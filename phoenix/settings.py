@@ -6,18 +6,30 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
+
+
+ALLOWED_HOSTS = server_settings.ALLOWED_HOSTS
+TIME_ZONE = server_settings.TIME_ZONE
+SITE_URL=server_settings.SITE_URL
+STATIC_ROOT=server_settings.STATIC_ROOT
+MEDIA_ROOT=server_settings.MEDIA_ROOT
+STATIC_URL = server_settings.STATIC_URL
+MEDIA_URL =  server_settings.MEDIA_URL
+ADMIN_URL =  server_settings.ADMIN_URL
+UPLOAD_ROOT =  server_settings.UPLOAD_ROOT
+STATICFILES_DIRS=server_settings.STATICFILES_DIRS
+SECRET_KEY=server_settings.SECRET_KEY
+DEBUG = server_settings.DEBUG
+QRCODE_ROOT=server_settings.QRCODE_ROOT
+INSTALLED_APPS =server_settings.INSTALLED_APPS
+
+
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY=server_settings.SECRET_KEY
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = server_settings.DEBUG
 
-QRCODE_ROOT=server_settings.QRCODE_ROOT
-# Application definition
-
-INSTALLED_APPS =server_settings.INSTALLED_APPS
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -90,23 +102,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
-STATIC_URL = server_settings.STATIC_URL
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-ALLOWED_HOSTS = server_settings.ALLOWED_HOSTS
-TIME_ZONE = server_settings.TIME_ZONE
-
-SITE_URL=server_settings.SITE_URL
-
-STATIC_ROOT=server_settings.STATIC_ROOT
-MEDIA_ROOT=server_settings.MEDIA_ROOT
-STATIC_URL = server_settings.STATIC_URL
-MEDIA_URL =  server_settings.MEDIA_URL
-ADMIN_URL =  server_settings.ADMIN_URL
-UPLOAD_ROOT =  server_settings.UPLOAD_ROOT
-
-STATICFILES_DIRS=server_settings.STATICFILES_DIRS
