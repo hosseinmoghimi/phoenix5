@@ -1,0 +1,56 @@
+<!doctype html>
+{% load static %}
+<html lang="en">
+
+<head>
+    {% include "phoenix/includes/head.html" %}
+
+    {% block head %}
+
+    {% endblock %}
+
+    {% block style %}
+
+    {% endblock %}
+    <meta name="csrf_token" content="{{ csrf_token }}">
+
+</head>
+
+<body>
+    <div class="container" style="margin-bottom: 75px;">
+
+        {% if not no_nav_bar %}
+          
+        {% include "phoenix/includes/navbar.html" %}
+        {% endif %}
+
+        <div class="pt-5" style="margin-top:50px;">
+
+            {% block content %}
+
+            {% endblock content %}
+        </div>
+
+
+
+    </div>
+    {% if not no_footer %}
+      
+    {% include "phoenix/includes/footer.html" %}
+    {% endif %}
+   
+    <!-- Optional JavaScript; choose one of the two! -->
+
+    {% csrf_token %}
+    {% include "phoenix/includes/layout-scripts.html" %}
+
+
+    {% block script %}
+
+    {% endblock %}
+
+
+
+</body>
+
+</html>

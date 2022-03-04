@@ -1,0 +1,45 @@
+{% load static %}
+{% if DEBUG %}
+<script>
+
+    var logToConsole = true
+</script>
+{% else %}
+<script>
+
+    var logToConsole = false
+</script>
+{% endif %}
+{% if user.is_authenticated%}
+<script src="{% static 'pusher/pusher.min.js'%}"></script>
+<script>
+    if (typeof notifications === 'undefined')
+        notifications = []
+
+</script>
+<script>
+    notifications = JSON.parse(`{{notifications_s|escapejs}}`)
+    notifications_count = JSON.parse(`{{notifications_count|escapejs}}`)
+
+
+    // Vue application
+
+
+    my_channel_events = JSON.parse(`{{my_channel_events_s|escapejs}}`)
+
+
+    my_channel_events.forEach(my_channel_event => {
+
+
+        // Enable pusher logging - don't include this in production
+        Pusher.logToConsole = logToConsole
+
+  
+
+    });
+
+</script>
+
+
+
+{% endif %}

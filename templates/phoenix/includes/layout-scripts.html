@@ -1,0 +1,47 @@
+{% load static %}
+<!-- Option 1: Bootstrap Bundle with Popper -->
+<script src="{% static 'vendor/js/jquery.min.js' %}"></script>
+<script src="{% static 'vendor/js/bootstrap.min.js' %}"></script>
+<script src="{% static 'vendor/js/popper.min.js' %}"></script>
+<script src="{% static 'utility/js/utility.js' %}"></script>
+{% if DEBUG %}
+<script src="{% static 'vendor/js/vue.js' %}"></script>
+
+{% else %}
+<script src="{% static 'vendor/js/vue.min.js' %}"></script>
+{% endif %}
+<script>
+    let CURRENCY = "{{CURRENCY}}"
+    let current_datetime = "{{current_datetime}}"
+    let current_date = "{{current_date}}"
+    var csrfmiddlewaretoken = ''
+    $(document).ready(function () {
+        // Javascript method's body can be found in assets/js/demos.js
+        csrfmiddlewaretoken = $("input[name='csrfmiddlewaretoken']").val()
+    })
+</script>
+
+
+<script>
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    const csrftoken = getCookie('csrftoken');
+    console.log(csrftoken)
+
+</script>
+{% if PUSHER_IS_ENABLE %}
+{% include "phoenix/includes/pusher-script.html" %}
+{% endif %}
