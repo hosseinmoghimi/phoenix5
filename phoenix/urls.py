@@ -9,12 +9,13 @@ from django.views.static import serve
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    # path('authentication/', include('authentication.urls')),
-    # path('core/', include('core.urls')),
-    # path('dashboard/', include('dashboard.urls')),
-    # path('market/', include('market.urls')),
+    path('authentication/', include('authentication.urls')),
+    path('core/', include('core.urls')),
+    path('dashboard/', include('dashboard.urls')),
+    path('market/', include('market.urls')),
     # path('entity/', include('entity.urls')),
     # path('accounting/', include('accounting.urls')),
+    path('', include('accounting.urls')),
     re_path(r'^qrcode/(?P<path>.*)$', serve, {'document_root': QRCODE_ROOT}),
     re_path(r'^static/(?P<path>.*)$', serve, {'document_root': STATIC_ROOT}),
     re_path(r'^media/(?P<path>.*)$', serve, {'document_root': MEDIA_ROOT}),

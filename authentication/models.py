@@ -138,3 +138,4 @@ class Profile(models.Model):
         return f"{ADMIN_URL}{APP_NAME}/profile/{self.pk}/change/"
 
 
+

@@ -15,20 +15,24 @@ upload_storage = FileSystemStorage(location=UPLOAD_ROOT, base_url='/uploads')
 
 
 class Page(models.Model,LinkHelper):
-    title=models.CharField(_("title"), max_length=5000)
+    title=models.CharField(_("عنوان"), max_length=5000)
     short_description=HTMLField(_("توضیحات کوتاه"),null=True,blank=True, max_length=50000)
     description=HTMLField(_("توضیحات"),null=True,blank=True, max_length=50000)
-    app_name=models.CharField(_("app_name"), max_length=50)
-    class_name=models.CharField(_("class_name"), max_length=50)
+    app_name=models.CharField(_("app_name"),null=True,blank=True, max_length=50)
+    class_name=models.CharField(_("class_name"),null=True,blank=True, max_length=50)
+    date_added=models.DateTimeField(_("date_added"), auto_now=False, auto_now_add=True)
     
-    
+    @property
+    def thumbnail(self):
+        return ""
 
     class Meta:
         verbose_name = _("Page")
         verbose_name_plural = _("Pages")
 
     def __str__(self):
-        return f"""{self.app_name or ""} {self.class_name or ""} {self.title}"""
+        # return f"""{self.app_name or ""} {self.class_name or ""} {self.title}"""
+        return f"""{self.title}"""
  
 
 class Download(models.Model):
@@ -129,14 +133,8 @@ class Link(Icon):
 class Parameter(models.Model):
     app_name=models.CharField(_("app_name"), max_length=50)
     name=models.CharField(_("app_name"), max_length=50)
-    value=models.CharField(_("app_name"), max_length=50)
-    image_origin=models.ImageField(_("image"), upload_to=IMAGE_FOLDER+"pictures/",null=True,blank=True, height_field=None, width_field=None, max_length=None)
     origin_value=models.CharField(_("origin_value"),null=True,blank=True, max_length=50000)
-    @property
-    def image(self):
-        if self.image_origin and self.image_origin is not None:
-            return f'{MEDIA_URL}{str(self.image_origin)}'
-        return None
+    class_name="parameter"
 
     @property
     def value(self):
@@ -167,7 +165,36 @@ class Parameter(models.Model):
 
     def __str__(self):
         return self.name
+ 
 
-    def get_absolute_url(self):
-        return reverse("Parameter_detail", kwargs={"pk": self.pk})
+    
+    def get_edit_url(self):
+        return f"{ADMIN_URL}{APP_NAME}/parameter/{self.pk}/change/"
 
+    
+    def get_delete_url(self):
+        return f"{ADMIN_URL}{APP_NAME}/parameter/{self.pk}/delete/"
+
+
+class Picture(models.Model,LinkHelper):
+    app_name=models.CharField(_("app_name"), max_length=50)
+    name=models.CharField(_("name"), max_length=50)
+    image_origin=models.ImageField(_("image"), upload_to=IMAGE_FOLDER+"pictures/",null=True,blank=True, height_field=None, width_field=None, max_length=None)
+    class_name="picture"
+      
+    @property
+    def image(self):
+        if self.image_origin and self.image_origin is not None:
+            return f'{MEDIA_URL}{str(self.image_origin)}'
+        return None
+
+    class Meta:
+        verbose_name = _("Picture")
+        verbose_name_plural = _("Pictures")
+
+    def __str__(self):
+        return self.app_name+" : "+self.name
+ 
+    
+    def get_edit_url(self):
+        return f"{ADMIN_URL}{APP_NAME}/picture/{self.pk}/change/"

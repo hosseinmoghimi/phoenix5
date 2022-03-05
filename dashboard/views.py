@@ -1,3 +1,59 @@
-from django.shortcuts import render
-
+from core.serializers import ParameterSerializer
+import json
+from django.http.response import Http404
+from core.repo import ParameterRepo, PictureRepo
+from django.shortcuts import render,reverse
+from core.views import CoreContext, MessageView
+from .apps import APP_NAME
+from django.views import View
+TEMPLATE_ROOT="dashboard/"
+def getContext(request):
+    context=CoreContext(request=request,app_name=APP_NAME)
+    context['LAYOUT_PARENT']="material-dashboard-4/layout.html"
+    context['app']={
+        'name':APP_NAME,
+        'home_url':reverse(APP_NAME+":home"),
+    }
+    return context
 # Create your views here.
+class ParameterViews(View):
+    
+    def get(self,request,*args, **kwargs):
+        if not 'app_name' in kwargs:
+            
+            from log.repo import LogRepo
+            LogRepo(request=request).add_log(title="Http404 dashboard views 1",app_name=APP_NAME)
+            raise Http404
+        if not request.user.has_perm("core.change_parameter"):
+            mv=MessageView(title="دسترسی غیر مجاز",body="<p>شما مجوز لازم برای دسترسی به این صفحه را ندارید.</p>")
+            return mv.response(request=request)
+        app_name=kwargs['app_name']
+
+        parameters=ParameterRepo(request=request,app_name=app_name).list()
+        context=getContext(request=request)
+        context['app_name']=app_name
+        context['parameters']=parameters
+        context['parameters_s']=json.dumps(ParameterSerializer(parameters,many=True).data)
+        from phoenix.server_settings import my_apps
+        context['my_apps']=my_apps
+        for my_app in my_apps:
+            if my_app['name']==app_name:
+                context['my_app']=my_app
+
+        
+        pictures=PictureRepo(request=request,app_name=app_name).list()
+        context['pictures']=pictures
+        return render(request,TEMPLATE_ROOT+"parameters.html",context)
+
+    def post(self,request,*args, **kwargs):
+        pass
+class BasicViews(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        return render(request,TEMPLATE_ROOT+"index.html",context)
+
+class SearchViews(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        return render(request,TEMPLATE_ROOT+"search.html",context)
+ 

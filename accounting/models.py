@@ -9,22 +9,21 @@ from tinymce.models import HTMLField
 from core.enums import ColorEnum,UnitNameEnum
 
 
-class Transaction(models.Model,LinkHelper):
-    title=models.CharField(_("title"), max_length=500)
+class Transaction(Page,LinkHelper):
+    # title=models.CharField(_("title"), max_length=500)
     pay_from=models.ForeignKey("account",related_name="transactions_from", verbose_name=_("pay_from"), on_delete=models.CASCADE)
     pay_to=models.ForeignKey("account", related_name="transactions_to",verbose_name=_("pay_to"), on_delete=models.CASCADE)
+    creator=models.ForeignKey("authentication.profile",null=True,blank=True, verbose_name=_("ثبت شده توسط"), on_delete=models.SET_NULL)
     status=models.CharField(_("وضعیت"),choices=TransactionStatusEnum.choices,default=TransactionStatusEnum.DRAFT, max_length=50)
     category=models.ForeignKey("transactioncategory",null=True,blank=True, verbose_name=_("category"), on_delete=models.SET_NULL)
     amount=models.IntegerField(_("amount"),default=0)
-    creator=models.ForeignKey("authentication.profile", verbose_name=_("ثبت شده توسط"), on_delete=models.CASCADE)
-    downloads=models.ManyToManyField("core.download",blank=True, verbose_name=_("downloads"))
+    # downloads=models.ManyToManyField("core.download",blank=True, verbose_name=_("downloads"))
     payment_method=models.CharField(_("نوع پرداخت"),choices=PaymentMethodEnum.choices,default=PaymentMethodEnum.DRAFT, max_length=50)
-    links=models.ManyToManyField("core.link",blank=True, verbose_name=_("links"))
-    date_added=models.DateTimeField(_("date_added"), auto_now=False, auto_now_add=True)
-    description=HTMLField(_("توضیحات"),null=True,blank=True, max_length=50000)
+    # links=models.ManyToManyField("core.link",blank=True, verbose_name=_("links"))
+    # description=HTMLField(_("توضیحات"),null=True,blank=True, max_length=50000)
     transaction_datetime=models.DateTimeField(_("transaction_datetime"), auto_now=False, auto_now_add=False)
-    class_name="transaction"
-    app_name=APP_NAME
+    # class_name="transaction"
+    # app_name=APP_NAME
     
 
     class Meta:
@@ -36,6 +35,9 @@ class Transaction(models.Model,LinkHelper):
 
 
     def save(self,*args, **kwargs):
+        if self.transaction_datetime is None:
+            from django.utils import timezone
+            self.transaction_datetime=timezone.now()
         super(Transaction,self).save(*args, **kwargs)
         FinancialDocument.objects.filter(transaction=self).delete()
         fd=FinancialDocument(transaction=self,account_id=self.pay_to.id)
@@ -44,7 +46,7 @@ class Transaction(models.Model,LinkHelper):
         fd.save()
 
  
-class ProductorService(models.Model):
+class ProductorService(Page):
 
     
 
@@ -59,10 +61,21 @@ class Product(ProductorService):
         verbose_name = _("Product")
         verbose_name_plural = _("Products")
         
-
+    @property
+    def available(self):
+        return 0
+    @property
+    def unit_price(self):
+        return 0
+    @property
+    def unit_name(self):
+        return "عدد"
         
     def save(self,*args, **kwargs):
-        self.class_name='product'
+        if self.class_name is None or self.class_name=="":
+            self.class_name='product'
+        if self.app_name is None or self.app_name=="":
+            self.app_name=APP_NAME
         return super(Product,self).save(*args, **kwargs)
 
  
@@ -389,6 +402,7 @@ class Invoice(Transaction):
         sum-=self.discount
         return sum
     def save(self,*args, **kwargs):
+        
         super(Invoice,self).save(*args, **kwargs)
         self.class_name='invoice'
         if self.title is None or self.title=="":
@@ -423,7 +437,8 @@ class Invoice(Transaction):
         verbose_name_plural = _("Invoices")
     
     def __str__(self):
-        return self.title
+        from utility.currency import to_price
+        return f"""{self.title}   ({to_price(self.sum_total())}) """
     # def save(self,*args, **kwargs):
     #     self.class_name='invoice'
     #     return super(Invoice,self).save(*args, **kwargs)
@@ -433,9 +448,9 @@ class Invoice(Transaction):
 
 
 class InvoiceLine(models.Model):
-    invoice=models.ForeignKey("invoice", verbose_name=_("invoice"), on_delete=models.CASCADE)
+    invoice=models.ForeignKey("invoice", verbose_name=_("invoice"),related_name="lines", on_delete=models.CASCADE)
     row=models.IntegerField(_("row"))
-    productorservice=models.ForeignKey("productorservice", verbose_name=_("productorservice"), on_delete=models.CASCADE)
+    product_or_service=models.ForeignKey("productorservice", verbose_name=_("productorservice"), on_delete=models.CASCADE)
     quantity=models.FloatField(_("quantity"))
     unit_price=models.IntegerField(_("unit_price"))
     unit_name=models.CharField(_("unit_name"),max_length=50,choices=UnitNameEnum.choices,default=UnitNameEnum.ADAD)
@@ -448,7 +463,7 @@ class InvoiceLine(models.Model):
         verbose_name_plural = _("InvoiceLines")
 
     def __str__(self):
-        return f"{self.invoice} {self.row} - {self.productorservice.title} "
+        return f"{self.invoice} {self.row} - {self.product_or_service.title} "
 
     def get_absolute_url(self):
         return reverse("InvoiceLine_detail", kwargs={"pk": self.pk})
