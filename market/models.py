@@ -7,7 +7,6 @@ from .apps import APP_NAME
 
 
 class Order(Invoice):
-
     
 
     class Meta:
@@ -25,17 +24,24 @@ class Order(Invoice):
         return super(Order,self).save(*args, **kwargs)
 
 
+class Category(models.Model):
+    title=models.CharField(_("title"), max_length=50)
+    products=models.ManyToManyField("product", blank=True,verbose_name=_("products"))
+
+    def __str__(self):
+        return self.title
+    class Meta:
+        verbose_name = 'Category'
+        verbose_name_plural = 'Categories'
+
 
 class Product(AccountingProduct):
-
-    
 
     class Meta:
         verbose_name = _("Product")
         verbose_name_plural = _("Products")
  
     def save(self,*args, **kwargs):
-        
         if self.class_name is None or self.class_name=="":
             self.class_name="product"
         if self.app_name is None or self.app_name=="":

@@ -1,5 +1,6 @@
 from django.shortcuts import render
-
+from .repo import ProductRepo
+from .serializers import ProductSerializer
 # Create your views here.
 from django.shortcuts import render,reverse
 from core.views import CoreContext,SearchForm
@@ -11,8 +12,8 @@ from .apps import APP_NAME
 import json
 
 
-LAYOUT_PARENT = "phoenix/layout.html"
-TEMPLATE_ROOT = "accounting/"
+TEMPLATE_ROOT = "market/"
+LAYOUT_PARENT = "material-kit-pro/layout.html"
 
 
 def getContext(request, *args, **kwargs):
@@ -25,6 +26,22 @@ def getContext(request, *args, **kwargs):
 
 class HomeView(View):
     def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        products=ProductRepo(request=request).list()
+        context['products']=products
+        products_s=json.dumps(ProductSerializer(products,many=True).data)
+        context['products_s']=products_s
+        return render(request,TEMPLATE_ROOT+"index.html",context)
+
+class SearchView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        products=ProductRepo(request=request).list()
+        context['products']=products
+        products_s=json.dumps(ProductSerializer(products,many=True).data)
+        context['products_s']=products_s
+        return render(request,TEMPLATE_ROOT+"index.html",context)
+    def post(self,request,*args, **kwargs):
         context=getContext(request=request)
         products=ProductRepo(request=request).list()
         context['products']=products

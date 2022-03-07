@@ -12,6 +12,7 @@ class CurrencyEnum(TextChoices):
 
 
 class ParameterNameEnum(TextChoices):
+    VISITOR_COUNTER="تعداد بازدید",_("تعداد بازدید")
     CURRENCY="واحد پول",_("واحد پول")
     TITLE="عنوان",_("عنوان")
     FARSI_FONT_NAME="نام فونت فارسی",_("نام فونت فارسی")
@@ -40,6 +41,11 @@ class UnitNameEnum(TextChoices):
 
 
    
+class PictureNameEnum(TextChoices):
+    LOGO="لوگو",_("لوگو")
+    FAVICON="آیکون",_("آیکون")
+    BACKGROUND="پس زمینه",_("پس زمینه")
+    
 class ColorEnum(TextChoices):
     SUCCESS = 'success', _('success')
     DANGER = 'danger', _('danger')

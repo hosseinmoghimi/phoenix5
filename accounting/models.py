@@ -1,4 +1,6 @@
+from unicodedata import category
 from django.db import models
+from django.forms import CharField
 from core.models import Page
 from django.shortcuts import reverse
 from django.utils.translation import gettext as _
@@ -9,23 +11,42 @@ from tinymce.models import HTMLField
 from core.enums import ColorEnum,UnitNameEnum
 
 
+class Asset(Page,LinkHelper):
+    
+    class Meta:
+        verbose_name = _("Asset")
+        verbose_name_plural = _("Assets")
+ 
+ 
+
+    def save(self,*args, **kwargs):
+        if self.class_name is None or self.class_name=="":
+            self.class_name='asset'
+        if self.app_name is None or self.app_name=="":
+            self.app_name=APP_NAME
+        return super(Asset,self).save(*args, **kwargs)
+
+
 class Transaction(Page,LinkHelper):
-    # title=models.CharField(_("title"), max_length=500)
-    pay_from=models.ForeignKey("account",related_name="transactions_from", verbose_name=_("pay_from"), on_delete=models.CASCADE)
-    pay_to=models.ForeignKey("account", related_name="transactions_to",verbose_name=_("pay_to"), on_delete=models.CASCADE)
+    pay_from=models.ForeignKey("account",related_name="transactions_from", verbose_name=_("پرداخت کننده"), on_delete=models.CASCADE)
+    pay_to=models.ForeignKey("account", related_name="transactions_to",verbose_name=_("دریافت کننده"), on_delete=models.CASCADE)
     creator=models.ForeignKey("authentication.profile",null=True,blank=True, verbose_name=_("ثبت شده توسط"), on_delete=models.SET_NULL)
     status=models.CharField(_("وضعیت"),choices=TransactionStatusEnum.choices,default=TransactionStatusEnum.DRAFT, max_length=50)
-    category=models.ForeignKey("transactioncategory",null=True,blank=True, verbose_name=_("category"), on_delete=models.SET_NULL)
-    amount=models.IntegerField(_("amount"),default=0)
-    # downloads=models.ManyToManyField("core.download",blank=True, verbose_name=_("downloads"))
+    category=models.ForeignKey("transactioncategory",null=True,blank=True, verbose_name=_("دسته بندی"), on_delete=models.SET_NULL)
+    amount=models.IntegerField(_("مبلغ"),default=0)
     payment_method=models.CharField(_("نوع پرداخت"),choices=PaymentMethodEnum.choices,default=PaymentMethodEnum.DRAFT, max_length=50)
-    # links=models.ManyToManyField("core.link",blank=True, verbose_name=_("links"))
-    # description=HTMLField(_("توضیحات"),null=True,blank=True, max_length=50000)
-    transaction_datetime=models.DateTimeField(_("transaction_datetime"), auto_now=False, auto_now_add=False)
-    # class_name="transaction"
-    # app_name=APP_NAME
-    
-
+    transaction_datetime=models.DateTimeField(_("تاریخ تراکنش"), auto_now=False, auto_now_add=False)
+    def color(self):
+        color="primary"
+        if self.status==TransactionStatusEnum.DRAFT:
+            color="secondary"
+        if self.status==TransactionStatusEnum.APPROVED:
+            color="success"
+        if self.status==TransactionStatusEnum.IN_PROGRESS:
+            color="warning"
+        if self.status==TransactionStatusEnum.CANCELED:
+            color="secondary"
+        return color
     class Meta:
         verbose_name = _("Transaction")
         verbose_name_plural = _("Transactions")
@@ -88,7 +109,10 @@ class Service(ProductorService):
  
 
     def save(self,*args, **kwargs):
-        self.class_name='service'
+        if self.class_name is None or self.class_name=="":
+            self.class_name='service'
+        if self.app_name is None or self.app_name=="":
+            self.app_name=APP_NAME
         return super(Service,self).save(*args, **kwargs)
 
 
@@ -173,7 +197,7 @@ class BankAccount(Account):
 class FinancialDocument(models.Model,LinkHelper):
     account=models.ForeignKey("account", verbose_name=_("account"), on_delete=models.CASCADE)
     transaction=models.ForeignKey("transaction",verbose_name=_("transaction"), on_delete=models.CASCADE)
-        
+    tags=models.ManyToManyField("FinancialDocumentTag", blank=True,verbose_name=_("tags"))
     @property
     def rest(self):
         rest=0
@@ -260,8 +284,7 @@ class Payment(Transaction):
         self.class_name="payment"
         super(Payment,self).save(*args, **kwargs)
         financial_year=FinancialYear.get_by_date(date=self.transaction_datetime)
-        FinancialDocumentCategory.objects.get_or_create(title="واریز")
-        category=FinancialDocumentCategory.objects.get(title="واریز")
+        category,aa=FinancialDocumentCategory.objects.get_or_create(title="واریز")
         FinancialDocument.objects.filter(transaction=self).delete()
 
         ifd1=FinancialDocument()
@@ -284,6 +307,16 @@ class Payment(Transaction):
         ifd1.account=self.pay_from
         ifd1.save()
 
+
+class FinancialDocumentTag(models.Model):
+    title=models.CharField(_("title"), max_length=50)
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        verbose_name = 'FinancialDocumentTag'
+        verbose_name_plural = 'FinancialDocumentTags'
 
 class Cheque(Transaction,LinkHelper):
     cheque_date=models.DateField(_("تاریخ چک"), auto_now=False, auto_now_add=False)
@@ -343,18 +376,7 @@ class Invoice(Transaction):
     invoice_datetime=models.DateTimeField(_("تاریخ فاکتور"), auto_now=False, auto_now_add=False)
     ship_fee=models.IntegerField(_("هزینه حمل"),default=0)
     discount=models.IntegerField(_("تخفیف"),default=0)
-    tax_amount=models.IntegerField(_("مبلغ مالیات"),default=0)
-    def color(self):
-        color="primary"
-        if self.status==TransactionStatusEnum.DRAFT:
-            color="secondary"
-        if self.status==TransactionStatusEnum.APPROVED:
-            color="success"
-        if self.status==TransactionStatusEnum.IN_PROGRESS:
-            color="warning"
-        if self.status==TransactionStatusEnum.CANCELED:
-            color="secondary"
-        return color
+    
     def editable(self):
         if self.status==TransactionStatusEnum.DRAFT:
             return True
@@ -408,30 +430,7 @@ class Invoice(Transaction):
         if self.title is None or self.title=="":
             self.title=f"فاکتورشماره {self.pk}"
             self.save()
-        # financial_year=FinancialYear.get_by_date(date=self.invoice_datetime)
-        # FinancialDocumentCategory.objects.get_or_create(title="فروش")
-        # category=FinancialDocumentCategory.objects.get(title="فروش")
-        # InvoiceFinancialDocument.objects.filter(invoice=self).delete()
-
-        # ifd1=InvoiceFinancialDocument()
-        # ifd1.financial_year=financial_year
-        # ifd1.category=category
-        # ifd1.account=self.customer
-        # ifd1.invoice=self
-        # ifd1.bedehkar=self.sum_total()
-        # ifd1.title=str(self)
-        # ifd1.document_datetime=self.invoice_datetime
-        # ifd1.save()
-
-        # ifd1=InvoiceFinancialDocument()
-        # ifd1.bestankar=self.sum_total()
-        # ifd1.invoice=self
-        # ifd1.title=str(self)
-        # ifd1.financial_year=financial_year
-        # ifd1.category=category
-        # ifd1.document_datetime=self.invoice_datetime
-        # ifd1.account=self.seller.owner
-        # ifd1.save()
+      
     class Meta:
         verbose_name = _("Invoice")
         verbose_name_plural = _("Invoices")
@@ -439,10 +438,7 @@ class Invoice(Transaction):
     def __str__(self):
         from utility.currency import to_price
         return f"""{self.title}   ({to_price(self.sum_total())}) """
-    # def save(self,*args, **kwargs):
-    #     self.class_name='invoice'
-    #     return super(Invoice,self).save(*args, **kwargs)
- 
+   
     def invoice_lines(self):
         return InvoiceLine.objects.filter(invoice=self).order_by('row')
 
@@ -589,7 +585,10 @@ class Cost(Spend,LinkHelper):
 
    
     def save(self,*args, **kwargs):
-        self.class_name="cost"
+        if self.class_name is None or self.class_name=="":
+            self.class_name='cost'
+        if self.app_name is None or self.app_name=="":
+            self.app_name=APP_NAME
         super(Cost,self).save(*args, **kwargs)
         for fd in self.financialdocument_set.all():
             FinancialBalance.objects.filter(financial_document=fd).delete()
@@ -611,7 +610,10 @@ class Wage(Spend,LinkHelper):
 
    
     def save(self,*args, **kwargs):
-        self.class_name="wage"
+        if self.class_name is None or self.class_name=="":
+            self.class_name='wage'
+        if self.app_name is None or self.app_name=="":
+            self.app_name=APP_NAME
         super(Wage,self).save(*args, **kwargs)
         for fd in self.financialdocument_set.all():
             FinancialBalance.objects.filter(financial_document=fd).delete()

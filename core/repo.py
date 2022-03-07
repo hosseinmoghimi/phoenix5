@@ -34,11 +34,14 @@ class PictureRepo:
             name=kwargs['name']
             if name=="":
                 return
-            picture= self.objects.filter(name=name).first()
+            picture= self.objects.filter(app_name=self.app_name).filter(name=name).first()
             if picture is None:
                 picture=Picture(app_name=self.app_name,name=name)
                 picture.save()
                 return picture
+            # (picture,res) = self.objects.get_or_create(name=name,app_name=self.app_name)
+            # picture = self.objects.filter(name=name).filter(app_name=self.app_name).first()
+            return picture
         if 'pk' in kwargs:
             pk=kwargs['pk']
         if 'picture_id' in kwargs:

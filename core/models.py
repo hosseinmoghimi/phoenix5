@@ -21,7 +21,7 @@ class Page(models.Model,LinkHelper):
     app_name=models.CharField(_("app_name"),null=True,blank=True, max_length=50)
     class_name=models.CharField(_("class_name"),null=True,blank=True, max_length=50)
     date_added=models.DateTimeField(_("date_added"), auto_now=False, auto_now_add=True)
-    
+    priority=models.IntegerField(_("ترتیب"),default=1000)
     @property
     def thumbnail(self):
         return ""
@@ -116,7 +116,7 @@ class Icon(models.Model):
  
 
 class Link(Icon):
-
+    url=models.CharField(_("url"), max_length=2000)
     
 
     class Meta:
@@ -164,7 +164,7 @@ class Parameter(models.Model):
         verbose_name_plural = _("Parameters")
 
     def __str__(self):
-        return self.name
+        return self.app_name+":"+self.name
  
 
     

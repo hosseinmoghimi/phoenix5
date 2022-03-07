@@ -94,7 +94,7 @@ class Request(models.Model):
 
     def save_invoice(self):
         invoice_line=InvoiceLine()
-        invoice_line.product_or_service_id=self.product.id
+        invoice_line.product_or_service_id=self.product_or_service.id
         invoice_line.quantity=self.quantity
         invoice_line.unit_name=self.unit_name
         invoice_line.unit_price=self.unit_price
@@ -197,13 +197,18 @@ class OrganizationUnit(Page):
 class Project(Page):
     employer=models.ForeignKey("organizationunit",related_name="projects_employed", verbose_name=_("کارفرما"), on_delete=models.CASCADE)    
     contractor=models.ForeignKey("organizationunit",related_name="projects_contracted", verbose_name=_("پیمانکار"), on_delete=models.CASCADE)    
-
+    
 
     class Meta:
         verbose_name = _("Project")
         verbose_name_plural = _("Projects")
  
- 
+    def save(self,*args, **kwargs):
+        if self.class_name is None or self.class_name=="":
+            self.class_name='project'
+        if self.app_name is None or self.app_name=="":
+            self.app_name=APP_NAME
+        super(Project,self).save(*args, **kwargs)
 
 class SampleForm(Page):
     

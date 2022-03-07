@@ -36,6 +36,12 @@ class LoginViews(View):
         pass
     def post(self,request):
         pass
+class RegisterViews(View):
+    def get(self,request,*args, **kwargs):
+        ProfileRepo(request=request).logout(request)
+        pass
+    def post(self,request):
+        pass
 class LogoutViews(View):
     def get(self,request,*args, **kwargs):
         ProfileRepo(request=request).logout(request)
