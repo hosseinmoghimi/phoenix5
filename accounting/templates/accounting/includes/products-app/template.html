@@ -11,9 +11,13 @@
                         کالا
                     </th>
                     <th>
-                        موجودی در انبار ها
+                        قیمت
+
                     </th>
 
+                    <th>
+                        موجودی در انبار ها
+                    </th>
                 </thead>
                 <tbody>
                     <tr v-for="product in products">
@@ -23,7 +27,15 @@
                                 <span v-text="product.title"></span>
                             </a>
                         </td>
+                        <td>
+                            <div>
+                                <span v-text="to_price(product.unit_price)"></span>
+                            </div>
+                            <div>
+                                <small v-text="to_price(product.buy_price)" class="text-muted"></small>
+                            </div>
 
+                        </td>
                         <td>
                             <span v-text="product.available"></span>
 

@@ -1,3 +1,5 @@
+import re
+from authentication.repo import ProfileRepo
 from core.middleware import get_request
 from unicodedata import category
 from django.db import models
@@ -27,6 +29,21 @@ class Asset(Page,LinkHelper):
             self.app_name=APP_NAME
         return super(Asset,self).save(*args, **kwargs)
 
+
+class Price(models.Model):
+    account=models.ForeignKey("account", verbose_name=_("account"), on_delete=models.CASCADE)
+    product_or_service=models.ForeignKey("productorservice", verbose_name=_("product_or_service"), on_delete=models.CASCADE)
+    sell_price=models.IntegerField(_("فروش"),default=0)
+    buy_price=models.IntegerField(_("خرید"),default=0)
+    date_added=models.DateTimeField(_("date_added"), auto_now=False, auto_now_add=True)
+    
+
+    class Meta:
+        verbose_name = _("Price")
+        verbose_name_plural = _("Prices")
+
+    def __str__(self):
+        return f"""{self.product_or_service.title} @ {self.account} {self.date_added}"""
 
 class Transaction(Page,LinkHelper):
     pay_from=models.ForeignKey("account",related_name="transactions_from", verbose_name=_("پرداخت کننده"), on_delete=models.CASCADE)
@@ -73,6 +90,27 @@ class ProductorService(Page):
     
     @property
     def unit_price(self):
+        request=get_request()
+        if request is not None:
+             
+            account,a=Account.objects.get_or_create(profile__user_id=request.user.id)
+            last_price=Price.objects.filter(product_or_service=self).filter(account=account).order_by("-date_added").first()
+
+            if last_price is not None:
+                return last_price.sell_price
+
+        return 0
+
+    @property
+    def buy_price(self):
+        request=get_request()
+        if request is not None:
+             
+            account,a=Account.objects.get_or_create(profile__user_id=request.user.id)
+            last_price=Price.objects.filter(product_or_service=self).filter(account=account).order_by("-date_added").first()
+
+            if last_price is not None:
+                return last_price.buy_price
         return 0
     @property
     def unit_name(self):
@@ -96,7 +134,9 @@ class Product(ProductorService):
 
     @property
     def available(self):
-        return 0
+        id=0         
+
+        return id
         
     def save(self,*args, **kwargs):
         if self.class_name is None or self.class_name=="":
