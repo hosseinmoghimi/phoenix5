@@ -39,8 +39,13 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'core.middleware.simple_middleware',
 ]
+# MIDDLEWARE_CLASSES=[
+    # 'core.middleware.SimpleMiddleware',
+    # 'core.middleware.RequestMiddleware'
 
+# ]
 ROOT_URLCONF = 'phoenix.urls'
 
 TEMPLATES = [

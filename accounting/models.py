@@ -1,3 +1,4 @@
+from core.middleware import get_request
 from unicodedata import category
 from django.db import models
 from django.forms import CharField
@@ -87,7 +88,12 @@ class Product(ProductorService):
     class Meta:
         verbose_name = _("Product")
         verbose_name_plural = _("Products")
-        
+
+
+
+
+
+
     @property
     def available(self):
         return 0
