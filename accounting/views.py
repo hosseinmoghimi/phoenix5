@@ -3,8 +3,8 @@ from core.views import CoreContext, PageContext,SearchForm
 # Create your views here.
 from django.views import View
 from .apps import APP_NAME
-from .repo import ProductRepo
-from .serializers import ProductSerializer
+from .repo import ProductRepo,ServiceRepo
+from .serializers import ProductSerializer,ServiceSerializer
 import json
 
 
@@ -45,3 +45,25 @@ class ProductViews(View):
         context.update(PageContext(request=request,page=product))
         context['product']=product
         return render(request,TEMPLATE_ROOT+"product.html",context)
+
+
+
+
+        
+
+class ServicesViews(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        services=ServiceRepo(request=request).list()
+        context['services']=services
+        services_s=json.dumps(ServiceSerializer(services,many=True).data)
+        context['services_s']=services_s
+        return render(request,TEMPLATE_ROOT+"services.html",context)
+
+class ServiceViews(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        service=ServiceRepo(request=request).service(*args, **kwargs)
+        context.update(PageContext(request=request,page=service))
+        context['service']=service
+        return render(request,TEMPLATE_ROOT+"service.html",context)

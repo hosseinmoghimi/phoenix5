@@ -1,0 +1,32 @@
+{% load to_price %}
+<div class="card" id="services-app">
+    <div class="card-body">
+
+        <div class="table-responsive">
+
+            <table class="table table-striped">
+                <thead>
+
+                    <th>
+                        سرویس
+                    </th>
+                  
+
+                </thead>
+                <tbody>
+                    <tr v-for="service in services">
+
+                        <td>
+                            <a :href="service.get_absolute_url">
+                                <span v-text="service.title"></span>
+                            </a>
+                        </td>
+
+                     
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</div>

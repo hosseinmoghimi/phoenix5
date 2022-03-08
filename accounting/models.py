@@ -70,6 +70,12 @@ class Transaction(Page,LinkHelper):
 class ProductorService(Page):
 
     
+    @property
+    def unit_price(self):
+        return 0
+    @property
+    def unit_name(self):
+        return "عدد"
 
     class Meta:
         verbose_name = _("ProductorService")
@@ -85,12 +91,6 @@ class Product(ProductorService):
     @property
     def available(self):
         return 0
-    @property
-    def unit_price(self):
-        return 0
-    @property
-    def unit_name(self):
-        return "عدد"
         
     def save(self,*args, **kwargs):
         if self.class_name is None or self.class_name=="":

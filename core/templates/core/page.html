@@ -1,0 +1,58 @@
+{% extends "phoenix/layout.html" %}
+
+{% block content %}
+<h6 class="text-center text-muted">
+    {{page.class_title}}
+</h6>
+<h5 class="text-center">
+    {{page.title}}
+
+    {% if perms.core.change_page %}
+    <a href="{{page.get_edit_url}}" target="_blank" title="ویرایش" class="mx-2"><i
+            class="fa fa-edit text-warning"></i></a>
+    {% endif %}
+
+
+
+    {% if perms.core.delete_page %}
+    <a href="{{page.get_delete_url}}" target="_blank" title="حذف" class="mx-2"><i
+            class="fa fa-trash text-danger"></i></a>
+    {% endif %}
+</h5>
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5>
+                    {{page.title}}
+                </h5>
+            </div>
+            <div class="farsi card-body text-right">
+                {% if perms.core.change_page %}
+                <a href="{{page.get_edit_url}}" target="_blank" title="ویرایش" class="mx-2 text-warning"><i
+                        class="fa fa-edit"></i> ویرایش</a>
+                {% endif %}
+            
+            
+            
+                {% if perms.core.delete_page %}
+                <a href="{{page.get_delete_url}}" target="_blank" title="حذف" class="mx-2 text-danger"><i
+                        class="fa fa-trash"></i> حذف</a>
+                {% endif %}
+
+            </div>
+        </div>
+    </div>
+    <div class="col-md-12">
+        {% include "core/includes/page-description-app/short-description.html" %}
+        {% include "core/includes/page-description-app/description.html" %}
+    </div>
+
+</div>
+
+{% endblock content %}
+
+
+{% block script %}
+
+{% endblock script %}

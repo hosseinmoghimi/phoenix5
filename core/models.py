@@ -22,6 +22,13 @@ class Page(models.Model,LinkHelper):
     class_name=models.CharField(_("class_name"),null=True,blank=True, max_length=50)
     date_added=models.DateTimeField(_("date_added"), auto_now=False, auto_now_add=True)
     priority=models.IntegerField(_("ترتیب"),default=1000)
+    def class_title(self):
+        class_title=""
+        if self.class_name=="product":
+            class_title="کالا"
+        if self.class_name=="service":
+            class_title="سرویس"
+        return class_title
     @property
     def thumbnail(self):
         return ""
