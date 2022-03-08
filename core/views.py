@@ -39,5 +39,9 @@ def CoreContext(request,*args, **kwargs):
     }
     return context
 
+def PageContext(request,page,*args, **kwargs):
+    context={}
+    context['page']=page
+    return context
 class MessageView():
     pass

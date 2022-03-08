@@ -1,5 +1,5 @@
 from django.shortcuts import render,reverse
-from core.views import CoreContext,SearchForm
+from core.views import CoreContext, PageContext,SearchForm
 # Create your views here.
 from django.views import View
 from .apps import APP_NAME
@@ -28,3 +28,20 @@ class HomeView(View):
         products_s=json.dumps(ProductSerializer(products,many=True).data)
         context['products_s']=products_s
         return render(request,TEMPLATE_ROOT+"index.html",context)
+
+class ProductsViews(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        products=ProductRepo(request=request).list()
+        context['products']=products
+        products_s=json.dumps(ProductSerializer(products,many=True).data)
+        context['products_s']=products_s
+        return render(request,TEMPLATE_ROOT+"products.html",context)
+
+class ProductViews(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        product=ProductRepo(request=request).product(*args, **kwargs)
+        context.update(PageContext(request=request,page=product))
+        context['product']=product
+        return render(request,TEMPLATE_ROOT+"product.html",context)
