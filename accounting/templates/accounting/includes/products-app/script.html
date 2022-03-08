@@ -1,6 +1,7 @@
 <script>
     let products_app_data = {
-        products: JSON.parse(`{{products_s|escapejs}}`)
+        products: JSON.parse(`{{products_s|escapejs}}`),
+        show_sell_prices:false,
     }
     let products_app_methods = {
         to_price: function (vall) {

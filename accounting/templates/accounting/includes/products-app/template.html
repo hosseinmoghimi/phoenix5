@@ -1,7 +1,7 @@
 {% load to_price %}
 <div class="card" id="products-app">
     <div class="card-body">
-
+<button @click="show_sell_prices=!show_sell_prices" class="btn btn-danger">show_sell_prices</button>
         <div class="table-responsive">
 
             <table class="table table-striped">
@@ -31,7 +31,7 @@
                             <div>
                                 <span v-text="to_price(product.unit_price)"></span>
                             </div>
-                            <div>
+                            <div v-if="show_sell_prices">
                                 <small v-text="to_price(product.buy_price)" class="text-muted"></small>
                             </div>
 
