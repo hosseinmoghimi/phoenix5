@@ -45,6 +45,7 @@ class Price(models.Model):
     def __str__(self):
         return f"""{self.product_or_service.title} @ {self.account} {self.date_added}"""
 
+
 class Transaction(Page,LinkHelper):
     pay_from=models.ForeignKey("account",related_name="transactions_from", verbose_name=_("پرداخت کننده"), on_delete=models.CASCADE)
     pay_to=models.ForeignKey("account", related_name="transactions_to",verbose_name=_("دریافت کننده"), on_delete=models.CASCADE)
@@ -363,6 +364,7 @@ class FinancialDocumentTag(models.Model):
     class Meta:
         verbose_name = 'FinancialDocumentTag'
         verbose_name_plural = 'FinancialDocumentTags'
+
 
 class Cheque(Transaction,LinkHelper):
     cheque_date=models.DateField(_("تاریخ چک"), auto_now=False, auto_now_add=False)
