@@ -1,9 +1,6 @@
-import re
-from authentication.repo import ProfileRepo
+from utility.calendar import PERSIAN_MONTH_NAMES
 from core.middleware import get_request
-from unicodedata import category
 from django.db import models
-from django.forms import CharField
 from core.models import Page
 from django.shortcuts import reverse
 from django.utils.translation import gettext as _
@@ -649,7 +646,7 @@ class Cost(Spend,LinkHelper):
             fb.save()
 
 
-class Wage(Spend,LinkHelper):    
+class Salary(Spend,LinkHelper):    
     class_name="wage"
     month=models.IntegerField(_("month"))
     year=models.IntegerField(_("year"))
@@ -657,8 +654,8 @@ class Wage(Spend,LinkHelper):
         return PERSIAN_MONTH_NAMES[self.month-1]+" " + str(self.year)
     
     class Meta:
-        verbose_name = _("Wage")
-        verbose_name_plural = _("Wages")
+        verbose_name = _("Salary")
+        verbose_name_plural = _("Salaries")
 
    
     def save(self,*args, **kwargs):
@@ -666,7 +663,7 @@ class Wage(Spend,LinkHelper):
             self.class_name='wage'
         if self.app_name is None or self.app_name=="":
             self.app_name=APP_NAME
-        super(Wage,self).save(*args, **kwargs)
+        super(Salary,self).save(*args, **kwargs)
         for fd in self.financialdocument_set.all():
             FinancialBalance.objects.filter(financial_document=fd).delete()
             fb=FinancialBalance(financial_document=fd)
