@@ -53,9 +53,10 @@ class TransactionStatusEnum(TextChoices):
     CANCELED="کنسل شده",_("کنسل شده")
     PASSED="پاس شده",_("پاس شده")
 
-# class InvoiceStatusEnum(TextChoices):
-#     DRAFT="پیش نویس",_("پیش نویس")
-#     IN_PROGRESS="در جریان",_("در جریان")
-#     DELIVERED="تحویل شده",_("تحویل شده")
-#     APPROVED="تایید شده",_("تایید شده")
-#     CANCELED="کنسل شده",_("کنسل شده")
+class SubAccountEnum(TextChoices):
+    INVESTMENT="سرمایه گذاری",_("سرمایه گذاری")
+    ASSET="دارایی",_("دارایی")
+    BUILDING="ملک",_("ملک")
+    FURNITURE="اثاثیه",_("اثاثیه")
+    TAX="مالیات",_("مالیات")
+    COST="هزینه",_("هزینه")

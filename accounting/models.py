@@ -1,4 +1,4 @@
-from utility.calendar import PERSIAN_MONTH_NAMES
+from utility.calendar import PERSIAN_MONTH_NAMES, PersianCalendar
 from core.middleware import get_request
 from django.db import models
 from core.models import Page
@@ -10,6 +10,16 @@ from .enums import *
 from tinymce.models import HTMLField
 from core.enums import ColorEnum,UnitNameEnum
 
+class SubAccount(models.Model):
+    parent=models.ForeignKey("SubAccount",null=True,blank=True, verbose_name=_("Parent"), on_delete=models.SET_NULL)
+    title=models.CharField(_("title"), max_length=50)
+    color=models.CharField(_("color"),max_length=50,choices=ColorEnum.choices,default=ColorEnum.PRIMARY)
+    class Meta:
+        verbose_name = 'SubAccount'
+        verbose_name_plural = 'SubAccounts'
+    def __str__(self):
+        return self.title
+
 
 class Asset(Page,LinkHelper):
     
@@ -17,7 +27,7 @@ class Asset(Page,LinkHelper):
         verbose_name = _("Asset")
         verbose_name_plural = _("Assets")
  
- 
+
 
     def save(self,*args, **kwargs):
         if self.class_name is None or self.class_name=="":
@@ -82,6 +92,9 @@ class Transaction(Page,LinkHelper):
         fd=FinancialDocument(transaction=self,account_id=self.pay_from.id)
         fd.save()
 
+    @property
+    def persian_transaction_datetime(self):
+        return PersianCalendar().from_gregorian(self.transaction_datetime)
  
 class ProductorService(Page):
 
@@ -181,6 +194,20 @@ class Account(models.Model,LinkHelper):
         if self.title is None or self.title=="":
             self.title=self.profile.name
         super(Account,self).save(*args, **kwargs)
+    
+    @property
+    def balance(self):
+        balance={}
+        bestankar=0
+        bedehkar=0
+        for doc in self.financialdocument_set.all():
+            bestankar+=doc.bestankar
+            bedehkar+=doc.bedehkar
+        rest=bestankar-bedehkar
+        balance['rest']=rest
+        balance['bestankar']=bestankar
+        balance['bedehkar']=bedehkar
+        return balance
 
 
 class Bank(models.Model):
@@ -244,34 +271,45 @@ class BankAccount(Account):
 
 class FinancialDocument(models.Model,LinkHelper):
     account=models.ForeignKey("account", verbose_name=_("account"), on_delete=models.CASCADE)
+    sub_account=models.ForeignKey("SubAccount", null=True,blank=True,verbose_name=_("Sub Account"), on_delete=models.SET_NULL)
+    bedehkar=models.IntegerField(_("bedehkar"),default=0)
+    bestankar=models.IntegerField(_("bestankar"),default=0)
+    document_datetime=models.DateTimeField(_("document_datetime"), auto_now=False, auto_now_add=True)
     transaction=models.ForeignKey("transaction",verbose_name=_("transaction"), on_delete=models.CASCADE)
     tags=models.ManyToManyField("FinancialDocumentTag", blank=True,verbose_name=_("tags"))
+    app_name=APP_NAME
+    class_name="financialdocument"
+
     @property
     def rest(self):
         rest=0
-        for fd in FinancialDocument.objects.filter(account=self.account).filter(transaction__transaction_datetime__lte=self.transaction.transaction_datetime):
+        for fd in FinancialDocument.objects.filter(account=self.account).filter(document_datetime__lte=self.transaction.transaction_datetime):
             rest+=fd.bestankar
             rest-=fd.bedehkar
         return rest
-    
+
+    def get_state_badge(self):
+        color="muted"
+        state="خنثی"
+        if self.bedehkar>0:
+            color="danger"
+            state="بدهکار"
+        if self.bestankar>0:
+            color="success"
+            state="بستانکار"
+
+        return f"""<span class="badge badge-{color}">{state}</span>"""
+
+
     @property
-    def bedehkar(self):
-        a=0
-        if self.transaction.pay_to.id==self.account.id:
-            a=self.transaction.amount
-        return a
+    def persian_document_datetime(self):
+        return PersianCalendar().from_gregorian(self.document_datetime)
+     
     @property
     def title(self):
         return self.transaction.title 
      
-    @property
-    def bestankar(self):
-        a=0
-        if self.transaction.pay_from.id==self.account.id:
-            a=self.transaction.amount
-        return a
-    class_name="financialdocument"
-    app_name=APP_NAME
+    
     
 
     class Meta:
@@ -279,7 +317,7 @@ class FinancialDocument(models.Model,LinkHelper):
         verbose_name_plural = _("FinancialDocuments")
 
     def __str__(self):
-        return f"""{self.account.title} : {self.transaction.title} : {self.transaction.amount}"""
+        return f"""{self.account.title} : {self.transaction.title} : {self.transaction.amount} {(" : "+self.sub_account.title) if self.sub_account is not None else ""}"""
 
     def save(self):
         super(FinancialDocument,self).save()
@@ -299,7 +337,7 @@ class FinancialBalance(models.Model,LinkHelper):
     buy_service=models.IntegerField(_("خرید خدمات"),default=0)
     discount=models.IntegerField(_("تخفیف"),default=0)
     ship_fee=models.IntegerField(_("هزینه حمل"),default=0)
-    
+    misc=models.IntegerField(_("سایر"),default=0)
     def sum(self):
         sum=0
         sum+=self.sell_benefit
@@ -310,15 +348,19 @@ class FinancialBalance(models.Model,LinkHelper):
         sum+=self.sell_service
         sum+=self.discount
         sum+=self.ship_fee
+        sum+=self.misc
         return sum
     class Meta:
         verbose_name = _("FinancialBalance")
         verbose_name_plural = _("FinancialBalances")
 
     def __str__(self):
-        return self.financial_document.title 
+        return str(self.financial_document) 
 
-
+    def save(self,*args, **kwargs):
+        self.misc=0
+        self.misc=self.financial_document.bedehkar+self.financial_document.bestankar-self.sum()
+        return super(FinancialBalance,self).save(*args, **kwargs)
 class Payment(Transaction):
     
 

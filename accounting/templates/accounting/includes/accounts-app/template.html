@@ -1,0 +1,76 @@
+{% load to_persian_date %}
+{% load to_price %}
+<div class="card">
+    <div class="card-header">
+
+        <h4 class="text-center">
+            حساب های مالی
+        </h4>
+        {% if page_pre_description %}
+
+        <h5 class="text-center">
+            {{page_pre_description}}
+        </h5>
+        {% endif %}
+        {% if page_description %}
+
+        <h4 class="text-center">
+            {{page_description}}
+        </h4>
+        {% endif %}
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+
+            <table class="table table-striped">
+                <thead>
+                    <th>
+                        حساب
+                    </th>
+                    <th>
+
+                    </th>
+                    <th>
+                        مانده
+                    </th>
+                </thead>
+                <tbody>
+                    {% for account in accounts %}
+
+                    <tr>
+                        <td>
+                            <a href="{{account.get_absolute_url}}">
+
+                                {{account.title}}
+                            </a>
+
+                            {% for tag in account.tags.all %}
+                            <a href="{{tag.get_absolute_url}}">
+
+                                <span class="badge badge-{{tag.color}}">
+                                    {{tag.name}}
+                                </span>
+                            </a>
+                            {% endfor %}
+                        </td>
+                        <td>
+                            <a href="{{account.profile.get_absolute_url}}">
+                                <img src="{{account.profile.image}}" class="rounded-circle" width="32" alt="">
+                                {{account.profile.name}}
+                            </a>
+
+                        </td>
+                        <td>
+                            <span>
+
+                                {{account.balance.rest|to_price}}
+                            </span>
+
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
