@@ -17,6 +17,6 @@ def getContext(request,*args, **kwargs):
 class HomeView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
-        share_holder=ShareHolderRepo(request=request).me
-        context['share_holder']=share_holder
+        share_holders=ShareHolderRepo(request=request).me
+        context['share_holders']=share_holders
         return render(request,TEMPLATE_ROOT+"index.html",context)

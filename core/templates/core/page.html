@@ -21,7 +21,7 @@
 </h5>
 <div class="row">
     <div class="col-md-6">
-        <div class="card" style="height: 100%;" >
+        <div class="card" style="height: 90%;">
             <div class="card-header">
                 <h5>
                     {{page.title}}
@@ -32,9 +32,9 @@
                 <a href="{{page.get_edit_url}}" target="_blank" title="ویرایش" class="mx-2 text-warning"><i
                         class="fa fa-edit"></i> ویرایش</a>
                 {% endif %}
-            
-            
-            
+
+
+
                 {% if perms.core.delete_page %}
                 <a href="{{page.get_delete_url}}" target="_blank" title="حذف" class="mx-2 text-danger"><i
                         class="fa fa-trash"></i> حذف</a>
@@ -45,13 +45,11 @@
     </div>
     <div class="col-md-6">
         <div class="card">
-<div class="card-body">
-    {% if page.thumbnail %}
-    
-    <img src="{{page.thumbnail}}" class="rounded" width="100%" alt="">
-    {% endif %}
-</div>
-            
+            <div class="card-body">
+                {% if page.thumbnail %}
+                <img src="{{page.thumbnail}}" class="rounded" width="100%" alt="">
+                {% endif %}
+            </div>
         </div>
     </div>
     <div class="col-md-12">

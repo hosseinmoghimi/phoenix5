@@ -1,3 +1,4 @@
+from email.policy import default
 from .models import Parameter,Picture
 from .constants import *
 from django.db.models import Q
@@ -122,7 +123,12 @@ class ParameterRepo:
             parameter_name=kwargs['name']
         parameter= self.objects.filter(name=parameter_name).first()
         if parameter is None:
-            parameter=Parameter(name=parameter_name,app_name=self.app_name)
+            default=parameter_name
+            if 'default' in kwargs:
+                default=kwargs['default']
+
+
+            parameter=Parameter(name=parameter_name,app_name=self.app_name,origin_value=default)
             parameter.save()
 
         if 'id' in kwargs:

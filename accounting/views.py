@@ -3,7 +3,7 @@ from core.views import CoreContext, PageContext,SearchForm
 # Create your views here.
 from django.views import View
 from .apps import APP_NAME
-from .repo import ProductRepo,ServiceRepo
+from .repo import AccountRepo, ProductRepo,ServiceRepo
 from .serializers import ProductSerializer,ServiceSerializer
 import json
 
@@ -48,6 +48,12 @@ class ProductViews(View):
 
 
 
+class AccountViews(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        account=AccountRepo(request=request).account(*args, **kwargs)
+        context['account']=account
+        return render(request,TEMPLATE_ROOT+"account.html",context)
 
         
 

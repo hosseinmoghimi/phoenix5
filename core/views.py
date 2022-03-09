@@ -32,7 +32,7 @@ def CoreContext(request,*args, **kwargs):
         context['farsi_font_name']=farsi_font_name
     picture_repo=PictureRepo(request=request,app_name=app_name)
     context['app']={
-        'title':parameter_repo.parameter(name=ParameterNameEnum.TITLE).value,
+        'title':parameter_repo.parameter(name=ParameterNameEnum.TITLE,default=app_name).value,
         'home_url':parameter_repo.parameter(name=ParameterNameEnum.HOME_URL).value,
         'icon':picture_repo.picture(name=PictureNameEnum.FAVICON).image,
         'logo':picture_repo.picture(name=PictureNameEnum.LOGO).image,

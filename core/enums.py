@@ -18,6 +18,8 @@ class ParameterNameEnum(TextChoices):
     FARSI_FONT_NAME="نام فونت فارسی",_("نام فونت فارسی")
     HOME_URL="لینک به خانه",_("لینک به خانه")
 
+    THUMBNAIL_DIMENSION="عرض تصاویر کوچک",_("عرض تصاویر کوچک")
+
 class TextDirectionEnum(TextChoices):
     Rtl='rtl',_('rtl')
     Ltr='ltr',_('ltr')

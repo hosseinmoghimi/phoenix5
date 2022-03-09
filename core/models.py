@@ -14,8 +14,66 @@ IMAGE_FOLDER="images"
 upload_storage = FileSystemStorage(location=UPLOAD_ROOT, base_url='/uploads')
 
 
-class Page(models.Model,LinkHelper):
+class ImageMixin():
+    
+    @property
+    def image(self):
+        if self.image_main_origin:
+            return MEDIA_URL+str(self.image_main_origin)
+    @property
+    def thumbnail(self):
+        return self.get_or_create_thumbnail()
+            
+
+    def get_or_create_thumbnail(self,*args, **kwargs):
+        if self.thumbnail_origin :
+            return MEDIA_URL+str(self.thumbnail_origin)
+        try :
+            if self.image_main_origin is None:
+                return f'{STATIC_URL}{self.app_name}/img/pages/thumbnail/{self.class_name}.png'
+        except:
+            pass
+        #Opening the uploaded image
+        
+        from PIL import Image as PilImage
+        from io import BytesIO
+        import sys
+        from django.core.files.uploadedfile import InMemoryUploadedFile
+
+
+        image = PilImage.open(self.image_main_origin)
+
+        width11, height11= image.size
+        ratio11=float(height11)/float(width11)
+
+        output = BytesIO()
+        from .repo import ParameterRepo
+        THUMBNAIL_DIMENSION=ParameterRepo(app_name=APP_NAME).parameter(name=ParameterNameEnum.THUMBNAIL_DIMENSION,default=150).value
+        try:
+            a=THUMBNAIL_DIMENSION+100
+        except:
+            THUMBNAIL_DIMENSION=250
+        #Resize/modify the image
+        image = image.resize( (THUMBNAIL_DIMENSION,int(ratio11*float(THUMBNAIL_DIMENSION))),PilImage.ANTIALIAS )
+        
+        #after modifications, save it to the output
+        image.save(output, format='JPEG', quality=95)
+        
+        output.seek(0)
+        
+
+        #change the imagefield value to be the newley modifed image value
+        image_name=f"{self.image_main_origin.name.split('.')[0]}.jpg"
+        image_path=IMAGE_FOLDER+'image/jpeg'
+        self.thumbnail_origin = InMemoryUploadedFile(output,'ImageField', image_name, image_path, sys.getsizeof(output), None)
+        return MEDIA_URL+str(self.thumbnail_origin)
+
+
+class Page(models.Model,LinkHelper,ImageMixin):
     title=models.CharField(_("عنوان"), max_length=5000)
+    thumbnail_origin = models.ImageField(_("تصویر کوچک"), upload_to=IMAGE_FOLDER+'ImageBase/Thumbnail/',
+                                         null=True, blank=True, height_field=None, width_field=None, max_length=None)
+    
     short_description=HTMLField(_("توضیحات کوتاه"),null=True,blank=True, max_length=50000)
     description=HTMLField(_("توضیحات"),null=True,blank=True, max_length=50000)
     app_name=models.CharField(_("app_name"),null=True,blank=True, max_length=50)
@@ -29,10 +87,7 @@ class Page(models.Model,LinkHelper):
         if self.class_name=="service":
             class_title="سرویس"
         return class_title
-    @property
-    def thumbnail(self):
-        return ""
-
+     
     class Meta:
         verbose_name = _("Page")
         verbose_name_plural = _("Pages")
@@ -183,6 +238,23 @@ class Parameter(models.Model):
         return f"{ADMIN_URL}{APP_NAME}/parameter/{self.pk}/delete/"
 
 
+class Image(models.Model,ImageMixin):
+    title=models.CharField(_("title"), max_length=50)
+    description=HTMLField(_("توضیحات"),null=True,blank=True, max_length=50000)
+
+
+    thumbnail_origin = models.ImageField(_("تصویر کوچک"), upload_to=IMAGE_FOLDER+'ImageBase/Thumbnail/',
+                                         null=True, blank=True, height_field=None, width_field=None, max_length=None)
+    image_main_origin = models.ImageField(_("تصویر اصلی"),null=True, blank=True, upload_to=IMAGE_FOLDER +
+                                     'ImageBase/Main/', height_field=None, width_field=None, max_length=None)
+    image_header_origin =models.ImageField(_("تصویر سربرگ"),null=True, blank=True, upload_to=IMAGE_FOLDER +
+                                     'ImageBase/Header/', height_field=None, width_field=None, max_length=None)                              
+ 
+
+    class Meta:
+        verbose_name = _("GalleryPhoto")
+        verbose_name_plural = _("تصاویر")
+ 
 class Picture(models.Model,LinkHelper):
     app_name=models.CharField(_("app_name"), max_length=50)
     name=models.CharField(_("name"), max_length=50)

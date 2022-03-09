@@ -13,8 +13,7 @@ class ShareHolderRepo:
             self.user=kwargs['user']
         self.profile=ProfileRepo(user=self.user).me
         self.objects=ShareHolder.objects.all()
-        self.me=ShareHolder.objects.filter(profile=self.profile).first()
-        print(self.me)
+        self.me=ShareHolder.objects.filter(profile=self.profile)
     def list(self,*args, **kwargs):
         return self.objects.filter(app_name=self.app_name)
     def share_holder(self,*args, **kwargs):

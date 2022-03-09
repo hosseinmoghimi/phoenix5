@@ -5,23 +5,56 @@
     STOCK
 </h3>
 <div class="row">
-<div class="col-md-12">
-    <div class="card">
-        <div class="card-body">
-            <h4>
-                {{share_holder.account.title}}
-            </h4>
-            <h5>
-                {{share_holder.stock}}
-               / 
-               <small class="text-muted">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+                <p>
 
-                   {{share_holder.account.total_stock}}
-                </small>
+                    <a href="{{profile.get_absolute_url}}">
+                        <img src="{{profile.image}}" class="rounded-circle" width="96" alt="">
+                        <br>
+                        {{profile.name}}
+                    </a>
+                </p>
 
-            </h5>
+            </div>
         </div>
     </div>
-</div>
+    {% for share_holder in share_holders %}
+
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+
+                <h4>
+                    <a href="{{share_holder.account.get_absolute_url}}">
+
+                        {{share_holder.account.title}}
+                    </a>
+                </h4>
+            </div>
+            <div class="card-body">
+                <h5 class="text-center">
+                   
+                   <small class="text-muted">
+                      سهم شما : 
+                   </small>
+                    {{share_holder.stock}}
+                   
+
+                </h5>
+                <h6 class="text-center">
+                    <small class="text-muted">
+                        کل سهام : 
+                     </small>
+
+                        {{share_holder.account.total_stock}}
+
+                </h6>
+            </div>
+
+        </div>
+    </div>
+    {% endfor %}
 </div>
 {% endblock content %}
