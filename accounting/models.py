@@ -172,7 +172,11 @@ class Account(models.Model,LinkHelper):
     class Meta:
         verbose_name = _("Account")
         verbose_name_plural = _("Accounts")
-
+    def total_stock(self):
+        sum=0
+        for share_holder in  self.shareholder_set.all():
+            sum+=share_holder.stock
+        return sum
     def __str__(self):
         return self.title
 

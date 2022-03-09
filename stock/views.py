@@ -1,5 +1,7 @@
 from django.shortcuts import render
 from django.views import View
+
+from stock.repo import ShareHolderRepo
 from .apps import APP_NAME
 from core.views import CoreContext
 from authentication.repo import ProfileRepo
@@ -15,4 +17,6 @@ def getContext(request,*args, **kwargs):
 class HomeView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
+        share_holder=ShareHolderRepo(request=request).me
+        context['share_holder']=share_holder
         return render(request,TEMPLATE_ROOT+"index.html",context)
