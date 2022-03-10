@@ -1,0 +1,20 @@
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <th>
+                مسافر
+            </th>
+
+        </thead>
+
+        <tbody>
+            <tr v-for="passenger in passengers">
+                <td>
+                    <a :href="passenger.get_absolute_url">
+                        <span v-text="passenger.profile.name"></span>
+                    </a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>

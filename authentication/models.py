@@ -1,3 +1,4 @@
+from utility.calendar import PersianCalendar
 from datetime import datetime
 from phoenix.settings import ADMIN_URL, MEDIA_URL, STATIC_URL
 from django.db import models
@@ -139,3 +140,49 @@ class Profile(models.Model):
 
 
 
+
+
+
+class ProfileContact(models.Model):
+
+    profile=models.ForeignKey("profile", verbose_name=_("profile"), on_delete=models.CASCADE)
+    name=models.CharField(_("name"), max_length=50)
+    value=models.CharField(_("value"), max_length=50)
+    url=models.CharField(_("url"),null=True,blank=True, max_length=5000)
+    icon=models.CharField(_("icon"), null=True,blank=True, max_length=5000)
+    bs_class=models.CharField(_("bootstrap class"), null=True,blank=True, max_length=50)
+    class_name="profilecontact"
+    class Meta:
+        verbose_name = _("ProfileContact")
+        verbose_name_plural = _("ProfileContacts")
+
+    def __str__(self):
+        return f"{str(self.profile)} : {self.name} : {self.value}"
+
+
+    def get_edit_url(self):
+        return f"{ADMIN_URL}{APP_NAME}/{self.class_name}/{self.pk}/change/"
+
+
+class MembershipRequest(models.Model):
+    mobile=models.CharField(_("mobile"), max_length=50)
+    date_added=models.DateTimeField(_("date_added"), auto_now=False, auto_now_add=True)
+    read=models.BooleanField(_("read?"),default=False)
+    handled=models.BooleanField(_("handled?") , default=False)
+    date_handled=models.DateTimeField(_("date_handled"),null=True,blank=True, auto_now=False, auto_now_add=False)
+    handled_by=models.ForeignKey("authentication.profile", null=True,blank=True,verbose_name=_("profile"), on_delete=models.SET_NULL)
+    app_name=models.CharField(_("app_name"), max_length=50)
+    class_name="membershiprequest"
+    
+    class Meta:
+        verbose_name = _("MembershipRequest")
+        verbose_name_plural = _("MembershipRequests")
+
+    def __str__(self):
+        return self.mobile
+    def persian_date_added(self):
+        return PersianCalendar().from_gregorian(self.date_added)
+    def persian_date_handled(self):
+        return PersianCalendar().from_gregorian(self.date_handled)
+    def get_delete_url(self):
+        return f"{ADMIN_URL}{APP_NAME}/{self.class_name}/{self.pk}/delete/"

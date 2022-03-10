@@ -1,0 +1,9 @@
+<script>
+let drivers=JSON.parse(`{{drivers_s|escapejs}}`)
+    let drivers_app=new Vue({
+        el:"#drivers-app",
+        data:{
+            drivers:drivers,
+        }
+    })
+</script>

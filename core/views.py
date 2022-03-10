@@ -27,15 +27,15 @@ def CoreContext(request,*args, **kwargs):
     # (parameter,res)=ParameterRepo(request=request,app_name='core').objects.get_or_create(name=ParameterNameEnum.CURRENCY)
     # context['CURRENCY']=parameter.value
     context['CURRENCY']=CURRENCY
-    farsi_font_name=parameter_repo.parameter(name=ParameterNameEnum.FARSI_FONT_NAME).value
+    farsi_font_name=parameter_repo.parameter(name=ParameterNameEnum.FARSI_FONT_NAME,default="Vazir").value
     if not farsi_font_name==ParameterNameEnum.FARSI_FONT_NAME and not farsi_font_name=="Default":
         context['farsi_font_name']=farsi_font_name
     picture_repo=PictureRepo(request=request,app_name=app_name)
     context['app']={
         'title':parameter_repo.parameter(name=ParameterNameEnum.TITLE,default=app_name).value,
-        'home_url':parameter_repo.parameter(name=ParameterNameEnum.HOME_URL).value,
-        'icon':picture_repo.picture(name=PictureNameEnum.FAVICON).image,
-        'logo':picture_repo.picture(name=PictureNameEnum.LOGO).image,
+        'home_url':parameter_repo.parameter(name=ParameterNameEnum.HOME_URL,default="/"+app_name+"/").value,
+        'icon':picture_repo.picture(name=PictureNameEnum.FAVICON,default=STATIC_URL+"").image,
+        'logo':picture_repo.picture(name=PictureNameEnum.LOGO,default=STATIC_URL+"").image,
     }
     return context
 

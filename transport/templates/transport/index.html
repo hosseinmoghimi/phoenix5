@@ -1,0 +1,29 @@
+{% extends "transport/layout.html" %}
+
+
+{% block content %}
+  <h4 class="text-center">
+      {{APP_NAME}}
+  </h4>
+
+  <div class="row">
+      <div class="col-md-12">
+          <div class="card">
+              <div class="card-body ">
+                <p>
+                    <a href="{% url 'transport:drivers' %}">راننده ها</a>
+                </p>
+                <p>
+                    <a href="{% url 'transport:passengers' %}">مسافر ها</a>
+                </p>
+              </div>
+          </div>
+      </div>
+  </div>
+{% endblock content %}
+
+
+{% block script %}
+{% include "transport/includes/drivers-app/script.html" %}
+  
+{% endblock script %}

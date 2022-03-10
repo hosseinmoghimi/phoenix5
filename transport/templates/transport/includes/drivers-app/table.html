@@ -1,0 +1,20 @@
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <th>
+                راننده
+            </th>
+
+        </thead>
+
+        <tbody>
+            <tr v-for="driver in drivers">
+                <td>
+                    <a :href="driver.get_absolute_url">
+                        <span v-text="driver.profile.name"></span>
+                    </a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>

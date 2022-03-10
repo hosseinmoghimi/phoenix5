@@ -1,0 +1,9 @@
+<script>
+let passengers=JSON.parse(`{{passengers_s|escapejs}}`)
+    let passengers_app=new Vue({
+        el:"#passengers-app",
+        data:{
+            passengers:passengers,
+        }
+    })
+</script>
