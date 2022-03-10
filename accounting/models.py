@@ -10,6 +10,7 @@ from .enums import *
 from tinymce.models import HTMLField
 from core.enums import ColorEnum,UnitNameEnum
 
+
 class SubAccount(models.Model):
     parent=models.ForeignKey("SubAccount",null=True,blank=True, verbose_name=_("Parent"), on_delete=models.SET_NULL)
     title=models.CharField(_("title"), max_length=50)
@@ -96,6 +97,7 @@ class Transaction(Page,LinkHelper):
     def persian_transaction_datetime(self):
         return PersianCalendar().from_gregorian(self.transaction_datetime)
  
+
 class ProductorService(Page):
 
     
@@ -364,10 +366,6 @@ class FinancialBalance(models.Model,LinkHelper):
 
 
 class Payment(Transaction):
-    
-
-
-        
     class Meta:
         verbose_name = _("Payment")
         verbose_name_plural = _("Payments")
