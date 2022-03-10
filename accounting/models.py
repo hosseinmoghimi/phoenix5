@@ -361,6 +361,8 @@ class FinancialBalance(models.Model,LinkHelper):
         self.misc=0
         self.misc=self.financial_document.bedehkar+self.financial_document.bestankar-self.sum()
         return super(FinancialBalance,self).save(*args, **kwargs)
+
+
 class Payment(Transaction):
     
 
