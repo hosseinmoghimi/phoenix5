@@ -16,8 +16,8 @@ class Location(models.Model,LinkHelper):
     title = models.CharField(
         _("عنوان نقطه"), max_length=100)
     location = models.CharField(_("لوکیشن"), max_length=1000)
-    latitude=models.CharField(_("latitude"), max_length=50)
-    longitude=models.CharField(_("longitude"), max_length=50)
+    latitude=models.CharField(_("latitude"),null=True,blank=True, max_length=50)
+    longitude=models.CharField(_("longitude"),null=True,blank=True, max_length=50)
 
 
     creator = models.ForeignKey("authentication.profile", null=True,

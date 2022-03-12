@@ -33,7 +33,7 @@ class ImageMixin():
             if self.image_main_origin is None:
                 return f'{STATIC_URL}{self.app_name}/img/pages/thumbnail/{self.class_name}.png'
         except:
-            pass
+            return f'{STATIC_URL}{self.app_name}/img/pages/thumbnail/{self.class_name}.png'
         #Opening the uploaded image
         
         from PIL import Image as PilImage
@@ -41,7 +41,7 @@ class ImageMixin():
         import sys
         from django.core.files.uploadedfile import InMemoryUploadedFile
 
-
+       
         image = PilImage.open(self.image_main_origin)
 
         width11, height11= image.size

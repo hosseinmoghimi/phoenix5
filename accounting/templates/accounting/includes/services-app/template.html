@@ -10,7 +10,7 @@
                     <th>
                         سرویس
                     </th>
-                  
+
 
                 </thead>
                 <tbody>
@@ -18,11 +18,18 @@
 
                         <td>
                             <a :href="service.get_absolute_url">
-                                <span v-text="service.title"></span>
+
+                                <div class="media">
+                                    <img :src="service.thumbnail" class="rounded" width="64" alt="">
+                                    <div class="media-body mr-2">
+                                        <span v-text="service.title"></span>
+
+                                    </div>
+                                </div>
                             </a>
                         </td>
 
-                     
+
                     </tr>
                 </tbody>
             </table>

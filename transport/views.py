@@ -42,6 +42,12 @@ class DriverView(View):
         context['driver']=driver
         return render(request,TEMPLATE_ROOT+"driver.html",context)
 
+class TripPathView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        driver=DriverRepo(request=request).driver(*args, **kwargs)
+        context['driver']=driver
+        return render(request,TEMPLATE_ROOT+"trip-path.html",context)
 class DriversView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)

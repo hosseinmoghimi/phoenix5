@@ -24,7 +24,15 @@
 
                         <td>
                             <a :href="product.get_absolute_url">
-                                <span v-text="product.title"></span>
+
+                                <div class="media">
+                                    <img :src="product.thumbnail" class="rounded" width="64" alt="">
+                                    <div class="media-body mr-2">
+                                        <span v-text="product.title"></span>
+
+                                    </div>
+                                </div>
+
                             </a>
                         </td>
                         <td>
