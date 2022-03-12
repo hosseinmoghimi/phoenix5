@@ -228,23 +228,6 @@ class Bank(models.Model):
         verbose_name_plural = _("Banks")
 
 
-class FinancialYear(models.Model):
-    title=models.CharField(_("عنوان"), max_length=50)
-    year=models.IntegerField(_("year"))
-    start_date=models.DateTimeField(_("start_date"), auto_now=False, auto_now_add=False)
-    end_date=models.DateTimeField(_("end_date"), auto_now=False, auto_now_add=False)
-    def get_by_date(date):
-        return FinancialYear.objects.filter(start_date__lte=date).filter(end_date__gte=date).first()
-    
-    def __str__(self):
-        return self.title
-
-
-    class Meta:
-        verbose_name = _("FinancialYear")
-        verbose_name_plural = _("FinancialYears")
-
-
 class BankAccount(Account):
     bank=models.ForeignKey("bank", verbose_name=_("bank"), on_delete=models.CASCADE)
     account_no=models.CharField(_("shomareh"),null=True,blank=True, max_length=50)
@@ -269,6 +252,23 @@ class BankAccount(Account):
     def save(self,*args, **kwargs):
         self.title=f"""حساب {self.bank} {self.profile.name}"""
         return super(BankAccount,self).save(*args, **kwargs)
+
+
+class FinancialYear(models.Model):
+    title=models.CharField(_("عنوان"), max_length=50)
+    year=models.IntegerField(_("year"))
+    start_date=models.DateTimeField(_("start_date"), auto_now=False, auto_now_add=False)
+    end_date=models.DateTimeField(_("end_date"), auto_now=False, auto_now_add=False)
+    def get_by_date(date):
+        return FinancialYear.objects.filter(start_date__lte=date).filter(end_date__gte=date).first()
+    
+    def __str__(self):
+        return self.title
+
+
+    class Meta:
+        verbose_name = _("FinancialYear")
+        verbose_name_plural = _("FinancialYears")
 
 
 class FinancialDocument(models.Model,LinkHelper):
@@ -363,39 +363,6 @@ class FinancialBalance(models.Model,LinkHelper):
         self.misc=0
         self.misc=self.financial_document.bedehkar+self.financial_document.bestankar-self.sum()
         return super(FinancialBalance,self).save(*args, **kwargs)
-
-
-class Payment(Transaction):
-    class Meta:
-        verbose_name = _("Payment")
-        verbose_name_plural = _("Payments")
-
-    def save(self,*args, **kwargs):
-        self.class_name="payment"
-        super(Payment,self).save(*args, **kwargs)
-        financial_year=FinancialYear.get_by_date(date=self.transaction_datetime)
-        category,aa=FinancialDocumentCategory.objects.get_or_create(title="واریز")
-        FinancialDocument.objects.filter(transaction=self).delete()
-
-        ifd1=FinancialDocument()
-        ifd1.financial_year=financial_year
-        ifd1.category=category
-        ifd1.account=self.pay_to
-        ifd1.transaction=self
-        ifd1.bedehkar=self.amount
-        ifd1.title=str(self)
-        ifd1.document_datetime=self.transaction_datetime
-        ifd1.save()
-
-        ifd1=FinancialDocument()
-        ifd1.bestankar=self.amount
-        ifd1.transaction=self
-        ifd1.title=str(self)
-        ifd1.financial_year=financial_year
-        ifd1.category=category
-        ifd1.document_datetime=self.transaction_datetime
-        ifd1.account=self.pay_from
-        ifd1.save()
 
 
 class FinancialDocumentTag(models.Model):
@@ -532,7 +499,8 @@ class Invoice(Transaction):
    
     def invoice_lines(self):
         return InvoiceLine.objects.filter(invoice=self).order_by('row')
-
+    def get_edit_url2(self):
+        return reverse(APP_NAME+":edit_invoice",kwargs={'pk':self.pk})
 
 class InvoiceLine(models.Model):
     invoice=models.ForeignKey("invoice", verbose_name=_("invoice"),related_name="lines", on_delete=models.CASCADE)
@@ -651,6 +619,66 @@ class Spend(Transaction,LinkHelper):
         super(Spend,self).save(*args, **kwargs)
    
 
+class Payment(Transaction):
+    class Meta:
+        verbose_name = _("Payment")
+        verbose_name_plural = _("Payments")
+
+    def save(self,*args, **kwargs):
+        self.class_name="payment"
+        super(Payment,self).save(*args, **kwargs)
+        financial_year=FinancialYear.get_by_date(date=self.transaction_datetime)
+        category,aa=FinancialDocumentCategory.objects.get_or_create(title="واریز")
+        FinancialDocument.objects.filter(transaction=self).delete()
+
+        ifd1=FinancialDocument()
+        ifd1.financial_year=financial_year
+        ifd1.category=category
+        ifd1.account=self.pay_to
+        ifd1.transaction=self
+        ifd1.bedehkar=self.amount
+        ifd1.title=str(self)
+        ifd1.document_datetime=self.transaction_datetime
+        ifd1.save()
+
+        ifd1=FinancialDocument()
+        ifd1.bestankar=self.amount
+        ifd1.transaction=self
+        ifd1.title=str(self)
+        ifd1.financial_year=financial_year
+        ifd1.category=category
+        ifd1.document_datetime=self.transaction_datetime
+        ifd1.account=self.pay_from
+        ifd1.save()
+
+
+
+class Salary(Spend,LinkHelper):    
+    class_name="wage"
+    month=models.IntegerField(_("month"))
+    year=models.IntegerField(_("year"))
+    def month_year(self):
+        return PERSIAN_MONTH_NAMES[self.month-1]+" " + str(self.year)
+    
+    class Meta:
+        verbose_name = _("Salary")
+        verbose_name_plural = _("Salaries")
+
+   
+    def save(self,*args, **kwargs):
+        if self.class_name is None or self.class_name=="":
+            self.class_name='wage'
+        if self.app_name is None or self.app_name=="":
+            self.app_name=APP_NAME
+        super(Salary,self).save(*args, **kwargs)
+        for fd in self.financialdocument_set.all():
+            FinancialBalance.objects.filter(financial_document=fd).delete()
+            fb=FinancialBalance(financial_document=fd)
+            fb.wage=self.amount
+            fb.save()
+            
+
+            
 class Cost(Spend,LinkHelper):    
     cost_type=models.CharField(_("cost"),choices=CostTypeEnum.choices, max_length=50)
     class_name="cost"
@@ -686,29 +714,3 @@ class Cost(Spend,LinkHelper):
             fb=FinancialBalance(financial_document=fd)
             fb.cost=self.amount
             fb.save()
-
-
-class Salary(Spend,LinkHelper):    
-    class_name="wage"
-    month=models.IntegerField(_("month"))
-    year=models.IntegerField(_("year"))
-    def month_year(self):
-        return PERSIAN_MONTH_NAMES[self.month-1]+" " + str(self.year)
-    
-    class Meta:
-        verbose_name = _("Salary")
-        verbose_name_plural = _("Salaries")
-
-   
-    def save(self,*args, **kwargs):
-        if self.class_name is None or self.class_name=="":
-            self.class_name='wage'
-        if self.app_name is None or self.app_name=="":
-            self.app_name=APP_NAME
-        super(Salary,self).save(*args, **kwargs)
-        for fd in self.financialdocument_set.all():
-            FinancialBalance.objects.filter(financial_document=fd).delete()
-            fb=FinancialBalance(financial_document=fd)
-            fb.wage=self.amount
-            fb.save()
-            

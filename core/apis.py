@@ -1,9 +1,9 @@
-from core.models import Page
-from core.serializers import ParameterSerializer
+from core.models import Page, PageLink
+from core.serializers import PageDownloadSerializer, PageLinkSerializer, ParameterSerializer
 from rest_framework.views import APIView
 from django.http import JsonResponse
 from .forms import *
-from .repo import PageRepo,  ParameterRepo
+from .repo import PageLinkRepo, PageRepo,  ParameterRepo,PageDownloadRepo
 from .constants import SUCCEED, FAILED
 from utility.utils import str_to_html
 
@@ -30,6 +30,58 @@ class ChangeParameterApi(APIView):
                     )
                 if parameter is not None:
                     context['parameter'] = ParameterSerializer(parameter).data
+                    context['result'] = SUCCEED
+        context['log'] = log
+        return JsonResponse(context)
+    
+class AddPageLinkApi(APIView):
+    def post(self, request, *args, **kwargs):
+        log = 1
+        context = {}
+        context['result'] = FAILED
+        if request.method == 'POST':
+            log += 1
+            add_page_link_form = AddPageLinkForm(request.POST)
+            if add_page_link_form.is_valid():
+                log += 1
+                cd=add_page_link_form.cleaned_data
+                page_id = cd['page_id']
+                title = cd['title']
+                url = cd['url']
+                
+                page_link = PageLinkRepo(request=request).add_page_link(
+                    page_id=page_id,
+                    title=title,
+                    url=url,
+                    )
+                if page_link is not None:
+                    context['page_link'] = PageLinkSerializer(page_link).data
+                    context['result'] = SUCCEED
+        context['log'] = log
+        return JsonResponse(context)
+    
+class AddPageDownloadApi(APIView):
+    def post(self, request, *args, **kwargs):
+        log = 1
+        context = {}
+        context['result'] = FAILED
+        if request.method == 'POST':
+            log += 1
+            add_page_download_form = AddPageDownloadForm(request.POST, request.FILES)
+            if add_page_download_form.is_valid():
+                log += 1
+                cd=add_page_download_form.cleaned_data
+                page_id = cd['page_id']
+                title = cd['title']
+                file = request.FILES['file1']
+                
+                page_download = PageDownloadRepo(request=request).add_page_download(
+                    page_id=page_id,
+                    title=title,
+                    file=file,
+                    )
+                if page_download is not None:
+                    context['page_download'] = PageDownloadSerializer(page_download).data
                     context['result'] = SUCCEED
         context['log'] = log
         return JsonResponse(context)

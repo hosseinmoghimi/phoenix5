@@ -1,5 +1,6 @@
 from django.core.files.storage import FileSystemStorage
 from django.db import models
+from django.http import Http404
 from django.shortcuts import reverse
 from django.utils.translation import gettext as _
 from phoenix.settings import ADMIN_URL, MEDIA_URL, STATIC_URL, UPLOAD_ROOT
@@ -97,30 +98,16 @@ class Page(models.Model,LinkHelper,ImageMixin):
         return f"""{self.title}"""
  
 
-class Download(models.Model):
-    name=models.CharField(_("name"), max_length=50)
-
-    
-
-    class Meta:
-        verbose_name = _("Download")
-        verbose_name_plural = _("Downloads")
-
-    def __str__(self):
-        return self.name
-
-    def get_absolute_url(self):
-        return reverse("Download_detail", kwargs={"pk": self.pk})
-
-
 class Icon(models.Model):
-    name=models.CharField(_("name"), null=True,blank=True,max_length=50)
-    icon_fa=models.CharField(_("fa"), null=True,blank=True,max_length=50)
+    title=models.CharField(_("title"), null=True,blank=True,max_length=50)
+    icon_fa=models.CharField(_("icon fa"), null=True,blank=True,max_length=50)
     icon_material=models.CharField(_("material_icon"),null=True,blank=True, max_length=50)
     icon_svg=models.TextField(_("svg_icon"),null=True,blank=True)
+    profile=models.ForeignKey("authentication.profile",null=True,blank=True, verbose_name=_("profile"), on_delete=models.CASCADE)
     color=models.CharField(_("color"),choices=ColorEnum.choices,default=ColorEnum.PRIMARY, max_length=50)
     width = models.IntegerField(_("عرض آیکون"), null=True, blank=True)
     height = models.IntegerField(_("ارتفاع آیکون"), null=True, blank=True)
+    priority=models.IntegerField(_("priority"),default=1000)
     image_origin = models.ImageField(_("تصویر آیکون"), upload_to=IMAGE_FOLDER+'Icon/',
                                      height_field=None, null=True, blank=True, width_field=None, max_length=None)
     
@@ -174,8 +161,56 @@ class Icon(models.Model):
         verbose_name_plural = _("Icons")
 
     def __str__(self):
-        return self.name
+        return self.title
  
+
+class Download(Icon):
+    file = models.FileField(_("فایل ضمیمه"), null=True, blank=True,
+                            upload_to=APP_NAME+'/downloads', storage=upload_storage, max_length=100)
+    mirror_link = models.CharField(_('آدرس بیرونی'),null=True,blank=True, max_length=10000)
+    date_added = models.DateTimeField(
+        _("افزوده شده در"), auto_now=False, auto_now_add=True)
+    date_updated = models.DateTimeField(
+        _("اصلاح شده در"), auto_now_add=False, auto_now=True)
+    download_counter=models.IntegerField(_("download_counter"),default=0)
+    profiles=models.ManyToManyField("authentication.profile",blank=True,related_name="profile_downloads", verbose_name=_("profiles"))
+    is_open=models.BooleanField(_("is_open?"),default=False)
+    
+    
+    def get_download_url(self):
+        if self.mirror_link and self.mirror_link is not None:
+            return self.mirror_link
+        if self.file:
+            return reverse(APP_NAME+':download', kwargs={'pk': self.pk})
+        else:
+            return ''
+
+    def download_response(self):
+        #STATIC_ROOT2 = os.path.join(BASE_DIR, STATIC_ROOT)
+        file_path = str(self.file.path)
+        # return JsonResponse({'download:':str(file_path)})
+        import os
+        from django.http import HttpResponse
+        if os.path.exists(file_path):
+            with open(file_path, 'rb') as fh:
+                response = HttpResponse(
+                    fh.read(), content_type="application/force-download")
+                response['Content-Disposition'] = 'inline; filename=' + \
+                    os.path.basename(file_path)
+                self.download_counter+=1
+                self.save()
+                return response
+        from log.repo import LogRepo
+        LogRepo().add_log(title="Http404 core models",app_name=APP_NAME)
+        raise Http404
+
+    class Meta:
+        verbose_name = _("Download")
+        verbose_name_plural = _("Downloads")
+
+    def __str__(self):
+        return self.title
+
 
 class Link(Icon):
     url=models.CharField(_("url"), max_length=2000)
@@ -190,6 +225,39 @@ class Link(Icon):
 
     def get_absolute_url(self):
         return reverse("Link_detail", kwargs={"pk": self.pk})
+
+
+class PageLink(Link,LinkHelper):
+    page=models.ForeignKey("page", verbose_name=_("page"), on_delete=models.CASCADE)
+    class_name="pagelink"
+    app_name=APP_NAME
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        verbose_name = 'PageLink'
+        verbose_name_plural = 'PageLinks'
+
+
+class PageDownload(Download,LinkHelper):
+    page=models.ForeignKey("page", verbose_name=_("page"), on_delete=models.CASCADE)
+    class_name="pagedownload"
+    app_name=APP_NAME
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        verbose_name = 'PageDownload'
+        verbose_name_plural = 'PageDownloads'
+
+class PageLike(models.Model):
+    page=models.ForeignKey("page", verbose_name=_("page"), on_delete=models.CASCADE)
+    profile=models.ForeignKey("authentication.profile", verbose_name=_("profile"), on_delete=models.CASCADE)
+    class Meta:
+        verbose_name = 'PageLike'
+        verbose_name_plural = 'PageLikes'
+    def __str__(self):
+        return self.page.title+" "+self.profile.name
 
 
 class Parameter(models.Model):
@@ -255,6 +323,7 @@ class Image(models.Model,ImageMixin):
         verbose_name = _("GalleryPhoto")
         verbose_name_plural = _("تصاویر")
  
+
 class Picture(models.Model,LinkHelper):
     app_name=models.CharField(_("app_name"), max_length=50)
     name=models.CharField(_("name"), max_length=50)

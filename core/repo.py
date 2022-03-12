@@ -1,12 +1,131 @@
 from email.policy import default
-from .models import Parameter,Picture
+from .models import Download, Page, PageDownload, PageLink, Parameter,Picture
 from .constants import *
 from django.db.models import Q
 from authentication.repo import ProfileRepo
 from .apps import APP_NAME
 
 class PageRepo:
-    pass
+    
+    def __init__(self,*args, **kwargs):
+        self.request=None
+        self.user=None
+        if 'user' in kwargs:
+            self.user=kwargs['user']
+        if 'request' in kwargs:
+            self.request=kwargs['request']
+            self.user=self.request.user
+        self.objects=Page.objects.all()
+    def add_page(self,title,*args, **kwargs):
+        new_page=Page(title=title)
+        new_page.title=title
+        if 'parent_id' in kwargs:
+            new_page.parent_id=kwargs['parent_id']
+        new_page.save()
+        new_page.app_name=new_page.parent.app_name
+        new_page.class_name=new_page.parent.class_name
+        new_page.save()
+        return new_page
+    def add_related_page(self,*args, **kwargs):
+        if not self.user.has_perm(APP_NAME+".change_page"):
+            return None
+        page_id=0
+        related_page_id=0
+        bidirectional=True
+        add_or_remove=True
+        if 'page_id' in kwargs:
+            page_id=kwargs['page_id']
+        if 'related_page_id' in kwargs:
+            related_page_id=kwargs['related_page_id']
+        if 'bidirectional' in kwargs:
+            bidirectional=kwargs['bidirectional']
+        if 'add_or_remove' in kwargs:
+            add_or_remove=kwargs['add_or_remove']
+        if add_or_remove is None:
+            add_or_remove=True
+        page=self.page(page_id=page_id)
+        related_page=self.page(page_id=related_page_id)
+        if page is None or related_page is None:
+            return None
+        if add_or_remove:
+            page.related_pages.add(related_page)
+            if bidirectional:
+                related_page.related_pages.add(page)
+            return related_page
+        else:
+            page.related_pages.remove(related_page)
+            if bidirectional:
+                related_page.related_pages.remove(page)
+            return related_page
+
+
+    def toggle_like(self,*args, **kwargs):
+        page=self.page(*args, **kwargs)
+        profile=ProfileRepo(request=self.request).me
+        likes=PageLike.objects.filter(page=page).filter(profile=profile)
+        if len(likes)==0 and profile is not None and page is not None:
+            my_like=PageLike(page=page,profile=profile)
+            my_like.save()
+            return my_like
+        else:
+            likes.delete()
+            return None
+    
+    def edit_page(self,*args, **kwargs):
+        if not self.user.has_perm(APP_NAME+".change_basicpage"):
+            return
+        page=self.page(*args, **kwargs)
+        if page is None:
+            return
+        if 'description' in kwargs and kwargs['description']  is not None and not kwargs['description'] == "" :
+            page.description=kwargs['description']
+
+        if 'short_description' in kwargs and kwargs['short_description']  is not None and not kwargs['short_description'] == "":
+            page.short_description=kwargs['short_description']
+        page.save()
+        return page
+
+
+    def edit(self,*args, **kwargs):
+        return self.edit_page(*args, **kwargs)
+
+
+
+
+    def page(self,*args, **kwargs):
+        if 'pk' in kwargs:
+            return self.objects.filter(pk=kwargs['pk']).first()
+        if 'id' in kwargs:
+            return self.objects.filter(pk=kwargs['id']).first()
+        if 'page_id' in kwargs:
+            return self.objects.filter(pk=kwargs['page_id']).first()
+        if 'title' in kwargs:
+            return self.objects.filter(pk=kwargs['title']).first()
+
+    def list(self,*args, **kwargs):
+        objects=self.objects
+        if 'search_for' in kwargs:
+            objects=objects.filter(title__contains=kwargs['search_for'])        
+        if 'for_home' in kwargs:
+            objects=objects.filter(for_home=kwargs['for_home'])
+        return objects.all()
+
+    
+    def my_pages_ids(self):
+        pages_ids=[]
+        if not self.request.user.is_authenticated:
+            return []
+        if self.request.user.has_perm('core.view_basicpage'):
+            return Page.objects.all()
+        # from projectmanager.repo import EmployeeRepo
+        # employee = EmployeeRepo(request=self.request).me
+        # if employee is not None:
+        #     for project in employee.organization_unit.project_set.all():
+        #         pages_ids.append(project.id)
+        return pages_ids
+        # return BasicPage.objects.filter(id__in=pages_ids)
+
+    
 
 class PictureRepo:
     
@@ -146,3 +265,123 @@ class ParameterRepo:
         objects= self.objects.all()
         return objects
 
+
+class PageDownloadRepo:
+    def __init__(self,*args, **kwargs):
+        self.request=None
+        self.user=None
+        self.app_name=None
+        if 'request' in kwargs:
+            self.request=kwargs['request']
+            self.user=self.request.user
+        if 'user' in kwargs:
+            self.user=kwargs['user']
+        if 'app_name' in kwargs:
+            self.app_name=kwargs['app_name']
+        else:
+            self.app_name=None
+        self.profile=ProfileRepo(user=self.user).me
+        
+        self.objects=PageDownload.objects.all()
+     
+    def add_page_download(self,title,file,priority=1000,*args, **kwargs):
+        page=PageRepo(request=self.request).page(*args, **kwargs)
+        if page is not None:
+            my_pages_ids=PageRepo(request=self.request).my_pages_ids()
+            
+            if self.user.has_perm(APP_NAME+".add_pagedownload") or page.id in my_pages_ids:
+                pass
+            else:
+                return
+        if page.app_name=='web':
+            is_open=True
+        else:
+            is_open=False
+
+        page_download=PageDownload(icon_fa="fa fa-download",title=title,is_open=is_open,file=file,priority=priority,page=page,profile=self.profile)
+        page_download.save()
+        page_download.profiles.add(self.profile)
+        return page_download
+
+    
+    def list(self,*args, **kwargs):
+        objects= self.objects
+        if 'page_id' in kwargs:
+            objects=objects.filter(page_id=kwargs['page_id'])
+        return objects
+
+class PageLinkRepo:
+    def __init__(self,*args, **kwargs):
+        self.request=None
+        self.user=None
+        self.app_name=None
+        if 'request' in kwargs:
+            self.request=kwargs['request']
+            self.user=self.request.user
+        if 'user' in kwargs:
+            self.user=kwargs['user']
+        if 'app_name' in kwargs:
+            self.app_name=kwargs['app_name']
+        else:
+            self.app_name=None
+        self.profile=ProfileRepo(user=self.user).me
+        
+        self.objects=PageLink.objects.all()
+     
+    
+    def list(self,*args, **kwargs):
+        objects= self.objects
+        if 'page_id' in kwargs:
+            objects=objects.filter(page_id=kwargs['page_id'])
+        return objects
+    def add_page_link(self,title,url,*args, **kwargs):
+        page=PageRepo(request=self.request).page(*args, **kwargs)
+        if page is not None:
+            my_pages_ids=PageRepo(request=self.request).my_pages_ids()
+            
+            if self.user.has_perm(APP_NAME+".add_pagelink") or page.id in my_pages_ids:
+                pass
+            else:
+                return
+        new_page_link=PageLink(title=title,page_id=page.id,url=url,icon_fa="fa fa-link")
+        new_page_link.new_tab=True
+        new_page_link.save()
+        return new_page_link
+
+
+class DownloadRepo:
+    def __init__(self,*args, **kwargs):
+        self.request=None
+        self.user=None
+        self.app_name=None
+        if 'request' in kwargs:
+            self.request=kwargs['request']
+            self.user=self.request.user
+        if 'user' in kwargs:
+            self.user=kwargs['user']
+        if 'app_name' in kwargs:
+            self.app_name=kwargs['app_name']
+        else:
+            self.app_name=None
+        self.profile=ProfileRepo(user=self.user).me
+        
+        self.objects=Download.objects.all()
+     
+    def download(self,*args, **kwargs):
+        if 'download_id' in kwargs:
+            return self.objects.filter(pk=kwargs['download_id']).first()
+        if 'page_download_id' in kwargs:
+            return self.objects.filter(pk=kwargs['page_download_id']).first()
+        if 'pk' in kwargs:
+            return self.objects.filter(pk=kwargs['pk']).first()
+        if 'id' in kwargs:
+            return self.objects.filter(pk=kwargs['id']).first()
+        if 'title' in kwargs:
+            return self.objects.filter(pk=kwargs['title']).first()
+
+         
+    def list(self,*args, **kwargs):
+        objects= self.objects
+        if 'page_id' in kwargs:
+            objects=objects.filter(page_id=kwargs['page_id'])
+        return objects

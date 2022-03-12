@@ -1,6 +1,12 @@
+import json
+from django.http import Http404
 from django.shortcuts import render
-from core.enums import ParameterNameEnum, PictureNameEnum
-from core.repo import ParameterRepo, PictureRepo
+from .apps import APP_NAME
+from log.repo import LogRepo
+from core.enums import ColorEnum, IconsEnum, ParameterNameEnum, PictureNameEnum
+from core.models import Download, Link
+from core.repo import DownloadRepo, PageDownloadRepo, PageRepo, ParameterRepo, PictureRepo
+from .serializers import PageDownloadSerializer, PageLinkSerializer
 from phoenix.settings import ADMIN_URL,MEDIA_URL,STATIC_URL,SITE_URL
 from django.shortcuts import render
 from authentication.repo import ProfileRepo
@@ -10,6 +16,7 @@ from phoenix.server_settings import my_apps
 from django.views import View
 from .forms import *
 # Create your views here.
+TEMPLATE_ROOT="core/"
 def CoreContext(request,*args, **kwargs):
     context={}
     app_name=kwargs['app_name'] if 'app_name' in kwargs else 'core'
@@ -42,6 +49,121 @@ def CoreContext(request,*args, **kwargs):
 def PageContext(request,page,*args, **kwargs):
     context={}
     context['page']=page
+    links=page.pagelink_set.all()
+    links_s=json.dumps(PageLinkSerializer(links,many=True).data)
+    context['links_s']=links_s
+    context['links']=links
+
+    
+    downloads=PageDownloadRepo(request=request).list(page_id=page.id)
+    context['downloads']=downloads
+    downloads_s=json.dumps(PageDownloadSerializer(downloads,many=True).data)
+    context['page_downloads_s']=downloads_s
+    my_pages_ids=PageRepo(request=request).my_pages_ids()
+    if request.user.has_perm(APP_NAME+".add_link") or page.id in my_pages_ids:
+        context['add_page_link_form'] = AddPageLinkForm()
+    if request.user.has_perm(APP_NAME+".add_download") or page.id in my_pages_ids:
+        context['add_page_download_form'] = AddPageDownloadForm()
     return context
-class MessageView():
-    pass
+
+class DownloadView(View):
+    def get(self,request,*args, **kwargs):
+        me=ProfileRepo(request=request).me
+        download = DownloadRepo(request=request).download(*args, **kwargs)
+        if me is None and not download.is_open:
+            pass
+        elif request.user.has_perm("core.change_download") or download.is_open or me in download.profiles.all():
+            if download is None:
+                LogRepo(request=request).add_log(title="Http404 core views 2"+str(kwargs),app_name=APP_NAME)
+                raise Http404
+            return download.download_response()
+
+        # if self.access(request=request,*args, **kwargs) and document is not None:
+        #     return document.download_response()
+        message_view = MessageView(request=request)
+        message_view.links = []
+        message_view.links.append(Link(title='تلاش مجدد', color="warning",
+                                  icon_material="apartment", url=download.get_download_url()))
+        message_view.message_color = 'warning'
+        message_view.has_home_link = True
+        message_view.header_color = "rose"
+        message_view.message_icon = ''
+        message_view.header_icon = '<i class="fa fa-exclamation-triangle" aria-hidden="true"></i>'
+        message_view.message_text = ' شما مجوز دسترسی به این صفحه را ندارید.'
+        message_view.header_text = 'دسترسی غیر مجاز'
+
+        return message_view.response()
+
+class MessageView(View):
+    def __init__(self,request, *args, **kwargs):
+        self.links = []
+        self.title = None
+        self.body = None
+        self.message_color = 'warning'
+        self.has_home_link = True
+        self.header_color = "rose"
+        self.message_icon = ''
+        self.header_icon = '<i class="fa fa-exclamation-triangle" aria-hidden="true"></i>'
+        self.message_text = ""
+        self.header_text = ""
+        self.message_html = ""
+        if 'app_name' in kwargs:
+            self.app_name = kwargs['app_name']
+        else:
+            self.app_name = 'web'
+        if 'title' in kwargs:
+            self.title = kwargs['title']
+        if 'body' in kwargs:
+            self.body = kwargs['body']
+        if 'message_html' in kwargs:
+            self.message_html = kwargs['message_html']
+        if 'message_color' in kwargs:
+            self.message_color = kwargs['message_color']
+        if 'has_home_link' in kwargs:
+            self.has_home_link = kwargs['has_home_link']
+        if 'header_color' in kwargs:
+            self.header_color = kwargs['header_color']
+        if 'message_icon' in kwargs:
+            self.message_icon = kwargs['message_icon']
+        if 'header_icon' in kwargs:
+            self.header_icon = kwargs['header_icon']
+        if 'message_text' in kwargs:
+            self.message_text = kwargs['message_text']
+        if 'header_text' in kwargs:
+            self.header_text = kwargs['header_text']
+        if 'request' in kwargs:
+            self.request = kwargs['request']
+
+
+    def show(self, *args, **kwargs):
+
+        return self.response()
+
+    def response(self, *args, **kwargs):
+        context = CoreContext(request=self.request, *args, **kwargs)
+        if self.header_text is None:
+            self.header_text = 'خطا'
+        if self.message_text is None:
+            self.message_text = 'متاسفانه خطایی رخ داده است.'
+        if self.has_home_link:
+            btn_home = Link(url=(SITE_URL),
+                            color=ColorEnum.SUCCESS+' btn-round',
+                            icon_material=IconsEnum.home,
+                            title='خانه', name='ssss', new_tab=False)
+            self.links.append(btn_home)
+        context['links'] = self.links
+
+        context['header_text'] = self.header_text
+        context['header_color'] = self.header_color
+        context['header_icon'] = self.header_icon
+
+        context['message_color'] = self.message_color
+        context['message_icon'] = self.message_icon
+        context['message_text'] = self.message_text
+        context['message_html'] = self.message_html
+        context['body'] = self.body
+        context['title'] = self.title
+
+        context['search_form'] = None
+        return render(self.request, TEMPLATE_ROOT+'message.html', context)
+

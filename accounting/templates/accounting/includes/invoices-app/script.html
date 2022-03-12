@@ -1,0 +1,102 @@
+{% load static %}
+
+<script src="{% static 'persian/moment.js' %}"></script>
+<script src="{% static 'persian/moment-jalaali.js' %}"></script>
+<script src="{% static 'persian/vue-persian-datetime-picker-browser.js' %}"></script>
+
+<script>
+    let rest_ = parseInt("{{rest}}")
+    let invoices = JSON.parse(`{{invoices_s|escapejs}}`)
+</script>
+{% if add_payment_form %}
+
+<script>
+
+    let invoices_app_data = {
+        invoices: invoices,
+        title: '',
+        bestankar: 0,
+        bedehkar: 0,
+        document_date: current_date,
+        document_time: { hour: "0", minute: "0" },
+        category_id: "",
+        show_form: false,
+        waiting: false,
+    }
+
+
+    let invoices_app_methods = {
+        to_price: function (vall,curr) {
+            return to_price(vall, curr)
+        }, 
+        rest: function () {
+            let rest = 0
+            this.invoices.forEach(invoice => {
+                rest -= invoice.bedehkar
+                rest += invoice.bestankar
+            })
+            return rest
+        },
+        add_invoice: function () {
+            invoices_app.waiting = true
+            let document_datetime = this.document_date + " " + (parseInt(this.document_time.hour) > 9 ? this.document_time.hour : ("0" + this.document_time.hour)) + ":" + (parseInt(this.document_time.minute) > 9 ? this.document_time.minute : ("0" + this.document_time.minute)) + ":00"
+            let payload = {
+                csrfmiddlewaretoken: csrfmiddlewaretoken,
+                title: this.title,
+                account_id: financial_account_id,
+                bestankar: this.bestankar,
+                bedehkar: this.bedehkar,
+                document_datetime: document_datetime,
+                category_id: this.category_id,
+            }
+            console.log(payload)
+            let url = "{% url 'hesabyar:add_invoice' %}"
+            $.post(url, payload).done((data) => {
+                invoices_app.waiting = false
+                console.log(data)
+                if (data.result === 'SUCCEED') {
+                    invoices_app.invoices.push(data.invoice)
+                    invoices_app.rest = data.rest
+                    invoices_app.bestankar = 0
+                    invoices_app.bedehkar = 0
+                }
+            })
+        }
+    }
+
+
+</script>
+{% else %}
+
+<script>
+
+    let invoices_app_data = {
+        invoices: invoices,
+
+    }
+    let invoices_app_methods = {
+        to_price: function (vall,curr) {
+            return to_price(vall, curr)
+        }, 
+        rest: function () {
+            let rest = 0
+            this.invoices.forEach(invoice => {
+                rest -= invoice.bedehkar
+                rest += invoice.bestankar
+            })
+            return rest
+        },
+    }
+</script>
+{% endif %}
+<script>
+    let invoices_app = new Vue({
+        el: "#financial-documents-app",
+        data: invoices_app_data,
+        components: {
+            DatePicker: VuePersianDatetimePicker
+
+        },
+        methods: invoices_app_methods,
+    })
+</script>

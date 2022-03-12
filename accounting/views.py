@@ -4,7 +4,7 @@ from core.views import CoreContext, PageContext,SearchForm
 # Create your views here.
 from django.views import View
 from .apps import APP_NAME
-from .repo import AccountRepo, ProductRepo,ServiceRepo,FinancialDocumentRepo
+from .repo import AccountRepo, ProductRepo,ServiceRepo,FinancialDocumentRepo,InvoiceRepo, TransactionRepo
 from .serializers import ProductSerializer,ServiceSerializer,FinancialDocumentForAccountSerializer,FinancialDocumentSerializer
 import json
 
@@ -21,7 +21,53 @@ def getContext(request, *args, **kwargs):
     context['LAYOUT_PARENT'] = LAYOUT_PARENT
     return context
 
+def get_invoice_context(request,*args, **kwargs):
+    context={}
+    invoice=InvoiceRepo(request=request).invoice(*args, **kwargs)
+    context['invoice']=invoice
+    return context
 
+
+def get_transaction_context(request,*args, **kwargs):
+    context={}
+    transaction=TransactionRepo(request=request).transaction(*args, **kwargs)
+    context['transaction']=transaction
+    context.update(PageContext(request=request,page=transaction))
+    return context
+
+class InvoiceView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        context.update(get_invoice_context(request=request,*args, **kwargs))
+        return render(request,TEMPLATE_ROOT+"invoice.html",context)
+class InvoicesView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        invoices=InvoiceRepo(request=request).list(*args, **kwargs)
+        context['invoices']=invoices
+        return render(request,TEMPLATE_ROOT+"invoices.html",context)
+
+
+
+class TransactionView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        context.update(get_transaction_context(request=request,*args, **kwargs))
+        return render(request,TEMPLATE_ROOT+"transaction.html",context)
+class TransactionsView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        transactions=TransactionRepo(request=request).list(*args, **kwargs)
+        context['transactions']=transactions
+        return render(request,TEMPLATE_ROOT+"transactions.html",context)
+
+
+class EditInvoiceView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        context.update(get_invoice_context(request=request,*args, **kwargs))
+        
+        return render(request,TEMPLATE_ROOT+"edit-invoice.html",context)
 class HomeView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)

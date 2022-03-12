@@ -1,6 +1,21 @@
 {% extends "accounting/layout.html" %}
 
 {% block content %}
+<h4 class="text-center">
+    {{account.title}}
+
+
+    {% if perms.hesabyar.change_account %}
+    <a href="{{account.get_edit_url}}" target="_blank" title="ویرایش" class="mx-2"><i
+            class="fa fa-edit text-info"></i></a>
+    {% endif %}
+
+    {% if perms.hesabyar.delete_account %}
+    <a href="{{account.get_delete_url}}" target="_blank" title="حذف" class="mx-2"><i
+            class="fa fa-trash text-danger"></i></a>
+    {% endif %}
+
+</h4>
 <div class="row">
     <div class="col-md-12">
         <div class="card">
