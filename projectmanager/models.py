@@ -9,6 +9,7 @@ from django.shortcuts import reverse
 
 from core.models import Page
 from projectmanager.enums import *
+from accounting.models import Product as AccountingProduct,Service as AccountingService
 from utility.utils import LinkHelper
 from .apps import APP_NAME
 # Create your models here.
@@ -224,3 +225,32 @@ class SampleForm(Page):
             self.app_name=APP_NAME
         return super(SampleForm,self).save()
  
+
+
+class Material(AccountingProduct):
+
+    class Meta:
+        verbose_name = _("Material")
+        verbose_name_plural = _("Materials")
+ 
+    def save(self,*args, **kwargs):
+        if self.class_name is None or self.class_name=="":
+            self.class_name="material"
+        if self.app_name is None or self.app_name=="":
+            self.app_name=APP_NAME
+        return super(Material,self).save(*args, **kwargs)
+
+
+
+class PM_Service(AccountingService):
+
+    class Meta:
+        verbose_name = _("Service")
+        verbose_name_plural = _("Services")
+ 
+    def save(self,*args, **kwargs):
+        if self.class_name is None or self.class_name=="":
+            self.class_name="pm_service"
+        if self.app_name is None or self.app_name=="":
+            self.app_name=APP_NAME
+        return super(PM_Service,self).save(*args, **kwargs)

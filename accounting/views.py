@@ -93,6 +93,32 @@ class ProductsView(View):
         context['products_s']=products_s
         return render(request,TEMPLATE_ROOT+"products.html",context)
 
+class ProductView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        product=ProductRepo(request=request).product(*args, **kwargs)
+        context.update(PageContext(request=request,page=product))
+        context['product']=product
+        return render(request,TEMPLATE_ROOT+"product.html",context)
+
+class ServicesView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        services=ServiceRepo(request=request).list()
+        context['services']=services
+        services_s=json.dumps(ServiceSerializer(services,many=True).data)
+        context['services_s']=services_s
+        return render(request,TEMPLATE_ROOT+"services.html",context)
+
+class ServiceView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        service=ServiceRepo(request=request).service(*args, **kwargs)
+        context.update(PageContext(request=request,page=service))
+        context['service']=service
+        return render(request,TEMPLATE_ROOT+"service.html",context)
+        
+
 class ChequesView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -114,15 +140,6 @@ class ChequeView(View):
         context.update(getTransactionContext(request=request,transaction=cheque))
         return render(request,TEMPLATE_ROOT+"cheque.html",context)
     
-class ProductView(View):
-    def get(self,request,*args, **kwargs):
-        context=getContext(request=request)
-        product=ProductRepo(request=request).product(*args, **kwargs)
-        context.update(PageContext(request=request,page=product))
-        context['product']=product
-        return render(request,TEMPLATE_ROOT+"product.html",context)
-
-
 
 class AccountView(View):
     def get(self,request,*args, **kwargs):
@@ -163,20 +180,3 @@ class FinancialDocumentView(View):
         financial_document=FinancialDocumentRepo(request=request).financial_document(*args, **kwargs)
         context['financial_document']=financial_document
         return render(request,TEMPLATE_ROOT+"financial-document.html",context)
-
-class ServicesView(View):
-    def get(self,request,*args, **kwargs):
-        context=getContext(request=request)
-        services=ServiceRepo(request=request).list()
-        context['services']=services
-        services_s=json.dumps(ServiceSerializer(services,many=True).data)
-        context['services_s']=services_s
-        return render(request,TEMPLATE_ROOT+"services.html",context)
-
-class ServiceView(View):
-    def get(self,request,*args, **kwargs):
-        context=getContext(request=request)
-        service=ServiceRepo(request=request).service(*args, **kwargs)
-        context.update(PageContext(request=request,page=service))
-        context['service']=service
-        return render(request,TEMPLATE_ROOT+"service.html",context)

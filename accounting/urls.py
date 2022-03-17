@@ -10,12 +10,12 @@ urlpatterns = [
     path("products/",login_required(views.ProductsView.as_view()),name="products"),
     path("product/<int:pk>/",login_required(views.ProductView.as_view()),name="product"),
 
+    path("service/<int:pk>/",login_required(views.ServiceView.as_view()),name="service"),
+    path("services/",login_required(views.ServicesView.as_view()),name="services"),
+
 
     path("cheque/<int:pk>/",login_required(views.ChequeView.as_view()),name="cheque"),
     path("cheques/",login_required(views.ChequesView.as_view()),name="cheques"), 
-
-    path("service/<int:pk>/",login_required(views.ServiceView.as_view()),name="service"),
-    path("services/",login_required(views.ServicesView.as_view()),name="services"),
     
     path("transaction/<int:pk>/",login_required(views.TransactionView.as_view()),name="transaction"),
     path("transactions/",login_required(views.TransactionsView.as_view()),name="transactions"),
