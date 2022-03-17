@@ -71,24 +71,35 @@ class ServiceInvoice(ProjectInvoice):
         return super(ServiceInvoice,self).save(*args, **kwargs)
 
 
-class Request(models.Model):
+class Request(models.Model,LinkHelper):
     product_or_service=models.ForeignKey("accounting.productorservice", verbose_name=_("product or service"), on_delete=models.CASCADE)
     project=models.ForeignKey("project", verbose_name=_("project"), on_delete=models.CASCADE)
     quantity=models.FloatField(_("quantity"))
     unit_price=models.IntegerField(_("unit_price"))
     unit_name=models.CharField(_("unit_name"),choices=UnitNameEnum.choices,default=UnitNameEnum.ADAD, max_length=50)
-    date_requested=models.DateTimeField(_("date_requested"), auto_now=False, auto_now_add=False)
+    date_delivered=models.DateTimeField(_("date_delivered"), auto_now=False,null=True,blank=True, auto_now_add=False)
+    date_requested=models.DateTimeField(_("date_requested"), auto_now=False,null=True,blank=True, auto_now_add=False)
+    date_added=models.DateTimeField(_("date_added"), auto_now=False, auto_now_add=True)
     employee=models.ForeignKey("employee", verbose_name=_("employee"), on_delete=models.CASCADE)
     status=models.CharField(_("status"),choices=RequestStatusEnum.choices, max_length=50)
+    type=models.CharField(_("type"),choices=RequestTypeEnum.choices,default=RequestTypeEnum.MATERIAL_REQUEST, max_length=50)
+    class_name="request"
+    app_name=APP_NAME
     @property
     def product(self):
-        from market.models import Product
-        return Product.objects.filter(pk=self.product_or_service_id).first()
+        # from market.models import Product
+        return Material.objects.filter(pk=self.product_or_service_id).first()
 
+    @property
+    def material(self):
+        return self.product
     @property
     def service(self):
         from accounting.models import Service
         return Service.objects.filter(pk=self.product_or_service_id).first()
+
+    def get_status_tag(self):
+        return f"""<span class="badge badge-pill badge-{self.get_status_color()}">{self.status}</span>"""
 
     class Meta:
         verbose_name = _("Request")
@@ -109,20 +120,50 @@ class Request(models.Model):
         invoice_line.save()
 
     def save(self,*args, **kwargs):
-        print(100*"#")
         super(Request,self).save(*args, **kwargs)
         if self.project is not None and self.project.employer.account is not None and self.project.contractor.account is not None:
             self.save_invoice()
         else:
             return
         
-            
+         
+    def total(self):
+        total=0
+        total=self.unit_price*self.quantity
+        return total
+
+    def persian_date_added(self):
+        return PersianCalendar().from_gregorian(self.date_added)
+
+    def persian_date_delivered(self):
+        return PersianCalendar().from_gregorian(self.date_delivered)
+
+    def persian_date_requested(self):
+        return PersianCalendar().from_gregorian(self.date_requested)
+
+    def can_be_edited(self):
+        return self.project.can_be_edited
+
+    def get_status_color(self):
+        return StatusColor(self.status)
+   
+    def signatures(self):
+        return RequestSignature.objects.filter(materialrequest=self).order_by('-date_added')
+
+    def line_total(self):
+        return self.quantity*self.unit_price
+
 
     def __str__(self):
         return f"درخواست {self.quantity}  {self.unit_name} {self.product_or_service.title} برای پروژه {self.project} توسط {self.employee}"
 
     def get_absolute_url(self):
-        return reverse("Request_detail", kwargs={"pk": self.pk})
+        if self.product is not None:
+            return reverse(APP_NAME+":materialrequest", kwargs={"pk": self.pk})
+
+
+        if self.service is not None:
+            return reverse(APP_NAME+":servicerequest", kwargs={"pk": self.pk})
 
 
 
@@ -175,7 +216,7 @@ class Employee(Account):
         return f"{self.profile.name} : {self.job_title} {str(self.organization_unit)}"
 
     def get_absolute_url(self):
-        return reverse("Employee_detail", kwargs={"pk": self.pk})
+        return reverse(APP_NAME+":employee", kwargs={"pk": self.pk})
 
 
 class OrganizationUnit(Page):
@@ -215,7 +256,10 @@ class Project(Page):
     organization_units = models.ManyToManyField("OrganizationUnit", verbose_name=_("واحد های سازمانی"), blank=True)
     weight = models.IntegerField(_("ضریب و وزن پروژه"), default=10)
     locations = models.ManyToManyField("map.location", blank=True, verbose_name=_("locations"))
-    
+    def material_requests(self):
+        return Request.objects.filter(project=self).filter(type=RequestTypeEnum.MATERIAL_REQUEST)
+    def service_requests(self):
+        return Request.objects.filter(project=self).filter(type=RequestTypeEnum.SERVICE_REQUEST)
 
     class Meta:
         verbose_name = _("Project")
@@ -288,6 +332,8 @@ class Project(Page):
     
     def sum_total(self):
         return 0
+
+
 class SampleForm(Page):
     
 

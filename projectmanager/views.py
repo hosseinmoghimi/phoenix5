@@ -11,7 +11,7 @@ from .apps import APP_NAME
 # from .serializers import MaterialSerializer
 import json
 from .repo import MaterialRepo, OrganizationUnitRepo,ServiceRepo,ProjectRepo
-from .serializers import MaterialSerializer, OrganizationUnitSerializer,ServiceSerializer,ProjectSerializer
+from .serializers import MaterialSerializer, OrganizationUnitSerializer,ServiceSerializer,ProjectSerializer,ServiceRequestSerializer,MaterialRequestSerializer
 
 TEMPLATE_ROOT = "projectmanager/"
 LAYOUT_PARENT = "phoenix/layout.html"
@@ -99,6 +99,17 @@ class ProjectView(View):
         context['organization_units']=organization_units
         organization_units_s=json.dumps(OrganizationUnitSerializer(organization_units,many=True).data)
         context['organization_units_s']=organization_units_s
+
+
+        service_requests=project.service_requests()
+        context['service_requests']=service_requests
+        service_requests_s=json.dumps(ServiceRequestSerializer(service_requests,many=True).data)
+        context['service_requests_s']=service_requests_s
+
+        material_requests=project.material_requests()
+        context['material_requests']=material_requests
+        material_requests_s=json.dumps(MaterialRequestSerializer(material_requests,many=True).data)
+        context['material_requests_s']=material_requests_s
         if request.user.has_perm(APP_NAME+".change_project"):
             all_organization_units=OrganizationUnitRepo(request=request).list()
             context['all_organization_units']=all_organization_units

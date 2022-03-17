@@ -1,6 +1,13 @@
 from rest_framework import serializers
-from .models import Material,Service,Project,OrganizationUnit
+from .models import Employee, Material, Request,Service,Project,OrganizationUnit
+from authentication.serializers import ProfileSerializer
 
+
+class EmployeeSerializer(serializers.ModelSerializer):
+    profile=ProfileSerializer()
+    class Meta:
+        model=Employee
+        fields=['id','get_absolute_url','profile']
 
 
 
@@ -24,8 +31,8 @@ class ServiceSerializer(serializers.ModelSerializer):
 
 
 
-
 class ProjectSerializer(serializers.ModelSerializer):
+
     employer=OrganizationUnitSerializer()
     contractor=OrganizationUnitSerializer()
     class Meta:
@@ -35,3 +42,27 @@ class ProjectSerializer(serializers.ModelSerializer):
         'full_title','status','sum_total','get_absolute_url',
         'get_edit_url','short_description','thumbnail','persian_start_date',
         'persian_end_date','percentage_completed']
+ 
+
+
+class ServiceRequestSerializer(serializers.ModelSerializer):
+    service=ServiceSerializer()
+    project=ProjectSerializer()
+    employee=EmployeeSerializer()
+    class Meta:
+        model=Request
+        fields=['id','total','service','persian_date_requested',
+        'quantity','persian_date_added','get_edit_url','get_delete_url',
+        'get_status_tag','project','employee','unit_name','unit_price',
+        'get_absolute_url']
+
+class MaterialRequestSerializer(serializers.ModelSerializer):
+    material=MaterialSerializer()
+    project=ProjectSerializer()
+    employee=EmployeeSerializer()
+    class Meta:
+        model=Request
+        fields=['id','total','material','persian_date_requested',
+        'quantity','persian_date_added','get_edit_url','get_delete_url',
+        'get_status_tag','project','employee','unit_name','unit_price',
+        'get_absolute_url']

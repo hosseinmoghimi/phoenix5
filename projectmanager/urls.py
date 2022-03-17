@@ -6,6 +6,10 @@ app_name=APP_NAME
 urlpatterns = [
     path("",views.HomeView.as_view(),name="home"),
     path("search/",views.HomeView.as_view(),name="search"),
+    path("employee/<int:pk>/",login_required(views.ProjectView.as_view()),name="employee"),
+    path("material_request/<int:pk>/",login_required(views.ProjectView.as_view()),name="materialrequest"),
+    path("service_request/<int:pk>/",login_required(views.ProjectView.as_view()),name="servicerequest"),
+    path("request/<int:pk>/",login_required(views.ProjectView.as_view()),name="request"),
 
     path("projects/",login_required(views.ProjectsView.as_view()),name="projects"),
     path("project/<int:pk>/",login_required(views.ProjectView.as_view()),name="project"),
