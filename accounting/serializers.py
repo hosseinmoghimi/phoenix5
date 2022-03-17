@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Account, Cheque, FinancialDocument, Product,Service, SubAccount, Transaction
+from .models import Account, Cheque, FinancialDocument, Product,Service,  Transaction
 
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
@@ -28,15 +28,7 @@ class ChequeSerializer(serializers.ModelSerializer):
         fields = ['id','title','status','color','pay_to','pay_from','description','amount','get_absolute_url','persian_cheque_date']
 
 
-
-
-class SubAccountSerializer(serializers.ModelSerializer):
-
-
-    class Meta:
-        model = SubAccount
-        fields = ['id', 'title','color','parent_id']
-
+ 
 class TransactionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Transaction
@@ -44,21 +36,19 @@ class TransactionSerializer(serializers.ModelSerializer):
 
 class FinancialDocumentSerializer(serializers.ModelSerializer):
     account = AccountSerializer()
-    sub_account = SubAccountSerializer()
     transaction = TransactionSerializer()
 
     class Meta:
         model = FinancialDocument
         fields = ['id', 'title','transaction','get_state_badge', 'account', 'get_absolute_url', 'bedehkar','rest',
-                  'bestankar', 'persian_document_datetime', 'sub_account','get_edit_url','get_delete_url']
+                  'bestankar', 'persian_document_datetime', 'get_edit_url','get_delete_url']
 
 
 class FinancialDocumentForAccountSerializer(serializers.ModelSerializer):
     account = AccountSerializer()
-    sub_account = SubAccountSerializer()
 
     class Meta:
         model = FinancialDocument
         fields = ['id', 'title','get_state_badge', 'rest','account', 'get_absolute_url', 'bedehkar',
-                  'bestankar', 'persian_document_datetime', 'sub_account','get_edit_url','get_delete_url']
+                  'bestankar', 'persian_document_datetime', 'get_edit_url','get_delete_url']
 

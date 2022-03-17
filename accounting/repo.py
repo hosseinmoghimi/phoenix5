@@ -1,5 +1,5 @@
 from .apps import APP_NAME
-from .models import Account, Cheque, FinancialDocument, FinancialYear, Invoice, Product,Service, SubAccount, Transaction
+from .models import Account, Cheque, FinancialBalance, FinancialDocument, FinancialYear, Invoice, Product,Service, Transaction
 from django.db.models import Q
 from authentication.repo import ProfileRepo
 from django.utils import timezone
@@ -74,6 +74,50 @@ class ServiceRepo():
             objects=objects.filter(parent_id=kwargs['parent_id'])
         return objects.all()
 
+class FinancialBalanceRepo:
+    def __init__(self, *args, **kwargs):
+        self.request = None
+        self.user = None
+        if 'request' in kwargs:
+            self.request = kwargs['request']
+            self.user = self.request.user
+        if 'user' in kwargs:
+            self.user = kwargs['user']
+        self.profile = ProfileRepo(user=self.user).me
+        self.objects = FinancialBalance.objects.all()
+        if self.user.has_perm(APP_NAME+".view_financialbalance"):
+            self.objects = self.objects.all()
+        elif self.profile is not None:
+            self.objects = self.objects.filter(financial_document__account__profile=self.profile)
+        else:
+            self.objects = self.objects.filter(pk=0)
+
+
+    def list(self, *args, **kwargs):
+        objects = self.objects.all()
+        if 'for_home' in kwargs:
+            objects = objects.filter(for_home=kwargs['for_home'])
+        if 'search_for' in kwargs:
+            search_for=kwargs['search_for']
+            objects = objects.filter(title__contains=search_for) 
+        if 'account_id' in kwargs:
+            account_id=kwargs['account_id']
+            objects = objects.filter(financial_document__account_id=account_id) 
+        if 'financial_document_id' in kwargs:
+            financial_document_id=kwargs['financial_document_id']
+            objects = objects.filter(financial_document_id=financial_document_id) 
+        return objects
+
+    def financial_year(self, *args, **kwargs):
+        if 'date' in kwargs:
+            return self.objects.filter(start_date__lte=kwargs['date']).filter(end_date__gte=kwargs['date']).first()
+           
+        if 'financial_year_id' in kwargs:
+            return self.objects.filter(pk= kwargs['financial_year_id']).first()
+        if 'pk' in kwargs:
+            return self.objects.filter(pk= kwargs['pk']).first()
+        if 'id' in kwargs:
+            return self.objects.filter(pk= kwargs['id']).first()
    
 
 

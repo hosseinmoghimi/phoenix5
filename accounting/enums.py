@@ -53,10 +53,14 @@ class TransactionStatusEnum(TextChoices):
     CANCELED="کنسل شده",_("کنسل شده")
     PASSED="پاس شده",_("پاس شده")
 
-class SubAccountEnum(TextChoices):
+class FinancialBalanceTitleEnum(TextChoices):
+    REGULAR="حساب عادی",_("حساب عادی")
     INVESTMENT="سرمایه گذاری",_("سرمایه گذاری")
     ASSET="دارایی",_("دارایی")
     BUILDING="ملک",_("ملک")
     FURNITURE="اثاثیه",_("اثاثیه")
     TAX="مالیات",_("مالیات")
     COST="هزینه",_("هزینه")
+    SELL="فروش",_("فروش")
+    BUY="خرید",_("خرید")
+    MISC="سایر",_("سایر")

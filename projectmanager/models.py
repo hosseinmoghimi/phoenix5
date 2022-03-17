@@ -73,15 +73,10 @@ class ServiceInvoice(ProjectInvoice):
         return super(ServiceInvoice,self).save(*args, **kwargs)
 
 
-class Request(models.Model,LinkHelper):
-    product_or_service=models.ForeignKey("accounting.productorservice", verbose_name=_("product or service"), on_delete=models.CASCADE)
+class Request(InvoiceLine,LinkHelper):
     project=models.ForeignKey("project", verbose_name=_("project"), on_delete=models.CASCADE)
-    quantity=models.FloatField(_("quantity"))
-    unit_price=models.IntegerField(_("unit_price"))
-    unit_name=models.CharField(_("unit_name"),choices=UnitNameEnum.choices,default=UnitNameEnum.ADAD, max_length=50)
     date_delivered=models.DateTimeField(_("date_delivered"), auto_now=False,null=True,blank=True, auto_now_add=False)
     date_requested=models.DateTimeField(_("date_requested"), auto_now=False,null=True,blank=True, auto_now_add=False)
-    date_added=models.DateTimeField(_("date_added"), auto_now=False, auto_now_add=True)
     employee=models.ForeignKey("employee", verbose_name=_("employee"), on_delete=models.CASCADE)
     status=models.CharField(_("status"),choices=RequestStatusEnum.choices, max_length=50)
     type=models.CharField(_("type"),choices=RequestTypeEnum.choices,default=RequestTypeEnum.MATERIAL_REQUEST, max_length=50)
@@ -366,7 +361,7 @@ class Material(AccountingProduct):
         return super(Material,self).save(*args, **kwargs)
 
     def material_requests(self):
-        return self.request_set.all()
+        return Request.objects.filter(product_or_service_id=self.pk)
 
 
 class PM_Service(AccountingService):
@@ -384,4 +379,4 @@ class PM_Service(AccountingService):
 
     
     def service_requests(self):
-        return self.request_set.all()
+        return Request.objects.filter(product_or_service_id=self.pk)

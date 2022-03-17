@@ -1,11 +1,10 @@
 from django.http import Http404
 from django.shortcuts import render,reverse
-from accounting.utils import init_sub_accounts
 from core.views import CoreContext, PageContext,SearchForm
 # Create your views here.
 from django.views import View
 from .apps import APP_NAME
-from .repo import AccountRepo, ChequeRepo, ProductRepo,ServiceRepo,FinancialDocumentRepo,InvoiceRepo, TransactionRepo
+from .repo import AccountRepo,FinancialBalanceRepo, ChequeRepo, ProductRepo,ServiceRepo,FinancialDocumentRepo,InvoiceRepo, TransactionRepo
 from .serializers import ChequeSerializer, ProductSerializer,ServiceSerializer,FinancialDocumentForAccountSerializer,FinancialDocumentSerializer
 from .forms import *
 import json
@@ -16,7 +15,6 @@ TEMPLATE_ROOT = "accounting/"
 
 
 def getContext(request, *args, **kwargs):
-    init_sub_accounts(delete_all=False)
     context = CoreContext(request=request, app_name=APP_NAME)
     context['search_form'] = SearchForm()
     context['search_action'] = reverse(APP_NAME+":search")
@@ -152,6 +150,10 @@ class AccountView(View):
         context['financial_documents_s']=financial_documents_s
         rest=0
         context['rest']=rest
+
+        financial_balances=FinancialBalanceRepo(request=request).list(account_id=account.id)
+        context['financial_balances']=financial_balances
+
         return render(request,TEMPLATE_ROOT+"account.html",context)
 
         
@@ -179,4 +181,6 @@ class FinancialDocumentView(View):
         context=getContext(request=request)
         financial_document=FinancialDocumentRepo(request=request).financial_document(*args, **kwargs)
         context['financial_document']=financial_document
+        financial_balances=FinancialBalanceRepo(request=request).list(financial_document_id=financial_document.id)
+        context['financial_balances']=financial_balances
         return render(request,TEMPLATE_ROOT+"financial-document.html",context)

@@ -1,3 +1,4 @@
+from utility.currency import to_price
 from utility.calendar import PERSIAN_MONTH_NAMES, PersianCalendar
 from core.middleware import get_request
 from django.db import models
@@ -10,18 +11,7 @@ from .enums import *
 from tinymce.models import HTMLField
 from core.enums import ColorEnum,UnitNameEnum
 
-
-class SubAccount(models.Model):
-    parent=models.ForeignKey("SubAccount",null=True,blank=True, verbose_name=_("Parent"), on_delete=models.SET_NULL)
-    title=models.CharField(_("title"), max_length=50)
-    color=models.CharField(_("color"),max_length=50,choices=ColorEnum.choices,default=ColorEnum.PRIMARY)
-    class Meta:
-        verbose_name = 'SubAccount'
-        verbose_name_plural = 'SubAccounts'
-    def __str__(self):
-        return self.title
-
-
+ 
 class Asset(Page,LinkHelper):
     
     class Meta:
@@ -88,9 +78,9 @@ class Transaction(Page,LinkHelper):
             self.transaction_datetime=timezone.now()
         super(Transaction,self).save(*args, **kwargs)
         FinancialDocument.objects.filter(transaction=self).delete()
-        fd=FinancialDocument(transaction=self,account_id=self.pay_to.id)
+        fd=FinancialDocument(transaction=self,account_id=self.pay_to.id,bedehkar=self.amount)
         fd.save()
-        fd=FinancialDocument(transaction=self,account_id=self.pay_from.id)
+        fd=FinancialDocument(transaction=self,account_id=self.pay_from.id,bestankar=self.amount)
         fd.save()
 
     @property
@@ -274,13 +264,13 @@ class FinancialYear(models.Model):
 
 class FinancialDocument(models.Model,LinkHelper):
     account=models.ForeignKey("account", verbose_name=_("account"), on_delete=models.CASCADE)
-    sub_account=models.ForeignKey("SubAccount", null=True,blank=True,verbose_name=_("Sub Account"), on_delete=models.SET_NULL)
     bedehkar=models.IntegerField(_("bedehkar"),default=0)
     bestankar=models.IntegerField(_("bestankar"),default=0)
     document_datetime=models.DateTimeField(_("document_datetime"), auto_now=False, auto_now_add=True)
     transaction=models.ForeignKey("transaction",verbose_name=_("transaction"), on_delete=models.CASCADE)
     tags=models.ManyToManyField("FinancialDocumentTag", blank=True,verbose_name=_("tags"))
     app_name=APP_NAME
+    color=models.CharField(_("color"),max_length=50,choices=ColorEnum.choices,default=ColorEnum.PRIMARY)
     class_name="financialdocument"
 
     @property
@@ -320,50 +310,58 @@ class FinancialDocument(models.Model,LinkHelper):
         verbose_name_plural = _("FinancialDocuments")
 
     def __str__(self):
-        return f"""{self.account.title} : {self.transaction.title} : {self.transaction.amount} {(" : "+self.sub_account.title) if self.sub_account is not None else ""}"""
+        return f"""{self.account.title} : {self.transaction.title} : {self.transaction.amount}"""
 
     def save(self):
         super(FinancialDocument,self).save()
-        (fb,res)=FinancialBalance.objects.get_or_create(financial_document=self)
+        financial_balances=FinancialBalance.objects.filter(financial_document=self)
+        if len(financial_balances)==0:
+            financial_balance=FinancialBalance()
+            financial_balance.bestankar=self.bestankar
+            financial_balance.bedehkar=self.bedehkar
+            financial_balance.title=FinancialBalanceTitleEnum.MISC
+            financial_balance.financial_document=self
+            financial_balance.save()
 
 
 class FinancialBalance(models.Model,LinkHelper):
-    class_name="financialbalance"
     app_name=APP_NAME
+    class_name="financialbalance"
+    title=models.CharField(_("title"),choices=FinancialBalanceTitleEnum.choices,default=FinancialBalanceTitleEnum.MISC, max_length=50)
     financial_document=models.ForeignKey("FinancialDocument", verbose_name=_("FinancialDocument"), on_delete=models.CASCADE)
-    sell_benefit=models.IntegerField(_("سود حاصل از فروش"),default=0)
-    sell_loss=models.IntegerField(_("زیان حاصل از فروش"),default=0)
-    cost=models.IntegerField(_("هزینه"),default=0)
-    tax=models.IntegerField(_("مالیات"),default=0)
-    wage=models.IntegerField(_("حقوق"),default=0)
-    sell_service=models.IntegerField(_("فروش خدمات"),default=0)
-    buy_service=models.IntegerField(_("خرید خدمات"),default=0)
-    discount=models.IntegerField(_("تخفیف"),default=0)
-    ship_fee=models.IntegerField(_("هزینه حمل"),default=0)
-    misc=models.IntegerField(_("سایر"),default=0)
-    def sum(self):
-        sum=0
-        sum+=self.sell_benefit
-        sum+=self.sell_loss
-        sum+=self.cost
-        sum+=self.tax
-        sum+=self.wage
-        sum+=self.sell_service
-        sum+=self.discount
-        sum+=self.ship_fee
-        sum+=self.misc
-        return sum
+    bestankar=models.IntegerField(_("بستانکار"),default=0)
+    bedehkar=models.IntegerField(_("بدهکار"),default=0)
+     
+    def amount(self):
+        return self.bedehkar+self.bestankar
+
+
     class Meta:
         verbose_name = _("FinancialBalance")
         verbose_name_plural = _("FinancialBalances")
 
     def __str__(self):
-        return str(self.financial_document) 
+        return f"""{str(self.financial_document)} {self.title} {to_price(self.amount())}"""
 
     def save(self,*args, **kwargs):
-        self.misc=0
-        self.misc=self.financial_document.bedehkar+self.financial_document.bestankar-self.sum()
-        return super(FinancialBalance,self).save(*args, **kwargs)
+        super(FinancialBalance,self).save(*args, **kwargs)
+        if self.title==FinancialBalanceTitleEnum.MISC:
+            return
+        aaa=FinancialBalance.objects.filter(financial_document=self.financial_document).filter(title=FinancialBalanceTitleEnum.MISC)
+        aaa.delete()
+        aaa=FinancialBalance.objects.filter(financial_document=self.financial_document)
+        sum_bestankar=0
+        sum_bedehkar=0
+        for a in aaa:
+            sum_bestankar+=a.bestankar
+            sum_bedehkar+=a.bedehkar
+        b=FinancialBalance()
+        b.financial_document=self.financial_document
+        b.title==FinancialBalanceTitleEnum.MISC
+        b.bestankar=self.financial_document.bestankar-sum_bestankar
+        b.bedehkar=self.financial_document.bedehkar-sum_bedehkar
+        b.save()
+
 
 
 class FinancialDocumentTag(models.Model):
@@ -485,6 +483,7 @@ class Invoice(Transaction):
         return sum
     def save(self,*args, **kwargs):
         
+        self.amount=self.sum_total()
         super(Invoice,self).save(*args, **kwargs)
         self.class_name='invoice'
         if self.title is None or self.title=="":
@@ -505,6 +504,7 @@ class Invoice(Transaction):
         return reverse(APP_NAME+":edit_invoice",kwargs={'pk':self.pk})
 
 class InvoiceLine(models.Model):
+    date_added=models.DateTimeField(_("date_added"), auto_now=False, auto_now_add=True)
     invoice=models.ForeignKey("invoice", verbose_name=_("invoice"),related_name="lines", on_delete=models.CASCADE)
     row=models.IntegerField(_("row"))
     product_or_service=models.ForeignKey("productorservice", verbose_name=_("productorservice"), on_delete=models.CASCADE)
