@@ -1,0 +1,57 @@
+{% load to_price %}
+<div class="card" id="materials-app">
+    <div class="card-body">
+<button @click="show_sell_prices=!show_sell_prices" class="btn btn-danger">show_sell_prices</button>
+        <div class="table-responsive">
+
+            <table class="table table-striped">
+                <thead>
+
+                    <th>
+                        متریال
+                    </th>
+                    <th>
+                        قیمت
+
+                    </th>
+
+                    <th>
+                        موجودی در انبار ها
+                    </th>
+                </thead>
+                <tbody>
+                    <tr v-for="material in materials">
+
+                        <td>
+                            <a :href="material.get_absolute_url">
+
+                                <div class="media">
+                                    <img :src="material.thumbnail" class="rounded" width="64" alt="">
+                                    <div class="media-body mr-2">
+                                        <span v-text="material.title"></span>
+
+                                    </div>
+                                </div>
+
+                            </a>
+                        </td>
+                        <td>
+                            <div>
+                                <span v-text="to_price(material.unit_price)"></span>
+                            </div>
+                            <div v-if="show_sell_prices">
+                                <small v-text="to_price(material.buy_price)" class="text-muted"></small>
+                            </div>
+
+                        </td>
+                        <td>
+                            <span v-text="material.available"></span>
+
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</div>

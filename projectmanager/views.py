@@ -12,7 +12,7 @@ from .repo import MaterialRepo,ServiceRepo
 from .serializers import MaterialSerializer,ServiceSerializer
 
 TEMPLATE_ROOT = "projectmanager/"
-LAYOUT_PARENT = "material-kit-pro/layout.html"
+LAYOUT_PARENT = "phoenix/layout.html"
 
 
 def getContext(request, *args, **kwargs):

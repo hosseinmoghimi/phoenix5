@@ -1,0 +1,19 @@
+<script>
+    let materials_app_data = {
+        materials: JSON.parse(`{{materials_s|escapejs}}`),
+        show_sell_prices:false,
+    }
+    let materials_app_methods = {
+        to_price: function (vall) {
+            return to_price(vall, "{{CURRENCY}}")
+        },
+        
+    }
+</script> 
+<script>
+    let materials_app = new Vue({
+        el: "#materials-app",
+        data: materials_app_data,
+        methods: materials_app_methods,
+    })
+</script>

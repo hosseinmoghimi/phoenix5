@@ -1,0 +1,31 @@
+{% extends "projectmanager/layout.html" %}
+
+{% block content %}
+<div class="row">
+  <div class="col-md-4">
+    <div class="card">
+      <div class="farsi card-body">
+        <a href="{% url 'projectmanager:materials' %}">
+          <h6>
+            لیست متریال ها
+          </h6>
+        </a>
+
+        <a href="{% url 'projectmanager:services' %}">
+          <h6>
+            لیست سرویس ها
+          </h6>
+        </a>
+       
+
+
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}
+
+
+{% block script %}
+
+{% endblock script %}

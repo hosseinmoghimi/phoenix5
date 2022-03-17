@@ -30,7 +30,7 @@ def CoreContext(request,*args, **kwargs):
     
     context['profile']=ProfileRepo(request=request).me
     parameter_repo = ParameterRepo(request=request,app_name=app_name)
-    visitor_counter=parameter_repo.parameter(name=ParameterNameEnum.VISITOR_COUNTER).value
+    visitor_counter=parameter_repo.parameter(name=ParameterNameEnum.VISITOR_COUNTER,default=1).value
     context['visitor_counter']=visitor_counter
     # (parameter,res)=ParameterRepo(request=request,app_name='core').objects.get_or_create(name=ParameterNameEnum.CURRENCY)
     # context['CURRENCY']=parameter.value
