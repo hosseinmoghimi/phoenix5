@@ -1,0 +1,52 @@
+<script>
+
+
+    let organization_units = JSON.parse(`{{organization_units_s|escapejs}}`)
+
+    let organization_units_app = new Vue({
+        el: "#organization-units-app",
+        data: {
+            new_organization_unit_title: "",
+            organization_units: organization_units,
+            message: "",
+            waiting: false,
+            show_form:false,
+        },
+        methods: {
+            add_organization_unit: function () {
+
+                organization_units_app.waiting = true
+                let url = "{% url 'projectmanager:add_organization_unit' %}"
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    title: this.new_organization_unit_title,
+                }
+                let posting = $.post(url, payload)
+                posting.done((data) => {
+
+                    organization_units_app.waiting = false
+                    if (data.result === 'FAILED') {
+                        organization_units_app.message={
+                            show :true,
+                            color :"danger",
+                            text :"خطا در افزودن مورد جدید",
+                        }
+                    }
+                    if (data.result === 'SUCCEED') {
+                        organization_units_app.message={
+                            show :true,
+                            color :"success",
+                            text :"با موفقیت افزوده شد.",
+                        }
+                        setTimeout(() => {
+                            organization_units_app.message.show =false
+                        }, 2000);
+                        organization_units_app.organization_units.push(data.organization_unit)
+                        organization_units_app.new_organization_unit_title = ""
+                    }
+                })
+            },
+
+        }
+    })
+</script>

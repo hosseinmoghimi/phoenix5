@@ -14,6 +14,7 @@ from utility.utils import LinkHelper
 from .apps import APP_NAME
 # Create your models here.
 from accounting.models import Account
+ 
 
 class ProjectInvoice(Invoice):
     # project=models.ForeignKey("project", verbose_name=_("project"), on_delete=models.CASCADE)
@@ -178,6 +179,7 @@ class Employee(Account):
 
 
 class OrganizationUnit(Page):
+    pre_title=models.CharField(_("pre_title"),default="", max_length=50)
     account=models.ForeignKey("accounting.account",null=True,blank=True, verbose_name=_("account"), on_delete=models.CASCADE)
     parent=models.ForeignKey("OrganizationUnit",related_name="childs",null=True,blank=True, verbose_name=_("parent"), on_delete=models.CASCADE)
     def __str__(self):
@@ -186,7 +188,8 @@ class OrganizationUnit(Page):
 
     class Meta:
         verbose_name = _("OrganizationUnit")
-        verbose_name_plural = _("OrganizationUnits")
+        verbose_name_plural = _("واحد های سازمانی")
+    
     def save(self,*args, **kwargs):
         if self.class_name is None or self.class_name=="":
             self.class_name="organizationunit"
@@ -195,22 +198,92 @@ class OrganizationUnit(Page):
         return super(OrganizationUnit,self).save(*args, **kwargs)
  
  
+class WareHouse(OrganizationUnit):
+    pass
 class Project(Page):
+    parent=models.ForeignKey("project", verbose_name=_("parent"),null=True,blank=True, on_delete=models.CASCADE)
+    status=models.CharField(_("status"),choices=ProjectStatusEnum.choices,default=ProjectStatusEnum.DRAFT, max_length=50)
     employer=models.ForeignKey("organizationunit",related_name="projects_employed", verbose_name=_("کارفرما"), on_delete=models.CASCADE)    
     contractor=models.ForeignKey("organizationunit",related_name="projects_contracted", verbose_name=_("پیمانکار"), on_delete=models.CASCADE)    
+    percentage_completed = models.IntegerField(_("درصد تکمیل پروژه"), default=0)
+    start_date = models.DateTimeField(_("زمان شروع پروژه"), null=True, blank=True, auto_now=False, auto_now_add=False)
+    end_date = models.DateTimeField(_("زمان پایان پروژه"), null=True, blank=True, auto_now=False, auto_now_add=False)
+    organization_units = models.ManyToManyField("OrganizationUnit", verbose_name=_("واحد های سازمانی"), blank=True)
+    weight = models.IntegerField(_("ضریب و وزن پروژه"), default=10)
+    locations = models.ManyToManyField("map.location", blank=True, verbose_name=_("locations"))
     
 
     class Meta:
         verbose_name = _("Project")
         verbose_name_plural = _("Projects")
+
+    def persian_start_date(self):
+        return PersianCalendar().from_gregorian(self.start_date)
+
+    def persian_end_date(self):
+        return PersianCalendar().from_gregorian(self.end_date)
+    
+    def auto_percentage_completed(self):
+        sub_projects = self.sub_projects()
+        if len(sub_projects) == 0:
+            return self.percentage_completed
+        auto_percentage_completed = 0
+        sum_weight = 0
+        for sub_project in sub_projects:
+            auto_percentage_completed += sub_project.weight *(sub_project.auto_percentage_completed())
+            sum_weight += sub_project.weight
+        auto_percentage_completed = auto_percentage_completed/sum_weight
+
+        return round(auto_percentage_completed, 2)
  
+    def update_accounting_data(self, *args, **kwargs):
+        
+        if self.status==ProjectStatusEnum.DRAFT:
+            return
+        if self.employer is None or self.employer.owner is None:
+            return
+        if self.contractor is None or self.contractor.owner is None:
+            return
+            
+        from accounting.models import ProjectTransaction,FinancialAccount
+        ProjectTransaction.objects.filter(project=self).delete()
+        if (self.sum_material_requests()+self.sum_service_requests())==0:
+            return
+        pt=ProjectTransaction()
+        pt.project=self
+        pt.amount=self.sum_material_requests()+self.sum_service_requests()
+        pt.pay_from=FinancialAccount.get_by_profile_or_new(profile_id=self.contractor.owner.id)
+        pt.pay_to=FinancialAccount.get_by_profile_or_new(profile_id=self.employer.owner.id)
+        pt.date_paid=self.date_added
+        pt.title=f"""بابت حساب پروژه """
+        pt.save()
+
+    def get_status_color(self):
+        return StatusColor(self.status)
+    
+    def full_title(self):
+        if self.parent is None:
+            return self.title
+        return self.parent.full_title()+" : "+self.title
+    
+    def sum_weight(self):
+        sum_weight = 0
+        sub_projects = self.sub_projects()
+        if len(sub_projects) == 0:
+            return 0
+        for sub_project in sub_projects:
+            sum_weight += sub_project.weight
+        return sum_weight
+
     def save(self,*args, **kwargs):
         if self.class_name is None or self.class_name=="":
             self.class_name='project'
         if self.app_name is None or self.app_name=="":
             self.app_name=APP_NAME
         super(Project,self).save(*args, **kwargs)
-
+    
+    def sum_total(self):
+        return 0
 class SampleForm(Page):
     
 

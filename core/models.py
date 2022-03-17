@@ -81,12 +81,17 @@ class Page(models.Model,LinkHelper,ImageMixin):
     class_name=models.CharField(_("class_name"),null=True,blank=True, max_length=50)
     date_added=models.DateTimeField(_("date_added"), auto_now=False, auto_now_add=True)
     priority=models.IntegerField(_("ترتیب"),default=1000)
+    archive=models.BooleanField(_("archive?"),default=False)
+    def likes_count(self):
+        return 0
     def class_title(self):
         class_title=""
         if self.class_name=="product":
             class_title="کالا"
         if self.class_name=="service":
             class_title="سرویس"
+        if self.class_name=="organizationunit":
+            class_title="واحد سازمانی"
         return class_title
      
     class Meta:
@@ -220,8 +225,6 @@ class Link(Icon):
         verbose_name = _("Link")
         verbose_name_plural = _("Links")
 
-    def __str__(self):
-        return self.name
 
     def get_absolute_url(self):
         return reverse("Link_detail", kwargs={"pk": self.pk})

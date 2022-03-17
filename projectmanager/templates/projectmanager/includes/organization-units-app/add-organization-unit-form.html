@@ -1,0 +1,42 @@
+{% load static %}
+<div class="text-right my-2">
+    <button class="btn btn-success" @click="show_form=true" v-if="!show_form" title="افزودن">
+        <i class="fa fa-plus"></i>
+        افزودن
+    </button>
+
+</div>
+<form @submit.prevent="add_organization_unit()" v-if="show_form">
+    <div class="row">
+        <div class="col-md-4">
+            <input required type="text" v-model="new_organization_unit_title" class="farsi form-control"
+                placeholder="واحد سازمانی جدید">
+
+        </div>
+        <div class="col-md-4 text-right">
+            <img v-if="waiting" width="32" src="{% static 'leo/img/loading.gif' %}" alt="">
+
+
+            <button style="max-width: 80px!important;" v-if="!waiting" class="btn btn-primary"
+                type="submit">
+        <i class="fa fa-plus"></i>
+        
+        تایید</button>
+
+
+                <button style="max-width: 80px!important;" v-if="!waiting" class="btn btn-secondary"
+                @click="show_form=false">انصراف</button>
+
+
+        </div>
+        <div class="col-md-4 text-right">
+            <span v-if="message.show" :class="'alert alert-'+message.color">
+
+                <span class="farsi text-right">
+                    <span v-text="message.text"></span>
+                </span>
+            </span>
+        </div>
+    </div>
+
+</form>

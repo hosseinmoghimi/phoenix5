@@ -1,0 +1,15 @@
+{% extends "phoenix/wide-layout.html" %}
+
+{% block content %}
+  <div class="row">
+      <div class="col-md-12">
+          {% include "projectmanager/includes/all-projects-app/template.html" %}
+      </div>
+  </div>
+{% endblock content %}
+
+
+{% block script %}
+{% include "projectmanager/includes/all-projects-app/script.html" %}
+  
+{% endblock script %}
