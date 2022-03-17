@@ -7,7 +7,7 @@ class EmployeeSerializer(serializers.ModelSerializer):
     profile=ProfileSerializer()
     class Meta:
         model=Employee
-        fields=['id','get_absolute_url','profile']
+        fields=['id','get_absolute_url','profile','title']
 
 
 

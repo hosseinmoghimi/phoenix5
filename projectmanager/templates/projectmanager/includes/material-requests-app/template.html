@@ -76,6 +76,15 @@
                             <td>
                                 <small v-text="material_request.persian_date_requested">
                                 </small>
+
+                                <div>
+                                    <a :href="material_request.employee.get_absolute_url">
+                                        <small>
+
+                                            <span v-text="material_request.employee.title"></span>
+                                        </small>
+                                    </a>
+                                </div>
                             </td>
                             {% if not project %}
 
@@ -124,7 +133,7 @@
 
                                 {% if perms.projectmanager.change_materialrequest %}
                                 <a title="ویرایش" target="_blank" :href="material_request.get_edit_url">
-                                    <i class="material-icons">edit</i>
+                                    <i class="fa fa-edit"></i>
                                 </a>
                                 {% endif %}
                                 {% if perms.projectmanager.delete_materialrequest %}

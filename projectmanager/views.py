@@ -135,6 +135,13 @@ class MaterialView(View):
         material=MaterialRepo(request=request).material(*args, **kwargs)
         context.update(PageContext(request=request,page=material))
         context['material']=material
+ 
+        material_requests=material.material_requests()
+        context['material_requests']=material_requests
+        material_requests_s=json.dumps(MaterialRequestSerializer(material_requests,many=True).data)
+        context['material_requests_s']=material_requests_s
+
+
         return render(request,TEMPLATE_ROOT+"material.html",context)
 
 class ServicesView(View):
@@ -152,5 +159,13 @@ class ServiceView(View):
         service=ServiceRepo(request=request).service(*args, **kwargs)
         context.update(PageContext(request=request,page=service))
         context['service']=service
+        
+
+        service_requests=service.service_requests()
+        context['service_requests']=service_requests
+        service_requests_s=json.dumps(ServiceRequestSerializer(service_requests,many=True).data)
+        context['service_requests_s']=service_requests_s
+ 
+
         return render(request,TEMPLATE_ROOT+"service.html",context)
         

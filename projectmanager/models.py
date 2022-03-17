@@ -50,6 +50,8 @@ class MaterialInvoice(ProjectInvoice):
   
 
     def save(self,*args, **kwargs):
+        if self.title is None or self.title=="":
+            self.title="فاکتور درخواست متریال  "+self.project.full_title()
         self.class_name="materialinvoice"
         self.app_name=APP_NAME
         return super(MaterialInvoice,self).save(*args, **kwargs)
@@ -363,6 +365,8 @@ class Material(AccountingProduct):
             self.app_name=APP_NAME
         return super(Material,self).save(*args, **kwargs)
 
+    def material_requests(self):
+        return self.request_set.all()
 
 
 class PM_Service(AccountingService):
@@ -377,3 +381,7 @@ class PM_Service(AccountingService):
         if self.app_name is None or self.app_name=="":
             self.app_name=APP_NAME
         return super(PM_Service,self).save(*args, **kwargs)
+
+    
+    def service_requests(self):
+        return self.request_set.all()
