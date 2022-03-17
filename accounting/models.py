@@ -380,8 +380,6 @@ class Cheque(Transaction,LinkHelper):
     cheque_date=models.DateField(_("تاریخ چک"), auto_now=False, auto_now_add=False)
     def persian_cheque_date(self):
         return PersianCalendar().from_gregorian(self.cheque_date)
-
-    class_name="cheque"
     class Meta:
         verbose_name = _("چک")
         verbose_name_plural = _("چک ها")
@@ -404,7 +402,10 @@ class Cheque(Transaction,LinkHelper):
 
 
     def save(self,*args, **kwargs):
-        self.class_name="cheque"
+        if self.class_name is None or self.class_name=="":
+            self.class_name='cheque'
+        if self.app_name is None or self.app_name=="":
+            self.app_name=APP_NAME
         super(Cheque,self).save(*args, **kwargs)
 
 

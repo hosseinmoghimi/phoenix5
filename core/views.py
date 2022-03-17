@@ -1,4 +1,5 @@
 import json
+from tkinter.messagebox import NO
 from django.http import Http404
 from django.shortcuts import render
 from .apps import APP_NAME
@@ -46,8 +47,14 @@ def CoreContext(request,*args, **kwargs):
     }
     return context
 
-def PageContext(request,page,*args, **kwargs):
+def PageContext(request,*args, **kwargs):
     context={}
+    if 'page' in kwargs:
+        page=kwargs['page']
+    if 'page_id' in kwargs:
+        page=PageRepo(request=request).page(pk=kwargs['page_id'])
+    if page is None:
+        raise Http404
     context['page']=page
     links=page.pagelink_set.all()
     links_s=json.dumps(PageLinkSerializer(links,many=True).data)

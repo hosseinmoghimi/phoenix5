@@ -1,5 +1,5 @@
 from .apps import APP_NAME
-from .models import Account, FinancialDocument, FinancialYear, Invoice, Product,Service, SubAccount, Transaction
+from .models import Account, Cheque, FinancialDocument, FinancialYear, Invoice, Product,Service, SubAccount, Transaction
 from django.db.models import Q
 from authentication.repo import ProfileRepo
 from django.utils import timezone
@@ -147,6 +147,7 @@ class FinancialDocumentRepo:
 class AccountRepo():
     def __init__(self, *args, **kwargs):
         self.request = None
+        self.me=None
         self.user = None
         if 'request' in kwargs:
             self.request = kwargs['request']
@@ -156,6 +157,8 @@ class AccountRepo():
         
         self.objects=Account.objects.all()
         self.profile=ProfileRepo(*args, **kwargs).me
+        if self.profile is not None:
+            self.me=Account.objects.filter(profile=self.profile).first()
        
 
     def account(self, *args, **kwargs):
@@ -217,6 +220,87 @@ class InvoiceRepo():
 
    
 
+   
+class ChequeRepo():
+    def __init__(self, *args, **kwargs):
+        self.request = None
+        self.user = None
+        if 'request' in kwargs:
+            self.request = kwargs['request']
+            self.user = self.request.user
+        if 'user' in kwargs:
+            self.user = kwargs['user']
+        
+        self.objects=Cheque.objects.all()
+        self.profile=ProfileRepo(*args, **kwargs).me
+       
+    def add_cheque(self,*args, **kwargs):
+        if not self.request.user.has_perm(APP_NAME+".add_cheque"):
+            return
+        cheque=Cheque()
+        me_acc=AccountRepo(request=self.request).me
+
+        if 'title' in kwargs:
+            cheque.title=kwargs['title']
+        if 'cheque_date' in kwargs:
+            cheque.cheque_date=kwargs['cheque_date']
+        else:
+            cheque.cheque_date=timezone.now()
+
+
+            
+        if 'pay_to_id' in kwargs:
+            cheque.pay_to_id=kwargs['pay_to_id']
+        else:
+            cheque.pay_to_id=me_acc.id
+        if 'pay_from_id' in kwargs:
+            cheque.pay_from_id=kwargs['pay_from_id']
+        else:
+            cheque.pay_from_id=me_acc.id
+
+
+        cheque.creator=self.profile
+
+
+        if 'transaction_datetime' in kwargs:
+            cheque.transaction_datetime=kwargs['transaction_datetime']
+        else:
+            cheque.transaction_datetime=timezone.now()
+            
+        if 'amount' in kwargs:
+            cheque.amount=kwargs['amount']
+        else:
+            cheque.amount=0
+
+
+        cheque.save()
+        return cheque
+
+    def cheque(self, *args, **kwargs):
+        pk=0
+        if 'cheque_id' in kwargs:
+            pk=kwargs['cheque_id']
+            return self.objects.filter(pk=pk).first()
+        if 'pk' in kwargs:
+            pk=kwargs['pk']
+            return self.objects.filter(pk=pk).first()
+        if 'id' in kwargs:
+            pk=kwargs['id']
+            return self.objects.filter(pk=pk).first()
+     
+    def list(self, *args, **kwargs):
+        objects = self.objects
+        if 'search_for' in kwargs:
+            search_for=kwargs['search_for']
+            objects = objects.filter(Q(title__contains=search_for)|Q(short_description__contains=search_for)|Q(description__contains=search_for))
+        if 'for_home' in kwargs:
+            objects = objects.filter(Q(for_home=kwargs['for_home']))
+        if 'parent_id' in kwargs:
+            objects=objects.filter(parent_id=kwargs['parent_id'])
+        return objects.all()
+
+   
+
 class TransactionRepo():
     def __init__(self, *args, **kwargs):
         self.request = None
@@ -239,6 +323,8 @@ class TransactionRepo():
 
     def transaction(self, *args, **kwargs):
         pk=0
+        if 'transaction' in kwargs:
+            return kwargs['transaction']
         if 'transaction_id' in kwargs:
             pk=kwargs['transaction_id']
         elif 'pk' in kwargs:

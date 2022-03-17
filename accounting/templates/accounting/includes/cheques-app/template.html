@@ -1,0 +1,18 @@
+<div class="card" id="cheques-app">
+    <div class="card-header">
+        <h4 class="text-center">
+            چک ها
+        </h4>
+    </div>
+    <div class="card-body">
+        {% include "accounting/includes/cheques-app/table.html" %}
+
+    </div>
+
+    {% if add_cheque_form %}
+    <div class="card-footer">
+        {% include "accounting/includes/cheques-app/add-cheque-form.html" %}
+    </div>
+    {% endif %}
+
+</div>

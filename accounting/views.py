@@ -1,11 +1,13 @@
+from django.http import Http404
 from django.shortcuts import render,reverse
 from accounting.utils import init_sub_accounts
 from core.views import CoreContext, PageContext,SearchForm
 # Create your views here.
 from django.views import View
 from .apps import APP_NAME
-from .repo import AccountRepo, ProductRepo,ServiceRepo,FinancialDocumentRepo,InvoiceRepo, TransactionRepo
-from .serializers import ProductSerializer,ServiceSerializer,FinancialDocumentForAccountSerializer,FinancialDocumentSerializer
+from .repo import AccountRepo, ChequeRepo, ProductRepo,ServiceRepo,FinancialDocumentRepo,InvoiceRepo, TransactionRepo
+from .serializers import ChequeSerializer, ProductSerializer,ServiceSerializer,FinancialDocumentForAccountSerializer,FinancialDocumentSerializer
+from .forms import *
 import json
 
 
@@ -28,9 +30,14 @@ def get_invoice_context(request,*args, **kwargs):
     return context
 
 
-def get_transaction_context(request,*args, **kwargs):
+def getTransactionContext(request,*args, **kwargs):
     context={}
-    transaction=TransactionRepo(request=request).transaction(*args, **kwargs)
+    if 'transation' in kwargs:
+        transaction=kwargs['transaction']
+    else:
+        transaction=TransactionRepo(request=request).transaction(*args, **kwargs)
+    if transaction is None:
+        raise Http404
     context['transaction']=transaction
     context.update(PageContext(request=request,page=transaction))
     return context
@@ -52,7 +59,7 @@ class InvoicesView(View):
 class TransactionView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
-        context.update(get_transaction_context(request=request,*args, **kwargs))
+        context.update(getTransactionContext(request=request,*args, **kwargs))
         return render(request,TEMPLATE_ROOT+"transaction.html",context)
 class TransactionsView(View):
     def get(self,request,*args, **kwargs):
@@ -86,6 +93,27 @@ class ProductsView(View):
         context['products_s']=products_s
         return render(request,TEMPLATE_ROOT+"products.html",context)
 
+class ChequesView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        cheques=ChequeRepo(request=request).list(*args, **kwargs)
+        context['cheques']=cheques
+        cheques_s=json.dumps(ChequeSerializer(cheques,many=True).data)
+        context['cheques_s']=cheques_s
+        if request.user.has_perm(APP_NAME+".add_cheque"):
+            context['add_cheque_form']=AddChequeForm()
+        return render(request,TEMPLATE_ROOT+"cheques.html",context)
+
+class ChequeView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        cheque=ChequeRepo(request=request).cheque(*args, **kwargs)
+        context['cheque']=cheque
+        cheque_s=json.dumps(ChequeSerializer(cheque).data)
+        context['cheque_s']=cheque_s 
+        context.update(getTransactionContext(request=request,transaction=cheque))
+        return render(request,TEMPLATE_ROOT+"cheque.html",context)
+    
 class ProductView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
