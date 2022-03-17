@@ -1,2 +1,44 @@
-{% extends "core/page.html" %}
- 
+{% extends "projectmanager/layout.html" %}
+
+{% block content %}
+
+{% include "core/includes/page-navbar.html" %}
+
+
+<div class="row">
+    <div class="col-md-4">
+        {% include "core/includes/page-thumbnail-card.html" %}
+
+    </div>
+    <div class="col-md-4">
+        {% include "core/includes/page-brief-card.html" %}
+
+
+
+    </div>
+    <div class="col-md-4">
+        {% include "core/includes/page-downloads-app/template.html" %}
+        {% include "core/includes/page-links-app/template.html" %}
+
+    </div>
+    <div class="col-md-12">
+        {% include "core/includes/page-description-app/short-description.html" %}
+        {% include "core/includes/page-description-app/description.html" %}
+    </div> 
+    <div class="col-md-4">
+       
+    </div>
+
+</div>
+
+{% endblock content %}
+
+
+{% block script %}
+<script>
+    let page_id = parseInt("{{material.id}}")
+</script>
+{% include "core/includes/page-links-app/script.html" %}
+{% include "core/includes/page-downloads-app/script.html" %}
+
+{% endblock script %}

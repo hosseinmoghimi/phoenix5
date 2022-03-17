@@ -179,13 +179,17 @@ class Employee(Account):
 
 
 class OrganizationUnit(Page):
-    pre_title=models.CharField(_("pre_title"),default="", max_length=50)
+    pre_title=models.CharField(_("pre_title"),blank=True,null=True, max_length=50)
     account=models.ForeignKey("accounting.account",null=True,blank=True, verbose_name=_("account"), on_delete=models.CASCADE)
     parent=models.ForeignKey("OrganizationUnit",related_name="childs",null=True,blank=True, verbose_name=_("parent"), on_delete=models.CASCADE)
     def __str__(self):
         # return self.title
         return self.title+" "+(str(self.parent) if self.parent is not None and not self.parent.id==self.id else "")
 
+    def full_title(self):
+        if self.parent is None:
+            return self.title
+        return self.title+" " +self.parent.full_title()
     class Meta:
         verbose_name = _("OrganizationUnit")
         verbose_name_plural = _("واحد های سازمانی")
@@ -265,7 +269,7 @@ class Project(Page):
         if self.parent is None:
             return self.title
         return self.parent.full_title()+" : "+self.title
-    
+
     def sum_weight(self):
         sum_weight = 0
         sub_projects = self.sub_projects()

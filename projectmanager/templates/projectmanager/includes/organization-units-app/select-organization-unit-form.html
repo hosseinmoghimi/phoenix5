@@ -1,0 +1,68 @@
+{% load static %}
+
+{% if select_organization_unit_form %}
+<div class="row">
+    <div class="col-md-4">
+
+        <input @input="filter_list()" required type="text" v-model="new_organization_unit_title"
+            class="farsi form-control" placeholder="واحد سازمانی جدید">
+
+    </div>
+</div>
+
+<div v-if="show_form">
+    <div v-for="organization_unit in all_organization_units">
+        <div class="row mb-2">
+
+
+
+            <div class="col-md-4">
+                <button @click="select_organization_unit(organization_unit.id)" style="max-width: 80px!important;"
+                    v-if="!waiting" class="btn btn-primary" type="submit">
+                    <i class="fa fa-plus"></i>
+
+                    انتخاب</button>
+            </div>
+
+
+            <div class="col-md-8">
+                <h5>
+                    <a :href="organization_unit.get_absolute_url">
+
+                        <span v-text="organization_unit.title"></span>
+                    </a>
+                </h5>
+
+                <h6 class="text-muted">
+                    <span v-text="organization_unit.full_title"></span>
+                </h6>
+            </div>
+
+        </div>
+        <hr>    
+    </div>
+</div>
+<div class="row">
+
+    <div class="col-md-4 text-right">
+        <img v-if="waiting" width="32" src="{% static 'leo/img/loading.gif' %}" alt="">
+
+
+
+
+
+        <button v-if="!waiting && false" style="max-width: 80px!important;" v-if="!waiting" class="btn btn-secondary"
+            @click="show_form=false">انصراف</button>
+
+
+    </div>
+    <div class="col-md-4 text-right">
+        <span v-if="message.show" :class="'alert alert-'+message.color">
+
+            <span class="farsi text-right">
+                <span v-text="message.text"></span>
+            </span>
+        </span>
+    </div>
+</div>
+{% endif %}

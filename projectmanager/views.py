@@ -56,6 +56,16 @@ class OrganizationUnitView(View):
         if request.user.has_perm(APP_NAME+".add_organizationunit"):
             context['add_organization_unit_form']=AddOrganizationUnitForm()
             context['show_organization_units_list']=True
+
+
+            
+        organization_units=OrganizationUnitRepo(request=request).list(parent_id=organization_unit.id,*args, **kwargs)
+        context['organization_units']=organization_units
+        organization_units_s=json.dumps(OrganizationUnitSerializer(organization_units,many=True).data)
+        context['organization_units_s']=organization_units_s
+        if request.user.has_perm(APP_NAME+".add_organizationunit"):
+            context['add_organization_unit_form']=AddOrganizationUnitForm()
+            context['show_organization_units_list']=True
         return render(request,TEMPLATE_ROOT+"organization-unit.html",context)
 class OrganizationUnitsView(View):
     def get(self,request,*args, **kwargs):
@@ -84,7 +94,17 @@ class ProjectView(View):
         context=getContext(request=request)
         project=ProjectRepo(request=request).project(*args, **kwargs)
         context.update(PageContext(request=request,page=project))
-        context['project']=project
+        context['project']=project  
+        organization_units=OrganizationUnitRepo(request=request).list(project_id=project.id,*args, **kwargs)
+        context['organization_units']=organization_units
+        organization_units_s=json.dumps(OrganizationUnitSerializer(organization_units,many=True).data)
+        context['organization_units_s']=organization_units_s
+        if request.user.has_perm(APP_NAME+".change_project"):
+            all_organization_units=OrganizationUnitRepo(request=request).list()
+            context['all_organization_units']=all_organization_units
+            all_organization_units_s=json.dumps(OrganizationUnitSerializer(all_organization_units,many=True).data)
+            context['all_organization_units_s']=all_organization_units_s
+            context['select_organization_unit_form']=True
         return render(request,TEMPLATE_ROOT+"project.html",context)
 
 

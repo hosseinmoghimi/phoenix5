@@ -9,7 +9,7 @@
 <form @submit.prevent="add_organization_unit()" v-if="show_form">
     <div class="row">
         <div class="col-md-4">
-            <input required type="text" v-model="new_organization_unit_title" class="farsi form-control"
+            <input @input="filter_list()" required type="text" v-model="new_organization_unit_title" class="farsi form-control"
                 placeholder="واحد سازمانی جدید">
 
         </div>
@@ -40,3 +40,4 @@
     </div>
 
 </form>
+

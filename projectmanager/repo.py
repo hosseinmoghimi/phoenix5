@@ -1,3 +1,4 @@
+from urllib import request
 from .apps import APP_NAME
 from .models import Material,PM_Service as Service, Project,OrganizationUnit,WareHouse
 
@@ -136,22 +137,39 @@ class OrganizationUnitRepo():
     def add_organization_unit(self,*args, **kwargs):
         if not self.user.has_perm(APP_NAME+".add_organizationunit"):
             return None
+
+        if 'organization_unit_id' in kwargs and kwargs['organization_unit_id'] is not None:
+            organization_unit=self.organization_unit(pk=kwargs['organization_unit_id'])
+            
         if 'is_ware_house' in kwargs and kwargs['is_ware_house']==True:
-            new_organization = WareHouse()
+            new_organization_unit = WareHouse()
         else:
-            new_organization = OrganizationUnit()
+            new_organization_unit = OrganizationUnit()
 
         if 'title' in kwargs:
-            new_organization.title = kwargs['title']
+            new_organization_unit.title = kwargs['title']
 
          
         if 'parent_id' in kwargs:
-            new_organization.parent_id=kwargs['parent_id']
+            new_organization_unit.parent_id=kwargs['parent_id']
       
+      
+         
+        if 'page_id' in kwargs and kwargs['page_id'] is not None: 
+            new_organization_unit=organization_unit
+
+            project_id=kwargs['page_id']
+            project=ProjectRepo(request=self.request).project(pk=project_id)
+            if project is not None:
+                project.organization_units.add(organization_unit)
+        
       
 
-        new_organization.save()
-        return new_organization
+
+      
+      
+        new_organization_unit.save()
+        return new_organization_unit
 
     def organization_unit(self, *args, **kwargs):
         pk=0
@@ -172,6 +190,9 @@ class OrganizationUnitRepo():
             objects = objects.filter(Q(for_home=kwargs['for_home']))
         if 'parent_id' in kwargs:
             objects=objects.filter(parent_id=kwargs['parent_id'])
+        if 'project_id' in kwargs:
+            project=ProjectRepo(request=self.request).project(project_id=kwargs['project_id'])
+            objects=project.organization_units.all()
         return objects.all()
 
    

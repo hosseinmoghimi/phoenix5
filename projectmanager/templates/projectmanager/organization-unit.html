@@ -1,78 +1,37 @@
 {% extends "projectmanager/layout.html" %}
 
 {% block content %}
-<h6 class="text-center text-muted">
-    {{organization_unit.class_title}}
-</h6>
-<h5 class="text-center">
-    <small>
-
-        {{organization_unit.pre_title}}
-    </small>
-    {{organization_unit.title}}
-
-    {% if perms.organization_unit.change_organizationunit %}
-    <a href="{{organization_unit.get_edit_url}}" target="_blank" title="ویرایش" class="mx-2"><i
-            class="fa fa-edit text-warning"></i></a>
-    {% endif %}
 
 
+{% include "core/includes/page-navbar.html" %}
 
-    {% if perms.organization_unit.delete_organizationunit %}
-    <a href="{{organization_unit.get_delete_url}}" target="_blank" title="حذف" class="mx-2"><i
-            class="fa fa-trash text-danger"></i></a>
-    {% endif %}
-</h5>
 <div class="row">
-    <div class="col-md-8">
-        <div class="card" style="height: 90%;">
-            <div class="card-header">
-                <h6 class="text-muted" v-if="organization_unit.pre_title">
-                    <small>
+    <div class="col-md-4">
+        {% include "core/includes/page-thumbnail-card.html" %}
 
-                        {{organization_unit.pre_title}}
-                    </small>
-                   
-
-                </h6>
-
-                <h5>
-                    {{organization_unit.title}}
-                </h5>
-            </div>
-            <div class="farsi card-body text-right">
-                {% if perms.core.change_page %}
-                <a href="{{organization_unit.get_edit_url}}" target="_blank" title="ویرایش" class="mx-2 text-warning"><i
-                        class="fa fa-edit"></i> ویرایش</a>
-                {% endif %}
-
-
-
-                {% if perms.core.delete_page %}
-                <a href="{{organization_unit.get_delete_url}}" target="_blank" title="حذف" class="mx-2 text-danger"><i
-                        class="fa fa-trash"></i> حذف</a>
-                {% endif %}
-
-            </div>
-        </div>
     </div>
     <div class="col-md-4">
-        <div class="card">
-            <div class="card-body">
-                {% if organization_unit.thumbnail %}
-                <img src="{{organization_unit.thumbnail}}" class="rounded" width="100%" alt="">
-                {% endif %}
-            </div>
-        </div>
-    </div>
-    <div class="col-md-12">
-        {% include "core/includes/page-description-app/short-description.html" %}
-        {% include "core/includes/page-description-app/description.html" %}
+        {% include "core/includes/page-brief-card.html" %}
+
+
+
     </div>
     <div class="col-md-4">
         {% include "core/includes/page-downloads-app/template.html" %}
         {% include "core/includes/page-links-app/template.html" %}
 
+    </div>
+    <div class="col-md-12">
+        {% include "core/includes/page-description-app/short-description.html" %}
+        {% include "core/includes/page-description-app/description.html" %}
+    </div>
+
+
+    <div class="col-md-12">
+        {% include "projectmanager/includes/organization-units-app/template.html" %}
+    </div>
+    <div class="col-md-4">
+    
     </div>
 
 </div>
@@ -82,9 +41,10 @@
 
 {% block script %}
 <script>
-    let page_id=parseInt("{{organization_unit.id}}")
+    let page_id = parseInt("{{organization_unit.id}}")
 </script>
 {% include "core/includes/page-links-app/script.html" %}
 {% include "core/includes/page-downloads-app/script.html" %}
+{% include "projectmanager/includes/organization-units-app/script.html" %}
 
 {% endblock script %}
