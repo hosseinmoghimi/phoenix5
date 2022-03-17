@@ -106,11 +106,12 @@ class ProductorService(Page):
         request=get_request()
         if request is not None:
              
-            account,a=Account.objects.get_or_create(profile__user_id=request.user.id)
-            last_price=Price.objects.filter(sell_price__gt=0).filter(product_or_service=self).filter(account=account).order_by("-date_added").first()
+            account=Account.objects.filter(profile__user_id=request.user.id).first()
+            if account is not None:
+                last_price=Price.objects.filter(sell_price__gt=0).filter(product_or_service=self).filter(account=account).order_by("-date_added").first()
 
-            if last_price is not None:
-                return last_price.sell_price
+                if last_price is not None:
+                    return last_price.sell_price
 
         return 0
 
@@ -119,7 +120,7 @@ class ProductorService(Page):
         request=get_request()
         if request is not None:
              
-            account,a=Account.objects.get_or_create(profile__user_id=request.user.id)
+            account=Account.objects.filter(profile__user_id=request.user.id).first()
             last_price=Price.objects.filter(buy_price__gt=0).filter(product_or_service=self).filter(account=account).order_by("-date_added").first()
 
             if last_price is not None:
