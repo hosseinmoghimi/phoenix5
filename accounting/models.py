@@ -345,7 +345,6 @@ class FinancialDocument(models.Model,LinkHelper):
         self.normalize_sub_accounts()
        
 
-
 class FinancialBalance(models.Model,LinkHelper):
     app_name=APP_NAME
     class_name="financialbalance"
@@ -508,6 +507,7 @@ class Invoice(Transaction):
     def get_edit_url2(self):
         return reverse(APP_NAME+":edit_invoice",kwargs={'pk':self.pk})
 
+
 class InvoiceLine(models.Model):
     date_added=models.DateTimeField(_("date_added"), auto_now=False, auto_now_add=True)
     invoice=models.ForeignKey("invoice",blank=True, verbose_name=_("invoice"),related_name="lines", on_delete=models.CASCADE)
@@ -659,7 +659,6 @@ class Payment(Transaction):
         ifd1.save()
 
 
-
 class Salary(Spend,LinkHelper):    
     class_name="wage"
     month=models.IntegerField(_("month"))
@@ -670,7 +669,6 @@ class Salary(Spend,LinkHelper):
     class Meta:
         verbose_name = _("Salary")
         verbose_name_plural = _("Salaries")
-
    
     def save(self,*args, **kwargs):
         if self.class_name is None or self.class_name=="":
@@ -683,7 +681,6 @@ class Salary(Spend,LinkHelper):
             fb=FinancialBalance(financial_document=fd)
             fb.wage=self.amount
             fb.save()
-            
 
             
 class Cost(Spend,LinkHelper):    
