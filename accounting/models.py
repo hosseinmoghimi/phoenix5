@@ -310,7 +310,12 @@ class FinancialDocument(models.Model,LinkHelper):
 
     @property
     def persian_document_datetime(self):
-        return PersianCalendar().from_gregorian(self.document_datetime)
+        from utility.templatetags import to_persian_date
+        a=to_persian_date.to_persian_datetime(self.document_datetime)
+        return a
+        # a= PersianCalendar().from_gregorian(self.document_datetime)
+        # return f"""<span class="ltr" title="{self.document_datetime.strftime("%Y/%m/%d %H:%M:%S") }">{str(a)[:10]}<small class="mx-3 text-muted">{str(a)[11:]}</small></span>"""
+
      
     @property
     def title(self):

@@ -24,6 +24,7 @@ def getContext(request, *args, **kwargs):
 def get_invoice_context(request,*args, **kwargs):
     context={}
     invoice=InvoiceRepo(request=request).invoice(*args, **kwargs)
+    context.update(get_transaction_context(request=request,transaction=invoice))
     context['invoice']=invoice
     return context
 
@@ -42,7 +43,7 @@ def get_price_app_context(request,*args, **kwargs):
 
 def get_transaction_context(request,*args, **kwargs):
     context={}
-    if 'transation' in kwargs:
+    if 'transaction' in kwargs:
         transaction=kwargs['transaction']
     else:
         transaction=TransactionRepo(request=request).transaction(*args, **kwargs)

@@ -6,8 +6,11 @@ from utility.calendar import PersianCalendar
 @register.filter
 def to_persian_datetime(value):
     try:    
-        a=PersianCalendar().from_gregorian(value)        
-        return f'<span title="{value.strftime("%Y/%m/%d %H:%M:%S") }">{str(a)}</span>'
+        a=str(PersianCalendar().from_gregorian(value))
+        date_=a[:10]
+        time_=a[11:]
+        greg=value.strftime("%Y/%m/%d %H:%M:%S") 
+        return f"""<span class="ltr" title="{greg}"><small class="mx-3 text-muted">{time_}</small>{date_}</span>"""
     except:
         return None
 

@@ -18,6 +18,14 @@
 
 
 <div class="row farsi">
+    <div class="col-md-5">
+        {% include "core/includes/page-app/page-brief-card.html" %}
+
+    </div>
+    <div class="col-md-7">
+        {% include "accounting/includes/transaction-app/transaction-brief.html" %}
+
+    </div>
     <div class="col-md-12">
         <div class="card">
             <div class="card-body">
@@ -41,10 +49,7 @@
                                 مبلغ :
                                 {{transaction.amount|to_price}}
                             </div>
-                            <div class="text-right farsi">
-
-                                {{transaction.amount|to_horuf}} {{CURRENCY}}
-                            </div>
+                          
                         </div>
                     </div>
                     <div class="col-md-4">
