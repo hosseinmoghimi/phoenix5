@@ -45,6 +45,7 @@ class AddMaterialRequestForm(forms.Form):
     material_id=forms.IntegerField(required=True)
     unit_price=forms.IntegerField(required=True)
     unit_name=forms.CharField(max_length=50, required=True)
+    description=forms.CharField(max_length=500, required=False)
 
 class EditProjectForm(forms.Form):
     title=forms.CharField(max_length=100, required=False)

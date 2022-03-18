@@ -3,7 +3,7 @@ from urllib import request
 
 from projectmanager.enums import RequestStatusEnum, SignatureStatusEnum
 from .apps import APP_NAME
-from .models import Employee, Material,PM_Service as Service, Project,OrganizationUnit, RequestSignature, ServiceRequest,WareHouse
+from .models import Employee, Material, MaterialRequest,PM_Service as Service, Project,OrganizationUnit, RequestSignature, ServiceRequest,WareHouse
 
 from authentication.repo import ProfileRepo
 from django.db.models import Q
@@ -228,6 +228,98 @@ class ServiceRequestRepo():
         pk=0
         if 'service_request_id' in kwargs:
             pk=kwargs['service_request_id']
+        elif 'pk' in kwargs:
+            pk=kwargs['pk']
+        elif 'id' in kwargs:
+            pk=kwargs['id']
+        return self.objects.filter(pk=pk).first()
+     
+    def list(self, *args, **kwargs):
+        objects = self.objects
+        if 'search_for' in kwargs:
+            search_for=kwargs['search_for']
+            objects = objects.filter(Q(title__contains=search_for)|Q(short_description__contains=search_for)|Q(description__contains=search_for))
+        if 'for_home' in kwargs:
+            objects = objects.filter(Q(for_home=kwargs['for_home']))
+        if 'parent_id' in kwargs:
+            objects=objects.filter(parent_id=kwargs['parent_id'])
+        if 'project_id' in kwargs:
+            project=ProjectRepo(request=self.request).project(project_id=kwargs['project_id'])
+            objects=project.organization_units.all()
+        return objects.all()
+
+
+
+
+
+class MaterialRequestRepo():
+    def __init__(self, *args, **kwargs):
+        self.request = None
+        self.user = None
+        if 'request' in kwargs:
+            self.request = kwargs['request']
+            self.user = self.request.user
+        if 'user' in kwargs:
+            self.user = kwargs['user']
+        
+        self.objects=MaterialRequest.objects.all()
+        self.profile=ProfileRepo(*args, **kwargs).me
+    def add_material_request(self,*args, **kwargs):
+        if not self.user.has_perm(APP_NAME+".add_materialrequest"):
+            return None
+        self.employee=EmployeeRepo(request=self.request).me
+        project=ProjectRepo(request=self.request).project(*args, **kwargs)
+        if self.employee is not None:
+            project=ProjectRepo(request=self.request).project(*args, **kwargs)
+            if project is None:
+                return
+
+
+        new_material_request = MaterialRequest(status=RequestStatusEnum.DRAFT)
+        if 'project_id' in kwargs:
+            new_material_request.project_id = kwargs['project_id']
+        if 'employee_id' in kwargs:
+            employee_id = kwargs['employee_id']
+            if not employee_id==0:
+                new_material_request.employee_id=employee_id
+        if 'material_id' in kwargs:
+            if not kwargs['material_id']==0:
+                new_material_request.product_or_service_id = kwargs['material_id']
+        if 'quantity' in kwargs:
+            new_material_request.quantity = kwargs['quantity']
+        if 'unit_name' in kwargs:
+            new_material_request.unit_name = kwargs['unit_name']
+        if 'unit_price' in kwargs:
+            new_material_request.unit_price = kwargs['unit_price']
+        if 'description' in kwargs:
+            new_material_request.description = kwargs['description']
+        if 'status' in kwargs:
+            new_material_request.status = kwargs['status']
+        if 'date_requested' in kwargs:
+            new_material_request.date_requested = kwargs['date_requested']
+        else:
+            new_material_request.date_requested = timezone.now()
+        if 'material_title' in kwargs and not kwargs['material_title']=="":
+            material=Material.objects.filter(title=kwargs['material_title']).first()
+            if material is None:
+                material=Material(title=kwargs['material_title'],unit_price=kwargs['unit_price'],unit_name=kwargs['unit_name'])
+                material.save()            
+            new_material_request.material_id=material.id
+        new_material_request.employee_id = employee_id
+        new_material_request.creator=self.employee
+        if new_material_request.quantity > 0 and new_material_request.unit_price >= 0:
+            new_material_request.save()
+            # new_material_request.material.unit_price = new_material_request.unit_price
+            # new_material_request.material.unit_name = new_material_request.unit_name
+            # new_material_request.material.save()
+            material_request_signature=RequestSignature(employee=self.employee,request=new_material_request,status=SignatureStatusEnum.REQUESTED)
+            material_request_signature.save()
+            return new_material_request
+
+    def material_request(self, *args, **kwargs):
+        pk=0
+        if 'material_request_id' in kwargs:
+            pk=kwargs['material_request_id']
         elif 'pk' in kwargs:
             pk=kwargs['pk']
         elif 'id' in kwargs:

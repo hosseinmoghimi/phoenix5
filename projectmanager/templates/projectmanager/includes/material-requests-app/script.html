@@ -13,6 +13,7 @@
             add_material_request_form_unit_price: 0,
             add_material_request_form_unit_name: "",
             add_material_request_form_quantity: "",
+            add_material_request_form_description:"",
             material_requests:material_requests,
             waiting: false,
             sum_material_requests: 0,
@@ -67,10 +68,10 @@
                     quantity: this.add_material_request_form_quantity,
                     employee_id: this.add_material_request_form_employee_id,
                     // status: this.add_material_request_form_status,
-                    // description: this.add_material_request_form_description,
+                    description: this.add_material_request_form_description,
                     csrfmiddlewaretoken: csrfmiddlewaretoken
                 }
-                //console.log(payload)
+                console.log(payload)
 
 
                 var posting = $.post(url_add_material_request, payload);
@@ -81,11 +82,13 @@
                 // Put the results in a div
                 posting.done(function (data) {
                     material_requests_app.waiting = false
+                    console.log(data)
 
                     if (data.result === 'SUCCEED') {
                         material_requests_app.material_requests.push(data.material_request)
                         // material_requests_app.show_add_material_request_form = false
                         material_requests_app.sum_material_requests += data.material_request.quantity * data.material_request.unit_price
+                        showNotification('top', 'center', 'settings', 'success', `<div class="text-center farsi">با موفقیت افزوده شد.</div>`)
 
 
 
@@ -102,7 +105,7 @@
                 this.materials = [material]
             },
             filter_list: function () {
-                if (this.add_material_request_form_title) {
+                if (this.add_material_request_form_title.length>3) {
 
                     this.materials = all_materials.filter(item => item.full_title.toUpperCase().includes(this.add_material_request_form_title.toUpperCase())).slice(0, 6);
                     try {
