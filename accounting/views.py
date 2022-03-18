@@ -168,7 +168,6 @@ class ChequesView(View):
         if request.user.has_perm(APP_NAME+".add_cheque"):
             context['add_cheque_form']=AddChequeForm()
         return render(request,TEMPLATE_ROOT+"cheques.html",context)
-
 class ChequeView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -195,9 +194,7 @@ class AccountView(View):
         financial_balances=FinancialBalanceRepo(request=request).list(account_id=account.id)
         context['financial_balances']=financial_balances
 
-        return render(request,TEMPLATE_ROOT+"account.html",context)
-
-        
+        return render(request,TEMPLATE_ROOT+"account.html",context)      
 class AccountsView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -215,8 +212,6 @@ class FinancialDocumentsView(View):
         rest=0
         context['rest']=rest
         return render(request,TEMPLATE_ROOT+"financial-documents.html",context)
-
-
 class FinancialDocumentView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)

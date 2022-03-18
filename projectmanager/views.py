@@ -1,3 +1,4 @@
+from accounting.views import get_service_context,get_product_context
 from django.shortcuts import render
 # Create your views here.
 from django.shortcuts import render,reverse
@@ -99,6 +100,8 @@ class ProjectView(View):
         context=getContext(request=request)
         project=ProjectRepo(request=request).project(*args, **kwargs)
         context.update(PageContext(request=request,page=project))
+
+
         context['project']=project  
         organization_units=OrganizationUnitRepo(request=request).list(project_id=project.id,*args, **kwargs)
         context['organization_units']=organization_units
@@ -151,7 +154,7 @@ class MaterialView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
         material=MaterialRepo(request=request).material(*args, **kwargs)
-        context.update(PageContext(request=request,page=material))
+        context.update(get_product_context(request=request,product=material))
         context['material']=material
  
         material_requests=material.material_requests()
@@ -176,9 +179,9 @@ class ServicesView(View):
 class ServiceView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
+        
         service=ServiceRepo(request=request).service(*args, **kwargs)
-        context.update(PageContext(request=request,page=service))
-        context['service']=service
+        context.update(get_service_context(request=request,service=service))
         
 
         service_requests=service.service_requests()
