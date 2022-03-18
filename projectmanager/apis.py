@@ -86,14 +86,15 @@ class AddServiceRequestApi(APIView):
                 quantity=fm['quantity']
                 unit_name=fm['unit_name']
                 unit_price=fm['unit_price']
+                service_id=fm['service_id']
                 description=fm['description']
-                print(fm)
                 service_request=ServiceRequestRepo(request=request).add_service_request(
                     service_title=service_title,
                     employee_id=employee_id,
                     project_id=project_id,
                     quantity=quantity,
                     unit_name=unit_name,
+                    service_id=service_id,
                     unit_price=unit_price,
                     description=description,
                 )

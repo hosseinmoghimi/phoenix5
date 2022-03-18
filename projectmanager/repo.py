@@ -1,7 +1,7 @@
 from django.utils import timezone
 from urllib import request
 
-from projectmanager.enums import RequestStatusEnum
+from projectmanager.enums import RequestStatusEnum, SignatureStatusEnum
 from .apps import APP_NAME
 from .models import Employee, Material,PM_Service as Service, Project,OrganizationUnit, RequestSignature, ServiceRequest,WareHouse
 
@@ -217,9 +217,9 @@ class ServiceRequestRepo():
         new_service_request.creator=self.employee
         if new_service_request.quantity > 0 and new_service_request.unit_price >= 0:
             new_service_request.save()
-            new_service_request.service.unit_price = new_service_request.unit_price
-            new_service_request.service.unit_name = new_service_request.unit_name
-            new_service_request.service.save()
+            # new_service_request.service.unit_price = new_service_request.unit_price
+            # new_service_request.service.unit_name = new_service_request.unit_name
+            # new_service_request.service.save()
             service_request_signature=RequestSignature(employee=self.employee,request=new_service_request,status=SignatureStatusEnum.REQUESTED)
             service_request_signature.save()
             return new_service_request

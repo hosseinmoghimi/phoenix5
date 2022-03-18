@@ -58,7 +58,6 @@
                 return {}
             },
             add_service_request: function () {
-                showNotification('top', 'center', 'settings', 'success', `<div class="text-center farsi">با موفقیت افزوده شد.</div>`)
 
                 service_requests_app.waiting = true
 
@@ -73,8 +72,6 @@
                     description: this.add_service_request_form_description,
                     csrfmiddlewaretoken: csrfmiddlewaretoken
                 }
-                console.log(payload)
-                console.log(url_add_service_request)
 
 
                 var posting = $.post(url_add_service_request, payload);
@@ -84,7 +81,6 @@
                 })
                 posting.done(function (data) {
                     service_requests_app.waiting = false
-                    console.log(data)
                     if (data.result === 'SUCCEED') {
                         service_requests_app.service_requests.push(data.service_request)
                         service_requests_app.sum_service_requests += data.service_request.quantity * data.service_request.unit_price
