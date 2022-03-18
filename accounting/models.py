@@ -321,17 +321,30 @@ class FinancialDocument(models.Model,LinkHelper):
 
     def __str__(self):
         return f"""{self.account.title} : {self.transaction.title} : {self.transaction.amount}"""
-
-    def save(self):
-        super(FinancialDocument,self).save()
-        financial_balances=FinancialBalance.objects.filter(financial_document=self)
-        if len(financial_balances)==0:
-            financial_balance=FinancialBalance()
-            financial_balance.bestankar=self.bestankar
-            financial_balance.bedehkar=self.bedehkar
-            financial_balance.title=FinancialBalanceTitleEnum.MISC
-            financial_balance.financial_document=self
-            financial_balance.save()
+    def normalize_sub_accounts(self,*args, **kwargs):
+ 
+        
+        aaa=FinancialBalance.objects.filter(financial_document=self).filter(title=FinancialBalanceTitleEnum.MISC)
+        aaa.delete()
+        aaa=FinancialBalance.objects.filter(financial_document=self)
+        sum_bestankar=0
+        sum_bedehkar=0
+        for a in aaa:
+            sum_bestankar+=a.bestankar
+            sum_bedehkar+=a.bedehkar
+        b=FinancialBalance()
+        b.financial_document=self
+        b.title==FinancialBalanceTitleEnum.MISC
+        b.bestankar=self.bestankar-sum_bestankar
+        b.bedehkar=self.bedehkar-sum_bedehkar
+        if b.bedehkar==0 and b.bestankar==0:
+            return 
+        else:
+            b.save()
+    def save(self,*args, **kwargs):
+        super(FinancialDocument,self).save(*args, **kwargs)
+        self.normalize_sub_accounts()
+       
 
 
 class FinancialBalance(models.Model,LinkHelper):
@@ -355,26 +368,16 @@ class FinancialBalance(models.Model,LinkHelper):
 
     def save(self,*args, **kwargs):
         super(FinancialBalance,self).save(*args, **kwargs)
-        if self.title==FinancialBalanceTitleEnum.MISC:
-            return
-        aaa=FinancialBalance.objects.filter(financial_document=self.financial_document).filter(title=FinancialBalanceTitleEnum.MISC)
-        aaa.delete()
         aaa=FinancialBalance.objects.filter(financial_document=self.financial_document)
         sum_bestankar=0
         sum_bedehkar=0
         for a in aaa:
             sum_bestankar+=a.bestankar
             sum_bedehkar+=a.bedehkar
-        b=FinancialBalance()
-        b.financial_document=self.financial_document
-        b.title==FinancialBalanceTitleEnum.MISC
-        b.bestankar=self.financial_document.bestankar-sum_bestankar
-        b.bedehkar=self.financial_document.bedehkar-sum_bedehkar
-        if b.bedehkar==0 and b.bestankar==0:
-            return 
+        if sum_bedehkar==self.financial_document.bedehkar and sum_bestankar==self.financial_document.bestankar:
+            return
         else:
-            b.save()
-
+            self.financial_document.normalize_sub_accounts()
 
 class FinancialDocumentTag(models.Model):
     title=models.CharField(_("title"), max_length=50)
