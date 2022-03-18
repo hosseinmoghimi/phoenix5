@@ -27,7 +27,6 @@ def get_invoice_context(request,*args, **kwargs):
     context['invoice']=invoice
     return context
 
-
 def get_price_app_context(request,*args, **kwargs):
     context={}
     accounts=AccountRepo(request=request).my_list(*args, **kwargs)
@@ -41,7 +40,7 @@ def get_price_app_context(request,*args, **kwargs):
     context['prices']=prices
     return context
 
-def getTransactionContext(request,*args, **kwargs):
+def get_transaction_context(request,*args, **kwargs):
     context={}
     if 'transation' in kwargs:
         transaction=kwargs['transaction']
@@ -52,7 +51,6 @@ def getTransactionContext(request,*args, **kwargs):
     context['transaction']=transaction
     context.update(PageContext(request=request,page=transaction))
     return context
-
 
 def get_product_or_service_context(request,*args, **kwargs):
     context={}
@@ -73,7 +71,6 @@ def get_product_or_service_context(request,*args, **kwargs):
 
     return context
 
-
 def get_product_context(request,*args, **kwargs):
     product=ProductRepo(request=request).product(*args, **kwargs)
     context=get_product_or_service_context(request=request,item=product,*args, **kwargs)
@@ -82,7 +79,6 @@ def get_product_context(request,*args, **kwargs):
 def get_service_context(request,*args, **kwargs):
     context=get_product_or_service_context(request=request,*args, **kwargs)
     return context
-
 
 
 class InvoiceView(View):
@@ -98,11 +94,10 @@ class InvoicesView(View):
         return render(request,TEMPLATE_ROOT+"invoices.html",context)
 
 
-
 class TransactionView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
-        context.update(getTransactionContext(request=request,*args, **kwargs))
+        context.update(get_transaction_context(request=request,*args, **kwargs))
         return render(request,TEMPLATE_ROOT+"transaction.html",context)
 class TransactionsView(View):
     def get(self,request,*args, **kwargs):
@@ -127,6 +122,7 @@ class HomeView(View):
         context['products_s']=products_s
         return render(request,TEMPLATE_ROOT+"index.html",context)
 
+
 class ProductsView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -141,6 +137,7 @@ class ProductView(View):
         product=ProductRepo(request=request).product(*args, **kwargs)
         context.update(get_product_context(request=request,product=product))
         return render(request,TEMPLATE_ROOT+"product.html",context)
+
 
 class ServicesView(View):
     def get(self,request,*args, **kwargs):
@@ -175,7 +172,7 @@ class ChequeView(View):
         context['cheque']=cheque
         cheque_s=json.dumps(ChequeSerializer(cheque).data)
         context['cheque_s']=cheque_s 
-        context.update(getTransactionContext(request=request,transaction=cheque))
+        context.update(get_transaction_context(request=request,transaction=cheque))
         return render(request,TEMPLATE_ROOT+"cheque.html",context)
     
 
@@ -201,6 +198,7 @@ class AccountsView(View):
         accounts=AccountRepo(request=request).list(*args, **kwargs)
         context['accounts']=accounts
         return render(request,TEMPLATE_ROOT+"accounts.html",context)
+
 
 class FinancialDocumentsView(View):
     def get(self,request,*args, **kwargs):
