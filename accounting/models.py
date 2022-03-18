@@ -107,6 +107,7 @@ class Transaction(Page,LinkHelper):
             return PersianCalendar().from_gregorian(self.transaction_datetime)
         return to_persian_datetime_tag(self.transaction_datetime)
 
+
 class ProductOrService(Page):
 
     
@@ -352,7 +353,10 @@ class FinancialDocument(models.Model,LinkHelper):
         super(FinancialDocument,self).save(*args, **kwargs)
         self.normalize_sub_accounts()
        
-
+    def is_bestankar(self):
+        return self.bestankar>0 
+    def is_bedehkar(self):
+        return self.bedehkar>0
 class FinancialBalance(models.Model,LinkHelper):
     app_name=APP_NAME
     class_name="financialbalance"

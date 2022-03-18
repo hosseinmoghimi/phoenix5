@@ -1,0 +1,195 @@
+{% load to_price %}
+{% load static %}
+{% load to_transaction_side %}
+{% load to_persian_date %}
+<div class="card">
+    <div class="card-header">
+        <h5>
+            {{financial_document.title}}
+            {{financial_document|to_transaction_side|safe}}
+        </h5>
+    </div>
+    <div class="farsi card-body text-right">
+
+        <h5>
+            {{financial_document.title}}
+            {{financial_document|to_transaction_side|safe}}
+
+            {% if perms.hesabyar.change_financialdocument %}
+            <a href="{{financial_document.get_edit_url}}" target="_blank" title="ویرایش" class="mx-2"><i
+                    class="fa fa-edit text-info"></i></a>
+            {% endif %}
+
+            {% if perms.hesabyar.delete_financialdocument %}
+            <a href="{{financial_document.get_delete_url}}" target="_blank" title="حذف" class="mx-2"><i
+                    class="fa fa-trash text-danger"></i></a>
+            {% endif %}
+
+        </h5>
+        <table class="table">
+            <tr>
+                <td>
+                    <div class="text-left">
+                        حساب
+                    </div>
+                </td>
+                <td>
+                    <a href="{{financial_document.account.get_absolute_url}}">
+                        <img src="{{financial_document.account.profile.image}}" class="rounded-circle" width="48"
+                            alt="">
+                        {{financial_document.account.title}}
+                        {{financial_document|to_transaction_side|safe}}
+
+                    </a>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="text-left">
+                        تراکنش
+                    </div>
+                </td>
+                <td>
+                    <a href="{{financial_document.transaction.get_absolute_url}}">
+
+                        {{financial_document.transaction.title}}
+                        <small class="text-muted">
+
+                            {{financial_document.transaction.payment_method}}
+                        </small>
+                    </a>
+                </td>
+            </tr>
+
+
+            {% if financial_document.is_bedehkar %}
+            <tr>
+                <td>
+                    <div class="text-left">
+                        بدهکار
+                    </div>
+                </td>
+                <td>
+
+                    {{financial_document.bedehkar|to_price}}
+                </td>
+            </tr>
+            {% endif %}
+
+            {% if financial_document.is_bestankar %}
+
+            <tr>
+                <td>
+                    <div class="text-left">
+                        بستانکار
+                    </div>
+                </td>
+                <td>
+
+                    {{financial_document.bestankar|to_price}}
+                </td>
+            </tr>
+            {% endif %}
+
+
+            <tr>
+                <td>
+                    <div class="text-left">
+                        مانده
+                    </div>
+                </td>
+                <td>
+
+                    {{financial_document.rest|to_price}}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="text-left">
+                        تاریخ
+                    </div>
+                </td>
+                <td>
+                    {{financial_document.persian_document_datetime|safe}}
+
+                </td>
+            </tr>
+
+            {% if financial_document.is_bestankar%}
+
+            <tr>
+
+                <td>
+                    <div class="text-left">
+                        بستانکار
+                    </div>
+                </td>
+                <td>
+                    <p class="rounded py-2 px-2" style="background-color: #0d4c0a;color:white;">
+                        {{financial_document.bestankar|to_price}}
+
+                    </p>
+
+                    <p class="rounded py-2 px-2" style="background-color: #136a0d;color:white;">
+                        {{financial_document.bestankar|to_horuf}} {{CURRENCY}}
+
+                    </p>
+                    <p class="rounded py-2 px-2" style="background-color: #309128;color:white;">
+                        {{financial_document.bestankar|to_price_x10}} ریال
+
+                    </p>
+
+                    <p class="rounded py-2 px-2" style="background-color: #45b83c;color:white;">
+                        {{financial_document.bestankar|to_horuf_x10}} ریال
+
+                    </p>
+
+
+                </td>
+            </tr>
+
+            {% endif %}
+
+            {% if financial_document.is_bedehkar %}
+
+
+            <tr>
+
+                <td>
+                    <div class="text-left">
+                        بدهکار
+                    </div>
+                </td>
+                <td>
+                    <p class="rounded py-2 px-2" style="background-color: #740606;color:white;">
+                        {{financial_document.bedehkar|to_price}}
+
+                    </p>
+
+                    <p class="rounded py-2 px-2" style="background-color: #992e2c;color:white;">
+                        {{financial_document.bedehkar|to_horuf}} {{CURRENCY}}
+
+                    </p>
+                    <p class="rounded py-2 px-2" style="background-color: #c65350;color:white;">
+                        {{financial_document.bedehkar|to_price_x10}} ریال
+
+                    </p>
+
+                    <p class="rounded py-2 px-2" style="background-color: #cc7c79;color:white;">
+                        {{financial_document.bedehkar|to_horuf_x10}} ریال
+
+                    </p>
+
+
+                </td>
+            </tr>
+
+            {% endif %}
+
+        </table>
+
+
+
+
+    </div>
+</div>
