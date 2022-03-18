@@ -44,9 +44,10 @@ class FinancialDocumentSerializer(serializers.ModelSerializer):
                   'bestankar', 'persian_document_datetime', 'get_edit_url','get_delete_url']
 
 class PriceSerializer(serializers.ModelSerializer):
+    account=AccountSerializer()
     class Meta:
         model = Price
-        fields=['id','sell_price','buy_price','persian_date_added']
+        fields=['id','sell_price','account','profit_percentage','buy_price','persian_date_added','get_edit_url','get_delete_url']
 class FinancialDocumentForAccountSerializer(serializers.ModelSerializer):
     account = AccountSerializer()
 

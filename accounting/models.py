@@ -28,21 +28,26 @@ class Asset(Page,LinkHelper):
         return super(Asset,self).save(*args, **kwargs)
 
 
-class Price(models.Model):
+class Price(models.Model,LinkHelper):
     account=models.ForeignKey("account", verbose_name=_("account"), on_delete=models.CASCADE)
     product_or_service=models.ForeignKey("productorservice", verbose_name=_("product_or_service"), on_delete=models.CASCADE)
     sell_price=models.IntegerField(_("فروش"),default=0)
     buy_price=models.IntegerField(_("خرید"),default=0)
     date_added=models.DateTimeField(_("date_added"), auto_now=False, auto_now_add=True)
+    app_name=APP_NAME
+    class_name="price"
     def persian_date_added(self):
         return PersianCalendar().from_gregorian(self.date_added)
-
+    def profit_percentage(self):
+        if self.buy_price<=0:
+            return 100
+        return int(100.0*(self.sell_price-self.buy_price)/self.buy_price)
     class Meta:
         verbose_name = _("Price")
         verbose_name_plural = _("Prices")
 
     def __str__(self):
-        return f"""{self.product_or_service.title} @ {self.account} {self.date_added}"""
+        return f"""{self.product_or_service.title} @ {self.account} {self.persian_date_added()}"""
 
 
 class Transaction(Page,LinkHelper):

@@ -4,7 +4,7 @@ from core.views import CoreContext, PageContext,SearchForm
 # Create your views here.
 from django.views import View
 from .apps import APP_NAME
-from .repo import AccountRepo,FinancialBalanceRepo, ChequeRepo, ProductRepo,ServiceRepo,FinancialDocumentRepo,InvoiceRepo, TransactionRepo
+from .repo import AccountRepo,FinancialBalanceRepo, ChequeRepo, PriceRepo, ProductRepo,ServiceRepo,FinancialDocumentRepo,InvoiceRepo, TransactionRepo
 from .serializers import ChequeSerializer, ProductSerializer,ServiceSerializer,FinancialDocumentForAccountSerializer,FinancialDocumentSerializer
 from .forms import *
 import json
@@ -33,9 +33,12 @@ def get_price_app_context(request,*args, **kwargs):
     accounts=AccountRepo(request=request).my_list(*args, **kwargs)
     context['accounts']=accounts
     if 'items' in kwargs:
-        context['items']=kwargs['items']
+        items=kwargs['items']
     else:
-        context['items']=[]
+        items=[]
+    context['items']=items
+    prices=PriceRepo(request=request).list(item_id=items[0].id)
+    context['prices']=prices
     return context
 
 def getTransactionContext(request,*args, **kwargs):
@@ -136,9 +139,7 @@ class ProductView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
         product=ProductRepo(request=request).product(*args, **kwargs)
-        context.update(PageContext(request=request,page=product))
-        context.update(get_product_or_service_context(request=request,item=product))
-        context['product']=product
+        context.update(get_product_context(request=request,product=product))
         return render(request,TEMPLATE_ROOT+"product.html",context)
 
 class ServicesView(View):
@@ -153,9 +154,7 @@ class ServiceView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
         service=ServiceRepo(request=request).service(*args, **kwargs)
-        context.update(PageContext(request=request,page=service))
-        context.update(get_product_or_service_context(request=request,item=service))
-        context['service']=service
+        context.update(get_service_context(request=request,service=service))
         return render(request,TEMPLATE_ROOT+"service.html",context)
         
 

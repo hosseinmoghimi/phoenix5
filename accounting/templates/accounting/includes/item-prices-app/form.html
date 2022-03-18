@@ -1,0 +1,66 @@
+<form @submit.prevent="add_price()">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="form-group">
+                <label for="">کالا / خدمات </label>
+                <select v-model="item_id" class="form-control">
+                    {% for item in items %}
+
+                    <option value="{{item.id}}">{{item.title}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+
+        <div class="col-md-3">
+            <div class="form-group">
+                <label for="">حساب</label>
+                <select v-model="account_id" class="form-control">
+                    {% for account in accounts %}
+
+                    <option value="{{account.id}}">{{account.title}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="form-group">
+                <label for="">قیمت خرید</label>
+                <input required type="number" v-model="buy_price" class="form-control">
+
+            </div>
+        </div>
+
+        <div class="col-md-2">
+            <div class="form-group">
+                <label for="">قیمت فروش</label>
+                <input required type="number" v-model="sell_price" class="form-control">
+
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="form-group">
+                <label for="">&nbsp;</label>
+
+                <div class="text-right">
+
+                    <button type="submit" class="btn btn-success">
+                        <i class="fa fa-plus mr-2"></i>
+                        تایید</button>
+                </div>
+            </div>
+
+        </div>
+        <div class="col-md-12">
+            <div v-if="message.show">
+                <div :class="'alert alert-'+message.color">
+                    <p v-html="message.text"></p>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+</form>

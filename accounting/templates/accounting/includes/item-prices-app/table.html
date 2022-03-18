@@ -1,0 +1,122 @@
+{% load to_persian_date %}
+{% load to_price %}
+{% load static %}
+<table class="table table-striped">
+    <thead>
+        <th>
+            حساب
+        </th>
+        <th>
+            تاریخ
+        </th>
+        <th>
+            قیمت خرید
+        </th>
+        <th>
+            قیمت فروش
+        </th>
+        <th>
+            سود
+        </th>
+        <th>
+
+        </th>
+    </thead>
+    <tbody>
+        
+        <tr v-for="price in prices">
+            <td>
+                <a :href="price.account.get_absolute_url">
+                    <span v-text="price.account.title"></span>
+
+                </a>
+            </td>
+            <td>
+                <div class="small">
+                    <span v-text="price.persian_date_added.slice(0,10)"></span>
+
+                </div>
+                <div class="small text-muted">
+                    <span v-text="price.persian_date_added.slice(11)"></span>
+
+                </div>
+
+            </td>
+
+            <td>
+                <span v-text="to_price(price.buy_price)"></span>
+
+            </td>
+            <td>
+                <span v-text="to_price(price.sell_price)"></span>
+
+            </td>
+            <td>
+                <span v-text="price.profit_percentage"></span> %
+            </td>
+            <td>
+                {% if perms.accounting.change_price %}
+                <a :href="price.get_edit_url" target="_blank" title="ویرایش" class="mx-2 text-warning"><i
+                        class="fa fa-edit"></i> ویرایش</a>
+                {% endif %}
+
+
+
+                {% if perms.accounting.delete_price %}
+                <a :href="price.get_delete_url" target="_blank" title="حذف" class="mx-2 text-danger"><i
+                        class="fa fa-trash"></i> حذف</a>
+                {% endif %}
+
+            </td>
+        </tr>
+        
+        {% for price in prices %}
+
+        <tr>
+            <td>
+                <a href="{{price.account.get_absolute_url}}">
+
+                    {{price.account.title}}
+                </a>
+            </td>
+            <td>
+                <div class="small">
+                    {{price.date_added|to_persian_date|safe}}
+
+                </div>
+                <div class="small text-muted">
+                    {{price.date_added|to_persian_time|safe}}
+
+                </div>
+            </td>
+
+            <td>
+                {{price.buy_price|to_price}}
+
+            </td>
+            <td>
+                {{price.sell_price|to_price}}
+
+            </td>
+            <td>
+                {{price.profit_percentage}} %
+            </td>
+            <td>
+                {% if perms.accounting.change_price %}
+                <a href="{{price.get_edit_url}}" target="_blank" title="ویرایش" class="mx-2 text-warning"><i
+                        class="fa fa-edit"></i> ویرایش</a>
+                {% endif %}
+
+
+
+                {% if perms.accounting.delete_price %}
+                <a href="{{price.get_delete_url}}" target="_blank" title="حذف" class="mx-2 text-danger"><i
+                        class="fa fa-trash"></i> حذف</a>
+                {% endif %}
+
+
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

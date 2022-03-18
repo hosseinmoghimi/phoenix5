@@ -1,55 +1,37 @@
-<div class="card" id="item-prices-app">
-    <div class="card-body">
-        <h4>
-            {{page.title}}
-        </h4>
-        <form @submit.prevent="add_price()">
-            <div class="row">
-                <div class="col-md-4">
-                    <div class="form-group">
-                        <label for="">آیتم</label>
-                        <select v-model="item_id" class="form-control">
-                            {% for item in items %}
+{% load to_persian_date %}
+{% load to_price %}
+{% load static %}
+<div id="accordion-item-prices">
 
-                            <option value="{{item.id}}">{{item.title}}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                </div>
+    <div class="card" id="item-prices-app">
 
 
-                <div class="col-md-4">
-                    <div class="form-group">
-                        <label for="">حساب</label>
-                        <select v-model="account_id" class="form-control">
-                            {% for account in accounts %}
+        <div class="card-header" id="headingItemPrices">
+            <h5 class="text-center">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapseItemPrices"
+                    aria-expanded="true" aria-controls="collapseItemPrices">
+                    قیمت های ثبت شده
+                </button>
+            </h5>
+        </div>
 
-                            <option value="{{account.id}}">{{account.title}}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="form-group">
-                        <label for="">قیمت خرید</label>
-                        <input required type="number" v-model="buy_price" class="form-control">
+        <div id="collapseItemPrices" class="collapse" aria-labelledby="headingItemPrices"
+            data-parent="#accordion-item-prices">
 
-                    </div>
-                </div>
 
-                <div class="col-md-4">
-                    <div class="form-group">
-                        <label for="">قیمت فروش</label>
-                        <input required type="number" v-model="sell_price" class="form-control">
+            <div class="card-body">
+                <h4>
+                    {{page.title}}
+                </h4>
+             
+                {% include "accounting/includes/item-prices-app/form.html" %}
 
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <button type="submit" class="btn btn-success">تایید</button>
-                </div>
 
+  <div class="table-responsive">
+                               {% include "accounting/includes/item-prices-app/table.html" %}
+                            </div>
 
             </div>
-        </form>
+        </div>
     </div>
 </div>

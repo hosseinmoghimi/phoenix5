@@ -164,12 +164,16 @@ class PriceRepo:
             objects = objects.filter(product_or_service_id=item_id) 
         return objects
     def add_price(self,*args, **kwargs):
-        account=AccountRepo(request=self.request).me
-        if account is not None :
-            account_id=account.id
-        elif self.request.user.has_perm(APP_NAME+".add_price") and 'account_id' in kwargs:
+        
+        account_id=0
+        if self.request.user.has_perm(APP_NAME+".add_price") and 'account_id' in kwargs:
             account_id=kwargs['account_id']
         else:
+            account=AccountRepo(request=self.request).me
+            if account is not None :
+                account_id=account.id
+
+        if account_id ==0 or account_id is None:
             return
 
         item_id=0
@@ -186,8 +190,13 @@ class PriceRepo:
         price.buy_price=buy_price
         price.sell_price=sell_price
         price.account_id=account_id
-        price.save()
-        return price
+        if price.sell_price<=0 and account_id>0:
+            return
+        try:
+            price.save()
+            return price
+        except:
+            return
 
     def price(self, *args, **kwargs):
         if 'price_id' in kwargs:

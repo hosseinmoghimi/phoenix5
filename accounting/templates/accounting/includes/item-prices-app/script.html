@@ -5,9 +5,18 @@
             item_id: page_id,
             buy_price: 0,
             sell_price: 0,
-            account_id:0,
+            account_id: 0,
+            prices: [],
+            message: {
+                show: false,
+                text: "",
+                color: "",
+            }
         },
         methods: {
+            to_price: function (vall) {
+                return to_price(vall, "{{CURRENCY}}")
+            },
             add_price: function () {
                 let url = "{% url 'accounting:add_price' %}"
                 let payload = {
@@ -21,6 +30,33 @@
                 console.log(payload)
                 $.post(url, payload).done((data) => {
                     console.log(data)
+                    if (data.result === 'SUCCEED') {
+                        
+                        item_prices_app.prices.reverse()
+                        item_prices_app.prices.push(data.price)
+                        item_prices_app.prices.reverse()
+
+                        item_prices_app.message = {
+                            color: 'success',
+                            show: true,
+                            text: `با موفقیت اضافه شد.`
+                        }
+                    } else {
+                        item_prices_app.message = {
+                            color: 'danger',
+                            show: true,
+                            text: `<ul>
+                                <li>قیمت های خرید و فروش صفر نباشد </li>
+                                <li>حساب مورد نظر را انتخاب کنید.</li>
+                                </ul>`
+                        }
+                    }
+                    setTimeout(() => {
+                        item_prices_app.message = {
+                            show: false
+                        }
+                    }, 2000);
+
                 })
             },
         }

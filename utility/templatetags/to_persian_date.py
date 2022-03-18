@@ -11,6 +11,18 @@ def to_persian_datetime(value):
     except:
         return None
 
+
+
+@register.filter
+def to_persian_time(value):
+    try:    
+        a=PersianCalendar().from_gregorian(value)        
+        return f'<span title="{value.strftime("%Y/%m/%d %H:%M:%S") }">{str(a)[11:]}</span>'
+    except:
+        return None
+
+
+
 @register.filter
 def to_week_day_name(date):
     a="_"
