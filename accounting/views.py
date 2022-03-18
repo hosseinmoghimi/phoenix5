@@ -28,6 +28,16 @@ def get_invoice_context(request,*args, **kwargs):
     return context
 
 
+def get_price_app_context(request,*args, **kwargs):
+    context={}
+    accounts=AccountRepo(request=request).my_list(*args, **kwargs)
+    context['accounts']=accounts
+    if 'items' in kwargs:
+        context['items']=kwargs['items']
+    else:
+        context['items']=[]
+    return context
+
 def getTransactionContext(request,*args, **kwargs):
     context={}
     if 'transation' in kwargs:
@@ -39,6 +49,38 @@ def getTransactionContext(request,*args, **kwargs):
     context['transaction']=transaction
     context.update(PageContext(request=request,page=transaction))
     return context
+
+
+def get_product_or_service_context(request,*args, **kwargs):
+    context={}
+    if 'product_or_service' in kwargs:
+        product_or_service=kwargs['product_or_service']
+    if 'product' in kwargs:
+        product_or_service=kwargs['product']
+        context['product']=product_or_service
+    if 'item' in kwargs:
+        product_or_service=kwargs['item']
+    if 'service' in kwargs:
+        product_or_service=kwargs['service']
+        context['service']=product_or_service
+
+    context['product_or_service']=product_or_service
+    context.update(PageContext(request=request,page=product_or_service))
+    context.update(get_price_app_context(request=request,items=[product_or_service]))
+
+    return context
+
+
+def get_product_context(request,*args, **kwargs):
+    product=ProductRepo(request=request).product(*args, **kwargs)
+    context=get_product_or_service_context(request=request,item=product,*args, **kwargs)
+    return context
+
+def get_service_context(request,*args, **kwargs):
+    context=get_product_or_service_context(request=request,*args, **kwargs)
+    return context
+
+
 
 class InvoiceView(View):
     def get(self,request,*args, **kwargs):
@@ -90,12 +132,12 @@ class ProductsView(View):
         products_s=json.dumps(ProductSerializer(products,many=True).data)
         context['products_s']=products_s
         return render(request,TEMPLATE_ROOT+"products.html",context)
-
 class ProductView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
         product=ProductRepo(request=request).product(*args, **kwargs)
         context.update(PageContext(request=request,page=product))
+        context.update(get_product_or_service_context(request=request,item=product))
         context['product']=product
         return render(request,TEMPLATE_ROOT+"product.html",context)
 
@@ -107,12 +149,12 @@ class ServicesView(View):
         services_s=json.dumps(ServiceSerializer(services,many=True).data)
         context['services_s']=services_s
         return render(request,TEMPLATE_ROOT+"services.html",context)
-
 class ServiceView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
         service=ServiceRepo(request=request).service(*args, **kwargs)
         context.update(PageContext(request=request,page=service))
+        context.update(get_product_or_service_context(request=request,item=service))
         context['service']=service
         return render(request,TEMPLATE_ROOT+"service.html",context)
         

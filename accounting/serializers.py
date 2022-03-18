@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Account, Cheque, FinancialDocument, Product,Service,  Transaction
+from .models import Account, Cheque, FinancialDocument, Price, Product,Service,  Transaction
 
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
@@ -43,7 +43,10 @@ class FinancialDocumentSerializer(serializers.ModelSerializer):
         fields = ['id', 'title','transaction','get_state_badge', 'account', 'get_absolute_url', 'bedehkar','rest',
                   'bestankar', 'persian_document_datetime', 'get_edit_url','get_delete_url']
 
-
+class PriceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Price
+        fields=['id','sell_price','buy_price','persian_date_added']
 class FinancialDocumentForAccountSerializer(serializers.ModelSerializer):
     account = AccountSerializer()
 

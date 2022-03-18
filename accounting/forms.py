@@ -28,6 +28,12 @@ class SearchForm(forms.Form):
 class AddChequeForm(forms.Form):
     title=forms.CharField( max_length=500, required=True)
     
+class AddPriceForm(forms.Form):
+    item_id=forms.IntegerField(required=True)
+    sell_price=forms.IntegerField(required=True)
+    buy_price=forms.IntegerField(required=True)
+    account_id=forms.IntegerField(required=False)
+    
 class AddPaymentForm(forms.Form):
     title=forms.CharField( max_length=500, required=True)
     pay_to_id=forms.IntegerField(required=True)

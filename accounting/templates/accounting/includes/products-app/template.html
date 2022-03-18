@@ -1,7 +1,10 @@
 {% load to_price %}
 <div class="card" id="products-app">
     <div class="card-body">
-<button @click="show_sell_prices=!show_sell_prices" class="btn btn-danger">show_sell_prices</button>
+        <div class="text-right">
+
+            <button @click="show_sell_prices=!show_sell_prices" class="btn btn-danger">نمایش قیمت خرید</button>
+        </div>
         <div class="table-responsive">
 
             <table class="table table-striped">

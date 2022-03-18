@@ -34,7 +34,8 @@ class Price(models.Model):
     sell_price=models.IntegerField(_("فروش"),default=0)
     buy_price=models.IntegerField(_("خرید"),default=0)
     date_added=models.DateTimeField(_("date_added"), auto_now=False, auto_now_add=True)
-    
+    def persian_date_added(self):
+        return PersianCalendar().from_gregorian(self.date_added)
 
     class Meta:
         verbose_name = _("Price")
@@ -112,7 +113,6 @@ class ProductOrService(Page):
 
                 if last_price is not None:
                     return last_price.sell_price
-
         return 0
 
     @property
@@ -149,7 +149,6 @@ class Product(ProductOrService):
     @property
     def available(self):
         id=0         
-
         return id
         
     def save(self,*args, **kwargs):

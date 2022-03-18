@@ -1,7 +1,10 @@
 {% load to_price %}
 <div class="card" id="services-app">
     <div class="card-body">
+        <div class="text-right">
 
+            <button @click="show_sell_prices=!show_sell_prices" class="btn btn-danger">نمایش قیمت خرید</button>
+        </div>
         <div class="table-responsive">
 
             <table class="table table-striped">
@@ -10,7 +13,10 @@
                     <th>
                         سرویس
                     </th>
+                    <th>
+                        قیمت
 
+                    </th>
 
                 </thead>
                 <tbody>
@@ -28,7 +34,15 @@
                                 </div>
                             </a>
                         </td>
+                        <td>
+                            <div>
+                                <span v-text="to_price(service.unit_price)"></span>
+                            </div>
+                            <div v-if="show_sell_prices">
+                                <small v-text="to_price(service.buy_price)" class="text-muted"></small>
+                            </div>
 
+                        </td>
 
                     </tr>
                 </tbody>

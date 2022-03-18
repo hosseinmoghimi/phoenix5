@@ -34,6 +34,7 @@ urlpatterns = [
 
 
   path("add_cheque/",login_required(apis.AddChequeApi.as_view()),name="add_cheque"),
+  path("add_price/",login_required(apis.AddPriceApi.as_view()),name="add_price"),
 
 
 ]

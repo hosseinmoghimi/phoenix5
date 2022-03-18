@@ -1,5 +1,6 @@
+from urllib import request
 from .apps import APP_NAME
-from .models import Account, Cheque, FinancialBalance, FinancialDocument, FinancialYear, Invoice, Product,Service, Transaction
+from .models import Account, Cheque, FinancialBalance, FinancialDocument, FinancialYear, Invoice, Price, Product,Service, Transaction
 from django.db.models import Q
 from authentication.repo import ProfileRepo
 from django.utils import timezone
@@ -19,6 +20,8 @@ class ProductRepo():
 
     def product(self, *args, **kwargs):
         pk=0
+        if 'product' in kwargs:
+            return kwargs['product']
         if 'product_id' in kwargs:
             pk=kwargs['product_id']
         elif 'pk' in kwargs:
@@ -114,6 +117,81 @@ class FinancialBalanceRepo:
            
         if 'financial_year_id' in kwargs:
             return self.objects.filter(pk= kwargs['financial_year_id']).first()
+        if 'pk' in kwargs:
+            return self.objects.filter(pk= kwargs['pk']).first()
+        if 'id' in kwargs:
+            return self.objects.filter(pk= kwargs['id']).first()
+   
+
+
+class PriceRepo:
+    def __init__(self, *args, **kwargs):
+        self.request = None
+        self.user = None
+        if 'request' in kwargs:
+            self.request = kwargs['request']
+            self.user = self.request.user
+        if 'user' in kwargs:
+            self.user = kwargs['user']
+        self.profile = ProfileRepo(user=self.user).me
+        self.objects = Price.objects.order_by('-date_added')
+        if self.user.has_perm(APP_NAME+".view_price"):
+            self.objects = self.objects.all()
+        elif self.profile is not None:
+            self.objects = self.objects.filter(account__profile_id=self.profile.id)
+        else:
+            self.objects = self.objects.filter(pk=0)
+
+
+    def list(self, *args, **kwargs):
+        objects = self.objects.all()
+        if 'for_home' in kwargs:
+            objects = objects.filter(for_home=kwargs['for_home'])
+        if 'search_for' in kwargs:
+            search_for=kwargs['search_for']
+            objects = objects.filter(title__contains=search_for) 
+        if 'account_id' in kwargs:
+            account_id=kwargs['account_id']
+            objects = objects.filter(financial_document__account_id=account_id) 
+        if 'item_id' in kwargs:
+            item_id=kwargs['item_id']
+            objects = objects.filter(product_or_service_id=item_id)  
+        if 'product_id' in kwargs:
+            item_id=kwargs['product_id']
+            objects = objects.filter(product_or_service_id=item_id)  
+        if 'service_id' in kwargs:
+            item_id=kwargs['service_id']
+            objects = objects.filter(product_or_service_id=item_id) 
+        return objects
+    def add_price(self,*args, **kwargs):
+        account=AccountRepo(request=self.request).me
+        if account is not None :
+            account_id=account.id
+        elif self.request.user.has_perm(APP_NAME+".add_price") and 'account_id' in kwargs:
+            account_id=kwargs['account_id']
+        else:
+            return
+
+        item_id=0
+        if 'item_id' in kwargs:
+            item_id=kwargs['item_id']
+        sell_price=0
+        if 'sell_price' in kwargs:
+            sell_price=kwargs['sell_price']
+        buy_price=0
+        if 'buy_price' in kwargs:
+            buy_price=kwargs['buy_price']
+        price=Price()
+        price.product_or_service_id=item_id
+        price.buy_price=buy_price
+        price.sell_price=sell_price
+        price.account_id=account_id
+        price.save()
+        return price
+
+    def price(self, *args, **kwargs):
+        if 'price_id' in kwargs:
+            return self.objects.filter(pk= kwargs['price_id']).first()
         if 'pk' in kwargs:
             return self.objects.filter(pk= kwargs['pk']).first()
         if 'id' in kwargs:
@@ -242,7 +320,7 @@ class AccountRepo():
         self.profile=ProfileRepo(*args, **kwargs).me
         if self.profile is not None:
             self.me=Account.objects.filter(profile=self.profile).first()
-       
+
 
     def account(self, *args, **kwargs):
         pk=0
@@ -264,7 +342,11 @@ class AccountRepo():
         if 'parent_id' in kwargs:
             objects=objects.filter(parent_id=kwargs['parent_id'])
         return objects.all()
-
+    def my_list(self,*args, **kwargs):
+        if self.request.user.has_perm(APP_NAME+".view_account"):
+            return self.objects.all()
+        else:
+            return self.objects.filter(profile=self.profile)
    
 class InvoiceRepo():
     def __init__(self, *args, **kwargs):
