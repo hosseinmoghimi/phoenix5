@@ -322,8 +322,6 @@ class FinancialDocument(models.Model,LinkHelper):
     def __str__(self):
         return f"""{self.account.title} : {self.transaction.title} : {self.transaction.amount}"""
     def normalize_sub_accounts(self,*args, **kwargs):
- 
-        
         aaa=FinancialBalance.objects.filter(financial_document=self).filter(title=FinancialBalanceTitleEnum.MISC)
         aaa.delete()
         aaa=FinancialBalance.objects.filter(financial_document=self)
@@ -332,6 +330,7 @@ class FinancialDocument(models.Model,LinkHelper):
         for a in aaa:
             sum_bestankar+=a.bestankar
             sum_bedehkar+=a.bedehkar
+        
         b=FinancialBalance()
         b.financial_document=self
         b.title==FinancialBalanceTitleEnum.MISC
@@ -368,16 +367,7 @@ class FinancialBalance(models.Model,LinkHelper):
 
     def save(self,*args, **kwargs):
         super(FinancialBalance,self).save(*args, **kwargs)
-        aaa=FinancialBalance.objects.filter(financial_document=self.financial_document)
-        sum_bestankar=0
-        sum_bedehkar=0
-        for a in aaa:
-            sum_bestankar+=a.bestankar
-            sum_bedehkar+=a.bedehkar
-        if sum_bedehkar==self.financial_document.bedehkar and sum_bestankar==self.financial_document.bestankar:
-            return
-        else:
-            self.financial_document.normalize_sub_accounts()
+        # self.financial_document.normalize_sub_accounts()
 
 class FinancialDocumentTag(models.Model):
     title=models.CharField(_("title"), max_length=50)

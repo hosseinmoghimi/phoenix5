@@ -39,7 +39,8 @@ class ProjectInvoice(Invoice):
             self.transaction_datetime=timezone.now()
             self.invoice_datetime=timezone.now()
         super(ProjectInvoice,self).save(*args, **kwargs)    
- 
+
+
 class MaterialInvoice(ProjectInvoice):
 
     
@@ -69,6 +70,8 @@ class ServiceInvoice(ProjectInvoice):
 
 
     def save(self,*args, **kwargs):
+        if self.title is None or self.title=="":
+            self.title="فاکتور درخواست سرویس  "+self.project.full_title()
         self.class_name="serviceinvoice"
         self.app_name=APP_NAME
         return super(ServiceInvoice,self).save(*args, **kwargs)
@@ -113,7 +116,7 @@ class Request(InvoiceLine,LinkHelper):
         if self.service is not None:
             invoice=ServiceInvoice.objects.filter(project_id=self.project.pk).first()
             if invoice is None:
-                invoice=MaterialInvoice()
+                invoice=ServiceInvoice()
                 invoice.project_id=self.project.pk
                 invoice.save()
         self.invoice=invoice
@@ -160,6 +163,30 @@ class Request(InvoiceLine,LinkHelper):
             return reverse(APP_NAME+":servicerequest", kwargs={"pk": self.pk})
 
 
+class MaterialRequest(Request,LinkHelper):
+    class Meta:
+        verbose_name = 'MaterialRequest'
+        verbose_name_plural = 'درخواست های متریال'
+
+
+    def save(self,*args, **kwargs): 
+        self.class_name="materialrequest"
+        self.app_name=APP_NAME
+        self.type=RequestTypeEnum.MATERIAL_REQUEST
+        return super(MaterialRequest,self).save(*args, **kwargs)
+
+
+class ServiceRequest(Request,LinkHelper):
+    class Meta:
+        verbose_name = 'ServiceRequest'
+        verbose_name_plural = 'درخواست های سرویس'
+
+    def save(self,*args, **kwargs): 
+        self.class_name="servicerequest"
+        self.type=RequestTypeEnum.SERVICE_REQUEST
+        self.app_name=APP_NAME
+        return super(ServiceRequest,self).save(*args, **kwargs)
+
 
 class RequestSignature(models.Model,LinkHelper):
     request = models.ForeignKey("request", verbose_name=_(
@@ -195,7 +222,6 @@ class RequestSignature(models.Model,LinkHelper):
 
     def get_absolute_url(self):
         return reverse("RequestSignature_detail", kwargs={"pk": self.pk})
- 
 
 
 class Employee(Account):
@@ -239,6 +265,8 @@ class OrganizationUnit(Page):
  
 class WareHouse(OrganizationUnit):
     pass
+
+
 class Project(Page):
     parent=models.ForeignKey("project", verbose_name=_("parent"),null=True,blank=True, on_delete=models.CASCADE)
     status=models.CharField(_("status"),choices=ProjectStatusEnum.choices,default=ProjectStatusEnum.DRAFT, max_length=50)
@@ -341,7 +369,6 @@ class SampleForm(Page):
         if self.app_name is None or self.app_name=="":
             self.app_name=APP_NAME
         return super(SampleForm,self).save()
- 
 
 
 class Material(AccountingProduct):

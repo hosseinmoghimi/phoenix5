@@ -1,31 +1,32 @@
 {% load static %}
 {% load to_persian_date %}
 {% load to_price %}
-<div id="accordionmaterialrequests">
+<div id="accordionservicerequests">
 
 
-    <div class="card" id="material-requests-app">
-        <div class="card-header" id="headingmaterialrequests">
+    <div class="card" id="service-requests-app">
+        <div class="card-header" id="headingservicerequests">
 
             <h5 class="card-title text-center farsi">
-                <button class="btn btn-link" data-toggle="collapse" data-target="#collapsematerialrequests"
-                    aria-expanded="true" aria-controls="collapsematerialrequests">
-                    درخواست های متریال
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapseservicerequests"
+                    aria-expanded="true" aria-controls="collapseservicerequests">
+                    درخواست های سرویس
                 </button>
             </h5>
 
 
         </div>
-        <div id="collapsematerialrequests" class="collapse {% if project and material_requests %}show{% endif %}"
-            aria-labelledby="headingmaterialrequests" data-parent="#accordionmaterialrequests">
+        <div id="collapseservicerequests" class="collapse {% if project and service_requests %}show{% endif %}"
+            aria-labelledby="headingservicerequests" data-parent="#accordionservicerequests">
 
             <div class="card-body">
-                {% include "projectmanager/includes/material-requests-app/table.html" %}
+                {% include "projectmanager/includes/service-requests-app/table.html" %}
 
-                
+               
+                {% if add_service_request_form %}
+                {% include "projectmanager/includes/service-requests-app/form.html" %}
 
-                {% if add_material_request_form %}
-                {% include "projectmanager/includes/material-requests-app/form.html" %}
+
                 {% endif %}
             </div>
             <div class="card-footer ">
@@ -35,10 +36,10 @@
                     <span class="small text-secondary">
                         مجموع قیمت متریال ها :
                     </span>
-                    <span v-text="to_price(sum_material_requests,'{{CURRENCY}}')">
+                    <span v-text="to_price(sum_service_requests,'{{CURRENCY}}')">
 
                     </span>
-                    <a title="چاپ فاکتور" target="_blank" class="mx-3" href="{{project.get_materials_order_url}}">
+                    <a title="چاپ فاکتور" target="_blank" class="mx-3" href="{{project.get_services_order_url}}">
                         <i class="material-icons">print</i>
                     </a>
 
@@ -47,7 +48,7 @@
 
                 {% endif %}
 
-                {% if material %}
+                {% if service %}
                 <p>
 
                     <span>
@@ -56,7 +57,7 @@
                             تعداد کل درخواست شده :
                         </span>
                         <span>
-                            {{material.count_requested|to_price_pure}}
+                            {{service.count_requested|to_price_pure}}
                         </span>
                     </span>
 
@@ -69,14 +70,14 @@
                         </span>
                         <span>
 
-                            {{material.sum_price_requested|to_price}}
+                            {{service.sum_price_requested|to_price}}
                         </span>
                     </span>
 
                 </p>
                 {% endif %}
                 <p>
-                    جمع : <span v-text="to_price(sum_material_requests,'{{CURRENCY}}')"></span>
+                    جمع : <span v-text="to_price(sum_service_requests,'{{CURRENCY}}')"></span>
                 </p>
             </div>
         </div>
