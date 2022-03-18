@@ -1,4 +1,13 @@
 <form @submit.prevent="add_cheque()">
-    <input type="text" class="form-control" v-model="title" placeholder="عنوان چک جدید">
-    <button class="btn btn-success" type="submit">افزودن</button>
+    <div class="row">
+        <div class="col-md-8">
+                <input required type="text" class="form-control" v-model="title" placeholder="عنوان چک جدید">
+
+        </div>
+        <div class="col-md-4 text-right">
+                <button class="btn btn-success" type="submit">افزودن</button>
+
+            </div>
+        </div>
+    </div>
 </form>

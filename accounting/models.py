@@ -1,5 +1,5 @@
 from utility.currency import to_price
-from utility.calendar import PERSIAN_MONTH_NAMES, PersianCalendar
+from utility.calendar import PERSIAN_MONTH_NAMES, PersianCalendar,to_persian_datetime_tag
 from core.middleware import get_request
 from django.db import models
 from core.models import Page
@@ -36,8 +36,10 @@ class Price(models.Model,LinkHelper):
     date_added=models.DateTimeField(_("date_added"), auto_now=False, auto_now_add=True)
     app_name=APP_NAME
     class_name="price"
-    def persian_date_added(self):
-        return PersianCalendar().from_gregorian(self.date_added)
+    def persian_date_added(self,no_tag=False):
+        if no_tag:
+            return PersianCalendar().from_gregorian(self.date_added)
+        return to_persian_datetime_tag(self.date_added)
     def profit_percentage(self):
         if self.buy_price<=0:
             return 100
@@ -47,7 +49,7 @@ class Price(models.Model,LinkHelper):
         verbose_name_plural = _("Prices")
 
     def __str__(self):
-        return f"""{self.product_or_service.title} @ {self.account} {self.persian_date_added()}"""
+        return f"""{self.product_or_service.title} @ {self.account} {self.persian_date_added(no_tag=True)}"""
 
 
 class Transaction(Page,LinkHelper):
@@ -100,9 +102,10 @@ class Transaction(Page,LinkHelper):
         fd_bestankar.save()
 
     @property
-    def persian_transaction_datetime(self):
-        return PersianCalendar().from_gregorian(self.transaction_datetime)
- 
+    def persian_transaction_datetime(self,no_tag=False):
+        if no_tag:
+            return PersianCalendar().from_gregorian(self.transaction_datetime)
+        return to_persian_datetime_tag(self.transaction_datetime)
 
 class ProductOrService(Page):
 
@@ -309,14 +312,10 @@ class FinancialDocument(models.Model,LinkHelper):
 
 
     @property
-    def persian_document_datetime(self):
-        from utility.templatetags import to_persian_date
-        a=to_persian_date.to_persian_datetime(self.document_datetime)
-        return a
-        # a= PersianCalendar().from_gregorian(self.document_datetime)
-        # return f"""<span class="ltr" title="{self.document_datetime.strftime("%Y/%m/%d %H:%M:%S") }">{str(a)[:10]}<small class="mx-3 text-muted">{str(a)[11:]}</small></span>"""
-
-     
+    def persian_document_datetime(self,no_tag=False):
+        if no_tag:
+            return PersianCalendar().from_gregorian(self.document_datetime)
+        return to_persian_datetime_tag(self.document_datetime)
     @property
     def title(self):
         return self.transaction.title 
@@ -390,8 +389,11 @@ class FinancialDocumentTag(models.Model):
 
 class Cheque(Transaction,LinkHelper):
     cheque_date=models.DateField(_("تاریخ چک"), auto_now=False, auto_now_add=False)
-    def persian_cheque_date(self):
-        return PersianCalendar().from_gregorian(self.cheque_date)
+    
+    def persian_cheque_date(self,no_tag=False):
+        if no_tag:
+            return PersianCalendar().from_gregorian(self.cheque_date)
+        return to_persian_datetime_tag(self.cheque_date)
     class Meta:
         verbose_name = _("چک")
         verbose_name_plural = _("چک ها")
@@ -468,15 +470,12 @@ class Invoice(Transaction):
         return reverse(APP_NAME+":edit_invoice",kwargs={'pk':self.pk})
     def get_print_url(self):
         return reverse(APP_NAME+":invoice_print",kwargs={'pk':self.pk})
-    # @property
-    # def title(self):
-    #     try:
-
-    #         return "فاکتور شماره "+str(self.pk)
-    #     except:
-    #         return "فاکتور شماره 0"
-    def persian_invoice_datetime(self):
-        return PersianCalendar().from_gregorian(self.invoice_datetime)
+    
+    
+    def persian_invoice_datetime(self,no_tag=False):
+        if no_tag:
+            return PersianCalendar().from_gregorian(self.invoice_datetime)
+        return to_persian_datetime_tag(self.invoice_datetime)
     def tax_amount(self):
         
         sum=self.lines_total()

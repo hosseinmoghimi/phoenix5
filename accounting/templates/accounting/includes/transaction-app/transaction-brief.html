@@ -82,6 +82,17 @@
                 {{transaction.amount|to_horuf}} {{CURRENCY}}
     
             </p>
+            <p class="rounded py-2 px-2" style="background-color: #777;color:white;">
+                {{transaction.amount|to_price_x10}}  ریال
+    
+            </p>
+
+            <p class="rounded py-2 px-2" style="background-color: #999;color:white;">
+                {{transaction.amount|to_horuf_x10}}  ریال
+    
+            </p>
+
+
         </td>
     </tr>
 

@@ -5,14 +5,19 @@
         </h4>
     </div>
     <div class="card-body">
+        {% if add_cheque_form %}
+            {% include "accounting/includes/cheques-app/add-cheque-form.html" %}
+        {% endif %}
+
         {% include "accounting/includes/cheques-app/table.html" %}
 
     </div>
 
-    {% if add_cheque_form %}
     <div class="card-footer">
-        {% include "accounting/includes/cheques-app/add-cheque-form.html" %}
+        <p>
+
+            توضیحات : ...
+        </p>
     </div>
-    {% endif %}
 
 </div>

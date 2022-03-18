@@ -1,18 +1,12 @@
 from django import template
 from django.http.request import bytes_to_text
 register = template.Library()
-from utility.calendar import PersianCalendar
+from utility.calendar import PersianCalendar, to_persian_datetime_tag
 
 @register.filter
 def to_persian_datetime(value):
-    try:    
-        a=str(PersianCalendar().from_gregorian(value))
-        date_=a[:10]
-        time_=a[11:]
-        greg=value.strftime("%Y/%m/%d %H:%M:%S") 
-        return f"""<span class="ltr" title="{greg}"><small class="mx-3 text-muted">{time_}</small>{date_}</span>"""
-    except:
-        return None
+    return to_persian_datetime_tag(value)
+   
 
 
 
