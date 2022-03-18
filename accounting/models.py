@@ -77,11 +77,21 @@ class Transaction(Page,LinkHelper):
             from django.utils import timezone
             self.transaction_datetime=timezone.now()
         super(Transaction,self).save(*args, **kwargs)
-        FinancialDocument.objects.filter(transaction=self).delete()
-        fd=FinancialDocument(transaction=self,account_id=self.pay_to.id,bedehkar=self.amount)
-        fd.save()
-        fd=FinancialDocument(transaction=self,account_id=self.pay_from.id,bestankar=self.amount)
-        fd.save()
+        # FinancialDocument.objects.filter(transaction=self).delete()
+
+        fd_bedehkar=FinancialDocument.objects.filter(transaction=self).filter(account_id=self.pay_to.id).first()
+        if fd_bedehkar is None:
+            fd_bedehkar=FinancialDocument(transaction=self,account_id=self.pay_to.id)
+        fd_bedehkar.bestankar=0
+        fd_bedehkar.bedehkar=self.amount
+        fd_bedehkar.save()
+
+        fd_bestankar=FinancialDocument.objects.filter(transaction=self).filter(account_id=self.pay_from.id).first()
+        if fd_bestankar is None:
+            fd_bestankar=FinancialDocument(transaction=self,account_id=self.pay_from.id)
+        fd_bestankar.bestankar=self.amount
+        fd_bestankar.bedehkar=0
+        fd_bestankar.save()
 
     @property
     def persian_transaction_datetime(self):
@@ -360,8 +370,10 @@ class FinancialBalance(models.Model,LinkHelper):
         b.title==FinancialBalanceTitleEnum.MISC
         b.bestankar=self.financial_document.bestankar-sum_bestankar
         b.bedehkar=self.financial_document.bedehkar-sum_bedehkar
-        b.save()
-
+        if b.bedehkar==0 and b.bestankar==0:
+            return 
+        else:
+            b.save()
 
 
 class FinancialDocumentTag(models.Model):
@@ -505,8 +517,8 @@ class Invoice(Transaction):
 
 class InvoiceLine(models.Model):
     date_added=models.DateTimeField(_("date_added"), auto_now=False, auto_now_add=True)
-    invoice=models.ForeignKey("invoice", verbose_name=_("invoice"),related_name="lines", on_delete=models.CASCADE)
-    row=models.IntegerField(_("row"))
+    invoice=models.ForeignKey("invoice",blank=True, verbose_name=_("invoice"),related_name="lines", on_delete=models.CASCADE)
+    row=models.IntegerField(_("row"),blank=True)
     product_or_service=models.ForeignKey("productorservice", verbose_name=_("productorservice"), on_delete=models.CASCADE)
     quantity=models.FloatField(_("quantity"))
     unit_price=models.IntegerField(_("unit_price"))

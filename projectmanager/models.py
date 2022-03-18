@@ -54,6 +54,7 @@ class MaterialInvoice(ProjectInvoice):
             self.title="فاکتور درخواست متریال  "+self.project.full_title()
         self.class_name="materialinvoice"
         self.app_name=APP_NAME
+        
         return super(MaterialInvoice,self).save(*args, **kwargs)
 
 
@@ -101,28 +102,24 @@ class Request(InvoiceLine,LinkHelper):
     class Meta:
         verbose_name = _("Request")
         verbose_name_plural = _("Requests")
-
-    def save_invoice(self):
-        invoice_line=InvoiceLine()
-        invoice_line.product_or_service_id=self.product_or_service.id
-        invoice_line.quantity=self.quantity
-        invoice_line.unit_name=self.unit_name
-        invoice_line.unit_price=self.unit_price
-        if self.product is not None:
-            invoice,res=MaterialInvoice.objects.get_or_create(project_id=self.project.pk)
-        if self.service is not None:
-            invoice,res=ServiceInvoice.objects.get_or_create(project_id=self.project.pk)
-        invoice_line.invoice=invoice
-        invoice_line.row=len(invoice.lines.all())+1
-        invoice_line.save()
-
+ 
     def save(self,*args, **kwargs):
+        if self.product is not None:
+            invoice=MaterialInvoice.objects.filter(project_id=self.project.pk).first()
+            if invoice is None:
+                invoice=MaterialInvoice()
+                invoice.project_id=self.project.pk
+                invoice.save()
+        if self.service is not None:
+            invoice=ServiceInvoice.objects.filter(project_id=self.project.pk).first()
+            if invoice is None:
+                invoice=MaterialInvoice()
+                invoice.project_id=self.project.pk
+                invoice.save()
+        self.invoice=invoice
+        self.row=len(invoice.lines.all())+1
         super(Request,self).save(*args, **kwargs)
-        if self.project is not None and self.project.employer.account is not None and self.project.contractor.account is not None:
-            self.save_invoice()
-        else:
-            return
-        
+         
          
     def total(self):
         total=0
