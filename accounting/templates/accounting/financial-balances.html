@@ -1,0 +1,25 @@
+{% extends "accounting/layout.html" %}
+{% load to_persian_date %}
+{% load to_price %}
+{% load to_transaction_side %}
+{% block content %}
+<h4 class="text-center">
+  ریز حساب ها
+</h4>
+
+
+<div class="row">
+    
+
+    <div class="col-md-12">
+
+        {% include "accounting/includes/financial-balances-app/template.html" %}
+    </div>
+  
+</div>
+{% endblock content %}
+
+{% block script %}
+
+
+{% endblock script %}

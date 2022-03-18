@@ -130,11 +130,12 @@
 
                         </td>
                         <td>
-                            <span v-text="to_price(financial_document.bedehkar,'')"></span>
+                            <span class="text-danger" v-if="financial_document.bedehkar>0" v-text="to_price(financial_document.bedehkar,'')"></span>
+                            
 
                         </td>
                         <td>
-                            <span v-text="to_price(financial_document.bestankar,'')"></span>
+                            <span class="text-success" v-if="financial_document.bestankar>0" v-text="to_price(financial_document.bestankar,'')"></span>
 
                         </td>
                         {% if financial_account %}

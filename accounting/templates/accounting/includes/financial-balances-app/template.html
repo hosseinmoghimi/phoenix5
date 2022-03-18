@@ -7,14 +7,22 @@
         <div class="table-responsive">
             <table class="table table-striped">
                 <thead>
+                    {% if not account %}
                     <th>
-                        عنوان
+                        حساب
                     </th>
+                    {% endif %}
+                    <th>
+                        ریزحساب
+                    </th>
+
+
                     {% if not financial_document %}
                     <th>
                         سند
                     </th>
                     {% endif %}
+
                     <th>
                         بدهکار
                     </th>
@@ -29,6 +37,15 @@
 
                     {% for financial_balance in financial_balances %}
                     <tr>
+                        {% if not account %}
+                        <td>
+                            <a href="{{financial_balance.financial_document.account.get_absolute_url}}">
+
+                                {{financial_balance.financial_document.account.title}}
+                            </a>
+
+                        </td>
+                        {% endif %}
                         <td>
                             <span class="text-{{financial_balance.color}}">
 
@@ -37,6 +54,7 @@
                                 {{financial_balance.title}}
                             </span>
                         </td>
+
                         {% if not financial_document %}
                         <td>
                             <a href="{{financial_balance.financial_document.get_absolute_url}}">
@@ -45,10 +63,12 @@
                         </td>
                         {% endif %}
                         <td>
+                            
                             {{financial_balance.bedehkar|to_price}}
                         </td>
-
+                        
                         <td>
+                          
 
                             {{financial_balance.bestankar|to_price}}
                         </td>

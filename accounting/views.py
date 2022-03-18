@@ -82,6 +82,14 @@ def get_service_context(request,*args, **kwargs):
     return context
 
 
+
+class FinancialBalancesView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        financial_balances=FinancialBalanceRepo(request=request).list(*args, **kwargs)
+        context['financial_balances']=financial_balances
+        return render(request,TEMPLATE_ROOT+"financial-balances.html",context)
+        
 class InvoiceView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
