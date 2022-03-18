@@ -1,6 +1,9 @@
+from django.utils import timezone
 from urllib import request
+
+from projectmanager.enums import RequestStatusEnum
 from .apps import APP_NAME
-from .models import Material,PM_Service as Service, Project,OrganizationUnit,WareHouse
+from .models import Employee, Material,PM_Service as Service, Project,OrganizationUnit, RequestSignature, ServiceRequest,WareHouse
 
 from authentication.repo import ProfileRepo
 from django.db.models import Q
@@ -114,8 +117,136 @@ class ProjectRepo():
             objects=objects.filter(parent_id=kwargs['parent_id'])
         return objects.all()
 
-   
+class EmployeeRepo():
+      
+    def __init__(self, *args, **kwargs):
+        self.request = None
+        self.user = None
+        if 'request' in kwargs:
+            self.request = kwargs['request']
+            self.user = self.request.user
+        if 'user' in kwargs:
+            self.user = kwargs['user']
+        
+        self.objects=Employee.objects.order_by("title")
+        self.profile=ProfileRepo(*args, **kwargs).me
+        self.me=Employee.objects.filter(profile=self.profile).first()
+       
+    def employee(self, *args, **kwargs):
+        pk=0
+        if 'employee_id' in kwargs:
+            pk=kwargs['employee_id']
+        elif 'pk' in kwargs:
+            pk=kwargs['pk']
+        elif 'id' in kwargs:
+            pk=kwargs['id']
+        return self.objects.filter(pk=pk).first()
+     
+    def list(self, *args, **kwargs):
+        objects = self.objects
+        if 'search_for' in kwargs:
+            search_for=kwargs['search_for']
+            objects = objects.filter(Q(title__contains=search_for)|Q(short_description__contains=search_for)|Q(description__contains=search_for))
+        if 'for_home' in kwargs:
+            objects = objects.filter(Q(for_home=kwargs['for_home']))
+        if 'parent_id' in kwargs:
+            objects=objects.filter(parent_id=kwargs['parent_id'])
+        if 'project_id' in kwargs:
+            project=ProjectRepo(request=self.request).project(project_id=kwargs['project_id'])
+            objects=project.organization_units.all()
+        return objects.all()
 
+
+
+
+
+class ServiceRequestRepo():
+    def __init__(self, *args, **kwargs):
+        self.request = None
+        self.user = None
+        if 'request' in kwargs:
+            self.request = kwargs['request']
+            self.user = self.request.user
+        if 'user' in kwargs:
+            self.user = kwargs['user']
+        
+        self.objects=ServiceRequest.objects.all()
+        self.profile=ProfileRepo(*args, **kwargs).me
+    def add_service_request(self,*args, **kwargs):
+        if not self.user.has_perm(APP_NAME+".add_servicerequest"):
+            return None
+        self.employee=EmployeeRepo(request=self.request).me
+        project=ProjectRepo(request=self.request).project(*args, **kwargs)
+        if self.employee is not None:
+            project=ProjectRepo(request=self.request).project(*args, **kwargs)
+            if project is None:
+                return
+
+
+        new_service_request = ServiceRequest(status=RequestStatusEnum.DRAFT)
+        if 'project_id' in kwargs:
+            new_service_request.project_id = kwargs['project_id']
+        if 'employee_id' in kwargs:
+            employee_id = kwargs['employee_id']
+            if not employee_id==0:
+                new_service_request.employee_id=employee_id
+        if 'service_id' in kwargs:
+            if not kwargs['service_id']==0:
+                new_service_request.product_or_service_id = kwargs['service_id']
+        if 'quantity' in kwargs:
+            new_service_request.quantity = kwargs['quantity']
+        if 'unit_name' in kwargs:
+            new_service_request.unit_name = kwargs['unit_name']
+        if 'unit_price' in kwargs:
+            new_service_request.unit_price = kwargs['unit_price']
+        if 'description' in kwargs:
+            new_service_request.description = kwargs['description']
+        if 'status' in kwargs:
+            new_service_request.status = kwargs['status']
+        if 'date_requested' in kwargs:
+            new_service_request.date_requested = kwargs['date_requested']
+        else:
+            new_service_request.date_requested = timezone.now()
+        if 'service_title' in kwargs and not kwargs['service_title']=="":
+            service=Service.objects.filter(title=kwargs['service_title']).first()
+            if service is None:
+                service=Service(title=kwargs['service_title'],unit_price=kwargs['unit_price'],unit_name=kwargs['unit_name'])
+                service.save()            
+            new_service_request.service_id=service.id
+        new_service_request.employee_id = employee_id
+        new_service_request.creator=self.employee
+        if new_service_request.quantity > 0 and new_service_request.unit_price >= 0:
+            new_service_request.save()
+            new_service_request.service.unit_price = new_service_request.unit_price
+            new_service_request.service.unit_name = new_service_request.unit_name
+            new_service_request.service.save()
+            service_request_signature=RequestSignature(employee=self.employee,request=new_service_request,status=SignatureStatusEnum.REQUESTED)
+            service_request_signature.save()
+            return new_service_request
+
+    def service_request(self, *args, **kwargs):
+        pk=0
+        if 'service_request_id' in kwargs:
+            pk=kwargs['service_request_id']
+        elif 'pk' in kwargs:
+            pk=kwargs['pk']
+        elif 'id' in kwargs:
+            pk=kwargs['id']
+        return self.objects.filter(pk=pk).first()
+     
+    def list(self, *args, **kwargs):
+        objects = self.objects
+        if 'search_for' in kwargs:
+            search_for=kwargs['search_for']
+            objects = objects.filter(Q(title__contains=search_for)|Q(short_description__contains=search_for)|Q(description__contains=search_for))
+        if 'for_home' in kwargs:
+            objects = objects.filter(Q(for_home=kwargs['for_home']))
+        if 'parent_id' in kwargs:
+            objects=objects.filter(parent_id=kwargs['parent_id'])
+        if 'project_id' in kwargs:
+            project=ProjectRepo(request=self.request).project(project_id=kwargs['project_id'])
+            objects=project.organization_units.all()
+        return objects.all()
 
 
 

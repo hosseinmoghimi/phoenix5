@@ -105,10 +105,12 @@ class Page(models.Model, LinkHelper, ImageMixin):
         return class_title
 
     def full_title(self):
-        if self.parent is None:
+        try:
+            if self.parent is None:
+                return self.title
+            return self.parent.full_title()+" : "+self.title
+        except:
             return self.title
-        return self.parent.full_title()+" : "+self.title
-
     def get_breadcrumb_link(self):
         aaa=f"""
                     <li class="breadcrumb-item"><a href="{self.get_absolute_url()}">

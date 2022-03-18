@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Employee, Material, Request,Service,Project,OrganizationUnit
+from .models import Employee, Material, PM_Service, Request,Project,OrganizationUnit
 from authentication.serializers import ProfileSerializer
 
 
@@ -21,13 +21,13 @@ class OrganizationUnitSerializer(serializers.ModelSerializer):
 class MaterialSerializer(serializers.ModelSerializer):
     class Meta:
         model = Material
-        fields = ['id', 'title', 'get_absolute_url','buy_price','available','unit_price','unit_name','thumbnail']
+        fields = ['id', 'title', 'get_absolute_url','full_title','buy_price','available','unit_price','unit_name','thumbnail']
 
 
 class ServiceSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Service
-        fields = ['id', 'title', 'get_absolute_url','buy_price','unit_price','unit_name','thumbnail']
+        model = PM_Service
+        fields = ['id', 'title', 'get_absolute_url','full_title','buy_price','unit_price','unit_name','thumbnail']
 
 
 

@@ -282,7 +282,12 @@ class Project(Page):
         return Request.objects.filter(project=self).filter(type=RequestTypeEnum.MATERIAL_REQUEST)
     def service_requests(self):
         return Request.objects.filter(project=self).filter(type=RequestTypeEnum.SERVICE_REQUEST)
-
+    def employees(self):
+        employees = []
+        for org in self.organization_units.all():
+            for emp in org.employee_set.all():
+                employees.append(emp.id)
+        return Employee.objects.filter(id__in=employees)
     class Meta:
         verbose_name = _("Project")
         verbose_name_plural = _("Projects")

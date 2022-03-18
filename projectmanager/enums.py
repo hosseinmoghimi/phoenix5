@@ -33,7 +33,7 @@ class ProjectStatusEnum(TextChoices):
     PAID='تسویه شده',_('تسویه شده')
 
 class RequestStatusEnum(TextChoices):
-
+    DRAFT="پیش نویس",_("پیش نویس")
     DEFAULT='DEFAULT',_('DEFAULT')
     INITIAL='تعریف اولیه در سیستم',_('تعریف اولیه در سیستم')
     DELIVERED='تحویل شده',_('تحویل شده')

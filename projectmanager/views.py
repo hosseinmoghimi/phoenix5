@@ -1,6 +1,7 @@
 from django.shortcuts import render
 # Create your views here.
 from django.shortcuts import render,reverse
+from core.enums import UnitNameEnum
 from core.views import CoreContext,SearchForm,PageContext
 # Create your views here.
 from django.views import View
@@ -11,7 +12,7 @@ from .apps import APP_NAME
 # from .serializers import MaterialSerializer
 import json
 from .repo import MaterialRepo, OrganizationUnitRepo,ServiceRepo,ProjectRepo
-from .serializers import MaterialSerializer, OrganizationUnitSerializer,ServiceSerializer,ProjectSerializer,ServiceRequestSerializer,MaterialRequestSerializer
+from .serializers import EmployeeSerializer, MaterialSerializer, OrganizationUnitSerializer,ServiceSerializer,ProjectSerializer,ServiceRequestSerializer,MaterialRequestSerializer
 
 TEMPLATE_ROOT = "projectmanager/"
 LAYOUT_PARENT = "phoenix/layout.html"
@@ -29,6 +30,7 @@ class HomeView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
         return render(request,TEMPLATE_ROOT+"index.html",context)
+
 
 class SearchView(View):
     def get(self,request,*args, **kwargs):
@@ -67,6 +69,8 @@ class OrganizationUnitView(View):
             context['add_organization_unit_form']=AddOrganizationUnitForm()
             context['show_organization_units_list']=True
         return render(request,TEMPLATE_ROOT+"organization-unit.html",context)
+
+
 class OrganizationUnitsView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -88,6 +92,7 @@ class ProjectsView(View):
         projects_s=json.dumps(ProjectSerializer(projects,many=True).data)
         context['projects_s']=projects_s
         return render(request,TEMPLATE_ROOT+"projects.html",context)
+
 
 class ProjectView(View):
     def get(self,request,*args, **kwargs):
@@ -116,8 +121,20 @@ class ProjectView(View):
             all_organization_units_s=json.dumps(OrganizationUnitSerializer(all_organization_units,many=True).data)
             context['all_organization_units_s']=all_organization_units_s
             context['select_organization_unit_form']=True
-        return render(request,TEMPLATE_ROOT+"project.html",context)
+            context['add_service_request_form']=True
+            context['add_material_request_form']=True
+            context['employees_s']=json.dumps(EmployeeSerializer(project.employees(),many=True).data)
+            all_service=ServiceRepo(request=request).list()
+            context['all_services_s']=json.dumps(ServiceSerializer(all_service,many=True).data)
 
+            
+            context['unit_names'] = (i[0] for i in UnitNameEnum.choices)
+            context['unit_names2'] = (i[0] for i in UnitNameEnum.choices)
+            
+            all_materials=MaterialRepo(request=request).list()
+            context['all_materials_s']=json.dumps(MaterialSerializer(all_materials,many=True).data)
+
+        return render(request,TEMPLATE_ROOT+"project.html",context)
 
 
 class MaterialsView(View):
@@ -128,6 +145,7 @@ class MaterialsView(View):
         materials_s=json.dumps(MaterialSerializer(materials,many=True).data)
         context['materials_s']=materials_s
         return render(request,TEMPLATE_ROOT+"materials.html",context)
+
 
 class MaterialView(View):
     def get(self,request,*args, **kwargs):
@@ -144,6 +162,7 @@ class MaterialView(View):
 
         return render(request,TEMPLATE_ROOT+"material.html",context)
 
+
 class ServicesView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -152,6 +171,7 @@ class ServicesView(View):
         services_s=json.dumps(ServiceSerializer(services,many=True).data)
         context['services_s']=services_s
         return render(request,TEMPLATE_ROOT+"services.html",context)
+
 
 class ServiceView(View):
     def get(self,request,*args, **kwargs):

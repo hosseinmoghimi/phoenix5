@@ -98,7 +98,7 @@ class Transaction(Page,LinkHelper):
         return PersianCalendar().from_gregorian(self.transaction_datetime)
  
 
-class ProductorService(Page):
+class ProductOrService(Page):
 
     
     @property
@@ -131,11 +131,11 @@ class ProductorService(Page):
         return "عدد"
 
     class Meta:
-        verbose_name = _("ProductorService")
-        verbose_name_plural = _("ProductorServices")
+        verbose_name = _("ProductOrService")
+        verbose_name_plural = _("ProductOrServices")
 
 
-class Product(ProductorService):
+class Product(ProductOrService):
 
     class Meta:
         verbose_name = _("Product")
@@ -160,7 +160,7 @@ class Product(ProductorService):
         return super(Product,self).save(*args, **kwargs)
 
  
-class Service(ProductorService):
+class Service(ProductOrService):
 
     class Meta:
         verbose_name = _("Service")
