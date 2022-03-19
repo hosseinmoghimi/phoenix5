@@ -373,12 +373,12 @@ class OrganizationUnitRepo():
             new_organization_unit.title = kwargs['title']
 
          
-        if 'parent_id' in kwargs:
+        if 'parent_id' in kwargs and kwargs['parent_id'] is not None and kwargs['parent_id']>0:
             new_organization_unit.parent_id=kwargs['parent_id']
       
       
          
-        if 'page_id' in kwargs and kwargs['page_id'] is not None: 
+        if 'page_id' in kwargs and kwargs['page_id'] is not None : 
             new_organization_unit=organization_unit
 
             project_id=kwargs['page_id']
@@ -389,7 +389,6 @@ class OrganizationUnitRepo():
       
 
 
-      
       
         new_organization_unit.save()
         return new_organization_unit

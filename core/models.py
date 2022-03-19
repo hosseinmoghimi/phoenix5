@@ -104,11 +104,12 @@ class Page(models.Model, LinkHelper, ImageMixin):
             class_title = "واحد سازمانی"
         return class_title
 
+    @property
     def full_title(self):
         try:
             if self.parent is None:
                 return self.title
-            return self.parent.full_title()+" : "+self.title
+            return self.parent.full_title+" : "+self.title
         except:
             return self.title
     def get_breadcrumb_link(self):

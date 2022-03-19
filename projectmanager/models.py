@@ -52,7 +52,7 @@ class MaterialInvoice(ProjectInvoice):
 
     def save(self,*args, **kwargs):
         if self.title is None or self.title=="":
-            self.title="فاکتور درخواست متریال  "+self.project.full_title()
+            self.title="فاکتور درخواست متریال  "+self.project.full_title
         self.class_name="materialinvoice"
         self.app_name=APP_NAME
         
@@ -71,7 +71,7 @@ class ServiceInvoice(ProjectInvoice):
 
     def save(self,*args, **kwargs):
         if self.title is None or self.title=="":
-            self.title="فاکتور درخواست سرویس  "+self.project.full_title()
+            self.title="فاکتور درخواست سرویس  "+self.project.full_title
         self.class_name="serviceinvoice"
         self.app_name=APP_NAME
         return super(ServiceInvoice,self).save(*args, **kwargs)
@@ -245,12 +245,7 @@ class OrganizationUnit(Page):
     parent=models.ForeignKey("OrganizationUnit",related_name="childs",null=True,blank=True, verbose_name=_("parent"), on_delete=models.CASCADE)
     def __str__(self):
         # return self.title
-        return self.title+" "+(str(self.parent) if self.parent is not None and not self.parent.id==self.id else "")
-
-    def full_title(self):
-        if self.parent is None:
-            return self.title
-        return self.title+" " +self.parent.full_title()
+        return self.full_title
     class Meta:
         verbose_name = _("OrganizationUnit")
         verbose_name_plural = _("واحد های سازمانی")
@@ -336,10 +331,11 @@ class Project(Page):
     def get_status_color(self):
         return StatusColor(self.status)
     
+    @property
     def full_title(self):
         if self.parent is None:
             return self.title
-        return self.parent.full_title()+" : "+self.title
+        return self.parent.full_title+" : "+self.title
 
     def sum_weight(self):
         sum_weight = 0
