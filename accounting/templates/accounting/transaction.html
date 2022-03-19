@@ -19,7 +19,7 @@
 
 <div class="row farsi">
     <div class="col-md-5">
-        {% include "core/includes/page-app/page-brief-card.html" %}
+        {% include "core/includes/page-app/brief-card.html" %}
 
     </div>
     <div class="col-md-7">
@@ -96,6 +96,10 @@
     </div>
     
 </div>
+<div class="col-md-12">
+    {% include "core/includes/page-images-app/template.html" %}
+
+</div>
 <div class="row">
     <div class="col-md-6">
  {% include "core/includes/page-downloads-app/template.html" %}
@@ -105,6 +109,7 @@
  {% include "core/includes/page-links-app/template.html" %}
 
     </div>
+
 </div>
 {% block wage %}
   
@@ -130,6 +135,10 @@
 {% endblock content %}
 
 {% block script %}
+<script>
+    let page_id=parseInt("{{page.id}}")
+</script>
  {% include "core/includes/page-links-app/script.html" %}
- {% include "core/includes/page-downloads-app/script.html" %}
+    {% include "core/includes/page-images-app/script.html" %}
+    {% include "core/includes/page-downloads-app/script.html" %}
 {% endblock script %}

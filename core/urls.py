@@ -9,4 +9,6 @@ urlpatterns = [
     path('add_page_link/',apis.AddPageLinkApi.as_view(),name="add_page_link"),
     path("download/<int:pk>/",views.DownloadView.as_view(),name='download'),
     path('add_page_download/',apis.AddPageDownloadApi.as_view(),name="add_page_download"),
+    path('add_page_image/',apis.AddPageImageApi.as_view(),name="add_page_image"),
+
 ]

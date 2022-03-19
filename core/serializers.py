@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import PageDownload, Parameter,PageLink
+from .models import Image, PageDownload, PageImage, Parameter,PageLink
 from authentication.serializers import ProfileSerializer
 
 
@@ -8,6 +8,16 @@ class ParameterSerializer(serializers.ModelSerializer):
         model=Parameter
         fields=['id','name','value','get_edit_url','get_delete_url']
 
+
+class ImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Image
+        fields=['id','title','thumbnail','image','get_edit_url','get_delete_url']
+
+class PageImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PageImage
+        fields=['id','title','thumbnail','image','get_edit_url','get_delete_url']
 
 
 class PageLinkSerializer(serializers.ModelSerializer):

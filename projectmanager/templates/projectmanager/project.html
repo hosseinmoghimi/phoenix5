@@ -2,16 +2,16 @@
 
 {% block content %}
 
-{% include "core/includes/page-app/page-navbar.html" %}
+{% include "core/includes/page-app/navbar.html" %}
 
 
 <div class="row">
     <div class="col-md-4">
-        {% include "core/includes/page-thumbnail-card.html" %}
+        {% include "core/includes/page-app/thumbnail-card.html" %}
 
     </div>
     <div class="col-md-4">
-        {% include "core/includes/page-app/page-brief-card.html" %}
+        {% include "core/includes/page-app/brief-card.html" %}
 
 
 
@@ -34,8 +34,9 @@
     <div class="col-md-12">
         {% include "projectmanager/includes/service-requests-app/template.html" %}
     </div>
-    <div class="col-md-4">
-     
+    <div class="col-md-12">
+        {% include "core/includes/page-images-app/template.html" %}
+
     </div>
 
 </div>
@@ -45,10 +46,11 @@
 
 {% block script %}
 <script>
-    let page_id=parseInt("{{project.id}}")
-    let project_id=parseInt("{{project.id}}")
+    let page_id = parseInt("{{project.id}}")
+    let project_id = parseInt("{{project.id}}")
 </script>
 {% include "core/includes/page-links-app/script.html" %}
+{% include "core/includes/page-images-app/script.html" %}
 {% include "core/includes/page-downloads-app/script.html" %}
 {% include "projectmanager/includes/organization-units-app/script.html" %}
 {% include "projectmanager/includes/material-requests-app/script.html" %}

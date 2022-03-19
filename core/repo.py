@@ -1,5 +1,5 @@
 from email.policy import default
-from .models import Download, Page, PageDownload, PageLink, Parameter,Picture
+from .models import Download, Image, Page, PageDownload, PageImage, PageLink, Parameter,Picture
 from .constants import *
 from django.db.models import Q
 from authentication.repo import ProfileRepo
@@ -265,6 +265,46 @@ class ParameterRepo:
         objects= self.objects.all()
         return objects
 
+
+class PageImageRepo:
+    def __init__(self,*args, **kwargs):
+        self.request=None
+        self.user=None
+        if 'user' in kwargs:
+            self.user=kwargs['user']
+        if 'request' in kwargs:
+            self.request=kwargs['request']
+            self.user=self.request.user
+        self.profile=ProfileRepo(request=self.request).me
+        self.objects=PageImage.objects
+    def add_page_image(self,title,image,*args, **kwargs):
+        
+        page=PageRepo(request=self.request).page(*args, **kwargs)
+        if page is not None:
+            my_pages_ids=PageRepo(request=self.request).my_pages_ids()
+            
+            if self.user.has_perm(APP_NAME+".add_pageimage") or page.id in my_pages_ids:
+                pass
+            else:
+                return
+        
+        # image=Image(title=title,image_main_origin=image)
+        # image.save()
+        new_page_image=PageImage(image_main_origin=image,page_id=page.id,title=title)
+        
+        new_page_image.save()
+        return new_page_image
+    def delete_page_image(self,image_id,page_id,*args, **kwargs):
+        if self.user.has_perm(APP_NAME+".delete_pageimage"):
+                
+            pi=PageImage.objects.filter(image_id=image_id).filter(page_id=page_id)
+            if len(pi)>0:
+                pi.delete()
+                if 'delete_image' in kwargs and kwargs['delete_image']:
+                    Image.objects.filter(pk=image_id).delete()
+
+                return True
+  
 
 class PageDownloadRepo:
     def __init__(self,*args, **kwargs):

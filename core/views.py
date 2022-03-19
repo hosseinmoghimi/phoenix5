@@ -7,7 +7,7 @@ from log.repo import LogRepo
 from core.enums import ColorEnum, IconsEnum, ParameterNameEnum, PictureNameEnum
 from core.models import Download, Link
 from core.repo import DownloadRepo, PageDownloadRepo, PageRepo, ParameterRepo, PictureRepo
-from .serializers import PageDownloadSerializer, PageLinkSerializer
+from .serializers import PageImageSerializer, PageDownloadSerializer, PageLinkSerializer
 from phoenix.settings import ADMIN_URL,MEDIA_URL,STATIC_URL,SITE_URL
 from django.shortcuts import render
 from authentication.repo import ProfileRepo
@@ -71,6 +71,13 @@ def PageContext(request,*args, **kwargs):
         context['add_page_link_form'] = AddPageLinkForm()
     if request.user.has_perm(APP_NAME+".add_download") or page.id in my_pages_ids:
         context['add_page_download_form'] = AddPageDownloadForm()
+        
+    if request.user.has_perm(APP_NAME+".add_pageimage") or page.id in my_pages_ids:
+        context['add_page_image_form'] = AddPageImageForm()
+
+    page_images=page.pageimage_set.all()
+    context['images_s']=json.dumps(PageImageSerializer(page_images,many=True).data)
+
     return context
 
 class DownloadView(View):

@@ -11,7 +11,7 @@ from utility.utils import LinkHelper
 from .apps import APP_NAME
 from .enums import *
 
-IMAGE_FOLDER = "images"
+IMAGE_FOLDER = "images/"
 upload_storage = FileSystemStorage(location=UPLOAD_ROOT, base_url='/uploads')
 
 
@@ -360,7 +360,10 @@ class Parameter(models.Model):
         return f"{ADMIN_URL}{APP_NAME}/parameter/{self.pk}/delete/"
 
 
-class Image(models.Model, ImageMixin):
+class Image(models.Model, LinkHelper):
+    app_name=APP_NAME
+    class_name='image'
+
     title = models.CharField(_("title"), max_length=50)
     description = HTMLField(_("توضیحات"), null=True,
                             blank=True, max_length=50000)
@@ -371,11 +374,79 @@ class Image(models.Model, ImageMixin):
                                           'ImageBase/Main/', height_field=None, width_field=None, max_length=None)
     image_header_origin = models.ImageField(_("تصویر سربرگ"), null=True, blank=True, upload_to=IMAGE_FOLDER +
                                             'ImageBase/Header/', height_field=None, width_field=None, max_length=None)
-
+    def __str__(self):
+        return self.title
     class Meta:
-        verbose_name = _("GalleryPhoto")
+        verbose_name = _("Image")
         verbose_name_plural = _("تصاویر")
 
+    @property
+    def image(self):
+        if self.image_main_origin:
+            return MEDIA_URL+str(self.image_main_origin)
+
+    @property
+    def thumbnail(self):
+        return self.get_or_create_thumbnail()
+
+    def get_or_create_thumbnail(self, *args, **kwargs):
+        if self.thumbnail_origin:
+            return MEDIA_URL+str(self.thumbnail_origin)
+        try:
+            if self.image_main_origin is None:
+                return f'{STATIC_URL}{self.app_name}/img/pages/thumbnail/{self.class_name}.png'
+        except:
+            return f'{STATIC_URL}{self.app_name}/img/pages/thumbnail/{self.class_name}.png'
+        # Opening the uploaded image
+
+        from PIL import Image as PilImage
+        from io import BytesIO
+        import sys
+        from django.core.files.uploadedfile import InMemoryUploadedFile
+
+        image = PilImage.open(self.image_main_origin)
+
+        width11, height11 = image.size
+        ratio11 = float(height11)/float(width11)
+     
+
+        output = BytesIO()
+        from .repo import ParameterRepo
+        THUMBNAIL_DIMENSION = int(ParameterRepo(app_name=APP_NAME).parameter(
+            name=ParameterNameEnum.THUMBNAIL_DIMENSION, default=150).value)
+         
+        # try:
+        #     a = THUMBNAIL_DIMENSION+100
+        # except:
+        #     THUMBNAIL_DIMENSION = 250
+        # Resize/modify the image
+        image = image.resize((THUMBNAIL_DIMENSION, int(ratio11*float(THUMBNAIL_DIMENSION))), PilImage.ANTIALIAS)
+        
+        # after modifications, save it to the output
+        image.save(output, format='JPEG', quality=95)
+   
+
+        output.seek(0)
+
+        # change the imagefield value to be the newley modifed image value
+        image_name = f"{self.image_main_origin.name.split('.')[0]}.jpg"
+        image_path = IMAGE_FOLDER+'ImageBase/Thumbnail'
+        self.thumbnail_origin = InMemoryUploadedFile(output, 'ImageField', image_name, image_path, sys.getsizeof(output), None)
+       
+        self.save()
+        # return MEDIA_URL+str(self.image_main_origin)
+        return MEDIA_URL+str(self.thumbnail_origin)
+
+
+class PageImage(Image,LinkHelper):
+    page=models.ForeignKey("page", verbose_name=_("page"), on_delete=models.CASCADE)
+    app_name=APP_NAME
+    class_name='pageimage'
+
+    class Meta:
+        verbose_name = _("PageImage")
+        verbose_name_plural = _("PageImages")
+ 
 
 class Picture(models.Model, LinkHelper):
     app_name = models.CharField(_("app_name"), max_length=50)

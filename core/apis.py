@@ -1,9 +1,9 @@
 from core.models import Page, PageLink
-from core.serializers import PageDownloadSerializer, PageLinkSerializer, ParameterSerializer
+from core.serializers import PageDownloadSerializer, PageImageSerializer, PageLinkSerializer, ParameterSerializer
 from rest_framework.views import APIView
 from django.http import JsonResponse
 from .forms import *
-from .repo import PageLinkRepo, PageRepo,  ParameterRepo,PageDownloadRepo
+from .repo import PageLinkRepo, PageRepo,  ParameterRepo,PageDownloadRepo,PageImageRepo
 from .constants import SUCCEED, FAILED
 from utility.utils import str_to_html
 
@@ -82,6 +82,32 @@ class AddPageDownloadApi(APIView):
                     )
                 if page_download is not None:
                     context['page_download'] = PageDownloadSerializer(page_download).data
+                    context['result'] = SUCCEED
+        context['log'] = log
+        return JsonResponse(context)
+    
+class AddPageImageApi(APIView):
+    def post(self, request, *args, **kwargs):
+        log = 1
+        context = {}
+        context['result'] = FAILED
+        if request.method == 'POST':
+            log += 1
+            add_page_download_form = AddPageImageForm(request.POST, request.FILES)
+            if add_page_download_form.is_valid():
+                log += 1
+                cd=add_page_download_form.cleaned_data
+                page_id = cd['page_id']
+                title = cd['title']
+                image = request.FILES['image']
+                
+                page_image = PageImageRepo(request=request).add_page_image(
+                    page_id=page_id,
+                    title=title,
+                    image=image,
+                    )
+                if page_image is not None:
+                    context['page_image'] = PageImageSerializer(page_image).data
                     context['result'] = SUCCEED
         context['log'] = log
         return JsonResponse(context)
