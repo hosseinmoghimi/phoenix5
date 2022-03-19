@@ -14,16 +14,17 @@ def getContext(request,*args, **kwargs):
     context['TEMPLATE_ROOT']=TEMPLATE_ROOT
     context['LAYOUT_PARENT']=LAYOUT_PARENT
     context['title']="auth"
-
-    # parameter_repo = ParameterRepo(request=request,app_name=APP_NAME)
     return context
-# Create your views here.
+    
+
 class BasicViews(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
         profiles=ProfileRepo(request=request).list()
         context['profiles']=profiles
         return render(request,TEMPLATE_ROOT+"index.html",context)
+
+
 class ProfileViews(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -36,12 +37,16 @@ class LoginViews(View):
         pass
     def post(self,request):
         pass
+
+
 class RegisterViews(View):
     def get(self,request,*args, **kwargs):
         ProfileRepo(request=request).logout(request)
         pass
     def post(self,request):
         pass
+
+
 class LogoutViews(View):
     def get(self,request,*args, **kwargs):
         ProfileRepo(request=request).logout(request)
