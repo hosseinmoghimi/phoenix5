@@ -5,7 +5,7 @@ from core.views import CoreContext, PageContext,SearchForm
 from django.views import View
 from .apps import APP_NAME
 from .repo import AccountRepo,FinancialBalanceRepo, ChequeRepo, PriceRepo, ProductRepo,ServiceRepo,FinancialDocumentRepo,InvoiceRepo, TransactionRepo
-from .serializers import ChequeSerializer, ProductSerializer,ServiceSerializer,FinancialDocumentForAccountSerializer,FinancialDocumentSerializer
+from .serializers import InvoiceLineSerializer,ChequeSerializer, ProductSerializer,ServiceSerializer,FinancialDocumentForAccountSerializer,FinancialDocumentSerializer
 from .forms import *
 import json
 
@@ -26,6 +26,10 @@ def get_invoice_context(request,*args, **kwargs):
     invoice=InvoiceRepo(request=request).invoice(*args, **kwargs)
     context.update(get_transaction_context(request=request,transaction=invoice))
     context['invoice']=invoice
+
+    invoice_lines=invoice.invoice_lines()
+    invoice_lines_s=json.dumps(InvoiceLineSerializer(invoice_lines,many=True).data)
+    context['invoice_lines_s']=invoice_lines_s
     return context
 
 def get_price_app_context(request,*args, **kwargs):
@@ -95,6 +99,13 @@ class InvoiceView(View):
         context=getContext(request=request)
         context.update(get_invoice_context(request=request,*args, **kwargs))
         return render(request,TEMPLATE_ROOT+"invoice.html",context)
+class InvoicePrintView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        context.update(get_invoice_context(request=request,*args, **kwargs))
+        context['no_footer']=True
+        context['no_nav_bar']=True
+        return render(request,TEMPLATE_ROOT+"invoice-print.html",context)
 class InvoicesView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)

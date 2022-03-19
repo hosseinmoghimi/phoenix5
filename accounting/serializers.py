@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Account, Cheque, FinancialDocument, Price, Product,Service,  Transaction
+from .models import Account, Cheque, FinancialDocument, InvoiceLine, Price, Product, ProductOrService,Service,  Transaction
 
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
@@ -26,6 +26,22 @@ class ChequeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Cheque
         fields = ['id','title','status','color','pay_to','pay_from','description','amount','get_absolute_url','persian_cheque_date']
+
+
+class ProductOrServiceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProductOrService
+        fields = ['id', 'title', 'get_absolute_url',
+                  'thumbnail']
+
+
+
+class InvoiceLineSerializer(serializers.ModelSerializer):
+    product_or_service=ProductOrServiceSerializer()
+    class Meta:
+        model = InvoiceLine
+        fields = ['id', 'row','product_or_service','unit_name', 'quantity', 'unit_price',
+                  'description']
 
 
  

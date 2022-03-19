@@ -357,6 +357,8 @@ class FinancialDocument(models.Model,LinkHelper):
         return self.bestankar>0 
     def is_bedehkar(self):
         return self.bedehkar>0
+
+
 class FinancialBalance(models.Model,LinkHelper):
     app_name=APP_NAME
     class_name="financialbalance"
@@ -453,7 +455,8 @@ class Invoice(Transaction):
     invoice_datetime=models.DateTimeField(_("تاریخ فاکتور"), auto_now=False, auto_now_add=False)
     ship_fee=models.IntegerField(_("هزینه حمل"),default=0)
     discount=models.IntegerField(_("تخفیف"),default=0)
-    
+    def get_print_url(self):
+        return reverse(APP_NAME+":invoice_print",kwargs={'pk':self.pk})
     def editable(self):
         if self.status==TransactionStatusEnum.DRAFT:
             return True
@@ -462,13 +465,7 @@ class Invoice(Transaction):
         return False
     def get_title(self):
         return self.title or f"فاکتور شماره {self.pk}"
-    @property
-    def customer(self):
-        return self.pay_to
-    @property
-    def seller(self):
-        return Store.objects.filter(pk=self.pay_from.pk).first()
-
+  
 
     def get_edit_url2(self):
         return reverse(APP_NAME+":edit_invoice",kwargs={'pk':self.pk})
