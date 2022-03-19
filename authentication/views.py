@@ -1,6 +1,6 @@
 from django.shortcuts import redirect, render
 from core.enums import ParameterNameEnum
-
+from .forms import *
 from core.repo import ParameterRepo
 from .repo import ProfileRepo
 from core.views import CoreContext
@@ -28,7 +28,7 @@ class ProfileViews(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
         profile=ProfileRepo(request=request).me
-        context['profile']=profile
+        context['selected_profile']=profile
         return render(request,TEMPLATE_ROOT+"profile.html",context)
 class LoginViews(View):
     def get(self,request,*args, **kwargs):
