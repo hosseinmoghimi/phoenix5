@@ -1,0 +1,30 @@
+{% load static %}
+<div class="card" >
+    <div class="card-header">
+        <h5>
+            {{page.title}}
+        </h5>
+    </div>
+    <div class="farsi card-body text-right">
+        {% if perms.core.change_page %}
+        <a href="{{page.get_edit_url}}" target="_blank" title="ویرایش" class="mx-2 text-warning"><i
+                class="fa fa-edit"></i> ویرایش</a>
+        {% endif %}
+
+
+
+        {% if perms.core.delete_page %}
+        <a href="{{page.get_delete_url}}" target="_blank" title="حذف" class="mx-2 text-danger"><i
+                class="fa fa-trash"></i> حذف</a>
+        {% endif %}
+        {% if page.parent %}
+        <div class="mb-3"></div>
+        {{page.recursive_full_link|safe}}
+        {% endif %}
+
+
+        <a href="{% url 'projectmanager:project_chart' pk=project.id %}" title="نمودار" class="mx-2 text-info"><i
+            class="fa fa-bar-chart"></i> نمودار</a>
+
+    </div>
+</div>
