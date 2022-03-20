@@ -5,10 +5,10 @@ from core.serializers import PageLinkSerializer
 from .enums import *
 
 from utility.calendar import PersianCalendar
-from .repo import  MaterialRequestRepo, OrganizationUnitRepo, ServiceRequestRepo
+from .repo import  MaterialRequestRepo, OrganizationUnitRepo, ProjectRepo, ServiceRequestRepo
 from django.http import JsonResponse
 from .forms import *
-from .serializers import MaterialRequestSerializer, OrganizationUnitSerializer, ServiceRequestSerializer
+from .serializers import MaterialRequestSerializer, OrganizationUnitSerializer, ProjectSerializer, ServiceRequestSerializer
 
 class AddOrganizationUnitApi(APIView):
     def post(self,request,*args, **kwargs):
@@ -40,7 +40,33 @@ class AddOrganizationUnitApi(APIView):
         
 
 
+   
+class AddProjectApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        log=1
+        context['result']=FAILED
+        if request.method=='POST':
+            log=2
+            AddProjectForm_=AddProjectForm(request.POST)
+            if AddProjectForm_.is_valid():
+                log=3
+                fm=AddProjectForm_.cleaned_data
+                title=fm['title']
+                parent_id=fm['parent_id']
+                
+                project=ProjectRepo(request=request).add_project(
+                    title=title,
+                    parent_id=parent_id,
+                )
+                if project is not None:
+                    context['project']=ProjectSerializer(project).data
+                    context['result']=SUCCEED
+        context['log']=log
+        return JsonResponse(context)
         
+
+     
 class AddMaterialRequestApi(APIView):
       def post(self,request,*args, **kwargs):
         context={}

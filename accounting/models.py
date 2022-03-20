@@ -84,6 +84,7 @@ class Transaction(Page,LinkHelper):
         if self.transaction_datetime is None:
             from django.utils import timezone
             self.transaction_datetime=timezone.now()
+        print(self.pay_from_id)
         super(Transaction,self).save(*args, **kwargs)
         # FinancialDocument.objects.filter(transaction=self).delete()
 

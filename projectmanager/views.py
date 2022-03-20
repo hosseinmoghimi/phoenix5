@@ -7,7 +7,7 @@ from core.views import CoreContext,SearchForm,PageContext
 # Create your views here.
 from django.views import View
 
-from projectmanager.forms import AddOrganizationUnitForm
+from projectmanager.forms import AddOrganizationUnitForm, AddProjectForm
 from .apps import APP_NAME
 # from .repo import MaterialRepo
 # from .serializers import MaterialSerializer
@@ -118,6 +118,14 @@ class ProjectView(View):
         context['material_requests']=material_requests
         material_requests_s=json.dumps(MaterialRequestSerializer(material_requests,many=True).data)
         context['material_requests_s']=material_requests_s
+
+        projects=project.project_set.order_by('priority')
+        projects_s=json.dumps(ProjectSerializer(projects,many=True).data)
+        context['projects_s']=projects_s
+        
+        if request.user.has_perm(APP_NAME+".add_project"):
+            context['add_project_form']=AddProjectForm()
+
         if request.user.has_perm(APP_NAME+".change_project"):
             all_organization_units=OrganizationUnitRepo(request=request).list()
             context['all_organization_units']=all_organization_units

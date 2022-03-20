@@ -116,7 +116,30 @@ class ProjectRepo():
         if 'parent_id' in kwargs:
             objects=objects.filter(parent_id=kwargs['parent_id'])
         return objects.all()
+    
+    def add_project(self,*args, **kwargs):
+        if not self.user.has_perm(APP_NAME+'.add_project'):
+            return
+        project=Project()
+        if 'title' in kwargs and kwargs['title'] is not None:
+            project.title=kwargs['title']
 
+        if 'contractor_id' in kwargs and kwargs['contractor_id'] is not None and kwargs['contractor_id']>0:
+            project.contractor_id=kwargs['contractor_id']
+            
+        if 'employer_id' in kwargs and kwargs['employer_id'] is not None and kwargs['employer_id']>0:
+            project.employer_id=kwargs['employer_id']
+
+        if 'parent_id' in kwargs and kwargs['parent_id'] is not None and kwargs['parent_id']>0:
+            parent_id=kwargs['parent_id']
+            parent=Project.objects.filter(pk=parent_id).first()
+            if parent is not None:
+                project.parent=parent
+                project.contractor=parent.contractor
+                project.employer=parent.employer
+
+        project.save()
+        return project
 class EmployeeRepo():
       
     def __init__(self, *args, **kwargs):
