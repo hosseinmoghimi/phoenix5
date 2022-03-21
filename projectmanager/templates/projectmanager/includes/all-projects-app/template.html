@@ -2,7 +2,9 @@
     <div class="card-body">
         <input type="text" placeholder="جستجو ..." class="form-control" @input="filter()" v-model="search_for">
 
-        
-        {% include "projectmanager/includes/all-projects-app/table.html" %}
+        <div class="table-responsive">
+
+            {% include "projectmanager/includes/all-projects-app/table.html" %}
+        </div>
     </div>
 </div>
