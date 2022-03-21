@@ -1,6 +1,6 @@
 from django.utils.translation import gettext as _
 from django.db.models import TextChoices
-
+from core.enums import UnitNameEnum
 class GuaranteeTypeEnum(TextChoices):
     REPAIR="تعمیر",_("تعمیر")
     CHANGE="تعویض",_("تعویض")

@@ -32,6 +32,7 @@ class Asset(Page,LinkHelper):
 class Price(models.Model,LinkHelper):
     account=models.ForeignKey("account", verbose_name=_("account"), on_delete=models.CASCADE)
     product_or_service=models.ForeignKey("productorservice", verbose_name=_("product_or_service"), on_delete=models.CASCADE)
+    unit_name=models.CharField(_("unit_name"),choices=UnitNameEnum.choices,default=UnitNameEnum.ADAD, max_length=50)
     sell_price=models.IntegerField(_("فروش"),default=0)
     buy_price=models.IntegerField(_("خرید"),default=0)
     date_added=models.DateTimeField(_("date_added"), auto_now=False, auto_now_add=True)

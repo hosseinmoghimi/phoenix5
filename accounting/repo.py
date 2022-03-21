@@ -1,4 +1,6 @@
 from urllib import request
+
+from core.enums import UnitNameEnum
 from .apps import APP_NAME
 from .models import Account, Cheque, FinancialBalance, FinancialDocument, FinancialYear, Invoice, Price, Product,Service, Transaction
 from django.db.models import Q
@@ -175,10 +177,12 @@ class PriceRepo:
 
         if account_id ==0 or account_id is None:
             return
-
+        unit_name=UnitNameEnum.ADAD
         item_id=0
         if 'item_id' in kwargs:
             item_id=kwargs['item_id']
+        if 'unit_name' in kwargs:
+            unit_name=kwargs['unit_name']
         sell_price=0
         if 'sell_price' in kwargs:
             sell_price=kwargs['sell_price']
@@ -190,6 +194,7 @@ class PriceRepo:
         price.buy_price=buy_price
         price.sell_price=sell_price
         price.account_id=account_id
+        price.unit_name=unit_name
         if price.sell_price<=0 and account_id>0:
             return
         try:

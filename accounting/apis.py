@@ -52,9 +52,11 @@ class AddPriceApi(APIView):
                 item_id=fm['item_id']
                 sell_price=fm['sell_price']
                 buy_price=fm['buy_price']
+                unit_name=fm['unit_name']
                 account_id=fm['account_id']
                 price=PriceRepo(request=request).add_price(
                     item_id=item_id,
+                    unit_name=unit_name,
                     account_id=account_id,
                     sell_price=sell_price,
                     buy_price=buy_price,

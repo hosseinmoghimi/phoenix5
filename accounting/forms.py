@@ -29,6 +29,7 @@ class AddChequeForm(forms.Form):
     title=forms.CharField( max_length=500, required=True)
     
 class AddPriceForm(forms.Form):
+    unit_name=forms.CharField(required=False,max_length=50)
     item_id=forms.IntegerField(required=True)
     sell_price=forms.IntegerField(required=True)
     buy_price=forms.IntegerField(required=True)

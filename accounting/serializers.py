@@ -63,7 +63,7 @@ class PriceSerializer(serializers.ModelSerializer):
     account=AccountSerializer()
     class Meta:
         model = Price
-        fields=['id','sell_price','account','profit_percentage','buy_price','persian_date_added','get_edit_url','get_delete_url']
+        fields=['id','sell_price','account','unit_name','profit_percentage','buy_price','persian_date_added','get_edit_url','get_delete_url']
 class FinancialDocumentForAccountSerializer(serializers.ModelSerializer):
     account = AccountSerializer()
 

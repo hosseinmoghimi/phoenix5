@@ -1,5 +1,6 @@
 from django.http import Http404
 from django.shortcuts import render,reverse
+from core.enums import UnitNameEnum
 from core.views import CoreContext, PageContext,SearchForm
 # Create your views here.
 from django.views import View
@@ -41,6 +42,8 @@ def get_price_app_context(request,*args, **kwargs):
     else:
         items=[]
     context['items']=items
+    unit_names=(i[0] for i in UnitNameEnum.choices)
+    context['unit_names']=unit_names
     prices=PriceRepo(request=request).list(item_id=items[0].id)
     context['prices']=prices
     return context
