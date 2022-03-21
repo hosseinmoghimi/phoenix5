@@ -116,7 +116,7 @@ class InvoicePrintView(View):
         context=getContext(request=request)
         context.update(get_invoice_context(request=request,*args, **kwargs))
         context['no_footer']=True
-        context['no_nav_bar']=True
+        context['no_navbar']=True
         return render(request,TEMPLATE_ROOT+"invoice-print.html",context)
 class InvoicesView(View):
     def get(self,request,*args, **kwargs):

@@ -1,4 +1,6 @@
-from tkinter.messagebox import RETRY
+from authentication.models import IMAGE_FOLDER
+from phoenix.server_settings import STATIC_URL
+from phoenix.settings import MEDIA_URL
 from utility.currency import to_price
 from utility.calendar import PERSIAN_MONTH_NAMES, PersianCalendar,to_persian_datetime_tag
 from core.middleware import get_request
@@ -188,10 +190,16 @@ class Service(ProductOrService):
 
 
 class Account(models.Model,LinkHelper):
+    logo_origin=models.ImageField(_("logo"), null=True,blank=True,upload_to=IMAGE_FOLDER+"account/", height_field=None, width_field=None, max_length=None)
     title=models.CharField(_("title"), null=True,blank=True,max_length=500)
     profile=models.ForeignKey("authentication.profile", verbose_name=_("profile"), on_delete=models.CASCADE)
     class_name="account"
     app_name=APP_NAME
+
+    def logo(self):
+        if self.logo_origin:
+            return MEDIA_URL+str(self.logo_origin)
+        return f"{STATIC_URL}{APP_NAME}/img/account.png"
 
     class Meta:
         verbose_name = _("Account")
