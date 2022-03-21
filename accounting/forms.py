@@ -4,7 +4,7 @@ class SearchFrom(forms.Form):
     search_for=forms.CharField( max_length=200, required=True)
     
 class AddStorePriceForm(forms.Form):
-    productorservice_id=forms.IntegerField(required=True)
+    product_or_service_id=forms.IntegerField(required=True)
     store_id=forms.IntegerField(required=True)
     sell_price=forms.IntegerField(required=True)
     buy_price=forms.IntegerField(required=True)
@@ -30,7 +30,7 @@ class AddChequeForm(forms.Form):
     
 class AddPriceForm(forms.Form):
     unit_name=forms.CharField(required=False,max_length=50)
-    item_id=forms.IntegerField(required=True)
+    product_or_service_id=forms.IntegerField(required=True)
     sell_price=forms.IntegerField(required=True)
     buy_price=forms.IntegerField(required=True)
     account_id=forms.IntegerField(required=False)

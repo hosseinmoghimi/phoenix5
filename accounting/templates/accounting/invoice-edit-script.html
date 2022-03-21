@@ -134,13 +134,14 @@
             save: function () {
                 let lines = []
                 this.invoice_lines.forEach(invoice_line => {
-                    lines.push({
+                    let new_line = {
                         product_or_service_id: invoice_line.product_or_service.id,
                         quantity: invoice_line.quantity,
                         unit_name: invoice_line.unit_name,
                         unit_price: invoice_line.unit_price,
                         row: invoice_line.row,
-                    })
+                    }
+                    lines.push(new_line)
                 });
 
                 let payload = {

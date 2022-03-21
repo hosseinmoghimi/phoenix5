@@ -506,13 +506,10 @@ class Invoice(Transaction):
         sum-=self.discount
         return sum
     def save(self,*args, **kwargs):
-        
+        if self.class_name is None:
+            self.class_name='invoice' 
         self.amount=self.sum_total()
         super(Invoice,self).save(*args, **kwargs)
-        self.class_name='invoice'
-        if self.title is None or self.title=="":
-            self.title=f"فاکتورشماره {self.pk}"
-            self.save()
       
     class Meta:
         verbose_name = _("Invoice")

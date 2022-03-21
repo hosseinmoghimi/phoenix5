@@ -2,7 +2,7 @@
     let item_prices_app = new Vue({
         el: "#item-prices-app",
         data: {
-            item_id: page_id,
+            product_or_service_id: page_id,
             buy_price: 0,
             sell_price: 0,
             account_id: 0,
@@ -22,7 +22,7 @@
                 let url = "{% url 'accounting:add_price' %}"
                 let payload = {
                     csrfmiddlewaretoken: csrfmiddlewaretoken,
-                    item_id: this.item_id,
+                    product_or_service_id: this.product_or_service_id,
                     account_id: this.account_id,
                     buy_price: this.buy_price,
                     sell_price: this.sell_price,

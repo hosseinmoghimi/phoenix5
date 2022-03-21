@@ -1,8 +1,10 @@
+from datetime import timedelta
 from urllib import request
+from accounting.enums import TransactionStatusEnum
 
 from core.enums import UnitNameEnum
 from .apps import APP_NAME
-from .models import Account, Cheque, FinancialBalance, FinancialDocument, FinancialYear, Invoice, Price, Product,Service, Transaction
+from .models import Account, Cheque, FinancialBalance, FinancialDocument, FinancialYear, Invoice, InvoiceLine, Payment, Price, Product,Service, Transaction, WareHouseSheet
 from django.db.models import Q
 from authentication.repo import ProfileRepo
 from django.utils import timezone
@@ -157,7 +159,10 @@ class PriceRepo:
             objects = objects.filter(account_id=account_id) 
         if 'item_id' in kwargs:
             item_id=kwargs['item_id']
-            objects = objects.filter(product_or_service_id=item_id)  
+            objects = objects.filter(product_or_service_id=item_id) 
+        if 'product_or_service_id' in kwargs:
+            product_or_service_id=kwargs['product_or_service_id']
+            objects = objects.filter(product_or_service_id=product_or_service_id)  
         if 'product_id' in kwargs:
             item_id=kwargs['product_id']
             objects = objects.filter(product_or_service_id=item_id)  
@@ -178,9 +183,9 @@ class PriceRepo:
         if account_id ==0 or account_id is None:
             return
         unit_name=UnitNameEnum.ADAD
-        item_id=0
-        if 'item_id' in kwargs:
-            item_id=kwargs['item_id']
+        product_or_service_id=0
+        if 'product_or_service_id' in kwargs:
+            product_or_service_id=kwargs['product_or_service_id']
         if 'unit_name' in kwargs:
             unit_name=kwargs['unit_name']
         sell_price=0
@@ -190,7 +195,7 @@ class PriceRepo:
         if 'buy_price' in kwargs:
             buy_price=kwargs['buy_price']
         price=Price()
-        price.product_or_service_id=item_id
+        price.product_or_service_id=product_or_service_id
         price.buy_price=buy_price
         price.sell_price=sell_price
         price.account_id=account_id
@@ -400,7 +405,145 @@ class InvoiceRepo():
         return objects.all()
 
    
+    def edit_invoice(self,*args, **kwargs):
+        
+        invoice=self.invoice(*args, **kwargs)
+        if invoice is None:
+            return
+        if self.user.has_perm(APP_NAME+".change_invoice"):
+            pass
+        elif invoice.pay_from.profile==self.profile:
+            pass
+        else:
+            return
+        if invoice.status==TransactionStatusEnum.DELIVERED:
+            return None
+        if invoice.status==TransactionStatusEnum.APPROVED:
+            return None
+        if 'title' in kwargs:
+            invoice.title=kwargs['title']
+        if 'pay_from_id' in kwargs:
+            invoice.pay_from_id=kwargs['pay_from_id']
 
+        if 'payment_method' in kwargs:
+            invoice.payment_method=kwargs['payment_method']
+
+        if 'status' in kwargs:
+            invoice.status=kwargs['status']
+
+        if 'pay_to_id' in kwargs:
+            invoice.pay_to_id=kwargs['pay_to_id']
+
+        if 'invoice_datetime' in kwargs:
+            invoice.invoice_datetime=kwargs['invoice_datetime']
+            invoice.transaction_datetime=kwargs['invoice_datetime']
+
+        if 'description' in kwargs:
+            invoice.description=kwargs['description']
+
+        if 'discount' in kwargs:
+            invoice.discount=kwargs['discount']
+
+        if 'ship_fee' in kwargs:
+            invoice.ship_fee=kwargs['ship_fee']
+
+        if 'tax_percent' in kwargs:
+            invoice.tax_percent=kwargs['tax_percent']
+
+        invoice.save()
+        if 'lines' in kwargs:
+            invoice_lines=kwargs['lines']
+            invoice.invoice_lines().delete()
+            amount=0
+            for line in invoice_lines:
+                if int(line['quantity'])>0:
+                    invoice_line=InvoiceLine()
+                    invoice_line.invoice=invoice
+                    invoice_line.product_or_service_id=int(line['product_or_service_id'])
+                    invoice_line.quantity=int(line['quantity'])
+                    invoice_line.row=int(line['row'])
+                    invoice_line.unit_price=int(line['unit_price'])
+                    invoice_line.unit_name=line['unit_name']
+                    invoice_line.save()
+                    amount1=invoice_line.unit_price*invoice_line.quantity
+                    amount=amount+amount1
+        tax_amount=int(0.01*invoice.tax_percent*(amount+invoice.ship_fee))
+        invoice.amount=amount+invoice.ship_fee+tax_amount-invoice.discount
+        invoice.tax_amount=tax_amount
+        if invoice.title is None or invoice.title=="":
+            invoice.title=f"فاکتور شماره {invoice.pk}"
+        invoice.save()
+        if (invoice.status==TransactionStatusEnum.APPROVED or invoice.status==TransactionStatusEnum.DELIVERED)and (invoice.payment_method==PaymentMethodEnum.CARD or invoice.payment_method==PaymentMethodEnum.POS):
+            payment=Payment()
+            payment.title="پرداخت برای "+invoice.title
+            payment.pay_from=invoice.pay_to
+            payment.pay_to=invoice.pay_from
+            payment.creator=self.profile
+            payment.amount=invoice.amount
+            delta=timedelta(minutes=1)
+            payment.transaction_datetime=invoice.transaction_datetime+delta
+            payment.payment_method=invoice.payment_method
+            payment.save()
+        # self.update_financial_documents(invoice)
+        if invoice.status==TransactionStatusEnum.DELIVERED:
+            for invoice_line in invoice.invoice_lines():
+                wh_sheet=WareHouseSheet()
+                wh_sheet.invoice=invoice
+                wh_sheet.product_id=invoice_line.product_or_service.id
+        fd=FinancialDocument.objects.filter(account=invoice.pay_from).filter(transaction=invoice).first()
+        if fd is not None:
+            fb=FinancialBalance(financial_document=fd)
+            sell_benefit=0
+            sum_services=0
+            for line in invoice.lines.all():
+                line_class_name=line.product_or_service.class_name
+                # product=ProductRepo(request=self.request).service(pk=line.product_or_service.id)
+                if line_class_name=="product":
+                    sp=Price.objects.filter(store_id=invoice.pay_from.id).filter(product_or_service_id=line.product_or_service.id).order_by('-date_added').first()
+                    if sp is not None:
+                        sell_benefit+=line.quantity*(line.unit_price-sp.buy_price)
+                # service=ServiceRepo(request=self.request).service(pk=line.product_or_service.id)
+                if line_class_name=="service":
+                # if service is not None:
+                    sum_services+=line.quantity*line.unit_price
+            fb.sell_service=sum_services if fb.financial_document.account.id==invoice.pay_from.id else 0
+            fb.buy_service=sum_services if fb.financial_document.account.id==invoice.pay_to.id else 0
+            
+            fb.sell_benefit=sell_benefit
+            fb.tax=invoice.tax_amount
+            fb.discount=invoice.discount
+            fb.ship_fee=invoice.ship_fee
+            fb.save()
+
+
+
+        fd=FinancialDocument.objects.filter(account=invoice.pay_to).filter(transaction=invoice).first()
+        if fd is not None:
+            fb=FinancialBalance(financial_document=fd)
+            sell_benefit=0
+            sum_services=0
+            for line in invoice.invoiceline_set.all():
+                line_class_name=line.product_or_service.class_name
+                # product=ProductRepo(request=self.request).service(pk=line.product_or_service.id)
+                if line_class_name=="product":
+                    # sp=StorePrice.objects.filter(store_id=invoice.pay_to.id).filter(product_or_service_id=line.product_or_service.id).order_by('-date_added').first()
+                    # if sp is not None:
+                        # sp=StorePrice()
+                        # sp.
+                    pass
+                # service=ServiceRepo(request=self.request).service(pk=line.product_or_service.id)
+                if line_class_name=="service":
+                # if service is not None:
+                    sum_services+=line.quantity*line.unit_price
+            fb.sell_service=sum_services if fb.financial_document.account.id==invoice.pay_from.id else 0
+            fb.buy_service=sum_services if fb.financial_document.account.id==invoice.pay_to.id else 0
+            
+            fb.sell_benefit=sell_benefit
+            fb.tax=invoice.tax_amount
+            fb.discount=invoice.discount
+            fb.ship_fee=invoice.ship_fee
+            fb.save()
+        return invoice
    
 class ChequeRepo():
     def __init__(self, *args, **kwargs):
