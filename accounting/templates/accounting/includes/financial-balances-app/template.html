@@ -88,12 +88,12 @@
                                     {{financial_balance.bestankar|to_price}}
                                 </td>
                                 <td>
-                                    {% if perms.hesabyar.change_financialbalance %}
+                                    {% if perms.accounting.change_financialbalance %}
                                     <a href="{{financial_balance.get_edit_url}}" target="_blank" title="ویرایش"
                                         class="mx-2"><i class="fa fa-edit text-info"></i></a>
                                     {% endif %}
 
-                                    {% if perms.hesabyar.delete_financialbalance %}
+                                    {% if perms.accounting.delete_financialbalance %}
                                     <a href="{{financial_balance.get_delete_url}}" target="_blank" title="حذف"
                                         class="mx-2"><i class="fa fa-trash text-danger"></i></a>
                                     {% endif %}

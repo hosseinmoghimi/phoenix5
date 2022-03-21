@@ -3,18 +3,18 @@
     {{invoice.title}}
     
     
-    <a href="{{invoice.get_show_url}}" title="نمایش" class="mx-2"><i
+    <a href="{{invoice.get_absolute_url}}" title="نمایش" class="mx-2"><i
         class="material-icons text-success">ballot</i></a>
 
 
-    {% if perms.hesabyar.change_invoice %}
+    {% if perms.accounting.change_invoice %}
     <a href="{{invoice.get_edit_url}}" target="_blank" title="ویرایش" class="mx-2"><i
             class="fa fa-edit text-info"></i></a>
             
     <a href="{{invoice.get_edit_url2}}" target="_blank" title="ویرایش" class="mx-2"><i
         class="fa fa-edit text-success"></i></a>
     {% endif %}
-    {% if perms.hesabyar.delete_invoice %}
+    {% if perms.accounting.delete_invoice %}
     <a href="{{invoice.get_delete_url}}" target="_blank" title="حذف" class="mx-2"><i
             class="fa fa-trash text-danger"></i></a>
     {% endif %}

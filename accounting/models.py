@@ -466,6 +466,7 @@ class Invoice(Transaction):
     invoice_datetime=models.DateTimeField(_("تاریخ فاکتور"), auto_now=False, auto_now_add=False)
     ship_fee=models.IntegerField(_("هزینه حمل"),default=0)
     discount=models.IntegerField(_("تخفیف"),default=0)
+
     def get_print_url(self):
         return reverse(APP_NAME+":invoice_print",kwargs={'pk':self.pk})
     def editable(self):
@@ -477,18 +478,16 @@ class Invoice(Transaction):
     def get_title(self):
         return self.title or f"فاکتور شماره {self.pk}"
   
-    def get_show_url(self):
-        return reverse(APP_NAME+":invoice_show",kwargs={'pk':self.pk})
     def get_edit_url2(self):
         return reverse(APP_NAME+":edit_invoice",kwargs={'pk':self.pk})
     def get_print_url(self):
         return reverse(APP_NAME+":invoice_print",kwargs={'pk':self.pk})
     
     
-    def persian_invoice_datetime(self,no_tag=False):
-        if no_tag:
-            return PersianCalendar().from_gregorian(self.invoice_datetime)
+    def persian_invoice_datetime_tag(self):
         return to_persian_datetime_tag(self.invoice_datetime)
+    def persian_invoice_datetime(self,no_tag=False):
+        return PersianCalendar().from_gregorian(self.invoice_datetime)
     def tax_amount(self):
         
         sum=self.lines_total()

@@ -8,7 +8,7 @@ def to_persian_datetime_tag(value):
         date_=a[:10]
         time_=a[11:]
         greg=value.strftime("%Y/%m/%d %H:%M:%S") 
-        return f"""<span class="ltr" title="{greg}"><small class="mx-3 text-muted">{time_}</small> {date_}</span>"""
+        return f"""<span class="ltr" title="{greg}">{date_} <small class="mx-1 text-muted">{time_}</small></span>"""
     except:
         return ""
 

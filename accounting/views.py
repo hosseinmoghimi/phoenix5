@@ -1,12 +1,14 @@
 from django.http import Http404
 from django.shortcuts import render,reverse
+from accounting.apis import EditInvoiceApi
+from accounting.enums import PaymentMethodEnum, TransactionStatusEnum
 from core.enums import UnitNameEnum
 from core.views import CoreContext, PageContext,SearchForm
 # Create your views here.
 from django.views import View
 from .apps import APP_NAME
 from .repo import AccountRepo,FinancialBalanceRepo, ChequeRepo, PriceRepo, ProductRepo,ServiceRepo,FinancialDocumentRepo,InvoiceRepo, TransactionRepo
-from .serializers import InvoiceLineSerializer,ChequeSerializer, PriceSerializer, ProductSerializer,ServiceSerializer,FinancialDocumentForAccountSerializer,FinancialDocumentSerializer
+from .serializers import InvoiceFullSerializer,InvoiceLineSerializer,ChequeSerializer, PriceSerializer, ProductSerializer,ServiceSerializer,FinancialDocumentForAccountSerializer,FinancialDocumentSerializer
 from .forms import *
 import json
 
@@ -22,6 +24,34 @@ def getContext(request, *args, **kwargs):
     context['LAYOUT_PARENT'] = LAYOUT_PARENT
     return context
 
+
+def get_edit_invoice_context(request,*args, **kwargs):
+    context={}
+    invoice=kwargs['invoice'] 
+    customers=AccountRepo(request=request).list(all=True)
+    context['customers']=customers
+
+    stores=AccountRepo(request=request).list()
+    context['stores']=stores
+        
+    products=ProductRepo(request=request).list()
+    context['products']=products
+    context['products_s']=json.dumps(ProductSerializer(products,many=True).data)
+
+
+
+    
+    services=ServiceRepo(request=request).list()
+    context['services']=services
+    context['services_s']=json.dumps(ServiceSerializer(services,many=True).data)
+
+    context['unit_names']=(u[0] for u in UnitNameEnum.choices)
+    context['invoice_statuses']=(u[0] for u in TransactionStatusEnum.choices)
+    context['invoice_payment_methods']=(u[0] for u in PaymentMethodEnum.choices)
+    
+    return context
+    
+
 def get_invoice_context(request,*args, **kwargs):
     context={}
     invoice=InvoiceRepo(request=request).invoice(*args, **kwargs)
@@ -31,6 +61,8 @@ def get_invoice_context(request,*args, **kwargs):
     invoice_lines=invoice.invoice_lines()
     invoice_lines_s=json.dumps(InvoiceLineSerializer(invoice_lines,many=True).data)
     context['invoice_lines_s']=invoice_lines_s
+    context['invoice_s']=json.dumps(InvoiceFullSerializer(invoice).data)
+
     return context
 
 def get_price_app_context(request,*args, **kwargs):
@@ -98,18 +130,13 @@ class FinancialBalancesView(View):
         return render(request,TEMPLATE_ROOT+"financial-balances.html",context)
 
 
-class InvoiceShowView(View):
-    def get(self,request,*args, **kwargs):
-        context=getContext(request=request)
-        context.update(get_invoice_context(request=request,*args, **kwargs))
-        context['no_navbar']=True
-        context['no_footer']=True
-        return render(request,TEMPLATE_ROOT+"invoice-show.html",context)
     
 class InvoiceView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
         context.update(get_invoice_context(request=request,*args, **kwargs))
+        context['no_navbar']=True
+        context['no_footer']=True
         return render(request,TEMPLATE_ROOT+"invoice.html",context)
 class InvoicePrintView(View):
     def get(self,request,*args, **kwargs):
@@ -124,6 +151,16 @@ class InvoicesView(View):
         invoices=InvoiceRepo(request=request).list(*args, **kwargs)
         context['invoices']=invoices
         return render(request,TEMPLATE_ROOT+"invoices.html",context)
+class InvoiceEditView(View):
+    def post(self,request,*args, **kwargs):
+        return EditInvoiceApi().post(request=request,*args, **kwargs)
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        context.update(get_invoice_context(request=request,*args, **kwargs))
+        invoice=context['invoice']
+        context.update(get_edit_invoice_context(request=request,invoice=invoice,*args, **kwargs))
+        
+        return render(request,TEMPLATE_ROOT+"invoice-edit.html",context)
 
 
 class TransactionView(View):
@@ -139,12 +176,6 @@ class TransactionsView(View):
         return render(request,TEMPLATE_ROOT+"transactions.html",context)
 
 
-class EditInvoiceView(View):
-    def get(self,request,*args, **kwargs):
-        context=getContext(request=request)
-        context.update(get_invoice_context(request=request,*args, **kwargs))
-        
-        return render(request,TEMPLATE_ROOT+"edit-invoice.html",context)
 class HomeView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)

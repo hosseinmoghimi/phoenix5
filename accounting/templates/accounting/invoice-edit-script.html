@@ -1,0 +1,182 @@
+{% load static %}
+<script src="{% static 'persian/moment.js' %}"></script>
+<script src="{% static 'persian/moment-jalaali.js' %}"></script>
+<script src="{% static 'persian/vue-persian-datetime-picker-browser.js' %}"></script>
+
+<script>
+    let invoice = JSON.parse(`{{invoice_s|escapejs}}`)
+    let products = JSON.parse(`{{products_s|escapejs}}`)
+    let services = JSON.parse(`{{services_s|escapejs}}`)
+    let invoice_lines = JSON.parse(`{{invoice_lines_s|escapejs}}`)
+    let invoice_line_component_template = `{% include "accounting/includes/invoice-lines-app/invoice-line-component-template.html" %}`
+    let invoice_line_component = Vue.component('invoice-line-component', {
+        data: function () {
+            return {
+
+            }
+        },
+        methods: {
+
+
+            to_price: function (vall) {
+                return to_price(vall, "")
+            },
+
+        },
+        props: ['invoice_line'],
+        template: invoice_line_component_template,
+    })
+
+
+    let edit_invoice_app = new Vue({
+        el: "#edit-invoice-app",
+        data: {
+            message: {
+                show: false,
+                body: "",
+                color: "success",
+            },
+            product_search_items: [],
+            service_search_items: [],
+            search_for: "",
+            invoice_date: invoice.persian_invoice_datetime.slice(0, 10),
+            invoice: invoice,
+            invoice_lines: invoice_lines,
+            new_invoice_line: {
+                row: invoice_lines.length + 1,
+                unit_price: 0,
+                unit_name: "",
+                product_or_service: { title: "جدید", get_absolute_url: "" },
+                quantity: 0,
+            },
+
+        },
+        components: {
+            DatePicker: VuePersianDatetimePicker,
+            invoice_line_component,
+
+        },
+        methods: {
+            filter: function () {
+                if (this.search_for.length > 0) {
+
+                    this.product_search_items = products.filter((product) => {
+                        return product.title.indexOf(this.search_for) > -1
+                    })
+                    this.service_search_items = services.filter((service) => {
+                        return service.title.indexOf(this.search_for) > -1
+                    })
+                }
+                else {
+                    this.product_search_items = []
+                    this.service_search_items = []
+                }
+            },
+            add_product: function (product) {
+                let line = {
+                    product_or_service: product,
+                    quantity: 1,
+                    unit_name: product.unit_name,
+                    unit_price: product.unit_price,
+                    row: this.invoice_lines.length + 1,
+                }
+                this.invoice_lines.push(line)
+                this.search_for = ""
+                this.product_search_items = []
+                this.service_search_items = []
+            },
+            add_service: function (service) {
+                let line = {
+                    product_or_service: service,
+                    quantity: 1,
+                    unit_name: service.unit_name,
+                    unit_price: service.unit_price,
+                    row: this.invoice_lines.length + 1,
+                }
+                this.invoice_lines.push(line)
+                this.search_for = ""
+                this.product_search_items = []
+                this.service_search_items = []
+            },
+            tax_amount: function () {
+                let a = this.invoice.tax_percent / 100.0
+                let b = parseInt(this.invoice.ship_fee) + this.lines_total()
+
+                return (parseInt(a * b))
+            },
+
+            to_price: function (vall) {
+                return to_price(vall, "")
+            },
+
+            sum_total: function () {
+                let a = parseInt(this.lines_total())
+                let b = parseInt(this.invoice.ship_fee)
+                let c = parseInt(this.tax_amount())
+                let d = parseInt(this.invoice.discount)
+                // console.log("@@@@@@@@@@")
+                // console.log(a)
+                // console.log(b)
+                // console.log(c)
+                // console.log(d)
+                // console.log(a + b + c - d)
+                return this.to_price(parseInt(a + b + c - d))
+
+            },
+            lines_total: function () {
+                let sum = 0
+                this.invoice_lines.forEach(invoice_line => {
+                    sum += invoice_line.quantity * invoice_line.unit_price
+
+                })
+                return sum
+            },
+            save: function () {
+                let lines = []
+                this.invoice_lines.forEach(invoice_line => {
+                    lines.push({
+                        product_or_service_id: invoice_line.product_or_service.id,
+                        quantity: invoice_line.quantity,
+                        unit_name: invoice_line.unit_name,
+                        unit_price: invoice_line.unit_price,
+                        row: invoice_line.row,
+                    })
+                });
+
+                let payload = {
+                    invoice_id: this.invoice.id,
+                    lines: JSON.stringify(lines),
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    invoice_datetime: this.invoice.persian_invoice_datetime,
+                    description: this.invoice.description,
+                    pay_to_id: this.invoice.pay_to.id,
+                    pay_from_id: this.invoice.pay_from.id,
+                    payment_method: this.invoice.payment_method,
+                    status: this.invoice.status,
+                    ship_fee: parseInt(this.invoice.ship_fee),
+                    tax_percent: parseInt(this.invoice.tax_percent),
+                    discount: parseInt(this.invoice.discount),
+                }
+                console.log(payload)
+                let url = "{% url 'accounting:edit_invoice' pk=invoice.pk %}"
+                $.post(url, payload).done((data) => {
+                    console.log(data)
+                    if (data.result === 'SUCCEED') {
+                        edit_invoice_app.message = { show: true, body: "با موفقیت ذخیره شد.", color: 'success' }
+                        setTimeout(() => {
+                            edit_invoice_app.message = { show: false, body: "با موفقیت ذخیره شد.", color: 'success' }
+
+                        }, 3000);
+                    }
+                    if (data.result === 'FAILED') {
+                        edit_invoice_app.message = { show: true, body: "خطا در ذخیره فاکتور.", color: 'danger' }
+                        setTimeout(() => {
+                            edit_invoice_app.message = { show: false, body: "با موفقیت ذخیره شد.", color: 'success' }
+
+                        }, 3000);
+                    }
+                })
+            }
+        }
+    })
+</script>

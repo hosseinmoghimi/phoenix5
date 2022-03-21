@@ -36,7 +36,9 @@ class AddChequeApi(APIView):
         context['log']=log
         return JsonResponse(context)
 
-
+class EditInvoiceApi(APIView):
+    def post(self,request,*args, **kwargs):
+        pass
         
 class AddPriceApi(APIView):
     def post(self,request,*args, **kwargs):

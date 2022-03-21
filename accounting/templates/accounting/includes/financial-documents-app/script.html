@@ -50,7 +50,7 @@
                 category_id: this.category_id,
             }
             console.log(payload)
-            let url = "{% url 'hesabyar:add_financial_document' %}"
+            let url = "{% url 'accounting:add_financial_document' %}"
             $.post(url, payload).done((data) => {
                 financial_documents_app.waiting = false
                 console.log(data)

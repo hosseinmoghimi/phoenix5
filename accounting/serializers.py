@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Account, Cheque, FinancialDocument, InvoiceLine, Price, Product, ProductOrService,Service,  Transaction
+from .models import Account, Cheque, FinancialDocument, Invoice, InvoiceLine, Price, Product, ProductOrService,Service,  Transaction
 
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
@@ -43,6 +43,14 @@ class InvoiceLineSerializer(serializers.ModelSerializer):
         fields = ['id', 'row','product_or_service','unit_name', 'quantity', 'unit_price',
                   'description']
 
+
+
+class InvoiceFullSerializer(serializers.ModelSerializer):
+    pay_to=AccountSerializer()
+    pay_from=AccountSerializer()
+    class Meta:
+        model = Invoice
+        fields = ['id','title','payment_method','status','pay_to','pay_from','description','get_absolute_url','persian_invoice_datetime','ship_fee','discount','tax_percent']
 
  
 class TransactionSerializer(serializers.ModelSerializer):
