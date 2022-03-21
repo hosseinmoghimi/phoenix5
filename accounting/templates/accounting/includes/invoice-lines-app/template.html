@@ -52,8 +52,8 @@
                     {% if not product and not service %}
 
                     <td class="bordered">
-                        <a :href="invoice_line.productorservice.get_absolute_url">
-                            <span v-text="invoice_line.productorservice.title"></span>
+                        <a :href="invoice_line.product_or_service.get_absolute_url">
+                            <span v-text="invoice_line.product_or_service.title"></span>
                         </a>
                     </td>
                     {% endif %}
