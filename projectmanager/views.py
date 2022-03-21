@@ -1,3 +1,5 @@
+from accounting.repo import PriceRepo
+from accounting.serializers import PriceBriefSerializer
 from accounting.views import InvoiceView, get_service_context,get_product_context
 from django.shortcuts import redirect, render
 # Create your views here.
@@ -159,12 +161,19 @@ class ProjectView(View):
             
             context['unit_names'] = (i[0] for i in UnitNameEnum.choices)
             context['unit_names2'] = (i[0] for i in UnitNameEnum.choices)
+
+
+                    
+            item_prices=PriceRepo(request=request).list(account_id=project.contractor.account.id)
+            print(item_prices)
+            print(100*"#")
+            item_prices_s=json.dumps(PriceBriefSerializer(item_prices,many=True).data)
+            context['item_prices_s']=item_prices_s
             
             all_materials=MaterialRepo(request=request).list()
             context['all_materials_s']=json.dumps(MaterialSerializer(all_materials,many=True).data)
 
         return render(request,TEMPLATE_ROOT+"project.html",context)
-
 
 
 class GuanttChartView(View):
@@ -272,13 +281,16 @@ class ProjectChartView(View):
 
         return render(request,TEMPLATE_ROOT+"project.html",context)
 
+
 class MaterialInvoiceView(View):
     def get(self,request,*args, **kwargs):
         return InvoiceView().get(request,*args, **kwargs)
 
+
 class ServiceInvoiceView(View):
     def get(self,request,*args, **kwargs):
         return InvoiceView().get(request,*args, **kwargs)
+
 
 class MaterialsView(View):
     def get(self,request,*args, **kwargs):

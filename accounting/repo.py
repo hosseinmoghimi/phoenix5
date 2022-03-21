@@ -154,7 +154,7 @@ class PriceRepo:
             objects = objects.filter(title__contains=search_for) 
         if 'account_id' in kwargs:
             account_id=kwargs['account_id']
-            objects = objects.filter(financial_document__account_id=account_id) 
+            objects = objects.filter(account_id=account_id) 
         if 'item_id' in kwargs:
             item_id=kwargs['item_id']
             objects = objects.filter(product_or_service_id=item_id)  

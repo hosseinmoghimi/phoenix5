@@ -59,6 +59,8 @@
     let page_id = parseInt("{{project.id}}")
     let project_id = parseInt("{{project.id}}")
     let parent_id = parseInt("{{project.id}}")
+    let item_prices=JSON.parse(`{{item_prices_s|escapejs}}`)
+
 </script>
 {% include "core/includes/page-links-app/script.html" %}
 {% include "core/includes/page-images-app/script.html" %}

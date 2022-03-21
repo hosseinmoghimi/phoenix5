@@ -64,6 +64,16 @@ class PriceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Price
         fields=['id','sell_price','account','unit_name','profit_percentage','buy_price','persian_date_added','get_edit_url','get_delete_url']
+
+
+class PriceBriefSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Price
+        fields=['id','product_or_service_id','sell_price','unit_name','profit_percentage','buy_price','persian_date_added','get_edit_url','get_delete_url']
+
+
+
+
 class FinancialDocumentForAccountSerializer(serializers.ModelSerializer):
     account = AccountSerializer()
 

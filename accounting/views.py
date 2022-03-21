@@ -6,7 +6,7 @@ from core.views import CoreContext, PageContext,SearchForm
 from django.views import View
 from .apps import APP_NAME
 from .repo import AccountRepo,FinancialBalanceRepo, ChequeRepo, PriceRepo, ProductRepo,ServiceRepo,FinancialDocumentRepo,InvoiceRepo, TransactionRepo
-from .serializers import InvoiceLineSerializer,ChequeSerializer, ProductSerializer,ServiceSerializer,FinancialDocumentForAccountSerializer,FinancialDocumentSerializer
+from .serializers import InvoiceLineSerializer,ChequeSerializer, PriceSerializer, ProductSerializer,ServiceSerializer,FinancialDocumentForAccountSerializer,FinancialDocumentSerializer
 from .forms import *
 import json
 

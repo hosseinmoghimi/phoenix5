@@ -42,9 +42,9 @@
             <div class="form-group">
                 <label for="">نام واحد</label>
 
-                <select v-model="add_service_request_form_unit_name" class="form-control farsi" id="">
+                <select required v-model="add_service_request_form_unit_name" class="form-control farsi" id="">
                     <option disabled selected>نام واحد</option>
-                    {% for unit_name in unit_names2 %}
+                    {% for unit_name in unit_names %}
                     <option value="{{unit_name}}">{{unit_name}}</option>
                     {% endfor %}
                 </select>
