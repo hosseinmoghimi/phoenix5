@@ -126,7 +126,7 @@ class ProjectRepo():
 
         if 'contractor_id' in kwargs and kwargs['contractor_id'] is not None and kwargs['contractor_id']>0:
             project.contractor_id=kwargs['contractor_id']
-            
+
         if 'employer_id' in kwargs and kwargs['employer_id'] is not None and kwargs['employer_id']>0:
             project.employer_id=kwargs['employer_id']
 
@@ -174,6 +174,10 @@ class EmployeeRepo():
             objects = objects.filter(Q(for_home=kwargs['for_home']))
         if 'parent_id' in kwargs:
             objects=objects.filter(parent_id=kwargs['parent_id'])
+        if 'organization_unit_id' in kwargs:
+            objects=objects.filter(organization_unit_id=kwargs['organization_unit_id'])
+        if 'profile_id' in kwargs:
+            objects=objects.filter(profile_id=kwargs['profile_id'])
         if 'project_id' in kwargs:
             project=ProjectRepo(request=self.request).project(project_id=kwargs['project_id'])
             objects=project.organization_units.all()

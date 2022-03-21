@@ -319,3 +319,9 @@ class ProfileRepo():
         result=SUCCEED
         message="successfully!"
         return (result,profile,message)
+
+
+
+    def list(self,*args, **kwargs):
+        objects=self.objects.all()
+        return objects

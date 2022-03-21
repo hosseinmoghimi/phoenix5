@@ -329,7 +329,7 @@ class AccountRepo():
         self.profile=ProfileRepo(*args, **kwargs).me
         if self.profile is not None:
             self.me=Account.objects.filter(profile=self.profile).first()
-
+        
 
     def account(self, *args, **kwargs):
         pk=0
@@ -348,6 +348,8 @@ class AccountRepo():
             objects = objects.filter(Q(title__contains=search_for)|Q(short_description__contains=search_for)|Q(description__contains=search_for))
         if 'for_home' in kwargs:
             objects = objects.filter(Q(for_home=kwargs['for_home']))
+        if 'profile_id' in kwargs:
+            objects=objects.filter(profile_id=kwargs['profile_id'])
         if 'parent_id' in kwargs:
             objects=objects.filter(parent_id=kwargs['parent_id'])
         return objects.all()

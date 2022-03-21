@@ -16,7 +16,7 @@ class EmployeeSerializer(serializers.ModelSerializer):
     organization_unit=OrganizationUnitSerializer()
     class Meta:
         model=Employee
-        fields=['id','organization_unit','get_absolute_url','profile','title']
+        fields=['id','organization_unit','job_title','get_absolute_url','profile','title']
 
 class MaterialSerializer(serializers.ModelSerializer):
     class Meta:

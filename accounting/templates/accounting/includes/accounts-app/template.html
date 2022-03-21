@@ -1,11 +1,17 @@
 {% load to_persian_date %}
 {% load to_price %}
-<div class="card">
-    <div class="card-header">
+<div id="accordion-accounts">
 
-        <h4 class="text-center">
+
+<div class="card">
+    <div class="card-header" id="heading-accounts">
+        <h5 class="text-center">
+            <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-accounts" aria-expanded="true"
+                aria-controls="collapse-accounts">
             حساب های مالی
-        </h4>
+            </button>
+        </h5>
+        
         {% if page_pre_description %}
 
         <h5 class="text-center">
@@ -19,6 +25,10 @@
         </h4>
         {% endif %}
     </div>
+    <div id="collapse-accounts" class="collapse" aria-labelledby="heading-accounts"
+    data-parent="#accordion-accounts">
+
+
     <div class="card-body">
         <div class="table-responsive">
 
@@ -73,4 +83,8 @@
             </table>
         </div>
     </div>
+</div>
+
+
+</div>
 </div>

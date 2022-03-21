@@ -19,16 +19,19 @@
             <div class="card-body">
 
                 <div v-for="employee in employees" class="mb-3">
-                    <a :href="employee.get_absolute_url">
-                        <div class="media">
-                            <img class="rounded-circle mr-3 " width="64" :src="employee.profile.image" alt="">
-                            <div class="media-body farsi">
-
-                                <h5 v-text="employee.profile.name">
-
-                                </h5>
+                    <div class="media">
+                        <img class="rounded-circle mr-3 " width="64" :src="employee.profile.image" alt="">
+                        <div class="media-body farsi">
+                            
+                            <a :href="employee.get_absolute_url">
+                            <h5 v-text="employee.title">
+                                
+                            </h5>
+                        </a>
                                 <div>
-                                   
+                                    <h6 class="text-success" v-text="employee.job_title">
+
+                                    </h6>
                                     <a :href="employee.organization_unit.get_absolute_url">
                                         <small v-text=employee.organization_unit.title></small>
                                     </a>
@@ -36,7 +39,6 @@
 
                             </div>
                         </div>
-                    </a>
                 </div>
 
 

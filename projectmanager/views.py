@@ -12,7 +12,7 @@ from .apps import APP_NAME
 # from .repo import MaterialRepo
 # from .serializers import MaterialSerializer
 import json
-from .repo import MaterialRepo, OrganizationUnitRepo,ServiceRepo,ProjectRepo
+from .repo import EmployeeRepo, MaterialRepo, OrganizationUnitRepo,ServiceRepo,ProjectRepo
 from .serializers import EmployeeSerializer, MaterialSerializer, OrganizationUnitSerializer,ServiceSerializer,ProjectSerializer,ServiceRequestSerializer,MaterialRequestSerializer
 
 TEMPLATE_ROOT = "projectmanager/"
@@ -57,7 +57,7 @@ class OrganizationUnitView(View):
         context.update(PageContext(request=request,page=organization_unit))
         context['organization_unit']=organization_unit
         
-        employees=organization_unit.employee_set.all()
+        employees=EmployeeRepo(request=request).list(organization_unit_id=organization_unit.id)
         context['employees_s']=json.dumps(EmployeeSerializer(employees,many=True).data)
         
         
