@@ -79,8 +79,6 @@ class ServiceRepo():
             objects=objects.filter(parent_id=kwargs['parent_id'])
         return objects.all()
 
-   
-
 
 class ProjectRepo():
     def __init__(self, *args, **kwargs):
@@ -137,9 +135,24 @@ class ProjectRepo():
                 project.parent=parent
                 project.contractor=parent.contractor
                 project.employer=parent.employer
+                
+                
+        project.start_date=timezone.now()
+        if 'start_date' in kwargs and kwargs['start_date'] is not None and not kwargs['start_date']=="":
+            start_date=kwargs['start_date']
+            if start_date is not None:
+                project.start_date=start_date
+        
+        project.end_date=timezone.now()
+        if 'end_date' in kwargs and kwargs['end_date'] is not None and not kwargs['end_date']=="":
+            end_date=kwargs['end_date']
+            if end_date is not None:
+                project.end_date=end_date
 
         project.save()
         return project
+
+
 class EmployeeRepo():
       
     def __init__(self, *args, **kwargs):
@@ -182,9 +195,6 @@ class EmployeeRepo():
             project=ProjectRepo(request=self.request).project(project_id=kwargs['project_id'])
             objects=project.organization_units.all()
         return objects.all()
-
-
-
 
 
 class ServiceRequestRepo():
