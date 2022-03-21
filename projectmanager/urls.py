@@ -27,7 +27,8 @@ urlpatterns = [
 
     path("service/<int:pk>/",login_required(views.ServiceView.as_view()),name="pm_service"),
     path("services/",login_required(views.ServicesView.as_view()),name="services"),
-
+    path("guantt_chart/<int:pk>/",login_required(views.GuanttChartView.as_view()),name="guantt_chart"),
+  
     path('add_material_request/',login_required(apis.AddMaterialRequestApi.as_view()),name="add_material_request"),
     path('add_service_request/',login_required(apis.AddServiceRequestApi.as_view()),name="add_service_request"),
     path('add_organization_unit/',login_required(apis.AddOrganizationUnitApi.as_view()),name="add_organization_unit"),

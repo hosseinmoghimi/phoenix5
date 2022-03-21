@@ -11,6 +11,14 @@
                 <button class="btn btn-link" data-toggle="collapse" data-target="#collapseservicerequests"
                     aria-expanded="true" aria-controls="collapseservicerequests">
                     درخواست های سرویس
+                    <span v-if="service_requests.length>0">
+                        <small class="text-danger mx-2">
+                            <span v-text="service_requests.length"></span>
+                        </small>
+                    </span>
+
+
+
                 </button>
             </h5>
 

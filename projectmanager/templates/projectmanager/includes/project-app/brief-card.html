@@ -1,30 +1,50 @@
 {% load static %}
-<div class="card" >
+<div class="card">
     <div class="card-header">
         <h5>
             {{page.title}}
         </h5>
     </div>
     <div class="farsi card-body text-right">
-        {% if perms.core.change_page %}
-        <a href="{{page.get_edit_url}}" target="_blank" title="ویرایش" class="mx-2 text-warning"><i
-                class="fa fa-edit"></i> ویرایش</a>
-        {% endif %}
+        <div class="row">
+            {% if perms.core.change_page %}
+            <div class="col-6">
+                <a href="{{page.get_edit_url}}" target="_blank" title="ویرایش" class="mx-2 text-warning"><i
+                        class="fa fa-edit"></i> ویرایش</a>
+            </div>
+            {% endif %}
+            {% if perms.core.delete_page %}
+            <div class="col-6">
+                <a href="{{page.get_delete_url}}" target="_blank" title="حذف" class="mx-2 text-danger"><i
+                        class="fa fa-trash"></i> حذف</a>
+            </div>
+            {% endif %}
+            {% if page.parent %}
+            <div class="col-6">
+                {{page.recursive_full_link|safe}}
+            </div>
+            {% endif %}
+            <div class="col-6">
+
+                <a href="{% url 'projectmanager:guantt_chart' pk=project.id %}" title="نمودار" class="mx-2 text-info"><i
+                        class="fa fa-bar-chart"></i> نمودار گانت</a>
+
+            </div>
+
+            <div class="col-6">
+
+                <a href="{% url 'projectmanager:project_chart' pk=project.id %}" title="نمودار"
+                    class="mx-2 text-info"><i class="fa fa-bar-chart"></i> نمودار زیر پروژه ها</a>
+            </div>
+        </div>
 
 
 
-        {% if perms.core.delete_page %}
-        <a href="{{page.get_delete_url}}" target="_blank" title="حذف" class="mx-2 text-danger"><i
-                class="fa fa-trash"></i> حذف</a>
-        {% endif %}
-        {% if page.parent %}
-        <div class="mb-3"></div>
-        {{page.recursive_full_link|safe}}
-        {% endif %}
 
 
-        <a href="{% url 'projectmanager:project_chart' pk=project.id %}" title="نمودار" class="mx-2 text-info"><i
-            class="fa fa-bar-chart"></i> نمودار</a>
+
+
+
 
     </div>
 </div>

@@ -31,6 +31,7 @@
         <tr v-for="project in projects">
             <td>
                 <a :href="project.get_absolute_url">
+                    <img :src="project.thumbnail" class="rounded ml-2" width="64" alt="">
                     <span v-text="project.title"></span>
                 </a>
                 <span class="pull-left">

@@ -1,12 +1,18 @@
 <div id="accordion-page-links">
 
-    
+
     <div class="card mb-3" id="page-links-app">
         <div class="card-header" id="headinglinks">
             <h5 class="text-center">
                 <button class="btn btn-link" data-toggle="collapse" data-target="#collapselinks" aria-expanded="true"
                     aria-controls="collapselinks">
                     لینک ها
+
+                    <span v-if="links.length>0">
+                        <small class="text-danger mx-2">
+                            <span v-text="links.length"></span>
+                        </small>
+                    </span>
                 </button>
             </h5>
         </div>
@@ -33,7 +39,7 @@
 
                         {% if perms.core.delete_link %}
                         <a :href="link.get_delete_url" target="_blank" title="حذف" class="ml-2 docs-creator">
-                            <i class="fa fa-trash text-danger" ></i>
+                            <i class="fa fa-trash text-danger"></i>
                         </a>
                         {% endif %}
 
