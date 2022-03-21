@@ -1,6 +1,11 @@
 
 <h4 class="text-center">
     {{invoice.title}}
+    
+    
+    <a href="{{invoice.get_show_url}}" title="نمایش" class="mx-2"><i
+        class="material-icons text-success">ballot</i></a>
+
 
     {% if perms.hesabyar.change_invoice %}
     <a href="{{invoice.get_edit_url}}" target="_blank" title="ویرایش" class="mx-2"><i

@@ -1,5 +1,5 @@
-from accounting.views import get_service_context,get_product_context
-from django.shortcuts import render
+from accounting.views import InvoiceView, get_service_context,get_product_context
+from django.shortcuts import redirect, render
 # Create your views here.
 from django.shortcuts import render,reverse
 from core.enums import UnitNameEnum
@@ -272,6 +272,13 @@ class ProjectChartView(View):
 
         return render(request,TEMPLATE_ROOT+"project.html",context)
 
+class MaterialInvoiceView(View):
+    def get(self,request,*args, **kwargs):
+        return InvoiceView().get(request,*args, **kwargs)
+
+class ServiceInvoiceView(View):
+    def get(self,request,*args, **kwargs):
+        return InvoiceView().get(request,*args, **kwargs)
 
 class MaterialsView(View):
     def get(self,request,*args, **kwargs):

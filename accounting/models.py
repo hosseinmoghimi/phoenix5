@@ -1,3 +1,4 @@
+from tkinter.messagebox import RETRY
 from utility.currency import to_price
 from utility.calendar import PERSIAN_MONTH_NAMES, PersianCalendar,to_persian_datetime_tag
 from core.middleware import get_request
@@ -467,7 +468,8 @@ class Invoice(Transaction):
     def get_title(self):
         return self.title or f"فاکتور شماره {self.pk}"
   
-
+    def get_show_url(self):
+        return reverse(APP_NAME+":invoice_show",kwargs={'pk':self.pk})
     def get_edit_url2(self):
         return reverse(APP_NAME+":edit_invoice",kwargs={'pk':self.pk})
     def get_print_url(self):

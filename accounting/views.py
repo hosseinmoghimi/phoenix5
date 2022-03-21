@@ -93,7 +93,16 @@ class FinancialBalancesView(View):
         financial_balances=FinancialBalanceRepo(request=request).list(*args, **kwargs)
         context['financial_balances']=financial_balances
         return render(request,TEMPLATE_ROOT+"financial-balances.html",context)
-        
+
+
+class InvoiceShowView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        context.update(get_invoice_context(request=request,*args, **kwargs))
+        context['no_navbar']=True
+        context['no_footer']=True
+        return render(request,TEMPLATE_ROOT+"invoice-show.html",context)
+    
 class InvoiceView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)

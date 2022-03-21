@@ -19,8 +19,8 @@ urlpatterns = [
     path("organization_unit/<int:pk>/",login_required(views.OrganizationUnitView.as_view()),name="organizationunit"),
 
 
-    path("material_invoice/<int:pk>/",login_required(views.HomeView.as_view()),name="materialinvoice"),
-    path("service_invoice/<int:pk>/",login_required(views.HomeView.as_view()),name="serviceinvoice"),
+    path("material_invoice/<int:pk>/",login_required(views.MaterialInvoiceView.as_view()),name="materialinvoice"),
+    path("service_invoice/<int:pk>/",login_required(views.ServiceInvoiceView.as_view()),name="serviceinvoice"),
 
     path("materials/",login_required(views.MaterialsView.as_view()),name="materials"),
     path("material/<int:pk>/",login_required(views.MaterialView.as_view()),name="material"),
