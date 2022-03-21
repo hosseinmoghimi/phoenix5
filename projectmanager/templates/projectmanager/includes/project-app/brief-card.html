@@ -1,4 +1,6 @@
+{% load to_price %}
 {% load static %}
+{% load to_persian_date %}
 <div class="card">
     <div class="card-header">
         <h5>
@@ -6,42 +8,130 @@
         </h5>
     </div>
     <div class="farsi card-body text-right">
-        <div class="row">
-            {% if perms.core.change_page %}
-            <div class="col-6">
-                <a href="{{page.get_edit_url}}" target="_blank" title="ویرایش" class="mx-2 text-warning"><i
-                        class="fa fa-edit"></i> ویرایش</a>
-            </div>
-            {% endif %}
-            {% if perms.core.delete_page %}
-            <div class="col-6">
-                <a href="{{page.get_delete_url}}" target="_blank" title="حذف" class="mx-2 text-danger"><i
-                        class="fa fa-trash"></i> حذف</a>
-            </div>
-            {% endif %}
-            {% if page.parent %}
-            <div class="col-6">
-                {{page.recursive_full_link|safe}}
-            </div>
-            {% endif %}
-            <div class="col-6">
-
-                <a href="{% url 'projectmanager:guantt_chart' pk=project.id %}" title="نمودار" class="mx-2 text-info"><i
-                        class="fa fa-bar-chart"></i> نمودار گانت</a>
-
-            </div>
-
-            <div class="col-6">
-
-                <a href="{% url 'projectmanager:project_chart' pk=project.id %}" title="نمودار"
-                    class="mx-2 text-info"><i class="fa fa-bar-chart"></i> نمودار زیر پروژه ها</a>
-            </div>
-        </div>
 
 
 
 
 
+        <table class="table table-striped">
+            <tr>
+                <td class="text-left">
+
+                </td>
+                <td>
+                    <div>
+
+                        <a href="{% url 'projectmanager:project_chart' pk=project.id %}" title="نمودار"
+                            class="mx-2 text-info"><i class="fa fa-bar-chart"></i> نمودار زیر پروژه ها</a>
+
+                    </div>
+                    <div>
+
+                        <a href="{% url 'projectmanager:guantt_chart' pk=project.id %}" title="نمودار"
+                            class="mx-2 text-info"><i class="fa fa-bar-chart"></i> نمودار گانت</a>
+                    </div>
+                    {% if perms.core.change_page %}
+                    <div class="col-6">
+                        <a href="{{page.get_edit_url}}" target="_blank" title="ویرایش" class="mx-2 text-warning"><i
+                                class="fa fa-edit"></i> ویرایش</a>
+                    </div>
+                    {% endif %}
+                    {% if perms.core.delete_page %}
+                    <div class="col-6">
+                        <a href="{{page.get_delete_url}}" target="_blank" title="حذف" class="mx-2 text-danger"><i
+                                class="fa fa-trash"></i> حذف</a>
+                    </div>
+                    {% endif %}
+                    {% if page.parent %}
+                    <div class="col-6">
+                        {{page.recursive_full_link|safe}}
+                    </div>
+                    {% endif %}
+
+                </td>
+            </tr>
+
+            <tr>
+                <td class="text-left">
+                    شروع
+                </td>
+                <td>
+                    {{project.start_date|to_persian_datetime|safe}}
+                </td>
+            </tr>
+
+
+
+            <tr>
+                <td class="text-left">
+                    پایان
+                </td>
+                <td>
+                    {{project.end_date|to_persian_datetime|safe}}
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="text-left">
+                </td>
+                <td>
+
+                </td>
+            </tr>
+
+            <tr>
+                <td class="text-left">
+                    پیمانکار
+                </td>
+                <td>
+                    <a href="{{project.contractor.get_absolute_url}}" title="پیمانکار" class="mx-2 text-info">
+
+                        {{project.contractor.title}}
+                    </a>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="text-left">
+                    کارفرما
+                </td>
+                <td>
+                    <a href="{{project.employer.get_absolute_url}}" title="کارفرما" class="mx-2 text-info">
+
+                        {{project.employer.title}}
+                    </a>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="text-left">
+                    درصد پیشرفت
+                </td>
+                <td>
+                    {{project.percentage_completed}} %
+
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="text-left">
+                    برآورد هزینه
+
+                </td>
+                <td>
+                    {{project.sum_total|to_price}} 
+
+                </td>
+            </tr>
+
+
+
+        </table>
 
 
 

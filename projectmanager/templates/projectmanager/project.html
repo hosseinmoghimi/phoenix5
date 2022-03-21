@@ -1,4 +1,4 @@
-{% extends "projectmanager/layout.html" %}
+{% extends "projectmanager/wide-layout.html" %}
 
 {% block content %}
 
@@ -6,36 +6,46 @@
 
 
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-3">
         {% include "core/includes/page-app/thumbnail-card.html" %}
         {% include "core/includes/page-app/brief-card.html" %}
-
-    </div>
-    <div class="col-md-4">
         {% include "projectmanager/includes/project-app/brief-card.html" %}
-        {% include "projectmanager/includes/projects-app/template.html" %}
-    </div>
-    <div class="col-md-4">
-        {% include "core/includes/page-downloads-app/template.html" %}
-        {% include "core/includes/page-links-app/template.html" %}
-    </div>
-    <div class="col-md-12">
-        {% include "core/includes/page-description-app/short-description.html" %}
-        {% include "core/includes/page-description-app/description.html" %}
-    </div>
-    <div class="col-md-12">
-        {% include "projectmanager/includes/organization-units-app/template.html" %}
-    </div>
-    <div class="col-md-12">
-        {% include "projectmanager/includes/material-requests-app/template.html" %}
-    </div>
-    <div class="col-md-12">
-        {% include "projectmanager/includes/service-requests-app/template.html" %}
-    </div>
-    <div class="col-md-12">
-        {% include "core/includes/page-images-app/template.html" %}
 
     </div>
+    <div class="col-md-9">
+        <div class="row">
+            <div class="col-md-12">
+                {% include "core/includes/page-description-app/short-description.html" %}
+                {% include "core/includes/page-description-app/description.html" %}
+            </div>
+
+            <div class="col-md-6">
+                {% include "projectmanager/includes/projects-app/template.html" %}
+            </div>
+            <div class="col-md-6">
+                {% include "core/includes/page-downloads-app/template.html" %}
+                {% include "core/includes/page-links-app/template.html" %}
+            {% include "projectmanager/includes/organization-units-app/template.html" %}
+
+            </div>
+        </div> 
+        <div class="col-md-12">
+            {% include "core/includes/page-images-app/template.html" %}
+    
+        </div>
+        <div class="col-md-12">
+            {% include "projectmanager/includes/material-requests-app/template.html" %}
+        </div>
+        <div class="col-md-12">
+            {% include "projectmanager/includes/service-requests-app/template.html" %}
+        </div>
+
+    </div>
+   
+
+
+    
+    
 
 </div>
 

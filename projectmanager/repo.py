@@ -113,6 +113,13 @@ class ProjectRepo():
             objects = objects.filter(Q(for_home=kwargs['for_home']))
         if 'parent_id' in kwargs:
             objects=objects.filter(parent_id=kwargs['parent_id'])
+        if 'organization_unit_id' in kwargs:
+            organization_unit=OrganizationUnitRepo(request=self.request).organization_unit(organization_unit_id=kwargs['organization_unit_id'])
+            if organization_unit is not None:
+                projects_employed =organization_unit.projects_employed.all()
+                projects_contracted =organization_unit.projects_contracted.all()
+                org_projects=organization_unit.project_set.all()
+                return (projects_employed,projects_contracted,org_projects)
         return objects.all()
     
     def add_project(self,*args, **kwargs):
@@ -257,8 +264,9 @@ class ServiceRequestRepo():
             # new_service_request.service.unit_price = new_service_request.unit_price
             # new_service_request.service.unit_name = new_service_request.unit_name
             # new_service_request.service.save()
-            service_request_signature=RequestSignature(employee=self.employee,request=new_service_request,status=SignatureStatusEnum.REQUESTED)
-            service_request_signature.save()
+            if self.employee is not None:
+                service_request_signature=RequestSignature(employee=self.employee,request=new_service_request,status=SignatureStatusEnum.REQUESTED)
+                service_request_signature.save()
             return new_service_request
 
     def service_request(self, *args, **kwargs):
@@ -349,8 +357,9 @@ class MaterialRequestRepo():
             # new_material_request.material.unit_price = new_material_request.unit_price
             # new_material_request.material.unit_name = new_material_request.unit_name
             # new_material_request.material.save()
-            material_request_signature=RequestSignature(employee=self.employee,request=new_material_request,status=SignatureStatusEnum.REQUESTED)
-            material_request_signature.save()
+            if self.employee is not None:
+                material_request_signature=RequestSignature(employee=self.employee,request=new_material_request,status=SignatureStatusEnum.REQUESTED)
+                material_request_signature.save()
             return new_material_request
 
     def material_request(self, *args, **kwargs):

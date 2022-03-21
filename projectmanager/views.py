@@ -66,7 +66,20 @@ class OrganizationUnitView(View):
             context['show_organization_units_list']=True
 
 
-            
+        projects=[]
+        (projects_employed,projects_contracted,org_projects)=ProjectRepo(request=request).list(organization_unit_id=organization_unit.id)
+        for project_employed in projects_employed:
+            projects.append(project_employed)
+        for project_contracted in projects_contracted:
+            projects.append(project_contracted)
+        for org_project in org_projects:
+            projects.append(org_project)
+
+        context['projects']=projects
+        projects_s=json.dumps(ProjectSerializer(projects,many=True).data)
+        context['projects_s']=projects_s
+
+
         organization_units=OrganizationUnitRepo(request=request).list(parent_id=organization_unit.id,*args, **kwargs)
         context['organization_units']=organization_units
         organization_units_s=json.dumps(OrganizationUnitSerializer(organization_units,many=True).data)
