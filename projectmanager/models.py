@@ -1,4 +1,5 @@
 from django.utils import timezone
+from phoenix.server_settings import MEDIA_URL
 from utility.calendar import PersianCalendar
 from django.db import models
 from accounting.models import Invoice, InvoiceLine,Service
@@ -15,7 +16,7 @@ from .apps import APP_NAME
 # Create your models here.
 from accounting.models import Account
  
-
+IMAGE_FOLDER=APP_NAME+"/images/"
 class ProjectInvoice(Invoice):
     # project=models.ForeignKey("project", verbose_name=_("project"), on_delete=models.CASCADE)
 
@@ -257,6 +258,8 @@ class OrganizationUnit(Page):
             self.app_name=APP_NAME
         return super(OrganizationUnit,self).save(*args, **kwargs)
  
+    def logo(self): 
+        return self.thumbnail
  
 class WareHouse(OrganizationUnit):
     pass

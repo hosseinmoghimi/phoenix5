@@ -26,11 +26,12 @@
         {% include "core/includes/page-description-app/description.html" %}
     </div>
 
-    <div class="col-md-4">
-        {% include "accounting/includes/item-prices-app/template.html" %}
-    </div>
-    <div class="col-md-4">
+    <div class="col-md-12">
+        {% include "core/includes/page-images-app/template.html" %}
 
+    </div>
+    <div class="col-md-12">
+        {% include "accounting/includes/item-prices-app/template.html" %}
     </div>
 
 </div>
@@ -45,5 +46,6 @@
 {% include "core/includes/page-links-app/script.html" %}
 {% include "core/includes/page-downloads-app/script.html" %}
 {% include "accounting/includes/item-prices-app/script.html" %}
+{% include "core/includes/page-images-app/script.html" %}
 
 {% endblock script %}

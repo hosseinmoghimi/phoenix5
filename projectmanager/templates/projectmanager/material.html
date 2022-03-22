@@ -24,16 +24,24 @@
     <div class="col-md-12">
         {% include "core/includes/page-description-app/short-description.html" %}
         {% include "core/includes/page-description-app/description.html" %}
-    </div> 
-    
+    </div>
+
     <div class="col-md-12">
         {% include "projectmanager/includes/material-requests-app/template.html" %}
     </div>
-    
+
     <div class="col-md-12">
         {% include "accounting/includes/item-prices-app/template.html" %}
 
     </div>
+    <div class="col-md-12">
+
+        {% include "core/includes/page-images-app/template.html" %}
+    </div>
+
+
+
+
 </div>
 
 {% endblock content %}
@@ -47,5 +55,6 @@
 {% include "core/includes/page-downloads-app/script.html" %}
 {% include "projectmanager/includes/material-requests-app/script.html" %}
 {% include "accounting/includes/item-prices-app/script.html" %}
+{% include "core/includes/page-images-app/script.html" %}
 
 {% endblock script %}

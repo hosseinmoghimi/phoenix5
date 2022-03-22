@@ -110,6 +110,7 @@ class ProjectsView(View):
         context=getContext(request=request)
         projects=ProjectRepo(request=request).list(*args, **kwargs)
         context['projects']=projects
+        context['show_all_projects']=True
         projects_s=json.dumps(ProjectSerializer(projects,many=True).data)
         context['projects_s']=projects_s
         return render(request,TEMPLATE_ROOT+"projects.html",context)
@@ -167,8 +168,6 @@ class ProjectView(View):
 
                     
             item_prices=PriceRepo(request=request).list(account_id=project.contractor.account.id)
-            print(item_prices)
-            print(100*"#")
             item_prices_s=json.dumps(PriceBriefSerializer(item_prices,many=True).data)
             context['item_prices_s']=item_prices_s
             

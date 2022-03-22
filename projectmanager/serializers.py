@@ -8,7 +8,7 @@ class OrganizationUnitSerializer(serializers.ModelSerializer):
 
     class Meta:
         model=OrganizationUnit
-        fields=['id','title','image','full_title','pre_title','get_edit_url','get_absolute_url']
+        fields=['id','title','image','logo','full_title','pre_title','get_edit_url','get_absolute_url']
 
 
 class EmployeeSerializer(serializers.ModelSerializer):
