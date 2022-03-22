@@ -452,21 +452,28 @@ class InvoiceRepo():
 
         invoice.save()
         if 'lines' in kwargs:
-            invoice_lines=kwargs['lines']
-            invoice.invoice_lines().delete()
-            amount=0
-            for line in invoice_lines:
+            lines=kwargs['lines']
+            for line in lines:
                 if int(line['quantity'])>0:
-                    invoice_line=InvoiceLine()
-                    invoice_line.invoice=invoice
-                    invoice_line.product_or_service_id=int(line['product_or_service_id'])
-                    invoice_line.quantity=int(line['quantity'])
-                    invoice_line.row=int(line['row'])
-                    invoice_line.unit_price=int(line['unit_price'])
-                    invoice_line.unit_name=line['unit_name']
-                    invoice_line.save()
-                    amount1=invoice_line.unit_price*invoice_line.quantity
-                    amount=amount+amount1
+                    sw=False
+                    for line_origin in invoice.lines.all():
+                        b=line_origin.product_or_service_id
+                        a=line['product_or_service_id']
+                        if line_origin.product_or_service_id==line['product_or_service_id']:
+                            line_origin.quantity=int(line['quantity'])
+                            line_origin.unit_price=int(line['unit_price'])
+                            line_origin.unit_name=line['unit_name']
+                            line_origin.save()
+                            sw=True
+                    if not sw:
+                        invoice_line=InvoiceLine()
+                        invoice_line.invoice=invoice
+                        invoice_line.product_or_service_id=int(line['product_or_service_id'])
+                        invoice_line.quantity=int(line['quantity'])
+                        invoice_line.row=int(line['row'])
+                        invoice_line.unit_price=int(line['unit_price'])
+                        invoice_line.unit_name=line['unit_name']
+                        invoice_line.save()
         
         invoice.save()
         return invoice
