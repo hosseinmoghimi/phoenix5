@@ -4,6 +4,12 @@
 <div class="card">
     <div class="card-header">
         <h5>
+            {% if page.pre_title %}
+            <small>
+
+                {{page.pre_title}}
+            </small>
+            {% endif %}
             {{page.title}}
         </h5>
     </div>
@@ -21,19 +27,19 @@
                 <td>
 
                     {% if perms.core.change_page %}
-                    <div class="col-6">
+                    <div class="">
                         <a href="{{organization_unit.get_edit_url}}" target="_blank" title="ویرایش"
                             class="mx-2 text-warning"><i class="fa fa-edit"></i> ویرایش</a>
                     </div>
                     {% endif %}
                     {% if perms.core.delete_page %}
-                    <div class="col-6">
+                    <div class="">
                         <a href="{{organization_unit.get_delete_url}}" target="_blank" title="حذف"
                             class="mx-2 text-danger"><i class="fa fa-trash"></i> حذف</a>
                     </div>
                     {% endif %}
                     {% if page.parent %}
-                    <div class="col-6">
+                    <div class="">
                         {{page.recursive_full_link|safe}}
                     </div>
                     {% endif %}
@@ -48,7 +54,7 @@
                 </td>
                 <td>
                     <a href="{{organization_unit.account.get_absolute_url}}">
-
+                        <img src="{{organization_unit.account.logo}}" width="32" class="rounded" alt="">
                         {{organization_unit.title}}
                     </a>
                 </td>

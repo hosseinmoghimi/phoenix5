@@ -44,7 +44,7 @@
                         </div>
                         {% endif %}
                         {% if page.parent %}
-                        <div class="col-6">
+                        <div class="6">
                             {{page.recursive_full_link|safe}}
                         </div>
                         {% endif %}
@@ -87,8 +87,11 @@
                     </td>
                     <td>
                         <a href="{{project.contractor.get_absolute_url}}" title="پیمانکار" class="mx-2 text-info">
+                            <img src="{{project.contractor.logo}}" width="32" class="rounded" alt="">
+                            <span class="mr-2">
 
-                            {{project.contractor.title}}
+                                {{project.contractor.title}}
+                            </span>
                         </a>
                     </td>
                 </tr>
@@ -99,8 +102,11 @@
                     </td>
                     <td>
                         <a href="{{project.employer.get_absolute_url}}" title="کارفرما" class="mx-2 text-info">
+                            <img src="{{project.employer.logo}}" width="32" class="rounded" alt="">
+                            <span class="mr-2">
 
-                            {{project.employer.title}}
+                                {{project.employer.title}}
+                            </span>
                         </a>
                     </td>
                 </tr>
