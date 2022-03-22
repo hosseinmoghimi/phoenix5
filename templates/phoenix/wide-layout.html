@@ -12,8 +12,10 @@
 
 <body>
     <div class="px-5" style="margin-bottom: 75px;">
-
+        {% if not no_navbar%}
+          
         {% include "phoenix/includes/navbar.html" %}
+        {% endif %}
 
         <div class="pt-5" style="margin-top:50px;">
 

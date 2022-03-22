@@ -196,10 +196,14 @@ class Account(models.Model,LinkHelper):
     class_name="account"
     app_name=APP_NAME
 
+    def invoices(self):
+        return Invoice.objects.filter(models.Q(pay_from=self)|models.Q(pay_to=self))
+
     def logo(self):
         if self.logo_origin:
             return MEDIA_URL+str(self.logo_origin)
-        return f"{STATIC_URL}{APP_NAME}/img/account.png"
+        return self.profile.image
+        # return f"{STATIC_URL}{APP_NAME}/img/account.png"
 
     class Meta:
         verbose_name = _("Account")

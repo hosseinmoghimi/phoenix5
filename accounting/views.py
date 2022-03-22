@@ -244,6 +244,7 @@ class AccountView(View):
         context=getContext(request=request)
         account=AccountRepo(request=request).account(*args, **kwargs)
         context['account']=account
+        context['invoices']=account.invoices()
         financial_documents=FinancialDocumentRepo(request=request).list(account_id=account.id)
         context['financial_documents']=financial_documents
         financial_documents_s=json.dumps(FinancialDocumentForAccountSerializer(financial_documents,many=True).data)
