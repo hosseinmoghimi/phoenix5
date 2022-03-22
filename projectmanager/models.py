@@ -354,9 +354,13 @@ class Project(Page):
         super(Project,self).save(*args, **kwargs)
     
     def sum_total(self):
-        return 0
+        sum=0
+        for ii in self.invoices():
+            sum+=ii.sum_total()
+        return sum
 
-
+    def invoices(self):
+        return ProjectInvoice.objects.filter(project_id=self.pk)
 class SampleForm(Page):
     
 

@@ -9,6 +9,8 @@
 <h4 class="text-center">
     {{account.title}}
 
+    <a href="{{account.profile.get_absolute_url}}" target="_blank" title="پروفایل" class="mx-2"><i
+        class="fa fa-user text-info"></i></a>
 
     {% if perms.accounting.change_account %}
     <a href="{{account.get_edit_url}}" target="_blank" title="ویرایش" class="mx-2"><i

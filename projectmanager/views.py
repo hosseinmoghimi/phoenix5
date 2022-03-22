@@ -122,6 +122,8 @@ class ProjectView(View):
         context.update(PageContext(request=request,page=project))
 
 
+        context['invoices']=project.invoices()
+
         context['project']=project  
         organization_units=OrganizationUnitRepo(request=request).list(project_id=project.id,*args, **kwargs)
         context['organization_units']=organization_units
