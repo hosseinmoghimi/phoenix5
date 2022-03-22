@@ -2,17 +2,13 @@
 {% block content %}
   <div class="row">
       <div class="col-md-12">
-          <div class="card">
-              <div class="card-body">
-                  <table>
-                      <thead>
-                          <th>
-                              invoice
-                          </th>
-                      </thead>
-                  </table>
-              </div>
-          </div>
+         
+        {% include "accounting/includes/invoices-app/template.html" %}
       </div>
   </div>
 {% endblock content %}
+
+{% block script %}
+{% include "accounting/includes/invoices-app/script.html" %}
+  
+{% endblock script %}

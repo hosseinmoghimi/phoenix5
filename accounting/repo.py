@@ -467,82 +467,8 @@ class InvoiceRepo():
                     invoice_line.save()
                     amount1=invoice_line.unit_price*invoice_line.quantity
                     amount=amount+amount1
-        tax_amount=int(0.01*invoice.tax_percent*(amount+invoice.ship_fee))
-        invoice.amount=amount+invoice.ship_fee+tax_amount-invoice.discount
-        invoice.tax_amount=tax_amount
-        if invoice.title is None or invoice.title=="":
-            invoice.title=f"فاکتور شماره {invoice.pk}"
+        
         invoice.save()
-        if (invoice.status==TransactionStatusEnum.APPROVED or invoice.status==TransactionStatusEnum.DELIVERED)and (invoice.payment_method==PaymentMethodEnum.CARD or invoice.payment_method==PaymentMethodEnum.POS):
-            payment=Payment()
-            payment.title="پرداخت برای "+invoice.title
-            payment.pay_from=invoice.pay_to
-            payment.pay_to=invoice.pay_from
-            payment.creator=self.profile
-            payment.amount=invoice.amount
-            delta=timedelta(minutes=1)
-            payment.transaction_datetime=invoice.transaction_datetime+delta
-            payment.payment_method=invoice.payment_method
-            payment.save()
-        # self.update_financial_documents(invoice)
-        if invoice.status==TransactionStatusEnum.DELIVERED:
-            for invoice_line in invoice.invoice_lines():
-                wh_sheet=WareHouseSheet()
-                wh_sheet.invoice=invoice
-                wh_sheet.product_id=invoice_line.product_or_service.id
-        fd=FinancialDocument.objects.filter(account=invoice.pay_from).filter(transaction=invoice).first()
-        if fd is not None:
-            fb=FinancialBalance(financial_document=fd)
-            sell_benefit=0
-            sum_services=0
-            for line in invoice.lines.all():
-                line_class_name=line.product_or_service.class_name
-                # product=ProductRepo(request=self.request).service(pk=line.product_or_service.id)
-                if line_class_name=="product":
-                    sp=Price.objects.filter(store_id=invoice.pay_from.id).filter(product_or_service_id=line.product_or_service.id).order_by('-date_added').first()
-                    if sp is not None:
-                        sell_benefit+=line.quantity*(line.unit_price-sp.buy_price)
-                # service=ServiceRepo(request=self.request).service(pk=line.product_or_service.id)
-                if line_class_name=="service":
-                # if service is not None:
-                    sum_services+=line.quantity*line.unit_price
-            fb.sell_service=sum_services if fb.financial_document.account.id==invoice.pay_from.id else 0
-            fb.buy_service=sum_services if fb.financial_document.account.id==invoice.pay_to.id else 0
-            
-            fb.sell_benefit=sell_benefit
-            fb.tax=invoice.tax_amount
-            fb.discount=invoice.discount
-            fb.ship_fee=invoice.ship_fee
-            fb.save()
-
-
-
-        fd=FinancialDocument.objects.filter(account=invoice.pay_to).filter(transaction=invoice).first()
-        if fd is not None:
-            fb=FinancialBalance(financial_document=fd)
-            sell_benefit=0
-            sum_services=0
-            for line in invoice.invoiceline_set.all():
-                line_class_name=line.product_or_service.class_name
-                # product=ProductRepo(request=self.request).service(pk=line.product_or_service.id)
-                if line_class_name=="product":
-                    # sp=StorePrice.objects.filter(store_id=invoice.pay_to.id).filter(product_or_service_id=line.product_or_service.id).order_by('-date_added').first()
-                    # if sp is not None:
-                        # sp=StorePrice()
-                        # sp.
-                    pass
-                # service=ServiceRepo(request=self.request).service(pk=line.product_or_service.id)
-                if line_class_name=="service":
-                # if service is not None:
-                    sum_services+=line.quantity*line.unit_price
-            fb.sell_service=sum_services if fb.financial_document.account.id==invoice.pay_from.id else 0
-            fb.buy_service=sum_services if fb.financial_document.account.id==invoice.pay_to.id else 0
-            
-            fb.sell_benefit=sell_benefit
-            fb.tax=invoice.tax_amount
-            fb.discount=invoice.discount
-            fb.ship_fee=invoice.ship_fee
-            fb.save()
         return invoice
    
 class ChequeRepo():

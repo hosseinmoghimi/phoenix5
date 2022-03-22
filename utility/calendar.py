@@ -2,7 +2,11 @@ from django.utils import timezone
 import datetime
 from khayyam import *
 
-def to_persian_datetime_tag(value):
+def to_persian_datetime_tag(value,*args, **kwargs):
+    if 'pure_text' in kwargs and kwargs['pure_text']==True:
+        return f"""
+        {date_} {time_}
+        """
     try:    
         a=str(PersianCalendar().from_gregorian(value))
         date_=a[:10]

@@ -1,165 +1,168 @@
 {% load to_price %}
 <div class="card" id="invoice-lines-app">
     <div class="card-body">
-        <table class="table table-striped">
-            <thead>
-                <th class="bordered">
-                    ردیف
-                </th>
-                {% if not product and not service %}
+        <div class="table-responsive">
 
-                <th class="bordered">
-                    شرح
-                </th>
-                {% endif %}
+            <table class="table table-striped">
+                <thead>
+                    <th class="bordered">
+                        ردیف
+                    </th>
+                    {% if not product and not service %}
 
-
-                {% if not invoice %}
-
-                <th class="bordered">
-                    فاکتور
-                </th>
-                <th class="bordered">
-                    تاریخ
-                </th>
-                {% endif %}
+                    <th class="bordered">
+                        شرح
+                    </th>
+                    {% endif %}
 
 
-                <th class="bordered">
-                    تعداد
-                </th>
+                    {% if not invoice %}
 
-                <th class="bordered">
-                    فی
-                </th>
+                    <th class="bordered">
+                        فاکتور
+                    </th>
+                    <th class="bordered">
+                        تاریخ
+                    </th>
+                    {% endif %}
 
-                <th class="bordered">
-                    جمع
-                    <small class="text-muted">
 
-                        ( {{CURRENCY}} )
-                    </small>
-                </th>
+                    <th class="bordered">
+                        تعداد
+                    </th>
 
-            </thead>
-            <tbody>
-                <tr v-for="invoice_line in invoice_lines">
-                    <td class="bordered">
-                        <span v-text="invoice_line.row"></span>
-                    </td>
+                    <th class="bordered">
+                        فی
+                    </th>
 
-                    <td class="bordered">
+                    <th class="bordered">
+                        جمع
+                        <small class="text-muted">
+
+                            ( {{CURRENCY}} )
+                        </small>
+                    </th>
+
+                </thead>
+                <tbody>
+                    <tr v-for="invoice_line in invoice_lines">
+                        <td class="bordered">
+                            <span v-text="invoice_line.row"></span>
+                        </td>
+
+                        <td class="bordered">
                             <span v-text="invoice_line.product_or_service.title"></span>
-                    </td>
+                        </td>
 
- 
-                    <td class="bordered">
-                        <span v-text="invoice_line.quantity"></span>
-                        <span v-text="invoice_line.unit_name"></span>
-                    </td>
 
-                    <td class="bordered">
-                        <span v-text="to_price(invoice_line.unit_price)"></span>
-                    </td>
+                        <td class="bordered">
+                            <span v-text="invoice_line.quantity"></span>
+                            <span v-text="invoice_line.unit_name"></span>
+                        </td>
 
-                    <td class="bordered">
-                        <span v-text="to_price(invoice_line.unit_price*invoice_line.quantity)"></span>
-                    </td>
+                        <td class="bordered">
+                            <span v-text="to_price(invoice_line.unit_price)"></span>
+                        </td>
 
-                </tr>
+                        <td class="bordered">
+                            <span v-text="to_price(invoice_line.unit_price*invoice_line.quantity)"></span>
+                        </td>
 
-                <tr>
-                    <td colspan="4">
-                        <div class="text-left">
-                            جمع
-                        </div>
-                    </td>
+                    </tr>
 
-                    <td class="bordered">
-                        <span v-text="to_price(sum_total())"></span>
-                    </td>
+                    <tr>
+                        <td colspan="4">
+                            <div class="text-left">
+                                جمع
+                            </div>
+                        </td>
 
-                </tr>
+                        <td class="bordered">
+                            <span v-text="to_price(sum_total())"></span>
+                        </td>
 
-                {% if invoice.ship_fee > 0 %}
+                    </tr>
 
-                <tr>
-                    <td colspan="4">
-                        <div class="text-left">
+                    {% if invoice.ship_fee > 0 %}
 
-                            هزینه ارسال
-                        </div>
-                    </td>
+                    <tr>
+                        <td colspan="4">
+                            <div class="text-left">
 
-                    <td class="bordered">
-                        <span>
-                            {{invoice.ship_fee|to_price}}
-                        </span>
-                    </td>
+                                هزینه ارسال
+                            </div>
+                        </td>
 
-                </tr>
-                {% endif %}
-                <tr>
-                    <td colspan="4">
-                        <div class="text-left">
-
+                        <td class="bordered">
                             <span>
-                                {{invoice.tax_percent}}
+                                {{invoice.ship_fee|to_price}}
                             </span>
-                            درصد
-                            مالیات بر ارزش افزوده
-                        </div>
-                    </td>
+                        </td>
 
-                    <td class="bordered">
-                        <span>
-                            {{invoice.tax_amount|to_price}}
-                        </span>
-                    </td>
+                    </tr>
+                    {% endif %}
+                    <tr>
+                        <td colspan="4">
+                            <div class="text-left">
 
-                </tr>
-                {% if invoice.discount %}
+                                <span>
+                                    {{invoice.tax_percent}}
+                                </span>
+                                درصد
+                                مالیات بر ارزش افزوده
+                            </div>
+                        </td>
 
-                <tr>
-                    <td colspan="4">
-                        <div class="text-left">
+                        <td class="bordered">
+                            <span>
+                                {{invoice.tax_amount|to_price}}
+                            </span>
+                        </td>
 
-                            تخفیف
-                        </div>
-                    </td>
+                    </tr>
+                    {% if invoice.discount %}
 
-                    <td class="bordered">
-                        <span>
-                            {{invoice.discount|to_price}}
-                        </span>
-                    </td>
+                    <tr>
+                        <td colspan="4">
+                            <div class="text-left">
 
-                </tr>
-                {% endif %}
-                <tr>
-                    <td colspan="4">
-                        <div class="text-left">
+                                تخفیف
+                            </div>
+                        </td>
 
-                            قابل پرداخت : {{invoice.sum_total|to_horuf}}
-                            {{CURRENCY}}
-                        </div>
-                    </td>
+                        <td class="bordered">
+                            <span>
+                                {{invoice.discount|to_price}}
+                            </span>
+                        </td>
 
-                    <td class="bordered ">
-                        <span>
-                            {{invoice.sum_total|to_price}}
-                        </span>
-                    </td>
+                    </tr>
+                    {% endif %}
+                    <tr>
+                        <td colspan="4">
+                            <div class="text-left">
 
-                </tr>
+                                قابل پرداخت : {{invoice.sum_total|to_horuf}}
+                                {{CURRENCY}}
+                            </div>
+                        </td>
+
+                        <td class="bordered ">
+                            <span>
+                                {{invoice.sum_total|to_price}}
+                            </span>
+                        </td>
+
+                    </tr>
 
 
 
 
 
 
-            </tbody>
-        </table>
+                </tbody>
+            </table>
+        </div>
+
     </div>
-
 </div>

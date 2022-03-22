@@ -9,6 +9,11 @@ def to_persian_datetime(value):
    
 
 
+@register.filter
+def to_persian_datetime_pure(value,*args, **kwargs):
+    return to_persian_datetime_tag(value,pure_text=True)
+   
+
 
 @register.filter
 def to_persian_time(value):

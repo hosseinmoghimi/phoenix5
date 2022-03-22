@@ -502,12 +502,14 @@ class Invoice(Transaction):
     def sum_total(self):
         sum=self.lines_total()
         sum+=self.ship_fee
-        sum+=((sum*self.tax_percent)/100.0)
+        sum+=self.tax_amount()
         sum-=self.discount
         return sum
     def save(self,*args, **kwargs):
         if self.class_name is None:
             self.class_name='invoice' 
+        if self.title is None or self.title=="":
+            self.title=f"فاکتور شماره {self.pk}"
         self.amount=self.sum_total()
         super(Invoice,self).save(*args, **kwargs)
       
