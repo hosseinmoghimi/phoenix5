@@ -1,7 +1,14 @@
 {% load static %}
 {% if add_payment_form %}
-  
-<form @submit.prevent="add_payment()">
+<div class="text-right">
+    <button @click="show_add_form=true" v-if="!show_add_form" class="btn btn-success">
+        <i class="fa fa-plus">
+        </i>
+        افزودن
+
+    </button>
+</div>
+<form @submit.prevent="add_payment()" v-if="show_add_form">
 
     <div class="row">
 
@@ -113,8 +120,10 @@
         <div class="col-md-12 pt-4">
             <div class="form-group">
                 <img src="{% static 'leo/img/loading.gif' %}" width="32" v-if="waiting" alt="">
-                
-                <button class="btn px-5 btn-success" type="submit">افزودن</button>
+
+                <button class="btn px-3 btn-success" type="submit">
+                    <i class="fa fa-plus"></i>
+                    افزودن</button>
             </div>
 
         </div>
@@ -127,4 +136,12 @@
         </div>
     </div>
 </form>
+ 
+<div class="text-right">
+    <button @click="show_add_form=false" v-if="show_add_form" class="btn btn-secondary">
+        
+        انصراف
+
+    </button>
+</div>
 {% endif %}
