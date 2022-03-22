@@ -27,6 +27,17 @@ def getContext(request, *args, **kwargs):
     return context
 
 
+def get_add_payment_context(request,*args, **kwargs):
+    context={}
+    if request.user.has_perm(APP_NAME+".add_payment"):
+        accounts=AccountRepo(request=request).list(*args, **kwargs)
+        context['payment_methods']=(u[0] for u in PaymentMethodEnum.choices)
+        context['accounts']=accounts
+        context['add_payment_form']=AddPaymentForm()
+    return context
+    
+    
+
 def get_edit_invoice_context(request,*args, **kwargs):
     context={}
     invoice=kwargs['invoice'] 
@@ -257,6 +268,15 @@ class AccountView(View):
         financial_balances=FinancialBalanceRepo(request=request).list(account_id=account.id)
         context['financial_balances']=financial_balances
 
+
+
+        payments=PaymentRepo(request=request).list(account_id=account.id)
+        context['payments']=payments
+        context['payments_s']=json.dumps(PaymentSerializer(payments,many=True).data)
+        if request.user.has_perm(APP_NAME+".add_payment"):
+            context.update(get_add_payment_context(request=request))
+
+
         return render(request,TEMPLATE_ROOT+"account.html",context)      
 class AccountsView(View):
     def get(self,request,*args, **kwargs):
@@ -265,6 +285,7 @@ class AccountsView(View):
         context['accounts']=accounts
         return render(request,TEMPLATE_ROOT+"accounts.html",context)
 
+     
 
 class PaymentsView(View):
     def get(self,request,*args, **kwargs):
@@ -272,14 +293,16 @@ class PaymentsView(View):
         payments=PaymentRepo(request=request).list(*args, **kwargs)
         context['payments']=payments
         context['payments_s']=json.dumps(PaymentSerializer(payments,many=True).data)
+        if request.user.has_perm(APP_NAME+".add_payment"):
+            context.update(get_add_payment_context(request=request))
         return render(request,TEMPLATE_ROOT+"payments.html",context)
-
 class PaymentView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
         payment=PaymentRepo(request=request).payment(*args, **kwargs)
         context['payment_s']=json.dumps(PaymentSerializer(payment).data)
         context['payment']=payment
+        context.update(get_transaction_context(request=request,transaction=payment))
         return render(request,TEMPLATE_ROOT+"payment.html",context)
 
 class FinancialDocumentsView(View):

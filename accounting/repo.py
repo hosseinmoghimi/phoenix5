@@ -408,14 +408,46 @@ class PaymentRepo():
         if 'for_home' in kwargs:
             objects = objects.filter(Q(for_home=kwargs['for_home']))
         if 'account_id' in kwargs:
-            objects=objects.filter(profile_id=kwargs['profile_id'])
-        if 'account_id' in kwargs:
-            objects=objects.filter(account_id=kwargs['account_id'])
+            objects=objects.filter(Q(pay_to_id=kwargs['account_id'])|Q(pay_from_id=kwargs['account_id']))
         if 'profile_id' in kwargs:
             objects=objects.filter(account__profile_id=kwargs['profile_id'])
         return objects.all()
 
+    def add_payment(self,*args, **kwargs):
+        print(kwargs)
+        print(100*"#")
+        if not self.request.user.has_perm(APP_NAME+".add_payment"):
+            return
+        payment=Payment()
+        payment.creator=self.profile
+        if 'title' in kwargs:
+            payment.title=kwargs['title']
 
+        if 'pay_from_id' in kwargs:
+            payment.pay_from_id=kwargs['pay_from_id']
+        if 'description' in kwargs:
+            payment.description=kwargs['description']
+        if 'pay_to_id' in kwargs:
+            payment.pay_to_id=kwargs['pay_to_id']
+        if 'amount' in kwargs:
+            payment.amount=kwargs['amount']
+        if 'payment_method' in kwargs:
+            payment.payment_method=kwargs['payment_method']
+
+        if 'payment_datetime' in kwargs:
+            payment.transaction_datetime=kwargs['payment_datetime']
+
+        if 'transaction_datetime' in kwargs:
+            payment.transaction_datetime=kwargs['transaction_datetime']
+
+        
+        # if 'financial_year_id' in kwargs:
+        #     payment.financial_year_id=kwargs['financial_year_id']
+        # else:
+        #     payment.financial_year_id=FinancialYear.get_by_date(date=payment.transaction_datetime).id
+
+        payment.save()
+        return payment
 class InvoiceRepo():
     def __init__(self, *args, **kwargs):
         self.request = None
@@ -431,14 +463,14 @@ class InvoiceRepo():
        
 
     def invoice(self, *args, **kwargs):
-        pk=0
+        if 'invoice' in kwargs:
+            return kwargs['invoice']
         if 'invoice_id' in kwargs:
-            pk=kwargs['invoice_id']
+            return self.objects.filter(pk=kwargs['invoice_id']).first()
         elif 'pk' in kwargs:
-            pk=kwargs['pk']
+            return self.objects.filter(pk=kwargs['pk']).first()
         elif 'id' in kwargs:
-            pk=kwargs['id']
-        return self.objects.filter(pk=pk).first()
+            return self.objects.filter(pk=kwargs['id']).first()
      
     def list(self, *args, **kwargs):
         objects = self.objects

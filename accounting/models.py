@@ -13,7 +13,7 @@ from utility.utils import LinkHelper
 from .enums import *
 from tinymce.models import HTMLField
 from core.enums import ColorEnum,UnitNameEnum
-
+from django.utils import timezone
  
 class Asset(Page,LinkHelper):
     
@@ -659,7 +659,8 @@ class Payment(Transaction):
             self.app_name=APP_NAME 
         if self.class_name is None:
             self.class_name='payment' 
-        
+        if self.transaction_datetime is None:
+            self.transaction_datetime=timezone.now()
         super(Payment,self).save(*args, **kwargs)
         
 

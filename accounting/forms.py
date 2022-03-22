@@ -40,7 +40,7 @@ class AddPaymentForm(forms.Form):
     pay_to_id=forms.IntegerField(required=True)
     pay_from_id=forms.IntegerField(required=True)
     amount=forms.IntegerField(required=True)
-    transaction_datetime=forms.CharField( max_length=50, required=True)
+    payment_datetime=forms.CharField( max_length=50, required=True)
     payment_method=forms.CharField( max_length=50, required=True)
     description=forms.CharField( max_length=50, required=False)
 class EditInvoiceForm(forms.Form):

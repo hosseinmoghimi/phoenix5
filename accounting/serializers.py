@@ -50,7 +50,7 @@ class PaymentSerializer(serializers.ModelSerializer):
     pay_to=AccountSerializer()
     class Meta:
         model = Payment
-        fields = ['id','title', 'pay_from','pay_to', 'amount','persian_transaction_datetime']
+        fields = ['id','title', 'pay_from','pay_to', 'amount','get_absolute_url','persian_transaction_datetime']
 
 
 

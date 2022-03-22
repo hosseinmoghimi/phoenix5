@@ -1,7 +1,9 @@
 import json
-from tkinter.messagebox import NO
 from django.http import Http404
 from django.shortcuts import render
+from django.utils import timezone
+
+from utility.calendar import PersianCalendar
 from .apps import APP_NAME
 from log.repo import LogRepo
 from core.enums import ColorEnum, IconsEnum, ParameterNameEnum, PictureNameEnum
@@ -45,6 +47,11 @@ def CoreContext(request,*args, **kwargs):
         'icon':picture_repo.picture(name=PictureNameEnum.FAVICON,default=STATIC_URL+"").image,
         'logo':picture_repo.picture(name=PictureNameEnum.LOGO,default=STATIC_URL+"").image,
     }
+    pc=PersianCalendar()
+    now=timezone.now()
+    current_datetime=pc.from_gregorian(now)
+    context['current_date']=current_datetime[:10]
+    context['current_datetime']=current_datetime
     return context
 
 def PageContext(request,*args, **kwargs):
