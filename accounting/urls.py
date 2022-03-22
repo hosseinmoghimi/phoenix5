@@ -5,7 +5,7 @@ from django.urls import path
 app_name=APP_NAME
 urlpatterns = [
     path("",login_required(views.HomeView.as_view()),name="home"),
-    path("search/",login_required(views.HomeView.as_view()),name="search"),
+    path("search/",login_required(views.SearchView.as_view()),name="search"),
 
     path("products/",login_required(views.ProductsView.as_view()),name="products"),
     path("product/<int:pk>/",login_required(views.ProductView.as_view()),name="product"),

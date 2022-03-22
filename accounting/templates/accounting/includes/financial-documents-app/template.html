@@ -14,6 +14,13 @@
                 <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-financial-documents"
                     aria-expanded="true" aria-controls="collapse-financial-documents">
                     سند های مالی
+
+                    <span v-if="financial_documents.length>0">
+                        <small class="text-danger mx-2">
+                            <span v-text="financial_documents.length"></span>
+                        </small>
+                    </span>
+
                 </button>
             </h5>
 

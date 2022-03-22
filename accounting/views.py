@@ -133,6 +133,36 @@ def get_service_context(request,*args, **kwargs):
     context=get_product_or_service_context(request=request,*args, **kwargs)
     return context
 
+class SearchView(View):
+    def post(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        search_form=SearchFrom(request.POST)
+        if search_form.is_valid():
+            search_for=search_form.cleaned_data['search_for']
+            context['search_for']=search_for
+
+            accounts=AccountRepo(request=request).list(search_for=search_for)
+            context['accounts']=accounts
+
+            invoices=InvoiceRepo(request=request).list(search_for=search_for)
+            context['invoices']=invoices
+
+            financial_balances=FinancialBalanceRepo(request=request).list(search_for=search_for)
+            context['financial_balances']=financial_balances
+
+            payments=PaymentRepo(request=request).list(search_for=search_for)
+            context['payments']=payments
+            context['payments_s']=json.dumps(PaymentSerializer(payments,many=True).data)
+
+            financial_documents=FinancialDocumentRepo(request=request).list(search_for=search_for)
+            context['financial_documents']=financial_documents
+            context['financial_documents_s']=json.dumps(FinancialDocumentSerializer(financial_documents,many=True).data)
+            
+            transactions=TransactionRepo(request=request).list(search_for=search_for)
+            context['transactions']=transactions
+
+        return render(request,TEMPLATE_ROOT+"search.html",context)
+
 
 
 class FinancialBalancesView(View):

@@ -265,12 +265,13 @@ class FinancialDocumentRepo:
         if 'user' in kwargs:
             self.user = kwargs['user']
         self.profile = ProfileRepo(user=self.user).me
+        self.objects=FinancialDocument.objects.order_by('document_datetime')
         if self.user.has_perm(APP_NAME+".view_financialdocument"):
-            self.objects = FinancialDocument.objects.order_by('transaction__transaction_datetime')
+            self.objects = self.objects
         elif self.profile is not None:
-            self.objects = FinancialDocument.objects.filter(account__profile=self.profile).order_by('document_datetime')
+            self.objects = self.objects.filter(account__profile=self.profile)
         else:
-            self.objects = FinancialDocument.objects.filter(pk__lte=0).order_by('document_datetime')
+            self.objects = self.objects.filter(pk__lte=0)
 
     def list(self, *args, **kwargs):
         objects = self.objects.all()
@@ -280,7 +281,7 @@ class FinancialDocumentRepo:
             objects = objects.filter(for_home=kwargs['for_home'])
         if 'search_for' in kwargs:
             search_for=kwargs['search_for']
-            objects = objects.filter(title__contains=search_for) 
+            objects = objects.filter(Q(transaction__title__contains=search_for)|Q(transaction__short_description__contains=search_for)|Q(transaction__description__contains=search_for))
         if 'account_id' in kwargs:
             account_id=kwargs['account_id']
             objects = objects.filter(account_id=account_id) 
@@ -355,9 +356,11 @@ class AccountRepo():
         objects = self.objects
         if 'search_for' in kwargs:
             search_for=kwargs['search_for']
-            objects = objects.filter(Q(title__contains=search_for)|Q(short_description__contains=search_for)|Q(description__contains=search_for))
+            objects = objects.filter(Q(title__contains=search_for))
         if 'for_home' in kwargs:
             objects = objects.filter(Q(for_home=kwargs['for_home']))
+        if 'search_for' in kwargs:
+            objects=objects.filter(title__contains=kwargs['search_for'])
         if 'profile_id' in kwargs:
             objects=objects.filter(profile_id=kwargs['profile_id'])
         if 'parent_id' in kwargs:
