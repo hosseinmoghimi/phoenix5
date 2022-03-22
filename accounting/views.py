@@ -1,3 +1,5 @@
+from multiprocessing import context
+from turtle import getcanvas
 from django.http import Http404
 from django.shortcuts import render,reverse
 from accounting.apis import EditInvoiceApi
@@ -7,8 +9,8 @@ from core.views import CoreContext, PageContext,SearchForm
 # Create your views here.
 from django.views import View
 from .apps import APP_NAME
-from .repo import AccountRepo,FinancialBalanceRepo, ChequeRepo, PriceRepo, ProductRepo,ServiceRepo,FinancialDocumentRepo,InvoiceRepo, TransactionRepo
-from .serializers import InvoiceFullSerializer,InvoiceLineSerializer,ChequeSerializer, PriceSerializer, ProductSerializer,ServiceSerializer,FinancialDocumentForAccountSerializer,FinancialDocumentSerializer
+from .repo import AccountRepo,FinancialBalanceRepo, ChequeRepo, PaymentRepo, PriceRepo, ProductRepo,ServiceRepo,FinancialDocumentRepo,InvoiceRepo, TransactionRepo
+from .serializers import InvoiceFullSerializer,InvoiceLineSerializer,ChequeSerializer, PaymentSerializer, PriceSerializer, ProductSerializer,ServiceSerializer,FinancialDocumentForAccountSerializer,FinancialDocumentSerializer
 from .forms import *
 import json
 
@@ -263,6 +265,22 @@ class AccountsView(View):
         context['accounts']=accounts
         return render(request,TEMPLATE_ROOT+"accounts.html",context)
 
+
+class PaymentsView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        payments=PaymentRepo(request=request).list(*args, **kwargs)
+        context['payments']=payments
+        context['payments_s']=json.dumps(PaymentSerializer(payments,many=True).data)
+        return render(request,TEMPLATE_ROOT+"payments.html",context)
+
+class PaymentView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        payment=PaymentRepo(request=request).payment(*args, **kwargs)
+        context['payment_s']=json.dumps(PaymentSerializer(payment).data)
+        context['payment']=payment
+        return render(request,TEMPLATE_ROOT+"payment.html",context)
 
 class FinancialDocumentsView(View):
     def get(self,request,*args, **kwargs):
