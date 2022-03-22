@@ -1,12 +1,13 @@
 from django.contrib import admin
 
-from .models import Image, Page,Link,Icon,Download, PageImage, PageLike, PageLink, Parameter, Picture,PageDownload
+from .models import Image, Page,Link,Icon,Download, PageComment, PageImage, PageLike, PageLink, Parameter, Picture,PageDownload
 
 # Register your models here.
 admin.site.register(Download)
 admin.site.register(Image)
 admin.site.register(Icon)
 admin.site.register(Link)
+admin.site.register(PageComment)
 admin.site.register(Parameter)
 admin.site.register(PageLike)
 admin.site.register(PageImage)

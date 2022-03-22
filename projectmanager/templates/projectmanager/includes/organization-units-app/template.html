@@ -1,23 +1,29 @@
 {% load static %}
 
 
-<div id="accordion">
+<div id="accordion-organization-units">
 
 
     <div class="card mb-3" id="organization-units-app">
-        <div class="card-header" id="headingOrgUnits">
+        <div class="card-header" id="heading-organization-units">
 
             <h5 class="card-title text-center farsi">
-                <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOrgUnits" aria-expanded="true"
-                    aria-controls="collapseOrgUnits">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-organization-units" aria-expanded="true"
+                    aria-controls="collapse-organization-units">
                     لیست واحد های سازمانی ها
+                    <span v-if="organization_units.length>0">
+                        <small class="text-danger mx-2">
+                            <span v-text="organization_units.length"></span>
+                        </small>
+                    </span>
+
                 </button>
             </h5>
 
 
         </div>
-        <div id="collapseOrgUnits" class="collapse {% if show_organization_units_list %}show{% endif %}"
-            aria-labelledby="headingOrgUnits" data-parent="#accordion">
+        <div id="collapse-organization-units" class="collapse"
+            aria-labelledby="heading-organization-units" data-parent="#accordion-organization-units">
 
             <div class="card-body">
                 <div class="my-3">

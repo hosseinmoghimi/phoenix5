@@ -27,15 +27,15 @@
                 <button style="max-width: 80px!important;" v-if="!waiting" class="btn btn-secondary"
                 @click="show_form=false">انصراف</button>
 
-
+              
         </div>
         <div class="col-md-4 text-right">
-            <span v-if="message.show" :class="'alert alert-'+message.color">
+              <span v-if="message.show" :class="'alert alert-'+message.color">
 
-                <span class="farsi text-right">
-                    <span v-text="message.text"></span>
+                    <span class="farsi text-right">
+                        <span v-text="message.text"></span>
+                    </span>
                 </span>
-            </span>
         </div>
     </div>
 

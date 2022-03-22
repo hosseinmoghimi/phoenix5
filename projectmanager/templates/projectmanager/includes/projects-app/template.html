@@ -5,8 +5,8 @@
 <div id="accordion-projects">
 
 
-    <div class="card mb-3" id="projects-app">
-        <div class="card-header" id="headingProjectsApp">
+    <div class="card" id="projects-app">
+        <div class="card-header" id="heading-projects">
             <div class="row">
                 <div class="col-3">
 
@@ -14,9 +14,15 @@
 
                 <div class="col-6">
                     <h5 class="card-title text-center farsi">
-                        <button class="btn btn-link" data-toggle="collapse" data-target="#collapseProjectsApp"
-                            aria-expanded="true" aria-controls="collapseProjectsApp">
+                        <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-projects"
+                            aria-expanded="true" aria-controls="collapse-projects">
                             پروژه ها
+                            <span v-if="projects.length>0">
+                                <small class="text-danger mx-2">
+                                    <span v-text="projects.length"></span>
+                                </small>
+                            </span>
+
                         </button>
                     </h5>
                 </div>
@@ -38,8 +44,8 @@
 
 
         </div>
-        <div id="collapseProjectsApp" class="collapse  {% if project or organization_unit %}show{% endif %} "
-            aria-labelledby="headingProjectsApp" data-parent="#accordion-projects">
+        <div id="collapse-projects" class="collapse"
+            aria-labelledby="heading-projects" data-parent="#accordion-projects">
 
             <div class="card-body">
 

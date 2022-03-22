@@ -1,5 +1,4 @@
-from email.policy import default
-from .models import Download, Image, Page, PageDownload, PageImage, PageLink, Parameter,Picture
+from .models import Download, Image, Page, PageComment, PageDownload, PageImage, PageLink, Parameter,Picture
 from .constants import *
 from django.db.models import Q
 from authentication.repo import ProfileRepo
@@ -126,6 +125,44 @@ class PageRepo:
         # return BasicPage.objects.filter(id__in=pages_ids)
 
     
+
+class PageCommentRepo:
+    def __init__(self,*args, **kwargs):
+        self.request=None
+        self.user=None
+        if 'user' in kwargs:
+            self.user=kwargs['user']
+        if 'request' in kwargs:
+            self.request=kwargs['request']
+            self.user=self.request.user
+        self.objects=PageComment.objects
+    def add_comment(self,comment,page_id,*args, **kwargs):
+        profile=ProfileRepo(user=self.user).me
+        page_comment=PageComment(comment=comment,page_id=page_id,profile=profile)
+        
+        page_comment.save()
+        return page_comment
+
+    def delete_comment(self,page_comment_id,*args, **kwargs):
+        profile=ProfileRepo(user=self.user).me
+        page_comment=PageComment.objects.filter(pk=page_comment_id).first()
+
+        if page_comment is not None and page_comment.profile==profile:
+            page_comment.delete()
+            return True
+        return False
+
+    def page_comment(self,*args, **kwargs):
+        if 'page_comment_id' in kwargs:
+            return self.objects.filter(pk=kwargs['page_comment_id']).first()
+        if 'pk' in kwargs:
+            return self.objects.filter(pk=kwargs['pk']).first()
+        if 'id' in kwargs:
+            return self.objects.filter(pk=kwargs['id']).first()
+        if 'title' in kwargs:
+            return self.objects.filter(pk=kwargs['title']).first()
+
+
 
 class PictureRepo:
     

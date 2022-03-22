@@ -9,7 +9,7 @@ from log.repo import LogRepo
 from core.enums import ColorEnum, IconsEnum, ParameterNameEnum, PictureNameEnum
 from core.models import Download, Link
 from core.repo import DownloadRepo, PageDownloadRepo, PageRepo, ParameterRepo, PictureRepo
-from .serializers import PageImageSerializer, PageDownloadSerializer, PageLinkSerializer
+from .serializers import PageCommentSerializer, PageImageSerializer, PageDownloadSerializer, PageLinkSerializer
 from phoenix.settings import ADMIN_URL,MEDIA_URL,STATIC_URL,SITE_URL
 from django.shortcuts import render
 from authentication.repo import ProfileRepo
@@ -69,6 +69,14 @@ def PageContext(request,*args, **kwargs):
     context['links']=links
 
     
+    page_comments = page.pagecomment_set.all()
+    context['page_comments'] = page_comments
+    context['page_comments_s'] = json.dumps(PageCommentSerializer(page_comments, many=True).data)
+
+
+    if ProfileRepo(request=request).me is not None:
+        context['add_page_comment_form'] = AddPageCommentForm()
+        
     downloads=PageDownloadRepo(request=request).list(page_id=page.id)
     context['downloads']=downloads
     downloads_s=json.dumps(PageDownloadSerializer(downloads,many=True).data)

@@ -11,4 +11,7 @@ urlpatterns = [
     path('add_page_download/',apis.AddPageDownloadApi.as_view(),name="add_page_download"),
     path('add_page_image/',apis.AddPageImageApi.as_view(),name="add_page_image"),
 
+    path('delete_page_comment/',apis.DeletePageCommentApi.as_view(),name="delete_page_comment"),
+    path('add_page_comment/',apis.AddPageCommentApi.as_view(),name="add_page_comment"),
+
 ]

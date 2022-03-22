@@ -2,11 +2,11 @@
 
 <div id="accordion-employees">
     <div class="card mb-3" id="employees-app">
-        <div class="card-header" id="headingEmployees">
+        <div class="card-header" id="heading-employees">
 
             <h5 class="card-title text-center farsi">
-                <button class="btn btn-link" data-toggle="collapse" data-target="#collapseEmployees"
-                    aria-expanded="true" aria-controls="collapseEmployees">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-employees"
+                    aria-expanded="true" aria-controls="collapse-employees">
                     پرسنل
                     <span v-if="employees.length>0">
                         <small class="text-danger mx-2">
@@ -21,8 +21,8 @@
 
 
         </div>
-        <div id="collapseEmployees" class="collapse {% if organization_unit %}show{% endif %}"
-            aria-labelledby="headingEmployees" data-parent="#accordion-employees">
+        <div id="collapse-employees" class="collapse"
+            aria-labelledby="heading-employees" data-parent="#accordion-employees">
             <div class="card-body">
 
                 <div v-for="employee in employees" class="mb-3">

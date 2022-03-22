@@ -19,17 +19,17 @@
 
                 </td>
                 <td>
-                   
+
                     {% if perms.core.change_page %}
                     <div class="col-6">
-                        <a href="{{organization_unit.get_edit_url}}" target="_blank" title="ویرایش" class="mx-2 text-warning"><i
-                                class="fa fa-edit"></i> ویرایش</a>
+                        <a href="{{organization_unit.get_edit_url}}" target="_blank" title="ویرایش"
+                            class="mx-2 text-warning"><i class="fa fa-edit"></i> ویرایش</a>
                     </div>
                     {% endif %}
                     {% if perms.core.delete_page %}
                     <div class="col-6">
-                        <a href="{{organization_unit.get_delete_url}}" target="_blank" title="حذف" class="mx-2 text-danger"><i
-                                class="fa fa-trash"></i> حذف</a>
+                        <a href="{{organization_unit.get_delete_url}}" target="_blank" title="حذف"
+                            class="mx-2 text-danger"><i class="fa fa-trash"></i> حذف</a>
                     </div>
                     {% endif %}
                     {% if page.parent %}
@@ -40,16 +40,21 @@
 
                 </td>
             </tr>
+            {% if organization_unit.account %}
 
             <tr>
                 <td class="text-left">
-                    شروع
+                    حساب
                 </td>
                 <td>
-                    {{organization_unit.start_date|to_persian_datetime|safe}}
+                    <a href="{{organization_unit.account.get_absolute_url}}">
+
+                        {{organization_unit.title}}
+                    </a>
                 </td>
             </tr>
 
+            {% endif %}
 
 
             <tr>
@@ -114,7 +119,7 @@
 
                 </td>
                 <td>
-                    {{organization_unit.sum_total|to_price}} 
+                    {{organization_unit.sum_total|to_price}}
 
                 </td>
             </tr>

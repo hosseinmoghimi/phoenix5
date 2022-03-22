@@ -145,6 +145,19 @@ class Page(models.Model, LinkHelper, ImageMixin):
         return f"""{self.title}"""
 
 
+class PageComment(models.Model):
+    profile=models.ForeignKey("authentication.profile", verbose_name=_("profile"), on_delete=models.CASCADE)
+    page=models.ForeignKey("page", verbose_name=_("page"), on_delete=models.CASCADE)
+    comment=HTMLField(verbose_name="comment")
+    date_added=models.DateTimeField(_("date_added"), auto_now=False, auto_now_add=True)
+    def persian_date_added(self):
+        return PersianCalendar().from_gregorian(self.date_added)
+    
+    class Meta:
+        verbose_name = _("PageComment")
+        verbose_name_plural = _("PageComments")
+
+
 class Icon(models.Model):
     title = models.CharField(_("title"), null=True, blank=True, max_length=50)
     icon_fa = models.CharField(

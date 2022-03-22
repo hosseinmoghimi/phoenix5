@@ -21,11 +21,11 @@
 
             <div class="col-md-6">
                 {% include "projectmanager/includes/projects-app/template.html" %}
+                {% include "projectmanager/includes/organization-units-app/template.html" %}
             </div>
             <div class="col-md-6">
                 {% include "core/includes/page-downloads-app/template.html" %}
                 {% include "core/includes/page-links-app/template.html" %}
-                {% include "projectmanager/includes/organization-units-app/template.html" %}
 
             </div>
 
@@ -42,6 +42,13 @@
             <div class="col-md-12">
                 {% include "projectmanager/includes/service-requests-app/template.html" %}
             </div>
+
+
+            <div class="col-md-12">
+                {% include "core/includes/page-comments-app/template.html" %}
+
+            </div>
+
         </div>
 
 
@@ -62,7 +69,8 @@
     let page_id = parseInt("{{project.id}}")
     let project_id = parseInt("{{project.id}}")
     let parent_id = parseInt("{{project.id}}")
-    let item_prices=JSON.parse(`{{item_prices_s|escapejs}}`)
+    let item_prices = JSON.parse(`{{item_prices_s|escapejs}}`)
+    let page_comment_component_template = `{% include "core/includes/page-comments-app/component.html" %}`
 
 </script>
 {% include "core/includes/page-links-app/script.html" %}
@@ -72,5 +80,6 @@
 {% include "projectmanager/includes/material-requests-app/script.html" %}
 {% include "projectmanager/includes/service-requests-app/script.html" %}
 {% include "projectmanager/includes/projects-app/script.html" %}
+{% include "core/includes/page-comments-app/script.html" %}
 
 {% endblock script %}

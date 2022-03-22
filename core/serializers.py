@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Image, PageDownload, PageImage, Parameter,PageLink
+from .models import Image, PageComment, PageDownload, PageImage, Parameter,PageLink
 from authentication.serializers import ProfileSerializer
 
 
@@ -9,6 +9,13 @@ class ParameterSerializer(serializers.ModelSerializer):
         fields=['id','name','value','get_edit_url','get_delete_url']
 
 
+
+class PageCommentSerializer(serializers.ModelSerializer):
+    profile=ProfileSerializer()
+    class Meta:
+        model = PageComment
+        fields=['id','comment','persian_date_added','profile']
+        
 class ImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Image
