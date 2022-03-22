@@ -66,7 +66,38 @@ class AddProjectApi(APIView):
         return JsonResponse(context)
         
 
-     
+    
+class EditProjectApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        log=1
+        context['result']=FAILED
+        if request.method=='POST':
+            log=2
+            edit_project_form=EditProjectForm(request.POST)
+            if edit_project_form.is_valid():
+                cd=edit_project_form.cleaned_data
+                archive=cd['archive']
+                title=cd['title']
+                project_id=cd['project_id']
+                percentage_completed=cd['percentage_completed']
+                start_date=cd['start_date']
+                end_date=cd['end_date']
+                status=cd['status']
+                employer_id=cd['employer_id']
+                weight=cd['weight']
+                contractor_id=cd['contractor_id']
+                
+                start_date=PersianCalendar().to_gregorian(start_date)
+                end_date=PersianCalendar().to_gregorian(end_date)
+                project=ProjectRepo(request=request).edit_project(weight=weight,title=title,archive=archive,contractor_id=contractor_id,employer_id=employer_id,project_id=project_id,percentage_completed=percentage_completed,start_date=start_date,end_date=end_date,status=status)
+                if project is not None: 
+                    context['project']=ProjectSerializer(project).data
+                    context['result']=SUCCEED
+        context['log']=log
+        return JsonResponse(context)
+        
+ 
 class AddMaterialRequestApi(APIView):
       def post(self,request,*args, **kwargs):
         context={}

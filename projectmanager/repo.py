@@ -159,7 +159,32 @@ class ProjectRepo():
         project.save()
         return project
 
-
+    def edit_project(self,*args, **kwargs):
+        if not self.user.has_perm(APP_NAME+".change_project"):
+            return None
+        project=self.project(*args, **kwargs)
+        if project is not None:
+            if 'percentage_completed' in kwargs:
+                project.percentage_completed=kwargs['percentage_completed']
+            if 'start_date' in kwargs:
+                project.start_date=kwargs['start_date']
+            if 'end_date' in kwargs:
+                project.end_date=kwargs['end_date']
+            if 'status' in kwargs:
+                project.status=kwargs['status']
+            if 'contractor_id' in kwargs:
+                project.contractor_id=kwargs['contractor_id']
+            if 'employer_id' in kwargs:
+                project.employer_id=kwargs['employer_id']
+            if 'title' in kwargs:
+                project.title=kwargs['title']
+            if 'weight' in kwargs:
+                project.weight=kwargs['weight']
+                pass
+            if 'archive' in kwargs:
+                project.archive=kwargs['archive']
+            project.save()
+            return project
 class EmployeeRepo():
       
     def __init__(self, *args, **kwargs):

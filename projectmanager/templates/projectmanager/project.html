@@ -43,6 +43,10 @@
                 {% include "projectmanager/includes/service-requests-app/template.html" %}
             </div>
 
+            <div class="col-md-12">
+                {% include "projectmanager/includes/project-edit-app/template.html" %}
+            </div>
+
 
             <div class="col-md-12">
                 {% include "core/includes/page-comments-app/template.html" %}
@@ -67,6 +71,7 @@
 {% block script %}
 <script>
     let page_id = parseInt("{{project.id}}")
+    let project = JSON.parse(`{{project_s|escapejs}}`)
     let project_id = parseInt("{{project.id}}")
     let parent_id = parseInt("{{project.id}}")
     let item_prices = JSON.parse(`{{item_prices_s|escapejs}}`)
@@ -81,5 +86,6 @@
 {% include "projectmanager/includes/service-requests-app/script.html" %}
 {% include "projectmanager/includes/projects-app/script.html" %}
 {% include "core/includes/page-comments-app/script.html" %}
+{% include "projectmanager/includes/project-edit-app/script.html" %}
 
 {% endblock script %}

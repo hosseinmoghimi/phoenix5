@@ -33,5 +33,6 @@ urlpatterns = [
     path('add_service_request/',login_required(apis.AddServiceRequestApi.as_view()),name="add_service_request"),
     path('add_organization_unit/',login_required(apis.AddOrganizationUnitApi.as_view()),name="add_organization_unit"),
     path('add_project/',login_required(apis.AddProjectApi.as_view()),name="add_project"),
+    path('edit_project/',login_required(apis.EditProjectApi.as_view()),name="edit_project"),
 
 ]
