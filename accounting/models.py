@@ -652,34 +652,16 @@ class Spend(Transaction,LinkHelper):
 class Payment(Transaction):
     class Meta:
         verbose_name = _("Payment")
-        verbose_name_plural = _("Payments")
+        verbose_name_plural = _("پرداخت ها")
 
     def save(self,*args, **kwargs):
-        self.class_name="payment"
+        if self.app_name is None:
+            self.app_name=APP_NAME 
+        if self.class_name is None:
+            self.class_name='payment' 
+        
         super(Payment,self).save(*args, **kwargs)
-        financial_year=FinancialYear.get_by_date(date=self.transaction_datetime)
-        category,aa=FinancialDocumentCategory.objects.get_or_create(title="واریز")
-        FinancialDocument.objects.filter(transaction=self).delete()
-
-        ifd1=FinancialDocument()
-        ifd1.financial_year=financial_year
-        ifd1.category=category
-        ifd1.account=self.pay_to
-        ifd1.transaction=self
-        ifd1.bedehkar=self.amount
-        ifd1.title=str(self)
-        ifd1.document_datetime=self.transaction_datetime
-        ifd1.save()
-
-        ifd1=FinancialDocument()
-        ifd1.bestankar=self.amount
-        ifd1.transaction=self
-        ifd1.title=str(self)
-        ifd1.financial_year=financial_year
-        ifd1.category=category
-        ifd1.document_datetime=self.transaction_datetime
-        ifd1.account=self.pay_from
-        ifd1.save()
+        
 
 
 class Salary(Spend,LinkHelper):    

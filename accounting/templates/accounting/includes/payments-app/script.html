@@ -1,0 +1,12 @@
+<script>
+    let payments=JSON.parse("{{payments_s|escapejs}}")
+    let payments_app=new Vue({
+        el:"#payments-app",
+        data:{
+            payments:payments
+        },
+        methods:{
+
+        }
+    })
+</script>

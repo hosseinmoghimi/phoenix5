@@ -369,6 +369,53 @@ class AccountRepo():
         else:
             return self.objects.filter(profile=self.profile)
    
+
+
+class PaymentRepo():
+    def __init__(self, *args, **kwargs):
+        self.request = None
+        self.me=None
+        self.user = None
+        if 'request' in kwargs:
+            self.request = kwargs['request']
+            self.user = self.request.user
+        if 'user' in kwargs:
+            self.user = kwargs['user']
+        
+        self.objects=Payment.objects.all()
+        self.profile=ProfileRepo(*args, **kwargs).me
+        if self.user.has_perm(APP_NAME+".view_payment"):
+            self.objects=self.objects
+        elif self.profile is not None:
+            self.objects=self.objects.filter(Q(pay_from__profile_id=self.profile.id)|Q(pay_to__profile_id=self.profile.id))
+        
+
+    def payment(self, *args, **kwargs):
+        pk=0
+        if 'payment_id' in kwargs:
+            pk=kwargs['payment_id']
+        elif 'pk' in kwargs:
+            pk=kwargs['pk']
+        elif 'id' in kwargs:
+            pk=kwargs['id']
+        return self.objects.filter(pk=pk).first()
+     
+    def list(self, *args, **kwargs):
+        objects = self.objects
+        if 'search_for' in kwargs:
+            search_for=kwargs['search_for']
+            objects = objects.filter(Q(title__contains=search_for)|Q(short_description__contains=search_for)|Q(description__contains=search_for))
+        if 'for_home' in kwargs:
+            objects = objects.filter(Q(for_home=kwargs['for_home']))
+        if 'account_id' in kwargs:
+            objects=objects.filter(profile_id=kwargs['profile_id'])
+        if 'account_id' in kwargs:
+            objects=objects.filter(account_id=kwargs['account_id'])
+        if 'profile_id' in kwargs:
+            objects=objects.filter(account__profile_id=kwargs['profile_id'])
+        return objects.all()
+
+
 class InvoiceRepo():
     def __init__(self, *args, **kwargs):
         self.request = None
