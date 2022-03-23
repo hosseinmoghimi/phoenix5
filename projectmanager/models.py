@@ -17,6 +17,8 @@ from .apps import APP_NAME
 from accounting.models import Account
  
 IMAGE_FOLDER=APP_NAME+"/images/"
+
+
 class ProjectInvoice(Invoice):
     # project=models.ForeignKey("project", verbose_name=_("project"), on_delete=models.CASCADE)
 
@@ -261,6 +263,7 @@ class OrganizationUnit(Page):
     def logo(self): 
         return self.thumbnail
  
+
 class WareHouse(OrganizationUnit):
     pass
 
@@ -364,6 +367,8 @@ class Project(Page):
 
     def invoices(self):
         return ProjectInvoice.objects.filter(project_id=self.pk)
+
+
 class SampleForm(Page):
     
 
