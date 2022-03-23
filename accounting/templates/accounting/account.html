@@ -10,7 +10,7 @@
     {{account.title}}
 
     <a href="{{account.profile.get_absolute_url}}" target="_blank" title="پروفایل" class="mx-2"><i
-        class="fa fa-user text-info"></i></a>
+            class="fa fa-user text-info"></i></a>
 
     {% if perms.accounting.change_account %}
     <a href="{{account.get_edit_url}}" target="_blank" title="ویرایش" class="mx-2"><i
@@ -24,7 +24,7 @@
 
 </h4>
 <div class="row">
-    
+
     <div class="col-md-12">
         {% include "accounting/includes/financial-documents-app/template.html" %}
 
@@ -40,6 +40,11 @@
     <div class="col-md-12">
         {% include "accounting/includes/payments-app/template.html" %}
     </div>
+
+    <div class="col-md-12">
+        {% include "accounting/includes/transactions-app/template.html" %}
+    </div>
+
 </div>
 {% endblock content %}
 
@@ -47,5 +52,6 @@
 {% block script %}
 {% include "accounting/includes/financial-documents-app/script.html" %}
 {% include "accounting/includes/payments-app/script.html" %}
+{% include "accounting/includes/transactions-app/script.html" %}
 
 {% endblock script %}

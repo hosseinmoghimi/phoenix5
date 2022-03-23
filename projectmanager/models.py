@@ -241,6 +241,14 @@ class Employee(Account):
     def get_absolute_url(self):
         return reverse(APP_NAME+":employee", kwargs={"pk": self.pk})
 
+        
+    def my_project_ids(self):
+        ids = []
+        # for org in self.organization_unit_set.all():
+        for proj in self.organization_unit.project_set.all():
+            ids.append(proj.id)
+        return ids
+
 
 class OrganizationUnit(Page):
     pre_title=models.CharField(_("pre_title"),blank=True,null=True, max_length=50)

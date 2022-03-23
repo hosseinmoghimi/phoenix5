@@ -43,7 +43,7 @@ class MaterialRepo():
             objects = objects.filter(Q(for_home=kwargs['for_home']))
         if 'parent_id' in kwargs:
             objects=objects.filter(parent_id=kwargs['parent_id'])
-        return objects.all()
+        return objects
 
 
 class ServiceRepo():
@@ -94,6 +94,16 @@ class ProjectRepo():
         
         self.objects=Project.objects.order_by("-start_date")
         self.profile=ProfileRepo(*args, **kwargs).me
+        if self.user is not None and self.user.is_authenticated and self.user.has_perm(APP_NAME+".view_project"):
+            self.objects=Project.objects.all()
+        else:
+            me_emp=Employee.objects.filter(profile_id=self.profile.id).first()
+            if me_emp is not None:
+                self.objects=Project.objects.filter(id__in=me_emp.my_project_ids())
+            else:
+                self.objects=Project.objects.filter(id__in=[0])
+
+
        
 
     def project(self, *args, **kwargs):
@@ -187,7 +197,6 @@ class ProjectRepo():
                 project.archive=kwargs['archive']
             project.save()
             return project
-
 
 
 class EventRepo():
@@ -284,7 +293,6 @@ class EventRepo():
         event.locations.add(location)
         event.save()
         return location
-
 
 
 class EmployeeRepo():
@@ -421,9 +429,6 @@ class ServiceRequestRepo():
         return objects.all()
 
 
-
-
-
 class MaterialRequestRepo():
     def __init__(self, *args, **kwargs):
         self.request = None
@@ -514,9 +519,6 @@ class MaterialRequestRepo():
         return objects.all()
 
 
-
-
-
 class OrganizationUnitRepo():
     def __init__(self, *args, **kwargs):
         self.request = None
@@ -591,4 +593,3 @@ class OrganizationUnitRepo():
         return objects.all()
 
    
-

@@ -9,7 +9,7 @@
     let material_requests_app_data = {
         employees: JSON.parse(`{{employees_s|escapejs}}`),
         new_material_request_material_id: 1,
-        add_material_request_form_title: "",
+        add_material_request_form_title: "یمان پاکتی",
         materials: [],
         add_material_request_form_unit_price: 0,
         add_material_request_form_unit_name: "",
@@ -100,21 +100,22 @@
 
             },
             select_material: function (material) {
+                console.log(material)
                 this.add_material_request_form_unit_name = material.unit_name
                 this.add_material_request_form_unit_price = material.unit_price
                 this.add_material_request_form_title = material.title
                 this.materials = [material]
-                if (typeof item_prices != "undefined") {
+                // if (typeof item_prices != "undefined") {
 
-                    item_prices.forEach(item_price => {
-                        if (item_price.product_or_service_id==material.id){
+                //     item_prices.forEach(item_price => {
+                //         if (item_price.product_or_service_id==material.id){
 
-                            this.add_material_request_form_unit_name =item_price.unit_name
-                            this.add_material_request_form_unit_price =item_price.sell_price
-                        }
+                //             this.add_material_request_form_unit_name =item_price.unit_name
+                //             this.add_material_request_form_unit_price =item_price.unit_price
+                //         }
                         
-                    });
-                }
+                //     });
+                // }
             },
             filter_list: function () {
                 if (this.add_material_request_form_title.length > 3) {

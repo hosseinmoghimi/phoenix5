@@ -59,16 +59,6 @@ class ProjectSerializer(serializers.ModelSerializer):
         'persian_end_date','percentage_completed']
 
 
-class MaterialRequestSerializer(serializers.ModelSerializer):
-    service=ServiceSerializer()
-    project=ProjectSerializer()
-    employee=EmployeeSerializer()
-    class Meta:
-        model=MaterialRequest
-        fields=['id','total','service','persian_date_requested',
-        'quantity','persian_date_added','get_edit_url','get_delete_url',
-        'get_status_tag','project','employee','unit_name','unit_price',
-        'get_absolute_url']
 
 
 class ServiceRequestSerializer(serializers.ModelSerializer):

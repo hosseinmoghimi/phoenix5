@@ -144,7 +144,12 @@ class ProjectView(View):
         context = getContext(request=request)
         project = ProjectRepo(request=request).project(*args, **kwargs)
         context.update(PageContext(request=request, page=project))
-
+        
+        my_project_ids=[]
+        me_emp=EmployeeRepo(request=request).me
+        if me_emp is not None:
+            my_project_ids=me_emp.my_project_ids()
+            
         context['invoices'] = project.invoices()
 
         events = EventRepo(request=request).list(project_id=project.id)
@@ -179,8 +184,8 @@ class ProjectView(View):
 
         if request.user.has_perm(APP_NAME+".add_project"):
             context['add_project_form'] = AddProjectForm()
-
-        if request.user.has_perm(APP_NAME+".change_project"):
+        
+        if request.user.has_perm(APP_NAME+".change_project") or project.id in my_project_ids:
             employers = OrganizationUnitRepo(request=request).list()
             context['employers'] = employers
             context['employers_s'] = json.dumps(

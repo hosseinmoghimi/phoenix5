@@ -8,6 +8,8 @@ from .models import Account, Cheque, FinancialBalance, FinancialDocument, Financ
 from django.db.models import Q
 from authentication.repo import ProfileRepo
 from django.utils import timezone
+
+
 class ProductRepo():
     def __init__(self, *args, **kwargs):
         self.request = None
@@ -81,6 +83,7 @@ class ServiceRepo():
             objects=objects.filter(parent_id=kwargs['parent_id'])
         return objects.all()
 
+
 class FinancialBalanceRepo:
     def __init__(self, *args, **kwargs):
         self.request = None
@@ -126,7 +129,6 @@ class FinancialBalanceRepo:
         if 'id' in kwargs:
             return self.objects.filter(pk= kwargs['id']).first()
    
-
 
 class PriceRepo:
     def __init__(self, *args, **kwargs):
@@ -216,9 +218,6 @@ class PriceRepo:
         if 'id' in kwargs:
             return self.objects.filter(pk= kwargs['id']).first()
    
-
-
-   
    
 class FinancialYearRepo:
     def __init__(self, *args, **kwargs):
@@ -255,6 +254,7 @@ class FinancialYearRepo:
         if 'id' in kwargs:
             return self.objects.filter(pk= kwargs['id']).first()
    
+
 class FinancialDocumentRepo:
     def __init__(self, *args, **kwargs):
         self.request = None
@@ -324,7 +324,6 @@ class FinancialDocumentRepo:
         return financial_document_
 
 
-
 class AccountRepo():
     def __init__(self, *args, **kwargs):
         self.request = None
@@ -372,7 +371,6 @@ class AccountRepo():
         else:
             return self.objects.filter(profile=self.profile)
    
-
 
 class PaymentRepo():
     def __init__(self, *args, **kwargs):
@@ -451,6 +449,8 @@ class PaymentRepo():
 
         payment.save()
         return payment
+
+
 class InvoiceRepo():
     def __init__(self, *args, **kwargs):
         self.request = None
@@ -559,7 +559,8 @@ class InvoiceRepo():
         
         invoice.save()
         return invoice
-   
+
+
 class ChequeRepo():
     def __init__(self, *args, **kwargs):
         self.request = None
@@ -638,7 +639,6 @@ class ChequeRepo():
             objects=objects.filter(parent_id=kwargs['parent_id'])
         return objects.all()
 
-   
 
 class TransactionRepo():
     def __init__(self, *args, **kwargs):
@@ -682,10 +682,6 @@ class TransactionRepo():
         if 'parent_id' in kwargs:
             objects=objects.filter(parent_id=kwargs['parent_id'])
         return objects.all()
-
-   
-
-
 
 
 class SubAccountRepo():
