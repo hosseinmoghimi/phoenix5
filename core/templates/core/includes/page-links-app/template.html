@@ -2,10 +2,10 @@
 
 
     <div class="card" id="page-links-app">
-        <div class="card-header" id="headinglinks">
+        <div class="card-header" id="heading-page-links">
             <h5 class="text-center">
-                <button class="btn btn-link" data-toggle="collapse" data-target="#collapselinks" aria-expanded="true"
-                    aria-controls="collapselinks">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-page-links" aria-expanded="true"
+                    aria-controls="collapse-page-links">
                     لینک ها
 
                     <span v-if="links.length>0">
@@ -16,7 +16,7 @@
                 </button>
             </h5>
         </div>
-        <div id="collapselinks" class="collapse {% if page.links.all %}show{% endif %}" aria-labelledby="headinglinks"
+        <div id="collapse-page-links" class="collapse " aria-labelledby="heading-page-links"
             data-parent="#accordion-page-links">
 
             <div class="card-body">
