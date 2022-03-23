@@ -19,7 +19,7 @@
                     {{selected_profile.name}}
                 </h5>
 
-                
+
                 <h5 class="text-center">
 
                     {{selected_profile.user.username}}
@@ -27,6 +27,12 @@
 
 
                 <div class="text-center farsi">
+                    {% if perms.authentication.change_profile %}
+                    <a href="{% url 'authentication:login_as' pk=selected_profile.id %}" title="login_as"
+                        class="mx-2 text-warning"><i class="fa fa-edit"></i> login_as</a>
+                    {% endif %}
+
+
 
                     {% if perms.authentication.change_profile %}
                     <a href="{{selected_profile.get_edit_url}}" target="_blank" title="ویرایش"
@@ -44,7 +50,19 @@
             </div>
         </div>
     </div>
+    {% if not selected_profile.enabled %}
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-body">
+                <div class="farsi alert alert-danger text-right">
 
+                    حساب کاربری غیر فعال می باشد.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% endif %}
 
     {% if employees %}
 

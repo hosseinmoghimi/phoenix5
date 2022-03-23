@@ -210,10 +210,10 @@ class Icon(models.Model):
             return f'<img src="{MEDIA_URL}{str(self.image_origin)}" alt="{self.title}" height="{self.height}" width="{self.width}">'
 
         if self.icon_material is not None and len(self.icon_material) > 0:
-            return f'<i style="{icon_style}" class="{text_color} material-icons">{self.icon_material}</i>'
+            return f'<i style="{icon_style}" class="material-icons">{self.icon_material}</i>'
 
         if self.icon_fa is not None and len(self.icon_fa) > 0:
-            return f'<i style="{icon_style}" class="{text_color} {self.icon_fa}"></i>'
+            return f'<i style="{icon_style}" class="{self.icon_fa}"></i>'
 
         if self.icon_svg is not None and len(self.icon_svg) > 0:
             return f'<span  style="{icon_style}" class="{text_color}">{self.icon_svg}</span>'
@@ -278,7 +278,7 @@ class Download(Icon):
 
 class Link(Icon):
     url = models.CharField(_("url"), max_length=2000)
-
+    new_tab=models.BooleanField(_("new_tab"),default=False)
     class Meta:
         verbose_name = _("Link")
         verbose_name_plural = _("Links")
@@ -286,6 +286,17 @@ class Link(Icon):
     def get_absolute_url(self):
         return reverse("Link_detail", kwargs={"pk": self.pk})
 
+    def get_link_btn(self):
+        target='target="_blank"' if self.new_tab else ''
+        return f"""
+
+            <a {target} class="btn btn-{self.color} " href="{self.url}">
+            <span class="ml-2">
+            {self.get_icon_tag_pure()}
+            </span>
+            {self.title}
+            </a>
+        """
 
 class PageLink(Link, LinkHelper):
     page = models.ForeignKey("page", verbose_name=_(

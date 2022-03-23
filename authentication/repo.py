@@ -19,12 +19,16 @@ class ProfileRepo():
             self.user=self.request.user
         if 'user' in kwargs:
             self.user=kwargs['user']
-        if 'forced' in kwargs:
+        if 'forced' in kwargs and kwargs['forced']:
             self.objects = Profile.objects.all()
-        elif self.user is not None and self.user and self.user.is_authenticated:
+        else:
             self.objects = Profile.objects.filter(enabled=True)
-            self.me = self.objects.filter(user=self.user).first()         
-        self.objects = Profile.objects.filter(enabled=True)
+
+        if self.user is not None and self.user and self.user.is_authenticated:
+            self.me = self.objects.filter(user=self.user).first()
+            if self.user.has_perm(APP_NAME+".view_profile"):
+                self.objects = Profile.objects.all()
+
 
     def login_by_token(self,*args, **kwargs):
         if 'token' in kwargs:
@@ -105,10 +109,10 @@ class ProfileRepo():
             return self.objects.filter(pk=pk).first()
         elif 'username' in kwargs:
             username=kwargs['username']
-            return Profile.objects.filter(user__username=username).first()
+            return self.objects.filter(user__username=username).first()
         elif 'user' in kwargs:
             user=kwargs['user']
-            return Profile.objects.filter(user=user).first()
+            return self.objects.filter(user=user).first()
 
     
     def logout(self,*args, **kwargs):
@@ -118,14 +122,20 @@ class ProfileRepo():
             logout(request=self.request)
             
 
-    def login(self,request,username,password):
+    def login(self,request,*args, **kwargs):
         logout(request=request)
-        user=authenticate(request=request,username=username,password=password)
-        if user is not None:
-            login(request,user)
-            if user.is_authenticated:
-                return request
-        return None
+        if 'user' in kwargs:
+            user=kwargs['user']
+            if user is not None:
+                login(request,user)
+                if user.is_authenticated:
+                    return (request,user)
+        if 'username' in kwargs and 'password' in kwargs:
+            user=authenticate(request=request,username=kwargs['username'],password=kwargs['password'])
+            if user is not None:
+                login(request,user)
+                if user.is_authenticated:
+                    return (request,user)
     def login_as_user(self,username,*args, **kwargs):
         if 'force' in kwargs and kwargs['force']:
             pass

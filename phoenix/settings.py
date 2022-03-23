@@ -74,6 +74,11 @@ WSGI_APPLICATION = 'phoenix.wsgi.application'
 DATABASES=server_settings.DATABASES
 
 
+# from authentication.views import login_view
+# LOGIN_URL = login_view
+LOGIN_URL = 'authentication:login'
+LOGOUT_REDIRECT_URL = 'authentication:profile'
+
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
 

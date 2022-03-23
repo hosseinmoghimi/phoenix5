@@ -125,6 +125,7 @@ class DownloadView(View):
 
 class MessageView(View):
     def __init__(self,request, *args, **kwargs):
+        self.request = request
         self.links = []
         self.title = None
         self.body = None
@@ -160,8 +161,6 @@ class MessageView(View):
             self.message_text = kwargs['message_text']
         if 'header_text' in kwargs:
             self.header_text = kwargs['header_text']
-        if 'request' in kwargs:
-            self.request = kwargs['request']
 
 
     def show(self, *args, **kwargs):
@@ -176,9 +175,9 @@ class MessageView(View):
             self.message_text = 'متاسفانه خطایی رخ داده است.'
         if self.has_home_link:
             btn_home = Link(url=(SITE_URL),
-                            color=ColorEnum.SUCCESS+' btn-round',
+                            color=ColorEnum.PRIMARY+' btn-round',
                             icon_material=IconsEnum.home,
-                            title='خانه', name='ssss', new_tab=False)
+                            title='خانه', new_tab=False)
             self.links.append(btn_home)
         context['links'] = self.links
 
@@ -194,5 +193,7 @@ class MessageView(View):
         context['title'] = self.title
 
         context['search_form'] = None
+        context['no_footer']=True
+        context['no_navbar']=True
         return render(self.request, TEMPLATE_ROOT+'message.html', context)
 

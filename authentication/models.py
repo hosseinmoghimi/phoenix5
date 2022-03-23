@@ -53,7 +53,7 @@ class Profile(models.Model,LinkHelper):
     address=models.CharField(_("address"),null=True,blank=True, max_length=50)
     image_origin=models.ImageField(_("image"),null=True,blank=True, upload_to=IMAGE_FOLDER+"profile/", height_field=None, width_field=None, max_length=None)
     header_origin=models.ImageField(_("header_origin"),null=True,blank=True, upload_to=IMAGE_FOLDER+"profile/header/", height_field=None, width_field=None, max_length=None)
-    enabled=models.BooleanField(_("enabled"),default=True)
+    enabled=models.BooleanField(_("enabled"),default=False)
     can_login=models.BooleanField(_("can login ?"),default=False)
     status=models.CharField(_("status"),choices=ProfileStatusEnum.choices,default=ProfileStatusEnum.AAA, max_length=50)
     class_name='profile' 

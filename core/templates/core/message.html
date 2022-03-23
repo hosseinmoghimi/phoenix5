@@ -1,5 +1,4 @@
-{% extends "base-layout.html" %}
-{% load socialaccount %}
+{% extends "phoenix/wide-layout.html" %}
 
 {% block content %}
 <div class="row">
@@ -58,7 +57,6 @@
             <div class="card-footer justify-content-center">
                 <div class="text-center">
                     {% for link in links %}
-
                     {{link.get_link_btn|safe}}
 
                     {% endfor %}
