@@ -3,15 +3,23 @@
 <div id="accordion-page-comments">
 
     <div class="card" id="page-comments-app">
-        <div class="card-header" id="headingComments">
+        <div class="card-header" id="heading-page-comments">
             <h5 class="text-center">
-                <button class="btn btn-link" data-toggle="collapse" data-target="#collapseseComments"
-                    aria-expanded="true" aria-controls="collapseseComments">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-page-comments"
+                    aria-expanded="true" aria-controls="collapse-page-comments">
                     نظرات
+
+                    <span v-if="page_comments.length>0">
+                        <small class="text-danger mx-2">
+                            <span v-text="page_comments.length"></span>
+                        </small>
+                    </span>
+
+
                 </button>
             </h5>
         </div>
-        <div id="collapseseComments" class="collapse" aria-labelledby="headingComments" 
+        <div id="collapse-page-comments" class="collapse" aria-labelledby="heading-page-comments" 
         data-parent="#accordion-page-comments">
 
 

@@ -8,33 +8,48 @@
 <h4 class="text-center mb-4">
 
     <small class="text-muted">
-        جستجو برای 
+        جستجو برای
     </small>
     {{search_for}}
 
-   
+
 
 </h4>
 <div class="row">
-    
+    {% if financial_documents %}
+
     <div class="col-md-12">
         {% include "accounting/includes/financial-documents-app/template.html" %}
 
     </div>
+    {% endif %}
+
+    {% if financial_balances %}
+
     <div class="col-md-12">
 
         {% include "accounting/includes/financial-balances-app/template.html" %}
     </div>
+    {% endif %}
+    {% if invoices %}
+
     <div class="col-md-12">
 
         {% include "accounting/includes/invoices-app/template.html" %}
     </div>
+    {% endif %}
+    {% if payments %}
+
     <div class="col-md-12">
         {% include "accounting/includes/payments-app/template.html" %}
     </div>
+    {% endif %}
+    {% if transactions %}
+
     <div class="col-md-12">
         {% include "accounting/includes/transactions-app/template.html" %}
     </div>
+    {% endif %}
 </div>
 {% endblock content %}
 

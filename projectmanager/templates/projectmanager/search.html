@@ -1,0 +1,61 @@
+{% extends "projectmanager/layout.html" %}
+
+{% block content %}
+<div class="text-center mt-3 mb-3">
+
+    <img src="{{account.logo}}" width="128" class="rounded" alt="">
+</div>
+<h4 class="text-center mb-4">
+
+    <small class="text-muted">
+        جستجو برای
+    </small>
+    {{search_for}}
+
+
+
+</h4>
+<div class="row">
+    {% if materials %}
+
+    <div class="col-md-12">
+        {% include "projectmanager/includes/materials-app/template.html" %}
+
+    </div>
+    {% endif %}
+
+
+
+
+    {% if services %}
+
+    <div class="col-md-12">
+        {% include "projectmanager/includes/services-app/template.html" %}
+
+    </div>
+    {% endif %}
+
+
+
+
+    {% if events %}
+
+    <div class="col-md-12">
+        {% include "projectmanager/includes/events-app/template.html" %}
+
+    </div>
+    {% endif %}
+
+
+
+
+</div>
+{% endblock content %}
+
+
+{% block script %}
+{% include "projectmanager/includes/services-app/script.html" %}
+{% include "projectmanager/includes/materials-app/script.html" %}
+{% include "projectmanager/includes/events-app/script.html" %}
+
+{% endblock script %}

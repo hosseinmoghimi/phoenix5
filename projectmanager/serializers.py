@@ -1,14 +1,30 @@
 from rest_framework import serializers
-from .models import Employee, Material, MaterialRequest, PM_Service, Request,Project,OrganizationUnit, ServiceRequest
+from .models import Event,Employee, Material, MaterialRequest, PM_Service, Request,Project,OrganizationUnit, ServiceRequest
 from authentication.serializers import ProfileSerializer
 
 
+class ProjectBriefSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Project
+        fields=['id', 'title', 'get_absolute_url']
 
 class OrganizationUnitSerializer(serializers.ModelSerializer):
 
     class Meta:
         model=OrganizationUnit
         fields=['id','title','image','logo','full_title','pre_title','get_edit_url','get_absolute_url']
+
+
+class EventSerializerForChart(serializers.ModelSerializer):
+    class Meta:
+        model=Event
+        fields=['id','title','get_absolute_url','start_datetime2','end_datetime2']
+
+class EventSerializer(serializers.ModelSerializer):
+    project_related=ProjectBriefSerializer()
+    class Meta:
+        model=Event
+        fields=['id','project_related','likes_count','title','get_absolute_url','persian_event_datetime','persian_start_datetime','persian_end_datetime','get_edit_url']
 
 
 class EmployeeSerializer(serializers.ModelSerializer):

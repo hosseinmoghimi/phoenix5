@@ -1,9 +1,11 @@
+from core.repo import PageRepo
+from map.repo import LocationRepo
 from django.utils import timezone
 from urllib import request
 
 from projectmanager.enums import RequestStatusEnum, SignatureStatusEnum
 from .apps import APP_NAME
-from .models import Employee, Material, MaterialRequest,PM_Service as Service, Project,OrganizationUnit, RequestSignature, ServiceRequest,WareHouse
+from .models import Employee, Event,Material, MaterialRequest,PM_Service as Service, Project,OrganizationUnit, RequestSignature, ServiceRequest,WareHouse
 
 from authentication.repo import ProfileRepo
 from django.db.models import Q
@@ -185,6 +187,106 @@ class ProjectRepo():
                 project.archive=kwargs['archive']
             project.save()
             return project
+
+
+
+class EventRepo():
+    def __init__(self, *args, **kwargs):
+        self.request = None
+        self.user = None
+        if 'request' in kwargs:
+            self.request = kwargs['request']
+            self.user = self.request.user
+        if 'user' in kwargs:
+            self.user = kwargs['user']
+        self.profile=ProfileRepo(*args, **kwargs).me
+        me_employer=EmployeeRepo(request=self.request).me
+        if self.user is None:
+            self.objects=Event.objects.filter(id=0)
+        elif self.user.has_perm(APP_NAME+".view_event"):
+            self.objects=Event.objects.all()
+        elif me_employer is not None:
+            if me_employer is not None:
+                my_project_ids=me_employer.my_project_ids()
+            self.objects = Event.objects.filter(project_related_id__in=my_project_ids)
+        elif self.profile is not None:
+            self.objects=Event.objects.filter(id=0)
+        else:
+            self.objects=Event.objects.filter(id=0)
+
+
+        self.objects=self.objects.order_by('-event_datetime')
+
+    def event(self, *args, **kwargs):
+        if 'pk' in kwargs:
+            return self.objects.filter(pk=kwargs['pk']).first()
+        if 'id' in kwargs:
+            return self.objects.filter(pk=kwargs['id']).first()
+        if 'event_id' in kwargs:
+            return self.objects.filter(pk=kwargs['event_id']).first()
+        if 'title' in kwargs:
+            return self.objects.filter(pk=kwargs['title']).first()
+    
+    def add_event(self,*args, **kwargs):
+        if 'project_id' in kwargs:
+            project_id= kwargs['project_id']
+        my_project_ids=PageRepo(request=self.request).my_pages_ids()
+        if self.user.has_perm(APP_NAME+".add_event")  :
+            pass
+        elif project_id in my_project_ids:
+            pass
+        else:
+            return
+        if 'start_datetime' in kwargs:
+            start_datetime=kwargs['start_datetime']
+        if 'end_datetime' in kwargs:
+            end_datetime=kwargs['end_datetime']
+        if 'event_datetime' in kwargs:
+            event_datetime=kwargs['event_datetime']
+        else:
+            from django.utils import timezone
+            event_datetime=timezone.now()
+        new_event=Event()
+        # new_event.creator=ProfileRepo(user=self.user).me
+        new_event.event_datetime=event_datetime
+        if 'title' in kwargs:
+            new_event.title = kwargs['title']
+        if 'event_datetime' in kwargs:
+            event_datetime = kwargs['event_datetime']
+        
+
+        # event_datetime=PersianCalendar().to_gregorian(event_datetime)
+        new_event.event_datetime=event_datetime
+        new_event.end_datetime=end_datetime
+        new_event.start_datetime=start_datetime
+        new_event.project_related_id=project_id
+        new_event.creator=self.profile
+        new_event.save()
+        return new_event
+ 
+
+    def list(self,*args, **kwargs):
+        objects=self.objects.all().order_by('-event_datetime')
+        if 'project_id' in kwargs:
+            objects=self.objects.filter(project_related_id=kwargs['project_id'])
+        if 'search_for' in kwargs:
+            search_for=kwargs['search_for']
+            objects=self.objects.filter(Q(title__contains=search_for))
+        return objects
+
+    def add_location(self,*args, **kwargs):
+        if not self.user.has_perm(APP_NAME+".change_project"):
+            return None 
+        location=LocationRepo(request=self.request,user=self.user).location(*args, **kwargs)
+        event=self.event(*args, **kwargs)
+        if event is None or location is None:
+            return None
+        event.locations.add(location)
+        event.save()
+        return location
+
+
+
 class EmployeeRepo():
       
     def __init__(self, *args, **kwargs):

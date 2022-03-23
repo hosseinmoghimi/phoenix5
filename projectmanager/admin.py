@@ -1,12 +1,13 @@
 from django.contrib import admin
 
-from projectmanager.models import MaterialRequest,ServiceRequest,PM_Service,Employee,Material, MaterialInvoice, OrganizationUnit, Project, Request, RequestSignature, SampleForm,  ServiceInvoice
+from projectmanager.models import Event,MaterialRequest,ServiceRequest,PM_Service,Employee,Material, MaterialInvoice, OrganizationUnit, Project, Request, RequestSignature, SampleForm,  ServiceInvoice
 
 # Register your models here.
 admin.site.register(OrganizationUnit)
 admin.site.register(Employee)
 admin.site.register(Project)
 admin.site.register(Request)
+admin.site.register(Event)
 admin.site.register(Material)
 admin.site.register(PM_Service)
 admin.site.register(MaterialInvoice)

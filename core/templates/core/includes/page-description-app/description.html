@@ -1,17 +1,17 @@
 {% if page.description %}
-<div id="accordion-PageDescription">
+<div id="accordion-page-description">
     <div class="card" id="page-description-app">
-        <div class="card-header" id="headingPageDescription">
+        <div class="card-header" id="heading-page-description">
             <h5 class="mb-0 text-center">
-                <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapsePageDescription"
-                    aria-expanded="false" aria-controls="collapsePageDescription">
+                <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapse-page-description"
+                    aria-expanded="false" aria-controls="collapse-page-description">
                     توضیحات کامل درباره
                     {{page.title}}
                 </button>
             </h5>
         </div>
-        <div id="collapsePageDescription" class="collapse" aria-labelledby="headingPageDescription"
-            data-parent="#accordion-PageDescription">
+        <div id="collapse-page-description" class="collapse" aria-labelledby="heading-page-description"
+            data-parent="#accordion-page-description">
             <div class="card-body farsi text-right">
                 {{page.description|safe}}
             </div>

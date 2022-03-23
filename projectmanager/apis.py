@@ -5,10 +5,10 @@ from core.serializers import PageLinkSerializer
 from .enums import *
 
 from utility.calendar import PersianCalendar
-from .repo import  MaterialRequestRepo, OrganizationUnitRepo, ProjectRepo, ServiceRequestRepo
+from .repo import  EventRepo, MaterialRequestRepo, OrganizationUnitRepo, ProjectRepo, ServiceRequestRepo
 from django.http import JsonResponse
 from .forms import *
-from .serializers import MaterialRequestSerializer, OrganizationUnitSerializer, ProjectSerializer, ServiceRequestSerializer
+from .serializers import EventSerializer, MaterialRequestSerializer, OrganizationUnitSerializer, ProjectSerializer, ServiceRequestSerializer
 
 class AddOrganizationUnitApi(APIView):
     def post(self,request,*args, **kwargs):
@@ -65,7 +65,31 @@ class AddProjectApi(APIView):
         context['log']=log
         return JsonResponse(context)
         
-
+class AddEventApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        context['result']=FAILED
+        log=1
+        if request.method=='POST':
+            log=2
+            add_event_form=AddEventForm(request.POST)
+            if add_event_form.is_valid():
+                log=3
+                title=add_event_form.cleaned_data['title']
+                event_datetime=add_event_form.cleaned_data['event_datetime']
+                start_datetime=add_event_form.cleaned_data['start_datetime']
+                end_datetime=add_event_form.cleaned_data['end_datetime']
+                project_id=add_event_form.cleaned_data['project_id']
+                event_datetime=PersianCalendar().to_gregorian(event_datetime)
+                start_datetime=PersianCalendar().to_gregorian(start_datetime)
+                end_datetime=PersianCalendar().to_gregorian(end_datetime)
+                event=EventRepo(request=request).add_event(start_datetime=start_datetime,end_datetime=end_datetime,event_datetime=event_datetime,project_id=project_id,title=title)
+                if event is not None:
+                    log=4
+                    context['event']=EventSerializer(event).data
+                    context['result']=SUCCEED
+        context['log']=log
+        return JsonResponse(context)
     
 class EditProjectApi(APIView):
     def post(self,request,*args, **kwargs):
