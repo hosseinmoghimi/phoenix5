@@ -4,6 +4,8 @@ from django.shortcuts import render,reverse
 from core.views import CoreContext,SearchForm
 # Create your views here.
 from django.views import View
+from core.repo import ParameterRepo
+from .enums import ParameterNameEnum
 from .apps import APP_NAME
 # from .repo import ProductRepo
 # from .serializers import ProductSerializer
@@ -21,11 +23,19 @@ def getContext(request, *args, **kwargs):
     context['LAYOUT_PARENT'] = LAYOUT_PARENT
     return context
 
-
+def get_contact_us_context(request):
+    context={}
+    param_repo=ParameterRepo(request=request,app_name=APP_NAME)
+    context['office_address']=param_repo.parameter(name=ParameterNameEnum.OFFICE_ADDRESS).value
+    context['office_tel']=param_repo.parameter(name=ParameterNameEnum.OFFICE_TEL).value
+    context['office_email']=param_repo.parameter(name=ParameterNameEnum.OFFICE_EMAIL).value
+    context['office_mobile']=param_repo.parameter(name=ParameterNameEnum.OFFICE_MOBILE).value
+   
+    return context
 class HomeView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
-        
+        context.update(get_contact_us_context(request=request))
         blogs=BlogRepo(request=request).list()
         context['blogs']=blogs
 

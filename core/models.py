@@ -165,8 +165,8 @@ class Icon(models.Model):
     icon_material = models.CharField(
         _("material_icon"), null=True, blank=True, max_length=50)
     icon_svg = models.TextField(_("svg_icon"), null=True, blank=True)
-    profile = models.ForeignKey("authentication.profile", null=True,
-                                blank=True, verbose_name=_("profile"), on_delete=models.CASCADE)
+    # profile = models.ForeignKey("authentication.profile", null=True,
+                                # blank=True, verbose_name=_("profile"), on_delete=models.CASCADE)
     color = models.CharField(
         _("color"), choices=ColorEnum.choices, default=ColorEnum.PRIMARY, max_length=50)
     width = models.IntegerField(_("عرض آیکون"), null=True, blank=True)
@@ -240,7 +240,8 @@ class Download(Icon):
     profiles = models.ManyToManyField(
         "authentication.profile", blank=True, related_name="profile_downloads", verbose_name=_("profiles"))
     is_open = models.BooleanField(_("is_open?"), default=False)
-
+    profile = models.ForeignKey("authentication.Profile", null=True,
+                                blank=True, verbose_name=_("profile"), on_delete=models.CASCADE)
     def get_download_url(self):
         if self.mirror_link and self.mirror_link is not None:
             return self.mirror_link
@@ -279,6 +280,9 @@ class Download(Icon):
 class Link(Icon):
     url = models.CharField(_("url"), max_length=2000)
     new_tab=models.BooleanField(_("new_tab"),default=False)
+    profile = models.ForeignKey("authentication.Profile", null=True,
+                                blank=True, verbose_name=_("profile"), on_delete=models.CASCADE)
+    
     class Meta:
         verbose_name = _("Link")
         verbose_name_plural = _("Links")
@@ -298,6 +302,7 @@ class Link(Icon):
             </a>
         """
 
+
 class PageLink(Link, LinkHelper):
     page = models.ForeignKey("page", verbose_name=_(
         "page"), on_delete=models.CASCADE)
@@ -315,9 +320,9 @@ class PageLink(Link, LinkHelper):
 class PageDownload(Download, LinkHelper):
     page = models.ForeignKey("page", verbose_name=_(
         "page"), on_delete=models.CASCADE)
+    
     class_name = "pagedownload"
     app_name = APP_NAME
-
     def __str__(self):
         return self.title
 
@@ -495,3 +500,47 @@ class Picture(models.Model, LinkHelper):
 
     def get_edit_url(self):
         return f"{ADMIN_URL}{APP_NAME}/picture/{self.pk}/change/"
+
+
+class ContactMessage(models.Model):
+    full_name = models.CharField(_("نام کامل"), max_length=50)
+    mobile = models.CharField(_("شماره تماس"), max_length=50)
+    email = models.EmailField(_("ایمیل"), max_length=254)
+    subject = models.CharField(_("عنوان پیام"), max_length=50)
+    message = models.CharField(_("متن پیام"), max_length=50)
+    date_added = models.DateTimeField(
+        _("افزوده شده در"), auto_now=False, auto_now_add=True)
+    app_name = models.CharField(_("اپلیکیشن"),choices=AppNameEnum.choices,  max_length=50)
+
+    class Meta:
+        verbose_name = _("ContactMessage")
+        verbose_name_plural = _("پیام های ارتباط با ما")
+
+    def __str__(self):
+        return self.full_name
+
+
+# class SocialLink(Link):
+#     # app_name=models.CharField(_('اپلیکیشن'),choices=AppNameEnum.choices, max_length=50,null=True,blank=True)
+#     profile = models.ForeignKey("authentication.Profile", null=True,
+#                                 blank=True, verbose_name=_("profile"), on_delete=models.PROTECT)
+
+#     def get_link(self):
+#         return f"""
+#                 <a href="{self.url}" class="btn btn-just-icon btn-link {self.icon_class}">
+#                 {self.get_icon_tag()}
+#                 </a>
+#         """
+
+#     class Meta:
+#         verbose_name = _("SocialLink")
+#         verbose_name_plural = _("شبکه اجتماعی")
+ 
+
+class NavLink(Link):
+    parent=models.ForeignKey("navlink", verbose_name=_("navlink"),null=True,blank=True, on_delete=models.CASCADE)
+    app_name=models.CharField(_("app_name"),choices=AppNameEnum.choices, max_length=50)
+
+    class Meta:
+        verbose_name = _("NavLink")
+        verbose_name_plural = _("NavLinks")

@@ -1,4 +1,4 @@
-from .models import Download, Image, Page, PageComment, PageDownload, PageImage, PageLink, Parameter,Picture
+from .models import ContactMessage, Download, Image, Page, PageComment, PageDownload, PageImage, PageLink, Parameter,Picture
 from .constants import *
 from django.db.models import Q
 from authentication.repo import ProfileRepo
@@ -420,12 +420,47 @@ class PageLinkRepo:
                 pass
             else:
                 return
-        new_page_link=PageLink(title=title,page_id=page.id,url=url,icon_fa="fa fa-link")
+        new_page_link=PageLink(title=title,page_id=page.id,url=url,icon_fa="fa fa-link",profile=self.profile)
         new_page_link.new_tab=True
         new_page_link.save()
         return new_page_link
 
 
+class ContactMessageRepo:
+    def __init__(self,*args, **kwargs):
+        self.request = None
+        self.app_name=""
+        self.user = None
+        if 'request' in kwargs:
+            self.request = kwargs['request']
+            self.user = self.request.user
+        if 'user' in kwargs:
+            self.user = kwargs['user']
+        if 'app_name' in kwargs:
+            self.app_name = kwargs['app_name']
+        self.objects = ContactMessage.objects.filter(app_name=self.app_name)
+        self.me=ProfileRepo(user=self.user).me
+    def list(self):
+        objects=self.objects
+        return objects
+
+    def add(self,*args, **kwargs):
+        contact_message=ContactMessage()
+        contact_message.app_name=self.app_name
+        if 'full_name' in kwargs:
+            contact_message.full_name=kwargs['full_name']
+        if 'subject' in kwargs:
+            contact_message.subject=kwargs['subject']
+        if 'email' in kwargs:
+            contact_message.email=kwargs['email']
+        if 'message' in kwargs:
+            contact_message.message=kwargs['message']
+        if 'mobile' in kwargs:
+            contact_message.mobile=kwargs['mobile']
+        contact_message.save()
+        return contact_message
+
+        
 class DownloadRepo:
     def __init__(self,*args, **kwargs):
         self.request=None

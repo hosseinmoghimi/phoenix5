@@ -3,6 +3,17 @@ from django.db.models import TextChoices
 
 from phoenix.settings import SITE_URL
 
+class AppNameEnum(TextChoices):
+    projectmanager='projectmanager',_('projectmanager')
+    accounting='accounting',_('accounting')
+    web='web',_('web')
+    transport='transport',_('transport')
+    log='log',_('log')
+    map='map',_('map')
+    market='market',_('market')
+    stock='stock',_('stock')
+    authentication='authentication',_('authentication')
+    dashboard='dashboard',_('dashboard')
 
 class CurrencyEnum(TextChoices):
     TUMAN="تومان",_("تومان")

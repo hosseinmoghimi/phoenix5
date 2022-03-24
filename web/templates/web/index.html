@@ -10,8 +10,7 @@
     {% include "web/includes/index-sections/our-works.html" %}
     {% include "web/includes/index-sections/our-teams.html" %}
     {% include "web/includes/index-sections/testimonials.html" %}
-    {% include "web/includes/index-sections/contactus.html" %}
-    {% include "web/includes/index-crypto/template.html" %}
+    {% include "web/includes/index-sections/contact-us.html" %}
 
 </div>
 {% endblock %}
@@ -20,7 +19,7 @@
 <script src="{% static 'vendor/js/vue.min.js' %}"></script>
 {% include "web/includes/blogs-app/script.html" %}
 
-{% include "web/includes/contact-us-app/script.html" %}
+{% include "core/includes/contact-us-app/script.html" %}
 
 <script>
     $(document).ready(() => {
@@ -30,8 +29,6 @@
         $(".carousel-item2").first().addClass("active")
     })
 </script>
-
-{% include "web/includes/index-crypto/script.html" %}
 
 
 {% endblock %}

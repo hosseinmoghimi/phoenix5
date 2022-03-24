@@ -32,10 +32,12 @@ def CoreContext(request,*args, **kwargs):
     
     context['profile']=ProfileRepo(request=request).me
     parameter_repo = ParameterRepo(request=request,app_name=app_name)
-    visitor_counter=parameter_repo.parameter(name=ParameterNameEnum.VISITOR_COUNTER,default=1).value
-    context['visitor_counter']=visitor_counter
-    # (parameter,res)=ParameterRepo(request=request,app_name='core').objects.get_or_create(name=ParameterNameEnum.CURRENCY)
-    # context['CURRENCY']=parameter.value
+
+    visitor_counter=parameter_repo.parameter(name=ParameterNameEnum.VISITOR_COUNTER,default=1)
+    visitor_counter.origin_value=1+int(visitor_counter.origin_value)
+    visitor_counter.save()
+    context['visitor_counter']=visitor_counter.value
+
     context['CURRENCY']=CURRENCY
     farsi_font_name=parameter_repo.parameter(name=ParameterNameEnum.FARSI_FONT_NAME,default="Vazir").value
     if not farsi_font_name==ParameterNameEnum.FARSI_FONT_NAME and not farsi_font_name=="Default":

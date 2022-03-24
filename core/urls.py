@@ -13,5 +13,6 @@ urlpatterns = [
 
     path('delete_page_comment/',apis.DeletePageCommentApi.as_view(),name="delete_page_comment"),
     path('add_page_comment/',apis.AddPageCommentApi.as_view(),name="add_page_comment"),
+    path('add_contact_message/',apis.AddContactMessageApi.as_view(),name="add_contact_message"),
 
 ]
