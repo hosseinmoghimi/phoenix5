@@ -681,6 +681,9 @@ class TransactionRepo():
             objects = objects.filter(Q(for_home=kwargs['for_home']))
         if 'parent_id' in kwargs:
             objects=objects.filter(parent_id=kwargs['parent_id'])
+        if 'account_id' in kwargs:
+            account_id=kwargs['account_id']
+            self.objects = self.objects.filter(Q(pay_from_id=account_id)|Q(pay_to_id=account_id))
         return objects.all()
 
 

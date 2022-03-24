@@ -300,6 +300,9 @@ class AccountView(View):
 
 
 
+        transactions=TransactionRepo(request=request).list(account_id=account.id)
+        context['transactions']=transactions
+
         payments=PaymentRepo(request=request).list(account_id=account.id)
         context['payments']=payments
         context['payments_s']=json.dumps(PaymentSerializer(payments,many=True).data)
