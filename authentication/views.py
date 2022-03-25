@@ -2,7 +2,7 @@ from django.shortcuts import redirect, render
 import json
 from core.enums import ParameterNameEnum
 from .forms import *
-from core.repo import ParameterRepo
+from core.repo import PageLikeRepo, ParameterRepo
 from .repo import ProfileRepo
 from core.views import CoreContext, MessageView
 from django.views import View
@@ -53,6 +53,8 @@ class ProfileViews(View):
             context['no_footer']=True
 
 
+        page_likes=PageLikeRepo(request=request).list(profile_id=selected_profile.id)
+        context['page_likes']=page_likes
 
         return render(request,TEMPLATE_ROOT+"profile.html",context)
 class ProfilesViews(View):

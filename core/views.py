@@ -8,7 +8,7 @@ from .apps import APP_NAME
 from log.repo import LogRepo
 from core.enums import ColorEnum, IconsEnum, ParameterNameEnum, PictureNameEnum
 from core.models import Download, Link
-from core.repo import DownloadRepo, PageDownloadRepo, PageRepo, ParameterRepo, PictureRepo
+from core.repo import DownloadRepo, PageDownloadRepo, PageLikeRepo, PageRepo, ParameterRepo, PictureRepo
 from .serializers import PageBriefSerializer, PageCommentSerializer, PageImageSerializer, PageDownloadSerializer, PageLinkSerializer
 from phoenix.settings import ADMIN_URL, MEDIA_URL, STATIC_URL, SITE_URL
 from django.shortcuts import render
@@ -84,6 +84,11 @@ def PageContext(request, *args, **kwargs):
     related_pages = page.related_pages.all()
     context['related_pages_s'] = json.dumps(
         PageBriefSerializer(related_pages, many=True).data)
+
+
+
+    page_likes=PageLikeRepo(request=request).list(page_id=page.id)
+    context['page_likes']=page_likes
 
     if profile is not None:
         my_like = page.my_like(profile_id=profile.id)

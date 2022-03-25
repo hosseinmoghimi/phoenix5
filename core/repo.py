@@ -126,8 +126,24 @@ class PageRepo:
         return pages_ids
         # return BasicPage.objects.filter(id__in=pages_ids)
 
+class PageLikeRepo():
+    def __init__(self,*args, **kwargs):
+        self.request=None
+        self.user=None
+        if 'user' in kwargs:
+            self.user=kwargs['user']
+        if 'request' in kwargs:
+            self.request=kwargs['request']
+            self.user=self.request.user
+        self.objects=PageLike.objects.all()
+    def list(self,*args, **kwargs):
+        objects=self.objects
+        if 'profile_id' in kwargs and kwargs['profile_id']>0:
+            objects=objects.filter(profile_id=kwargs['profile_id'])
+        if 'page_id' in kwargs and kwargs['page_id']>0:
+            objects=objects.filter(page_id=kwargs['page_id'])
+        return objects
     
-
 class PageCommentRepo:
     def __init__(self,*args, **kwargs):
         self.request=None

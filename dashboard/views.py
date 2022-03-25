@@ -1,7 +1,7 @@
 from core.serializers import ParameterSerializer
 import json
 from django.http.response import Http404
-from core.repo import ParameterRepo, PictureRepo
+from core.repo import PageLikeRepo, ParameterRepo, PictureRepo
 from django.shortcuts import render,reverse
 from core.views import CoreContext, MessageView
 from .apps import APP_NAME
@@ -15,6 +15,13 @@ def getContext(request):
         'home_url':reverse(APP_NAME+":home"),
     }
     return context
+# Create your views here.
+class PageLikesView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        page_likes=PageLikeRepo(request=request).list(*args, **kwargs)
+        context['page_likes']=page_likes
+        return render(request,TEMPLATE_ROOT+"page-likes.html",context)
 # Create your views here.
 class ParameterViews(View):
     

@@ -94,11 +94,13 @@ class Page(models.Model, LinkHelper, ImageMixin):
             class_title = "خدمات"
         if self.class_name == "blog":
             class_title = "مقاله"
+        if self.class_name == "material":
+            class_title = "متریال"
         if self.class_name == "product":
             class_title = "کالا"
         if self.class_name == "project":
             class_title = "پروژه"
-        if self.class_name == "service":
+        if self.class_name == "service" or self.class_name=="pm_service":
             class_title = "سرویس"
         if self.class_name == "organizationunit":
             class_title = "واحد سازمانی"
@@ -348,20 +350,6 @@ class PageDownload(Download, LinkHelper):
         verbose_name_plural = 'PageDownloads'
 
 
-class PageLike(models.Model):
-    page = models.ForeignKey("page", verbose_name=_(
-        "page"), on_delete=models.CASCADE)
-    profile = models.ForeignKey("authentication.profile", verbose_name=_(
-        "profile"), on_delete=models.CASCADE)
-
-    class Meta:
-        verbose_name = 'PageLike'
-        verbose_name_plural = 'PageLikes'
-
-    def __str__(self):
-        return self.page.title+" "+self.profile.name
-
-
 class Parameter(models.Model):
     app_name = models.CharField(_("app_name"), max_length=50)
     name = models.CharField(_("نام پارامتر (تغییر ندهید)"), max_length=50)
@@ -412,6 +400,8 @@ class Parameter(models.Model):
                 <i class="fa fa-edit text-info mx-2"></i>
             </a>
         """
+
+
 class Image(models.Model, LinkHelper):
     app_name=APP_NAME
     class_name='image'

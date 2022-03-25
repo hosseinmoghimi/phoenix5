@@ -5,6 +5,8 @@ from django.urls import path
 
 app_name=APP_NAME
 urlpatterns = [
+
+
     path('change_parameter/',apis.ChangeParameterApi.as_view(),name="change_parameter"),
     path('add_page_link/',apis.AddPageLinkApi.as_view(),name="add_page_link"),
     path("download/<int:pk>/",views.DownloadView.as_view(),name='download'),
