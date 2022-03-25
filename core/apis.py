@@ -1,5 +1,5 @@
 from core.models import Page, PageLink
-from core.serializers import PageCommentSerializer, PageDownloadSerializer, PageImageSerializer, PageLinkSerializer, ParameterSerializer
+from core.serializers import PageBriefSerializer, PageCommentSerializer, PageDownloadSerializer, PageImageSerializer, PageLinkSerializer, ParameterSerializer
 from rest_framework.views import APIView
 from django.http import JsonResponse
 from .forms import *
@@ -172,3 +172,24 @@ class AddContactMessageApi(APIView):
                     return JsonResponse({'result':SUCCEED})
         context['log']=log
         return JsonResponse(context)
+        
+class AddRelatedPageApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        log=1
+        if request.method=='POST':
+            log+=1
+            add_related_page_form=AddRelatedPageForm(request.POST)
+            if add_related_page_form.is_valid():
+                page_id = add_related_page_form.cleaned_data['page_id']
+                related_page_id = add_related_page_form.cleaned_data['related_page_id']
+                bidirectional = add_related_page_form.cleaned_data['bidirectional']
+                add_or_remove = add_related_page_form.cleaned_data['add_or_remove']
+                related_page = PageRepo(request=request).add_related_page(add_or_remove=add_or_remove,page_id=page_id, bidirectional=bidirectional, related_page_id=related_page_id)
+                if related_page is not None:
+                    log = 4
+                    context['related_page'] = PageBriefSerializer(related_page).data
+                    context['result'] = SUCCEED
+        context['log']=log
+        return JsonResponse(context)
+        

@@ -2,6 +2,17 @@ from django import forms
 class SearchForm(forms.Form):
     # app_name=forms.CharField(max_length=50,required=False)
     search_for=forms.CharField(max_length=500,required=True)
+
+
+
+class AddRelatedPageForm(forms.Form):
+    page_id=forms.IntegerField(required=True)
+    related_page_id=forms.IntegerField(required=True)
+    bidirectional=forms.BooleanField(required=False)
+    add_or_remove=forms.BooleanField(required=False)
+
+
+
 class ChangeParameterForm(forms.Form):
     parameter_id=forms.IntegerField(required=False)
     app_name=forms.CharField(max_length=50,required=False)

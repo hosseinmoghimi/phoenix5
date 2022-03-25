@@ -9,7 +9,7 @@ from log.repo import LogRepo
 from core.enums import ColorEnum, IconsEnum, ParameterNameEnum, PictureNameEnum
 from core.models import Download, Link
 from core.repo import DownloadRepo, PageDownloadRepo, PageRepo, ParameterRepo, PictureRepo
-from .serializers import PageCommentSerializer, PageImageSerializer, PageDownloadSerializer, PageLinkSerializer
+from .serializers import PageBriefSerializer, PageCommentSerializer, PageImageSerializer, PageDownloadSerializer, PageLinkSerializer
 from phoenix.settings import ADMIN_URL,MEDIA_URL,STATIC_URL,SITE_URL
 from django.shortcuts import render
 from authentication.repo import ProfileRepo
@@ -75,7 +75,10 @@ def PageContext(request,*args, **kwargs):
     context['page_comments'] = page_comments
     context['page_comments_s'] = json.dumps(PageCommentSerializer(page_comments, many=True).data)
 
-
+    related_pages=page.related_pages.all()
+    context['related_pages_s']=json.dumps(PageBriefSerializer(related_pages,many=True).data)
+            
+            
     if ProfileRepo(request=request).me is not None:
         context['add_page_comment_form'] = AddPageCommentForm()
         
@@ -91,7 +94,8 @@ def PageContext(request,*args, **kwargs):
         
     if request.user.has_perm(APP_NAME+".add_pageimage") or page.id in my_pages_ids:
         context['add_page_image_form'] = AddPageImageForm()
-
+    if request.user.has_perm(APP_NAME+".change_page") or page.id in my_pages_ids:
+        context['add_related_page_form'] = AddRelatedPageForm()
     page_images=page.pageimage_set.all()
     context['images_s']=json.dumps(PageImageSerializer(page_images,many=True).data)
 
