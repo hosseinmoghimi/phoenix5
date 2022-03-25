@@ -1,4 +1,5 @@
 {% load to_price %}
+
 <div class="card" id="invoice-lines-app">
     <div class="card-body">
         <div class="table-responsive">
@@ -39,7 +40,7 @@
                         جمع
                         <small class="text-muted">
 
-                            ( {{CURRENCY}} )
+                            (&nbsp;{{CURRENCY}}&nbsp;)
                         </small>
                     </th>
 
@@ -79,6 +80,7 @@
 
                         <td class="bordered">
                             <span v-text="to_price(sum_total())"></span>
+                            {{CURRENCY}}
                         </td>
 
                     </tr>
@@ -94,9 +96,10 @@
                         </td>
 
                         <td class="bordered">
-                            <span>
-                                {{invoice.ship_fee|to_price}}
-                            </span>
+
+                            <span v-text="to_price({{invoice.ship_fee}})">
+                            </span> {{CURRENCY}}
+ 
                         </td>
 
                     </tr>
@@ -114,9 +117,8 @@
                         </td>
 
                         <td class="bordered">
-                            <span>
-                                {{invoice.tax_amount|to_price}}
-                            </span>
+                            <span v-text="to_price({{invoice.tax_amount}})">
+                            </span> {{CURRENCY}}
                         </td>
 
                     </tr>
@@ -131,9 +133,10 @@
                         </td>
 
                         <td class="bordered">
-                            <span>
-                                {{invoice.discount|to_price}}
-                            </span>
+
+                            <span v-text="to_price({{invoice.discount}})">
+                            </span> {{CURRENCY}}
+                            
                         </td>
 
                     </tr>
@@ -142,15 +145,30 @@
                         <td colspan="4">
                             <div class="text-left">
 
-                                قابل پرداخت : {{invoice.sum_total|to_horuf}}
-                                {{CURRENCY}}
+                                قابل پرداخت : 
+                                
+                                <span class="h5">
+                                  {{invoice.sum_total|to_horuf}} تومان
+                                </span>
                             </div>
+
+                            <div class="text-left">
+
+                                
+                                <span class="h5">
+                                  {{invoice.sum_total|to_horuf_rial}} ریال
+                                </span>
+                            </div>
+
                         </td>
 
                         <td class="bordered ">
-                            <span>
+                            <h5>
                                 {{invoice.sum_total|to_price}}
-                            </span>
+                            </h5>
+                            <h5>
+                                {{invoice.sum_total|to_price_rial}}
+                            </h5>
                         </td>
 
                     </tr>

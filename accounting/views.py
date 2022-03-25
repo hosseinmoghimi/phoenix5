@@ -1,9 +1,11 @@
+from locale import currency
 from multiprocessing import context
 from turtle import getcanvas
 from django.http import Http404
 from django.shortcuts import render,reverse
 from accounting.apis import EditInvoiceApi
 from accounting.enums import PaymentMethodEnum, TransactionStatusEnum
+from core.constants import CURRENCY
 from core.enums import UnitNameEnum
 from core.views import CoreContext, PageContext,SearchForm
 # Create your views here.
@@ -185,6 +187,17 @@ class InvoicePrintView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
         context.update(get_invoice_context(request=request,*args, **kwargs))
+        currency=CURRENCY
+        context['TUMAN']=True
+        context['RIAL']=False
+        if 'currency' in kwargs:
+            currency=kwargs['currency']
+            if currency=='r':
+                context['TUMAN']=False
+                context['RIAL']=True
+                from core.constants import RIAL
+                context['CURRENCY']=RIAL
+
         context['no_footer']=True
         context['no_navbar']=True
         return render(request,TEMPLATE_ROOT+"invoice-print.html",context)

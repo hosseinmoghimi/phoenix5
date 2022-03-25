@@ -512,6 +512,8 @@ class Invoice(Transaction):
     def save(self,*args, **kwargs):
         if self.class_name is None:
             self.class_name='invoice' 
+        if self.app_name is None:
+            self.app_name=APP_NAME
         if self.title is None or self.title=="":
             self.title=f"فاکتور شماره {self.pk}"
         self.amount=self.sum_total()

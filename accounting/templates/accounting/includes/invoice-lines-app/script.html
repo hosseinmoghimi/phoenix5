@@ -1,3 +1,15 @@
+
+<script>
+    let currency_coef = 1 
+</script>
+
+{% if RIAL %}
+<script>
+    currency_coef = 10
+</script>
+{% endif %}
+
+
 {% if add %}
 <script>
     let invoice_lines_app_data = {
@@ -5,7 +17,7 @@
     }
     let invoice_lines_app_methods = {
         to_price: function (vall) {
-            return to_price(vall, "")
+            return to_price(vall*currency_coef, "")
         },
         sum_total: function () {
             let sum = 0
@@ -24,7 +36,7 @@
     }
     let invoice_lines_app_methods = {
         to_price: function (vall) {
-            return to_price(vall, "")
+            return to_price(vall*currency_coef, "")
         },
         sum_total: function () {
             let sum = 0

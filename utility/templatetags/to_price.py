@@ -4,43 +4,42 @@ from django import template
 register = template.Library()
 from utility.currency import to_price as to_price_origin
 from utility.num import to_horuf as to_horuf_num,to_tartib as to_tartib_
+
+
+
+
+
+
 @register.filter
-def to_price(value):
+def to_price(value,*args, **kwargs):
+    print(kwargs)
     return to_price_origin(value=value)
 
 @register.filter
 def to_price_rial(value):
-    return to_price_x10(value=value*10)+" "+CurrencyEnum.RIAL
+    value=value*10
+    return to_price_origin(value=value,unit=CurrencyEnum.RIAL) 
 
-
-@register.filter
-def to_price_x10(value):
-    return to_price_pure(value=value*10)
-
+ 
 
 @register.filter
 def to_horuf(value):
-    return to_horuf_num(value)
-
-
-
-
-@register.filter
-def to_horuf_x10(value):
-    return to_horuf_num(value*10)
-
-
+    return to_horuf_num(value=value)
 
 
 @register.filter
-def to_tartib(value):
-    return to_tartib_(value)
+def to_horuf_rial(value):
+    value=value*10
+    return to_horuf_num(value=value)
+
+
 
 
 
 
 @register.filter
 def to_price_pure(value):
+    print('tuman')
     """converts int to string"""  
     try:
         sign=''
@@ -54,14 +53,37 @@ def to_price_pure(value):
         return ""
 
 
-def separate(price):
+
+@register.filter
+def to_price_pure_rial(value):
+    value=value*10
+    return to_price_pure(value=value)
     
+
+
+
+
+
+ 
+ 
+
+
+@register.filter
+def to_tartib(value):
+    return to_tartib_(value)
+
+
+def separate(value):
     try:
-        price=int(price)
+        value=int(value)
     except:
-        return None
+        # return LEO_ERRORS.error_to_price_template_tag
+        return ""
+
+    if value<0:
+        return '-'+separate(value=0-value)
     
-    if price<1000:
-        return str(price)
+    if value<1000:
+        return str(value)
     else:
-        return separate(price/1000)+','+str(price)[-3:]
+        return separate(value/1000)+','+str(value)[-3:]

@@ -20,20 +20,23 @@
 
                 </h4>
 
-                <h4 class="text-right">
-                    {{invoice.title}}
-                </h4>
+
 
 
                 <div class="row">
                     <div class="col-md-6">
-                        <p class="text-right mx-5">
+                        <!-- <p class="text-right mx-5">
                             فروشنده :
                             {{invoice.pay_from.title}}
-                        </p>
-                        <p class="text-right mx-5">
+                        </p> -->
+
+                        <h5 class="text-right mx-5 mb-3">
                             خریدار :
                             {{invoice.pay_to.title}}
+                        </h5>
+                        <p class="text-right mx-5">
+
+                            {{invoice.title}}
                         </p>
                     </div>
 
@@ -105,7 +108,10 @@
                 </h5>
                 <div>
 
-                    واحد مبلغ ها تومان می باشد.
+                    واحد مبلغ ها
+
+                    {{CURRENCY}}
+                    می باشد.
                 </div>
 
                 {% if invoice.pay_from.bank_account %}
@@ -116,7 +122,7 @@
                 {% endif %}
                 <div class="text-right farsi">
                     <small>
-                    وضعیت :
+                        وضعیت :
 
                     </small>
                     {{invoice.status}}
