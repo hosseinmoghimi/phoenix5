@@ -70,6 +70,22 @@ class SearchView(View):
         return render(request, TEMPLATE_ROOT+"search.html", context)
 
 
+class EmployeeView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        employee=EmployeeRepo(request=request).employee(*args, **kwargs)
+        context['employee']=employee
+        return render(request,TEMPLATE_ROOT+"employee.html",context)
+
+class EmployeesView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        employees=EmployeeRepo(request=request).list(*args, **kwargs)
+        context['employees']=employees
+        employees_s=json.dumps(EmployeeSerializer(employees,many=True).data)
+        context['employees_s']=employees_s
+        return render(request,TEMPLATE_ROOT+"employees.html",context)
+
 class OrganizationUnitView(View):
     def get(self, request, *args, **kwargs):
         context = getContext(request=request)

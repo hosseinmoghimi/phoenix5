@@ -18,12 +18,16 @@
         },
         methods: {
             likes_count_message : function () {
+                if (this.likes_count < 1){
+                    return "کسی این صفحه را نپسندیده است."
+                }
                 let aa = 'است .'
                 if (this.likes_count > 1)
                     aa = 'اند .'
                 return this.likes_count + '  نفر این صفحه را پسندیده  ' + aa
             },
             toggle_like: function () {
+                console.log(page_id)
                 let payload = {
                     page_id: page_id,
                     csrfmiddlewaretoken: csrfmiddlewaretoken

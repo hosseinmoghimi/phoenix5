@@ -230,7 +230,13 @@ class RequestSignature(models.Model,LinkHelper):
 class Employee(Account):
     organization_unit=models.ForeignKey("organizationunit", verbose_name=_("organization_unit"), on_delete=models.CASCADE)
     job_title=models.CharField(_("job title"), max_length=50)
-
+    
+    @property
+    def mobile(self):
+        return self.profile.mobile
+    @property
+    def name(self):
+        return self.profile.name
     class Meta:
         verbose_name = _("Employee")
         verbose_name_plural = _("Employees")
