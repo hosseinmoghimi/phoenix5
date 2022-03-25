@@ -88,6 +88,8 @@ class Page(models.Model, LinkHelper, ImageMixin):
 
     def class_title(self):
         class_title = ""
+        if self.class_name == "ourwork":
+            class_title = "پروژه"
         if self.class_name == "feature":
             class_title = "خدمات"
         if self.class_name == "blog":
@@ -345,9 +347,9 @@ class PageLike(models.Model):
 
 class Parameter(models.Model):
     app_name = models.CharField(_("app_name"), max_length=50)
-    name = models.CharField(_("app_name"), max_length=50)
+    name = models.CharField(_("نام پارامتر (تغییر ندهید)"), max_length=50)
     origin_value = models.CharField(
-        _("origin_value"), null=True, blank=True, max_length=50000)
+        _("مقدار پارامتر"), null=True, blank=True, max_length=50000)
     class_name = "parameter"
 
     @property
@@ -387,7 +389,12 @@ class Parameter(models.Model):
     def get_delete_url(self):
         return f"{ADMIN_URL}{APP_NAME}/parameter/{self.pk}/delete/"
 
-
+    def get_edit_btn(self):
+        return f"""
+            <a title="ویرایش" target="_blank" href="{self.get_edit_url()}">
+                <i class="fa fa-edit text-info mx-2"></i>
+            </a>
+        """
 class Image(models.Model, LinkHelper):
     app_name=APP_NAME
     class_name='image'

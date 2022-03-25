@@ -6,13 +6,8 @@ from utility.currency import to_price as to_price_origin
 from utility.num import to_horuf as to_horuf_num,to_tartib as to_tartib_
 
 
-
-
-
-
 @register.filter
 def to_price(value,*args, **kwargs):
-    print(kwargs)
     return to_price_origin(value=value)
 
 @register.filter

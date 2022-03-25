@@ -1,6 +1,11 @@
 from django.utils.translation import gettext as _
 from django.db.models import TextChoices
 from core.enums import UnitNameEnum
+
+
+class FinancialDocumentTypeEnum(TextChoices):
+    BEDEHKAR="بدهکار",_("بدهکار")
+    BESTANKAR="بستانکار",_("بستانکار")
 class GuaranteeTypeEnum(TextChoices):
     REPAIR="تعمیر",_("تعمیر")
     CHANGE="تعویض",_("تعویض")

@@ -365,6 +365,8 @@ class FinancialDocumentView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
         financial_document=FinancialDocumentRepo(request=request).financial_document(*args, **kwargs)
+        financial_document.normalize_balances()
+
         context['financial_document']=financial_document
         financial_balances=FinancialBalanceRepo(request=request).list(financial_document_id=financial_document.id)
         context['financial_balances']=financial_balances

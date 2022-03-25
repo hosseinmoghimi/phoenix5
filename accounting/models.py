@@ -94,14 +94,14 @@ class Transaction(Page,LinkHelper):
 
         fd_bedehkar=FinancialDocument.objects.filter(transaction=self).filter(account_id=self.pay_to.id).first()
         if fd_bedehkar is None:
-            fd_bedehkar=FinancialDocument(transaction=self,account_id=self.pay_to.id)
+            fd_bedehkar=FinancialDocument(transaction=self,account_id=self.pay_to.id,direction=FinancialDocumentTypeEnum.BEDEHKAR)
         fd_bedehkar.bestankar=0
         fd_bedehkar.bedehkar=self.amount
         fd_bedehkar.save()
 
         fd_bestankar=FinancialDocument.objects.filter(transaction=self).filter(account_id=self.pay_from.id).first()
         if fd_bestankar is None:
-            fd_bestankar=FinancialDocument(transaction=self,account_id=self.pay_from.id)
+            fd_bestankar=FinancialDocument(transaction=self,account_id=self.pay_from.id,direction=FinancialDocumentTypeEnum.BESTANKAR)
         fd_bestankar.bestankar=self.amount
         fd_bestankar.bedehkar=0
         fd_bestankar.save()
@@ -302,8 +302,9 @@ class FinancialDocument(models.Model,LinkHelper):
     document_datetime=models.DateTimeField(_("document_datetime"), auto_now=False, auto_now_add=True)
     transaction=models.ForeignKey("transaction",verbose_name=_("transaction"), on_delete=models.CASCADE)
     tags=models.ManyToManyField("FinancialDocumentTag", blank=True,verbose_name=_("tags"))
-    app_name=APP_NAME
     color=models.CharField(_("color"),max_length=50,choices=ColorEnum.choices,default=ColorEnum.PRIMARY)
+    direction=models.CharField(_("direction"),max_length=50,choices=FinancialDocumentTypeEnum.choices,default=FinancialDocumentTypeEnum.BESTANKAR)
+    app_name=APP_NAME
     class_name="financialdocument"
 
     @property
@@ -345,28 +346,31 @@ class FinancialDocument(models.Model,LinkHelper):
 
     def __str__(self):
         return f"""{self.account.title} : {self.transaction.title} : {self.transaction.amount}"""
-    def normalize_sub_accounts(self,*args, **kwargs):
-        aaa=FinancialBalance.objects.filter(financial_document=self).filter(title=FinancialBalanceTitleEnum.MISC)
-        aaa.delete()
-        aaa=FinancialBalance.objects.filter(financial_document=self)
+    def normalize_balances(self,*args, **kwargs):
+        balances=FinancialBalance.objects.filter(financial_document=self)
         sum_bestankar=0
         sum_bedehkar=0
-        for a in aaa:
-            sum_bestankar+=a.bestankar
-            sum_bedehkar+=a.bedehkar
-        
-        b=FinancialBalance()
-        b.financial_document=self
-        b.title==FinancialBalanceTitleEnum.MISC
-        b.bestankar=self.bestankar-sum_bestankar
-        b.bedehkar=self.bedehkar-sum_bedehkar
-        if b.bedehkar==0 and b.bestankar==0:
-            return 
-        else:
-            b.save()
+        for balance in balances:
+            sum_bestankar+=balance.bestankar
+            sum_bedehkar+=balance.bedehkar
+        print(sum_bedehkar)
+        print(self.bedehkar)
+        print(sum_bestankar)
+        print(self.bestankar)
+        if not sum_bestankar==self.bestankar or not sum_bedehkar==self.bedehkar:
+            b=FinancialBalance.objects.filter(financial_document=self).filter(title=FinancialBalanceTitleEnum.MISC).first()
+            if b is None:
+                b=FinancialBalance()
+                b.financial_document=self
+                b.title==FinancialBalanceTitleEnum.MISC
+            b.bestankar=self.bestankar-sum_bestankar
+            b.bedehkar=self.bedehkar-sum_bedehkar
+            if b.bedehkar==0 and b.bestankar==0:
+                return 
+            else:
+                b.save()
     def save(self,*args, **kwargs):
         super(FinancialDocument,self).save(*args, **kwargs)
-        self.normalize_sub_accounts()
        
     def is_bestankar(self):
         return self.bestankar>0 
