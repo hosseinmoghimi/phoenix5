@@ -2,6 +2,7 @@
 
 <h6 class="text-center text-muted">
     {{page.class_title}}
+
 </h6>
 <h4 class="text-center">
     {% if page.pre_title %}
@@ -9,9 +10,12 @@
     <small>
 
         {{page.pre_title}}
+
     </small>
     {% endif %}
     {{page.title}}
+    {% include "core/includes/page-like-app/template.html" %}
+
     {% if False %}
 
     {% if perms.core.change_page %}

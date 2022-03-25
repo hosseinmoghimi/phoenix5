@@ -44,6 +44,13 @@
                             </div>
                             <div v-if="show_sell_prices">
                                 <small v-text="to_price(product.buy_price)" class="text-muted"></small>
+
+                                <span class="mx-2">
+
+                                    <small v-text="percent(product)" class="text-muted"></small>
+                                    %
+                                </span>
+
                             </div>
 
                         </td>

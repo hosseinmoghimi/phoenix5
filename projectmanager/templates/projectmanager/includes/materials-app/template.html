@@ -1,7 +1,10 @@
 {% load to_price %}
 <div class="card" id="materials-app">
     <div class="card-body">
-<button @click="show_sell_prices=!show_sell_prices" class="btn btn-danger">show_sell_prices</button>
+        <div class="text-right">
+
+            <button @click="show_sell_prices=!show_sell_prices" class="btn btn-danger">show_sell_prices</button>
+        </div>
         <div class="table-responsive">
 
             <table class="table table-striped">
@@ -41,6 +44,11 @@
                             </div>
                             <div v-if="show_sell_prices">
                                 <small v-text="to_price(material.buy_price)" class="text-muted"></small>
+                                <span class="mx-2">
+
+                                    <small v-text="percent(material)" class="text-muted"></small>
+                                    %
+                                </span>
                             </div>
 
                         </td>

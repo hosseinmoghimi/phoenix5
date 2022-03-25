@@ -1,15 +1,23 @@
 <script>
     let services_app_data = {
-        show_sell_prices:false,
+        show_sell_prices: false,
         services: JSON.parse(`{{services_s|escapejs}}`)
     }
     let services_app_methods = {
         to_price: function (vall) {
             return to_price(vall, "")
         },
-        
+        percent: function (service) {
+            let aaa = 100
+            if (service.buy_price > 0) {
+
+                aaa = 100 * (service.unit_price - service.buy_price) / service.buy_price
+            }
+            return parseInt(aaa)
+        },
+
     }
-</script> 
+</script>
 <script>
     let services_app = new Vue({
         el: "#services-app",

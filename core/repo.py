@@ -1,4 +1,4 @@
-from .models import ContactMessage, Download, Image, Page, PageComment, PageDownload, PageImage, PageLink, Parameter,Picture
+from .models import ContactMessage, Download, Image, Page, PageComment, PageDownload, PageImage, PageLike, PageLink, Parameter,Picture
 from .constants import *
 from django.db.models import Q
 from authentication.repo import ProfileRepo
@@ -62,13 +62,15 @@ class PageRepo:
         page=self.page(*args, **kwargs)
         profile=ProfileRepo(request=self.request).me
         likes=PageLike.objects.filter(page=page).filter(profile=profile)
+        my_like=False
         if len(likes)==0 and profile is not None and page is not None:
             my_like=PageLike(page=page,profile=profile)
             my_like.save()
-            return my_like
+            my_like=True
         else:
             likes.delete()
-            return None
+        likes_count=page.likes_count()
+        return (my_like,likes_count)
     
     def edit_page(self,*args, **kwargs):
         if not self.user.has_perm(APP_NAME+".change_basicpage"):

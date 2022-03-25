@@ -84,7 +84,7 @@ class Page(models.Model, LinkHelper, ImageMixin):
     meta_data=models.CharField(_("meta_data"),null=True,blank=True, max_length=500)
     related_pages=models.ManyToManyField("page",blank=True, verbose_name=_("related_pages"))
     def likes_count(self):
-        return 0
+        return len(PageLike.objects.filter(page_id=self.id))
 
     def class_title(self):
         class_title = ""
@@ -135,6 +135,9 @@ class Page(models.Model, LinkHelper, ImageMixin):
                 </nav>
         """
        
+    def my_like(self,profile_id):
+        my_likes=PageLike.objects.filter(page_id=self.id).filter(profile_id=profile_id)
+        return len(my_likes)>0
 
     class Meta:
         verbose_name = _("Page")
@@ -143,6 +146,20 @@ class Page(models.Model, LinkHelper, ImageMixin):
     def __str__(self):
         # return f"""{self.app_name or ""} {self.class_name or ""} {self.title}"""
         return f"""{self.title}"""
+
+
+class PageLike(models.Model):
+    profile=models.ForeignKey("authentication.profile", verbose_name=_("profile"), on_delete=models.CASCADE)
+    page=models.ForeignKey("page", verbose_name=_("page"), on_delete=models.CASCADE)
+    date_added=models.DateTimeField(_("date_added"), auto_now=False, auto_now_add=True)
+
+    class Meta:
+        verbose_name = _("PageLike")
+        verbose_name_plural = _("PageLikes")
+
+    def __str__(self):
+        return f"{self.page.title} {self.profile.name}"
+
 
 
 class PageComment(models.Model):

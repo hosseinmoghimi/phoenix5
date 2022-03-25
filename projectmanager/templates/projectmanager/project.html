@@ -78,24 +78,20 @@
 
 {% block script %}
 <script>
-    let page_id = parseInt("{{project.id}}")
     let project = JSON.parse(`{{project_s|escapejs}}`)
     let project_id = parseInt("{{project.id}}")
     let parent_id = parseInt("{{project.id}}")
     let item_prices = JSON.parse(`{{item_prices_s|escapejs}}`)
-    let page_comment_component_template = `{% include "core/includes/page-comments-app/component.html" %}`
 
 </script>
-{% include "core/includes/page-links-app/script.html" %}
-{% include "core/includes/page-images-app/script.html" %}
-{% include "core/includes/page-downloads-app/script.html" %}
+{% include "core/includes/page-app/script.html" %}
+
 {% include "projectmanager/includes/organization-units-app/script.html" %}
 {% include "projectmanager/includes/material-requests-app/script.html" %}
 {% include "projectmanager/includes/service-requests-app/script.html" %}
 {% include "projectmanager/includes/projects-app/script.html" %}
-{% include "core/includes/page-comments-app/script.html" %}
-{% include "projectmanager/includes/project-edit-app/script.html" %}
 {% include "projectmanager/includes/events-app/script.html" %}
-{% include "core/includes/page-related-app/script.html" %}
+{% include "projectmanager/includes/project-edit-app/script.html" %}
+
 
 {% endblock script %}

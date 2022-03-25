@@ -14,7 +14,18 @@
                         سرویس
                     </th>
                     <th>
-                        قیمت
+                        قیمت فروش
+
+                    </th>
+
+
+                    <th v-if="show_sell_prices">
+                        قیمت خرید
+
+                    </th>
+
+                    <th v-if="show_sell_prices">
+                        درصد سود
 
                     </th>
 
@@ -35,13 +46,18 @@
                             </a>
                         </td>
                         <td>
-                            <div>
-                                <span v-text="to_price(service.unit_price)"></span>
-                            </div>
-                            <div v-if="show_sell_prices">
-                                <small v-text="to_price(service.buy_price)" class="text-muted"></small>
-                            </div>
+                            <span v-text="to_price(service.unit_price)"></span>
 
+                            {{CURRENCY}}
+                        </td>
+                        <td v-if="show_sell_prices">
+                            <span v-text="to_price(service.buy_price)" class=""></span>
+
+                            {{CURRENCY}}
+
+                        </td>
+                        <td v-if="show_sell_prices">
+                            <span v-text="percent(service)" class=""></span> %
                         </td>
 
                     </tr>

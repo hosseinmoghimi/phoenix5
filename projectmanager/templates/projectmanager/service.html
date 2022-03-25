@@ -43,14 +43,12 @@
 
 
 {% block script %}
-<script>
-    let page_id = parseInt("{{service.id}}")
-    let project_id = parseInt("{{project.id}}")
-</script>
-{% include "core/includes/page-links-app/script.html" %}
-{% include "core/includes/page-downloads-app/script.html" %}
+ 
+
+{% include "core/includes/page-app/script.html" %}
+
+ 
 {% include "projectmanager/includes/service-requests-app/script.html" %}
-{% include "accounting/includes/item-prices-app/script.html" %}
-{% include "core/includes/page-related-app/script.html" %}
+{% include "accounting/includes/item-prices-app/script.html" %} 
 
 {% endblock script %}

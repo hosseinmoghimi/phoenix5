@@ -58,15 +58,16 @@
 
 
 {% block script %}
-<script>
-    let page_id = parseInt("{{organization_unit.id}}")
-</script>
-{% include "core/includes/page-links-app/script.html" %}
-{% include "core/includes/page-downloads-app/script.html" %}
+
+{% include "core/includes/page-app/script.html" %}
+
 {% include "projectmanager/includes/organization-units-app/script.html" %}
 {% include "projectmanager/includes/employees-app/script.html" %}
 {% include "projectmanager/includes/all-projects-app/script.html" %}
-{% include "core/includes/page-images-app/script.html" %}
-{% include "core/includes/page-related-app/script.html" %}
+ 
+
+
+
+
 
 {% endblock script %}
