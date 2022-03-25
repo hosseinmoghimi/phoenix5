@@ -1,5 +1,6 @@
 {% load to_persian_date %}
 {% load to_price %}
+{% load to_amount_color %}
 <div id="accordion-accounts">
 
 
@@ -79,8 +80,7 @@
 
                                 </td>
                                 <td>
-                                    <span>
-
+                                    <span class="text-{{account.balance.rest|to_amount_color}}">
                                         {{account.balance.rest|to_price}}
                                     </span>
 
