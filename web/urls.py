@@ -4,6 +4,10 @@ from . import views
 app_name=APP_NAME
 urlpatterns = [
     path("",views.HomeView.as_view(),name="home"),
-    path("search/",views.HomeView.as_view(),name="search"),
+    path("search/",views.SearchView.as_view(),name="search"),
     path("add_blog/",views.HomeView.as_view(),name="add_blog"),
+    path("blog/<int:pk>/",views.HomeView.as_view(),name="blog"),
+    path("feature/<int:pk>/",views.HomeView.as_view(),name="feature"),
+    path("our_work/<int:pk>/",views.HomeView.as_view(),name="our_work"),
+    path("our_team/<int:pk>/",views.HomeView.as_view(),name="our_team"),
 ]

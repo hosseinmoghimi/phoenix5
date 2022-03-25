@@ -6,7 +6,7 @@
 <div class="main {{main_class}}">
     {% include "web/includes/index-sections/sliders.html" %}
     {% include "web/includes/index-sections/features.html" %}
-    {% include "web/includes/blogs-app/template.html" %}
+    {% include "web/includes/index-sections/blogs.html" %}
     {% include "web/includes/index-sections/our-works.html" %}
     {% include "web/includes/index-sections/our-teams.html" %}
     {% include "web/includes/index-sections/testimonials.html" %}
@@ -17,7 +17,6 @@
 
 {% block script %}
 <script src="{% static 'vendor/js/vue.min.js' %}"></script>
-{% include "web/includes/blogs-app/script.html" %}
 
 {% include "core/includes/contact-us-app/script.html" %}
 

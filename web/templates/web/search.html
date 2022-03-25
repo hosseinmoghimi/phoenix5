@@ -14,7 +14,7 @@
                     <h4 class="text-center">
                         جستجو برای
                     </h4>
-                    <h1 class="title text-center">{{category.title}}
+                    <h1 class="title text-center">
 
                         {{search_for}}
                     </h1>
@@ -51,7 +51,7 @@
                 </div>
                 <div class="col-md-8 text-right">
                         <span class="farsi text-muted small">
-                             مقاله
+                        {{page.class_title}}
                         </span>
                     <a href="{{page.get_absolute_url}}">
                         
@@ -81,6 +81,48 @@
                 </div>
             </div>
             {% endfor %}
+
+            {% for page in features %}
+            <div class="row mb-5">
+                <div class="col-md-4">
+
+                    <a href="{{page.get_absolute_url}}">
+                        <img src="{{page.thumbnail}}" class="w-100 rounded" alt="">
+                    </a>
+                </div>
+                <div class="col-md-8 text-right">
+                        <span class="farsi text-muted small">
+                        {{page.class_title}}
+                        </span>
+                    <a href="{{page.get_absolute_url}}">
+                        
+                        <h4>
+                          {{page.title}}
+
+                        </h4>
+
+                    </a>
+                    {% if page.short_description %}
+                    <div class="text-muted small mt-2">
+
+                        {{page.short_description|safe}}
+                    </div>
+                    {% endif %}
+                    <div>
+
+                        {% for tag in page.tags.all %}
+                        <a href="{{tag.get_absolute_url}}">
+                            
+                            <span class="badge badge-success farsi">
+                                {{tag.title}}
+                            </span>
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+
             {% for our_work in our_works %}
             <div class="row mb-5">
                 <div class="col-md-4">
@@ -91,7 +133,7 @@
                 </div>
                 <div class="col-md-8 text-right">
                         <span class="farsi text-muted small">
-                            پروژه
+                            {{page.class_title}}
                         </span>
                     <a href="{{our_work.get_absolute_url}}">
                         
@@ -133,7 +175,8 @@
                 </div>
                 <div class="col-md-8 text-right">
                         <span class="farsi text-muted small">
-                        رمزارز    
+                            {{page.class_title}}
+                        
                         </span>
                     <a href="{{page.get_absolute_url}}">
                         

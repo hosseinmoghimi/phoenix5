@@ -73,27 +73,25 @@ class ImageMixin():
 
 class Page(models.Model, LinkHelper, ImageMixin):
     title = models.CharField(_("عنوان"), max_length=5000)
-    thumbnail_origin = models.ImageField(_("تصویر کوچک"), upload_to=IMAGE_FOLDER+'ImageBase/Thumbnail/',
-                                         null=True, blank=True, height_field=None, width_field=None, max_length=None)
-
-    short_description = HTMLField(
-        _("توضیحات کوتاه"), null=True, blank=True, max_length=50000)
-    description = HTMLField(_("توضیحات"), null=True,
-                            blank=True, max_length=50000)
-    app_name = models.CharField(
-        _("app_name"), null=True, blank=True, max_length=50)
-    class_name = models.CharField(
-        _("class_name"), null=True, blank=True, max_length=50)
-    date_added = models.DateTimeField(
-        _("date_added"), auto_now=False, auto_now_add=True)
+    thumbnail_origin = models.ImageField(_("تصویر کوچک"), upload_to=IMAGE_FOLDER+'ImageBase/Thumbnail/',null=True, blank=True, height_field=None, width_field=None, max_length=None)
+    short_description = HTMLField(_("توضیحات کوتاه"), null=True, blank=True, max_length=50000)
+    description = HTMLField(_("توضیحات"), null=True,blank=True, max_length=50000)
+    app_name = models.CharField(_("app_name"), null=True, blank=True, max_length=50)
+    class_name = models.CharField(_("class_name"), null=True, blank=True, max_length=50)
+    date_added = models.DateTimeField(_("date_added"), auto_now=False, auto_now_add=True)
     priority = models.IntegerField(_("ترتیب"), default=1000)
     archive = models.BooleanField(_("archive?"), default=False)
-
+    meta_data=models.CharField(_("meta_data"),null=True,blank=True, max_length=500)
+    
     def likes_count(self):
         return 0
 
     def class_title(self):
         class_title = ""
+        if self.class_name == "feature":
+            class_title = "خدمات"
+        if self.class_name == "blog":
+            class_title = "مقاله"
         if self.class_name == "product":
             class_title = "کالا"
         if self.class_name == "project":

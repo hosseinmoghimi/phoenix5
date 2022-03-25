@@ -23,6 +23,7 @@ def getContext(request, *args, **kwargs):
     context['LAYOUT_PARENT'] = LAYOUT_PARENT
     return context
 
+
 def get_contact_us_context(request):
     context={}
     param_repo=ParameterRepo(request=request,app_name=APP_NAME)
@@ -55,15 +56,20 @@ class HomeView(View):
 class SearchView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
-        products=ProductRepo(request=request).list()
-        context['products']=products
-        products_s=json.dumps(ProductSerializer(products,many=True).data)
-        context['products_s']=products_s
-        return render(request,TEMPLATE_ROOT+"index.html",context)
+        blogs=BlogRepo(request=request).list()
+        context['blogs']=blogs
+        return render(request,TEMPLATE_ROOT+"search.html",context)
     def post(self,request,*args, **kwargs):
         context=getContext(request=request)
-        products=ProductRepo(request=request).list()
-        context['products']=products
-        products_s=json.dumps(ProductSerializer(products,many=True).data)
-        context['products_s']=products_s
-        return render(request,TEMPLATE_ROOT+"index.html",context)
+        search_form=SearchForm(request.POST)
+        if search_form.is_valid():
+            search_for=search_form.cleaned_data.get('search_for')
+            context['search_for']=search_for
+
+            blogs=BlogRepo(request=request).list(search_for=search_for)
+            context['blogs']=blogs
+
+            features=FeatureRepo(request=request).list(search_for=search_for)
+            context['features']=features
+
+        return render(request,TEMPLATE_ROOT+"search.html",context) 

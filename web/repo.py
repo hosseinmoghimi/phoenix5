@@ -1,4 +1,5 @@
 from .models import Blog,Feature,OurWork,Carousel
+from django.db.models import Q
 from authentication.repo import ProfileRepo
 
 class BlogRepo:
@@ -12,6 +13,7 @@ class BlogRepo:
             self.user = kwargs['user']
         self.objects = Blog.objects.order_by('priority')
         self.me=ProfileRepo(user=self.user).me
+
     def list(self,*args, **kwargs):
         objects= self.objects.all()
         if 'for_home' in kwargs:
@@ -24,6 +26,7 @@ class BlogRepo:
             search_for=kwargs['search_for']
             objects=objects.filter(Q(title__contains=search_for) | Q(meta_data__contains=search_for)|Q(description__contains=search_for))
         return objects
+
     def blog(self,*args, **kwargs):
         pk=0
         if 'blog_id' in kwargs:
@@ -60,6 +63,9 @@ class FeatureRepo:
         self.me=ProfileRepo(user=self.user).me
     def list(self,*args, **kwargs):
         objects= self.objects.all()
+        if 'search_for' in kwargs:
+            search_for=kwargs['search_for']
+            objects=objects.filter(Q(title__contains=search_for) | Q(meta_data__contains=search_for)|Q(description__contains=search_for))
         if 'for_home' in kwargs:
             objects=objects.filter(for_home=kwargs['for_home'])
         return objects
