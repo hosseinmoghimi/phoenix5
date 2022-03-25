@@ -1,0 +1,6 @@
+{% load static %}
+<form @submit.prevent="search()">
+    <img src="{% static 'leo/img/loading.gif' %}" width="32" v-if="waiting" alt="">
+
+    <input type="text" v-model="search_for" class="form-control" placeholder="جستجو ..." @input="filter()">
+</form>

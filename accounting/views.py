@@ -1,18 +1,18 @@
 from locale import currency
 from multiprocessing import context
 from turtle import getcanvas
-from django.http import Http404
+from django.http import Http404, JsonResponse
 from django.shortcuts import render,reverse
 from accounting.apis import EditInvoiceApi
 from accounting.enums import PaymentMethodEnum, TransactionStatusEnum
-from core.constants import CURRENCY
+from core.constants import CURRENCY, FAILED, SUCCEED
 from core.enums import UnitNameEnum
 from core.views import CoreContext, PageContext,SearchForm
 # Create your views here.
 from django.views import View
 from .apps import APP_NAME
 from .repo import AccountRepo,FinancialBalanceRepo, ChequeRepo, PaymentRepo, PriceRepo, ProductRepo,ServiceRepo,FinancialDocumentRepo,InvoiceRepo, TransactionRepo
-from .serializers import InvoiceFullSerializer,InvoiceLineSerializer,ChequeSerializer, PaymentSerializer, PriceSerializer, ProductSerializer,ServiceSerializer,FinancialDocumentForAccountSerializer,FinancialDocumentSerializer
+from .serializers import AccountSerializer, InvoiceFullSerializer,InvoiceLineSerializer,ChequeSerializer, PaymentSerializer, PriceSerializer, ProductSerializer,ServiceSerializer,FinancialDocumentForAccountSerializer,FinancialDocumentSerializer
 from .forms import *
 import json
 
@@ -307,6 +307,23 @@ class ChequeView(View):
     
 
 class AccountView(View):
+    
+    def post(self,request,*args, **kwargs):
+        context={
+            'result':FAILED
+        }
+        create_account_form=CreateAccountForm(request.POST)
+        if create_account_form.is_valid():
+            cd=create_account_form.cleaned_data
+            profile_id=cd['profile_id']
+            account=AccountRepo(request=request).account(profile_id=profile_id)
+            if account is not None:
+                context['account']=AccountSerializer(account).data
+                context['result']=SUCCEED
+
+        return JsonResponse(context)
+
+        
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
         account=AccountRepo(request=request).account(*args, **kwargs)

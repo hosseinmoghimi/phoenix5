@@ -228,9 +228,10 @@ class RequestSignature(models.Model,LinkHelper):
 
 
 class Employee(Account):
-    organization_unit=models.ForeignKey("organizationunit", verbose_name=_("organization_unit"), on_delete=models.CASCADE)
-    job_title=models.CharField(_("job title"), max_length=50)
-    
+    organization_unit=models.ForeignKey("organizationunit",null=True,blank=True, verbose_name=_("organization_unit"), on_delete=models.CASCADE)
+    job_title=models.CharField(_("job title"),default="سرپرست", max_length=50)
+    app_name=APP_NAME
+    class_name='employee'
     @property
     def mobile(self):
         return self.profile.mobile
@@ -242,7 +243,7 @@ class Employee(Account):
         verbose_name_plural = _("Employees")
 
     def __str__(self):
-        return f"{self.profile.name} : {self.job_title} {str(self.organization_unit)}"
+        return f"""{self.profile.name} : {self.job_title} {str(self.organization_unit) if self.organization_unit is not None else ""} """
 
     def get_absolute_url(self):
         return reverse(APP_NAME+":employee", kwargs={"pk": self.pk})
@@ -250,9 +251,10 @@ class Employee(Account):
         
     def my_project_ids(self):
         ids = []
+        if self.organization_unit is not None:
         # for org in self.organization_unit_set.all():
-        for proj in self.organization_unit.project_set.all():
-            ids.append(proj.id)
+            for proj in self.organization_unit.project_set.all():
+                ids.append(proj.id)
         return ids
 
 
@@ -290,7 +292,7 @@ class Project(Page):
     percentage_completed = models.IntegerField(_("درصد تکمیل پروژه"), default=0)
     start_date = models.DateTimeField(_("زمان شروع پروژه"), null=True, blank=True, auto_now=False, auto_now_add=False)
     end_date = models.DateTimeField(_("زمان پایان پروژه"), null=True, blank=True, auto_now=False, auto_now_add=False)
-    organization_units = models.ManyToManyField("OrganizationUnit", verbose_name=_("واحد های سازمانی"), blank=True)
+    organization_units = models.ManyToManyField("organizationunit", verbose_name=_("واحد های سازمانی"), blank=True)
     weight = models.IntegerField(_("ضریب و وزن پروژه"), default=10)
     locations = models.ManyToManyField("map.location", blank=True, verbose_name=_("locations"))
     def material_requests(self):

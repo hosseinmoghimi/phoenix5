@@ -1,0 +1,15 @@
+<div class="media mb-2">
+    <a :href="profile.get_absolute_url">
+
+        <img :src="profile.image" width="64" class="rounded-circle" alt="">
+    </a>
+    <div class="media-body">
+        <a :href="profile.get_absolute_url">
+
+            <h5 class="">
+
+                <span v-text="profile.name"></span>
+            </h5>
+        </a>
+    </div>
+</div>

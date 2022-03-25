@@ -4,6 +4,7 @@ from . import views,apis
 app_name=APP_NAME
 urlpatterns = [
     path('',views.BasicViews.as_view(),name="home"),
+    path('search/',views.SearchViews.as_view(),name="search"),
     path('profile/<int:pk>/',views.ProfileViews.as_view(),name="profile"),
     path('me/',views.ProfileViews.as_view(),name="me"),
     path('profiles/',views.ProfilesViews.as_view(),name="profiles"),

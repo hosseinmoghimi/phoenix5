@@ -39,9 +39,15 @@
                                     <h6 class="text-success" v-text="employee.job_title">
 
                                     </h6>
-                                    <a :href="employee.organization_unit.get_absolute_url">
+                                    <a v-if="employee.organization_unit" :href="employee.organization_unit.get_absolute_url">
                                         <small v-text=employee.organization_unit.title></small>
                                     </a>
+                                    <span v-else>
+                                        <div class="text-muted">
+
+                                            مشخص نشده
+                                        </div>
+                                    </span>
                                 </div>
 
                             </div>

@@ -6,7 +6,7 @@ from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.models import User
 from .models import Profile
 from .apps import APP_NAME
-
+from django.db.models import Q
 class ProfileRepo():
     def __init__(self,*args, **kwargs):
         self.request=None
@@ -151,10 +151,13 @@ class ProfileRepo():
         return self.request
         
     def list(self,*args, **kwargs):
+        objects=self.objects.filter(pk=0)
         if self.user.has_perm(APP_NAME+".view_profile"):
-            return Profile.objects.all()
-        return Profile.objects.filter(pk=0)
-    
+            objects= Profile.objects.all()
+        if 'search_for' in kwargs:
+            search_for=kwargs['search_for']
+            objects =objects.filter(Q(user__first_name__contains=search_for)|Q(user__last_name__contains=search_for))
+        return objects
 
     def edit_profile(self,*args, **kwargs):
         profile_id=0

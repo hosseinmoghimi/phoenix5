@@ -348,12 +348,24 @@ class AccountRepo():
     def account(self, *args, **kwargs):
         pk=0
         if 'account_id' in kwargs:
-            pk=kwargs['account_id']
+            account_id=kwargs['account_id']
+            return self.objects.filter(pk=account_id).first()
+        if 'profile_id' in kwargs:
+            profile_id=kwargs['profile_id']
+            profile= ProfileRepo(request=self.request).profile(profile_id=profile_id)
+            print(profile)
+            account=Account.objects.filter(profile_id=profile_id).first()
+            if account is None:
+                account=Account()
+                account.profile_id=profile.id
+                account.save()
+                return account
         elif 'pk' in kwargs:
             pk=kwargs['pk']
+            return self.objects.filter(pk=pk).first()
         elif 'id' in kwargs:
-            pk=kwargs['id']
-        return self.objects.filter(pk=pk).first()
+            id=kwargs['id']
+            return self.objects.filter(pk=id).first()
      
     def list(self, *args, **kwargs):
         objects = self.objects

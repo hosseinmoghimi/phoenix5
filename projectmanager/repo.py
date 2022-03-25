@@ -125,6 +125,10 @@ class ProjectRepo():
             objects = objects.filter(Q(for_home=kwargs['for_home']))
         if 'parent_id' in kwargs:
             objects=objects.filter(parent_id=kwargs['parent_id'])
+        if 'employee_id' in kwargs:
+            employee=EmployeeRepo(request=self.request).employee(*args, **kwargs)
+            if employee is not None and employee.organization_unit is not None:
+                objects=employee.organization_unit.project_set.all()
         if 'organization_unit_id' in kwargs:
             organization_unit=OrganizationUnitRepo(request=self.request).organization_unit(organization_unit_id=kwargs['organization_unit_id'])
             if organization_unit is not None:
@@ -311,14 +315,39 @@ class EmployeeRepo():
         self.me=Employee.objects.filter(profile=self.profile).first()
        
     def employee(self, *args, **kwargs):
-        pk=0
         if 'employee_id' in kwargs:
             pk=kwargs['employee_id']
+            employee=self.objects.filter(pk=pk).first()
+            return employee
+        if 'profile_id' in kwargs and kwargs['profile_id'] is not None:
+            profile_id=kwargs['profile_id']
+            employee=self.objects.filter(pk=profile_id).first()
+            if employee is None:
+                employee=Employee()
+                profile=ProfileRepo(request=self.request).profile(pk=profile_id)
+
+                employee.profile=profile
+                employee.save()
+                return employee
+        if 'account_id' in kwargs and kwargs['account_id'] is not None:
+            account_id=kwargs['account_id']
+            employee=self.objects.filter(pk=account_id).first()
+            if employee is None:
+                from accounting.repo import AccountRepo
+                employee=Employee()
+                account=AccountRepo(request=self.request).account(pk=account_id)
+                employee.account_ptr_id=account_id
+                employee.profile=account.profile
+                employee.save()
+                return employee
         elif 'pk' in kwargs:
             pk=kwargs['pk']
+            employee=self.objects.filter(pk=pk).first()
+            return employee
         elif 'id' in kwargs:
             pk=kwargs['id']
-        return self.objects.filter(pk=pk).first()
+            employee=self.objects.filter(pk=pk).first()
+            return employee
      
     def list(self, *args, **kwargs):
         objects = self.objects

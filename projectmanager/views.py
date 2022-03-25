@@ -1,9 +1,13 @@
+from urllib import request
+
+from django.http import JsonResponse
 from accounting.repo import PriceRepo
 from accounting.serializers import PriceBriefSerializer
 from accounting.views import InvoiceView, get_service_context, get_product_context
 from django.shortcuts import redirect, render
 # Create your views here.
 from django.shortcuts import render, reverse
+from core.constants import FAILED, SUCCEED
 from core.enums import UnitNameEnum
 from core.views import CoreContext, SearchForm, PageContext
 # Create your views here.
@@ -71,10 +75,36 @@ class SearchView(View):
 
 
 class EmployeeView(View):
+    def post(self,request,*args, **kwargs):
+        context={
+            'result':FAILED
+        }
+        create_employee_form=CreateEmployeeForm(request.POST)
+        if create_employee_form.is_valid():
+            cd=create_employee_form.cleaned_data
+            profile_id=cd['profile_id']
+            account_id=cd['account_id']
+            employee=EmployeeRepo(request=request).employee(profile_id=profile_id,account_id=account_id)
+            if employee is not None:
+                context['employee']=EmployeeSerializer(employee).data
+                context['result']=SUCCEED
+
+        return JsonResponse(context)
+
+
+ 
+
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
         employee=EmployeeRepo(request=request).employee(*args, **kwargs)
         context['employee']=employee
+
+        projects = ProjectRepo(request=request).list(employee_id=employee.id)
+        context['projects'] = projects
+        context['show_all_projects'] = True
+        projects_s = json.dumps(ProjectSerializer(projects, many=True).data)
+        context['projects_s'] = projects_s
+
         return render(request,TEMPLATE_ROOT+"employee.html",context)
 
 class EmployeesView(View):

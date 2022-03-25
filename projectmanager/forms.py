@@ -1,6 +1,9 @@
 from django import forms
 from .apps import APP_NAME
  
+class CreateEmployeeForm(forms.Form):
+    profile_id=forms.IntegerField(required=False)
+    account_id=forms.IntegerField(required=False)
 
 class AddProjectForm(forms.Form):
     parent_id=forms.IntegerField(required=False)

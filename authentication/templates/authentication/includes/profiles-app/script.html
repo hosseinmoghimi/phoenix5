@@ -1,0 +1,49 @@
+{% load to_json %}
+<script>
+    let profiles = JSON.parse(`{{profiles|to_json_profiles|escapejs}}`)
+    let profiles_app = new Vue({
+        el:"#profiles-app",
+        data: {
+            profiles: profiles,
+            search_for: "",
+            waiting: false,
+        },
+        methods: {
+            filter: function () {
+                this.profiles = profiles.filter(profile => profile.name.indexOf(this.search_for) > -1)
+                console.log(this.search_for)
+            },
+            search:function(){
+                let url = "{% url 'authentication:search' %}"
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    search_for: this.search_for
+                }
+                $.post(url, payload).done((data) => {
+                    console.log(data)
+                })
+            },
+            create_employee: function (profile_id) {
+                let url = "{% url 'projectmanager:employee' pk=0 %}"
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    profile_id: profile_id
+                }
+                $.post(url, payload).done((data) => {
+                    console.log(data)
+                })
+            },
+            create_account: function (profile_id) {
+                let url = "{% url 'accounting:account' pk=0 %}"
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    profile_id: profile_id
+                }
+                $.post(url, payload).done((data) => {
+                    console.log(data)
+                })
+            },
+        }
+    })
+
+</script>

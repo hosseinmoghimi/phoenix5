@@ -9,7 +9,9 @@ class AddStorePriceForm(forms.Form):
     sell_price=forms.IntegerField(required=True)
     buy_price=forms.IntegerField(required=True)
 
-
+class CreateAccountForm(forms.Form):
+    profile_id=forms.IntegerField(required=False)
+    
 class GetReportForm(forms.Form):
     financial_account_id=forms.IntegerField(required=True)
     start_date=forms.CharField(max_length=50, required=True)

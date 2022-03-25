@@ -1,5 +1,8 @@
+from django.http import JsonResponse
 from django.shortcuts import redirect, render
 import json
+from authentication.serializers import ProfileSerializer
+from core.constants import FAILED, SUCCEED
 from core.enums import ParameterNameEnum
 from .forms import *
 from core.repo import PageLikeRepo, ParameterRepo
@@ -20,11 +23,33 @@ def getContext(request,*args, **kwargs):
 class BasicViews(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
-        profiles=ProfileRepo(request=request).list()
+        profiles=ProfileRepo(request=request).list(*args, **kwargs)
         context['profiles']=profiles
+        context['profiles_s']=json.dumps(ProfileSerializer(profiles,many=True).data)
         return render(request,TEMPLATE_ROOT+"index.html",context)
 
 
+class SearchViews(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        profiles=ProfileRepo(request=request).list(*args, **kwargs)
+        context['profiles']=profiles
+        context['profiles_s']=json.dumps(ProfileSerializer(profiles,many=True).data)
+        return render(request,TEMPLATE_ROOT+"search.html",context)
+  
+    def post(self,request,*args, **kwargs):
+        context={
+            'result':FAILED
+        }
+        search_form=SearchForm(request.POST)
+        if search_form.is_valid():
+            cd=search_form.cleaned_data
+            search_for=cd['search_for']
+            profiles=ProfileRepo(request=request).list(search_for=search_for)
+            context['profiles']=ProfileSerializer(profiles).data
+            context['result']=SUCCEED
+
+        return JsonResponse(context)
 class ProfileViews(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -62,6 +87,7 @@ class ProfilesViews(View):
         context=getContext(request=request)
         profiles=ProfileRepo(request=request).list(*args, **kwargs)
         context['profiles']=profiles
+        context['profiles_s']=json.dumps(ProfileSerializer(profiles,many=True).data)
         print(profiles)
         return render(request,TEMPLATE_ROOT+"profiles.html",context)
 class LoginViews(View):

@@ -195,7 +195,8 @@ class Account(models.Model,LinkHelper):
     profile=models.ForeignKey("authentication.profile", verbose_name=_("profile"), on_delete=models.CASCADE)
     class_name="account"
     app_name=APP_NAME
-
+    def balance_rest(self):
+        return self.balance['rest']
     def invoices(self):
         return Invoice.objects.filter(models.Q(pay_from=self)|models.Q(pay_to=self))
 
@@ -204,7 +205,10 @@ class Account(models.Model,LinkHelper):
             return MEDIA_URL+str(self.logo_origin)
         return self.profile.image
         # return f"{STATIC_URL}{APP_NAME}/img/account.png"
-
+    @property
+    def employee(self):
+        from projectmanager.models import Employee
+        return Employee.objects.filter(id=self.pk).first()
     class Meta:
         verbose_name = _("Account")
         verbose_name_plural = _("Accounts")
@@ -217,8 +221,13 @@ class Account(models.Model,LinkHelper):
         return self.title
 
     def save(self,*args, **kwargs):
+        # from projectmanager.models import Employee
+        # a=Account.objects.filter(fff="")
         if self.title is None or self.title=="":
-            self.title=self.profile.name
+            if self.profile is not None:
+                self.title=self.profile.name
+            else:
+                self.title=self.profile_ptr_id
         super(Account,self).save(*args, **kwargs)
     
     @property

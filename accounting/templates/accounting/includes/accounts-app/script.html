@@ -1,4 +1,38 @@
+{% load to_json %}
 <script>
+    let accounts = JSON.parse(`{{accounts|to_json_accounts|escapejs}}`)
+    let accounts_app = new Vue({
+        el:"#accounts-app",
+        data: {
+            accounts: accounts,
+            search_for:'',
+            waiting:false,
+        },
+        methods: {
+            filter:function(){
+                this.accounts = accounts.filter(account => account.title.indexOf(this.search_for) > -1)
+         
+            },
+            to_price: function (vall) {
+                let color='danger'
+                if (vall>0)
+                color='success'
+                vall=to_price(vall,"{{CURRENCY}}")
+                return `
+                    <span class="text-${color}">${vall}</span>
+                    `
+            },
+            create_employee: function (account_id) {
+                let url = "{% url 'projectmanager:employee' pk=0 %}"
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    account_id: account_id
+                }
+                $.post(url, payload).done((data) => {
+                    console.log(data)
+                })
+            },
+        }
+    })
 
-    
 </script>
