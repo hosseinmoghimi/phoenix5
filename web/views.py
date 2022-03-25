@@ -1,7 +1,7 @@
 from django.shortcuts import render
 # Create your views here.
 from django.shortcuts import render,reverse
-from core.views import CoreContext,SearchForm
+from core.views import CoreContext, PageContext,SearchForm
 # Create your views here.
 from django.views import View
 from core.repo import ParameterRepo, PictureRepo
@@ -115,3 +115,30 @@ class SearchView(View):
             context['our_works']=our_works
 
         return render(request,TEMPLATE_ROOT+"search.html",context) 
+
+
+
+class BlogView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        blog=BlogRepo(request=request).blog(*args, **kwargs)
+        context.update(PageContext(request=request,page=blog))
+        return render(request,TEMPLATE_ROOT+"blog.html",context)
+class FeatureView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        feature=FeatureRepo(request=request).feature(*args, **kwargs)
+        context.update(PageContext(request=request,page=feature))
+        return render(request,TEMPLATE_ROOT+"feature.html",context)
+class OurTeamView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        feature=OurTeamRepo(request=request).our_team(*args, **kwargs)
+        context.update(PageContext(request=request,page=feature))
+        return render(request,TEMPLATE_ROOT+"feature.html",context)
+class OurWorkView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        our_work=OurWorkRepo(request=request).our_work(*args, **kwargs)
+        context.update(PageContext(request=request,page=our_work))
+        return render(request,TEMPLATE_ROOT+"our-work.html",context)
