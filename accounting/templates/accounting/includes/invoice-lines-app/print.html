@@ -143,31 +143,30 @@
                     {% endif %}
                     <tr>
                         <td colspan="4">
+
                             <div class="text-left">
 
-                                قابل پرداخت : 
+                                
+                                <span class="h6">
+                                  {{invoice.sum_total|to_horuf_rial}} ریال
+                                </span>
+                            </div>
+                            <div class="text-left">
+
                                 
                                 <span class="h5">
                                   {{invoice.sum_total|to_horuf}} تومان
                                 </span>
                             </div>
 
-                            <div class="text-left">
-
-                                
-                                <span class="h5">
-                                  {{invoice.sum_total|to_horuf_rial}} ریال
-                                </span>
-                            </div>
-
                         </td>
 
                         <td class="bordered ">
+                            <h6>
+                                {{invoice.sum_total|to_price_rial}}
+                            </h6>
                             <h5>
                                 {{invoice.sum_total|to_price}}
-                            </h5>
-                            <h5>
-                                {{invoice.sum_total|to_price_rial}}
                             </h5>
                         </td>
 
