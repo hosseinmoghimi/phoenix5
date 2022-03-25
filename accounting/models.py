@@ -353,10 +353,6 @@ class FinancialDocument(models.Model,LinkHelper):
         for balance in balances:
             sum_bestankar+=balance.bestankar
             sum_bedehkar+=balance.bedehkar
-        print(sum_bedehkar)
-        print(self.bedehkar)
-        print(sum_bestankar)
-        print(self.bestankar)
         if not sum_bestankar==self.bestankar or not sum_bedehkar==self.bedehkar:
             b=FinancialBalance.objects.filter(financial_document=self).filter(title=FinancialBalanceTitleEnum.MISC).first()
             if b is None:

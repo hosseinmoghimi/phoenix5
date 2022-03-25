@@ -105,6 +105,15 @@ def get_transaction_context(request,*args, **kwargs):
         raise Http404
     context['transaction']=transaction
     context.update(PageContext(request=request,page=transaction))
+
+    financial_documents=FinancialDocumentRepo(request=request).list(transaction_id=transaction.id)
+    context['financial_documents']=financial_documents
+    context['financial_documents_s']=json.dumps(FinancialDocumentSerializer(financial_documents,many=True).data)
+            
+
+    financial_balances=FinancialBalanceRepo(request=request).list(transaction_id=transaction.id)
+    context['financial_balances']=financial_balances
+
     return context
 
 def get_product_or_service_context(request,*args, **kwargs):
@@ -134,6 +143,19 @@ def get_product_context(request,*args, **kwargs):
 def get_service_context(request,*args, **kwargs):
     context=get_product_or_service_context(request=request,*args, **kwargs)
     return context
+
+
+
+class HomeView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        products=ProductRepo(request=request).list()
+        context['products']=products
+        products_s=json.dumps(ProductSerializer(products,many=True).data)
+        context['products_s']=products_s
+        return render(request,TEMPLATE_ROOT+"index.html",context)
+
+
 
 class SearchView(View):
     def post(self,request,*args, **kwargs):
@@ -230,17 +252,6 @@ class TransactionsView(View):
         transactions=TransactionRepo(request=request).list(*args, **kwargs)
         context['transactions']=transactions
         return render(request,TEMPLATE_ROOT+"transactions.html",context)
-
-
-class HomeView(View):
-    def get(self,request,*args, **kwargs):
-        context=getContext(request=request)
-        products=ProductRepo(request=request).list()
-        context['products']=products
-        products_s=json.dumps(ProductSerializer(products,many=True).data)
-        context['products_s']=products_s
-        return render(request,TEMPLATE_ROOT+"index.html",context)
-
 
 class ProductsView(View):
     def get(self,request,*args, **kwargs):

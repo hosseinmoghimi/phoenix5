@@ -113,6 +113,8 @@ class FinancialBalanceRepo:
         if 'account_id' in kwargs:
             account_id=kwargs['account_id']
             objects = objects.filter(financial_document__account_id=account_id) 
+        if 'transaction_id' in kwargs:
+            objects = objects.filter(financial_document__transaction_id=kwargs['transaction_id'])
         if 'financial_document_id' in kwargs:
             financial_document_id=kwargs['financial_document_id']
             objects = objects.filter(financial_document_id=financial_document_id) 
@@ -282,6 +284,8 @@ class FinancialDocumentRepo:
         if 'search_for' in kwargs:
             search_for=kwargs['search_for']
             objects = objects.filter(Q(transaction__title__contains=search_for)|Q(transaction__short_description__contains=search_for)|Q(transaction__description__contains=search_for))
+        if 'transaction_id' in kwargs:
+            objects = objects.filter(transaction_id=kwargs['transaction_id'])
         if 'account_id' in kwargs:
             account_id=kwargs['account_id']
             objects = objects.filter(account_id=account_id) 
