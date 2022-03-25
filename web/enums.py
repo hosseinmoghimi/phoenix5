@@ -8,6 +8,8 @@ class ParameterNameEnum(TextChoices):
     OFFICE_EMAIL="ایمیل دفتر",_("ایمیل دفتر")
     OFFICE_MOBILE="شماره همراه",_("شماره همراه")
 
+class PictureNamesEnum(TextChoices):
+    CONTACT_US="پس زمینه ارتباط با ما",_("پس زمینه ارتباط با ما")
     
 class ParameterEnum(TextChoices):
     CONTACT_US_TITLE="عنوان ارتباط با ما",_("عنوان ارتباط با ما")

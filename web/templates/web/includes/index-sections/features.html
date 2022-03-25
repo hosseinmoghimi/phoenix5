@@ -8,7 +8,7 @@
                         {{feature_title_param.value}}
                         {% if perms.core.change_parameter %}
                         {{feature_title_param.get_edit_btn|safe}}
-                          
+
                         {% endif %}
 
                     </h2>
@@ -16,7 +16,7 @@
                         {{feature_description_param.value}}
                         {% if perms.core.change_parameter %}
                         {{feature_description_param.get_edit_btn|safe}}
-                          
+
                         {% endif %}
                     </h5>
                 </div>
@@ -26,9 +26,11 @@
 
                 <div class="col-md-4 mr-auto ml-auto">
                     <div class="info">
-                        <div class="icon icon-info">
-                            <i class="material-icons">chat</i>
-                        </div>
+                        <a href="{{feature.get_absolute_url}}">
+                            <div class="icon icon-info">
+                                <i class="material-icons">chat</i>
+                            </div>
+                        </a>
                         <a href="{{feature.get_absolute_url}}">
 
                             <h4 class="info-title">{{feature.title}}</h4>

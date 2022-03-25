@@ -1,3 +1,4 @@
+from xmlrpc.client import boolean
 from core.enums import ColorEnum
 from phoenix.server_settings import ADMIN_URL,STATIC_URL,MEDIA_URL
 from django.db import models
@@ -10,6 +11,7 @@ IMAGE_FOLDER=APP_NAME+"/images/"
 
 
 class Blog(Page):
+    for_home=models.BooleanField(_("for_home"),default=False)
  
     def save(self,*args, **kwargs):
         if self.class_name is None or self.class_name=="":
@@ -24,7 +26,6 @@ class Blog(Page):
  
  
 class Carousel(models.Model):
-    app_name=models.CharField(_("app_name"), max_length=50)
     image_banner = models.ImageField(_("تصویر اسلایدر  1333*2000 "), upload_to=IMAGE_FOLDER +
                                      'Banner/', height_field=None, width_field=None, max_length=None)
     title = models.CharField(_("عنوان"), null=True, blank=True, max_length=500)
@@ -59,6 +60,7 @@ class Carousel(models.Model):
 
 
 class OurWork(Page):
+    for_home=models.BooleanField(_("for_home"),default=False)
  
     def save(self,*args, **kwargs):
         if self.class_name is None or self.class_name=="":
@@ -73,6 +75,7 @@ class OurWork(Page):
  
 
 class Feature(Page):
+    for_home=models.BooleanField(_("for_home"),default=False)
  
     def save(self,*args, **kwargs):
         if self.class_name is None or self.class_name=="":
@@ -141,7 +144,9 @@ class CountDownItem(models.Model):
 
 
 class OurTeam(models.Model):
+    for_home=models.BooleanField(_("for_home"),default=False)
     class_name="ourteam"
+    app_name=APP_NAME
     app_name=models.CharField(_("app_name"),null=True,blank=True, max_length=50)
     profile = models.ForeignKey("authentication.Profile", verbose_name=_(
         "پروفایل"), on_delete=models.CASCADE)

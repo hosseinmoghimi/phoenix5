@@ -4,13 +4,13 @@ from django.shortcuts import render,reverse
 from core.views import CoreContext,SearchForm
 # Create your views here.
 from django.views import View
-from core.repo import ParameterRepo
-from .enums import ParameterEnum, ParameterNameEnum
+from core.repo import ParameterRepo, PictureRepo
+from .enums import ParameterEnum, ParameterNameEnum, PictureNamesEnum
 from .apps import APP_NAME
 # from .repo import ProductRepo
 # from .serializers import ProductSerializer
 import json
-from .repo import BlogRepo,FeatureRepo,OurWorkRepo,CarouselRepo
+from .repo import BlogRepo,FeatureRepo, OurTeamRepo,OurWorkRepo,CarouselRepo, TestimonialRepo
 
 TEMPLATE_ROOT = "web/"
 LAYOUT_PARENT = "material-kit-pro/layout.html"
@@ -34,26 +34,41 @@ def get_contact_us_context(request):
     context['contact_us_description']=param_repo.parameter(name=ParameterEnum.CONTACT_US_TITLE,default="""در صورت نیاز با اطلاعات بیشتر در مورد نحوه استفاده از اپلیکیشن ها از طریق راه های ارتباطی زیر میتوانید با ما در ارتباط باشید.""")
     context['contact_us_title']=param_repo.parameter(name=ParameterEnum.CONTACT_US_DESCRIPTION,default="""با ما در ارتباط باشید""")
 
+    picture_repo=PictureRepo(request=request,app_name=APP_NAME)
+    context['contact_us_back_img']=picture_repo.picture(name=PictureNamesEnum.CONTACT_US,default="web/img/contact-us.jpg")
    
     return context
 class HomeView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
         context.update(get_contact_us_context(request=request))
-        blogs=BlogRepo(request=request).list()
-        context['blogs']=blogs
 
-        features=FeatureRepo(request=request).list()
-        context['features']=features
-        
-
-        our_works=OurWorkRepo(request=request).list()
-        context['our_works']=our_works
-        
 
         carousels=CarouselRepo(request=request).list()
         context['carousels']=carousels
 
+
+        features=FeatureRepo(request=request).list(for_home=True)
+        context['features']=features
+        
+
+
+        blogs=BlogRepo(request=request).list(for_home=True,*args, **kwargs)
+        context['blogs']=blogs
+
+        our_works=OurWorkRepo(request=request).list(for_home=True)
+        context['our_works']=our_works
+        
+
+
+        our_works=OurWorkRepo(request=request).list(for_home=True,*args, **kwargs)
+        context['our_works']=our_works
+
+        teams=OurTeamRepo(request=request).list(for_home=True,*args, **kwargs)
+        context['teams']=teams
+
+        testimonials=TestimonialRepo(request=request).list(*args, **kwargs)
+        context['testimonials']=testimonials
 
 
 

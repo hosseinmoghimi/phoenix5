@@ -194,6 +194,10 @@ class PictureRepo:
             picture= self.objects.filter(app_name=self.app_name).filter(name=name).first()
             if picture is None:
                 picture=Picture(app_name=self.app_name,name=name)
+                picture.app_name=self.app_name
+                picture.name=name
+                if 'default' in kwargs:
+                    picture.image_origin=kwargs['default']
                 picture.save()
                 return picture
             # (picture,res) = self.objects.get_or_create(name=name,app_name=self.app_name)

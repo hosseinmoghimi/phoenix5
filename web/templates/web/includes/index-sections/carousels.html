@@ -7,7 +7,7 @@
         <!-- Carousel Card -->
         <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
             <ol class="carousel-indicators">
-                {% for slider in sliders %}
+                {% for carousel in carousels %}
 
                 <li data-target="#carouselExampleIndicators" id="slider_link{{forloop.counter0}}"
                     data-slide-to="{{forloop.counter0}}"></li>
@@ -15,26 +15,26 @@
 
             </ol>
             <div class="carousel-inner">
-                {% for slider in sliders %}
+                {% for carousel in carousels %}
                 <div class="carousel-item">
-                    <div class="page-header header-filter1" style="background-image: url('{{slider.image}}');">
+                    <div class="page-header header-filter1" style="background-image: url('{{carousel.image}}');">
                         <div class="container">
                             <div class="row">
                                 <div class="col-md-6 text-left">
-                                    {% if slider.title %}
+                                    {% if carousel.title %}
                                       
-                                    <h1 class="title">{{slider.title}}</h1>
+                                    <h1 class="title">{{carousel.title}}</h1>
                                     {% endif %}
 
-                                    {% if slider.body %}
+                                    {% if carousel.body %}
                                     <div class="farsi">
 
-                                        {{slider.body|safe}}
+                                        {{carousel.body|safe}}
                                     </div>
                                     {% endif %}
                                     <br>
                                     <div class="buttons">
-                                        {% for link in slider.links.all %}
+                                        {% for link in carousel.links.all %}
 
 
                                         <a href="{{link.url}}"  target="{{link.target}}"
@@ -47,7 +47,7 @@
 
                                     </div>
                                     {% if perms.web.change_carousel %}
-                                      {{slider.get_edit_btn|safe}}
+                                      {{carousel.get_edit_btn|safe}}
                                     {% endif %}
                                 </div>
                             </div>
