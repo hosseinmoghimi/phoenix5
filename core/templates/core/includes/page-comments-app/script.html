@@ -59,10 +59,8 @@
                     page_id: page_id,
                     comment: this.comment,
                 }
-                console.log(payload)
                 let posting = $.post(url, payload)
                 posting.done((data) => {
-                    console.log(data)
 
                     if (data.result === 'SUCCEED') {
 

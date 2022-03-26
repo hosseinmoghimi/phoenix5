@@ -184,16 +184,19 @@
                             <th>
                             </th>
                             <th>
+                                <div class="text-left">
+                                    جمع
+                                </div>
                             </th>
                             <th>
-                                <span v-text="sum_bedehkar()"></span>
+                                <span v-text="sum_bedehkar()"></span> {{CURRENCY}}
                             </th>
                             <th>
-                                <span v-text="sum_bestankar()"></span>
+                                <span v-text="sum_bestankar()"></span> {{CURRENCY}}
                             </th>
                             {% if financial_account %}
                             <th>
-                                مانده
+                                
                             </th>
                             {% endif %}
                             </thead>
