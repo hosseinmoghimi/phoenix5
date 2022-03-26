@@ -9,21 +9,20 @@
     <div class="col-md-4">
         <div class="card" id="folder-app">
             <div class="card-body">
-
                 <div class="text-center">
-
                 </div>
-
-
                 <a :href="folder.get_absolute_url">
                     <h4>
-                        <i class="fa fa-edit"></i>
                         <span v-text="folder.name"></span>
+                        {% if perms.archive.change_folder %}
+                        <a :href="folder.get_edit_url" target="_blank" title="ویرایش">
+                            <i class="fa fa-edit"></i>
+                        </a>
+                        {% endif %}
                     </h4>
                 </a>
                 <h5 v-text="folder.id">
                 </h5>
-
             </div>
         </div>
     </div>
@@ -37,18 +36,10 @@
                 </form>
                 {% endif %}
                 <div class="row my-4">
-
                     <div class="col-md-4" v-for="folder in folders">
-
-
-
                         <div class="text-right">
-
-
-
-                            <button @click="open_folder(folder.id)" class="btn btn-link">
+                            <button @click="open_folder(folder.id)" class="btn btn-block btn-link">
                                 <h5 class="text-center">
-
                                     <span v-text="folder.name"></span>
                                 </h5>
                             </button>
