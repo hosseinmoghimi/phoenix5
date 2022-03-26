@@ -1,17 +1,21 @@
 from django import forms
 
 class SearchFrom(forms.Form):
-    search_for=forms.CharField( max_length=200, required=True)
+    search_for=forms.CharField( max_length=200, required=False)
+    start_date=forms.CharField(max_length=20, required=False)
+    end_date=forms.CharField(max_length=20, required=False)
+    account_id=forms.IntegerField(required=False)
+    profile_id=forms.IntegerField(required=False)
     
 class AddStorePriceForm(forms.Form):
     product_or_service_id=forms.IntegerField(required=True)
     store_id=forms.IntegerField(required=True)
     sell_price=forms.IntegerField(required=True)
     buy_price=forms.IntegerField(required=True)
-
+ 
 class CreateAccountForm(forms.Form):
     profile_id=forms.IntegerField(required=False)
-    
+
 class GetReportForm(forms.Form):
     financial_account_id=forms.IntegerField(required=True)
     start_date=forms.CharField(max_length=50, required=True)

@@ -14,11 +14,20 @@
 
                 </div>
 
-                <h5 class="text-center">
+                <h5 class="text-center my-2">
 
                     {{selected_profile.name}}
                 </h5>
 
+
+              
+                 
+
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-body">
+                 
 
                 <h5 class="text-center">
 
@@ -29,7 +38,7 @@
                 <div class="text-center farsi">
                     {% if perms.authentication.change_profile %}
                     <a href="{% url 'authentication:login_as' pk=selected_profile.id %}" title="login_as"
-                        class="mx-2 text-warning"><i class="fa fa-edit"></i> login_as</a>
+                        class="mx-2 text-info"><i class="fa fa-edit"></i> ورود</a>
                     {% endif %}
 
 

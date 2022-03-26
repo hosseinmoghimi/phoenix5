@@ -1,10 +1,7 @@
 from django.utils import timezone
-from phoenix.server_settings import MEDIA_URL
 from utility.calendar import PersianCalendar
 from django.db import models
-from accounting.models import Invoice, InvoiceLine,Service
-from core.enums import UnitNameEnum
-from market.models import Product
+from accounting.models import Invoice, InvoiceLine
 from django.utils.translation import gettext as _
 from django.shortcuts import reverse
 
@@ -227,9 +224,10 @@ class RequestSignature(models.Model,LinkHelper):
         return reverse("RequestSignature_detail", kwargs={"pk": self.pk})
 
 
-class Employee(Account):
+class Employee(Account,LinkHelper):
     organization_unit=models.ForeignKey("organizationunit",null=True,blank=True, verbose_name=_("organization_unit"), on_delete=models.CASCADE)
     job_title=models.CharField(_("job title"),default="سرپرست", max_length=50)
+    app_name=APP_NAME
     app_name=APP_NAME
     class_name='employee'
     @property

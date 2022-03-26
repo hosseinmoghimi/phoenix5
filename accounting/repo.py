@@ -281,13 +281,20 @@ class FinancialDocumentRepo:
             objects = objects.filter(category_id=kwargs['category_id'])
         if 'for_home' in kwargs:
             objects = objects.filter(for_home=kwargs['for_home'])
-        if 'search_for' in kwargs:
+        if 'start_date' in kwargs and kwargs['start_date'] is not None:
+            objects = objects.filter(document_datetime__gte=kwargs['start_date'])
+        if 'end_date' in kwargs and kwargs['end_date'] is not None:
+            objects = objects.filter(document_datetime__lte=kwargs['end_date'])
+        if 'profile_id' in kwargs and kwargs['profile_id'] is not None is not None and kwargs['profile_id']>0:
+            objects = objects.filter(account__profile_id=kwargs['profile_id'])
+        if 'search_for' in kwargs and kwargs['search_for'] is not None:
             search_for=kwargs['search_for']
             objects = objects.filter(Q(transaction__title__contains=search_for)|Q(transaction__short_description__contains=search_for)|Q(transaction__description__contains=search_for))
-        if 'transaction_id' in kwargs:
+        if 'transaction_id' in kwargs and kwargs['transaction_id'] is not None is not None and kwargs['transaction_id']>0:
             objects = objects.filter(transaction_id=kwargs['transaction_id'])
-        if 'account_id' in kwargs:
+        if 'account_id' in kwargs and kwargs['account_id'] is not None and kwargs['account_id']>0:
             account_id=kwargs['account_id']
+            print(account_id)
             objects = objects.filter(account_id=account_id) 
         return objects
 

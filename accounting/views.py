@@ -1,6 +1,3 @@
-from locale import currency
-from multiprocessing import context
-from turtle import getcanvas
 from django.http import Http404, JsonResponse
 from django.shortcuts import render,reverse
 from accounting.apis import EditInvoiceApi
@@ -10,9 +7,11 @@ from core.enums import UnitNameEnum
 from core.views import CoreContext, PageContext,SearchForm
 # Create your views here.
 from django.views import View
+
+from utility.calendar import PersianCalendar
 from .apps import APP_NAME
 from .repo import AccountRepo,FinancialBalanceRepo, ChequeRepo, PaymentRepo, PriceRepo, ProductRepo,ServiceRepo,FinancialDocumentRepo,InvoiceRepo, TransactionRepo
-from .serializers import AccountSerializer, InvoiceFullSerializer,InvoiceLineSerializer,ChequeSerializer, PaymentSerializer, PriceSerializer, ProductSerializer,ServiceSerializer,FinancialDocumentForAccountSerializer,FinancialDocumentSerializer
+from .serializers import AccountSerializer, FinancialBalanceSerializer, InvoiceFullSerializer,InvoiceLineSerializer,ChequeSerializer, InvoiceSerializer, PaymentSerializer, PriceSerializer, ProductSerializer,ServiceSerializer,FinancialDocumentForAccountSerializer,FinancialDocumentSerializer, TransactionSerializer
 from .forms import *
 import json
 
@@ -144,7 +143,13 @@ def get_service_context(request,*args, **kwargs):
     context=get_product_or_service_context(request=request,*args, **kwargs)
     return context
 
+def get_search_form_context(request,*args, **kwargs):
+    context={}
+    accounts=AccountRepo(request=request).list(*args, **kwargs)
+    context['accounts']=accounts
+    context['search_form']=SearchForm()
 
+    return context
 
 class HomeView(View):
     def get(self,request,*args, **kwargs):
@@ -167,12 +172,15 @@ class SearchView(View):
 
             accounts=AccountRepo(request=request).list(search_for=search_for)
             context['accounts']=accounts
+            context['accounts_s']=json.dumps(AccountSerializer(accounts,many=True).data)
 
             invoices=InvoiceRepo(request=request).list(search_for=search_for)
             context['invoices']=invoices
+            context['invoices_s']=json.dumps(InvoiceSerializer(invoices,many=True).data)
 
             financial_balances=FinancialBalanceRepo(request=request).list(search_for=search_for)
             context['financial_balances']=financial_balances
+            context['financial_balances_s']=json.dumps(FinancialBalanceSerializer(financial_balances,many=True).data)
 
             payments=PaymentRepo(request=request).list(search_for=search_for)
             context['payments']=payments
@@ -184,8 +192,46 @@ class SearchView(View):
             
             transactions=TransactionRepo(request=request).list(search_for=search_for)
             context['transactions']=transactions
+            context['transactions_s']=json.dumps(TransactionSerializer(transactions,many=True).data)
+
 
         return render(request,TEMPLATE_ROOT+"search.html",context)
+
+
+
+class SearchJsonView(View):
+    def post(self,request,*args, **kwargs):
+        context={
+            'result':FAILED
+        }
+        search_form=SearchFrom(request.POST)
+        if search_form.is_valid():
+            cd1=search_form.cleaned_data
+            cd={}
+            cd['start_date']=PersianCalendar().to_gregorian(cd1['start_date'])
+            cd['end_date']=PersianCalendar().to_gregorian(cd1['end_date'])
+            cd['search_for']=cd1['search_for']
+            cd['account_id']=cd1['account_id']
+
+            accounts=AccountRepo(request=request).list(cd)
+            context['accounts']=(AccountSerializer(accounts,many=True).data)
+
+            invoices=InvoiceRepo(request=request).list(cd)
+            context['invoices']=(InvoiceSerializer(invoices,many=True).data)
+
+            financial_balances=FinancialBalanceRepo(request=request).list(kwargs=cd)
+            context['financial_balances']=(FinancialBalanceSerializer(financial_balances,many=True).data)
+
+            payments=PaymentRepo(request=request).list(cd)
+            context['payments']=(PaymentSerializer(payments,many=True).data)
+
+            financial_documents=FinancialDocumentRepo(request=request).list(**cd)
+            context['financial_documents']=(FinancialDocumentSerializer(financial_documents,many=True).data)
+            
+            transactions=TransactionRepo(request=request).list(cd)
+            context['transactions']=(TransactionSerializer(transactions,many=True).data)
+            context['result']=SUCCEED
+        return JsonResponse(context)
 
 
 
@@ -328,21 +374,27 @@ class AccountView(View):
         context=getContext(request=request)
         account=AccountRepo(request=request).account(*args, **kwargs)
         context['account']=account
-        context['invoices']=account.invoices()
+
+        invoices=account.invoices()
+        context['invoices']=invoices
+        context['invoices_s']=json.dumps(InvoiceSerializer(invoices,many=True).data)
+
         financial_documents=FinancialDocumentRepo(request=request).list(account_id=account.id)
         context['financial_documents']=financial_documents
-        financial_documents_s=json.dumps(FinancialDocumentForAccountSerializer(financial_documents,many=True).data)
-        context['financial_documents_s']=financial_documents_s
+        context['financial_documents_s']=json.dumps(FinancialDocumentForAccountSerializer(financial_documents,many=True).data)
         rest=0
         context['rest']=rest
 
         financial_balances=FinancialBalanceRepo(request=request).list(account_id=account.id)
         context['financial_balances']=financial_balances
+        context['financial_balances_s']=json.dumps(FinancialBalanceSerializer(financial_balances,many=True).data)
+
 
 
 
         transactions=TransactionRepo(request=request).list(account_id=account.id)
         context['transactions']=transactions
+        context['transactions_s']=json.dumps(TransactionSerializer(transactions,many=True).data)
 
         payments=PaymentRepo(request=request).list(account_id=account.id)
         context['payments']=payments
@@ -380,6 +432,30 @@ class PaymentView(View):
         return render(request,TEMPLATE_ROOT+"payment.html",context)
 
 class FinancialDocumentsView(View):
+    def post(self,request,*args, **kwargs):
+        context={
+            'result':FAILED
+        }
+        search_accounting_form=SearchAccountingForm(request.POST)
+        if search_accounting_form.is_valid():
+            cd=search_accounting_form.cleaned_data
+            start_date=cd['start_date']
+            end_date=cd['end_date']
+            search_for=cd['search_for']
+            account_id=cd['account_id']
+            profile_id=cd['profile_id']
+            financial_documents=FinancialDocumentRepo(request=request).list(
+                start_date=start_date,
+                end_date=end_date,
+                search_for=search_for,
+                account_id=account_id,
+                profile_id=profile_id
+                )
+            financial_documents_s=json.dumps(FinancialDocumentSerializer(financial_documents,many=True).data)
+            context['financial_documents']=financial_documents_s
+            context['result']=SUCCEED
+        return JsonResponse(context)
+
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
         financial_documents=FinancialDocumentRepo(request=request).list(*args, **kwargs)
@@ -388,6 +464,8 @@ class FinancialDocumentsView(View):
         context['financial_documents_s']=financial_documents_s
         rest=0
         context['rest']=rest
+
+        context.update(get_search_form_context(request=request))
         return render(request,TEMPLATE_ROOT+"financial-documents.html",context)
 class FinancialDocumentView(View):
     def get(self,request,*args, **kwargs):

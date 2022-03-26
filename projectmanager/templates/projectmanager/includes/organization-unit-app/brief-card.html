@@ -65,71 +65,12 @@
 
             <tr>
                 <td class="text-left">
-                    پایان
+                    تعداد پرسنل
                 </td>
                 <td>
-                    {{organization_unit.end_date|to_persian_datetime|safe}}
+                        {{organization_unit.employee_set.all|length}} نفر
                 </td>
             </tr>
-
-
-            <tr>
-                <td class="text-left">
-                </td>
-                <td>
-
-                </td>
-            </tr>
-
-            <tr>
-                <td class="text-left">
-                    پیمانکار
-                </td>
-                <td>
-                    <a href="{{organization_unit.contractor.get_absolute_url}}" title="پیمانکار" class="mx-2 text-info">
-
-                        {{organization_unit.contractor.title}}
-                    </a>
-                </td>
-            </tr>
-
-            <tr>
-                <td class="text-left">
-                    کارفرما
-                </td>
-                <td>
-                    <a href="{{organization_unit.employer.get_absolute_url}}" title="کارفرما" class="mx-2 text-info">
-
-                        {{organization_unit.employer.title}}
-                    </a>
-                </td>
-            </tr>
-
-
-
-
-            <tr>
-                <td class="text-left">
-                    درصد پیشرفت
-                </td>
-                <td>
-                    {{organization_unit.percentage_completed}} %
-
-                </td>
-            </tr>
-
-
-            <tr>
-                <td class="text-left">
-                    برآورد هزینه
-
-                </td>
-                <td>
-                    {{organization_unit.sum_total|to_price}}
-
-                </td>
-            </tr>
-
 
 
         </table>

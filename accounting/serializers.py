@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Account, Cheque, FinancialDocument, Invoice, InvoiceLine, Payment, Price, Product, ProductOrService,Service,  Transaction
+from .models import Account, Cheque, FinancialBalance, FinancialDocument, Invoice, InvoiceLine, Payment, Price, Product, ProductOrService,Service,  Transaction
 from authentication.serializers import ProfileSerializer
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
@@ -18,6 +18,13 @@ class AccountSerializer(serializers.ModelSerializer):
         model = Account
         fields = ['id','logo','balance_rest', 'title','profile', 'get_absolute_url']
 
+
+class InvoiceSerializer(serializers.ModelSerializer):
+    pay_to = AccountSerializer()
+    pay_from = AccountSerializer()
+    class Meta:
+        model = Invoice
+        fields = ['id','pay_to','pay_from', 'title','get_absolute_url']
 
 
 
@@ -64,9 +71,11 @@ class InvoiceFullSerializer(serializers.ModelSerializer):
 
  
 class TransactionSerializer(serializers.ModelSerializer):
+    pay_to=AccountSerializer()
+    pay_from=AccountSerializer()
     class Meta:
         model = Transaction
-        fields = ['id', 'title','category', 'get_absolute_url']
+        fields = ['id', 'pay_from','pay_to','title','category','persian_transaction_datetime','amount', 'get_absolute_url','payment_method']
 
 class FinancialDocumentSerializer(serializers.ModelSerializer):
     account = AccountSerializer()
@@ -99,4 +108,12 @@ class FinancialDocumentForAccountSerializer(serializers.ModelSerializer):
         model = FinancialDocument
         fields = ['id', 'title','get_state_badge', 'rest','account', 'get_absolute_url', 'bedehkar',
                   'bestankar', 'persian_document_datetime', 'get_edit_url','get_delete_url']
+
+
+
+class FinancialBalanceSerializer(serializers.ModelSerializer):
+    financial_document = FinancialDocumentSerializer()
+    class Meta:
+        model = FinancialBalance
+        fields = ['id','financial_document','bedehkar', 'title', 'bestankar','get_absolute_url']
 

@@ -6,18 +6,18 @@
 <div id="accordion-transactions">
 
 
-    <div class="card">
+    <div class="card" id="transactions-app">
         <div class="card-header" id="heading-transactions">
             <h5 class="text-center">
                 <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-transactions"
                     aria-expanded="true" aria-controls="collapse-transactions">
                     تراکنش ها
 
-                    {% if transactions %}
-                    <small class="text-danger mx-2">
-                        {{transactions|length}}
-                    </small>
-                    {% endif %}
+                    <span v-if="accounts.length>0">
+                        <small class="text-danger mx-2">
+                            <span v-text="accounts.length"></span>
+                        </small>
+                    </span>
                 </button>
             </h5>
 
@@ -152,6 +152,70 @@
 
                             </tr>
                             {% endfor %}
+
+                            <tr v-for="transaction in transactions">
+                                <td>
+                                     
+                                    <div>
+
+                                        <span class="badge badge-primary">
+                                            <span v-text="transaction.payment_method"></span>
+                                        </span>
+                                    </div>
+                                </td>
+                                <td>
+
+
+                                    <a :href="transaction.get_absolute_url">
+                                        <span class="h5" v-text="transaction.title">
+
+                                        </span>
+                                    </a>
+                                    {% if transaction.tags.all %}
+                                    {% for tag in transaction.tags.all %}
+                                    <a href="{{tag.get_absolute_url}}">
+                                        <span class="badge badge-{{tag.color}}">
+
+                                            {{tag.title}}
+                                        </span>
+                                    </a>
+                                    {% endfor %}
+                                    {% endif %}
+                                </td>
+                                <td>
+                                   
+                                </td>
+
+                                <td>
+                                    <a :href="transaction.pay_from.get_absolute_url">
+                                        <span v-text="transaction.pay_from.title"></span>
+                                    </a>
+                                </td>
+
+
+                                <td>
+                                    <a :href="transaction.pay_to.get_absolute_url">
+                                        <span v-text="transaction.pay_to.title"></span>
+                                    </a>
+                                </td>
+
+
+                                <td>
+                                    <span v-text="to_price(transaction.amount)"></span>
+                                </td>
+
+
+                                <td>
+
+                                    <small class="text-muted">
+                                        <span v-html="transaction.persian_transaction_datetime"></span>
+                                    </small>
+                                </td>
+
+
+
+                            </tr>
+
                         </tbody>
                     </table>
 
@@ -162,4 +226,3 @@
 
     </div>
 </div>
-

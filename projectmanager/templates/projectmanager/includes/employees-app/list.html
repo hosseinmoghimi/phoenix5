@@ -31,10 +31,10 @@
                                 نام
                             </th>
                             <th>
-                                واحد سازمانی
+                                سمت
                             </th>
                             <th>
-                                سمت
+                                واحد سازمانی
                             </th>
                             <th>
 
@@ -66,7 +66,16 @@
                                     </a>
                                 </td>
                                 <td>
-
+                                    {% if perms.projectmanager.change_employee %}
+                                      <a class="mx-2"   :href="employee.get_edit_url" target="_blank" title="ویرایش">
+                                          <i class="fa fa-edit text-warning"></i>
+                                      </a>
+                                    {% endif %}
+                                    {% if perms.projectmanager.delete_employee %}
+                                      <a class="mx-2"   :href="employee.get_delete_url" target="_blank" title="ویرایش">
+                                          <i class="fa fa-trash text-danger"></i>
+                                      </a>
+                                    {% endif %}
                                 </td>
                             </tr>
                         </tbody>

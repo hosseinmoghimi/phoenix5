@@ -50,13 +50,22 @@
         {% include "accounting/includes/transactions-app/template.html" %}
     </div>
     {% endif %}
+    {% if accounts %}
+
+    <div class="col-md-12">
+        {% include "accounting/includes/accounts-app/template.html" %}
+    </div>
+    {% endif %}
 </div>
 {% endblock content %}
 
 
 {% block script %}
+{% include "accounting/includes/invoices-app/script.html" %}
+{% include "accounting/includes/financial-balances-app/script.html" %}
 {% include "accounting/includes/financial-documents-app/script.html" %}
 {% include "accounting/includes/payments-app/script.html" %}
 {% include "accounting/includes/transactions-app/script.html" %}
+{% include "accounting/includes/accounts-app/script.html" %}
 
 {% endblock script %}

@@ -26,9 +26,23 @@
 
 
     let financial_documents_app_methods = {
-        to_price: function (vall,curr) {
+        to_price: function (vall, curr) {
             return to_price(vall, curr)
-        }, 
+        },
+        sum_bestankar: function () {
+            let sum = 0
+            this.financial_documents.forEach(financial_document => {
+                sum += financial_document.bestankar
+            })
+            return this.to_price(sum)
+        },
+        sum_bedehkar: function () {
+            let sum = 0
+            this.financial_documents.forEach(financial_document => {
+                sum += financial_document.bedehkar
+            })
+            return this.to_price(sum)
+        },
         rest: function () {
             let rest = 0
             this.financial_documents.forEach(financial_document => {
@@ -75,9 +89,23 @@
 
     }
     let financial_documents_app_methods = {
-        to_price: function (vall,curr) {
+        to_price: function (vall, curr) {
             return to_price(vall, curr)
-        }, 
+        },
+        sum_bestankar: function () {
+            let sum = 0
+            this.financial_documents.forEach(financial_document => {
+                sum += financial_document.bestankar
+            })
+            return this.to_price(sum)
+        },
+        sum_bedehkar: function () {
+            let sum = 0
+            this.financial_documents.forEach(financial_document => {
+                sum += financial_document.bedehkar
+            })
+            return this.to_price(sum)
+        },
         rest: function () {
             let rest = 0
             this.financial_documents.forEach(financial_document => {
