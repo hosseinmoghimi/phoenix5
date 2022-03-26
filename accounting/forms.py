@@ -1,6 +1,6 @@
 from django import forms
 
-class SearchFrom(forms.Form):
+class SearchForm(forms.Form):
     search_for=forms.CharField( max_length=200, required=False)
     start_date=forms.CharField(max_length=20, required=False)
     end_date=forms.CharField(max_length=20, required=False)

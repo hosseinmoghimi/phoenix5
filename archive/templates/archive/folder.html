@@ -1,0 +1,131 @@
+{% extends "archive/layout.html" %}
+{% load to_json %}
+{% block content %}
+<div class="row">
+    <div class="col-md-12" id="breadcrumb-app">
+        <div v-html="breadcrumb">
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card" id="folder-app">
+            <div class="card-body">
+
+                <div class="text-center">
+
+                </div>
+
+
+                <a :href="folder.get_absolute_url">
+                    <h4>
+                        <i class="fa fa-edit"></i>
+                        <span v-text="folder.name"></span>
+                    </h4>
+                </a>
+                <h5 v-text="folder.id">
+                </h5>
+
+            </div>
+        </div>
+    </div>
+    <div class="col-md-8">
+        <div class="card" id="folders-app">
+            <div class="card-body">
+                {% if create_folder_form %}
+                <form @submit.prevent="create_folder()">
+                    <input type="text" class="form-control" required placeholder="نام پوشه جدید"
+                        v-model="new_folder_name">
+                </form>
+                {% endif %}
+                <div class="row my-4">
+
+                    <div class="col-md-4" v-for="folder in folders">
+
+
+
+                        <div class="text-right">
+
+
+
+                            <button @click="open_folder(folder.id)" class="btn btn-link">
+                                <h5 class="text-center">
+
+                                    <span v-text="folder.name"></span>
+                                </h5>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block script %}
+<script>
+    let folders = JSON.parse(`{{folders|to_json_folders|escapejs}}`)
+    let folders_app = new Vue({
+        el: "#folders-app",
+        data: {
+            new_folder_name: "",
+            folders: folders,
+            waiting: false,
+        },
+        methods: {
+            open_folder: function (folder_id) {
+                folders_app.waiting = true
+                let url = "{% url 'archive:folder' pk=0 %}"
+
+                let payload = {
+                    folder_id: folder_id,
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                }
+                $.post(url, payload).done(data => {
+                    console.log(data)
+                    folders_app.waiting = false
+                    if (data.result === "SUCCEED") {
+                        folder_app.folder = data.folder
+                        breadcrumb_app.breadcrumb = data.folder.get_breadcrumb
+                        folders_app.folders = (data.folders)
+                    }
+                })
+
+            },
+            create_folder: function () {
+                let url = "{% url 'archive:create_folder' %}"
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    name: this.new_folder_name,
+                    parent_id: folder_app.folder.id
+                }
+                $.post(url, payload).done(data => {
+                    if (data.result === "SUCCEED") {
+                        folders_app.new_folder_name = ""
+                        folders_app.folders.push(data.folder)
+                    }
+                })
+
+            },
+        }
+
+    })
+</script>
+
+<script>
+    let folder = JSON.parse(`{{folder|to_json_folder|escapejs}}`)
+    let folder_app = new Vue({
+        el: "#folder-app",
+        data: {
+            folder: folder,
+        }
+    })
+    let breadcrumb = `{{folder.get_breadcrumb|safe}}`
+    let breadcrumb_app = new Vue({
+        el: "#breadcrumb-app",
+        data: {
+            breadcrumb: breadcrumb,
+        }
+    })
+</script>
+
+{% endblock script %}

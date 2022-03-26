@@ -165,7 +165,7 @@ class HomeView(View):
 class SearchView(View):
     def post(self,request,*args, **kwargs):
         context=getContext(request=request)
-        search_form=SearchFrom(request.POST)
+        search_form=SearchForm(request.POST)
         if search_form.is_valid():
             search_for=search_form.cleaned_data['search_for']
             context['search_for']=search_for
@@ -204,7 +204,7 @@ class SearchJsonView(View):
         context={
             'result':FAILED
         }
-        search_form=SearchFrom(request.POST)
+        search_form=SearchForm(request.POST)
         if search_form.is_valid():
             cd1=search_form.cleaned_data
             cd={}
