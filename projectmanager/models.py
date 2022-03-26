@@ -274,8 +274,13 @@ class OrganizationUnit(Page):
             self.app_name=APP_NAME
         return super(OrganizationUnit,self).save(*args, **kwargs)
  
-    def logo(self): 
-        return self.thumbnail
+    def logo(self):
+        if self.thumbnail_origin:
+            return self.thumbnail
+        elif self.parent is not None:
+            return self.parent.thumbnail
+        else:
+            return self.thumbnail
  
 
 class WareHouse(OrganizationUnit):
