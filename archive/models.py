@@ -5,7 +5,7 @@ from core.models import LinkHelper
 from .apps import APP_NAME
 from django.shortcuts import reverse
 from core.models import Page
-
+from phoenix.server_settings import STATIC_URL
 # Create your models here.
 class Folder(models.Model,LinkHelper):
     name=models.CharField(_("name"), max_length=100)
@@ -43,6 +43,8 @@ class Folder(models.Model,LinkHelper):
                 </ol>
                 </nav>
         """
+    def thumbnail(self):
+        return STATIC_URL+'archive/img/pages/thumbnail/folder.png'
 
 class File(Page):
     folder=models.ForeignKey("folder",related_name="files", verbose_name=_("folder"), on_delete=models.PROTECT)

@@ -46,8 +46,12 @@
                 <div class="row my-4">
                     <div class="col-md-4" v-for="folder in folders">
                         <div class="text-right card mb-3">
-                            <button @click="open_folder(folder.id)" class="btn btn-block btn-warning">
-                                <h5 class="text-center">
+                            <button @click="open_folder(folder.id)" class="btn btn-block btn-link">
+                                <div class="text-center">
+
+                                    <img :src="folder.thumbnail" width="48" alt="">
+                                </div>
+                                <h5 class="mt-2 text-center">
                                     <span v-text="folder.name"></span>
                                 </h5>
                             </button>
@@ -56,11 +60,16 @@
 
                     <div class="col-md-4" v-for="file in files">
                         <div class="text-right card mb-3">
-                            <button @click="open_file(file.id)" class="btn btn-block btn-info">
-                                <h5 class="text-center">
+                            <a :href="file.get_absolute_url" class="btn btn-block btn-link">
+                                <div class="text-center">
+
+                                    <img :src="file.thumbnail" width="48" alt="">
+                                </div>
+                                <h5 class="mt-2 text-center">
+                                    
                                     <span v-text="file.title"></span>
                                 </h5>
-                            </button>
+                            </a>
                         </div>
                     </div>
 
@@ -99,6 +108,7 @@
                     if (data.result === "SUCCEED") {
                         folder_app.folder = data.folder
                         breadcrumb_app.breadcrumb = data.folder.get_breadcrumb
+                        folders_app.files = (data.files)
                         folders_app.folders = (data.folders)
                     }
                 })

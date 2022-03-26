@@ -5,11 +5,11 @@ from archive.models import Folder,File
 class FolderSerializer(serializers.ModelSerializer):
     class Meta:
         model=Folder
-        fields=['id','name','get_absolute_url','get_breadcrumb','get_edit_url']
+        fields=['id','thumbnail','name','get_absolute_url','get_breadcrumb','get_edit_url']
 
 
         
 class FileSerializer(serializers.ModelSerializer):
     class Meta:
         model=File
-        fields=['id','title','get_absolute_url','get_edit_url']
+        fields=['id','thumbnail','title','get_absolute_url','get_edit_url']
