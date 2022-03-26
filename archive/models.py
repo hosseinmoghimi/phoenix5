@@ -4,7 +4,7 @@ from django.utils.translation import gettext as _
 from core.models import LinkHelper
 from .apps import APP_NAME
 from django.shortcuts import reverse
-
+from core.models import Page
 
 # Create your models here.
 class Folder(models.Model,LinkHelper):
@@ -43,4 +43,22 @@ class Folder(models.Model,LinkHelper):
                 </ol>
                 </nav>
         """
-     
+
+class File(Page):
+    folder=models.ForeignKey("folder",related_name="files", verbose_name=_("folder"), on_delete=models.PROTECT)
+
+
+
+    
+
+    class Meta:
+        verbose_name = _("File")
+        verbose_name_plural = _("Files")
+ 
+
+    def save(self,*args, **kwargs):
+        if self.app_name is None:
+            self.app_name=APP_NAME
+        if self.class_name is None:
+            self.class_name='file'
+        return super(File,self).save(*args, **kwargs)

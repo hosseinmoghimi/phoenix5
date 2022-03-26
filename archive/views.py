@@ -7,8 +7,8 @@ from django.views import View
 
 from utility.calendar import PersianCalendar
 from .apps import APP_NAME
-from .repo import FolderRepo
-from .serializers import FolderSerializer
+from .repo import FileRepo, FolderRepo
+from .serializers import FileSerializer, FolderSerializer
 from .forms import *
 import json
 
@@ -52,14 +52,17 @@ class FolderView(View):
         folder=FolderRepo(request=request).folder(*args, **kwargs)
         context['folder']=folder
         folders=FolderRepo(request=request).list(parent_id=folder.pk)
-
+        files=folder.files.all()
         
+        context['files']=files
         context['folders']=folders
 
 
         context['open_folder_form']=OpenFolderForm()
         if request.user.has_perm(APP_NAME+".add_folder"):
             context['create_folder_form']=CreateFolderForm()
+        if request.user.has_perm(APP_NAME+".add_file"):
+            context['create_file_form']=CreateFileForm()
         return render(request,TEMPLATE_ROOT+"folder.html",context)
     def post(self,request,*args, **kwargs):
         context={
@@ -72,8 +75,44 @@ class FolderView(View):
             folders=folder.childs.all()
             context['folder']=FolderSerializer(folder).data
             context['folders']=FolderSerializer(folders,many=True).data
+            context['files']=FileSerializer(folder.files.all(),many=True).data
             context['result']=SUCCEED
         return JsonResponse(context)
+
+
+
+class FileView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        folder=FolderRepo(request=request).folder(*args, **kwargs)
+        context['folder']=folder
+        folders=FolderRepo(request=request).list(parent_id=folder.pk)
+
+        
+        context['folders']=folders
+
+
+        context['open_folder_form']=OpenFolderForm()
+        if request.user.has_perm(APP_NAME+".add_folder"):
+            context['create_folder_form']=CreateFolderForm()
+        if request.user.has_perm(APP_NAME+".add_file"):
+            context['create_file_form']=CreateFileForm()
+        return render(request,TEMPLATE_ROOT+"folder.html",context)
+    def post(self,request,*args, **kwargs):
+        context={
+            'result':FAILED,
+        }
+        open_folder_form=OpenFolderForm(request.POST)
+        if open_folder_form.is_valid():
+            folder_id=open_folder_form.cleaned_data['folder_id']
+            folder=FolderRepo(request=request).folder(folder_id=folder_id)
+            folders=folder.childs.all()
+            context['folder']=FolderSerializer(folder).data
+            context['folders']=FolderSerializer(folders,many=True).data
+            context['files']=FileSerializer(folder.files.all(),many=True).data
+            context['result']=SUCCEED
+        return JsonResponse(context)
+
 
  
 class CreateFolderApi(View):
@@ -85,6 +124,19 @@ class CreateFolderApi(View):
         if create_folder_form.is_valid():
             folder=FolderRepo(request=request).create_folder(**create_folder_form.cleaned_data)
             context['folder']=FolderSerializer(folder).data
+            context['result']=SUCCEED
+        return JsonResponse(context)
+
+ 
+class CreateFileApi(View):
+    def post(self,request,*args, **kwargs):
+        context={
+            'result':FAILED,
+        }
+        create_file_form=CreateFileForm(request.POST)
+        if create_file_form.is_valid():
+            file=FileRepo(request=request).create_file(**create_file_form.cleaned_data)
+            context['file']=FileSerializer(file).data
             context['result']=SUCCEED
         return JsonResponse(context)
 

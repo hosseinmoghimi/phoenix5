@@ -106,6 +106,17 @@ class Page(models.Model, LinkHelper, ImageMixin):
             class_title = "واحد سازمانی"
         return class_title
 
+
+
+
+    def save(self,*args, **kwargs):
+        if self.app_name is None:
+            self.app_name=APP_NAME
+        if self.class_name is None:
+            self.class_name='page'
+        return super(Page,self).save()
+
+
     @property
     def full_title(self):
         try:

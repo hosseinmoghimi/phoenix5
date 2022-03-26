@@ -35,16 +35,35 @@
                         v-model="new_folder_name">
                 </form>
                 {% endif %}
+
+                {% if create_file_form %}
+                <form @submit.prevent="create_file()">
+                    <input type="text" class="form-control" required placeholder="نام فایل جدید"
+                        v-model="new_file_name">
+                </form>
+                {% endif %}
+
                 <div class="row my-4">
                     <div class="col-md-4" v-for="folder in folders">
-                        <div class="text-right">
-                            <button @click="open_folder(folder.id)" class="btn btn-block btn-link">
+                        <div class="text-right card mb-3">
+                            <button @click="open_folder(folder.id)" class="btn btn-block btn-warning">
                                 <h5 class="text-center">
                                     <span v-text="folder.name"></span>
                                 </h5>
                             </button>
                         </div>
                     </div>
+
+                    <div class="col-md-4" v-for="file in files">
+                        <div class="text-right card mb-3">
+                            <button @click="open_file(file.id)" class="btn btn-block btn-info">
+                                <h5 class="text-center">
+                                    <span v-text="file.title"></span>
+                                </h5>
+                            </button>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -55,10 +74,13 @@
 {% block script %}
 <script>
     let folders = JSON.parse(`{{folders|to_json_folders|escapejs}}`)
+    let files = JSON.parse(`{{files|to_json_files|escapejs}}`)
     let folders_app = new Vue({
         el: "#folders-app",
         data: {
             new_folder_name: "",
+            new_file_name: "",
+            files:files,
             folders: folders,
             waiting: false,
         },
@@ -93,6 +115,22 @@
                     if (data.result === "SUCCEED") {
                         folders_app.new_folder_name = ""
                         folders_app.folders.push(data.folder)
+                    }
+                })
+
+            },
+            
+            create_file: function () {
+                let url = "{% url 'archive:create_file' %}"
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    title: this.new_file_name,
+                    folder_id: folder_app.folder.id
+                }
+                $.post(url, payload).done(data => {
+                    if (data.result === "SUCCEED") {
+                        folders_app.new_file_name = ""
+                        folders_app.files.push(data.file)
                     }
                 })
 
