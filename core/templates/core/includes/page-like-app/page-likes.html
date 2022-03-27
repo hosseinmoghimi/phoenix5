@@ -30,12 +30,25 @@
 
                     <table class="table table-striped">
                         <thead>
+
+                            {% if not page %}
+
                             <th>
                                 صفحه
                             </th>
+                            {% endif %}
+                            {% if not selected_profile %}
+
                             <th>
                                 پروفایل
                             </th>
+                            {% endif %}
+                            {% if not page %}
+
+                            <th>
+                                پسندیده شده
+                            </th>
+                            {% endif %}
                             <th>
                                 تاریخ
                             </th>
@@ -44,6 +57,8 @@
                             {% for page_like in page_likes %}
 
                             <tr>
+
+                                {% if not page %}
                                 <td>
                                     <div class="media">
                                         <a href="{{page_like.page.get_absolute_url}}">
@@ -52,29 +67,33 @@
                                         </a>
                                         <div class="media-body mr-3">
                                             <div>
-                                                <a href="{{page_like.page.get_absolute_url}}">
-
-
-                                                    {{page_like.page.title}}
-
-                                                </a>
-                                            </div>
-                                            <div>
-                                                <small class="text-muted mx-3">
+                                                <small class="text-muted">
                                                     {{page_like.page.class_title}}
                                                 </small>
-                                                <small>
 
-                                                    {{page_like.page.likes_count}}
-                                                    <i class="fa fa-star " style="color:#f5c103" aria-hidden="true"></i>
-
-                                                </small>
 
                                             </div>
+                                            <div>
+                                                <h5>
+                                                    <a href="{{page_like.page.get_absolute_url}}">
+
+
+                                                        {{page_like.page.title}}
+                                                    </a>
+
+                                                </h5>
+
+                                            </div>
+
                                         </div>
                                     </div>
 
                                 </td>
+
+                                {% endif %}
+
+                                {% if not selected_profile %}
+
                                 <td>
                                     <div class="media">
                                         <a href="{{page_like.profile.get_absolute_url}}">
@@ -92,11 +111,24 @@
                                                 </a>
 
                                             </div>
-                                            
+
 
                                         </div>
                                     </div>
                                 </td>
+                                {% endif %}
+                                {% if not page %}
+
+
+                                <td>
+                                    <small>
+
+                                        <i class="fa fa-star " style="color:#f5c103" aria-hidden="true"></i>
+                                        {{page_like.page.likes_count}}
+
+                                    </small>
+                                </td>
+                                {% endif %}
                                 <td>
                                     {{page_like.date_added|to_persian_datetime|safe}}
                                 </td>

@@ -11,6 +11,8 @@ class RegisterForm(UserCreationForm):
         model=User
         fields=['username','password1','password2','mobile','first_name','last_name']
    
+class SetDefaultProfileForm(forms.Form):
+    profile_id=forms.IntegerField(required=True)
 
 class LoginForm(forms.Form):
     username=forms.CharField(max_length=50, required=True)

@@ -22,6 +22,7 @@ urlpatterns = [
     path('stock/', include('stock.urls')),
     path('log/', include('log.urls')),
     path('archive/', include('archive.urls')),
+    path('messenger/', include('messenger.urls')),
     path('', include('accounting.urls')),
     re_path(r'^qrcode/(?P<path>.*)$', serve, {'document_root': QRCODE_ROOT}),
     re_path(r'^static/(?P<path>.*)$', serve, {'document_root': STATIC_ROOT}),

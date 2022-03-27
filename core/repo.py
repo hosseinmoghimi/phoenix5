@@ -142,7 +142,7 @@ class PageLikeRepo():
             objects=objects.filter(profile_id=kwargs['profile_id'])
         if 'page_id' in kwargs and kwargs['page_id']>0:
             objects=objects.filter(page_id=kwargs['page_id'])
-        return objects
+        return objects.order_by('-date_added')
     
 class PageCommentRepo:
     def __init__(self,*args, **kwargs):

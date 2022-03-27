@@ -11,5 +11,15 @@
                 <span v-text="profile.name"></span>
             </h5>
         </a>
+        {% if set_default_profile_form %}
+        <div v-if="!profile.default">
+
+            <button @click="set_default(profile.id)" class="btn btn-success">set default</button>
+        </div>
+        <div v-if="profile.default">
+            <i class="fa fa-star " style="color:#f5c103" aria-hidden="true"></i>
+
+        </div>
+        {% endif %}
     </div>
 </div>

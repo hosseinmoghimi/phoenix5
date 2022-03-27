@@ -13,5 +13,6 @@ urlpatterns = [
     # path('login/',views.login_view,name="login"),
     path('as/<int:pk>/',views.LoginAsViews.as_view(),name="login_as"),
     path('register/',views.RegisterViews.as_view(),name="register"),
+    path('set_default/',apis.SetDefaultProfileApi.as_view(),name="set_default"),
     path('membership_requests_app/<app_name>/',views.LogoutViews.as_view(),name="membership_requests_app"),
 ]

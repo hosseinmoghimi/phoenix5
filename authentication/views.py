@@ -81,14 +81,24 @@ class ProfileViews(View):
         page_likes=PageLikeRepo(request=request).list(profile_id=selected_profile.id)
         context['page_likes']=page_likes
 
+
+
+        profiles=ProfileRepo(request=request).list(user_id=selected_profile.user.id)
+        if len(profiles)>1:
+            print(profiles)
+            context['profiles']=profiles
+            context['profiles_s']=json.dumps(ProfileSerializer(profiles,many=True).data)
+            context['set_default_profile_form']=SetDefaultProfileForm()
+
         return render(request,TEMPLATE_ROOT+"profile.html",context)
+
+
 class ProfilesViews(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
         profiles=ProfileRepo(request=request).list(*args, **kwargs)
         context['profiles']=profiles
         context['profiles_s']=json.dumps(ProfileSerializer(profiles,many=True).data)
-        print(profiles)
         return render(request,TEMPLATE_ROOT+"profiles.html",context)
 class LoginViews(View):
     def get(self,request,*args, **kwargs):

@@ -32,7 +32,8 @@ def CoreContext(request, *args, **kwargs):
     context['SITE_URL'] = SITE_URL
     context['apps'] = my_apps
 
-    context['profile'] = ProfileRepo(request=request).me
+    profile = ProfileRepo(request=request).me
+    context['profile'] = profile
     parameter_repo = ParameterRepo(request=request, app_name=app_name)
 
     visitor_counter = parameter_repo.parameter(
@@ -58,6 +59,10 @@ def CoreContext(request, *args, **kwargs):
     current_datetime = pc.from_gregorian(now)
     context['current_date'] = current_datetime[:10]
     context['current_datetime'] = current_datetime
+    from messenger.views import getPusherContext
+    context.update(getPusherContext(request=request,profile=profile))
+
+
     return context
 
 

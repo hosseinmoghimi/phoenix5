@@ -93,7 +93,13 @@
 
     </div>
     {% endif %}
+    {% if profiles %}
 
+    <div class="col-md-4">
+        {% include "authentication/includes/profiles-app/template.html" %}
+
+    </div>
+    {% endif %}
 
     {% if accounts %}
 
@@ -113,5 +119,8 @@
 {% block script %}
 {% include "accounting/includes/accounts-app/script.html" %}
 {% include "projectmanager/includes/employees-app/script.html" %}
+{% if profiles %}
+{% include "authentication/includes/profiles-app/script.html" %}
+{% endif %}
 
 {% endblock script %}
