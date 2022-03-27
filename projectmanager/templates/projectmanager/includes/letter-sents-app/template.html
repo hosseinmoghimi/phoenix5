@@ -28,48 +28,40 @@
                 <div class="table-responsive">
                     <table class="table table-striped">
                         <thead>
-
+                            {% if not letter %}
                             <th>
-                                عنوان نامه
+                                نامه
                             </th>
-
+                            {% endif %}
                             <th>
-                                فرستنده </th>
-
+                                فرستنده
+                             </th>
                             <th>
                                 گیرنده
                             </th>
                             <th>
                                 تاریخ
-
                             </th>
                             <th>
 
                             </th>
-
                         </thead>
                         <tbody>
                             <tr v-for="letter_sent in letter_sents">
-
+                                {% if not letter %}
                                 <td>
-
-
-
                                     <a :href="letter_sent.letter.get_absolute_url">
-
                                         <div class="media">
                                             <img :src="letter_sent.letter.thumbnail" class="rounded" width="64" alt="">
                                             <div class="media-body mr-2">
                                                 <span v-text="letter_sent.letter.title"></span>
-
                                             </div>
                                         </div>
-
                                     </a>
                                 </td>
+                                {% endif %}
                                 <td>
                                     <a :href="letter_sent.sender.get_absolute_url">
-
                                         <div class="media">
 
                                             <img class="rounded" width="48" :src="letter_sent.sender.logo" alt="">
@@ -99,11 +91,9 @@
                                             </div>
                                         </div>
                                     </a>
-
                                 </td>
                                 <td>
                                     <a :href="letter_sent.recipient.get_absolute_url">
-
                                         <div class="media">
 
                                             <img class="rounded" width="48" :src="letter_sent.recipient.logo" alt="">
@@ -133,14 +123,11 @@
                                             </div>
                                         </div>
                                     </a>
-
-
                                 </td>
                                 <td>
                                     <div>
                                         <span v-html="letter_sent.persian_date_sent"></span>
                                     </div>
-
                                 </td>
                                 <td>
 
