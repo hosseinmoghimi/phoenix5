@@ -1,15 +1,18 @@
 <script>
     let material_requests = JSON.parse(`{{material_requests_s|escapejs}}`)
 </script>
+<script>
+    let material_requests_app_data={}
+</script>
 {% if add_material_request_form %}
 <script>
 
     let all_materials = JSON.parse(`{{all_materials_s|escapejs}}`)
     let url_add_material_request = "{% url 'projectmanager:add_material_request' %}"
-    let material_requests_app_data = {
+    material_requests_app_data = {
         employees: JSON.parse(`{{employees_s|escapejs}}`),
         new_material_request_material_id: 1,
-        add_material_request_form_title: "یمان پاکتی",
+        add_material_request_form_title: "",
         materials: [],
         add_material_request_form_unit_price: 0,
         add_material_request_form_unit_name: "",
@@ -24,7 +27,7 @@
 </script>
 {% else %}
 <script>
-    let material_requests_app_data = {
+    material_requests_app_data = {
         material_requests: material_requests,
         waiting: false,
         sum_material_requests: 0,

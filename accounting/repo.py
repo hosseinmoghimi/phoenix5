@@ -705,8 +705,11 @@ class TransactionRepo():
         if 'parent_id' in kwargs:
             objects=objects.filter(parent_id=kwargs['parent_id'])
         if 'account_id' in kwargs:
-            account_id=kwargs['account_id']
-            self.objects = self.objects.filter(Q(pay_from_id=account_id)|Q(pay_to_id=account_id))
+            objects=objects.filter(Q(pay_from_id=kwargs['account_id'])|Q(pay_to_id=kwargs['account_id']))
+        if 'account_id_1' in kwargs and 'account_id_2' in kwargs:
+            account_id_1=kwargs['account_id_1']
+            account_id_2=kwargs['account_id_2']
+            objects = self.objects.filter(Q(pay_from_id=account_id_1)|Q(pay_from_id=account_id_2)).filter(Q(pay_to_id=account_id_1)|Q(pay_to_id=account_id_2))
         return objects.all()
 
 

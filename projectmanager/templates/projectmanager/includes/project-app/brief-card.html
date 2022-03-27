@@ -54,35 +54,6 @@
 
                 <tr>
                     <td class="text-left">
-                        شروع
-                    </td>
-                    <td>
-                        {{project.start_date|to_persian_datetime|safe}}
-                    </td>
-                </tr>
-
-
-
-                <tr>
-                    <td class="text-left">
-                        پایان
-                    </td>
-                    <td>
-                        {{project.end_date|to_persian_datetime|safe}}
-                    </td>
-                </tr>
-
-
-                <tr>
-                    <td class="text-left">
-                    </td>
-                    <td>
-
-                    </td>
-                </tr>
-
-                <tr>
-                    <td class="text-left">
                         پیمانکار
                     </td>
                     <td>
@@ -110,8 +81,41 @@
                         </a>
                     </td>
                 </tr>
+                <tr>
+                    <td class="text-left">
+                        شروع
+                    </td>
+                    <td>
+                        {{project.start_date|to_persian_datetime|safe}}
+                    </td>
+                </tr>
 
 
+
+                <tr>
+                    <td class="text-left">
+                        پایان
+                    </td>
+                    <td>
+                        {{project.end_date|to_persian_datetime|safe}}
+                    </td>
+                </tr>
+
+
+               
+
+
+                <tr>
+                    <td class="text-left">
+                        وضعیت
+                    </td>
+                    <td>
+                        <div class="badge badge-primary">
+
+                            {{project.status}}
+                        </div>
+                    </td>
+                </tr>
 
 
                 <tr>

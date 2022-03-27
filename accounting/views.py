@@ -297,6 +297,8 @@ class TransactionsView(View):
         context=getContext(request=request)
         transactions=TransactionRepo(request=request).list(*args, **kwargs)
         context['transactions']=transactions
+        transactions_s=json.dumps(TransactionSerializer(transactions,many=True).data)
+        context['transactions_s']=transactions_s
         return render(request,TEMPLATE_ROOT+"transactions.html",context)
 
 class ProductsView(View):
