@@ -1,5 +1,5 @@
 from django.utils import timezone
-from utility.calendar import PersianCalendar
+from utility.calendar import PersianCalendar, to_persian_datetime_tag
 from django.db import models
 from accounting.models import Invoice, InvoiceLine
 from django.utils.translation import gettext as _
@@ -282,9 +282,40 @@ class OrganizationUnit(Page):
         else:
             return self.thumbnail
  
-
+class letterSent(models.Model):
+    sender=models.ForeignKey("organizationunit",related_name="sent_letters", verbose_name=_("فرستنده"), on_delete=models.CASCADE)
+    recipient=models.ForeignKey("organizationunit",related_name="inbox_letters", verbose_name=_("گیرنده"), on_delete=models.CASCADE)
+    letter=models.ForeignKey("letter", verbose_name=_("letter"), on_delete=models.CASCADE)
+    date_sent=models.DateTimeField(_("date sent"), auto_now=False, auto_now_add=False)
+    class Meta:
+        verbose_name = 'letterSent'
+        verbose_name_plural = 'letterSents'
+    def persian_date_sent(self):
+        return to_persian_datetime_tag(self.date_sent)
 class WareHouse(OrganizationUnit):
-    pass
+    
+    def save(self,*args, **kwargs):
+        if self.class_name is None:
+            self.class_name="warehouse"
+        if self.app_name is None:
+            self.app_name=APP_NAME
+        return super(WareHouse,self).save(*args, **kwargs)
+    class Meta:
+        verbose_name = 'WareHouse'
+        verbose_name_plural = 'WareHouses'
+
+class Letter(Page):
+    def persian_date_added(self):
+        return to_persian_datetime_tag(self.date_added)
+    def save(self,*args, **kwargs):
+        if self.class_name is None:
+            self.class_name="letter"
+        if self.app_name is None:
+            self.app_name=APP_NAME
+        return super(Letter,self).save(*args, **kwargs)
+    class Meta:
+        verbose_name = 'Letter'
+        verbose_name_plural = 'Letters'
 
 
 class Project(Page):

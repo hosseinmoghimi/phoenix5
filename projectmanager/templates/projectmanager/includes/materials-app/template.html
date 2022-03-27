@@ -1,65 +1,141 @@
+{% load static %}
 {% load to_price %}
-<div class="card" id="materials-app">
-    <div class="card-body">
-        <div class="text-right my-2">
 
-            <button @click="show_sell_prices=!show_sell_prices" class="btn btn-danger">show_sell_prices</button>
+
+<div id="accordion-materials">
+
+
+    <div class="card" id="materials-app">
+        <div class="card-header" id="heading-materials">
+            <h5 class="text-center">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-materials"
+                    aria-expanded="true" aria-controls="collapse-materials">
+                    متریال ها
+
+
+                    <span v-if="materials.length>0">
+                        <small class="text-danger mx-2">
+                            <span v-text="materials.length"></span>
+                        </small>
+                    </span>
+
+
+                </button>
+            </h5>
+
+            {% if page_pre_description %}
+
+            <h5 class="text-center">
+                {{page_pre_description}}
+            </h5>
+            {% endif %}
+            {% if page_description %}
+
+            <h4 class="text-center">
+                {{page_description}}
+            </h4>
+            {% endif %}
         </div>
-        <div class="table-responsive">
+        <div id="collapse-materials" class="collapse" aria-labelledby="heading-materials"
+            data-parent="#accordion-materials">
 
-            <table class="table table-striped">
-                <thead>
 
-                    <th>
-                        متریال
-                    </th>
-                    <th>
-                        قیمت
+            <div class="card-body">
+                <img v-if="waiting" width="32" src="{% static 'leo/img/loading.gif' %}" alt="">
+                <h6 v-if="waiting">
 
-                    </th>
+                    <span class="text-muted">در حال بار گذاری ... </span>
+                </h6>
 
-                    <th>
-                        موجودی در انبار ها
-                    </th>
-                </thead>
-                <tbody>
-                    <tr v-for="material in materials">
+                <input type="text" v-model="search_for" class="form-control" placeholder="جستجو ..."
+                    @input="filter(search_for)">
+                <button @click="add()" class="btn btn-success">
+                    <i class="fa fa-plus"></i>
+                    افزودن
+                </button>
 
-                        <td>
-                            <a :href="material.get_absolute_url">
+                <div class="text-right my-2">
 
-                                <div class="media">
-                                    <img :src="material.thumbnail" class="rounded" width="64" alt="">
-                                    <div class="media-body mr-2">
-                                        <span v-text="material.title"></span>
+                    <button @click="show_sell_prices=!show_sell_prices" class="btn btn-danger">نمایش جزئیات</button>
+                </div>
+                <div class="table-responsive">
+
+                    <table class="table table-striped">
+                        <thead>
+
+                            <th>
+                                متریال
+                            </th>
+                            <th>
+                                قیمت فروش
+                            </th>
+                            <th v-if="show_sell_prices">
+                                قیمت
+                                خرید
+                            </th>
+                            <th v-if="show_sell_prices">
+                                درصد سود
+                            </th>
+
+                            <th>
+                                موجودی در انبار ها
+                            </th>
+                        </thead>
+                        <tbody>
+                            <tr v-for="material in materials">
+
+                                <td>
+                                    <a :href="material.get_absolute_url">
+
+                                        <div class="media">
+                                            <img :src="material.thumbnail" class="rounded" width="64" alt="">
+                                            <div class="media-body mr-2">
+                                                <span v-text="material.title"></span>
+
+                                            </div>
+                                        </div>
+
+                                    </a>
+                                </td>
+                                <td>
+                                    <div>
+                                        <span v-text="to_price(material.unit_price)"></span>
+                                    </div>
+
+
+                                </td>
+
+
+                                <td v-if="show_sell_prices">
+
+                                    <div v-if="show_sell_prices">
+                                        <small v-text="to_price(material.buy_price)" class="text-muted"></small>
 
                                     </div>
-                                </div>
 
-                            </a>
-                        </td>
-                        <td>
-                            <div>
-                                <span v-text="to_price(material.unit_price)"></span>
-                            </div>
-                            <div v-if="show_sell_prices">
-                                <small v-text="to_price(material.buy_price)" class="text-muted"></small>
-                                <span class="mx-2">
+                                </td>
 
-                                    <small v-text="percent(material)" class="text-muted"></small>
-                                    %
-                                </span>
-                            </div>
+                                <td v-if="show_sell_prices">
+                                    <span class="mx-2">
 
-                        </td>
-                        <td>
-                            <span v-text="material.available"></span>
+                                        <span v-text="percent(material)" class="text-muted"></span>
+                                        %
+                                    </span>
 
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+
+                                </td>
+
+                                <td>
+                                    <span v-text="material.available"></span>
+
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
+
 
     </div>
 </div>

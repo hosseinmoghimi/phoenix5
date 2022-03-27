@@ -1,67 +1,139 @@
+{% load static %}
 {% load to_price %}
-<div class="card" id="products-app">
-    <div class="card-body">
-        <div class="text-right my-2">
 
-            <button @click="show_sell_prices=!show_sell_prices" class="btn btn-danger">نمایش قیمت خرید</button>
+
+<div id="accordion-products">
+
+
+    <div class="card" id="products-app">
+        <div class="card-header" id="heading-products">
+            <h5 class="text-center">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-products"
+                    aria-expanded="true" aria-controls="collapse-products">
+                    لیست کالا ها
+
+
+                    <span v-if="products.length>0">
+                        <small class="text-danger mx-2">
+                            <span v-text="products.length"></span>
+                        </small>
+                    </span>
+
+
+                </button>
+            </h5>
+
+            {% if page_pre_description %}
+
+            <h5 class="text-center">
+                {{page_pre_description}}
+            </h5>
+            {% endif %}
+            {% if page_description %}
+
+            <h4 class="text-center">
+                {{page_description}}
+            </h4>
+            {% endif %}
         </div>
-        <div class="table-responsive">
+        <div id="collapse-products" class="collapse" aria-labelledby="heading-products"
+            data-parent="#accordion-products">
 
-            <table class="table table-striped">
-                <thead>
 
-                    <th>
-                        کالا
-                    </th>
-                    <th>
-                        قیمت
+            <div class="card-body">
+                <img v-if="waiting" width="32" src="{% static 'leo/img/loading.gif' %}" alt="">
+                <h6 v-if="waiting">
 
-                    </th>
+                    <span class="text-muted">در حال بار گذاری ... </span>
+                </h6>
 
-                    <th>
-                        موجودی در انبار ها
-                    </th>
-                </thead>
-                <tbody>
-                    <tr v-for="product in products">
+                <input type="text" v-model="search_for" class="form-control" placeholder="جستجو ..."
+                    @input="filter(search_for)">
+                <button @click="add()" class="btn btn-success">
+                    <i class="fa fa-plus"></i>
+                    افزودن
+                </button>
 
-                        <td>
-                            <a :href="product.get_absolute_url">
+                <div class="text-right my-2">
 
-                                <div class="media">
-                                    <img :src="product.thumbnail" class="rounded" width="64" alt="">
-                                    <div class="media-body mr-2">
-                                        <span v-text="product.title"></span>
+                    <button @click="show_sell_prices=!show_sell_prices" class="btn btn-danger">نمایش جزئیات</button>
+                </div>
+                <div class="table-responsive">
+
+                    <table class="table table-striped">
+                        <thead>
+
+                            <th>
+                                متریال
+                            </th>
+                            <th>
+                                قیمت فروش
+                            </th>
+                            <th v-if="show_sell_prices">
+                                قیمت
+                                خرید
+                            </th>
+                            <th v-if="show_sell_prices">
+                                درصد سود
+                            </th>
+
+                            <th>
+                                موجودی در انبار ها
+                            </th>
+                        </thead>
+                        <tbody>
+                            <tr v-for="product in products">
+
+                                <td>
+                                    <a :href="product.get_absolute_url">
+
+                                        <div class="media">
+                                            <img :src="product.thumbnail" class="rounded" width="64" alt="">
+                                            <div class="media-body mr-2">
+                                                <span v-text="product.title"></span>
+
+                                            </div>
+                                        </div>
+
+                                    </a>
+                                </td>
+                                <td>
+                                    <div>
+                                        <span v-text="to_price(product.unit_price)"></span>
+                                    </div>
+
+
+                                </td>
+
+                                <td v-if="show_sell_prices">
+
+                                    <div v-if="show_sell_prices">
+                                        <small v-text="to_price(product.buy_price)" class="text-muted"></small>
 
                                     </div>
-                                </div>
 
-                            </a>
-                        </td>
-                        <td>
-                            <div>
-                                <span v-text="to_price(product.unit_price)"></span>
-                            </div>
-                            <div v-if="show_sell_prices">
-                                <small v-text="to_price(product.buy_price)" class="text-muted"></small>
+                                </td>
 
-                                <span class="mx-2">
+                                <td v-if="show_sell_prices">
+                                    <span class="mx-2">
 
-                                    <small v-text="percent(product)" class="text-muted"></small>
-                                    %
-                                </span>
+                                        <span v-text="percent(product)" class="text-muted"></span>
+                                        %
+                                    </span>
 
-                            </div>
 
-                        </td>
-                        <td>
-                            <span v-text="product.available"></span>
+                                </td>
+                                <td>
+                                    <span v-text="product.available"></span>
 
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
+
 
     </div>
 </div>

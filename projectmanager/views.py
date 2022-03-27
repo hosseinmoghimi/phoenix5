@@ -20,8 +20,8 @@ from .apps import APP_NAME
 # from .repo import MaterialRepo
 # from .serializers import MaterialSerializer
 import json
-from .repo import EmployeeRepo, EventRepo, MaterialRepo, OrganizationUnitRepo, ServiceRepo, ProjectRepo
-from .serializers import EmployeeSerializer, EventSerializer, MaterialSerializer, OrganizationUnitSerializer, ServiceSerializer, ProjectSerializer, ServiceRequestSerializer, MaterialRequestSerializer
+from .repo import EmployeeRepo, EventRepo, LetterRepo, MaterialRepo, OrganizationUnitRepo, ServiceRepo, ProjectRepo
+from .serializers import EmployeeSerializer, EventSerializer, LetterSentSerializer, LetterSerializer, MaterialSerializer, OrganizationUnitSerializer, ServiceSerializer, ProjectSerializer, ServiceRequestSerializer, MaterialRequestSerializer
 
 TEMPLATE_ROOT = "projectmanager/"
 LAYOUT_PARENT = "phoenix/layout.html"
@@ -124,38 +124,52 @@ class OrganizationUnitView(View):
         context.update(PageContext(request=request, page=organization_unit))
         context['organization_unit'] = organization_unit
 
-        employees = EmployeeRepo(request=request).list(
-            organization_unit_id=organization_unit.id)
-        context['employees_s'] = json.dumps(
-            EmployeeSerializer(employees, many=True).data)
+        #employees
+        if True:
+            employees = EmployeeRepo(request=request).list(
+                organization_unit_id=organization_unit.id)
+            context['employees_s'] = json.dumps(
+                EmployeeSerializer(employees, many=True).data)
 
+        #   letters
+        if True:
+            letters=LetterRepo(request=request).list(organization_unit_id=organization_unit.id)
+            # letters=organization_unit.letters.order_by('date_added')    
+            context['letters'] = letters
+            letters_s = json.dumps(LetterSerializer(letters, many=True).data)
+            context['letters_s'] = letters_s
+
+        #projects
+        if True:
+            projects = []
+            (projects_employed, projects_contracted, org_projects) = ProjectRepo(
+                request=request).list(organization_unit_id=organization_unit.id)
+            for project_employed in projects_employed:
+                projects.append(project_employed)
+            for project_contracted in projects_contracted:
+                projects.append(project_contracted)
+            for org_project in org_projects:
+                projects.append(org_project)
+            context['projects'] = projects
+            projects_s = json.dumps(ProjectSerializer(projects, many=True).data)
+            context['projects_s'] = projects_s
+
+        #childs
+        if True:
+            organization_units = OrganizationUnitRepo(request=request).list(
+                parent_id=organization_unit.id, *args, **kwargs)
+            context['organization_units'] = organization_units
+            organization_units_s = json.dumps(
+                OrganizationUnitSerializer(organization_units, many=True).data)
+            context['organization_units_s'] = organization_units_s
+        
+
+        
         if request.user.has_perm(APP_NAME+".add_organizationunit"):
             context['add_organization_unit_form'] = AddOrganizationUnitForm()
             context['show_organization_units_list'] = True
 
-        projects = []
-        (projects_employed, projects_contracted, org_projects) = ProjectRepo(
-            request=request).list(organization_unit_id=organization_unit.id)
-        for project_employed in projects_employed:
-            projects.append(project_employed)
-        for project_contracted in projects_contracted:
-            projects.append(project_contracted)
-        for org_project in org_projects:
-            projects.append(org_project)
 
-        context['projects'] = projects
-        projects_s = json.dumps(ProjectSerializer(projects, many=True).data)
-        context['projects_s'] = projects_s
-
-        organization_units = OrganizationUnitRepo(request=request).list(
-            parent_id=organization_unit.id, *args, **kwargs)
-        context['organization_units'] = organization_units
-        organization_units_s = json.dumps(
-            OrganizationUnitSerializer(organization_units, many=True).data)
-        context['organization_units_s'] = organization_units_s
-        if request.user.has_perm(APP_NAME+".add_organizationunit"):
-            context['add_organization_unit_form'] = AddOrganizationUnitForm()
-            context['show_organization_units_list'] = True
         return render(request, TEMPLATE_ROOT+"organization-unit.html", context)
 
 
@@ -184,6 +198,34 @@ class ProjectsView(View):
         context['projects_s'] = projects_s
         return render(request, TEMPLATE_ROOT+"projects.html", context)
 
+
+class LettersView(View):
+    def get(self, request, *args, **kwargs):
+        context = getContext(request=request)
+        letters = LetterRepo(request=request).list(*args, **kwargs)
+        context['letters'] = letters
+        letters_s = json.dumps(LetterSerializer(letters, many=True).data)
+        context['letters_s'] = letters_s
+        return render(request, TEMPLATE_ROOT+"letters.html", context)
+
+
+class LetterView(View):
+    def get(self, request, *args, **kwargs):
+        context = getContext(request=request)
+        letter = LetterRepo(request=request).letter(*args, **kwargs)
+        context['letter'] = letter
+        context.update(PageContext(request=request,page=letter))
+
+
+        #letter_sents
+        if True:
+            letter_sents=letter.lettersent_set.all()
+            context['letter_sents']=letter_sents
+            letter_sents_s=json.dumps(LetterSentSerializer(letter_sents,many=True).data)
+            context['letter_sents_s']=letter_sents_s
+
+
+        return render(request, TEMPLATE_ROOT+"letter.html", context)
 
 class ProjectView(View):
     def get(self, request, *args, **kwargs):

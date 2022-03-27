@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Event,Employee, Material, MaterialRequest, PM_Service, Request,Project,OrganizationUnit, ServiceRequest
+from .models import Event,Employee, Letter, Material, MaterialRequest, PM_Service, Request,Project,OrganizationUnit, ServiceRequest, letterSent
 from authentication.serializers import ProfileSerializer
 
 
@@ -25,6 +25,19 @@ class EventSerializer(serializers.ModelSerializer):
     class Meta:
         model=Event
         fields=['id','project_related','likes_count','title','get_absolute_url','persian_event_datetime','persian_start_datetime','persian_end_datetime','get_edit_url']
+
+class LetterSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Letter
+        fields=['id','thumbnail','title','get_absolute_url','persian_date_added','get_edit_url']
+
+class LetterSentSerializer(serializers.ModelSerializer):
+    letter=LetterSerializer()
+    sender=OrganizationUnitSerializer()
+    recipient=OrganizationUnitSerializer()
+    class Meta:
+        model=letterSent
+        fields=['id','letter','sender','persian_date_sent','recipient']
 
 
 class EmployeeSerializer(serializers.ModelSerializer):

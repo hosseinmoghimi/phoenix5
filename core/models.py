@@ -88,6 +88,8 @@ class Page(models.Model, LinkHelper, ImageMixin):
 
     def class_title(self):
         class_title = ""
+        if self.class_name == "letter":
+            class_title = "نامه"
         if self.class_name == "file":
             class_title = "فایل"
         if self.class_name == "ourwork":
