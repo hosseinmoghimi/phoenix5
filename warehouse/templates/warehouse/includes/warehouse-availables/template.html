@@ -1,0 +1,116 @@
+{% load to_persian_date %}
+{% load to_price %}
+{% load to_amount_color %}
+{% load static %}
+<div id="accordion-warehouse-availables">
+
+
+    <div class="card" id="warehouse-availables-app">
+        <div class="card-header" id="heading-warehouse-availables">
+            <h5 class="text-center">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-warehouse-availables"
+                    aria-expanded="true" aria-controls="collapse-warehouse-availables">
+                    موجودی انبار
+
+
+
+                    <span v-if="availables_list.length>0">
+                        <small class="text-danger mx-2">
+                            <span v-text="availables_list.length"></span>
+                        </small>
+                    </span>
+
+
+                </button>
+            </h5>
+
+            {% if page_pre_description %}
+
+            <h5 class="text-center">
+                {{page_pre_description}}
+            </h5>
+            {% endif %}
+            {% if page_description %}
+
+            <h4 class="text-center">
+                {{page_description}}
+            </h4>
+            {% endif %}
+        </div>
+        <div id="collapse-warehouse-availables" class="collapse" aria-labelledby="heading-warehouse-availables"
+            data-parent="#accordion-warehouse-availables">
+
+
+            <div class="card-body">
+
+                {% load static %}
+                <form @submit.prevent="search()">
+                    <img src="{% static 'leo/img/loading.gif' %}" width="32" v-if="waiting" alt="">
+
+                    <input type="text" v-model="search_for" class="form-control" placeholder="جستجو ..."
+                        @input="filter()">
+                </form>
+
+
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            {% if not ware_house %}
+
+                            <th>
+                                انبار
+                            </th>
+                            {% endif %}
+                            {% if not product %}
+
+                            <th>
+                                کالا
+                            </th>
+                            {% endif %}
+                            <th>
+                                موجودی
+                            </th>
+                        </thead>
+                        <tbody>
+                            <tr v-for="available_item in availables_list">
+                                {% if not ware_house %}
+
+                                <td>
+                                    <a :href="available_item.ware_house.get_absolute_url">
+
+                                        <span v-text="available_item.ware_house.title"></span>
+                                    </a>
+                                </td>
+                                {% endif %}
+                                {% if not product %}
+
+                                <td>
+                                    <a :href="available_item.product.get_absolute_url">
+
+                                        <span v-text="available_item.product.title"></span>
+                                    </a>
+                                </td>
+                                {% endif %}
+                                <td>
+                                    <span v-text="available_item.available"></span>
+                                    <span v-text="available_item.unit_name"></span>
+                                </td>
+                                <td>
+
+                                </td>
+                                <td>
+
+                                </td>
+
+                            </tr>
+                        </tbody>
+
+                    </table>
+
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+</div>

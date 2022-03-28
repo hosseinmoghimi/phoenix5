@@ -1,0 +1,102 @@
+{% load to_price %}
+
+<div id="accordion-guarantees">
+
+
+    <div class="card" id="guarantees-app">
+        <div class="card-header" id="heading-guarantees">
+            <h5 class="text-center">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-guarantees"
+                    aria-expanded="true" aria-controls="collapse-guarantees">
+                    موجودی انبار
+
+
+
+
+
+                    <span v-if="guarantees.length>0">
+                        <small class="text-danger mx-2">
+                            <span v-text="guarantees.length"></span>
+                        </small>
+                    </span>
+
+
+                </button>
+            </h5>
+
+            {% if page_pre_description %}
+
+            <h5 class="text-center">
+                {{page_pre_description}}
+            </h5>
+            {% endif %}
+            {% if page_description %}
+
+            <h4 class="text-center">
+                {{page_description}}
+            </h4>
+            {% endif %}
+        </div>
+        <div id="collapse-guarantees" class="collapse" aria-labelledby="heading-guarantees"
+            data-parent="#accordion-guarantees">
+
+
+            <div class="card-body">
+                <div class="table-responsive">
+            
+                    <table class="table table-striped">
+                        <thead>
+            
+                            {% if not product %}
+            
+                            <th>
+                                کالا
+                            </th>
+                            {% endif %}
+            
+                            
+                            {% if not invoice %}
+            
+                            <th>
+                                فاکتور
+                            </th>
+                            {% endif %}
+            
+                            <th>
+                                سریال
+                            </th>
+                            <th>
+                                تاریخ
+                            </th>
+            
+                            <th>
+                                نوع
+                            </th>
+            
+                            <th>
+                                وضعیت
+                            </th>
+                            <th>
+            
+                            </th>
+            
+                        </thead>
+                        <tbody>
+                            <template v-for="guarantee in guarantees">
+            
+                                <guarantee-component :guarantee="guarantee"></guarantee-component>
+                            </template>
+                         
+                        </tbody>
+                    </table>
+                    </div>
+        
+            </div>
+        </div>
+
+
+    </div>
+</div>
+
+
+ 

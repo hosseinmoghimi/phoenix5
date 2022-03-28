@@ -7,8 +7,10 @@ from core.enums import UnitNameEnum
 from core.views import CoreContext, PageContext,SearchForm
 # Create your views here.
 from django.views import View
+from guarantee.serializers import GuaranteeSerializer
 
 from utility.calendar import PersianCalendar
+from warehouse.serializers import WareHouseSheetSerializer
 from .apps import APP_NAME
 from .repo import AccountRepo,FinancialBalanceRepo, ChequeRepo, PaymentRepo, PriceRepo, ProductRepo,ServiceRepo,FinancialDocumentRepo,InvoiceRepo, TransactionRepo
 from .serializers import AccountSerializer, FinancialBalanceSerializer, InvoiceFullSerializer,InvoiceLineSerializer,ChequeSerializer, InvoiceSerializer, PaymentSerializer, PriceSerializer, ProductSerializer,ServiceSerializer,FinancialDocumentForAccountSerializer,FinancialDocumentSerializer, TransactionSerializer
@@ -76,6 +78,18 @@ def get_invoice_context(request,*args, **kwargs):
     invoice_lines_s=json.dumps(InvoiceLineSerializer(invoice_lines,many=True).data)
     context['invoice_lines_s']=invoice_lines_s
     context['invoice_s']=json.dumps(InvoiceFullSerializer(invoice).data)
+
+    guarantees=invoice.guarantee_set.all()
+    context['guarantees']=guarantees
+    guarantees_s=json.dumps(GuaranteeSerializer(guarantees,many=True).data)
+    context['guarantees_s']=guarantees_s
+
+ 
+    warehouse_sheets=invoice.warehousesheet_set.all()
+    warehouse_sheets_s=json.dumps(WareHouseSheetSerializer(warehouse_sheets,many=True).data)
+    context['warehouse_sheets_s']=warehouse_sheets_s
+
+
 
     return context
 

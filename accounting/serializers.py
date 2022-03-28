@@ -6,6 +6,11 @@ class ProductSerializer(serializers.ModelSerializer):
         model = Product
         fields = ['id', 'title', 'get_absolute_url','buy_price','available','unit_price','unit_name','thumbnail']
 
+class ProductBriefSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Product
+        fields = ['id', 'title', 'get_absolute_url', 'thumbnail']
+
 
 class ServiceSerializer(serializers.ModelSerializer):
     class Meta:

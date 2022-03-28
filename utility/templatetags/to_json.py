@@ -5,9 +5,13 @@ from archive.serializers import FolderSerializer,FileSerializer
 import json
 
 
-
+from warehouse.serializers import WareHouseSerializer
 from accounting.serializers import AccountSerializer,ProfileSerializer, TransactionSerializer
 
+
+@register.filter
+def to_json_warehouses(warehouses):
+    return json.dumps(WareHouseSerializer(warehouses,many=True).data)
 
 @register.filter
 def to_json_accounts(accounts):
