@@ -294,7 +294,6 @@ class FinancialDocumentRepo:
             objects = objects.filter(transaction_id=kwargs['transaction_id'])
         if 'account_id' in kwargs and kwargs['account_id'] is not None and kwargs['account_id']>0:
             account_id=kwargs['account_id']
-            print(account_id)
             objects = objects.filter(account_id=account_id) 
         return objects
 

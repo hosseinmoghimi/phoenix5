@@ -120,6 +120,8 @@ def get_transaction_context(request,*args, **kwargs):
     context.update(PageContext(request=request,page=transaction))
 
     financial_documents=FinancialDocumentRepo(request=request).list(transaction_id=transaction.id)
+    financial_documents=transaction.financialdocument_set.all()
+    print(len(financial_documents))
     context['financial_documents']=financial_documents
     context['financial_documents_s']=json.dumps(FinancialDocumentSerializer(financial_documents,many=True).data)
             
