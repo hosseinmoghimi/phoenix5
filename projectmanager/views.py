@@ -1,4 +1,3 @@
-from urllib import request
 
 from django.http import JsonResponse
 from accounting.repo import PriceRepo
@@ -54,7 +53,8 @@ class SearchView(View):
             cd = search_form.cleaned_data
             search_for = cd['search_for']
 
-            materials = MaterialRepo(request=request).list(search_for=search_for)
+            materials = MaterialRepo(request=request).list(
+                search_for=search_for)
             context['materials'] = materials
             materials_s = json.dumps(
                 MaterialSerializer(materials, many=True).data)
@@ -75,29 +75,27 @@ class SearchView(View):
 
 
 class EmployeeView(View):
-    def post(self,request,*args, **kwargs):
-        context={
-            'result':FAILED
+    def post(self, request, *args, **kwargs):
+        context = {
+            'result': FAILED
         }
-        create_employee_form=CreateEmployeeForm(request.POST)
+        create_employee_form = CreateEmployeeForm(request.POST)
         if create_employee_form.is_valid():
-            cd=create_employee_form.cleaned_data
-            profile_id=cd['profile_id']
-            account_id=cd['account_id']
-            employee=EmployeeRepo(request=request).employee(profile_id=profile_id,account_id=account_id)
+            cd = create_employee_form.cleaned_data
+            profile_id = cd['profile_id']
+            account_id = cd['account_id']
+            employee = EmployeeRepo(request=request).employee(
+                profile_id=profile_id, account_id=account_id)
             if employee is not None:
-                context['employee']=EmployeeSerializer(employee).data
-                context['result']=SUCCEED
+                context['employee'] = EmployeeSerializer(employee).data
+                context['result'] = SUCCEED
 
         return JsonResponse(context)
 
-
- 
-
-    def get(self,request,*args, **kwargs):
-        context=getContext(request=request)
-        employee=EmployeeRepo(request=request).employee(*args, **kwargs)
-        context['employee']=employee
+    def get(self, request, *args, **kwargs):
+        context = getContext(request=request)
+        employee = EmployeeRepo(request=request).employee(*args, **kwargs)
+        context['employee'] = employee
 
         projects = ProjectRepo(request=request).list(employee_id=employee.id)
         context['projects'] = projects
@@ -105,17 +103,17 @@ class EmployeeView(View):
         projects_s = json.dumps(ProjectSerializer(projects, many=True).data)
         context['projects_s'] = projects_s
 
-        return render(request,TEMPLATE_ROOT+"employee.html",context)
+        return render(request, TEMPLATE_ROOT+"employee.html", context)
 
 
 class EmployeesView(View):
-    def get(self,request,*args, **kwargs):
-        context=getContext(request=request)
-        employees=EmployeeRepo(request=request).list(*args, **kwargs)
-        context['employees']=employees
-        employees_s=json.dumps(EmployeeSerializer(employees,many=True).data)
-        context['employees_s']=employees_s
-        return render(request,TEMPLATE_ROOT+"employees.html",context)
+    def get(self, request, *args, **kwargs):
+        context = getContext(request=request)
+        employees = EmployeeRepo(request=request).list(*args, **kwargs)
+        context['employees'] = employees
+        employees_s = json.dumps(EmployeeSerializer(employees, many=True).data)
+        context['employees_s'] = employees_s
+        return render(request, TEMPLATE_ROOT+"employees.html", context)
 
 
 class OrganizationUnitView(View):
@@ -126,7 +124,7 @@ class OrganizationUnitView(View):
         context.update(PageContext(request=request, page=organization_unit))
         context['organization_unit'] = organization_unit
 
-        #employees
+        # employees
         if True:
             employees = EmployeeRepo(request=request).list(
                 organization_unit_id=organization_unit.id)
@@ -135,13 +133,14 @@ class OrganizationUnitView(View):
 
         #   letters
         if True:
-            letters=LetterRepo(request=request).list(organization_unit_id=organization_unit.id)
-            # letters=organization_unit.letters.order_by('date_added')    
+            letters = LetterRepo(request=request).list(
+                organization_unit_id=organization_unit.id)
+            # letters=organization_unit.letters.order_by('date_added')
             context['letters'] = letters
             letters_s = json.dumps(LetterSerializer(letters, many=True).data)
             context['letters_s'] = letters_s
 
-        #projects
+        # projects
         if True:
             projects = []
             (projects_employed, projects_contracted, org_projects) = ProjectRepo(
@@ -153,10 +152,11 @@ class OrganizationUnitView(View):
             for org_project in org_projects:
                 projects.append(org_project)
             context['projects'] = projects
-            projects_s = json.dumps(ProjectSerializer(projects, many=True).data)
+            projects_s = json.dumps(
+                ProjectSerializer(projects, many=True).data)
             context['projects_s'] = projects_s
 
-        #childs
+        # childs
         if True:
             organization_units = OrganizationUnitRepo(request=request).list(
                 parent_id=organization_unit.id, *args, **kwargs)
@@ -164,13 +164,10 @@ class OrganizationUnitView(View):
             organization_units_s = json.dumps(
                 OrganizationUnitSerializer(organization_units, many=True).data)
             context['organization_units_s'] = organization_units_s
-        
 
-        
         if request.user.has_perm(APP_NAME+".add_organizationunit"):
             context['add_organization_unit_form'] = AddOrganizationUnitForm()
             context['show_organization_units_list'] = True
-
 
         return render(request, TEMPLATE_ROOT+"organization-unit.html", context)
 
@@ -216,16 +213,15 @@ class LetterView(View):
         context = getContext(request=request)
         letter = LetterRepo(request=request).letter(*args, **kwargs)
         context['letter'] = letter
-        context.update(PageContext(request=request,page=letter))
+        context.update(PageContext(request=request, page=letter))
 
-
-        #letter_sents
+        # letter_sents
         if True:
-            letter_sents=letter.lettersent_set.all()
-            context['letter_sents']=letter_sents
-            letter_sents_s=json.dumps(LetterSentSerializer(letter_sents,many=True).data)
-            context['letter_sents_s']=letter_sents_s
-
+            letter_sents = letter.lettersent_set.all()
+            context['letter_sents'] = letter_sents
+            letter_sents_s = json.dumps(
+                LetterSentSerializer(letter_sents, many=True).data)
+            context['letter_sents_s'] = letter_sents_s
 
         return render(request, TEMPLATE_ROOT+"letter.html", context)
 
@@ -235,12 +231,12 @@ class ProjectView(View):
         context = getContext(request=request)
         project = ProjectRepo(request=request).project(*args, **kwargs)
         context.update(PageContext(request=request, page=project))
-        
-        my_project_ids=[]
-        me_emp=EmployeeRepo(request=request).me
+
+        my_project_ids = []
+        me_emp = EmployeeRepo(request=request).me
         if me_emp is not None:
-            my_project_ids=me_emp.my_project_ids()
-            
+            my_project_ids = me_emp.my_project_ids()
+
         context['invoices'] = project.invoices()
 
         events = EventRepo(request=request).list(project_id=project.id)
@@ -248,12 +244,12 @@ class ProjectView(View):
         events_s = json.dumps(EventSerializer(events, many=True).data)
         context['events_s'] = events_s
 
+   
+
         context['project'] = project
-        organization_units = OrganizationUnitRepo(request=request).list(
-            project_id=project.id, *args, **kwargs)
+        organization_units = OrganizationUnitRepo(request=request).list(project_id=project.id, *args, **kwargs)
         context['organization_units'] = organization_units
-        organization_units_s = json.dumps(
-            OrganizationUnitSerializer(organization_units, many=True).data)
+        organization_units_s = json.dumps(OrganizationUnitSerializer(organization_units, many=True).data)
         context['organization_units_s'] = organization_units_s
 
         service_requests = project.service_requests()
@@ -275,7 +271,7 @@ class ProjectView(View):
 
         if request.user.has_perm(APP_NAME+".add_project"):
             context['add_project_form'] = AddProjectForm()
-        
+
         if request.user.has_perm(APP_NAME+".change_project") or project.id in my_project_ids:
             employers = OrganizationUnitRepo(request=request).list()
             context['employers'] = employers

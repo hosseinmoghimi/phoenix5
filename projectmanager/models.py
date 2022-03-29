@@ -282,6 +282,7 @@ class OrganizationUnit(Page):
         else:
             return self.thumbnail
  
+
 class letterSent(models.Model):
     sender=models.ForeignKey("organizationunit",related_name="sent_letters", verbose_name=_("فرستنده"), on_delete=models.CASCADE)
     recipient=models.ForeignKey("organizationunit",related_name="inbox_letters", verbose_name=_("گیرنده"), on_delete=models.CASCADE)
@@ -292,6 +293,8 @@ class letterSent(models.Model):
         verbose_name_plural = 'letterSents'
     def persian_date_sent(self):
         return to_persian_datetime_tag(self.date_sent)
+
+
 class WareHouse(OrganizationUnit):
     
     def save(self,*args, **kwargs):
@@ -303,6 +306,7 @@ class WareHouse(OrganizationUnit):
     class Meta:
         verbose_name = 'WareHouse'
         verbose_name_plural = 'WareHouses'
+
 
 class Letter(Page):
     def persian_date_added(self):
@@ -328,7 +332,7 @@ class Project(Page):
     end_date = models.DateTimeField(_("زمان پایان پروژه"), null=True, blank=True, auto_now=False, auto_now_add=False)
     organization_units = models.ManyToManyField("organizationunit", verbose_name=_("واحد های سازمانی"), blank=True)
     weight = models.IntegerField(_("ضریب و وزن پروژه"), default=10)
-    locations = models.ManyToManyField("map.location", blank=True, verbose_name=_("locations"))
+    # locations = models.ManyToManyField("map.location", blank=True, verbose_name=_("locations"))
     def material_requests(self):
         return Request.objects.filter(project=self).filter(type=RequestTypeEnum.MATERIAL_REQUEST)
     def service_requests(self):
@@ -342,6 +346,18 @@ class Project(Page):
     class Meta:
         verbose_name = _("Project")
         verbose_name_plural = _("Projects")
+    
+    # @property
+    # def locations(self):
+    #     from map.models import Location,PageLocation
+    #     page_locations=PageLocation.objects.filter(page_id=self.pk)
+    #     locations_id=list(page_locations.values('location_id'))
+    #     ids=[]
+    #     for location_id in locations_id:
+    #         ids.append(location_id['location_id'])
+    #     locations=Location.objects.filter(id__in=ids)
+    #     return locations
+
 
     def persian_start_date(self):
         return PersianCalendar().from_gregorian(self.start_date)

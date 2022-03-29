@@ -86,11 +86,6 @@ class SearchForm(forms.Form):
     url=("/"+APP_NAME+"/search/")
     search_for=forms.CharField(max_length=50, required=True)
           
-class AddExistingLocationForm(forms.Form):
-    page_id=forms.IntegerField(required=True)
-    location_id=forms.IntegerField(required=True)
-           
-            
 class AddMaterialForm(forms.Form):
     title=forms.CharField(max_length=50, required=True)
     parent_id=forms.IntegerField( required=False)

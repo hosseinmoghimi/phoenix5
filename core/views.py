@@ -79,45 +79,78 @@ def PageContext(request, *args, **kwargs):
     context['page'] = page
 
     
-    links = page.pagelink_set.all()
-    links_s = json.dumps(PageLinkSerializer(links, many=True).data)
-    context['links_s'] = links_s
-    context['links'] = links
+    # links
+    if True:
+        links = page.pagelink_set.all()
+        links_s = json.dumps(PageLinkSerializer(links, many=True).data)
+        context['links_s'] = links_s
+        context['links'] = links
 
-
+    # locations
+    if True:
+        from map.serializers import PageLocationSerializer,LocationSerializer
+        from map.repo import LocationRepo,PageLocationRepo
+        page_locations =PageLocationRepo(request=request).list(page_id=page.id)
+        # context['locations_s'] = json.dumps(LocationSerializer(locations, many=True).data)
+        context['page_locations_s'] = json.dumps(PageLocationSerializer(page_locations, many=True).data)
+        context['locations_s'] = json.dumps(LocationSerializer([], many=True).data)
+        context['all_locations']=LocationRepo(request=request).list()
+        if request.user.has_perm(APP_NAME+".change_page") or page.id in my_pages_ids:
+            from map.forms import AddLocationForm,AddPageLocationForm
+            context['add_page_location_form']=AddPageLocationForm()
+            context['add_location_form']=AddLocationForm()
 
     
-    page_tags = page.pagetag_set.all()
-    page_tags_s = json.dumps(PageTagSerializer(page_tags, many=True).data)
-    context['page_tags_s'] = page_tags_s
-    context['page_tags'] = page_tags
+    # tags
+    if True:
+        page_tags = page.pagetag_set.all()
+        page_tags_s = json.dumps(PageTagSerializer(page_tags, many=True).data)
+        context['page_tags_s'] = page_tags_s
+        context['page_tags'] = page_tags
 
 
-    page_comments = page.pagecomment_set.all()
-    context['page_comments'] = page_comments
-    context['page_comments_s'] = json.dumps(
-        PageCommentSerializer(page_comments, many=True).data)
+    # commnets
+    if True:
+        page_comments = page.pagecomment_set.all()
+        context['page_comments'] = page_comments
+        context['page_comments_s'] = json.dumps(
+            PageCommentSerializer(page_comments, many=True).data)
+        if ProfileRepo(request=request).me is not None:
+            context['add_page_comment_form'] = AddPageCommentForm()
 
-    related_pages = page.related_pages.all()
-    context['related_pages_s'] = json.dumps(
-        PageBriefSerializer(related_pages, many=True).data)
+
+    # related_pages
+    if True:
+        related_pages = page.related_pages.all()
+        context['related_pages_s'] = json.dumps(
+            PageBriefSerializer(related_pages, many=True).data)
+
+
+    # downloads
+    if True:
+        downloads = PageDownloadRepo(request=request).list(page_id=page.id)
+        context['downloads'] = downloads
+        downloads_s = json.dumps(PageDownloadSerializer(downloads, many=True).data)
+        context['page_downloads_s'] = downloads_s
+
+
+    #images
+    if True:
+        page_images = page.pageimage_set.all()
+        context['images_s'] = json.dumps(PageImageSerializer(page_images, many=True).data)
+
+    # likes
+    if True:
+        page_likes=PageLikeRepo(request=request).list(page_id=page.id)
+        context['page_likes']=page_likes
+        if profile is not None:
+            my_like = page.my_like(profile_id=profile.id)
+            context['my_like'] = my_like
 
 
 
-    page_likes=PageLikeRepo(request=request).list(page_id=page.id)
-    context['page_likes']=page_likes
+        
 
-    if profile is not None:
-        my_like = page.my_like(profile_id=profile.id)
-        context['my_like'] = my_like
-    
-    if ProfileRepo(request=request).me is not None:
-        context['add_page_comment_form'] = AddPageCommentForm()
-
-    downloads = PageDownloadRepo(request=request).list(page_id=page.id)
-    context['downloads'] = downloads
-    downloads_s = json.dumps(PageDownloadSerializer(downloads, many=True).data)
-    context['page_downloads_s'] = downloads_s
     my_pages_ids = PageRepo(request=request).my_pages_ids()
     if request.user.has_perm(APP_NAME+".add_link") or page.id in my_pages_ids:
         context['add_page_link_form'] = AddPageLinkForm()
@@ -129,9 +162,6 @@ def PageContext(request, *args, **kwargs):
     if request.user.has_perm(APP_NAME+".change_page") or page.id in my_pages_ids:
         context['add_related_page_form'] = AddRelatedPageForm()
         context['add_page_tag_form'] = AddPageTagForm()
-    page_images = page.pageimage_set.all()
-    context['images_s'] = json.dumps(
-        PageImageSerializer(page_images, many=True).data)
 
     return context
 
