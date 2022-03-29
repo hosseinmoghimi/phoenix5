@@ -19,6 +19,8 @@
                 posting.done((data) => {
                     console.log(data)
                     if (data.result === 'SUCCEED') {
+                        
+                        page_tags_app.new_tag = ""
                         page_tags_app.page_tags = data.page_tags
                     }
                 })
