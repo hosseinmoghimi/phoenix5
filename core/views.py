@@ -15,7 +15,7 @@ from django.shortcuts import render
 from authentication.repo import ProfileRepo
 from core.constants import CURRENCY
 
-from phoenix.server_settings import my_apps
+from phoenix.server_settings import phoenix_apps
 from django.views import View
 from .forms import *
 # Create your views here.
@@ -30,7 +30,7 @@ def CoreContext(request, *args, **kwargs):
     context['STATIC_URL'] = STATIC_URL
     context['MEDIA_URL'] = MEDIA_URL
     context['SITE_URL'] = SITE_URL
-    context['apps'] = my_apps
+    context['apps'] = phoenix_apps
 
     profile = ProfileRepo(request=request).me
     context['profile'] = profile

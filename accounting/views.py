@@ -2,21 +2,23 @@ from django.http import Http404, JsonResponse
 from django.shortcuts import render,reverse
 from accounting.apis import EditInvoiceApi
 from accounting.enums import PaymentMethodEnum, TransactionStatusEnum
+from accounting.models import Invoice
 from core.constants import CURRENCY, FAILED, SUCCEED
 from core.enums import UnitNameEnum
-from core.views import CoreContext, PageContext,SearchForm
+from core.views import CoreContext, MessageView, PageContext,SearchForm
 # Create your views here.
 from django.views import View
 from guarantee.serializers import GuaranteeSerializer
 
 from utility.calendar import PersianCalendar
-from warehouse.serializers import WareHouseSheetSerializer
+from warehouse.repo import WareHouseRepo, WareHouseSheetRepo
+from warehouse.serializers import WareHouseSerializer, WareHouseSheetSerializer
 from .apps import APP_NAME
 from .repo import AccountRepo,FinancialBalanceRepo, ChequeRepo, PaymentRepo, PriceRepo, ProductRepo,ServiceRepo,FinancialDocumentRepo,InvoiceRepo, TransactionRepo
 from .serializers import AccountSerializer, FinancialBalanceSerializer, InvoiceFullSerializer,InvoiceLineSerializer,ChequeSerializer, InvoiceSerializer, PaymentSerializer, PriceSerializer, ProductSerializer,ServiceSerializer,FinancialDocumentForAccountSerializer,FinancialDocumentSerializer, TransactionSerializer
 from .forms import *
 import json
-
+from phoenix.server_settings import phoenix_apps
 
 LAYOUT_PARENT = "phoenix/layout.html"
 TEMPLATE_ROOT = "accounting/"
@@ -71,9 +73,13 @@ def get_edit_invoice_context(request,*args, **kwargs):
 def get_invoice_context(request,*args, **kwargs):
     context={}
     invoice=InvoiceRepo(request=request).invoice(*args, **kwargs)
-    context.update(get_transaction_context(request=request,transaction=invoice))
     context['invoice']=invoice
+    if invoice is None:
+        mv=MessageView(request=request)
+        mv.title="چنین فاکتوری یافت نشد."
+        return mv.response()
 
+    context.update(get_transaction_context(request=request,transaction=invoice))
     invoice_lines=invoice.invoice_lines()
     invoice_lines_s=json.dumps(InvoiceLineSerializer(invoice_lines,many=True).data)
     context['invoice_lines_s']=invoice_lines_s
@@ -115,7 +121,9 @@ def get_transaction_context(request,*args, **kwargs):
     else:
         transaction=TransactionRepo(request=request).transaction(*args, **kwargs)
     if transaction is None:
-        raise Http404
+        mv=MessageView(request=request)
+        mv.title="چنین تراکنشی یافت نشد."
+        return mv.response()
     context['transaction']=transaction
     context.update(PageContext(request=request,page=transaction))
 
@@ -151,7 +159,34 @@ def get_product_or_service_context(request,*args, **kwargs):
 
 def get_product_context(request,*args, **kwargs):
     product=ProductRepo(request=request).product(*args, **kwargs)
+    if product is None:
+        mv=MessageView(request=request)
+        mv.title="چنین کالایی یافت نشد."
+        return mv.response()
+    
     context=get_product_or_service_context(request=request,item=product,*args, **kwargs)
+
+
+
+
+    #warehouse availables
+    if True:
+        products=[product]
+        ware_houses=WareHouseRepo(request=request).list()
+        availables_list=[]
+        warehouse_sheets=WareHouseSheetRepo(request=request).list(product_id=product.id)
+
+        for ware_house in ware_houses:    
+            for product in products:    
+                line=warehouse_sheets.filter(product_id=product.id).filter(ware_house=ware_house).first()
+                if line is not None:
+                    list_item={'product':{'id':product.pk,'title':product.title,'get_absolute_url':product.get_absolute_url()}}
+                    list_item['available']=line.available()
+                    list_item['unit_name']=line.unit_name
+                    list_item['ware_house']=WareHouseSerializer(line.ware_house).data
+                    availables_list.append(list_item)
+        context['availables_list']=json.dumps(availables_list)
+    
     return context
 
 def get_service_context(request,*args, **kwargs):
@@ -262,6 +297,12 @@ class FinancialBalancesView(View):
 class InvoiceView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
+        invoice=InvoiceRepo(request=request).invoice(*args, **kwargs)
+        
+        if invoice is None:
+            mv=MessageView(request=request)
+            mv.title="چنین فاکتوری یافت نشد."
+            return mv.response()
         context.update(get_invoice_context(request=request,*args, **kwargs))
         context['no_navbar']=True
         context['no_footer']=True
@@ -306,6 +347,9 @@ class TransactionView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
         context.update(get_transaction_context(request=request,*args, **kwargs))
+        if context['transacion'] is None:
+            mv=MessageView(request=request)
+            mv.title="چنین تراکنشی یافت نشد."
         return render(request,TEMPLATE_ROOT+"transaction.html",context)
 class TransactionsView(View):
     def get(self,request,*args, **kwargs):
@@ -328,6 +372,10 @@ class ProductView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
         product=ProductRepo(request=request).product(*args, **kwargs)
+        
+        if product is None:
+            mv=MessageView(request=request)
+            mv.title="چنین کالایی یافت نشد."
         context.update(get_product_context(request=request,product=product))
         return render(request,TEMPLATE_ROOT+"product.html",context)
 

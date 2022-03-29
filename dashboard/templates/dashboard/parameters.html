@@ -15,7 +15,7 @@
 {% block content %}
 
 <div class="rtl text-right mb-5">
-    {% for app in my_apps %}
+    {% for app in phoenix_apps %}
 
     <a class="btn btn-{{app.color}}" href="{% url 'dashboard:parameters' app_name=app.name %}">
         {{app.title}}
@@ -27,13 +27,13 @@
 <div id="app">
     <div class="text-center">
 
-        <a target="_blank"  href="{{my_app.home_url}}" class="btn btn-success">
+        <a target="_blank"  href="{{phoenix_app.home_url}}" class="btn btn-success">
             <i class="material-icons">
                 home
             </i>
-            {{my_app.title}}</a>
+            {{phoenix_app.title}}</a>
 
-        <a  target="_blank" href="{% url 'authentication:membership_requests_app' app_name=my_app.name %}" class="btn btn-success">
+        <a  target="_blank" href="{% url 'authentication:membership_requests_app' app_name=phoenix_app.name %}" class="btn btn-success">
             <i class="material-icons">
                 person
             </i>

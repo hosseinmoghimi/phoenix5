@@ -41,11 +41,11 @@ class ParameterViews(View):
         context['app_name']=app_name
         context['parameters']=parameters
         context['parameters_s']=json.dumps(ParameterSerializer(parameters,many=True).data)
-        from phoenix.server_settings import my_apps
-        context['my_apps']=my_apps
-        for my_app in my_apps:
-            if my_app['name']==app_name:
-                context['my_app']=my_app
+        from phoenix.server_settings import phoenix_apps
+        context['phoenix_apps']=phoenix_apps
+        for phoenix_app in phoenix_apps:
+            if phoenix_app['name']==app_name:
+                context['phoenix_app']=phoenix_app
 
         
         pictures=PictureRepo(request=request,app_name=app_name).list()

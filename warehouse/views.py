@@ -44,13 +44,16 @@ class WareHouseViews(View):
 
         products=ProductRepo(request=request).list()
         availables_list=[]
-        for product in products:    
-            line=warehouse_sheets.filter(product_id=product.id).filter(ware_house=ware_house).first()
-            if line is not None:
-                list_item={'product':{'id':product.pk,'title':product.title,'get_absolute_url':product.get_absolute_url()}}
-                list_item['available']=line.available()
-                list_item['unit_name']=line.unit_name
-                availables_list.append(list_item)
+        ware_houses=[ware_house]
+        for ware_house in ware_houses:    
+            for product in products:    
+                line=warehouse_sheets.filter(product_id=product.id).filter(ware_house=ware_house).first()
+                if line is not None:
+                    list_item={'product':{'id':product.pk,'title':product.title,'get_absolute_url':product.get_absolute_url()}}
+                    list_item['available']=line.available()
+                    list_item['unit_name']=line.unit_name
+                    list_item['ware_house']=WareHouseSerializer(line.ware_house).data
+                    availables_list.append(list_item)
         context['availables_list']=json.dumps(availables_list)
 
         return render(request,TEMPLATE_ROOT+"ware-house.html",context)
