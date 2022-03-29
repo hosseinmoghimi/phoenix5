@@ -193,13 +193,28 @@ class Account(models.Model,LinkHelper):
     logo_origin=models.ImageField(_("logo"), null=True,blank=True,upload_to=IMAGE_FOLDER+"account/", height_field=None, width_field=None, max_length=None)
     title=models.CharField(_("title"), null=True,blank=True,max_length=500)
     profile=models.ForeignKey("authentication.profile", verbose_name=_("profile"), on_delete=models.CASCADE)
-    class_name="account"
-    app_name=APP_NAME
+    
+    address=models.CharField(_("address"),null=True,blank=True, max_length=50)
+    tel=models.CharField(_("tel"),null=True,blank=True, max_length=50)
+    class_name=models.CharField(_("class_name"),blank=True, max_length=50)
+    app_name=models.CharField(_("app_name"),blank=True,max_length=50)
+    @property
+    def class_title(self):
+        class_title="حساب مالی"
+        if self.class_name=="account":
+            class_title="حساب مالی"
+        if self.class_name=="driver":
+            class_title="راننده"
+        if self.class_name=="passenger":
+            class_title="مسافر"
+        if self.class_name=="serviceman":
+            class_title="سرویس کار"
+        return class_title
     def balance_rest(self):
         return self.balance['rest']
     def invoices(self):
         return Invoice.objects.filter(models.Q(pay_from=self)|models.Q(pay_to=self))
-
+    
     def logo(self):
         if self.logo_origin:
             return MEDIA_URL+str(self.logo_origin)
@@ -221,13 +236,16 @@ class Account(models.Model,LinkHelper):
         return self.title
 
     def save(self,*args, **kwargs):
+        if self.class_name is None or self.class_name=="":
+            self.class_name='account'
+        if self.app_name is None or self.app_name=="":
+            self.app_name=APP_NAME
+            
         # from projectmanager.models import Employee
         # a=Account.objects.filter(fff="")
         if self.title is None or self.title=="":
             if self.profile is not None:
-                self.title=self.profile.name
-            else:
-                self.title=self.profile_ptr_id
+                self.title=self.profile.name 
         super(Account,self).save(*args, **kwargs)
     
     @property

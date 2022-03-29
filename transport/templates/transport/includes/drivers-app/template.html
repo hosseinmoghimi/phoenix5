@@ -1,11 +1,106 @@
-<div id="drivers-app" class="card">
-    <div class="card-header">
+{% load static %}
+<div id="accordion-drivers">
 
-        <h4 class="text-center">
-            راننده ها
-        </h4>
-    </div>
-    <div class="card-body">
-        {% include "transport/includes/drivers-app/table.html" %}
+
+    <div class="card" id="drivers-app">
+        <div class="card-header" id="heading-drivers">
+            <h5 class="text-center">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-drivers" aria-expanded="true"
+                    aria-controls="collapse-drivers">
+                    راننده ها
+                    <span v-if="drivers.length>0">
+                        <small class="text-danger mx-2">
+                            <span v-text="drivers.length"></span>
+                        </small>
+                    </span>
+
+
+                </button>
+            </h5>
+
+
+        </div>
+        <div id="collapse-drivers" class="collapse" aria-labelledby="heading-drivers" data-parent="#accordion-drivers">
+
+
+            <div class="card-body">
+
+                {% load static %}
+                <form @submit.prevent="search()">
+                    <img src="{% static 'leo/img/loading.gif' %}" width="32" v-if="waiting" alt="">
+
+                    <input type="text" v-model="search_for" class="form-control" placeholder="جستجو ..."
+                        @input="filter()">
+                </form>
+
+
+                <div class="table-responsive">
+                    <img v-if="false" width="32" src="{% static 'leo/img/loading.gif' %}" alt="">
+                    <h6 v-if="false">
+
+                        <span class="text-muted">در حال بار گذاری ... </span>
+                    </h6>
+                    <table class="table table-striped">
+                        <thead>
+                            <th>
+                                راننده
+                            </th>
+                            <th>
+                                پروفایل
+                            </th>
+                            <th>
+                                مانده
+                            </th>
+                            <th>
+
+                            </th>
+                        </thead>
+                        <tbody>
+
+
+                            <tr v-for="driver in drivers">
+                                <td>
+                                    <a :href="driver.get_absolute_url">
+                                        <img :src="driver.logo" class="rounded1" width="32" alt="">
+
+
+                                        <span v-text="driver.title"></span>
+                                    </a>
+
+
+                                </td>
+                                <td>
+                                    <a :href="driver.profile.get_absolute_url">
+                                        <img :src="driver.profile.image" class="rounded-circle" width="32" alt="">
+                                        <span v-text="driver.profile.name"></span>
+                                    </a>
+
+                                </td>
+                                <td>
+                                    <span v-html="to_price(driver.balance_rest)"></span>
+                                    </span>
+
+                                </td>
+                                <td>
+
+                                    {% if perms.projectmanager.add_employee and not driver.employee %}
+                                    <form @submit.prevent="create_employee(driver.id)">
+                                        {% csrf_token %}
+                                        <button class="btn btn-warning" type="submit">
+                                            ایجاد پرسنل
+                                        </button>
+                                    </form>
+                                    {% endif %}
+
+
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+
     </div>
 </div>

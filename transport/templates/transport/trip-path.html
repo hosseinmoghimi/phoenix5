@@ -1,0 +1,105 @@
+{% extends "transport/layout.html" %}
+{% load to_price %}
+{% block content %}
+
+<div class="row">
+
+    <div class="col-md-12">
+        <h4 class="text-center">
+            {{trip_path.title}}
+        </h4>
+    </div>
+</div>
+<div class="row">
+
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5>
+                    <div class="text-muted">
+                        هزینه
+                    </div>
+                </h5>
+                <h4>
+                    {{trip_path.cost|to_price}}
+
+                </h4>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5>
+                    <div class="text-muted">
+                        فاصله مکانی
+                    </div>
+                </h5>
+                <h4>
+                    {{trip_path.distance}}
+                    کیلومتر
+
+                </h4>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5>
+                    <div class="text-muted">
+                        فاصله زمانی
+                    </div>
+                </h5>
+                <h4>
+                    {{trip_path.duration}}
+                    دقیقه
+                </h4>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5>
+                    <small class="text-muted">
+                        مبدا
+
+                    </small>
+                    <a href="{{trip_path.source.get_absolute_url}}">
+
+                        {{trip_path.source.title}}
+                    </a>
+                </h5>
+            </div>
+            <div class="card-body">
+
+                {{trip_path.source.location|safe}}
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5>
+                    <small class="text-muted">
+                        مقصد
+
+                    </small>
+
+                    <a href="{{trip_path.destination.get_absolute_url}}">
+
+                        {{trip_path.destination.title}}
+                    </a>
+                </h5>
+            </div>
+            <div class="card-body">
+
+                {{trip_path.destination.location|safe}}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

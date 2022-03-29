@@ -224,12 +224,10 @@ class RequestSignature(models.Model,LinkHelper):
         return reverse("RequestSignature_detail", kwargs={"pk": self.pk})
 
 
-class Employee(Account,LinkHelper):
+class Employee(Account):
     organization_unit=models.ForeignKey("organizationunit",null=True,blank=True, verbose_name=_("organization_unit"), on_delete=models.CASCADE)
     job_title=models.CharField(_("job title"),default="سرپرست", max_length=50)
-    app_name=APP_NAME
-    app_name=APP_NAME
-    class_name='employee'
+   
     @property
     def mobile(self):
         return self.profile.mobile
@@ -255,6 +253,13 @@ class Employee(Account,LinkHelper):
                 ids.append(proj.id)
         return ids
 
+
+    def save(self,*args, **kwargs):
+        if self.class_name is None or self.class_name=="":
+            self.class_name='employee'
+        if self.app_name is None or self.app_name=="":
+            self.app_name=APP_NAME
+        return super(Employee,self).save(*args, **kwargs)
 
 class OrganizationUnit(Page):
     pre_title=models.CharField(_("pre_title"),blank=True,null=True, max_length=50)

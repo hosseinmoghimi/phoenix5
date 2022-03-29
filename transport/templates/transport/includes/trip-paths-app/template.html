@@ -1,0 +1,120 @@
+{% load static %}
+<div id="accordion-trip-paths">
+
+
+    <div class="card" id="trip-paths-app">
+        <div class="card-header" id="heading-trip-paths">
+            <h5 class="text-center">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-trip-paths"
+                    aria-expanded="true" aria-controls="collapse-trip-paths">
+                    مسیر ها
+                    <span v-if="trip_paths.length>0">
+                        <small class="text-danger mx-2">
+                            <span v-text="trip_paths.length"></span>
+                        </small>
+                    </span>
+
+
+                </button>
+            </h5>
+
+
+        </div>
+        <div id="collapse-trip-paths" class="collapse" aria-labelledby="heading-trip-paths"
+            data-parent="#accordion-trip-paths">
+
+
+            <div class="card-body">
+
+                {% load static %}
+                <form @submit.prevent="search()">
+                    <img src="{% static 'leo/img/loading.gif' %}" width="32" v-if="waiting" alt="">
+
+                    <input type="text" v-model="search_for" class="form-control" placeholder="جستجو ..."
+                        @input="filter()">
+                </form>
+
+
+                <div class="table-responsive">
+                    <img v-if="false" width="32" src="{% static 'leo/img/loading.gif' %}" alt="">
+                    <h6 v-if="false">
+
+                        <span class="text-muted">در حال بار گذاری ... </span>
+                    </h6>
+                    <table class="table table-striped">
+                        <thead>
+                            <th>
+                                مسیر
+                            </th>
+                            <th>
+                                مبدا
+                            </th>
+                            <th>
+                                مقصد
+                            </th>
+                            <th>
+                                هزینه
+                            </th>
+                            <th>
+                                فاصله مکانی
+                            </th>
+                            <th>
+                                فاصله زمانی
+                            </th>
+                        </thead>
+                        <tbody>
+
+
+                            <tr v-for="trip_path in trip_paths">
+                                <td>
+                                    <a :href="trip_path.get_absolute_url">
+                                        <span v-text="trip_path.title"></span>
+                                    </a>
+
+
+                                </td>
+                                <td>
+                                    <a :href="trip_path.source.get_absolute_url">
+                                        <span v-text="trip_path.source.title"></span>
+                                    </a>
+
+                                </td>
+
+                                <td>
+                                    <a :href="trip_path.destination.get_absolute_url">
+                                        <span v-text="trip_path.destination.title"></span>
+                                    </a>
+
+                                </td>
+
+                                <td>
+                                    <span v-html="to_price(trip_path.cost)"></span>
+                                    </span>
+
+                                </td>
+                                <td>
+                                    <span v-html="trip_path.distance"></span>
+                                    </span>
+
+                                </td>
+                                <td>
+                                    <span v-html="trip_path.duration"></span>
+                                    </span>
+
+                                </td>
+                                <td>
+
+                                
+
+
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+</div>

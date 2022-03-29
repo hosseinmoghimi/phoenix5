@@ -9,6 +9,7 @@ urlpatterns = [
     path("drivers/",views.DriversView.as_view(),name="drivers"),
     path("driver/<int:pk>/",views.DriverView.as_view(),name="driver"),
     path("trippath/<int:pk>/",views.TripPathView.as_view(),name="trippath"),
+    path("trip_paths/",views.TripPathsView.as_view(),name="trip_paths"),
 
     
     path("passengers/",views.PassengersView.as_view(),name="passengers"),

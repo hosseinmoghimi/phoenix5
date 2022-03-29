@@ -21,7 +21,7 @@ class AccountSerializer(serializers.ModelSerializer):
     profile=ProfileSerializer()
     class Meta:
         model = Account
-        fields = ['id','logo','balance_rest', 'title','profile', 'get_absolute_url']
+        fields = ['id','logo','class_title','balance_rest', 'title','profile', 'get_absolute_url']
 
 
 class InvoiceSerializer(serializers.ModelSerializer):

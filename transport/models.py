@@ -11,25 +11,23 @@ from utility.utils import LinkHelper
 from .enums import *
 from tinymce.models import HTMLField
 from core.enums import ColorEnum,UnitNameEnum
+from accounting.models import Account
 
-
-class Driver(models.Model,LinkHelper):
-    profile=models.ForeignKey("authentication.profile", verbose_name=_("profile"), on_delete=models.CASCADE)
-    title=models.CharField(_("title"), max_length=50)
+class Driver(Account):
     color=models.CharField(_("color"),max_length=50,choices=ColorEnum.choices,default=ColorEnum.PRIMARY)
-    class_name='driver'
-    app_name=APP_NAME
     class Meta:
         verbose_name = 'Driver'
-        verbose_name_plural = 'Drivers'
-    def __str__(self):
-        return self.profile.name
+        verbose_name_plural = 'Drivers' 
+
+    def save(self,*args, **kwargs):
+        if self.class_name is None or self.class_name=="":
+            self.class_name='driver'
+        if self.app_name is None or self.app_name=="":
+            self.app_name=APP_NAME
+        return super(Driver,self).save(*args, **kwargs)
 
 
-class Passenger(models.Model,LinkHelper):
-    profile=models.ForeignKey("authentication.profile", verbose_name=_("profile"), on_delete=models.CASCADE)
-    class_name="passenger"
-    app_name=APP_NAME
+class Passenger(Account):
 
     def get_trips_url(self):
         return reverse(APP_NAME+":trips",kwargs={'category_id':0,'driver_id':0,'vehicle_id':0,'passenger_id':self.pk,'trip_path_id':0})
@@ -37,9 +35,13 @@ class Passenger(models.Model,LinkHelper):
     class Meta:
         verbose_name = _("Passenger")
         verbose_name_plural = _("Passengers")
-
-    def __str__(self):
-        return self.profile.name
+ 
+    def save(self,*args, **kwargs):
+        if self.class_name is None or self.class_name=="":
+            self.class_name='passenger'
+        if self.app_name is None or self.app_name=="":
+            self.app_name=APP_NAME
+        return super(Passenger,self).save(*args, **kwargs)
 
 
 class Area(models.Model,LinkHelper):
@@ -55,22 +57,21 @@ class Area(models.Model,LinkHelper):
         return self.name
 
 
-
-class ServiceMan(models.Model,LinkHelper):
-    profile=models.ForeignKey("authentication.profile", verbose_name=_("profile"), on_delete=models.CASCADE)
-    name=models.CharField(_("نام تعمیرگاه"),null=True,blank=True, max_length=50)
-    address=models.CharField(_("address"),null=True,blank=True, max_length=50)
-    tel=models.CharField(_("tel"),null=True,blank=True, max_length=50)
-    
-    app_name=APP_NAME
-    class_name="serviceman"
+class ServiceMan(Account):
     class Meta:
         verbose_name = _("ServiceMan")
         verbose_name_plural = _("ServiceMans")
 
     def __str__(self):
-        return self.name if self.name is not None else self.profile.name
+        return self.title if self.title is not None else self.profile.name
  
+    def save(self,*args, **kwargs):
+        if self.class_name is None or self.class_name=="":
+            self.class_name='serviceman'
+        if self.app_name is None or self.app_name=="":
+            self.app_name=APP_NAME
+        return super(ServiceMan,self).save(*args, **kwargs)
+
 
 class Vehicle(Asset):
     vehicle_type=models.CharField(_("نوع وسیله "),choices=VehicleTypeEnum.choices,default=VehicleTypeEnum.SEDAN, max_length=50)
@@ -111,6 +112,7 @@ class Vehicle(Asset):
             pic='grader.jpg'
         return f'{STATIC_URL}{APP_NAME}/images/thumbnail/{pic}/' 
 
+
 class WorkShift(models.Model,LinkHelper):
     area=models.ForeignKey("area", verbose_name=_("area"), on_delete=models.CASCADE)
     vehicle=models.ForeignKey("vehicle", verbose_name=_("vehicle"), on_delete=models.CASCADE)
@@ -133,11 +135,6 @@ class WorkShift(models.Model,LinkHelper):
     def __str__(self):
         return f'{self.vehicle.title} {self.persian_start_time()}'
 
-  
-
-
-
- 
 
 class TripPath(models.Model,LinkHelper):
     source=models.ForeignKey("map.location",related_name="trip_source_set", verbose_name=_("مبدا"), on_delete=models.CASCADE)
@@ -159,7 +156,6 @@ class TripPath(models.Model,LinkHelper):
         return reverse(APP_NAME+":trips",kwargs={'category_id':0,'driver_id':0,'passenger_id':0,'vehicle_id':0,'trip_path_id':self.pk})
      
 
-
 class TripCategory(models.Model,LinkHelper):
     title=models.CharField(_("عنوان"), max_length=50)
     color=models.CharField(_("color"),choices=ColorEnum.choices,default=ColorEnum.PRIMARY, max_length=50)
@@ -178,6 +174,7 @@ class TripCategory(models.Model,LinkHelper):
 
     def __str__(self):
         return self.title
+ 
  
 class Trip(models.Model,LinkHelper):
     status=models.CharField(_("status"), choices=TripStatusEnum.choices,default=TripStatusEnum.REQUESTED, max_length=50)
