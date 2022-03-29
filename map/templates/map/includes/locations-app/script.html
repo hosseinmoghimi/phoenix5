@@ -41,17 +41,17 @@
                 this.page_locations = page_locations.filter(page_location => page_location.location.title.indexOf(this.search_for) > -1)
 
             },
-            show_add_page_location: function () {
+            add_page_location: function () {
                 let payload = {
                     csrfmiddlewaretoken: csrfmiddlewaretoken,
                     page_id: page_id,
                     location_id: this.location_id,
                 }
-                let url = "{% url 'map:add_page_location' %}"
-                var posting = $.post(url_add_loaction, payload)
+                let url_add_page_loaction = "{% url 'map:add_page_location' %}"
+                var posting = $.post(url_add_page_loaction, payload)
                 posting.done((data) => {
                     if (data.result === 'SUCCEED')
-                        locations_app.locations.push(data.location)
+                        locations_app.page_locations.push(data.page_location)
                 })
             },
             add_location: function () {

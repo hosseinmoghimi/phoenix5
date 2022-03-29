@@ -92,9 +92,10 @@ class PageLocationRepo():
             return
         if location is None:
             return
-        if location in page.location.all():
+        if len(PageLocation.objects.filter(page_id=page.id).filter(location_id=location.id))>0:
             return
-
+        else:
+            pass
         page_location=PageLocation()
         page_location.page=page
         page_location.location=location

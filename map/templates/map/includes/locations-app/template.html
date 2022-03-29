@@ -55,11 +55,12 @@
                                 <td>
                                 </td>
                             </tr>
-                            
+
                             <tr v-for="page_location in page_locations">
                                 <td>
                                     <a :href="page_location.location.get_absolute_url">
-                                        <img :src="page_location.location.logo" class="rounded-circle" width="32" alt="">
+                                        <img :src="page_location.location.logo" class="rounded-circle" width="32"
+                                            alt="">
                                         <span v-text="page_location.location.title"></span>
                                     </a>
                                 </td>
@@ -71,8 +72,8 @@
                     </table>
                 </div>
             </div>
+            {% include "map/includes/locations-app/footer.html" %}
 
-       
         </div>
     </div>
 </div>

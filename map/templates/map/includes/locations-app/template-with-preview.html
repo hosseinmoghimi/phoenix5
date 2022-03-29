@@ -36,7 +36,7 @@
                 {% load static %}
                 <img src="{% static 'leo/img/loading.gif' %}" width="32" v-if="waiting" alt="">
                 <input type="text" v-model="search_for" class="form-control" placeholder="جستجو ..." @input="filter()">
-                
+
                 <div class="my-3" v-for="location in locations">
                     <a :href="location.get_absolute_url">
                         <h4>
@@ -56,7 +56,8 @@
                     </div>
                 </div>
             </div>
-          
+            {% include "map/includes/locations-app/footer.html" %}
+
 
         </div>
 
