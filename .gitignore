@@ -10,6 +10,7 @@ media/
 
 *.cnf
 server_settings.py
+server_urls.py
 secret/
 
 _run.bat
