@@ -5,10 +5,87 @@ from urllib import request
 
 from projectmanager.enums import RequestStatusEnum, SignatureStatusEnum
 from .apps import APP_NAME
-from .models import Employee, Event, Letter,Material, MaterialRequest,PM_Service as Service, Project,OrganizationUnit, RequestSignature, ServiceRequest,WareHouse
+from .models import Employee, Event, Letter,Material, MaterialInvoice, MaterialRequest,PM_Service as Service, Project,OrganizationUnit, RequestSignature, ServiceInvoice, ServiceRequest,WareHouse
 
 from authentication.repo import ProfileRepo
 from django.db.models import Q
+
+class MaterialInvoiceRepo():
+    def __init__(self, *args, **kwargs):
+        self.request = None
+        self.user = None
+        if 'request' in kwargs:
+            self.request = kwargs['request']
+            self.user = self.request.user
+        if 'user' in kwargs:
+            self.user = kwargs['user']
+        
+        self.objects=MaterialInvoice.objects.all()
+        self.profile=ProfileRepo(*args, **kwargs).me
+       
+
+    def material_invoice(self, *args, **kwargs):
+        pk=0
+        if 'material_invoice_id' in kwargs:
+            pk=kwargs['material_invoice_id']
+        elif 'pk' in kwargs:
+            pk=kwargs['pk']
+        elif 'id' in kwargs:
+            pk=kwargs['id']
+        return self.objects.filter(pk=pk).first()
+     
+    def list(self, *args, **kwargs):
+        objects = self.objects
+        if 'search_for' in kwargs:
+            search_for=kwargs['search_for']
+            objects = objects.filter(Q(title__contains=search_for)|Q(short_description__contains=search_for)|Q(description__contains=search_for))
+        if 'for_home' in kwargs:
+            objects = objects.filter(Q(for_home=kwargs['for_home']))
+        if 'organization_unit_id' in kwargs:
+            objects = objects.filter(pk=0)
+        if 'parent_id' in kwargs:
+            objects=objects.filter(parent_id=kwargs['parent_id'])
+        return objects.order_by('date_added') 
+
+
+
+class ServiceInvoiceRepo():
+    def __init__(self, *args, **kwargs):
+        self.request = None
+        self.user = None
+        if 'request' in kwargs:
+            self.request = kwargs['request']
+            self.user = self.request.user
+        if 'user' in kwargs:
+            self.user = kwargs['user']
+        
+        self.objects=ServiceInvoice.objects.all()
+        self.profile=ProfileRepo(*args, **kwargs).me
+       
+
+    def service_invoice(self, *args, **kwargs):
+        pk=0
+        if 'service_invoice_id' in kwargs:
+            pk=kwargs['service_invoice_id']
+        elif 'pk' in kwargs:
+            pk=kwargs['pk']
+        elif 'id' in kwargs:
+            pk=kwargs['id']
+        return self.objects.filter(pk=pk).first()
+     
+    def list(self, *args, **kwargs):
+        objects = self.objects
+        if 'search_for' in kwargs:
+            search_for=kwargs['search_for']
+            objects = objects.filter(Q(title__contains=search_for)|Q(short_description__contains=search_for)|Q(description__contains=search_for))
+        if 'for_home' in kwargs:
+            objects = objects.filter(Q(for_home=kwargs['for_home']))
+        if 'organization_unit_id' in kwargs:
+            objects = objects.filter(pk=0)
+        if 'parent_id' in kwargs:
+            objects=objects.filter(parent_id=kwargs['parent_id'])
+        return objects.order_by('date_added') 
+
 
 class LetterRepo():
     def __init__(self, *args, **kwargs):

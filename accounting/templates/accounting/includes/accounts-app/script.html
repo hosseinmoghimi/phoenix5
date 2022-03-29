@@ -14,7 +14,9 @@
          
             },
             to_price: function (vall) {
-                let color='danger'
+                let color='primary'
+                if (vall<0)
+                color='danger'
                 if (vall>0)
                 color='success'
                 vall=to_price(vall,"{{CURRENCY}}")

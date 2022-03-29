@@ -1,4 +1,4 @@
-{% extends "accounting/layout.html" %}
+{% extends "projectmanager/layout.html" %}
 
 {% load to_persian_date %}
 {% load to_price %}
@@ -33,13 +33,15 @@
                 </a>
                 {% endfor %}
 
-                {% for serviceinvoice in invoice.serviceinvoice_set.all %}
-                <a href="{{serviceinvoice.project.get_absolute_url}}">
-                    <h4>
-                        {{serviceinvoice.project.title}}
-                    </h4>
-                </a>
-                {% endfor %}
+                <h5>
+
+                    <small class="text-muted">
+                        پروژه
+                    </small>
+                    <a href="{{service_invoice.project.get_absolute_url}}">
+                        {{service_invoice.project.title}}
+                    </a>
+                </h5>
 
                 <h4 class="text-center my-3">
                     {% include "accounting/includes/invoice-app/navbar.html" %}

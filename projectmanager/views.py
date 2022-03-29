@@ -1,14 +1,14 @@
 
 from django.http import JsonResponse
-from accounting.repo import PriceRepo
+from accounting.repo import InvoiceRepo, PriceRepo
 from accounting.serializers import PriceBriefSerializer
-from accounting.views import InvoiceView, get_service_context, get_product_context
+from accounting.views import InvoiceView, get_invoice_context, get_service_context, get_product_context
 from django.shortcuts import redirect, render
 # Create your views here.
 from django.shortcuts import render, reverse
 from core.constants import FAILED, SUCCEED
 from core.enums import UnitNameEnum
-from core.views import CoreContext, SearchForm, PageContext
+from core.views import CoreContext, MessageView, SearchForm, PageContext
 # Create your views here.
 from django.views import View
 
@@ -19,7 +19,7 @@ from .apps import APP_NAME
 # from .repo import MaterialRepo
 # from .serializers import MaterialSerializer
 import json
-from .repo import EmployeeRepo, EventRepo, LetterRepo, MaterialRepo, OrganizationUnitRepo, ServiceRepo, ProjectRepo
+from .repo import EmployeeRepo, EventRepo, LetterRepo, MaterialInvoiceRepo, MaterialRepo, OrganizationUnitRepo, ServiceInvoiceRepo, ServiceRepo, ProjectRepo
 from .serializers import EmployeeSerializer, EventSerializer, LetterSentSerializer, LetterSerializer, MaterialSerializer, OrganizationUnitSerializer, ServiceSerializer, ProjectSerializer, ServiceRequestSerializer, MaterialRequestSerializer
 
 TEMPLATE_ROOT = "projectmanager/"
@@ -432,14 +432,33 @@ class ProjectChartView(View):
 
 
 class MaterialInvoiceView(View):
-    def get(self, request, *args, **kwargs):
-        return InvoiceView().get(request, *args, **kwargs)
 
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        material_invoice=MaterialInvoiceRepo(request=request).material_invoice(*args, **kwargs)
+        context['material_invoice']=material_invoice
+        if material_invoice is None:
+            mv=MessageView(request=request)
+            mv.title="چنین فاکتوری یافت نشد."
+            return mv.response()
+        context.update(get_invoice_context(request=request,invoice=material_invoice,*args, **kwargs))
+        context['no_navbar']=True
+        context['no_footer']=True
+        return render(request,TEMPLATE_ROOT+"material-invoice.html",context)
 
 class ServiceInvoiceView(View):
-    def get(self, request, *args, **kwargs):
-        return InvoiceView().get(request, *args, **kwargs)
-
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        service_invoice=ServiceInvoiceRepo(request=request).service_invoice(*args, **kwargs)
+        context['service_invoice']=service_invoice
+        if service_invoice is None:
+            mv=MessageView(request=request)
+            mv.title="چنین فاکتوری یافت نشد."
+            return mv.response()
+        context.update(get_invoice_context(request=request,invoice=service_invoice,*args, **kwargs))
+        context['no_navbar']=True
+        context['no_footer']=True
+        return render(request,TEMPLATE_ROOT+"service-invoice.html",context)
 
 class MaterialsView(View):
     def get(self, request, *args, **kwargs):

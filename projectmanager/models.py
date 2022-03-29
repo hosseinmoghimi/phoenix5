@@ -61,7 +61,7 @@ class MaterialInvoice(ProjectInvoice):
 
 class ServiceInvoice(ProjectInvoice):
 
-    
+ 
 
     class Meta:
         verbose_name = _("ServiceInvoice")

@@ -73,56 +73,7 @@
                             </th>
                         </thead>
                         <tbody>
-                            <template v-if="false">
-
-                            {% for account in accounts %}
-
-                            <tr>
-                                <td>
-                                    <a href="{{account.get_absolute_url}}">
-                                        <img src="{{account.logo}}" class="rounded-circle" width="32" alt="">
-
-                                        {{account.title}} ...
-                                    </a>
-
-                                    {% for tag in account.tags.all %}
-                                    <a href="{{tag.get_absolute_url}}">
-
-                                        <span class="badge badge-{{tag.color}}">
-                                            {{tag.name}}
-                                        </span>
-                                    </a>
-                                    {% endfor %}
-                                </td>
-                                <td>
-                                    <a href="{{account.profile.get_absolute_url}}">
-                                        <img src="{{account.profile.image}}" class="rounded-circle" width="32" alt="">
-                                        {{account.profile.name}}
-                                    </a>
-
-                                </td>
-                                <td>
-                                    <span class="text-{{account.balance.rest|to_amount_color}}">
-                                        {{account.balance.rest|to_price}}
-                                    </span>
-
-                                </td>
-                                <td>
-
-                                    {% if perms.projectmanager.add_employee and not account.employee %}
-                                    <form method="POST" action="{% url 'projectmanager:employee' pk=account.id %}">
-                                        {% csrf_token %}
-                                        <button class="btn btn-warning" type="submit">
-                                            ایجاد پرسنل
-                                        </button>
-                                    </form>
-                                    {% endif %}
-
-
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </template>
+                          
 
                             <tr v-for="account in accounts">
                                 <td>
