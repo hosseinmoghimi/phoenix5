@@ -1,39 +1,124 @@
 {% load to_price %}
-<div class="card" id="services-app">
-    <div class="card-body">
 
-        <div class="table-responsive">
-
-            <table class="table table-striped">
-                <thead>
-
-                    <th>
-                        سرویس
-                    </th>
+{% load static %}
+<div id="accordion-services">
 
 
-                </thead>
-                <tbody>
-                    <tr v-for="service in services">
-
-                        <td>
-                            <a :href="service.get_absolute_url">
-
-                                <div class="media">
-                                    <img :src="service.thumbnail" class="rounded" width="64" alt="">
-                                    <div class="media-body mr-2">
-                                        <span v-text="service.title"></span>
-
-                                    </div>
-                                </div>
-                            </a>
-                        </td>
+    <div class="card" id="services-app">
+        <div class="card-header" id="heading-services">
+            <h5 class="text-center">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-services"
+                    aria-expanded="true" aria-controls="collapse-services">
+                    سرویس ها
 
 
-                    </tr>
-                </tbody>
-            </table>
+                    <span v-if="services.length>0">
+                        <small class="text-danger mx-2">
+                            <span v-text="services.length"></span>
+                        </small>
+                    </span>
+
+
+                </button>
+            </h5>
+
+            {% if page_pre_description %}
+
+            <h5 class="text-center">
+                {{page_pre_description}}
+            </h5>
+            {% endif %}
+            {% if page_description %}
+
+            <h4 class="text-center">
+                {{page_description}}
+            </h4>
+            {% endif %}
         </div>
+        <div id="collapse-services" class="collapse" aria-labelledby="heading-services"
+            data-parent="#accordion-services">
+
+
+            <div class="card-body">
+                <img v-if="waiting" width="32" src="{% static 'leo/img/loading.gif' %}" alt="">
+                <h6 v-if="waiting">
+
+                    <span class="text-muted">در حال بار گذاری ... </span>
+                </h6>
+
+                <input type="text" v-model="search_for" class="form-control" placeholder="جستجو ..."
+                    @input="filter(search_for)">
+                <button @click="add()" class="btn btn-success">
+                    <i class="fa fa-plus"></i>
+                    افزودن
+                </button>
+
+                <div class="text-right my-2">
+
+                    <button @click="show_sell_prices=!show_sell_prices" class="btn btn-danger">نمایش قیمت خرید</button>
+                </div>
+                <div class="table-responsive">
+
+                    <table class="table table-striped">
+                        <thead>
+
+                            <th>
+                                سرویس
+                            </th>
+                            <th>
+                                قیمت فروش
+
+                            </th>
+
+
+                            <th v-if="show_sell_prices">
+                                قیمت خرید
+
+                            </th>
+
+                            <th v-if="show_sell_prices">
+                                درصد سود
+
+                            </th>
+
+                        </thead>
+                        <tbody>
+                            <tr v-for="service in services">
+
+                                <td>
+                                    <a :href="service.get_absolute_url">
+
+                                        <div class="media">
+                                            <img :src="service.thumbnail" class="rounded" width="64" alt="">
+                                            <div class="media-body mr-2">
+                                                <span v-text="service.title"></span>
+
+                                            </div>
+                                        </div>
+                                    </a>
+                                </td>
+                                <td>
+                                    <span v-text="to_price(service.unit_price)"></span>
+
+                                    {{CURRENCY}}
+                                </td>
+                                <td v-if="show_sell_prices">
+                                    <span v-text="to_price(service.buy_price)" class=""></span>
+
+                                    {{CURRENCY}}
+
+                                </td>
+                                <td v-if="show_sell_prices">
+                                    <span v-text="percent(service)" class=""></span> %
+                                </td>
+
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
 
     </div>
 </div>

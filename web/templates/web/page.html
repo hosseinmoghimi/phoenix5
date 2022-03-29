@@ -12,8 +12,8 @@
                 {{page.panel|safe}}
                 {% endif %}
                 <br>
-             
-               
+
+
             </div>
         </div>
     </div>
@@ -31,10 +31,13 @@
             <div class="row">
                 <div class="col-md-8 ml-auto mr-auto pt-4">
                     {% if page.sub_title %}
-                      
+
                     <h4 class="mb-0 mt-4 text-center">{{page.sub_title}}</h4>
                     {% endif %}
-                    <h3 class="mt-0 title text-center">{{page.title}}</h3>
+                    <h3 class="mt-0 title text-center">{{page.title}}
+                        
+                    {% include "core/includes/page-like-app/template.html" %}
+                 </h3>
                     <div class=" text-center mb-3">
                         {% if perms.web.change_webpage %}
 
@@ -45,41 +48,24 @@
                             </span>
                         </a>
                         {% endif %}
-                        
+
                         <span class="my-2">
-    
+
                             {% post_to_telegram link_text=" . " title=page.title obj_or_url=page.get_absolute_url %}
-    
+
                         </span>
                         <span class="my-2">
-    
+
                             {% post_to_whatsapp page.get_absolute_url link_text=" . " %}
-    
+
                         </span>
                     </div>
                     {% if page.panel %}
                     {{page.panel|safe}}
                     {% endif %}
                 </div>
-                {% if page.pageimage_set.all %}
 
-                <div class="section col-md-10 ml-auto mr-auto">
-                    <div class="row rtl">
-                        {% for page_image in page.pageimage_set.all %}
-                        <div class="col-md-4  ml-auto mr-auto">
-                            <a target="_blank" href="{{page_image.image.get_absolute_url}}">
 
-                                <img class="img-raised rounded img-fluid" alt="Raised Image"
-                                    src="{{page_image.image.thumbnail}}">
-                            </a>
-                        </div>
-
-                        {% endfor %}
-
-                    </div>
-                </div>
-                {% endif %}
-                
                 {% if page.short_description %}
                 <div class="col-md-8 ml-auto mr-auto farsi">
 
@@ -88,8 +74,8 @@
                 </div>
                 {% endif %}
 
-            
-                
+
+
 
                 {% if page.description %}
                 <div class="col-md-8 ml-auto mr-auto farsi">
@@ -103,23 +89,23 @@
         <div class="section section-blog-info">
             <div class="row">
                 <div class="col-md-8 ml-auto mr-auto">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="blog-tags farsi text-right">
-                                برچسب ها :
-                                {% for tag in page.tags.all %}
-                                <a href="{{tag.get_absolute_url}}">
+                    {% if page_tags %}
 
-                                    <span class="badge badge-primary badge-pill">
-                                        {{tag.title}}
-                                    </span>
-                                </a>
+                    <div class="blog-tags farsi text-right">
+                        برچسب ها :
+                        {% for tag in page_tags %}
+                        <a href="{{tag.get_absolute_url}}">
 
-                                {% endfor %}
-                            </div>
+                            <span class="badge badge-primary badge-pill">
+                                {{tag.title}}
+                            </span>
+                        </a>
 
-                        </div>
+                        {% endfor %}
                     </div>
+
+                    {% endif %}
+
                     <hr>
                     {% if page.author %}
 
@@ -143,7 +129,8 @@
                                 </p>
                             </div>
                             <div class="col-md-2">
-                                <a href="{{page.author.get_absolute_url}}"  class="farsi btn btn-primary pull-right btn-round">سایر نوشته ها</a>
+                                <a href="{{page.author.get_absolute_url}}"
+                                    class="farsi btn btn-primary pull-right btn-round">سایر نوشته ها</a>
                             </div>
                         </div>
                     </div>
@@ -153,37 +140,23 @@
         </div>
         <div class="section section-comments">
             <div class="row">
-                {% if add_page_link_form %}
-                <div class="col-md-4">
 
-                    {% include "web/includes/page-links-app/template.html" %}
-                </div>
-                {% else %}
-                <div class="col-md-6">
-                    {% include "web/includes/page-links-app/template-simple.html" %}
-
-                </div>
-                {% endif %}
+                {% include "web/includes/page-images-app/template.html" %}
 
 
-                {% if add_page_document_form %}
-                <div class="col-md-4">
+                {% include "web/includes/page-links-app/template.html" %}
 
-                    {% include "web/includes/page-documents-app/template.html" %}
-                </div>
-                {% else %}
-                <div class="col-md-6">
 
-                    {% include "web/includes/page-documents-app/template-simple.html" %}
-                </div>
 
-                {% endif %}
 
-                {% if add_page_tag_form %}
-                <div class="col-md-4">
-                    {% include "web/includes/page-tags-app/template.html" %}
-                </div>
-                {% endif %}
+                {% include "web/includes/page-downloads-app/template.html" %}
+
+
+
+                {% include "web/includes/page-tags-app/template.html" %}
+
+
+
 
             </div>
         </div>
@@ -211,27 +184,11 @@
 {% endblock %}
 
 {% block script %}
+{% include "core/includes/page-app/script.html" %}
 <script>
-
-    let page_id = parseInt("{{page.id}}")
+    page_comment_component_template = `{% include "web/includes/page-comments-app/component.html" %}`
 </script>
-<script src="{% static 'vendor/js/vue.min.js' %}"></script>
-<script>
 
-    let page_comment_component_template = `{% include "web/includes/page-comments-app/component.html" %}`
-</script>
-{% include "core/includes/page-comments-app/script.html" %}
-{% if add_page_link_form %}
-{% include "core/includes/page-links-app/script.html" %}
-
-{% endif %}
-
-{% if add_page_document_form %}
-
-{% include "core/includes/page-documents-app/script.html" %}
-{% endif %}
-{% include "core/includes/page-tags-app/script.html" %}
-{% include "core/includes/page-related-app/script.html" %}
 {% endblock %}
 
 

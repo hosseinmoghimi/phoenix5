@@ -3,6 +3,17 @@ from django.db.models import TextChoices
 
 from phoenix.settings import SITE_URL
 
+class AppNameEnum(TextChoices):
+    projectmanager='projectmanager',_('projectmanager')
+    accounting='accounting',_('accounting')
+    web='web',_('web')
+    transport='transport',_('transport')
+    log='log',_('log')
+    map='map',_('map')
+    market='market',_('market')
+    stock='stock',_('stock')
+    authentication='authentication',_('authentication')
+    dashboard='dashboard',_('dashboard')
 
 class CurrencyEnum(TextChoices):
     TUMAN="تومان",_("تومان")
@@ -10,6 +21,42 @@ class CurrencyEnum(TextChoices):
     DOLLAR="دلار",_("دلار")
 
 
+def class_title(*args, **kwargs):
+    class_name='page'
+    app_name='core'
+    if 'class_name' in kwargs:
+        class_name=kwargs['class_name']
+    if 'app_name' in kwargs:
+        app_name=kwargs['app_name']
+
+    class_title = ""
+    if class_name == "page":
+        class_title = "صفحه"
+    if class_name == "letter":
+        class_title = "نامه"
+    if class_name == "file":
+        class_title = "فایل"
+    if class_name == "ourwork":
+        class_title = "پروژه"
+    if class_name == "feature":
+        class_title = "خدمات"
+    if class_name == "blog":
+        class_title = "مقاله"
+    if class_name == "material":
+        class_title = "متریال"
+    if class_name == "product":
+        class_title = "کالا"
+    if class_name == "project":
+        class_title = "پروژه"
+    if class_name == "service":
+        class_title = "سرویس"
+    if class_name=="pm_service":
+        class_title = "سرویس"
+    if class_name == "organizationunit":
+        class_title = "واحد سازمانی"
+    if class_name == "event":
+        class_title = "رویداد"
+    return class_title
 
 class ParameterNameEnum(TextChoices):
     VISITOR_COUNTER="تعداد بازدید",_("تعداد بازدید")

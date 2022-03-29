@@ -1,9 +1,7 @@
 from django.utils import timezone
-from utility.calendar import PersianCalendar
+from utility.calendar import PersianCalendar, to_persian_datetime_tag
 from django.db import models
-from accounting.models import Invoice, InvoiceLine,Service
-from core.enums import UnitNameEnum
-from market.models import Product
+from accounting.models import Invoice, InvoiceLine
 from django.utils.translation import gettext as _
 from django.shortcuts import reverse
 
@@ -15,6 +13,8 @@ from .apps import APP_NAME
 # Create your models here.
 from accounting.models import Account
  
+IMAGE_FOLDER=APP_NAME+"/images/"
+
 
 class ProjectInvoice(Invoice):
     # project=models.ForeignKey("project", verbose_name=_("project"), on_delete=models.CASCADE)
@@ -52,7 +52,7 @@ class MaterialInvoice(ProjectInvoice):
 
     def save(self,*args, **kwargs):
         if self.title is None or self.title=="":
-            self.title="فاکتور درخواست متریال  "+self.project.full_title()
+            self.title="فاکتور درخواست متریال  "+self.project.full_title
         self.class_name="materialinvoice"
         self.app_name=APP_NAME
         
@@ -61,7 +61,7 @@ class MaterialInvoice(ProjectInvoice):
 
 class ServiceInvoice(ProjectInvoice):
 
-    
+ 
 
     class Meta:
         verbose_name = _("ServiceInvoice")
@@ -71,7 +71,7 @@ class ServiceInvoice(ProjectInvoice):
 
     def save(self,*args, **kwargs):
         if self.title is None or self.title=="":
-            self.title="فاکتور درخواست سرویس  "+self.project.full_title()
+            self.title="فاکتور درخواست سرویس  "+self.project.full_title
         self.class_name="serviceinvoice"
         self.app_name=APP_NAME
         return super(ServiceInvoice,self).save(*args, **kwargs)
@@ -224,19 +224,36 @@ class RequestSignature(models.Model,LinkHelper):
         return reverse("RequestSignature_detail", kwargs={"pk": self.pk})
 
 
-class Employee(Account):
-    organization_unit=models.ForeignKey("organizationunit", verbose_name=_("organization_unit"), on_delete=models.CASCADE)
-    job_title=models.CharField(_("job title"), max_length=50)
-
+class Employee(Account,LinkHelper):
+    organization_unit=models.ForeignKey("organizationunit",null=True,blank=True, verbose_name=_("organization_unit"), on_delete=models.CASCADE)
+    job_title=models.CharField(_("job title"),default="سرپرست", max_length=50)
+    app_name=APP_NAME
+    app_name=APP_NAME
+    class_name='employee'
+    @property
+    def mobile(self):
+        return self.profile.mobile
+    @property
+    def name(self):
+        return self.profile.name
     class Meta:
         verbose_name = _("Employee")
         verbose_name_plural = _("Employees")
 
     def __str__(self):
-        return f"{self.profile.name} : {self.job_title} {str(self.organization_unit)}"
+        return f"""{self.profile.name} : {self.job_title} {str(self.organization_unit) if self.organization_unit is not None else ""} """
 
     def get_absolute_url(self):
         return reverse(APP_NAME+":employee", kwargs={"pk": self.pk})
+
+        
+    def my_project_ids(self):
+        ids = []
+        if self.organization_unit is not None:
+        # for org in self.organization_unit_set.all():
+            for proj in self.organization_unit.project_set.all():
+                ids.append(proj.id)
+        return ids
 
 
 class OrganizationUnit(Page):
@@ -245,12 +262,7 @@ class OrganizationUnit(Page):
     parent=models.ForeignKey("OrganizationUnit",related_name="childs",null=True,blank=True, verbose_name=_("parent"), on_delete=models.CASCADE)
     def __str__(self):
         # return self.title
-        return self.title+" "+(str(self.parent) if self.parent is not None and not self.parent.id==self.id else "")
-
-    def full_title(self):
-        if self.parent is None:
-            return self.title
-        return self.title+" " +self.parent.full_title()
+        return self.full_title
     class Meta:
         verbose_name = _("OrganizationUnit")
         verbose_name_plural = _("واحد های سازمانی")
@@ -262,9 +274,52 @@ class OrganizationUnit(Page):
             self.app_name=APP_NAME
         return super(OrganizationUnit,self).save(*args, **kwargs)
  
+    def logo(self):
+        if self.thumbnail_origin:
+            return self.thumbnail
+        elif self.parent is not None:
+            return self.parent.thumbnail
+        else:
+            return self.thumbnail
  
+
+class letterSent(models.Model):
+    sender=models.ForeignKey("organizationunit",related_name="sent_letters", verbose_name=_("فرستنده"), on_delete=models.CASCADE)
+    recipient=models.ForeignKey("organizationunit",related_name="inbox_letters", verbose_name=_("گیرنده"), on_delete=models.CASCADE)
+    letter=models.ForeignKey("letter", verbose_name=_("letter"), on_delete=models.CASCADE)
+    date_sent=models.DateTimeField(_("date sent"), auto_now=False, auto_now_add=False)
+    class Meta:
+        verbose_name = 'letterSent'
+        verbose_name_plural = 'letterSents'
+    def persian_date_sent(self):
+        return to_persian_datetime_tag(self.date_sent)
+
+
 class WareHouse(OrganizationUnit):
-    pass
+    
+    def save(self,*args, **kwargs):
+        if self.class_name is None:
+            self.class_name="warehouse"
+        if self.app_name is None:
+            self.app_name=APP_NAME
+        return super(WareHouse,self).save(*args, **kwargs)
+    class Meta:
+        verbose_name = 'WareHouse'
+        verbose_name_plural = 'WareHouses'
+
+
+class Letter(Page):
+    def persian_date_added(self):
+        return to_persian_datetime_tag(self.date_added)
+    def save(self,*args, **kwargs):
+        if self.class_name is None:
+            self.class_name="letter"
+        if self.app_name is None:
+            self.app_name=APP_NAME
+        return super(Letter,self).save(*args, **kwargs)
+    class Meta:
+        verbose_name = 'Letter'
+        verbose_name_plural = 'Letters'
 
 
 class Project(Page):
@@ -275,9 +330,9 @@ class Project(Page):
     percentage_completed = models.IntegerField(_("درصد تکمیل پروژه"), default=0)
     start_date = models.DateTimeField(_("زمان شروع پروژه"), null=True, blank=True, auto_now=False, auto_now_add=False)
     end_date = models.DateTimeField(_("زمان پایان پروژه"), null=True, blank=True, auto_now=False, auto_now_add=False)
-    organization_units = models.ManyToManyField("OrganizationUnit", verbose_name=_("واحد های سازمانی"), blank=True)
+    organization_units = models.ManyToManyField("organizationunit", verbose_name=_("واحد های سازمانی"), blank=True)
     weight = models.IntegerField(_("ضریب و وزن پروژه"), default=10)
-    locations = models.ManyToManyField("map.location", blank=True, verbose_name=_("locations"))
+    # locations = models.ManyToManyField("map.location", blank=True, verbose_name=_("locations"))
     def material_requests(self):
         return Request.objects.filter(project=self).filter(type=RequestTypeEnum.MATERIAL_REQUEST)
     def service_requests(self):
@@ -291,6 +346,18 @@ class Project(Page):
     class Meta:
         verbose_name = _("Project")
         verbose_name_plural = _("Projects")
+    
+    # @property
+    # def locations(self):
+    #     from map.models import Location,PageLocation
+    #     page_locations=PageLocation.objects.filter(page_id=self.pk)
+    #     locations_id=list(page_locations.values('location_id'))
+    #     ids=[]
+    #     for location_id in locations_id:
+    #         ids.append(location_id['location_id'])
+    #     locations=Location.objects.filter(id__in=ids)
+    #     return locations
+
 
     def persian_start_date(self):
         return PersianCalendar().from_gregorian(self.start_date)
@@ -336,10 +403,11 @@ class Project(Page):
     def get_status_color(self):
         return StatusColor(self.status)
     
+    @property
     def full_title(self):
         if self.parent is None:
             return self.title
-        return self.parent.full_title()+" : "+self.title
+        return self.parent.full_title+" : "+self.title
 
     def sum_weight(self):
         sum_weight = 0
@@ -358,7 +426,13 @@ class Project(Page):
         super(Project,self).save(*args, **kwargs)
     
     def sum_total(self):
-        return 0
+        sum=0
+        for ii in self.invoices():
+            sum+=ii.sum_total()
+        return sum
+
+    def invoices(self):
+        return ProjectInvoice.objects.filter(project_id=self.pk)
 
 
 class SampleForm(Page):
@@ -375,6 +449,46 @@ class SampleForm(Page):
             self.app_name=APP_NAME
         return super(SampleForm,self).save()
 
+
+class Event(Page):
+    project_related = models.ForeignKey(
+        "project", verbose_name=_("project"), on_delete=models.CASCADE)
+    event_datetime = models.DateTimeField(
+        _("event_datetime"), auto_now=False, auto_now_add=False)
+    start_datetime = models.DateTimeField(
+        _("start_datetime"), auto_now=False, auto_now_add=False)
+    end_datetime = models.DateTimeField(
+        _("end_datetime"), auto_now=False, auto_now_add=False)
+    locations = models.ManyToManyField(
+        "map.location", blank=True, verbose_name=_("locations"))
+    # adder=models.ForeignKey("authentication.profile", verbose_name=_("profile"), on_delete=models.CASCADE)
+
+    def save(self, *args, **kwargs):
+        if self.app_name is None:
+            self.app_name=APP_NAME
+        if self.class_name is None:
+            self.class_name = "event"
+        return super(Event, self).save(*args, **kwargs)
+
+    def persian_event_datetime(self):
+        return PersianCalendar().from_gregorian(self.event_datetime)
+
+    def persian_start_datetime(self):
+        return PersianCalendar().from_gregorian(self.start_datetime)
+
+    def persian_end_datetime(self):
+        return PersianCalendar().from_gregorian(self.end_datetime)
+    
+    def start_datetime2(self):
+        return self.start_datetime.strftime("%Y-%m-%d %H:%M")
+
+    def end_datetime2(self):
+        return self.end_datetime.strftime("%Y-%m-%d %H:%M")
+
+    class Meta:
+        verbose_name = _("Event")
+        verbose_name_plural = _("رویداد ها")
+ 
 
 class Material(AccountingProduct):
 

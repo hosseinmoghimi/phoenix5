@@ -1,0 +1,28 @@
+{% load to_json %}
+<script>
+    let warehouses = JSON.parse(`{{ware_houses|to_json_warehouses|escapejs}}`)
+    let warehouses_app = new Vue({
+        el:"#warehouses-app",
+        data: {
+            warehouses: warehouses,
+            search_for:'',
+            waiting:false,
+        },
+        methods: {
+            filter:function(){
+                this.warehouses = warehouses.filter(warehouse => warehouse.title.indexOf(this.search_for) > -1)
+         
+            },
+            to_price: function (vall) {
+                let color='danger'
+                if (vall>0)
+                color='success'
+                vall=to_price(vall,"{{CURRENCY}}")
+                return `
+                    <span class="text-${color}">${vall}</span>
+                    `
+            }, 
+        }
+    })
+
+</script>

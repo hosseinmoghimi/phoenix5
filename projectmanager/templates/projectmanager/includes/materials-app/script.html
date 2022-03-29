@@ -1,15 +1,34 @@
 <script>
+    let materials = JSON.parse(`{{materials_s|escapejs}}`)
     let materials_app_data = {
-        materials: JSON.parse(`{{materials_s|escapejs}}`),
-        show_sell_prices:false,
+        materials:materials,
+        show_sell_prices: false,
+        search_for: "",
+        waiting:false,
     }
     let materials_app_methods = {
+        add:function(){
+
+        },
+        filter: function (search_for) {
+            this.materials = materials.filter((material) => {
+                return (material.title.indexOf(search_for) > -1)
+            })
+        },
         to_price: function (vall) {
             return to_price(vall, "{{CURRENCY}}")
         },
-        
+        percent: function (service) {
+            let aaa = 100
+            if (service.buy_price > 0) {
+
+                aaa = 100 * (service.unit_price - service.buy_price) / service.buy_price
+            }
+            return parseInt(aaa)
+        },
+
     }
-</script> 
+</script>
 <script>
     let materials_app = new Vue({
         el: "#materials-app",

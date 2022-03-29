@@ -5,6 +5,16 @@
 <script src="{% static 'vendor/js/popper.min.js' %}"></script>
 <script src="{% static 'utility/js/utility.js' %}"></script>
 <script src="{% static 'dashboard/js/plugins/bootstrap-notify.js' %}"></script>
+
+
+
+
+<script src="{% static 'persian/moment.js' %}"></script>
+<script src="{% static 'persian/moment-jalaali.js' %}"></script>
+<script src="{% static 'persian/vue-persian-datetime-picker-browser.js' %}"></script>
+
+
+
 {% if DEBUG %}
 <script src="{% static 'vendor/js/vue.js' %}"></script>
 
@@ -40,7 +50,6 @@
         return cookieValue;
     }
     const csrftoken = getCookie('csrftoken');
-    console.log(csrftoken)
 
 </script>
 {% if PUSHER_IS_ENABLE %}

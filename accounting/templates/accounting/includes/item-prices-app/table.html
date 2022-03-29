@@ -10,6 +10,9 @@
             تاریخ
         </th>
         <th>
+            واحد
+        </th>
+        <th>
             قیمت خرید
         </th>
         <th>
@@ -33,16 +36,16 @@
             </td>
             <td>
                 <div class="small">
-                    <span v-text="price.persian_date_added.slice(0,10)"></span>
+                    <span v-html="price.persian_date_added"></span>
 
-                </div>
-                <div class="small text-muted">
-                    <span v-text="price.persian_date_added.slice(11)"></span>
-
+               
                 </div>
 
             </td>
-
+            <td>
+                 
+                <span v-text="price.unit_name"></span>
+            </td>
             <td>
                 <span v-text="to_price(price.buy_price)"></span>
 
@@ -90,6 +93,10 @@
                 </div>
             </td>
 
+            <td>
+                {{price.unit_name}}
+
+            </td>
             <td>
                 {{price.buy_price|to_price}}
 

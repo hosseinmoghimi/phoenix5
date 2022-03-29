@@ -1,0 +1,105 @@
+{% load to_price %}
+{% load static %}
+{% load to_persian_date %}
+<div class="card">
+    <div class="card-header">
+        <h5>
+            {{transaction.title}}
+        </h5>
+    </div>
+    <div class="farsi card-body text-right">
+
+        <h5>
+            {{transaction.title}}
+        </h5>
+        <table class="table">
+            <tr>
+                <td>
+                    <div class="text-left">
+                        بستانکار
+                    </div>
+                </td>
+                <td>
+                    <a href="{{transaction.pay_from.get_absolute_url}}">
+                        <img src="{{transaction.pay_from.profile.image}}" class="rounded-circle" width="48" alt="">
+                        {{transaction.pay_from.title}}
+                    </a>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="text-left">
+                        بدهکار
+                    </div>
+                </td>
+                <td>
+                    <a href="{{transaction.pay_to.get_absolute_url}}">
+                        <img src="{{transaction.pay_to.profile.image}}" class="rounded-circle" width="48" alt="">
+
+                        {{transaction.pay_to.title}}
+                    </a>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="text-left">
+                        تاریخ
+                    </div>
+                </td>
+                <td>
+                    {{transaction.transaction_datetime|to_persian_datetime|safe}}
+
+                </td>
+            </tr>
+            <tr>
+
+                <td>
+                    <div class="text-left">
+                        نحوه پرداخت
+
+                    </div>
+                </td>
+                <td>
+                    {{transaction.payment_method}}
+
+                </td>
+            </tr>
+
+            <tr>
+
+                <td>
+                    <div class="text-left">
+                        مبلغ
+                    </div>
+                </td>
+                <td>
+                    <p class="rounded py-2 px-2" style="background-color: #0d4c0a;color:white;">
+                        {{transaction.amount|to_price}}
+
+                    </p>
+
+                    <p class="rounded py-2 px-2" style="background-color: #136a0d;color:white;">
+                        {{transaction.amount|to_horuf}} {{CURRENCY}}
+
+                    </p>
+                    <p class="rounded py-2 px-2" style="background-color: #309128;color:white;">
+                        {{transaction.amount|to_price_rial}}
+
+                    </p>
+
+                    <p class="rounded py-2 px-2" style="background-color: #45b83c;color:white;">
+                        {{transaction.amount|to_horuf_rial}} ریال
+
+                    </p>
+
+
+                </td>
+            </tr>
+
+        </table>
+
+
+
+
+    </div>
+</div>

@@ -1,0 +1,71 @@
+{% if account %}
+<script>
+
+    let account_id = parseInt("{{account.id}}")
+</script>
+{% else %}
+<script>
+
+    let account_id = 0
+</script>
+{% endif %}
+<script>
+
+    let payments = JSON.parse("{{payments_s|escapejs}}")
+    let payments_app = new Vue({
+        el: "#payments-app",
+        data: {
+            payments: payments,
+            payment_datetime: current_date,
+            title: "",
+            pay_to_id: account_id,
+            pay_from_id: account_id,
+            amount: 0,
+            description: "",
+            payment_method: "پیش نویس",
+            waiting: false,
+            show_add_form:false,
+            message: {
+                show: false,
+                color: "success",
+                body: "",
+            }
+        },
+        components: {
+            DatePicker: VuePersianDatetimePicker,
+
+        },
+        methods: {
+            to_price: function (vall) {
+                return to_price(vall, "{{CURRENCY}}")
+            },
+            add_payment: function () {
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    pay_to_id: parseInt(this.pay_to_id),
+                    pay_from_id: parseInt(this.pay_from_id),
+                    title: this.title,
+                    description: this.description,
+                    amount: parseInt(this.amount),
+                    payment_datetime: this.payment_datetime,
+                    payment_method: this.payment_method,
+
+                }
+                payments_app.waiting = true
+                let url = "{% url 'accounting:add_payment' %}"
+                $.post(url, payload).done((data) => {
+                    payments_app.waiting = false
+                    payments_app.payments.push(data.payment)
+                    if (data.result === 'SUCCEED') {
+                        this.message = { show: true, body: "با موفقیت ذخیره شد.", color: 'success' }
+                    }
+                    if (data.result === 'FAILED') {
+                        this.message = { show: true, body: "خطا در ذخیره سازی ", color: 'danger' }
+                    }
+
+                })
+
+            }
+        }
+    })
+</script>

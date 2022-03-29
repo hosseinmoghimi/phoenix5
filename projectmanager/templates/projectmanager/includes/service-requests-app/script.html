@@ -96,9 +96,22 @@
                 this.add_service_request_form_unit_price = service.unit_price
                 this.add_service_request_form_title = service.title
                 this.services = [service]
+
+                if (typeof item_prices != "undefined") {
+
+                    item_prices.forEach(item_price => {
+                        if (item_price.product_or_service_id == service.id) {
+
+                            this.add_service_request_form_unit_name = item_price.unit_name
+                            this.add_service_request_form_unit_price = item_price.sell_price
+                        }
+
+                    });
+                }
+
+
             },
             filter_list: function () {
-                console.log(this.add_service_request_form_title.length>3)
                 if (this.add_service_request_form_title) {
 
                     this.services = all_services.filter((item) => { return item.full_title.toUpperCase().indexOf(this.add_service_request_form_title.toUpperCase()) > -1 }).slice(0, 6);

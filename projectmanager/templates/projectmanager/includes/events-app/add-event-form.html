@@ -1,0 +1,67 @@
+{% load static %}
+{% if add_event_form %}
+<div class="text-right">
+
+    <button @click="show_add_event_form=true" v-if="!show_add_event_form" class="btn btn-primary">
+        <i class="fa fa-plus" aria-hidden="true"></i>
+        افزودن
+    </button>
+</div>
+<div v-if="show_add_event_form">
+
+    <form @submit.prevent="add_event">
+
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="exampleInputEmail1">.... </label>
+                    <date-picker v-model="event_datetime"></date-picker>
+
+                    <small id="emailHelp" class="form-text farsi text-muted">
+                        شناسه صفحه مرتبط را وارد کنید.
+                    </small>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="exampleInputEmail1">شروع</label>
+                    <date-picker v-model="start_datetime"></date-picker>
+
+                    <small id="emailHelp" class="form-text farsi text-muted">
+                        شناسه صفحه مرتبط را وارد کنید.
+                    </small>
+                </div>
+
+
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="exampleInputEmail1">پایان</label>
+                    <date-picker v-model="end_datetime"></date-picker>
+
+                    <small id="emailHelp" class="form-text farsi text-muted">
+                        شناسه صفحه مرتبط را وارد کنید.
+                    </small>
+                </div>
+            </div>
+            <div class="col-md-7">
+                <input required type="text" placeholder="شرح رویداد" class="form-control"
+                    v-model="add_event_form_title">
+            </div>
+            <div class="col-5 text-right">
+                <img v-if="waiting" width="32" src="{% static 'leo/img/loading.gif' %}" alt="">
+
+
+                <button v-if="!waiting" class="btn btn-success" type="submit">
+                    <i class="fa fa-plus"></i>
+                    افزودن
+                </button>
+                <button class="btn btn-outline-secondary" @click="show_add_event_form=false"
+                    type="reset">انصراف</button>
+
+
+            </div>
+        </div>
+    </form>
+</div>
+{% endif %}

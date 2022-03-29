@@ -1,0 +1,29 @@
+<script>
+    let url_add_page_tag = "{% url 'core:add_page_tag' %}"
+    let page_tags = JSON.parse(`{{page_tags_s|escapejs}}`)
+    let page_tags_app = new Vue({
+        el: "#page-tags-app",
+        data: {
+            new_tag: "",
+            page_tags: page_tags,
+            show_add_tag: false,
+        },
+        methods: {
+            add_page_tag: function () {
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    page_id: page_id,
+                    tag_title: this.new_tag,
+                }
+                let posting = $.post(url_add_page_tag, payload)
+                posting.done((data) => {
+                    if (data.result === 'SUCCEED') {
+                        
+                        page_tags_app.new_tag = ""
+                        page_tags_app.page_tags = data.page_tags
+                    }
+                })
+            },
+        }
+    })
+</script>

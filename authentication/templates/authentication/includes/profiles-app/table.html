@@ -1,0 +1,40 @@
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+
+            <th>
+
+            </th>
+            <th>
+
+            </th>
+        </thead>
+        <tbody>
+            <tr v-for="profile in profiles">
+                <td>
+                    {% include "authentication/includes/profiles-app/media.html" %}
+                </td>
+                <td>
+                    {% if perms.projectmanager.add_employee %}
+                    <form @submit.prevent="create_employee(profile.id)">
+                        {% csrf_token %}
+                        <button class="btn btn-warning" type="submit">
+                            ایجاد پرسنل
+                        </button>
+                    </form>
+                    {% endif %}
+
+                    {% if perms.accounting.add_account %}
+                    <form @submit.prevent="create_account(profile.id)">
+                        {% csrf_token %}
+                        <button class="btn btn-warning" type="submit">
+                            ایجاد حساب مالی
+                        </button>
+                    </form>
+                    {% endif %}
+
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>

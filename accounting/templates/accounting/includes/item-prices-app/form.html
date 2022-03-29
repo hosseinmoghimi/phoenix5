@@ -1,25 +1,53 @@
 <form @submit.prevent="add_price()">
     <div class="row">
+        {% if not product and not service %}
+
         <div class="col-md-3">
+
             <div class="form-group">
                 <label for="">کالا / خدمات </label>
-                <select v-model="item_id" class="form-control">
+                <select required v-model="item_id" class="form-control">
                     {% for item in items %}
 
                     <option value="{{item.id}}">{{item.title}}</option>
                     {% endfor %}
                 </select>
             </div>
+
+
+
+
+
+
         </div>
+
+        {% endif %}
+
+
+        {% if not account %}
+
 
 
         <div class="col-md-3">
             <div class="form-group">
                 <label for="">حساب</label>
-                <select v-model="account_id" class="form-control">
+                <select required v-model="account_id" class="form-control">
                     {% for account in accounts %}
 
                     <option value="{{account.id}}">{{account.title}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="col-md-3">
+            <div class="form-group">
+                <label for="">واحد</label>
+                <select required v-model="unit_name" class="form-control">
+                    {% for unit_name in unit_names %}
+
+                    <option value="{{unit_name}}">{{unit_name}}</option>
                     {% endfor %}
                 </select>
             </div>

@@ -1,0 +1,41 @@
+{% load to_json %}
+<script>
+    let search_app = new Vue({
+        el: "#search-app",
+        data: {
+            search_for: '',
+            waiting: false,
+            account_id: 0,
+            start_date: current_date,
+            end_date: current_date,
+
+        },
+        components: {
+            DatePicker: VuePersianDatetimePicker,
+
+        },
+        methods: {
+
+            search: function () {
+                let url = "{% url 'accounting:search_json' %}"
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    account_id: this.account_id,
+                    start_date: this.start_date,
+                    end_date: this.end_date,
+                    search_for: this.search_for,
+                }
+                console.log(payload)
+
+                $.post(url, payload).done((data) => {
+                    console.log(data)
+                    if (typeof financial_documents_app != 'undefined') {
+                        console.log(financial_documents_app.financial_documents.length)
+                        financial_documents_app.financial_documents = data.financial_documents
+                    }
+                })
+            },
+        }
+    })
+
+</script>

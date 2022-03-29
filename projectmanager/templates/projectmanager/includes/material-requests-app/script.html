@@ -1,48 +1,52 @@
 <script>
-    let material_requests=JSON.parse(`{{material_requests_s|escapejs}}`)
+    let material_requests = JSON.parse(`{{material_requests_s|escapejs}}`)
+</script>
+<script>
+    let material_requests_app_data={}
 </script>
 {% if add_material_request_form %}
 <script>
+
     let all_materials = JSON.parse(`{{all_materials_s|escapejs}}`)
     let url_add_material_request = "{% url 'projectmanager:add_material_request' %}"
-    let material_requests_app_data= {
-            employees:JSON.parse(`{{employees_s|escapejs}}`),
-            new_material_request_material_id: 1,
-            add_material_request_form_title: "",
-            materials: [],
-            add_material_request_form_unit_price: 0,
-            add_material_request_form_unit_name: "",
-            add_material_request_form_quantity: "",
-            add_material_request_form_description:"",
-            material_requests:material_requests,
-            waiting: false,
-            sum_material_requests: 0,
-            show_add_material_request_form: false,
-            add_material_request_form_employee_id: ""
-        }
+    material_requests_app_data = {
+        employees: JSON.parse(`{{employees_s|escapejs}}`),
+        new_material_request_material_id: 1,
+        add_material_request_form_title: "",
+        materials: [],
+        add_material_request_form_unit_price: 0,
+        add_material_request_form_unit_name: "",
+        add_material_request_form_quantity: "",
+        add_material_request_form_description: "",
+        material_requests: material_requests,
+        waiting: false,
+        sum_material_requests: 0,
+        show_add_material_request_form: false,
+        add_material_request_form_employee_id: ""
+    }
 </script>
 {% else %}
 <script>
-    let material_requests_app_data= {
-            material_requests:material_requests,
-            waiting: false,
-            sum_material_requests: 0,
-            show_add_material_request_form: false,
-        }
+    material_requests_app_data = {
+        material_requests: material_requests,
+        waiting: false,
+        sum_material_requests: 0,
+        show_add_material_request_form: false,
+    }
 </script>
 {% endif %}
 
 <script>
 
-   
+
     let material_requests_app = new Vue({
         el: "#material-requests-app",
         data: material_requests_app_data,
-        mounted:function(){
-            this.sum_material_requests=0
+        mounted: function () {
+            this.sum_material_requests = 0
             this.material_requests.forEach(material_request => {
-                this.sum_material_requests+=material_request.total
-                
+                this.sum_material_requests += material_request.total
+
             });
         },
         methods: {
@@ -71,7 +75,6 @@
                     description: this.add_material_request_form_description,
                     csrfmiddlewaretoken: csrfmiddlewaretoken
                 }
-                console.log(payload)
 
 
                 var posting = $.post(url_add_material_request, payload);
@@ -82,7 +85,6 @@
                 // Put the results in a div
                 posting.done(function (data) {
                     material_requests_app.waiting = false
-                    console.log(data)
 
                     if (data.result === 'SUCCEED') {
                         material_requests_app.material_requests.push(data.material_request)
@@ -103,9 +105,20 @@
                 this.add_material_request_form_unit_price = material.unit_price
                 this.add_material_request_form_title = material.title
                 this.materials = [material]
+                // if (typeof item_prices != "undefined") {
+
+                //     item_prices.forEach(item_price => {
+                //         if (item_price.product_or_service_id==material.id){
+
+                //             this.add_material_request_form_unit_name =item_price.unit_name
+                //             this.add_material_request_form_unit_price =item_price.unit_price
+                //         }
+                        
+                //     });
+                // }
             },
             filter_list: function () {
-                if (this.add_material_request_form_title.length>3) {
+                if (this.add_material_request_form_title.length > 3) {
 
                     this.materials = all_materials.filter(item => item.full_title.toUpperCase().includes(this.add_material_request_form_title.toUpperCase())).slice(0, 6);
                     try {

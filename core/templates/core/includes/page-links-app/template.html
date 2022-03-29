@@ -1,15 +1,22 @@
 <div id="accordion-page-links">
 
-    <div class="card mb-3" id="page-links-app">
-        <div class="card-header" id="headinglinks">
+
+    <div class="card" id="page-links-app">
+        <div class="card-header" id="heading-page-links">
             <h5 class="text-center">
-                <button class="btn btn-link" data-toggle="collapse" data-target="#collapselinks" aria-expanded="true"
-                    aria-controls="collapselinks">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-page-links" aria-expanded="true"
+                    aria-controls="collapse-page-links">
                     لینک ها
+
+                    <span v-if="links.length>0">
+                        <small class="text-danger mx-2">
+                            <span v-text="links.length"></span>
+                        </small>
+                    </span>
                 </button>
             </h5>
         </div>
-        <div id="collapselinks" class="collapse {% if page.links.all %}show{% endif %}" aria-labelledby="headinglinks"
+        <div id="collapse-page-links" class="collapse " aria-labelledby="heading-page-links"
             data-parent="#accordion-page-links">
 
             <div class="card-body">
@@ -32,7 +39,7 @@
 
                         {% if perms.core.delete_link %}
                         <a :href="link.get_delete_url" target="_blank" title="حذف" class="ml-2 docs-creator">
-                            <i class="fa fa-trash text-danger" ></i>
+                            <i class="fa fa-trash text-danger"></i>
                         </a>
                         {% endif %}
 
@@ -55,15 +62,15 @@
 
                 <form v-if="show_add_link" @submit.prevent="add_page_link()">
                     <div class="row">
-                        <div class="col-8">
-                            <input required type="text" v-model="new_link_title" class="farsi form-control"
+                        <div class="col-12">
+                            <input required type="text" v-model="new_link_title" class=" mb-2 farsi form-control"
                                 placeholder="عنوان لینک جدید">
-                            <input required type="text" v-model="new_link_url" class="farsi form-control"
+                            <input required type="text" v-model="new_link_url" class=" mb-2 farsi form-control"
                                 placeholder="آدرس لینک جدید">
 
                         </div>
-                        <div class="col-4">
-                            <button class="farsi btn btn-primary btn-block" type="submit">تایید</button>
+                        <div class="col-12">
+                            <button class="farsi btn btn-primary btn-block mb-2 " type="submit">تایید</button>
                             <button @click="show_add_link=!show_add_link" class="farsi btn btn-secondary btn-block"
                                 type="reset">انصراف</button>
 

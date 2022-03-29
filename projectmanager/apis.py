@@ -5,10 +5,10 @@ from core.serializers import PageLinkSerializer
 from .enums import *
 
 from utility.calendar import PersianCalendar
-from .repo import  MaterialRequestRepo, OrganizationUnitRepo, ServiceRequestRepo
+from .repo import  EventRepo, MaterialRequestRepo, OrganizationUnitRepo, ProjectRepo, ServiceRequestRepo
 from django.http import JsonResponse
 from .forms import *
-from .serializers import MaterialRequestSerializer, OrganizationUnitSerializer, ServiceRequestSerializer
+from .serializers import EventSerializer, MaterialRequestSerializer, OrganizationUnitSerializer, ProjectSerializer, ServiceRequestSerializer
 
 class AddOrganizationUnitApi(APIView):
     def post(self,request,*args, **kwargs):
@@ -40,7 +40,88 @@ class AddOrganizationUnitApi(APIView):
         
 
 
+   
+class AddProjectApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        log=1
+        context['result']=FAILED
+        if request.method=='POST':
+            log=2
+            AddProjectForm_=AddProjectForm(request.POST)
+            if AddProjectForm_.is_valid():
+                log=3
+                fm=AddProjectForm_.cleaned_data
+                title=fm['title']
+                parent_id=fm['parent_id']
+                
+                project=ProjectRepo(request=request).add_project(
+                    title=title,
+                    parent_id=parent_id,
+                )
+                if project is not None:
+                    context['project']=ProjectSerializer(project).data
+                    context['result']=SUCCEED
+        context['log']=log
+        return JsonResponse(context)
         
+class AddEventApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        context['result']=FAILED
+        log=1
+        if request.method=='POST':
+            log=2
+            add_event_form=AddEventForm(request.POST)
+            if add_event_form.is_valid():
+                log=3
+                title=add_event_form.cleaned_data['title']
+                event_datetime=add_event_form.cleaned_data['event_datetime']
+                start_datetime=add_event_form.cleaned_data['start_datetime']
+                end_datetime=add_event_form.cleaned_data['end_datetime']
+                project_id=add_event_form.cleaned_data['project_id']
+                event_datetime=PersianCalendar().to_gregorian(event_datetime)
+                start_datetime=PersianCalendar().to_gregorian(start_datetime)
+                end_datetime=PersianCalendar().to_gregorian(end_datetime)
+                event=EventRepo(request=request).add_event(start_datetime=start_datetime,end_datetime=end_datetime,event_datetime=event_datetime,project_id=project_id,title=title)
+                if event is not None:
+                    log=4
+                    context['event']=EventSerializer(event).data
+                    context['result']=SUCCEED
+        context['log']=log
+        return JsonResponse(context)
+    
+class EditProjectApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        log=1
+        context['result']=FAILED
+        if request.method=='POST':
+            log=2
+            edit_project_form=EditProjectForm(request.POST)
+            if edit_project_form.is_valid():
+                cd=edit_project_form.cleaned_data
+                archive=cd['archive']
+                title=cd['title']
+                project_id=cd['project_id']
+                percentage_completed=cd['percentage_completed']
+                start_date=cd['start_date']
+                end_date=cd['end_date']
+                status=cd['status']
+                employer_id=cd['employer_id']
+                weight=cd['weight']
+                contractor_id=cd['contractor_id']
+                
+                start_date=PersianCalendar().to_gregorian(start_date)
+                end_date=PersianCalendar().to_gregorian(end_date)
+                project=ProjectRepo(request=request).edit_project(weight=weight,title=title,archive=archive,contractor_id=contractor_id,employer_id=employer_id,project_id=project_id,percentage_completed=percentage_completed,start_date=start_date,end_date=end_date,status=status)
+                if project is not None: 
+                    context['project']=ProjectSerializer(project).data
+                    context['result']=SUCCEED
+        context['log']=log
+        return JsonResponse(context)
+        
+ 
 class AddMaterialRequestApi(APIView):
       def post(self,request,*args, **kwargs):
         context={}

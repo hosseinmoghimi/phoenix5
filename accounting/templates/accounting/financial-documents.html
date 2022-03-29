@@ -1,7 +1,11 @@
-{% extends "accounting/layout.html" %}
+{% extends "accounting/wide-layout.html" %}
 
 {% block content %}
 <div class="row">
+  <div class="col-md-12">
+    {% include "accounting/includes/search-app/form.html" %}
+
+  </div>
   <div class="col-md-12"> 
       {% include "accounting/includes/financial-documents-app/template.html" %}
       </div>
@@ -11,5 +15,6 @@
 
 {% block script %}
 {% include "accounting/includes/financial-documents-app/script.html" %}
+{% include "accounting/includes/search-app/script.html" %}
 
 {% endblock script %}

@@ -1,5 +1,5 @@
-from email.policy import default
-from .models import Download, Page, PageDownload, PageLink, Parameter,Picture
+from aiohttp import request
+from .models import ContactMessage, Download, Image, Page, PageComment, PageDownload, PageImage, PageLike, PageLink, PageTag, Parameter,Picture, Tag
 from .constants import *
 from django.db.models import Q
 from authentication.repo import ProfileRepo
@@ -63,13 +63,15 @@ class PageRepo:
         page=self.page(*args, **kwargs)
         profile=ProfileRepo(request=self.request).me
         likes=PageLike.objects.filter(page=page).filter(profile=profile)
+        my_like=False
         if len(likes)==0 and profile is not None and page is not None:
             my_like=PageLike(page=page,profile=profile)
             my_like.save()
-            return my_like
+            my_like=True
         else:
             likes.delete()
-            return None
+        likes_count=page.likes_count()
+        return (my_like,likes_count)
     
     def edit_page(self,*args, **kwargs):
         if not self.user.has_perm(APP_NAME+".change_basicpage"):
@@ -124,8 +126,105 @@ class PageRepo:
         #         pages_ids.append(project.id)
         return pages_ids
         # return BasicPage.objects.filter(id__in=pages_ids)
+    def add_tag(self,*args, **kwargs):
+        if not self.user.has_perm(APP_NAME+".change_tag"):
+            return
+        page=PageRepo(request=self.request).page(*args, **kwargs)
+        if page is None:
+            return
+        if not 'tag_title' in kwargs:
+            return
+        tag=Tag.objects.filter(title=kwargs['tag_title']).first()
+        if tag is None:
+            tag=Tag(title=kwargs['tag_title'])
+            tag.save()
+        aa=PageTag.objects.filter(page_id=page.id).filter(tag_id=tag.id)
+        if len(aa)>0:
+            aa.delete()
+        else:
+            page_tag=PageTag()
+            page_tag.tag=tag
+            page_tag.page=page
+            page_tag.save()
+        return PageTag.objects.filter(page_id=page.id)
 
+class PageLikeRepo():
+    def __init__(self,*args, **kwargs):
+        self.request=None
+        self.user=None
+        if 'user' in kwargs:
+            self.user=kwargs['user']
+        if 'request' in kwargs:
+            self.request=kwargs['request']
+            self.user=self.request.user
+        self.objects=PageLike.objects.all()
+    def list(self,*args, **kwargs):
+        objects=self.objects
+        if 'profile_id' in kwargs and kwargs['profile_id']>0:
+            objects=objects.filter(profile_id=kwargs['profile_id'])
+        if 'page_id' in kwargs and kwargs['page_id']>0:
+            objects=objects.filter(page_id=kwargs['page_id'])
+        return objects.order_by('-date_added')
     
+class PageCommentRepo:
+    def __init__(self,*args, **kwargs):
+        self.request=None
+        self.user=None
+        if 'user' in kwargs:
+            self.user=kwargs['user']
+        if 'request' in kwargs:
+            self.request=kwargs['request']
+            self.user=self.request.user
+        self.objects=PageComment.objects
+    def add_comment(self,comment,page_id,*args, **kwargs):
+        profile=ProfileRepo(user=self.user).me
+        page_comment=PageComment(comment=comment,page_id=page_id,profile=profile)
+        
+        page_comment.save()
+        return page_comment
+
+    def delete_comment(self,page_comment_id,*args, **kwargs):
+        profile=ProfileRepo(user=self.user).me
+        page_comment=PageComment.objects.filter(pk=page_comment_id).first()
+
+        if page_comment is not None and page_comment.profile==profile:
+            page_comment.delete()
+            return True
+        return False
+
+    def page_comment(self,*args, **kwargs):
+        if 'page_comment_id' in kwargs:
+            return self.objects.filter(pk=kwargs['page_comment_id']).first()
+        if 'pk' in kwargs:
+            return self.objects.filter(pk=kwargs['pk']).first()
+        if 'id' in kwargs:
+            return self.objects.filter(pk=kwargs['id']).first()
+        if 'title' in kwargs:
+            return self.objects.filter(pk=kwargs['title']).first()
+
+
+ 
+class TagRepo:
+    def __init__(self,*args, **kwargs):
+        self.request=None
+        self.user=None
+        if 'user' in kwargs:
+            self.user=kwargs['user']
+        if 'request' in kwargs:
+            self.request=kwargs['request']
+            self.user=self.request.user
+        self.objects=Tag.objects
+    
+
+    def tag(self,*args, **kwargs):
+        if 'tag_id' in kwargs:
+            return self.objects.filter(pk=kwargs['tag_id']).first()
+        if 'pk' in kwargs:
+            return self.objects.filter(pk=kwargs['pk']).first()
+        if 'id' in kwargs:
+            return self.objects.filter(pk=kwargs['id']).first()
+        if 'title' in kwargs:
+            return self.objects.filter(pk=kwargs['title']).first()
 
 class PictureRepo:
     
@@ -157,6 +256,10 @@ class PictureRepo:
             picture= self.objects.filter(app_name=self.app_name).filter(name=name).first()
             if picture is None:
                 picture=Picture(app_name=self.app_name,name=name)
+                picture.app_name=self.app_name
+                picture.name=name
+                if 'default' in kwargs:
+                    picture.image_origin=kwargs['default']
                 picture.save()
                 return picture
             # (picture,res) = self.objects.get_or_create(name=name,app_name=self.app_name)
@@ -266,6 +369,46 @@ class ParameterRepo:
         return objects
 
 
+class PageImageRepo:
+    def __init__(self,*args, **kwargs):
+        self.request=None
+        self.user=None
+        if 'user' in kwargs:
+            self.user=kwargs['user']
+        if 'request' in kwargs:
+            self.request=kwargs['request']
+            self.user=self.request.user
+        self.profile=ProfileRepo(request=self.request).me
+        self.objects=PageImage.objects
+    def add_page_image(self,title,image,*args, **kwargs):
+        
+        page=PageRepo(request=self.request).page(*args, **kwargs)
+        if page is not None:
+            my_pages_ids=PageRepo(request=self.request).my_pages_ids()
+            
+            if self.user.has_perm(APP_NAME+".add_pageimage") or page.id in my_pages_ids:
+                pass
+            else:
+                return
+        
+        # image=Image(title=title,image_main_origin=image)
+        # image.save()
+        new_page_image=PageImage(image_main_origin=image,page_id=page.id,title=title)
+        
+        new_page_image.save()
+        return new_page_image
+    def delete_page_image(self,image_id,page_id,*args, **kwargs):
+        if self.user.has_perm(APP_NAME+".delete_pageimage"):
+                
+            pi=PageImage.objects.filter(image_id=image_id).filter(page_id=page_id)
+            if len(pi)>0:
+                pi.delete()
+                if 'delete_image' in kwargs and kwargs['delete_image']:
+                    Image.objects.filter(pk=image_id).delete()
+
+                return True
+  
+
 class PageDownloadRepo:
     def __init__(self,*args, **kwargs):
         self.request=None
@@ -343,12 +486,47 @@ class PageLinkRepo:
                 pass
             else:
                 return
-        new_page_link=PageLink(title=title,page_id=page.id,url=url,icon_fa="fa fa-link")
+        new_page_link=PageLink(title=title,page_id=page.id,url=url,icon_fa="fa fa-link",profile=self.profile)
         new_page_link.new_tab=True
         new_page_link.save()
         return new_page_link
 
 
+class ContactMessageRepo:
+    def __init__(self,*args, **kwargs):
+        self.request = None
+        self.app_name=""
+        self.user = None
+        if 'request' in kwargs:
+            self.request = kwargs['request']
+            self.user = self.request.user
+        if 'user' in kwargs:
+            self.user = kwargs['user']
+        if 'app_name' in kwargs:
+            self.app_name = kwargs['app_name']
+        self.objects = ContactMessage.objects.filter(app_name=self.app_name)
+        self.me=ProfileRepo(user=self.user).me
+    def list(self):
+        objects=self.objects
+        return objects
+
+    def add(self,*args, **kwargs):
+        contact_message=ContactMessage()
+        contact_message.app_name=self.app_name
+        if 'full_name' in kwargs:
+            contact_message.full_name=kwargs['full_name']
+        if 'subject' in kwargs:
+            contact_message.subject=kwargs['subject']
+        if 'email' in kwargs:
+            contact_message.email=kwargs['email']
+        if 'message' in kwargs:
+            contact_message.message=kwargs['message']
+        if 'mobile' in kwargs:
+            contact_message.mobile=kwargs['mobile']
+        contact_message.save()
+        return contact_message
+
+        
 class DownloadRepo:
     def __init__(self,*args, **kwargs):
         self.request=None

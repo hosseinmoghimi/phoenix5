@@ -1,0 +1,27 @@
+<script>
+    let letters_app_data = {
+        letters: JSON.parse(`{{letters_s|escapejs}}`),
+        show_sell_prices:false,
+    }
+    let letters_app_methods = {
+        to_price: function (vall) {
+            return to_price(vall, "{{CURRENCY}}")
+        },
+        percent: function (service) {
+            let aaa = 100
+            if (service.buy_price > 0) {
+
+                aaa = 100 * (service.unit_price - service.buy_price) / service.buy_price
+            }
+            return parseInt(aaa)
+        },
+        
+    }
+</script> 
+<script>
+    let letters_app = new Vue({
+        el: "#letters-app",
+        data: letters_app_data,
+        methods: letters_app_methods,
+    })
+</script>

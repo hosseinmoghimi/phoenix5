@@ -10,13 +10,17 @@ media/
 
 *.cnf
 server_settings.py
+server_urls.py
 secret/
 
 _run.bat
+__run.sh
 _migrate.bat
+__migrate.sh
 _collectstatic.bat
 _make_migrations.bat
 _createsuperuser.bat
+__createsuperuser.sh
 _activate.bat
 
 

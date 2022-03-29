@@ -1,4 +1,5 @@
 import imp
+from urllib import request
 from rest_framework.authtoken.models import Token
 from django.utils import timezone
 from core.constants import FAILED, SUCCEED
@@ -6,8 +7,11 @@ from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.models import User
 from .models import Profile
 from .apps import APP_NAME
+from django.db.models import Q
+
 
 class ProfileRepo():
+
     def __init__(self,*args, **kwargs):
         self.request=None
         self.me=None
@@ -19,12 +23,46 @@ class ProfileRepo():
             self.user=self.request.user
         if 'user' in kwargs:
             self.user=kwargs['user']
-        if 'forced' in kwargs:
+        if 'forced' in kwargs and kwargs['forced']:
             self.objects = Profile.objects.all()
-        elif self.user is not None and self.user and self.user.is_authenticated:
+        else:
             self.objects = Profile.objects.filter(enabled=True)
-            self.me = self.objects.filter(user=self.user).first()         
-        self.objects = Profile.objects.filter(enabled=True)
+
+        if self.user is not None and self.user and self.user.is_authenticated:
+            self.me = self.objects.filter(user=self.user).first()
+            if self.user.has_perm(APP_NAME+".view_profile"):
+                self.objects = Profile.objects.all()
+    def get_default(self,*args, **kwargs):
+        if 'user' in kwargs and kwargs['user'] is not None:
+            objects=self.objects.filter(user=kwargs['user'])
+        if 'request' in kwargs and kwargs['request'] is not None:
+            objects=self.objects.filter(user=kwargs['request'].user)
+        default_profiles=objects.filter(default=True)
+        if len(default_profiles)==1:
+            return default_profiles.first()
+        elif len(default_profiles)>0:
+            return self.set_default(default_profiles.first().id)
+    
+    def set_default(self,*args, **kwargs):
+        profile=self.profile(*args, **kwargs)
+        if profile is None:
+            return
+        if self.request.user.has_perm(APP_NAME+".change_profile"):
+            pass
+        elif profile.user is not None and profile.user==self.request.user:
+            pass
+        else:
+            return
+        user=profile.user
+        if user is not None:
+            profiles=Profile.objects.filter(user=user).exclude(id=profile.id)
+            for other_profiles in profiles:
+                other_profiles.default=False
+                other_profiles.save()
+                
+        profile.default=False
+        profile.save()
+        return profile
 
     def login_by_token(self,*args, **kwargs):
         if 'token' in kwargs:
@@ -84,6 +122,7 @@ class ProfileRepo():
         
         message="ناموفق"
         return (result,profile,request,message)
+    
     def change_profile_image(self,profile_id,image):
         profile=self.profile(profile_id=profile_id)
         if profile is not None:
@@ -94,38 +133,45 @@ class ProfileRepo():
        
     def profile(self,*args, **kwargs):
         pk=0
-        if 'profile_id' in kwargs:
+        if 'profile' in kwargs and kwargs['profile'] is not None:
+            return kwargs['profile']
+        if 'profile_id' in kwargs and kwargs['profile_id'] is not None:
             pk=kwargs['profile_id']
             return self.objects.filter(pk=pk).first()
-        elif 'pk' in kwargs:
+        elif 'pk' in kwargs and kwargs['pk'] is not None:
             pk=kwargs['pk']
             return self.objects.filter(pk=pk).first()
-        elif 'id' in kwargs:
+        elif 'id' in kwargs and kwargs['id'] is not None:
             pk=kwargs['id']
             return self.objects.filter(pk=pk).first()
-        elif 'username' in kwargs:
+        elif 'username' in kwargs and kwargs['username'] is not None:
             username=kwargs['username']
-            return Profile.objects.filter(user__username=username).first()
+            return self.objects.filter(user__username=username).first()
         elif 'user' in kwargs:
             user=kwargs['user']
-            return Profile.objects.filter(user=user).first()
-
+            return self.objects.filter(user=user).first()
     
     def logout(self,*args, **kwargs):
         if 'request' in kwargs:
             logout(request=kwargs['request'])
         else:
             logout(request=self.request)
-            
 
-    def login(self,request,username,password):
+    def login(self,request,*args, **kwargs):
         logout(request=request)
-        user=authenticate(request=request,username=username,password=password)
-        if user is not None:
-            login(request,user)
-            if user.is_authenticated:
-                return request
-        return None
+        if 'user' in kwargs:
+            user=kwargs['user']
+            if user is not None:
+                login(request,user)
+                if user.is_authenticated:
+                    return (request,user)
+        if 'username' in kwargs and 'password' in kwargs:
+            user=authenticate(request=request,username=kwargs['username'],password=kwargs['password'])
+            if user is not None:
+                login(request,user)
+                if user.is_authenticated:
+                    return (request,user)
+    
     def login_as_user(self,username,*args, **kwargs):
         if 'force' in kwargs and kwargs['force']:
             pass
@@ -141,10 +187,15 @@ class ProfileRepo():
         return self.request
         
     def list(self,*args, **kwargs):
+        objects=self.objects.filter(pk=0)
         if self.user.has_perm(APP_NAME+".view_profile"):
-            return Profile.objects.all()
-        return Profile.objects.filter(pk=0)
-    
+            objects= Profile.objects.all()
+        if 'search_for' in kwargs:
+            search_for=kwargs['search_for']
+            objects =objects.filter(Q(user__first_name__contains=search_for)|Q(user__last_name__contains=search_for))
+        if 'user_id' in kwargs and kwargs['user_id'] is not None:
+            objects=objects.filter(user_id=kwargs['user_id'])
+        return objects
 
     def edit_profile(self,*args, **kwargs):
         profile_id=0

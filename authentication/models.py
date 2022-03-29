@@ -3,6 +3,8 @@ from datetime import datetime
 from phoenix.settings import ADMIN_URL, MEDIA_URL, STATIC_URL
 from django.db import models
 
+from utility.utils import LinkHelper
+
 from .enums import ProfileStatusEnum
 from django.shortcuts import reverse
 from django.utils.translation import gettext as _
@@ -43,7 +45,7 @@ if CREATE_PROFILE_ON_USER_ADD:
 
 
 
-class Profile(models.Model):
+class Profile(models.Model,LinkHelper):
     user=models.OneToOneField(settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,null=True,blank=True)
     mobile=models.CharField(_("mobile"),null=True,blank=True, max_length=50)
@@ -51,10 +53,12 @@ class Profile(models.Model):
     address=models.CharField(_("address"),null=True,blank=True, max_length=50)
     image_origin=models.ImageField(_("image"),null=True,blank=True, upload_to=IMAGE_FOLDER+"profile/", height_field=None, width_field=None, max_length=None)
     header_origin=models.ImageField(_("header_origin"),null=True,blank=True, upload_to=IMAGE_FOLDER+"profile/header/", height_field=None, width_field=None, max_length=None)
-    enabled=models.BooleanField(_("enabled"),default=True)
+    enabled=models.BooleanField(_("enabled"),default=False)
+    default=models.BooleanField(_("default"),default=False)
     can_login=models.BooleanField(_("can login ?"),default=False)
     status=models.CharField(_("status"),choices=ProfileStatusEnum.choices,default=ProfileStatusEnum.AAA, max_length=50)
-     
+    class_name='profile' 
+    app_name=APP_NAME
     def get_dashboard_url(self):
         return ''
         return reverse(APP_NAME+":dashboard",kwargs={'pk':self.pk})
@@ -134,9 +138,7 @@ class Profile(models.Model):
     def get_reset_password_url(self):
         return ''
         return reverse(APP_NAME+":reset_password_view", kwargs={"profile_id": self.pk})
-
-    def get_edit_url(self):
-        return f"{ADMIN_URL}{APP_NAME}/profile/{self.pk}/change/"
+ 
 
 
 

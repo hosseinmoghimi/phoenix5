@@ -5,71 +5,25 @@
 {% block content %}
 <h4 class="text-center">
     {{financial_document.title}}
-    {% if perms.hesabyar.change_financialdocument %}
-    <a href="{{financial_document.get_edit_url}}" target="_blank" title="ویرایش" class="mx-2"><i
-            class="fa fa-edit text-info"></i></a>
-    {% endif %}
 
-    {% if perms.hesabyar.delete_financialdocument %}
-    <a href="{{financial_document.get_delete_url}}" target="_blank" title="حذف" class="mx-2"><i
-            class="fa fa-trash text-danger"></i></a>
-    {% endif %}
 </h4>
 
 
 <div class="row">
     <div class="col-md-12">
-        <div class="card">
-            <div class="card-body">
+        {% include "accounting/includes/financial-document-app/brief.html" %}
 
-
-
-                <p>
-
-                    حساب مربوطه:
-                    <a href="{{financial_document.account.get_absolute_url}}">
-
-                        {{financial_document.account.title}}
-                    </a>
-                    {{financial_document|to_transaction_side|safe}}
-
-                    <br>
-                    تاریخ :
-                    {{financial_document.transaction.transaction_datetime|to_persian_datetime|safe}}
-                    <br>
-
-                    بدهکار :
-                    {{financial_document.bedehkar|to_price}}
-                    <br>
-                    بستانکار :
-                    {{financial_document.bestankar|to_price}}
-                    <br>
-                    مانده :
-                    {{financial_document.rest|to_price}}
-                    <br>
-                    تراکنش مربوطه:
-                    <a href="{{financial_document.transaction.get_absolute_url}}">
-
-                        {{financial_document.transaction.title}}
-                    </a>
-                </p>
-                {% for fd in financial_document1.fds %}
-                <div>
-                    <a href="{{fd.get_absolute_url}}">{{fd.title}}</a>
-                </div>
-
-                {% endfor %}
-            </div>
-        </div>
     </div>
-<div class="col-md-12">
 
-    {% include "accounting/includes/financial-balances.html" %}
-</div>
-   
+    <div class="col-md-12">
+
+        {% include "accounting/includes/financial-balances-app/template.html" %}
+    </div>
+  
 </div>
 {% endblock content %}
 
 {% block script %}
+
 
 {% endblock script %}

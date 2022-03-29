@@ -1,0 +1,49 @@
+{% load static %}
+
+{% load to_persian_date %}
+<div id="accordion-events">
+
+    <div class="card" id="events-app">
+        <div class="card-header" id="heading-events">
+            <h5 class="text-center">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-events" aria-expanded="true"
+                    aria-controls="collapse-events">
+                    رویداد ها
+
+                    <span v-if="events.length>0">
+                        <small class="text-danger mx-2">
+                            <span v-text="events.length"></span>
+                        </small>
+                    </span>
+
+                </button>
+
+            </h5>
+
+        </div>
+        <div id="collapse-events" class="collapse" aria-labelledby="heading-events" data-parent="#accordion-events">
+
+            <div class="card-body">
+                {% if project %}
+
+                <p>
+
+                    <a href="{{project.get_event_chart_url}}">
+                        نمودار رویداد های پروژه
+                    </a>
+                </p>
+                {% endif %}
+
+                {% include "projectmanager/includes/events-app/table.html" %}
+              
+            </div>
+            {% if add_event_form %}
+
+            <div class="card-footer">
+                {% include "projectmanager/includes/events-app/add-event-form.html" %}
+
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>

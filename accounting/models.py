@@ -1,5 +1,8 @@
+from authentication.models import IMAGE_FOLDER
+from phoenix.server_settings import STATIC_URL
+from phoenix.settings import MEDIA_URL
 from utility.currency import to_price
-from utility.calendar import PERSIAN_MONTH_NAMES, PersianCalendar
+from utility.calendar import PERSIAN_MONTH_NAMES, PersianCalendar,to_persian_datetime_tag
 from core.middleware import get_request
 from django.db import models
 from core.models import Page
@@ -10,7 +13,7 @@ from utility.utils import LinkHelper
 from .enums import *
 from tinymce.models import HTMLField
 from core.enums import ColorEnum,UnitNameEnum
-
+from django.utils import timezone
  
 class Asset(Page,LinkHelper):
     
@@ -31,13 +34,16 @@ class Asset(Page,LinkHelper):
 class Price(models.Model,LinkHelper):
     account=models.ForeignKey("account", verbose_name=_("account"), on_delete=models.CASCADE)
     product_or_service=models.ForeignKey("productorservice", verbose_name=_("product_or_service"), on_delete=models.CASCADE)
+    unit_name=models.CharField(_("unit_name"),choices=UnitNameEnum.choices,default=UnitNameEnum.ADAD, max_length=50)
     sell_price=models.IntegerField(_("فروش"),default=0)
     buy_price=models.IntegerField(_("خرید"),default=0)
     date_added=models.DateTimeField(_("date_added"), auto_now=False, auto_now_add=True)
     app_name=APP_NAME
     class_name="price"
-    def persian_date_added(self):
-        return PersianCalendar().from_gregorian(self.date_added)
+    def persian_date_added(self,no_tag=False):
+        if no_tag:
+            return PersianCalendar().from_gregorian(self.date_added)
+        return to_persian_datetime_tag(self.date_added)
     def profit_percentage(self):
         if self.buy_price<=0:
             return 100
@@ -47,7 +53,7 @@ class Price(models.Model,LinkHelper):
         verbose_name_plural = _("Prices")
 
     def __str__(self):
-        return f"""{self.product_or_service.title} @ {self.account} {self.persian_date_added()}"""
+        return f"""{self.product_or_service.title} @ {self.account} {self.persian_date_added(no_tag=True)}"""
 
 
 class Transaction(Page,LinkHelper):
@@ -82,27 +88,30 @@ class Transaction(Page,LinkHelper):
         if self.transaction_datetime is None:
             from django.utils import timezone
             self.transaction_datetime=timezone.now()
+        print(self.pay_from_id)
         super(Transaction,self).save(*args, **kwargs)
         # FinancialDocument.objects.filter(transaction=self).delete()
 
         fd_bedehkar=FinancialDocument.objects.filter(transaction=self).filter(account_id=self.pay_to.id).first()
         if fd_bedehkar is None:
-            fd_bedehkar=FinancialDocument(transaction=self,account_id=self.pay_to.id)
+            fd_bedehkar=FinancialDocument(transaction=self,account_id=self.pay_to.id,direction=FinancialDocumentTypeEnum.BEDEHKAR)
         fd_bedehkar.bestankar=0
         fd_bedehkar.bedehkar=self.amount
         fd_bedehkar.save()
 
         fd_bestankar=FinancialDocument.objects.filter(transaction=self).filter(account_id=self.pay_from.id).first()
         if fd_bestankar is None:
-            fd_bestankar=FinancialDocument(transaction=self,account_id=self.pay_from.id)
+            fd_bestankar=FinancialDocument(transaction=self,account_id=self.pay_from.id,direction=FinancialDocumentTypeEnum.BESTANKAR)
         fd_bestankar.bestankar=self.amount
         fd_bestankar.bedehkar=0
         fd_bestankar.save()
 
     @property
-    def persian_transaction_datetime(self):
-        return PersianCalendar().from_gregorian(self.transaction_datetime)
- 
+    def persian_transaction_datetime(self,no_tag=False):
+        if no_tag:
+            return PersianCalendar().from_gregorian(self.transaction_datetime)
+        return to_persian_datetime_tag(self.transaction_datetime)
+
 
 class ProductOrService(Page):
 
@@ -181,11 +190,25 @@ class Service(ProductOrService):
 
 
 class Account(models.Model,LinkHelper):
+    logo_origin=models.ImageField(_("logo"), null=True,blank=True,upload_to=IMAGE_FOLDER+"account/", height_field=None, width_field=None, max_length=None)
     title=models.CharField(_("title"), null=True,blank=True,max_length=500)
     profile=models.ForeignKey("authentication.profile", verbose_name=_("profile"), on_delete=models.CASCADE)
     class_name="account"
     app_name=APP_NAME
+    def balance_rest(self):
+        return self.balance['rest']
+    def invoices(self):
+        return Invoice.objects.filter(models.Q(pay_from=self)|models.Q(pay_to=self))
 
+    def logo(self):
+        if self.logo_origin:
+            return MEDIA_URL+str(self.logo_origin)
+        return self.profile.image
+        # return f"{STATIC_URL}{APP_NAME}/img/account.png"
+    @property
+    def employee(self):
+        from projectmanager.models import Employee
+        return Employee.objects.filter(id=self.pk).first()
     class Meta:
         verbose_name = _("Account")
         verbose_name_plural = _("Accounts")
@@ -198,8 +221,13 @@ class Account(models.Model,LinkHelper):
         return self.title
 
     def save(self,*args, **kwargs):
+        # from projectmanager.models import Employee
+        # a=Account.objects.filter(fff="")
         if self.title is None or self.title=="":
-            self.title=self.profile.name
+            if self.profile is not None:
+                self.title=self.profile.name
+            else:
+                self.title=self.profile_ptr_id
         super(Account,self).save(*args, **kwargs)
     
     @property
@@ -283,8 +311,9 @@ class FinancialDocument(models.Model,LinkHelper):
     document_datetime=models.DateTimeField(_("document_datetime"), auto_now=False, auto_now_add=True)
     transaction=models.ForeignKey("transaction",verbose_name=_("transaction"), on_delete=models.CASCADE)
     tags=models.ManyToManyField("FinancialDocumentTag", blank=True,verbose_name=_("tags"))
-    app_name=APP_NAME
     color=models.CharField(_("color"),max_length=50,choices=ColorEnum.choices,default=ColorEnum.PRIMARY)
+    direction=models.CharField(_("direction"),max_length=50,choices=FinancialDocumentTypeEnum.choices,default=FinancialDocumentTypeEnum.BESTANKAR)
+    app_name=APP_NAME
     class_name="financialdocument"
 
     @property
@@ -309,9 +338,10 @@ class FinancialDocument(models.Model,LinkHelper):
 
 
     @property
-    def persian_document_datetime(self):
-        return PersianCalendar().from_gregorian(self.document_datetime)
-     
+    def persian_document_datetime(self,no_tag=False):
+        if no_tag:
+            return PersianCalendar().from_gregorian(self.document_datetime)
+        return to_persian_datetime_tag(self.document_datetime)
     @property
     def title(self):
         return self.transaction.title 
@@ -325,29 +355,33 @@ class FinancialDocument(models.Model,LinkHelper):
 
     def __str__(self):
         return f"""{self.account.title} : {self.transaction.title} : {self.transaction.amount}"""
-    def normalize_sub_accounts(self,*args, **kwargs):
-        aaa=FinancialBalance.objects.filter(financial_document=self).filter(title=FinancialBalanceTitleEnum.MISC)
-        aaa.delete()
-        aaa=FinancialBalance.objects.filter(financial_document=self)
+    def normalize_balances(self,*args, **kwargs):
+        balances=FinancialBalance.objects.filter(financial_document=self)
         sum_bestankar=0
         sum_bedehkar=0
-        for a in aaa:
-            sum_bestankar+=a.bestankar
-            sum_bedehkar+=a.bedehkar
-        
-        b=FinancialBalance()
-        b.financial_document=self
-        b.title==FinancialBalanceTitleEnum.MISC
-        b.bestankar=self.bestankar-sum_bestankar
-        b.bedehkar=self.bedehkar-sum_bedehkar
-        if b.bedehkar==0 and b.bestankar==0:
-            return 
-        else:
-            b.save()
+        for balance in balances:
+            sum_bestankar+=balance.bestankar
+            sum_bedehkar+=balance.bedehkar
+        if not sum_bestankar==self.bestankar or not sum_bedehkar==self.bedehkar:
+            b=FinancialBalance.objects.filter(financial_document=self).filter(title=FinancialBalanceTitleEnum.MISC).first()
+            if b is None:
+                b=FinancialBalance()
+                b.financial_document=self
+                b.title==FinancialBalanceTitleEnum.MISC
+            b.bestankar=self.bestankar-sum_bestankar
+            b.bedehkar=self.bedehkar-sum_bedehkar
+            if b.bedehkar==0 and b.bestankar==0:
+                return 
+            else:
+                b.save()
     def save(self,*args, **kwargs):
         super(FinancialDocument,self).save(*args, **kwargs)
-        self.normalize_sub_accounts()
        
+    def is_bestankar(self):
+        return self.bestankar>0 
+    def is_bedehkar(self):
+        return self.bedehkar>0
+
 
 class FinancialBalance(models.Model,LinkHelper):
     app_name=APP_NAME
@@ -385,8 +419,11 @@ class FinancialDocumentTag(models.Model):
 
 class Cheque(Transaction,LinkHelper):
     cheque_date=models.DateField(_("تاریخ چک"), auto_now=False, auto_now_add=False)
-    def persian_cheque_date(self):
-        return PersianCalendar().from_gregorian(self.cheque_date)
+    
+    def persian_cheque_date(self,no_tag=False):
+        if no_tag:
+            return PersianCalendar().from_gregorian(self.cheque_date)
+        return to_persian_datetime_tag(self.cheque_date)
     class Meta:
         verbose_name = _("چک")
         verbose_name_plural = _("چک ها")
@@ -442,7 +479,9 @@ class Invoice(Transaction):
     invoice_datetime=models.DateTimeField(_("تاریخ فاکتور"), auto_now=False, auto_now_add=False)
     ship_fee=models.IntegerField(_("هزینه حمل"),default=0)
     discount=models.IntegerField(_("تخفیف"),default=0)
-    
+
+    def get_print_url(self):
+        return reverse(APP_NAME+":invoice_print",kwargs={'pk':self.pk})
     def editable(self):
         if self.status==TransactionStatusEnum.DRAFT:
             return True
@@ -451,26 +490,16 @@ class Invoice(Transaction):
         return False
     def get_title(self):
         return self.title or f"فاکتور شماره {self.pk}"
-    @property
-    def customer(self):
-        return self.pay_to
-    @property
-    def seller(self):
-        return Store.objects.filter(pk=self.pay_from.pk).first()
-
-
+  
     def get_edit_url2(self):
         return reverse(APP_NAME+":edit_invoice",kwargs={'pk':self.pk})
     def get_print_url(self):
         return reverse(APP_NAME+":invoice_print",kwargs={'pk':self.pk})
-    # @property
-    # def title(self):
-    #     try:
-
-    #         return "فاکتور شماره "+str(self.pk)
-    #     except:
-    #         return "فاکتور شماره 0"
-    def persian_invoice_datetime(self):
+    
+    
+    def persian_invoice_datetime_tag(self):
+        return to_persian_datetime_tag(self.invoice_datetime)
+    def persian_invoice_datetime(self,no_tag=False):
         return PersianCalendar().from_gregorian(self.invoice_datetime)
     def tax_amount(self):
         
@@ -486,17 +515,18 @@ class Invoice(Transaction):
     def sum_total(self):
         sum=self.lines_total()
         sum+=self.ship_fee
-        sum+=((sum*self.tax_percent)/100.0)
+        sum+=self.tax_amount()
         sum-=self.discount
         return sum
     def save(self,*args, **kwargs):
-        
+        if self.class_name is None:
+            self.class_name='invoice' 
+        if self.app_name is None:
+            self.app_name=APP_NAME
+        if self.title is None or self.title=="":
+            self.title=f"فاکتور شماره {self.pk}"
         self.amount=self.sum_total()
         super(Invoice,self).save(*args, **kwargs)
-        self.class_name='invoice'
-        if self.title is None or self.title=="":
-            self.title=f"فاکتورشماره {self.pk}"
-            self.save()
       
     class Meta:
         verbose_name = _("Invoice")
@@ -534,83 +564,7 @@ class InvoiceLine(models.Model):
     def get_absolute_url(self):
         return reverse("InvoiceLine_detail", kwargs={"pk": self.pk})
 
-
-class WareHouse(Page):
-    # store=models.ForeignKey("store",related_name="ware_houses", verbose_name=_("store"), on_delete=models.CASCADE)
-    address=models.CharField(_("address"),null=True,blank=True, max_length=50)
-    tel=models.CharField(_("tel"),null=True,blank=True, max_length=50)
-    owner=models.ForeignKey("account", verbose_name=_("owner"), on_delete=models.CASCADE)
-    def get_print_url(self):
-        return reverse(APP_NAME+":ware_house_print",kwargs={'pk':self.pk})
-
-    class Meta:
-        verbose_name = _("WareHouse")
-        verbose_name_plural = _("WareHouses")
-
-    def save(self,*args, **kwargs):
-        self.class_name="warehouse"
-        return super(WareHouse,self).save(*args, **kwargs)
-
-
-class Guarantee(models.Model,LinkHelper):
-    invoice=models.ForeignKey("invoice", verbose_name=_("فاکتور"), on_delete=models.CASCADE)
-    product=models.ForeignKey("product", verbose_name=_("کالا"), on_delete=models.CASCADE)
-    start_date=models.DateField(_("شروع گارانتی"), auto_now=False, auto_now_add=False)
-    end_date=models.DateField(_("پابان گارانتی"), auto_now=False, auto_now_add=False)
-    status=models.CharField(_("وضعیت"),choices=GuaranteeStatusEnum.choices,default=GuaranteeStatusEnum.VALID, max_length=50)
-    type=models.CharField(_("نوع گارانتی"),choices=GuaranteeTypeEnum.choices,default=GuaranteeTypeEnum.REPAIR, max_length=50)
-    serial_no=models.CharField(_("شماره سریال"), max_length=50)
-    conditions=models.CharField(_("شرایط"),null=True,blank=True, max_length=5000)
-    description=HTMLField(_("توضیحات"),null=True,blank=True, max_length=50000)
-    class_name="guarantee"    
-    def persian_end_date(self):
-        return PersianCalendar().from_gregorian(self.end_date)
-    def persian_start_date(self):
-        return PersianCalendar().from_gregorian(self.start_date)
-    class Meta:
-        verbose_name = _("Guarantee")
-        verbose_name_plural = _("Guarantees")
-            
-
-class WareHouseSheet(models.Model,LinkHelper):
-    date_added=models.DateTimeField(_("date_added"), auto_now=False, auto_now_add=True)
-    date_registered=models.DateTimeField(_("date_registered"), auto_now=False, auto_now_add=False)
-    creator=models.ForeignKey("authentication.profile", verbose_name=_("creator"), on_delete=models.CASCADE)    
-    invoice=models.ForeignKey("invoice", verbose_name=_("invoice"), on_delete=models.CASCADE)    
-    product=models.ForeignKey("product", verbose_name=_("product"), on_delete=models.CASCADE)    
-    quantity=models.IntegerField(_("quantity"))
-    unit_name=models.CharField(_("unit_name"),choices=UnitNameEnum.choices,default=UnitNameEnum.ADAD, max_length=50)
-    direction=models.CharField(_("direction"),choices=WareHouseSheetDirectionEnum.choices, max_length=50)
-    ware_house=models.ForeignKey("warehouse", verbose_name=_("ware_house"), on_delete=models.CASCADE)
-    status=models.CharField(_("status"),choices=WareHouseSheetStatusEnum.choices,default=WareHouseSheetStatusEnum.INITIAL, max_length=50)
-    description=HTMLField(_("description"),null=True,blank=True,max_length=50000)
-    class_name="warehousesheet"
-    class Meta:
-        verbose_name = _("WareHouseSheet")
-        verbose_name_plural = _("WareHouseSheets")
-    def persian_date_registered(self):
-        return PersianCalendar().from_gregorian(self.date_registered)
-
-    def save(self,*args, **kwargs):
-        self.class_name="warehousesheet"
-        super(WareHouseSheet,self).save(*args, **kwargs)
-    def available(self):
-        a=0;
-        for aa in WareHouseSheet.objects.filter(ware_house=self.ware_house).filter(product=self.product).filter(status=WareHouseSheetStatusEnum.DONE):
-            if aa.direction==WareHouseSheetDirectionEnum.IMPORT:
-                a+=aa.quantity
-            if aa.direction==WareHouseSheetDirectionEnum.EXPORT:
-                a-=aa.quantity
-        return a
-    def color(self):
-        color="primary"
-        if self.direction==WareHouseSheetDirectionEnum.IMPORT:
-            color="success"
-        if self.direction==WareHouseSheetDirectionEnum.EXPORT:
-            color="danger"
-        return color
-
-
+  
 class Spend(Transaction,LinkHelper):    
     spend_type=models.CharField(_("spend_type"),choices=SpendTypeEnum.choices, max_length=50)
     class_name="spend"
@@ -633,34 +587,17 @@ class Spend(Transaction,LinkHelper):
 class Payment(Transaction):
     class Meta:
         verbose_name = _("Payment")
-        verbose_name_plural = _("Payments")
+        verbose_name_plural = _("پرداخت ها")
 
     def save(self,*args, **kwargs):
-        self.class_name="payment"
+        if self.app_name is None:
+            self.app_name=APP_NAME 
+        if self.class_name is None:
+            self.class_name='payment' 
+        if self.transaction_datetime is None:
+            self.transaction_datetime=timezone.now()
         super(Payment,self).save(*args, **kwargs)
-        financial_year=FinancialYear.get_by_date(date=self.transaction_datetime)
-        category,aa=FinancialDocumentCategory.objects.get_or_create(title="واریز")
-        FinancialDocument.objects.filter(transaction=self).delete()
-
-        ifd1=FinancialDocument()
-        ifd1.financial_year=financial_year
-        ifd1.category=category
-        ifd1.account=self.pay_to
-        ifd1.transaction=self
-        ifd1.bedehkar=self.amount
-        ifd1.title=str(self)
-        ifd1.document_datetime=self.transaction_datetime
-        ifd1.save()
-
-        ifd1=FinancialDocument()
-        ifd1.bestankar=self.amount
-        ifd1.transaction=self
-        ifd1.title=str(self)
-        ifd1.financial_year=financial_year
-        ifd1.category=category
-        ifd1.document_datetime=self.transaction_datetime
-        ifd1.account=self.pay_from
-        ifd1.save()
+        
 
 
 class Salary(Spend,LinkHelper):    

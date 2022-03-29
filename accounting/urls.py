@@ -5,7 +5,8 @@ from django.urls import path
 app_name=APP_NAME
 urlpatterns = [
     path("",login_required(views.HomeView.as_view()),name="home"),
-    path("search/",login_required(views.HomeView.as_view()),name="search"),
+    path("search/",login_required(views.SearchView.as_view()),name="search"),
+    path("search_json/",login_required(views.SearchJsonView.as_view()),name="search_json"),
 
     path("products/",login_required(views.ProductsView.as_view()),name="products"),
     path("product/<int:pk>/",login_required(views.ProductView.as_view()),name="product"),
@@ -19,20 +20,31 @@ urlpatterns = [
     
     path("transaction/<int:pk>/",login_required(views.TransactionView.as_view()),name="transaction"),
     path("transactions/",login_required(views.TransactionsView.as_view()),name="transactions"),
+    path("transactions/<int:account_id_1>/<int:account_id_2>/",login_required(views.TransactionsView.as_view()),name="transactions2"),
     
     path("account/<int:pk>/",login_required(views.AccountView.as_view()),name="account"),
     path("financial_accounts/",login_required(views.AccountsView.as_view()),name="accounts"),
 
-    path("edit-invoice/<int:pk>/",login_required(views.EditInvoiceView.as_view()),name="edit_invoice"),
+    path("invoice/edit/<int:pk>/",login_required(views.InvoiceEditView.as_view()),name="edit_invoice"),
     path("invoices/",login_required(views.InvoicesView.as_view()),name="invoices"),
     path("invoice/<int:pk>/",login_required(views.InvoiceView.as_view()),name="invoice"),
+    path("invoice/print/<int:pk>/",login_required(views.InvoicePrintView.as_view()),name="invoice_print"),
+    path("invoice/print/<int:pk>/<currency>/",login_required(views.InvoicePrintView.as_view()),name="invoice_print_currency"),
 
     path("financial_document/<int:pk>/",login_required(views.FinancialDocumentView.as_view()),name="financialdocument"),
     path("financial_documents/",login_required(views.FinancialDocumentsView.as_view()),name="financial_documents"),
+    
+    path("financial_balance/<int:pk>/",login_required(views.FinancialDocumentView.as_view()),name="financialbalance"),
+    path("financial_balances/",login_required(views.FinancialDocumentsView.as_view()),name="financial_balances"),
+    
+    path("payment/<int:pk>/",login_required(views.PaymentView.as_view()),name="payment"),
+    path("payments/",login_required(views.PaymentsView.as_view()),name="payments"),
+    
+    path("financial_balances/",login_required(views.FinancialBalancesView.as_view()),name="financial_balances"),
 
 
 
-
+  path("add_payment/",login_required(apis.AddPaymentApi.as_view()),name="add_payment"),
   path("add_cheque/",login_required(apis.AddChequeApi.as_view()),name="add_cheque"),
   path("add_price/",login_required(apis.AddPriceApi.as_view()),name="add_price"),
 

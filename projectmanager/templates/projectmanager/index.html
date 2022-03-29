@@ -19,11 +19,28 @@
           
 
           
-        <a href="{% url 'projectmanager:projects' %}">
+          <a href="{% url 'projectmanager:employees' %}">
             <h6>
-              لیست پروژه ها
+              لیست کارکنان
             </h6>
           </a>
+          
+          <a href="{% url 'projectmanager:letters' %}">
+            <h6>
+              لیست نامه ها
+            </h6>
+          </a>
+        <a href="{% url 'projectmanager:projects' %}">
+          <h6>
+            لیست پروژه ها
+          </h6>
+        </a>
+
+        <a href="{% url 'projectmanager:events' %}">
+          <h6>
+            لیست رویداد ها
+          </h6>
+        </a>
 
           <a href="{% url 'projectmanager:organization_units' %}">
             <h6>

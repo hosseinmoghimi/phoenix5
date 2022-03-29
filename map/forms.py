@@ -1,7 +1,11 @@
 from django import forms
 
 class AddLocationForm(forms.Form):
-    page_id=forms.IntegerField(required=False)
+    title=forms.CharField(max_length=500,required=True)
     location=forms.CharField(max_length=500,required=True)
-    title=forms.CharField(max_length=500,required=False)
+    page_id=forms.IntegerField(required=False)
+               
+class AddPageLocationForm(forms.Form):
+    page_id=forms.IntegerField(required=True)
+    location_id=forms.IntegerField(required=True)
                

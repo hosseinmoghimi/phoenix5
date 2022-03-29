@@ -1,0 +1,82 @@
+{% load to_price %}
+{% load static %}
+{% load to_persian_date %}
+<div class="card">
+    <div class="card-header">
+        <h5>
+            {% if page.pre_title %}
+            <small>
+
+                {{page.pre_title}}
+            </small>
+            {% endif %}
+            {{page.title}}
+        </h5>
+    </div>
+    <div class="farsi card-body text-right">
+
+
+
+
+
+        <table class="table table-striped">
+            <tr>
+                <td class="text-left">
+
+                </td>
+                <td>
+
+                    {% if perms.core.change_page %}
+                    <div class="">
+                        <a href="{{organization_unit.get_edit_url}}" target="_blank" title="ویرایش"
+                            class="mx-2 text-warning"><i class="fa fa-edit"></i> ویرایش</a>
+                    </div>
+                    {% endif %}
+                    {% if perms.core.delete_page %}
+                    <div class="">
+                        <a href="{{organization_unit.get_delete_url}}" target="_blank" title="حذف"
+                            class="mx-2 text-danger"><i class="fa fa-trash"></i> حذف</a>
+                    </div>
+                    {% endif %}
+                    {% if page.parent %}
+                    <div class="">
+                        {{page.recursive_full_link|safe}}
+                    </div>
+                    {% endif %}
+
+                </td>
+            </tr>
+            {% if organization_unit.account %}
+
+            <tr>
+                <td class="text-left">
+                    حساب
+                </td>
+                <td>
+                    <a href="{{organization_unit.account.get_absolute_url}}">
+                        <img src="{{organization_unit.account.logo}}" width="32" class="rounded" alt="">
+                        {{organization_unit.title}}
+                    </a>
+                </td>
+            </tr>
+
+            {% endif %}
+
+
+            <tr>
+                <td class="text-left">
+                    تعداد پرسنل
+                </td>
+                <td>
+                        {{organization_unit.employee_set.all|length}} نفر
+                </td>
+            </tr>
+
+
+        </table>
+
+
+
+
+    </div>
+</div>

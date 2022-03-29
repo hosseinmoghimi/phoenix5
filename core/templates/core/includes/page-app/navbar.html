@@ -1,0 +1,43 @@
+<div class="mb-4"></div>
+
+<h6 class="text-center text-muted">
+    {{page.class_title}}
+
+</h6>
+<h4 class="text-center">
+    {% if page.pre_title %}
+
+    <small>
+
+        {{page.pre_title}}
+
+    </small>
+    {% endif %}
+    {{page.title}}
+
+    {% if False %}
+
+    {% if perms.core.change_page %}
+    <a href="{{page.get_edit_url}}" target="_blank" title="ویرایش" class="mx-2"><i
+            class="fa fa-edit text-warning"></i></a>
+    {% endif %}
+
+
+
+    {% if perms.core.delete_page %}
+    <a href="{{page.get_delete_url}}" target="_blank" title="حذف" class="mx-2"><i
+            class="fa fa-trash text-danger"></i></a>
+    {% endif %}
+    {% endif %}
+
+</h4>
+{% if page.parent %}
+
+<h6 class="text-muted text-center">
+    {{page.full_title}}
+</h6>
+<div class="text-center"> 
+    {{page.get_breadcrumb|safe}}
+</div>
+{% endif %}
+<div class="mb-4"></div>

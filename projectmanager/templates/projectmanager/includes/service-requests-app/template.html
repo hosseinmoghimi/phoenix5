@@ -11,12 +11,20 @@
                 <button class="btn btn-link" data-toggle="collapse" data-target="#collapseservicerequests"
                     aria-expanded="true" aria-controls="collapseservicerequests">
                     درخواست های سرویس
+                    <span v-if="service_requests.length>0">
+                        <small class="text-danger mx-2">
+                            <span v-text="service_requests.length"></span>
+                        </small>
+                    </span>
+
+
+
                 </button>
             </h5>
 
 
         </div>
-        <div id="collapseservicerequests" class="collapse {% if project and service_requests %}show{% endif %}"
+        <div id="collapseservicerequests" class="collapse "
             aria-labelledby="headingservicerequests" data-parent="#accordionservicerequests">
 
             <div class="card-body">

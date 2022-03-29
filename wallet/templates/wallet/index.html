@@ -1,0 +1,57 @@
+{% extends "archive/layout.html" %}
+{% load static %}
+{% block content %}
+<div class="row">
+    <div class="col-md-6">
+        <div class="card" id="wallet-app">
+            <div class="card-body">
+                <button @click="startLogin()" class="btn btn-success">
+                    <i class="material-icons">vpn_key</i>
+                    ورود
+
+
+                </button>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block script %}
+<script src="{% static 'web3auth/js/web3auth.js' %}"></script>
+
+
+<script>
+    function startLogin() {
+        if (typeof web3 !== 'undefined') {
+            checkWeb3(function (loggedIn) {
+                if (!loggedIn) {
+                    alert("Please unlock your web3 provider (probably, Metamask)")
+                } else {
+                    var login_url = "{% url 'web3auth:web3auth_login_api' %}";
+                    web3Login(login_url, console.log, console.log, console.log, console.log, console.log, function (resp) {
+                        console.log(resp);
+                        window.location.replace(resp.redirect_url);
+                    });
+                }
+            });
+
+        } else {
+            alert('web3 missing');
+        }
+    }
+
+    let wallet_app = new Vue({
+        el: "#wallet-app",
+        data: {
+
+        },
+        methods: {
+            startLogin: function () {
+                startLogin()
+            },
+        }
+    })
+</script>
+{% endblock script %}

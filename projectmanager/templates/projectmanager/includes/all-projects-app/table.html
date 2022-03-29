@@ -31,6 +31,7 @@
         <tr v-for="project in projects">
             <td>
                 <a :href="project.get_absolute_url">
+                    <img :src="project.thumbnail" class="rounded ml-2" width="64" alt="">
                     <span v-text="project.title"></span>
                 </a>
                 <span class="pull-left">
@@ -62,11 +63,15 @@
             </td>
             <td>
                 <a v-if="project.employer" :href="project.employer.get_absolute_url">
+                    <img class="rounded" width="48" :src="project.employer.logo" alt="">
+
                     <span v-text="project.employer.title"></span>
                 </a>
             </td>
             <td>
                 <a v-if="project.contractor" :href="project.contractor.get_absolute_url">
+                    <img class="rounded" width="48" :src="project.contractor.logo" alt="">
+
                     <span v-text="project.contractor.title"></span>
                 </a>
             </td>

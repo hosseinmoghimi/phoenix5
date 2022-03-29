@@ -74,6 +74,11 @@ WSGI_APPLICATION = 'phoenix.wsgi.application'
 DATABASES=server_settings.DATABASES
 
 
+# from authentication.views import login_view
+# LOGIN_URL = login_view
+LOGIN_URL = 'authentication:login'
+LOGOUT_REDIRECT_URL = 'authentication:profile'
+
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
 
@@ -113,3 +118,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+AUTHENTICATION_BACKENDS = [
+'django.contrib.auth.backends.ModelBackend',
+'web3auth.backend.Web3Backend'
+]
+WEB3AUTH_USER_ADDRESS_FIELD = 'username'
+WEB3AUTH_USER_SIGNUP_FIELDS = ['email',]

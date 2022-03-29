@@ -1,0 +1,166 @@
+{% extends "accounting/layout.html" %}
+
+{% load to_persian_date %}
+
+{% load to_variz_text %}
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+
+        <div class="card">
+            <div class="card-body">
+
+                <div class="text-center">
+                    <img src="{{invoice.pay_from.logo}}" height="96" class="my-3" alt="">
+
+                </div>
+                <h4 class="text-center my-3">
+
+                    {{invoice.pay_from.title}}
+
+                </h4>
+
+
+
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <!-- <p class="text-right mx-5">
+                            فروشنده :
+                            {{invoice.pay_from.title}}
+                        </p> -->
+
+                        <h5 class="text-right mx-5 mb-3">
+                            خریدار :
+                            {{invoice.pay_to.title}}
+                        </h5>
+                        <p class="text-right mx-5">
+
+                            {{invoice.title}}
+                        </p>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="row">
+                            <div class="col-8  farsi text-left">تاریخ</div>
+                            <div class="col-4  farsi text-right">{{invoice.invoice_datetime|to_persian_date|safe}}</div>
+
+                            <div class="col-8  farsi text-left">شماره</div>
+                            <div class="col-4  farsi text-right">{{invoice.pk}}</div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="col-md-12">
+        <div class="table-responsive">
+
+            {% include "accounting/includes/invoice-lines-app/print.html" %}
+        </div>
+    </div>
+
+
+    <div class="col-md-12">
+
+
+    </div>
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+
+                <div class="mb-5"></div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <p class="text-center">
+                            فروشنده :
+                            {{invoice.pay_from.title}}
+                        </p>
+                    </div>
+                    <div class="col-md-6">
+                        <p class="text-center">
+                            خریدار :
+                            {{invoice.pay_to.title}}
+                        </p>
+                    </div>
+
+                </div>
+
+
+                <div class="mb-5"></div>
+                <div class="mb-5"></div>
+                <div class="mb-5"></div>
+                <div class="mb-5"></div>
+                <div class="mb-5"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body px-5 farsi text-right">
+                <h5>
+                    توضیحات
+                </h5>
+                <div>
+
+                    واحد مبلغ ها
+
+                    {{CURRENCY}}
+                    می باشد.
+                </div>
+
+                {% if invoice.pay_from.bank_account %}
+                <div>
+
+                    {{invoice.pay_from.bank_account|to_variz_text}}
+                </div>
+                {% endif %}
+                <div class="text-right farsi">
+                    <small>
+                        وضعیت :
+
+                    </small>
+                    {{invoice.status}}
+                    /
+
+                    {{invoice.payment_method}}
+
+
+                </div>
+
+                {% if invoice.description %}
+                <div class=" ">
+
+                    {{invoice.description|safe}}
+                </div>
+
+                {% endif %}
+
+            </div>
+        </div>
+
+
+
+    </div>
+
+
+
+</div>
+
+{% endblock content %}
+
+
+{% block script %}
+<script>
+    let page_id = parseInt("{{page.id}}")
+    let invoice_lines = JSON.parse(`{{invoice_lines_s|escapejs}}`)
+</script>
+{% include "accounting/includes/invoice-lines-app/script.html" %}
+
+{% endblock script %}

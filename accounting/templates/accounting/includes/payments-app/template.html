@@ -1,0 +1,186 @@
+{% load to_persian_date %}
+{% load to_price %}
+
+{% load to_persian_date %}
+{% load to_price %}
+<div id="accordion-payments">
+
+
+    <div class="card" id="payments-app">
+        <div class="card-header" id="heading-payments">
+            <h5 class="text-center">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-payments"
+                    aria-expanded="true" aria-controls="collapse-payments">
+                    پرداخت ها
+
+                    {% if payments %}
+                    <small class="text-danger mx-2">
+                        {{payments|length}}
+                    </small>
+                    {% endif %}
+
+
+                </button>
+            </h5>
+
+            {% if page_pre_description %}
+
+            <h5 class="text-center">
+                {{page_pre_description}}
+            </h5>
+            {% endif %}
+            {% if page_description %}
+
+            <h4 class="text-center">
+                {{page_description}}
+            </h4>
+            {% endif %}
+        </div>
+        <div id="collapse-payments" class="collapse" aria-labelledby="heading-payments"
+            data-parent="#accordion-payments">
+
+
+            <div class="card-body">
+                <div class="table-responsive">
+
+                    <table class="table table-striped">
+                        <thead>
+                            <th>
+                                پرداخت
+                            </th>
+                            <th>
+                                مبلغ
+                            </th>
+                            <th>
+                                بستانکار
+                            </th>
+                            <th>
+                                بدهکار
+                            </th>
+                            <th>
+                                تاریخ
+                            </th>
+                            <th>
+
+                            </th>
+                        </thead>
+                        <tbody>
+                            {% for payment in payments1 %}
+
+                            <tr>
+                                <td>
+                                    <a href="{{payment.get_absolute_url}}">
+
+                                        {{payment.title}}
+                                    </a>
+
+                                    {% for tag in payment.tags.all %}
+                                    <a href="{{tag.get_absolute_url}}">
+
+                                        <span class="badge badge-{{tag.color}}">
+                                            {{tag.name}}
+                                        </span>
+                                    </a>
+                                    {% endfor %}
+                                </td>
+                                <td>
+                                    {{payment.amount|to_price}}
+
+                                </td>
+
+
+                                <td>
+                                    <a href="{{payment.pay_from.get_absolute_url}}">
+                                        <img src="{{payment.pay_from.logo}}" class="rounded-circle" width="32" alt="">
+                                        {{payment.pay_from.title}}
+                                    </a>
+
+                                </td>
+                                <td>
+                                    <a href="{{payment.pay_to.get_absolute_url}}">
+                                        <img src="{{payment.pay_to.logo}}" class="rounded-circle" width="32" alt="">
+                                        {{payment.pay_to.title}}
+                                    </a>
+
+                                </td>
+
+                                <td>
+                                    {{payment.transaction_datetime|to_persian_datetime|safe}}
+
+                                </td>
+
+                                <td>
+
+                                    {% include "accounting/includes/payment-app/navbar.html" %}
+
+                                </td>
+                            </tr>
+                            {% endfor %}
+
+                            <tr v-for="payment in payments">
+                                <td>
+                                    <a :href="payment.get_absolute_url">
+                                        <span v-text="payment.title"></span>
+                                    </a>
+
+                                    {% for tag in payment.tags.all %}
+                                    <a href="{{tag.get_absolute_url}}">
+
+                                        <span class="badge badge-{{tag.color}}">
+                                            {{tag.name}}
+                                        </span>
+                                    </a>
+                                    {% endfor %}
+                                </td>
+                                <td>
+                                    <span v-text="to_price(payment.amount)"></span>
+
+                                </td>
+
+
+                                <td>
+                                    <a :href="payment.pay_from.get_absolute_url">
+                                        <img :src="payment.pay_from.logo" class="rounded-circle" width="32" alt="">
+                                        <span v-text="payment.pay_from.title"></span>
+
+                                    </a>
+
+                                </td>
+                                <td>
+                                    <a :href="payment.pay_to.get_absolute_url">
+                                        <img :src="payment.pay_to.logo" class="rounded-circle" width="32" alt="">
+                                        <span v-text="payment.pay_to.title"></span>
+
+                                    </a>
+
+
+
+                                </td>
+
+                                <td>
+                                    <span v-html="payment.persian_transaction_datetime"></span>
+
+                                </td>
+
+                                <td>
+
+                                    {% include "accounting/includes/payment-app/navbar.html" %}
+
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            {% if add_payment_form %}
+
+            <div class="card-footer">
+                {% include "accounting/includes/payments-app/form.html" %}
+            </div>
+            {% endif %}
+        </div>
+
+
+    </div>
+</div>

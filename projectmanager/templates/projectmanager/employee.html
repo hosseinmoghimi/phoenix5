@@ -1,0 +1,52 @@
+{% extends "projectmanager/layout.html" %}
+
+{% block content %}
+ 
+
+  <div class="text-center mt-3 mb-3">
+
+    <img src="{{employee.profile.image}}" width="128" class="rounded-circle" alt="">
+</div>
+
+<h4 class="text-center">
+    {{employee.name}}
+
+    <a href="{{employee.profile.get_absolute_url}}" title="پروفایل" class="mx-2"><i
+            class="fa fa-user text-info"></i></a>
+
+    {% if perms.projectmanager.change_employee %}
+    <a href="{{employee.get_edit_url}}" target="_blank" title="ویرایش" class="mx-2"><i
+            class="fa fa-edit text-info"></i></a>
+    {% endif %}
+
+    {% if perms.projectmanager.delete_employee %}
+    <a href="{{employee.get_delete_url}}" target="_blank" title="حذف" class="mx-2"><i
+            class="fa fa-trash text-danger"></i></a>
+    {% endif %}
+
+</h4>
+<h5 class="text-center">
+        {{employee.job_title}}
+        
+</h5>
+<h5 class="text-center">
+       <a href="{{employee.organization_unit.get_absolute_url}}">
+        {{employee.organization_unit.title}}
+
+       </a> 
+</h5>
+
+
+<div class="row">
+        <div class="col-md-12">
+            {% include "projectmanager/includes/all-projects-app/template.html" %}
+        </div>
+    </div>
+
+{% endblock content %}
+
+
+{% block script %}
+            {% include "projectmanager/includes/all-projects-app/script.html" %}
+  
+{% endblock script %}

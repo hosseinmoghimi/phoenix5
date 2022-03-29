@@ -1,87 +1,181 @@
+from decimal import getcontext
 import json
-from tkinter.messagebox import NO
 from django.http import Http404
 from django.shortcuts import render
+from django.utils import timezone
+
+from utility.calendar import PersianCalendar
 from .apps import APP_NAME
 from log.repo import LogRepo
 from core.enums import ColorEnum, IconsEnum, ParameterNameEnum, PictureNameEnum
 from core.models import Download, Link
-from core.repo import DownloadRepo, PageDownloadRepo, PageRepo, ParameterRepo, PictureRepo
-from .serializers import PageDownloadSerializer, PageLinkSerializer
-from phoenix.settings import ADMIN_URL,MEDIA_URL,STATIC_URL,SITE_URL
+from core.repo import DownloadRepo, PageDownloadRepo, PageLikeRepo, PageRepo, ParameterRepo, PictureRepo, TagRepo
+from .serializers import PageBriefSerializer, PageCommentSerializer, PageImageSerializer, PageDownloadSerializer, PageLinkSerializer, PageTagSerializer
+from phoenix.settings import ADMIN_URL, MEDIA_URL, STATIC_URL, SITE_URL
 from django.shortcuts import render
 from authentication.repo import ProfileRepo
 from core.constants import CURRENCY
 
-from phoenix.server_settings import my_apps
+from phoenix.server_settings import phoenix_apps
 from django.views import View
 from .forms import *
 # Create your views here.
-TEMPLATE_ROOT="core/"
-def CoreContext(request,*args, **kwargs):
-    context={}
-    app_name=kwargs['app_name'] if 'app_name' in kwargs else 'core'
-    context['APP_NAME']=app_name
-    context['ADMIN_URL']=ADMIN_URL
-    context['STATIC_URL']=STATIC_URL
-    context['MEDIA_URL']=MEDIA_URL
-    context['SITE_URL']=SITE_URL
-    context['apps']=my_apps
-    
-    context['profile']=ProfileRepo(request=request).me
-    parameter_repo = ParameterRepo(request=request,app_name=app_name)
-    visitor_counter=parameter_repo.parameter(name=ParameterNameEnum.VISITOR_COUNTER,default=1).value
-    context['visitor_counter']=visitor_counter
-    # (parameter,res)=ParameterRepo(request=request,app_name='core').objects.get_or_create(name=ParameterNameEnum.CURRENCY)
-    # context['CURRENCY']=parameter.value
-    context['CURRENCY']=CURRENCY
-    farsi_font_name=parameter_repo.parameter(name=ParameterNameEnum.FARSI_FONT_NAME,default="Vazir").value
-    if not farsi_font_name==ParameterNameEnum.FARSI_FONT_NAME and not farsi_font_name=="Default":
-        context['farsi_font_name']=farsi_font_name
-    picture_repo=PictureRepo(request=request,app_name=app_name)
-    context['app']={
-        'title':parameter_repo.parameter(name=ParameterNameEnum.TITLE,default=app_name).value,
-        'home_url':parameter_repo.parameter(name=ParameterNameEnum.HOME_URL,default="/"+app_name+"/").value,
-        'icon':picture_repo.picture(name=PictureNameEnum.FAVICON,default=STATIC_URL+"").image,
-        'logo':picture_repo.picture(name=PictureNameEnum.LOGO,default=STATIC_URL+"").image,
+TEMPLATE_ROOT = "core/"
+
+
+def CoreContext(request, *args, **kwargs):
+    context = {}
+    app_name = kwargs['app_name'] if 'app_name' in kwargs else 'core'
+    context['APP_NAME'] = app_name
+    context['ADMIN_URL'] = ADMIN_URL
+    context['STATIC_URL'] = STATIC_URL
+    context['MEDIA_URL'] = MEDIA_URL
+    context['SITE_URL'] = SITE_URL
+    context['apps'] = phoenix_apps
+
+    profile = ProfileRepo(request=request).me
+    context['profile'] = profile
+    parameter_repo = ParameterRepo(request=request, app_name=app_name)
+
+    visitor_counter = parameter_repo.parameter(
+        name=ParameterNameEnum.VISITOR_COUNTER, default=1)
+    visitor_counter.origin_value = 1+int(visitor_counter.origin_value)
+    visitor_counter.save()
+    context['visitor_counter'] = visitor_counter.value
+
+    context['CURRENCY'] = CURRENCY
+    farsi_font_name = parameter_repo.parameter(
+        name=ParameterNameEnum.FARSI_FONT_NAME, default="Vazir").value
+    if not farsi_font_name == ParameterNameEnum.FARSI_FONT_NAME and not farsi_font_name == "Default":
+        context['farsi_font_name'] = farsi_font_name
+    picture_repo = PictureRepo(request=request, app_name=app_name)
+    context['app'] = {
+        'title': parameter_repo.parameter(name=ParameterNameEnum.TITLE, default=app_name).value,
+        'home_url': parameter_repo.parameter(name=ParameterNameEnum.HOME_URL, default="/"+app_name+"/").value,
+        'icon': picture_repo.picture(name=PictureNameEnum.FAVICON, default=STATIC_URL+"").image,
+        'logo': picture_repo.picture(name=PictureNameEnum.LOGO, default=STATIC_URL+"").image,
     }
+    pc = PersianCalendar()
+    now = timezone.now()
+    current_datetime = pc.from_gregorian(now)
+    context['current_date'] = current_datetime[:10]
+    context['current_datetime'] = current_datetime
+    from messenger.views import getPusherContext
+    context.update(getPusherContext(request=request,profile=profile))
+
+
     return context
 
-def PageContext(request,*args, **kwargs):
-    context={}
+
+def PageContext(request, *args, **kwargs):
+    profile=ProfileRepo(request=request).me
+    context = {}
     if 'page' in kwargs:
-        page=kwargs['page']
+        page = kwargs['page']
     if 'page_id' in kwargs:
-        page=PageRepo(request=request).page(pk=kwargs['page_id'])
+        page = PageRepo(request=request).page(pk=kwargs['page_id'])
     if page is None:
         raise Http404
-    context['page']=page
-    links=page.pagelink_set.all()
-    links_s=json.dumps(PageLinkSerializer(links,many=True).data)
-    context['links_s']=links_s
-    context['links']=links
+    context['page'] = page
 
     
-    downloads=PageDownloadRepo(request=request).list(page_id=page.id)
-    context['downloads']=downloads
-    downloads_s=json.dumps(PageDownloadSerializer(downloads,many=True).data)
-    context['page_downloads_s']=downloads_s
-    my_pages_ids=PageRepo(request=request).my_pages_ids()
+    # links
+    if True:
+        links = page.pagelink_set.all()
+        links_s = json.dumps(PageLinkSerializer(links, many=True).data)
+        context['links_s'] = links_s
+        context['links'] = links
+
+    # locations
+    if True:
+        from map.serializers import PageLocationSerializer,LocationSerializer
+        from map.repo import LocationRepo,PageLocationRepo
+        page_locations =PageLocationRepo(request=request).list(page_id=page.id)
+        # context['locations_s'] = json.dumps(LocationSerializer(locations, many=True).data)
+        context['page_locations_s'] = json.dumps(PageLocationSerializer(page_locations, many=True).data)
+        context['locations_s'] = json.dumps(LocationSerializer([], many=True).data)
+        context['all_locations']=LocationRepo(request=request).list()
+        if request.user.has_perm(APP_NAME+".change_page") or page.id in my_pages_ids:
+            from map.forms import AddLocationForm,AddPageLocationForm
+            context['add_page_location_form']=AddPageLocationForm()
+            context['add_location_form']=AddLocationForm()
+
+    
+    # tags
+    if True:
+        page_tags = page.pagetag_set.all()
+        page_tags_s = json.dumps(PageTagSerializer(page_tags, many=True).data)
+        context['page_tags_s'] = page_tags_s
+        context['page_tags'] = page_tags
+
+
+    # commnets
+    if True:
+        page_comments = page.pagecomment_set.all()
+        context['page_comments'] = page_comments
+        context['page_comments_s'] = json.dumps(
+            PageCommentSerializer(page_comments, many=True).data)
+        if ProfileRepo(request=request).me is not None:
+            context['add_page_comment_form'] = AddPageCommentForm()
+
+
+    # related_pages
+    if True:
+        related_pages = page.related_pages.all()
+        context['related_pages_s'] = json.dumps(
+            PageBriefSerializer(related_pages, many=True).data)
+
+
+    # downloads
+    if True:
+        downloads = PageDownloadRepo(request=request).list(page_id=page.id)
+        context['downloads'] = downloads
+        downloads_s = json.dumps(PageDownloadSerializer(downloads, many=True).data)
+        context['page_downloads_s'] = downloads_s
+
+
+    #images
+    if True:
+        page_images = page.pageimage_set.all()
+        context['images_s'] = json.dumps(PageImageSerializer(page_images, many=True).data)
+
+    # likes
+    if True:
+        page_likes=PageLikeRepo(request=request).list(page_id=page.id)
+        context['page_likes']=page_likes
+        if profile is not None:
+            my_like = page.my_like(profile_id=profile.id)
+            context['my_like'] = my_like
+
+
+
+        
+
+    my_pages_ids = PageRepo(request=request).my_pages_ids()
     if request.user.has_perm(APP_NAME+".add_link") or page.id in my_pages_ids:
         context['add_page_link_form'] = AddPageLinkForm()
     if request.user.has_perm(APP_NAME+".add_download") or page.id in my_pages_ids:
         context['add_page_download_form'] = AddPageDownloadForm()
+
+    if request.user.has_perm(APP_NAME+".add_pageimage") or page.id in my_pages_ids:
+        context['add_page_image_form'] = AddPageImageForm()
+    if request.user.has_perm(APP_NAME+".change_page") or page.id in my_pages_ids:
+        context['add_related_page_form'] = AddRelatedPageForm()
+        context['add_page_tag_form'] = AddPageTagForm()
+
     return context
 
+
 class DownloadView(View):
-    def get(self,request,*args, **kwargs):
-        me=ProfileRepo(request=request).me
+    def get(self, request, *args, **kwargs):
+        me = ProfileRepo(request=request).me
         download = DownloadRepo(request=request).download(*args, **kwargs)
         if me is None and not download.is_open:
             pass
         elif request.user.has_perm("core.change_download") or download.is_open or me in download.profiles.all():
             if download is None:
-                LogRepo(request=request).add_log(title="Http404 core views 2"+str(kwargs),app_name=APP_NAME)
+                LogRepo(request=request).add_log(
+                    title="Http404 core views 2"+str(kwargs), app_name=APP_NAME)
                 raise Http404
             return download.download_response()
 
@@ -101,8 +195,25 @@ class DownloadView(View):
 
         return message_view.response()
 
+
+
+class TagView(View):
+    def get(self, request, *args, **kwargs):
+        me = ProfileRepo(request=request).me
+        tag = TagRepo(request=request).tag(*args, **kwargs)
+        if tag is None:
+            raise Http404
+        context=CoreContext(request=request,app_name=APP_NAME)
+        context['tag']=tag
+        page_tags=tag.pagetag_set.all()
+        context['page_tags']=page_tags
+        return render(request,TEMPLATE_ROOT+"tag.html",context)
+        
+ 
+
 class MessageView(View):
-    def __init__(self,request, *args, **kwargs):
+    def __init__(self, request, *args, **kwargs):
+        self.request = request
         self.links = []
         self.title = None
         self.body = None
@@ -138,9 +249,6 @@ class MessageView(View):
             self.message_text = kwargs['message_text']
         if 'header_text' in kwargs:
             self.header_text = kwargs['header_text']
-        if 'request' in kwargs:
-            self.request = kwargs['request']
-
 
     def show(self, *args, **kwargs):
 
@@ -154,9 +262,9 @@ class MessageView(View):
             self.message_text = 'متاسفانه خطایی رخ داده است.'
         if self.has_home_link:
             btn_home = Link(url=(SITE_URL),
-                            color=ColorEnum.SUCCESS+' btn-round',
+                            color=ColorEnum.PRIMARY+' btn-round',
                             icon_material=IconsEnum.home,
-                            title='خانه', name='ssss', new_tab=False)
+                            title='خانه', new_tab=False)
             self.links.append(btn_home)
         context['links'] = self.links
 
@@ -172,5 +280,6 @@ class MessageView(View):
         context['title'] = self.title
 
         context['search_form'] = None
+        context['no_footer'] = True
+        context['no_navbar'] = True
         return render(self.request, TEMPLATE_ROOT+'message.html', context)
-

@@ -1,0 +1,25 @@
+<div class="media mb-2">
+    <a :href="profile.get_absolute_url">
+
+        <img :src="profile.image" width="64" class="rounded-circle" alt="">
+    </a>
+    <div class="media-body">
+        <a :href="profile.get_absolute_url">
+
+            <h5 class="">
+
+                <span v-text="profile.name"></span>
+            </h5>
+        </a>
+        {% if set_default_profile_form %}
+        <div v-if="!profile.default">
+
+            <button @click="set_default(profile.id)" class="btn btn-success">set default</button>
+        </div>
+        <div v-if="profile.default">
+            <i class="fa fa-star " style="color:#f5c103" aria-hidden="true"></i>
+
+        </div>
+        {% endif %}
+    </div>
+</div>

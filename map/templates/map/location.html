@@ -6,7 +6,7 @@
 {% block content %}
 <div>
     <h3 class="text-center">
-        <i class="material-icons">engineering</i>
+        <i class="material-icons">place</i>
         <small class="text-secondary">
             موقعیت مکانی
         </small>
@@ -69,50 +69,31 @@
             </div>
         </div>
         <div class="col-md-6">
+            {% if location.pagelocation_set.all %}
+
             <div class="card">
                 <div class="card-body">
                     <div>
-                        <h4 class="">
-                            مرتبط با :
+                        <h4 class="mb-4">
+                            صفحات مرتبط
                         </h4>
-                        <ul class="nav flex-column mb-4 farsi">
-                            {% for project in location.project_set.all %}
-                            <li class="nav-item text-right">
-                                <small class="text-muted">
-                                    پروژه
-                                </small>
-                                <a class="farsi" href="{{project.get_absolute_url}}">
-                                    {{project.title}}
-                                </a>
-                            </li>
-                            {% endfor %}
-
-                            {% for event in location.event_set.all %}
-                            <li class="nav-item text-right">
-                                <small class="text-muted">
-                                    رویداد
-                                </small>
-                                <a class="farsi" href="{{event.get_absolute_url}}">
-                                    {{event.title}}
-                                </a>
-                            </li>
-                            {% endfor %}
+                        {% for pagelocation in location.pagelocation_set.all %}
+                        <div class="text-right farsi mb-2">
 
 
-                            {% for worksite in location.worksite_set.all %}
-                            <li class="nav-item text-right">
-                                <small class="text-muted">
-                                    سایت
-                                </small>
-                                <a class="farsi" href="{{worksite.get_absolute_url}}">
-                                    {{worksite.title}}
-                                </a>
-                            </li>
-                            {% endfor %}
-                        </ul>
+                            <small class="text-muted ml-3">
+                                {{pagelocation.page.class_title}}
+                            </small>
+                            <a class="farsi" href="{{pagelocation.page.get_absolute_url}}">
+                                {{pagelocation.page.title}}
+                            </a>
+                        </div>
+                        {% endfor %}
+
                     </div>
                 </div>
             </div>
+            {% endif %}
         </div>
         {% if location.trip_source_set.all or location.trip_destination_set.all%}
         <div class="col-md-12">
@@ -123,12 +104,12 @@
                     </h4>
                 </div>
                 <div class="card-body">
-                          
+
                     {% for trip_path in location.trip_source_set.all %}
                     <h5 class="mr-5">
                         مبدا :
                         <a href="{{trip_path.get_absolute_url}}">
-                            
+
                             {{trip_path.title}}
                         </a>
                     </h5>
@@ -137,7 +118,7 @@
                     <h5 class="mr-5">
                         مقصد :
                         <a href="{{trip_path.get_absolute_url}}">
-                            
+
                             {{trip_path.title}}
                         </a>
                     </h5>

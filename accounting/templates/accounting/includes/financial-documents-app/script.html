@@ -8,7 +8,7 @@
     let rest_ = parseInt("{{rest}}")
     let financial_documents = JSON.parse(`{{financial_documents_s|escapejs}}`)
 </script>
-{% if add_payment_form %}
+{% if add_payment_form1 %}
 
 <script>
 
@@ -26,9 +26,23 @@
 
 
     let financial_documents_app_methods = {
-        to_price: function (vall,curr) {
+        to_price: function (vall, curr) {
             return to_price(vall, curr)
-        }, 
+        },
+        sum_bestankar: function () {
+            let sum = 0
+            this.financial_documents.forEach(financial_document => {
+                sum += financial_document.bestankar
+            })
+            return this.to_price(sum)
+        },
+        sum_bedehkar: function () {
+            let sum = 0
+            this.financial_documents.forEach(financial_document => {
+                sum += financial_document.bedehkar
+            })
+            return this.to_price(sum)
+        },
         rest: function () {
             let rest = 0
             this.financial_documents.forEach(financial_document => {
@@ -50,7 +64,7 @@
                 category_id: this.category_id,
             }
             console.log(payload)
-            let url = "{% url 'hesabyar:add_financial_document' %}"
+            let url = "{% url 'accounting:add_financial_document' %}"
             $.post(url, payload).done((data) => {
                 financial_documents_app.waiting = false
                 console.log(data)
@@ -75,9 +89,23 @@
 
     }
     let financial_documents_app_methods = {
-        to_price: function (vall,curr) {
+        to_price: function (vall, curr) {
             return to_price(vall, curr)
-        }, 
+        },
+        sum_bestankar: function () {
+            let sum = 0
+            this.financial_documents.forEach(financial_document => {
+                sum += financial_document.bestankar
+            })
+            return this.to_price(sum)
+        },
+        sum_bedehkar: function () {
+            let sum = 0
+            this.financial_documents.forEach(financial_document => {
+                sum += financial_document.bedehkar
+            })
+            return this.to_price(sum)
+        },
         rest: function () {
             let rest = 0
             this.financial_documents.forEach(financial_document => {

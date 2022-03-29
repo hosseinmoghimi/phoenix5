@@ -1,6 +1,57 @@
-from .models import Blog,Feature,OurWork,Carousel
+from .models import Blog,Feature, OurTeam,OurWork,Carousel, Testimonial
+from django.db.models import Q
 from authentication.repo import ProfileRepo
 
+class CarouselRepo:
+    def __init__(self,*args, **kwargs):
+        self.request = None
+        self.app_name=""
+        self.user = None
+        if 'request' in kwargs:
+            self.request = kwargs['request']
+            self.user = self.request.user
+        if 'user' in kwargs:
+            self.user = kwargs['user']
+        if 'app_name' in kwargs:
+            self.app_name = kwargs['app_name']
+        self.objects = Carousel.objects.order_by('priority')
+        self.me=ProfileRepo(user=self.user).me
+    def list(self,*args, **kwargs):
+        objects=self.objects
+        if 'app_name' in kwargs:
+            self.app_name = kwargs['app_name']
+        return objects
+    
+class FeatureRepo:
+    def __init__(self,*args, **kwargs):
+        self.request = None
+        self.user = None
+        if 'request' in kwargs:
+            self.request = kwargs['request']
+            self.user = self.request.user
+        if 'user' in kwargs:
+            self.user = kwargs['user']
+        self.objects = Feature.objects
+        self.me=ProfileRepo(user=self.user).me
+    def list(self,*args, **kwargs):
+        objects= self.objects.all()
+        if 'search_for' in kwargs:
+            search_for=kwargs['search_for']
+            objects=objects.filter(Q(title__contains=search_for) | Q(meta_data__contains=search_for)|Q(description__contains=search_for))
+        if 'for_home' in kwargs:
+            objects=objects.filter(for_home=kwargs['for_home'])
+        return objects
+    def feature(self,*args, **kwargs):
+        pk=0
+        if 'feature_id' in kwargs:
+            pk=kwargs['feature_id']
+        elif 'pk' in kwargs:
+            pk=kwargs['pk']
+        elif 'id' in kwargs:
+            pk=kwargs['id']
+        return self.objects.filter(pk=pk).first()
+   
+   
 class BlogRepo:
     def __init__(self,*args, **kwargs):
         self.request = None
@@ -12,6 +63,7 @@ class BlogRepo:
             self.user = kwargs['user']
         self.objects = Blog.objects.order_by('priority')
         self.me=ProfileRepo(user=self.user).me
+
     def list(self,*args, **kwargs):
         objects= self.objects.all()
         if 'for_home' in kwargs:
@@ -24,6 +76,7 @@ class BlogRepo:
             search_for=kwargs['search_for']
             objects=objects.filter(Q(title__contains=search_for) | Q(meta_data__contains=search_for)|Q(description__contains=search_for))
         return objects
+
     def blog(self,*args, **kwargs):
         pk=0
         if 'blog_id' in kwargs:
@@ -47,33 +100,6 @@ class BlogRepo:
         return blog
 
 
-class FeatureRepo:
-    def __init__(self,*args, **kwargs):
-        self.request = None
-        self.user = None
-        if 'request' in kwargs:
-            self.request = kwargs['request']
-            self.user = self.request.user
-        if 'user' in kwargs:
-            self.user = kwargs['user']
-        self.objects = Feature.objects
-        self.me=ProfileRepo(user=self.user).me
-    def list(self,*args, **kwargs):
-        objects= self.objects.all()
-        if 'for_home' in kwargs:
-            objects=objects.filter(for_home=kwargs['for_home'])
-        return objects
-    def feature(self,*args, **kwargs):
-        pk=0
-        if 'feature_id' in kwargs:
-            pk=kwargs['feature_id']
-        elif 'pk' in kwargs:
-            pk=kwargs['pk']
-        elif 'id' in kwargs:
-            pk=kwargs['id']
-        return self.objects.filter(pk=pk).first()
-   
-   
 
 class OurWorkRepo:
     def __init__(self,*args, **kwargs):
@@ -121,22 +147,59 @@ class OurWorkRepo:
         return our_work
 
 
-class CarouselRepo:
+class OurTeamRepo:
     def __init__(self,*args, **kwargs):
         self.request = None
-        self.app_name=""
         self.user = None
         if 'request' in kwargs:
             self.request = kwargs['request']
             self.user = self.request.user
         if 'user' in kwargs:
             self.user = kwargs['user']
-        if 'app_name' in kwargs:
-            self.app_name = kwargs['app_name']
-        self.objects = Carousel.objects.order_by('priority')
+        self.objects = OurTeam.objects.order_by('priority')
         self.me=ProfileRepo(user=self.user).me
     def list(self,*args, **kwargs):
-        if 'app_name' in kwargs:
-            self.app_name = kwargs['app_name']
-        return self.objects.filter(app_name=self.app_name)
-    
+        objects= self.objects.all()
+        if 'for_home' in kwargs:
+            objects=objects.filter(for_home=kwargs['for_home'])
+        return objects
+    def our_team(self,*args, **kwargs):
+        pk=0
+        if 'our_team_id' in kwargs:
+            pk=kwargs['our_team_id']
+        elif 'pk' in kwargs:
+            pk=kwargs['pk']
+        elif 'id' in kwargs:
+            pk=kwargs['id']
+        return self.objects.filter(pk=pk).first()
+   
+   
+
+
+class TestimonialRepo:
+    def __init__(self,*args, **kwargs):
+        self.request = None
+        self.user = None
+        if 'request' in kwargs:
+            self.request = kwargs['request']
+            self.user = self.request.user
+        if 'user' in kwargs:
+            self.user = kwargs['user']
+        self.objects = Testimonial.objects.order_by('priority')
+        self.me=ProfileRepo(user=self.user).me
+    def list(self,*args, **kwargs):
+        objects= self.objects.all()
+        if 'for_home' in kwargs:
+            objects=objects.filter(for_home=kwargs['for_home'])
+        return objects
+    def testimonial(self,*args, **kwargs):
+        pk=0
+        if 'testimonial_id' in kwargs:
+            pk=kwargs['testimonial_id']
+        elif 'pk' in kwargs:
+            pk=kwargs['pk']
+        elif 'id' in kwargs:
+            pk=kwargs['id']
+        return self.objects.filter(pk=pk).first()
+   
+  

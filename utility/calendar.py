@@ -1,6 +1,23 @@
 from django.utils import timezone
 import datetime
 from khayyam import *
+
+def to_persian_datetime_tag(value,*args, **kwargs):
+    if 'pure_text' in kwargs and kwargs['pure_text']==True:
+        return f"""
+        {date_} {time_}
+        """
+    try:    
+        a=str(PersianCalendar().from_gregorian(value))
+        date_=a[:10]
+        time_=a[11:]
+        greg=value.strftime("%Y/%m/%d %H:%M:%S") 
+        return f"""<span class="ltr" title="{greg}">{date_} <small class="mx-1 text-muted">{time_}</small></span>"""
+    except:
+        return ""
+
+
+
 PERSIAN_MONTH_NAMES=[
 'فروردین',
 'اردیبهشت',

@@ -1,42 +1,107 @@
-{% extends "projectmanager/layout.html" %}
+{% extends "projectmanager/wide-layout.html" %}
 
 {% block content %}
 
-{% include "core/includes/page-navbar.html" %}
+{% include "core/includes/page-app/navbar.html" %}
 
 
 <div class="row">
-    <div class="col-md-4">
-        {% include "core/includes/page-thumbnail-card.html" %}
-
-    </div>
-    <div class="col-md-4">
-        {% include "core/includes/page-brief-card.html" %}
-
+    <div class="col-md-3">
+        {% include "core/includes/page-app/thumbnail-card.html" %}
+        {% include "core/includes/page-app/brief-card.html" %}
+        {% include "projectmanager/includes/project-app/brief-card.html" %}
 
 
     </div>
-    <div class="col-md-4">
-        {% include "core/includes/page-downloads-app/template.html" %}
-        {% include "core/includes/page-links-app/template.html" %}
+    <div class="col-md-9">
+        <div class="row">
+            <div class="col-md-12">
+                {% include "core/includes/page-description-app/short-description.html" %}
+                {% include "core/includes/page-description-app/description.html" %}
+            </div>
+        </div>
+        <div class="row">
+
+            <div class="col-md-6">
+                {% include "projectmanager/includes/projects-app/template.html" %}
+            </div>
+            <div class="col-md-6">
+                {% include "projectmanager/includes/organization-units-app/template.html" %}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                {% include "core/includes/page-downloads-app/template.html" %}
+
+
+            </div>
+            
+            <div class="col-md-4">
+                {% include "core/includes/page-links-app/template.html" %}
+
+
+            </div>
+            
+            <div class="col-md-4">
+                {% include "core/includes/page-tags-app/template.html" %}
+
+
+            </div>
+
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                {% include "core/includes/page-images-app/template.html" %}
+
+            </div>
+            <div class="col-md-12">
+                {% include "accounting/includes/invoices-app/template.html" %}
+            </div>
+            <div class="col-md-12">
+                {% include "projectmanager/includes/material-requests-app/template.html" %}
+            </div>
+            <div class="col-md-12">
+                {% include "projectmanager/includes/service-requests-app/template.html" %}
+            </div>
+
+            <div class="col-md-12">
+                {% include "projectmanager/includes/project-edit-app/template.html" %}
+            </div>
+
+
+            <div class="col-md-12">
+                {% include "core/includes/page-comments-app/template.html" %}
+
+            </div>
+            <div class="col-md-12">
+                {% include "projectmanager/includes/events-app/template.html" %}
+
+            </div>
+
+            <div class="col-md-12">
+                {% include "core/includes/page-related-app/template.html" %}
+
+            </div>
+
+            <div class="col-md-12">
+                {% include "core/includes/page-like-app/page-likes.html" %}
+
+            </div>
+
+            <div class="col-md-12">
+                {% include "map/includes/locations-app/template-with-preview.html" %}
+            </div>
+
+
+        </div>
+
 
     </div>
-    <div class="col-md-12">
-        {% include "core/includes/page-description-app/short-description.html" %}
-        {% include "core/includes/page-description-app/description.html" %}
-    </div>
-    <div class="col-md-12">
-        {% include "projectmanager/includes/organization-units-app/template.html" %}
-    </div>
-    <div class="col-md-12">
-        {% include "projectmanager/includes/material-requests-app/template.html" %}
-    </div>
-    <div class="col-md-12">
-        {% include "projectmanager/includes/service-requests-app/template.html" %}
-    </div>
-    <div class="col-md-4">
-     
-    </div>
+
+
+
+
+
 
 </div>
 
@@ -45,13 +110,21 @@
 
 {% block script %}
 <script>
-    let page_id=parseInt("{{project.id}}")
-    let project_id=parseInt("{{project.id}}")
+    let project = JSON.parse(`{{project_s|escapejs}}`)
+    let project_id = parseInt("{{project.id}}")
+    let parent_id = parseInt("{{project.id}}")
+    let item_prices = JSON.parse(`{{item_prices_s|escapejs}}`)
+
 </script>
-{% include "core/includes/page-links-app/script.html" %}
-{% include "core/includes/page-downloads-app/script.html" %}
+{% include "core/includes/page-app/script.html" %}
+{% include "map/includes/locations-app/script.html" %}
+
 {% include "projectmanager/includes/organization-units-app/script.html" %}
 {% include "projectmanager/includes/material-requests-app/script.html" %}
 {% include "projectmanager/includes/service-requests-app/script.html" %}
+{% include "projectmanager/includes/projects-app/script.html" %}
+{% include "projectmanager/includes/events-app/script.html" %}
+{% include "projectmanager/includes/project-edit-app/script.html" %}
+
 
 {% endblock script %}

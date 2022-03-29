@@ -1,35 +1,79 @@
-<div class="card" id="locations-app">
-    <div class="card-header">
-        <h4 class="title">
-            <a href="{% url 'map:locations' %}">
+{% load static %}
+<div id="accordion-locations">
+    <div class="card" id="locations-app">
+        <div class="card-header" id="heading-locations">
+            <h5 class="text-center">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-locations"
+                    aria-expanded="true" aria-controls="collapse-locations">
+                    موقعیت ها
+                    <span v-if="locations.length>0">
+                        <small class="text-danger mx-2">
+                            <span v-text="locations.length"></span>
+                        </small>
+                    </span>
 
-                موقعیت ها
-            </a>
-        </h4>
+                    <span v-if="page_locations.length>0">
+                        <small class="text-danger mx-2">
+                            <span v-text="page_locations.length"></span>
+                        </small>
+                    </span>
+
+                </button>
+            </h5>
+        </div>
+        <div id="collapse-locations" class="collapse" aria-labelledby="heading-locations"
+            data-parent="#accordion-locations">
+            <div class="card-body">
+                <img v-if="false" width="32" src="{% static 'leo/img/loading.gif' %}" alt="">
+                <h6 v-if="false">
+                    <span class="text-muted">در حال بار گذاری ... </span>
+                </h6>
+                {% load static %}
+                <form @submit.prevent="search()">
+                    <img src="{% static 'leo/img/loading.gif' %}" width="32" v-if="waiting" alt="">
+
+                    <input type="text" v-model="search_for" class="form-control" placeholder="جستجو ..."
+                        @input="filter()">
+                </form>
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <th>
+                                موقعیت
+                            </th>
+                            <th>
+                            </th>
+                        </thead>
+                        <tbody>
+                            <tr v-for="location in locations">
+                                <td>
+                                    <a :href="location.get_absolute_url">
+                                        <img :src="location.logo" class="rounded-circle" width="32" alt="">
+                                        <span v-text="location.title"></span>
+                                    </a>
+                                </td>
+                                <td>
+                                </td>
+                            </tr>
+
+                            <tr v-for="page_location in page_locations">
+                                <td>
+                                    <a :href="page_location.location.get_absolute_url">
+                                        <img :src="page_location.location.logo" class="rounded-circle" width="32"
+                                            alt="">
+                                        <span v-text="page_location.location.title"></span>
+                                    </a>
+                                </td>
+                                <td>
+                                </td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            {% include "map/includes/locations-app/footer.html" %}
+
+        </div>
     </div>
-    <div class="card-body">
-       
-        <ul>
-            <li v-for="location in locations" class="text-right">
-                <a :href="location.get_absolute_url" class="text-right farsi">
-                    <span v-text="location.title"></span>
-                </a>
-
-            </li>
-        </ul>
-    </div>
-    {% if add_location_form %}
-      <div class="card-footer">
-        <p>
-
-            <button @click="show_add_location_form=true" v-if="!show_add_location_form" class="btn btn-success">
-                <i class="material-icons">
-                    add
-                </i>
-            </button>
-        </p>
-        
-        {% include "map/includes/locations-app/add-new-location-form.html" %}
-      </div>
-    {% endif %}
 </div>
