@@ -112,7 +112,6 @@
 
             },
             filter_list: function () {
-                console.log(this.add_service_request_form_title.length > 3)
                 if (this.add_service_request_form_title) {
 
                     this.services = all_services.filter((item) => { return item.full_title.toUpperCase().indexOf(this.add_service_request_form_title.toUpperCase()) > -1 }).slice(0, 6);

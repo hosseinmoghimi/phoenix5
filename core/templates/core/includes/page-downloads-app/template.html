@@ -3,10 +3,10 @@
 
     
     <div id="page-downloads-app" class="card">
-        <div class="card-header" id="headingdownloads">
+        <div class="card-header" id="heading-page-downloads">
             <h5 class="text-center">
-                <button class="btn btn-link" data-toggle="collapse" data-target="#collapsedownloads"
-                    aria-expanded="true" aria-controls="collapsedownloads">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-page-downloads"
+                    aria-expanded="true" aria-controls="collapse-page-downloads">
                     دانلود ها
 
                     <span v-if="downloads.length>0">
@@ -19,8 +19,8 @@
             </h5>
         </div>
 
-        <div id="collapsedownloads" class="collapse {% if page.downloads.all %}show{% endif %}"
-            aria-labelledby="headingdownloads" data-parent="#accordion-page-downloads">
+        <div id="collapse-page-downloads" class="collapse"
+            aria-labelledby="heading-page-downloads" data-parent="#accordion-page-downloads">
 
             <div class="card-body">
 

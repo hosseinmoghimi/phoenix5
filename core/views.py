@@ -1,3 +1,4 @@
+from decimal import getcontext
 import json
 from django.http import Http404
 from django.shortcuts import render
@@ -8,8 +9,8 @@ from .apps import APP_NAME
 from log.repo import LogRepo
 from core.enums import ColorEnum, IconsEnum, ParameterNameEnum, PictureNameEnum
 from core.models import Download, Link
-from core.repo import DownloadRepo, PageDownloadRepo, PageLikeRepo, PageRepo, ParameterRepo, PictureRepo
-from .serializers import PageBriefSerializer, PageCommentSerializer, PageImageSerializer, PageDownloadSerializer, PageLinkSerializer
+from core.repo import DownloadRepo, PageDownloadRepo, PageLikeRepo, PageRepo, ParameterRepo, PictureRepo, TagRepo
+from .serializers import PageBriefSerializer, PageCommentSerializer, PageImageSerializer, PageDownloadSerializer, PageLinkSerializer, PageTagSerializer
 from phoenix.settings import ADMIN_URL, MEDIA_URL, STATIC_URL, SITE_URL
 from django.shortcuts import render
 from authentication.repo import ProfileRepo
@@ -76,10 +77,21 @@ def PageContext(request, *args, **kwargs):
     if page is None:
         raise Http404
     context['page'] = page
+
+    
     links = page.pagelink_set.all()
     links_s = json.dumps(PageLinkSerializer(links, many=True).data)
     context['links_s'] = links_s
     context['links'] = links
+
+
+
+    
+    page_tags = page.pagetag_set.all()
+    page_tags_s = json.dumps(PageTagSerializer(page_tags, many=True).data)
+    context['page_tags_s'] = page_tags_s
+    context['page_tags'] = page_tags
+
 
     page_comments = page.pagecomment_set.all()
     context['page_comments'] = page_comments
@@ -116,6 +128,7 @@ def PageContext(request, *args, **kwargs):
         context['add_page_image_form'] = AddPageImageForm()
     if request.user.has_perm(APP_NAME+".change_page") or page.id in my_pages_ids:
         context['add_related_page_form'] = AddRelatedPageForm()
+        context['add_page_tag_form'] = AddPageTagForm()
     page_images = page.pageimage_set.all()
     context['images_s'] = json.dumps(
         PageImageSerializer(page_images, many=True).data)
@@ -152,6 +165,21 @@ class DownloadView(View):
 
         return message_view.response()
 
+
+
+class TagView(View):
+    def get(self, request, *args, **kwargs):
+        me = ProfileRepo(request=request).me
+        tag = TagRepo(request=request).tag(*args, **kwargs)
+        if tag is None:
+            raise Http404
+        context=CoreContext(request=request,app_name=APP_NAME)
+        context['tag']=tag
+        page_tags=tag.pagetag_set.all()
+        context['page_tags']=page_tags
+        return render(request,TEMPLATE_ROOT+"tag.html",context)
+        
+ 
 
 class MessageView(View):
     def __init__(self, request, *args, **kwargs):

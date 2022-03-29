@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Image, Page, PageComment, PageDownload, PageImage, PageLike, Parameter,PageLink
+from .models import Image, Page, PageComment, PageDownload, PageImage, PageLike, PageTag, Parameter,PageLink, Tag
 from authentication.serializers import ProfileSerializer
 
 
@@ -15,6 +15,19 @@ class PageLikeSerializer(serializers.ModelSerializer):
         model=PageLike
         fields=['id','class_title','title','thumbnail','get_absolute_url','get_delete_url']
 
+
+
+
+class TagSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Tag
+        fields=['id','title','get_absolute_url','get_edit_url','get_delete_url']
+
+
+class PageTagSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=PageTag
+        fields=['id','tag_title','get_tag_url','get_edit_url','get_delete_url']
 
 
 

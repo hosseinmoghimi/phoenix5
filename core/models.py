@@ -547,6 +547,44 @@ class ContactMessage(models.Model):
         return self.full_name
 
 
+
+class Tag(models.Model,LinkHelper):
+    title=models.CharField(_("title"), max_length=50)
+    class_name="tag"
+    app_name=APP_NAME
+
+    class Meta:
+        verbose_name = _("Tag")
+        verbose_name_plural = _("Tags")
+
+    def __str__(self):
+        return self.title
+
+    def get_absolute_url(self):
+        return reverse(APP_NAME+":tag", kwargs={"pk": self.pk})
+
+
+class PageTag(models.Model,LinkHelper):
+    page=models.ForeignKey("page", verbose_name=_("page"), on_delete=models.CASCADE)
+    tag=models.ForeignKey("tag", verbose_name=_("tag"), on_delete=models.CASCADE)
+    
+    class_name="pagetag"
+    app_name=APP_NAME
+
+    def tag_title(self):
+        return self.tag.title
+
+    def get_tag_url(self):
+        return self.tag.get_absolute_url()
+
+    class Meta:
+        verbose_name = _("PageTag")
+        verbose_name_plural = _("PageTags")
+
+    def __str__(self):
+        return self.tag.title
+ 
+
 # class SocialLink(Link):
 #     # app_name=models.CharField(_('اپلیکیشن'),choices=AppNameEnum.choices, max_length=50,null=True,blank=True)
 #     profile = models.ForeignKey("authentication.Profile", null=True,

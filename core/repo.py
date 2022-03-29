@@ -1,4 +1,5 @@
-from .models import ContactMessage, Download, Image, Page, PageComment, PageDownload, PageImage, PageLike, PageLink, Parameter,Picture
+from aiohttp import request
+from .models import ContactMessage, Download, Image, Page, PageComment, PageDownload, PageImage, PageLike, PageLink, PageTag, Parameter,Picture, Tag
 from .constants import *
 from django.db.models import Q
 from authentication.repo import ProfileRepo
@@ -125,6 +126,27 @@ class PageRepo:
         #         pages_ids.append(project.id)
         return pages_ids
         # return BasicPage.objects.filter(id__in=pages_ids)
+    def add_tag(self,*args, **kwargs):
+        if not self.user.has_perm(APP_NAME+".change_tag"):
+            return
+        page=PageRepo(request=self.request).page(*args, **kwargs)
+        if page is None:
+            return
+        if not 'tag_title' in kwargs:
+            return
+        tag=Tag.objects.filter(title=kwargs['tag_title']).first()
+        if tag is None:
+            tag=Tag(title=kwargs['tag_title'])
+            tag.save()
+        aa=PageTag.objects.filter(page_id=page.id).filter(tag_id=tag.id)
+        if len(aa)>0:
+            aa.delete()
+        else:
+            page_tag=PageTag()
+            page_tag.tag=tag
+            page_tag.page=page
+            page_tag.save()
+        return PageTag.objects.filter(page_id=page.id)
 
 class PageLikeRepo():
     def __init__(self,*args, **kwargs):
@@ -181,6 +203,28 @@ class PageCommentRepo:
             return self.objects.filter(pk=kwargs['title']).first()
 
 
+ 
+class TagRepo:
+    def __init__(self,*args, **kwargs):
+        self.request=None
+        self.user=None
+        if 'user' in kwargs:
+            self.user=kwargs['user']
+        if 'request' in kwargs:
+            self.request=kwargs['request']
+            self.user=self.request.user
+        self.objects=Tag.objects
+    
+
+    def tag(self,*args, **kwargs):
+        if 'tag_id' in kwargs:
+            return self.objects.filter(pk=kwargs['tag_id']).first()
+        if 'pk' in kwargs:
+            return self.objects.filter(pk=kwargs['pk']).first()
+        if 'id' in kwargs:
+            return self.objects.filter(pk=kwargs['id']).first()
+        if 'title' in kwargs:
+            return self.objects.filter(pk=kwargs['title']).first()
 
 class PictureRepo:
     

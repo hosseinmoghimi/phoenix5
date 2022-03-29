@@ -23,7 +23,6 @@
                     csrfmiddlewaretoken: csrfmiddlewaretoken
                 }
                 let posting = $.post(url, payload)
-                //console.log(payload)
                 posting.done(function (data) {
                     if (data.result === 'SUCCEED') {
                         page_comments_app.page_comments = page_comments_app.page_comments.filter((page_comment) => {

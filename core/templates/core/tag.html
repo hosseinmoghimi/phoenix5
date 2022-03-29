@@ -1,0 +1,37 @@
+{% extends "core/layout.html" %}
+{% block content %}
+<h4 class="text-center">
+    <small class="text-muted">
+        تگ
+    </small>
+    {{tag.title}}
+</h4>
+
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5>
+                    صفحات
+                </h5>
+            </div>
+            <div class="card-body">
+                {% for page_tag in page_tags %}
+                <a href="{{page_tag.page.get_absolute_url}}">
+                    <h5 class="farsi">
+                        {{page_tag.page.title}}
+                    </h5>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+
+
+{% block script %}
+
+{% endblock script %}

@@ -19,7 +19,6 @@
                     if (image.id == image_id) {
 
                         page_images_app.selected_image = image
-                        console.log(image)
                     }
                 });
             },
@@ -42,7 +41,6 @@
                         page_images_app.waiting = false
 
                         if (data != 0) {
-                            console.log(data)
                             if (data.result === 'SUCCEED') {
                                 page_images_app.images.push(data.page_image)
                                 page_images_app.add_page_image_form_title = ''

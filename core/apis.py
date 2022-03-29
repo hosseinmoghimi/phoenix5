@@ -1,5 +1,5 @@
 from core.models import Page, PageLink
-from core.serializers import PageBriefSerializer, PageCommentSerializer, PageDownloadSerializer, PageImageSerializer, PageLikeSerializer, PageLinkSerializer, ParameterSerializer
+from core.serializers import PageBriefSerializer, PageCommentSerializer, PageDownloadSerializer, PageImageSerializer, PageLikeSerializer, PageLinkSerializer, PageTagSerializer, ParameterSerializer, TagSerializer
 from rest_framework.views import APIView
 from django.http import JsonResponse
 from .forms import *
@@ -60,6 +60,31 @@ class AddPageLinkApi(APIView):
         context['log'] = log
         return JsonResponse(context)
     
+class AddPageTagApi(APIView):
+    def post(self, request, *args, **kwargs):
+        log = 1
+        context = {}
+        context['result'] = FAILED
+        if request.method == 'POST':
+            log += 1
+            add_page_tag_form = AddPageTagForm(request.POST)
+            if add_page_tag_form.is_valid():
+                log += 1
+                cd=add_page_tag_form.cleaned_data
+                page_id = cd['page_id']
+                tag_title = cd['tag_title']
+                
+                page_tags = PageRepo(request=request).add_tag(
+                    page_id=page_id,
+                    tag_title=tag_title,
+                    )
+                if page_tags is not None:
+                    context['page_tags'] = PageTagSerializer(page_tags,many=True).data
+                    context['result'] = SUCCEED
+        context['log'] = log
+        return JsonResponse(context)
+
+    
 class AddPageDownloadApi(APIView):
     def post(self, request, *args, **kwargs):
         log = 1
@@ -86,6 +111,7 @@ class AddPageDownloadApi(APIView):
         context['log'] = log
         return JsonResponse(context)
     
+
 class AddPageImageApi(APIView):
     def post(self, request, *args, **kwargs):
         log = 1

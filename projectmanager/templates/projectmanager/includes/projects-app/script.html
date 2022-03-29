@@ -20,7 +20,6 @@
                     parent_id: parent_id,
                     title: this.new_project_title,
                 }
-                console.log(payload)
                 let posting = $.post(url, payload)
                 posting.done((data) => {
                     projects_app.waiting = false
