@@ -5,7 +5,7 @@
             رویداد
         </th>
         {% if not project %}
-          
+
         <th>
             پروژه
         </th>
@@ -17,32 +17,38 @@
             شروع/پایان
         </th>
         <th>
-          
+
 
         </th>
     </thead>
     <tbody>
-       
-        
+
+
 
         <tr v-for="event in events">
             <td>
                 <a :href="event.get_absolute_url">
-                    <span v-text="event.title">
+                    <div class="media">
+                        <img :src="event.thumbnail" class="rounded" width="48" alt="">
+                        <div class="media-body mr-3">
+                            <div>
+                                <span v-text="event.title">
+                                </span>
+                            </div>
+                        </div>
+                    </div>
 
-
-                    </span>
                 </a>
                 <span class="pull-left">
                     <small class="d-inline text-primary">
 
                         <!-- <i  class="fa fa-star-o text-secondary" aria-hidden="true"></i> -->
-                        <i  v-for="item in event.likes_count" class="fa fa-star text-primary" aria-hidden="true"></i>
+                        <i v-for="item in event.likes_count" class="fa fa-star text-primary" aria-hidden="true"></i>
                     </small>
                 </span>
             </td>
             {% if not project %}
-          
+
             <td>
                 <a v-if="event.project_related" :href="event.project_related.get_absolute_url">
                     <span v-text="event.project_related.title">
@@ -60,15 +66,15 @@
 
             <td>
                 <div>
-                    
-                <small v-text="event.persian_start_datetime">
 
-                </small>
+                    <small v-text="event.persian_start_datetime">
+
+                    </small>
                 </div>
                 <div>
-                    
+
                 </div>
-             
+
                 <small v-text="event.persian_end_datetime">
 
                 </small>
