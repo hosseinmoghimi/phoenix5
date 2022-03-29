@@ -56,10 +56,13 @@
             },
             add_location: function () {
                 locations_app.waiting = true
+                let page_id_=0
+                if (typeof page_id != "undefined")
+                    page_id_ = page_id
                 let payload = {
                     location: locations_app.new_location,
                     title: locations_app.new_location_title,
-                    page_id: page_id,
+                    page_id: page_id_,
                     csrfmiddlewaretoken: csrfmiddlewaretoken
                 }
                 // //console.log(payload)

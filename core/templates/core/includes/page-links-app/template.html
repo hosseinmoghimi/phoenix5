@@ -62,15 +62,15 @@
 
                 <form v-if="show_add_link" @submit.prevent="add_page_link()">
                     <div class="row">
-                        <div class="col-8">
-                            <input required type="text" v-model="new_link_title" class="farsi form-control"
+                        <div class="col-12">
+                            <input required type="text" v-model="new_link_title" class=" mb-2 farsi form-control"
                                 placeholder="عنوان لینک جدید">
-                            <input required type="text" v-model="new_link_url" class="farsi form-control"
+                            <input required type="text" v-model="new_link_url" class=" mb-2 farsi form-control"
                                 placeholder="آدرس لینک جدید">
 
                         </div>
-                        <div class="col-4">
-                            <button class="farsi btn btn-primary btn-block" type="submit">تایید</button>
+                        <div class="col-12">
+                            <button class="farsi btn btn-primary btn-block mb-2 " type="submit">تایید</button>
                             <button @click="show_add_link=!show_add_link" class="farsi btn btn-secondary btn-block"
                                 type="reset">انصراف</button>
 

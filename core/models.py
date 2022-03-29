@@ -87,28 +87,7 @@ class Page(models.Model, LinkHelper, ImageMixin):
         return len(PageLike.objects.filter(page_id=self.id))
 
     def class_title(self):
-        class_title = ""
-        if self.class_name == "letter":
-            class_title = "نامه"
-        if self.class_name == "file":
-            class_title = "فایل"
-        if self.class_name == "ourwork":
-            class_title = "پروژه"
-        if self.class_name == "feature":
-            class_title = "خدمات"
-        if self.class_name == "blog":
-            class_title = "مقاله"
-        if self.class_name == "material":
-            class_title = "متریال"
-        if self.class_name == "product":
-            class_title = "کالا"
-        if self.class_name == "project":
-            class_title = "پروژه"
-        if self.class_name == "service" or self.class_name=="pm_service":
-            class_title = "سرویس"
-        if self.class_name == "organizationunit":
-            class_title = "واحد سازمانی"
-        return class_title
+        return class_title(app_name=self.app_name,class_name=self.class_name)
 
 
 

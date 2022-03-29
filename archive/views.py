@@ -14,6 +14,7 @@ import json
 
 
 LAYOUT_PARENT = "phoenix/layout.html"
+WIDE_LAYOUT_PARENT = "phoenix/wide-layout.html"
 TEMPLATE_ROOT = "archive/"
 
 
@@ -22,6 +23,7 @@ def getContext(request, *args, **kwargs):
     context['search_form'] = SearchForm()
     context['search_action'] = reverse(APP_NAME+":search")
     context['LAYOUT_PARENT'] = LAYOUT_PARENT
+    context['WIDE_LAYOUT_PARENT'] = WIDE_LAYOUT_PARENT
     return context
 
 class HomeView(View):

@@ -30,14 +30,14 @@
         <div class="card" id="folders-app">
             <div class="card-body">
                 {% if create_folder_form %}
-                <form @submit.prevent="create_folder()">
+                <form class="mb-2" @submit.prevent="create_folder()">
                     <input type="text" class="form-control" required placeholder="نام پوشه جدید"
                         v-model="new_folder_name">
                 </form>
                 {% endif %}
 
                 {% if create_file_form %}
-                <form @submit.prevent="create_file()">
+                <form class="mb-2" @submit.prevent="create_file()">
                     <input type="text" class="form-control" required placeholder="نام فایل جدید"
                         v-model="new_file_name">
                 </form>

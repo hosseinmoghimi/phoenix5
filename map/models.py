@@ -55,11 +55,13 @@ class Location(models.Model,LinkHelper):
  
 
 
-class PageLocation(models.Model):
+class PageLocation(models.Model,LinkHelper):
     page=models.ForeignKey("core.page", verbose_name=_("page"), on_delete=models.CASCADE)
     location=models.ForeignKey("location", verbose_name=_("location"), on_delete=models.CASCADE)
     date_added=models.DateTimeField(_("date_added"), auto_now=False, auto_now_add=True)
-
+    class_name = "pagelocation"
+    app_name=APP_NAME
+  
     class Meta:
         verbose_name = _("PageLocation")
         verbose_name_plural = _("PageLocations")

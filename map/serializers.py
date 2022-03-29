@@ -12,7 +12,7 @@ class PageLocationSerializer(serializers.ModelSerializer):
     location=LocationSerializer()
     class Meta:
         model=PageLocation
-        fields=['id','location']
+        fields=['id','location','get_edit_url','get_delete_url']
 
 
          
