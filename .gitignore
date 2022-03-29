@@ -5,6 +5,7 @@ venv/
 env/
 staticfiles/
 public/
+public_html/
 media/
 *.sqlite3*
 

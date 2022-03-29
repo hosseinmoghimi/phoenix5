@@ -105,7 +105,7 @@ class LoginViews(View):
         context=getContext(request=request)
         ProfileRepo(request=request).logout(request)
         context['login_form']=LoginForm()
-        return render(request,TEMPLATE_ROOT+"login3.html",context)  
+        return render(request,TEMPLATE_ROOT+"login.html",context)  
     def post(self,request):
         login_form=LoginForm(request.POST)
         if login_form.is_valid():

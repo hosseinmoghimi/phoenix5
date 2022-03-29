@@ -167,7 +167,7 @@ def PageContext(request, *args, **kwargs):
 
 
 class DownloadView(View):
-    def get(self, request, *args, **kwargs):
+    def get(self, request, *args, **kwargs): 
         me = ProfileRepo(request=request).me
         download = DownloadRepo(request=request).download(*args, **kwargs)
         if me is None and not download.is_open:

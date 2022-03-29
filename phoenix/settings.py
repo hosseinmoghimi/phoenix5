@@ -46,6 +46,12 @@ MIDDLEWARE = [
     # 'core.middleware.RequestMiddleware'
 
 # ]
+
+AUTHENTICATION_BACKENDS = [
+'django.contrib.auth.backends.ModelBackend',
+'web3auth.backend.Web3Backend'
+]
+
 ROOT_URLCONF = 'phoenix.urls'
 
 TEMPLATES = [
@@ -118,10 +124,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-AUTHENTICATION_BACKENDS = [
-'django.contrib.auth.backends.ModelBackend',
-'web3auth.backend.Web3Backend'
-]
+ 
 WEB3AUTH_USER_ADDRESS_FIELD = 'username'
 WEB3AUTH_USER_SIGNUP_FIELDS = ['email',]
