@@ -131,13 +131,15 @@ def get_account_context(request,*args, **kwargs):
     financial_documents=FinancialDocumentRepo(request=request).list(account_id=account.id)
     context['financial_documents']=financial_documents
     context['financial_documents_s']=json.dumps(FinancialDocumentForAccountSerializer(financial_documents,many=True).data)
-    rest=0
-    context['rest']=rest
 
     financial_balances=FinancialBalanceRepo(request=request).list(account_id=account.id)
     context['financial_balances']=financial_balances
     context['financial_balances_s']=json.dumps(FinancialBalanceSerializer(financial_balances,many=True).data)
 
+
+
+    if request.user.has_perm(APP_NAME+".add_payment"):
+        context.update(get_add_payment_context(request=request))
 
 
 
@@ -476,10 +478,6 @@ class AccountView(View):
         context['account']=account
 
         context.update(get_account_context(request=request,account=account))
-        if request.user.has_perm(APP_NAME+".add_payment"):
-            context.update(get_add_payment_context(request=request))
-
-
         return render(request,TEMPLATE_ROOT+"account.html",context)      
 class AccountsView(View):
     def get(self,request,*args, **kwargs):
