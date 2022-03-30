@@ -82,6 +82,7 @@
 
                                 </td>
 
+
                                 <td>
                                     <a :href="trip.driver.get_absolute_url">
                                         <span v-text="trip.driver.title"></span>
@@ -106,6 +107,14 @@
 
                                 </td>
                                 <td>
+                                    <div>
+                                        <small class="text-muted">
+                                            سفارش دهنده
+                                        </small>
+                                        <a :href="trip.pay_to.get_absolute_url">
+                                            <span v-text="trip.pay_to.title"></span>
+                                        </a>
+                                    </div>
                                     <div v-for="passenger in trip.passengers">
 
                                         <a :href="passenger.get_absolute_url">
@@ -134,7 +143,7 @@
 
                                 </td>
                                 <td>
-                                    <span  v-if="trip.delay" class="badge badge-danger">
+                                    <span v-if="trip.delay" class="badge badge-danger">
 
                                         <span v-text="trip.delay"></span> دقیقه
                                     </span>

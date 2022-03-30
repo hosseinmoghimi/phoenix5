@@ -114,6 +114,43 @@ def get_price_app_context(request,*args, **kwargs):
     context['prices']=prices
     return context
 
+def get_account_context(request,*args, **kwargs):
+    context={}
+    if 'account' in kwargs:
+        account=kwargs['account']
+    else:
+        account=AccountRepo(request=request).account(*args, **kwargs)
+    if account is None:
+        raise Http404
+    context['account']=account
+
+    invoices=account.invoices()
+    context['invoices']=invoices
+    context['invoices_s']=json.dumps(InvoiceSerializer(invoices,many=True).data)
+
+    financial_documents=FinancialDocumentRepo(request=request).list(account_id=account.id)
+    context['financial_documents']=financial_documents
+    context['financial_documents_s']=json.dumps(FinancialDocumentForAccountSerializer(financial_documents,many=True).data)
+    rest=0
+    context['rest']=rest
+
+    financial_balances=FinancialBalanceRepo(request=request).list(account_id=account.id)
+    context['financial_balances']=financial_balances
+    context['financial_balances_s']=json.dumps(FinancialBalanceSerializer(financial_balances,many=True).data)
+
+
+
+
+    transactions=TransactionRepo(request=request).list(account_id=account.id)
+    context['transactions']=transactions
+    context['transactions_s']=json.dumps(TransactionSerializer(transactions,many=True).data)
+
+    payments=PaymentRepo(request=request).list(account_id=account.id)
+    context['payments']=payments
+    context['payments_s']=json.dumps(PaymentSerializer(payments,many=True).data)
+    
+    return context
+
 def get_transaction_context(request,*args, **kwargs):
     context={}
     if 'transaction' in kwargs:
@@ -135,6 +172,8 @@ def get_transaction_context(request,*args, **kwargs):
 
     financial_balances=FinancialBalanceRepo(request=request).list(transaction_id=transaction.id)
     context['financial_balances']=financial_balances
+    financial_balances_s=json.dumps(FinancialBalanceSerializer(financial_balances,many=True).data)
+    context['financial_balances_s']=financial_balances_s
 
     return context
 
@@ -211,7 +250,6 @@ class HomeView(View):
         return render(request,TEMPLATE_ROOT+"index.html",context)
 
 
-
 class SearchView(View):
     def post(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -246,7 +284,6 @@ class SearchView(View):
 
 
         return render(request,TEMPLATE_ROOT+"search.html",context)
-
 
 
 class SearchJsonView(View):
@@ -284,7 +321,6 @@ class SearchJsonView(View):
         return JsonResponse(context)
 
 
-
 class FinancialBalancesView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -292,8 +328,7 @@ class FinancialBalancesView(View):
         context['financial_balances']=financial_balances
         return render(request,TEMPLATE_ROOT+"financial-balances.html",context)
 
-
-    
+ 
 class InvoiceView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -346,8 +381,9 @@ class InvoiceEditView(View):
 class TransactionView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
+        
         context.update(get_transaction_context(request=request,*args, **kwargs))
-        if context['transacion'] is None:
+        if context['transaction'] is None:
             mv=MessageView(request=request)
             mv.title="چنین تراکنشی یافت نشد."
         return render(request,TEMPLATE_ROOT+"transaction.html",context)
@@ -417,8 +453,7 @@ class ChequeView(View):
         return render(request,TEMPLATE_ROOT+"cheque.html",context)
     
 
-class AccountView(View):
-    
+class AccountView(View):  
     def post(self,request,*args, **kwargs):
         context={
             'result':FAILED
@@ -440,30 +475,7 @@ class AccountView(View):
         account=AccountRepo(request=request).account(*args, **kwargs)
         context['account']=account
 
-        invoices=account.invoices()
-        context['invoices']=invoices
-        context['invoices_s']=json.dumps(InvoiceSerializer(invoices,many=True).data)
-
-        financial_documents=FinancialDocumentRepo(request=request).list(account_id=account.id)
-        context['financial_documents']=financial_documents
-        context['financial_documents_s']=json.dumps(FinancialDocumentForAccountSerializer(financial_documents,many=True).data)
-        rest=0
-        context['rest']=rest
-
-        financial_balances=FinancialBalanceRepo(request=request).list(account_id=account.id)
-        context['financial_balances']=financial_balances
-        context['financial_balances_s']=json.dumps(FinancialBalanceSerializer(financial_balances,many=True).data)
-
-
-
-
-        transactions=TransactionRepo(request=request).list(account_id=account.id)
-        context['transactions']=transactions
-        context['transactions_s']=json.dumps(TransactionSerializer(transactions,many=True).data)
-
-        payments=PaymentRepo(request=request).list(account_id=account.id)
-        context['payments']=payments
-        context['payments_s']=json.dumps(PaymentSerializer(payments,many=True).data)
+        context.update(get_account_context(request=request,account=account))
         if request.user.has_perm(APP_NAME+".add_payment"):
             context.update(get_add_payment_context(request=request))
 

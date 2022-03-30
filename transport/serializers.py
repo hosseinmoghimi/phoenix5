@@ -2,7 +2,7 @@ from rest_framework import serializers
 from authentication.serializers import ProfileSerializer
 from transport.models import Passenger,Driver, Trip, TripCategory, TripPath, Vehicle
 from map.serializers import LocationSerializer
-
+from accounting.serializers import AccountSerializer
 class DriverSerializer(serializers.ModelSerializer):
     profile=ProfileSerializer()
     class Meta:
@@ -35,10 +35,11 @@ class VehicleSerializer(serializers.ModelSerializer):
 
 class TripSerializer(serializers.ModelSerializer):
     paths=TripPathSerializer(many=True)
+    pay_to=AccountSerializer()
     driver=DriverSerializer()
     passengers=PassengerSerializer(many=True)
-    category=TripCategorySerializer()
+    trip_category=TripCategorySerializer()
     vehicle=VehicleSerializer()
     class Meta:
         model=Trip
-        fields=['id','paths','status','vehicle','passengers','title','cost','distance','driver','get_absolute_url','duration','delay','category']
+        fields=['id','paths','pay_to','status','vehicle','passengers','title','cost','distance','driver','get_absolute_url','duration','delay','trip_category']

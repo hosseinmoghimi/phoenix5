@@ -27,9 +27,6 @@
 
 
 {% block script %}
-<script>
-    let page_id=parseInt("{{page.id}}")
-</script>
-{% include "core/includes/page-links-app/script.html" %}
-{% include "core/includes/page-downloads-app/script.html" %}
+{% include "accounting/includes/transaction-app/script.html" %}
+
 {% endblock script %}

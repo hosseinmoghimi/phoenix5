@@ -88,7 +88,6 @@ class Transaction(Page,LinkHelper):
         if self.transaction_datetime is None:
             from django.utils import timezone
             self.transaction_datetime=timezone.now()
-        print(self.pay_from_id)
         super(Transaction,self).save(*args, **kwargs)
         # FinancialDocument.objects.filter(transaction=self).delete()
 
@@ -214,7 +213,7 @@ class Account(models.Model,LinkHelper):
         return self.balance['rest']
     def invoices(self):
         return Invoice.objects.filter(models.Q(pay_from=self)|models.Q(pay_to=self))
-    
+
     def logo(self):
         if self.logo_origin:
             return MEDIA_URL+str(self.logo_origin)

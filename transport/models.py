@@ -1,4 +1,4 @@
-from accounting.models import Asset
+from accounting.models import Asset, Transaction
 from utility.calendar import PERSIAN_MONTH_NAMES, PersianCalendar
 from core.middleware import get_request
 from phoenix.settings import STATIC_URL
@@ -176,24 +176,24 @@ class TripCategory(models.Model,LinkHelper):
         return self.title
  
  
-class Trip(models.Model,LinkHelper):
-    status=models.CharField(_("status"), choices=TripStatusEnum.choices,default=TripStatusEnum.REQUESTED, max_length=50)
-    title=models.CharField(_("title"), max_length=200)
-    category=models.ForeignKey("tripcategory",null=True,blank=True, verbose_name=_("نوع سفر"), on_delete=models.SET_NULL)
+class Trip(Transaction):
+    trip_category=models.ForeignKey("tripcategory",null=True,blank=True, verbose_name=_("نوع سفر"), on_delete=models.SET_NULL)
     vehicle=models.ForeignKey("vehicle", verbose_name=_("vehicle"), on_delete=models.CASCADE)
-    driver=models.ForeignKey("driver", verbose_name=_("driver"), on_delete=models.CASCADE)
     distance=models.IntegerField(_("distance"))
     duration=models.IntegerField(_("duration"))
-    cost=models.IntegerField(_("cost"))
-    date_added=models.DateTimeField(_("date_added"), auto_now=False, auto_now_add=True)
     date_started=models.DateTimeField(_("شروع سرویس"),null=True,blank=True, auto_now=False, auto_now_add=False)
     date_ended=models.DateTimeField(_("پایان سرویس"),null=True,blank=True, auto_now=False, auto_now_add=False)
     paths=models.ManyToManyField("trippath",blank=True, verbose_name=_("مسیر های سرویس"))
     passengers=models.ManyToManyField("passenger",blank=True, verbose_name=_("مسافر ها"))
     delay=models.IntegerField(_("تاخیر"),default=0)
-    description=models.CharField(_("توضیحات"),null=True,blank=True, max_length=5000)
-    class_name="trip"
-    app_name=APP_NAME
+ 
+
+    @property
+    def driver(self):
+        return self.pay_from
+    @property
+    def cost(self):
+        return self.amount
     def get_status_color(self):
         color="primary"
         if self.status==TripStatusEnum.REQUESTED:
@@ -219,6 +219,14 @@ class Trip(models.Model,LinkHelper):
         return self.title
   
 
+    def save(self,*args, **kwargs):
+        if self.class_name is None or self.class_name=="":
+            self.class_name='trip'
+        if self.app_name is None or self.app_name=="":
+            self.app_name=APP_NAME
+        return super(Trip,self).save(*args, **kwargs)
+
+ 
 
   
 class VehicleEvent(Page):

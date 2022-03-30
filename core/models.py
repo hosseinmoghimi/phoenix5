@@ -424,6 +424,7 @@ class Image(models.Model, LinkHelper):
     @property
     def thumbnail(self):
         return self.get_or_create_thumbnail()
+         
 
     def get_or_create_thumbnail(self, *args, **kwargs):
         if self.thumbnail_origin:
@@ -457,21 +458,22 @@ class Image(models.Model, LinkHelper):
         #     THUMBNAIL_DIMENSION = 250
         # Resize/modify the image
         image = image.resize((THUMBNAIL_DIMENSION, int(ratio11*float(THUMBNAIL_DIMENSION))), PilImage.ANTIALIAS)
-        
+        try:
         # after modifications, save it to the output
-        image.save(output, format='JPEG', quality=95)
+            image.save(output, format='JPEG', quality=95)
    
+            output.seek(0)
 
-        output.seek(0)
-
-        # change the imagefield value to be the newley modifed image value
-        image_name = f"{self.image_main_origin.name.split('.')[0]}.jpg"
-        image_path = IMAGE_FOLDER+'ImageBase/Thumbnail'
-        self.thumbnail_origin = InMemoryUploadedFile(output, 'ImageField', image_name, image_path, sys.getsizeof(output), None)
-       
-        self.save()
-        # return MEDIA_URL+str(self.image_main_origin)
-        return MEDIA_URL+str(self.thumbnail_origin)
+            # change the imagefield value to be the newley modifed image value
+            image_name = f"{self.image_main_origin.name.split('.')[0]}.jpg"
+            image_path = IMAGE_FOLDER+'ImageBase/Thumbnail'
+            self.thumbnail_origin = InMemoryUploadedFile(output, 'ImageField', image_name, image_path, sys.getsizeof(output), None)
+        
+            self.save()
+            # return MEDIA_URL+str(self.image_main_origin)
+            return MEDIA_URL+str(self.thumbnail_origin)
+        except:
+            return self.image
 
 
 class PageImage(Image,LinkHelper):

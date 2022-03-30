@@ -12,7 +12,7 @@ from .apps import APP_NAME
 # from .repo import ProductRepo
 # from .serializers import ProductSerializer
 import json
-
+from accounting.views import get_transaction_context,get_account_context
 
 TEMPLATE_ROOT = "transport/"
 LAYOUT_PARENT = "phoenix/layout.html"
@@ -41,6 +41,8 @@ class DriverView(View):
         context=getContext(request=request)
         driver=DriverRepo(request=request).driver(*args, **kwargs)
         context['driver']=driver
+        context.update(get_account_context(request=request,account=driver))
+
         return render(request,TEMPLATE_ROOT+"driver.html",context)
 
 
@@ -78,6 +80,7 @@ class TripView(View):
         context=getContext(request=request)
         trip=TripRepo(request=request).trip(*args, **kwargs)
         context['trip']=trip
+        context.update(get_transaction_context(request=request,transaction=trip))
         return render(request,TEMPLATE_ROOT+"trip.html",context)
 
 
@@ -96,7 +99,10 @@ class PassengerView(View):
         context=getContext(request=request)
         passenger=PassengerRepo(request=request).passenger(*args, **kwargs)
         context['passenger']=passenger
+        context.update(get_account_context(request=request,account=passenger))
+
         return render(request,TEMPLATE_ROOT+"passenger.html",context)
+
 
 class PassengersView(View):
     def get(self,request,*args, **kwargs):
@@ -106,6 +112,8 @@ class PassengersView(View):
         passengers_s=json.dumps(PassengerSerializer(passengers,many=True).data)
         context['passengers_s']=passengers_s
         return render(request,TEMPLATE_ROOT+"passengers.html",context)
+
+
 class SearchView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
