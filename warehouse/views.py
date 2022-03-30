@@ -41,19 +41,26 @@ class WareHouseViews(View):
         warehouse_sheets_s=json.dumps(WareHouseSheetSerializer(warehouse_sheets,many=True).data)
         context['warehouse_sheets_s']=warehouse_sheets_s
 
-
         products=ProductRepo(request=request).list()
         availables_list=[]
-        ware_houses=[ware_house]
-        for ware_house in ware_houses:    
-            for product in products:    
-                line=warehouse_sheets.filter(product_id=product.id).filter(ware_house=ware_house).first()
-                if line is not None:
-                    list_item={'product':{'id':product.pk,'title':product.title,'get_absolute_url':product.get_absolute_url()}}
-                    list_item['available']=line.available()
-                    list_item['unit_name']=line.unit_name
-                    list_item['ware_house']=WareHouseSerializer(line.ware_house).data
-                    availables_list.append(list_item)
+        for product in products:
+            warehouse_sheets_=warehouse_sheets.filter(invoice_line__product_or_service_id=product.id)
+            if len(warehouse_sheets_)>0:
+                list_item={}
+                unit_names=[]
+                for a in warehouse_sheets_:
+                    if not a.invoice_line.unit_name in unit_names:
+                        unit_names.append(a.invoice_line.unit_name)
+                for unit_name in unit_names:    
+                    list_item['ware_house']=WareHouseSerializer(ware_house).data
+                    list_item['product']={'id':product.pk,'title':product.title,'get_absolute_url':product.get_absolute_url()}
+                    list_item['unit_name']=unit_name
+                    warehouse_sheets_=warehouse_sheets_.filter(invoice_line__unit_name=unit_name)
+                    available=0
+                    for line in warehouse_sheets_:
+                        available+=line.available
+                list_item['available']=available
+                availables_list.append(list_item)
         context['availables_list']=json.dumps(availables_list)
 
         return render(request,TEMPLATE_ROOT+"ware-house.html",context)
@@ -103,6 +110,8 @@ class WareHouseSheetViews(View):
         context=getContext(request=request)
         warehouse_sheet=WareHouseSheetRepo(request=request).warehouse_sheet(*args, **kwargs)
         context['warehouse_sheet']=warehouse_sheet
+        warehouse_sheet_s=json.dumps(WareHouseSheetSerializer(warehouse_sheet).data)
+        context['warehouse_sheet_s']=warehouse_sheet_s
         return render(request,TEMPLATE_ROOT+"ware-house-sheet.html",context)
 
  

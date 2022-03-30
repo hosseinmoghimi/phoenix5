@@ -37,8 +37,7 @@ class WareHouseSheet(models.Model,LinkHelper):
     date_added=models.DateTimeField(_("date_added"), auto_now=False, auto_now_add=True)
     date_registered=models.DateTimeField(_("date_registered"), auto_now=False, auto_now_add=False)
     creator=models.ForeignKey("authentication.profile", verbose_name=_("creator"), on_delete=models.CASCADE)    
-    invoice=models.ForeignKey("accounting.invoice", verbose_name=_("invoice"), on_delete=models.CASCADE)    
-    product=models.ForeignKey("accounting.product", verbose_name=_("product"), on_delete=models.CASCADE)    
+    invoice_line=models.ForeignKey("accounting.invoiceline", verbose_name=_("invoice_line"), on_delete=models.CASCADE)    
     quantity=models.IntegerField(_("quantity"))
     unit_name=models.CharField(_("unit_name"),choices=UnitNameEnum.choices,default=UnitNameEnum.ADAD, max_length=50)
     direction=models.CharField(_("direction"),choices=WareHouseSheetDirectionEnum.choices, max_length=50)
@@ -52,18 +51,23 @@ class WareHouseSheet(models.Model,LinkHelper):
         verbose_name_plural = _("WareHouseSheets")
     def persian_date_registered(self):
         return PersianCalendar().from_gregorian(self.date_registered)
-
+    @property
+    def product(self):
+        return self.invoice_line.product
     def save(self,*args, **kwargs):
         self.class_name="warehousesheet"
         super(WareHouseSheet,self).save(*args, **kwargs)
+
+    @property
     def available(self):
         a=0;
-        for aa in WareHouseSheet.objects.filter(ware_house=self.ware_house).filter(product=self.product).filter(status=WareHouseSheetStatusEnum.DONE):
+        for aa in WareHouseSheet.objects.filter(ware_house=self.ware_house).filter(invoice_line__product_or_service_id=self.invoice_line.product_or_service.id).filter(status=WareHouseSheetStatusEnum.DONE):
             if aa.direction==WareHouseSheetDirectionEnum.IMPORT:
                 a+=aa.quantity
             if aa.direction==WareHouseSheetDirectionEnum.EXPORT:
                 a-=aa.quantity
         return a
+    
     def color(self):
         color="primary"
         if self.direction==WareHouseSheetDirectionEnum.IMPORT:
@@ -71,5 +75,3 @@ class WareHouseSheet(models.Model,LinkHelper):
         if self.direction==WareHouseSheetDirectionEnum.EXPORT:
             color="danger"
         return color
-
- 

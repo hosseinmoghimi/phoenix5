@@ -56,6 +56,14 @@ class InvoiceLineSerializer(serializers.ModelSerializer):
         fields = ['id', 'row','product_or_service','unit_name', 'quantity', 'unit_price',
                   'description']
 
+class InvoiceLineWithInvoiceSerializer(serializers.ModelSerializer):
+    invoice=InvoiceSerializer()
+    product_or_service=ProductOrServiceSerializer()
+    class Meta:
+        model = InvoiceLine
+        fields = ['id', 'row','product_or_service','unit_name', 'quantity', 'unit_price','invoice',
+                  'description']
+
 
 
 class PaymentSerializer(serializers.ModelSerializer):

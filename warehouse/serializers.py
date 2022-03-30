@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from authentication.serializers import ProfileSerializer
 from .models import WareHouse,WareHouseSheet
-from accounting.serializers import InvoiceSerializer, ProductSerializer,AccountSerializer
+from accounting.serializers import InvoiceLineWithInvoiceSerializer,AccountSerializer
 class WareHouseSerializer(serializers.ModelSerializer):
     account=AccountSerializer()
     class Meta:
@@ -11,12 +11,11 @@ class WareHouseSerializer(serializers.ModelSerializer):
  
 
 class WareHouseSheetSerializer(serializers.ModelSerializer):
-    product=ProductSerializer()
-    invoice=InvoiceSerializer()
+    invoice_line=InvoiceLineWithInvoiceSerializer()
     ware_house=WareHouseSerializer()
     class Meta:
         model = WareHouseSheet
-        fields = ['id','available','invoice','persian_date_registered','unit_name','color', 'ware_house','product','direction','status', 'get_absolute_url','quantity','get_edit_url']
+        fields = ['id','quantity','invoice_line','persian_date_registered','unit_name','color', 'ware_house','direction','status', 'get_absolute_url','quantity','get_edit_url']
 
 
 

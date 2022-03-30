@@ -1,4 +1,5 @@
 import json
+from accounting.repo import ProductRepo
 from core.constants import FAILED,SUCCEED
 from rest_framework.views import APIView
 from warehouse.enums import *
@@ -7,7 +8,7 @@ from utility.calendar import PersianCalendar
 from .repo import   WareHouseSheetRepo
 from django.http import JsonResponse
 from .forms import *
-from .serializers import WareHouseSheetSerializer
+from .serializers import WareHouseSerializer, WareHouseSheetSerializer
  
 
 class WareHouseSheetApi(APIView):
@@ -39,6 +40,45 @@ class WareHouseSheetApi(APIView):
                 )
                 if warehouse_sheet is not None:
                     context['warehouse_sheet']=WareHouseSheetSerializer(warehouse_sheet).data
+                    context['result']=SUCCEED
+        context['log']=log
+        return JsonResponse(context)
+
+class ReportApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        log=11
+        context['result']=FAILED
+        if request.method=='POST':
+            log=22
+            report_form=ReportForm(request.POST)
+            availables_list=[]
+            if report_form.is_valid():
+                log=33
+                cd=report_form.cleaned_data
+                warehouse_sheets=WareHouseSheetRepo(request=request).list(**cd)
+                products=ProductRepo(request=request).list()
+                for product in products:
+                    warehouse_sheets_=warehouse_sheets.filter(invoice_line__product_or_service_id=product.id)
+                    if len(warehouse_sheets_)>0:
+                        list_item={}
+                        unit_names=[]
+                        for a in warehouse_sheets_:
+                            if not a.invoice_line.unit_name in unit_names:
+                                unit_names.append(a.invoice_line.unit_name)
+                        for unit_name in unit_names:
+                            list_item['product']={'id':product.pk,'title':product.title,'get_absolute_url':product.get_absolute_url()}
+                            list_item['unit_name']=unit_name
+                            warehouse_sheets_=warehouse_sheets_.filter(invoice_line__unit_name=unit_name)
+                            available=0
+                            for line in warehouse_sheets_:
+                                ware_house=line.ware_house
+                                available+=line.available
+                        list_item['ware_house']=WareHouseSerializer(ware_house).data
+                        list_item['available']=available
+                        availables_list.append(list_item)
+                        
+                    context['availables_list']=availables_list
                     context['result']=SUCCEED
         context['log']=log
         return JsonResponse(context)

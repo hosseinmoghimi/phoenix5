@@ -261,6 +261,7 @@ class Employee(Account):
             self.app_name=APP_NAME
         return super(Employee,self).save(*args, **kwargs)
 
+
 class OrganizationUnit(Page):
     pre_title=models.CharField(_("pre_title"),blank=True,null=True, max_length=50)
     account=models.ForeignKey("accounting.account",null=True,blank=True, verbose_name=_("account"), on_delete=models.CASCADE)

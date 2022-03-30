@@ -11,5 +11,6 @@ urlpatterns = [
     path('ware_house_sheet/<int:pk>/',login_required(views.WareHouseSheetViews.as_view()),name="warehousesheet"),
     # path('profile_financial_account/<pk>/',login_required(views.ReportViews().profile_financial_account),name="profile_financial_account"),
     path('change_warehouse_sheet_state/',login_required(apis.WareHouseSheetApi.as_view()),name="change_warehouse_sheet_state"),
+    path('report/',login_required(apis.ReportApi.as_view()),name="report"),
 
 ]

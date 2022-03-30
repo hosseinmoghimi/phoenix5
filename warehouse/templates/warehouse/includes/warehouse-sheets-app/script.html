@@ -1,5 +1,5 @@
 <script>
-    let warehouse_sheets=JSON.parse(`{{warehouse_sheets_s|escapejs}}`)
+    let warehouse_sheets = JSON.parse(`{{warehouse_sheets_s|escapejs}}`)
     let warehouse_sheets_app_data = {
         warehouse_sheets: warehouse_sheets
     }
@@ -30,17 +30,19 @@
                 }
                 $.post(url, payload).done(data => {
                     console.log(data)
+                    if (data.result === 'SUCCEED') {
 
-                    data.warehouse_sheet
-                    warehouse_sheets_app.warehouse_sheets.forEach(warehouse_sheet => {
-                        if (warehouse_sheet.id == data.warehouse_sheet.id) {
-                            warehouse_sheet.status = data.warehouse_sheet.status
-                            console.log(warehouse_sheet.status)
-                        }
-                    });
+                        warehouse_sheets_app.warehouse_sheets.forEach(warehouse_sheet => {
+                            if (warehouse_sheet.id == data.warehouse_sheet.id) {
+                                warehouse_sheet.status = data.warehouse_sheet.status
+                                console.log(warehouse_sheet.status)
+                            }
+                            if (typeof availables_list_app != 'undefined') {
+                                availables_list_app.refresh(warehouse_sheet.ware_house.id)
+                            }
+                        })
+                    }
                 })
-                console.log(this.warehouse_sheet.id)
-                console.log(payload)
             },
         },
         props: ['warehouse_sheet'],

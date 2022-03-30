@@ -5,8 +5,8 @@
     {% if not product %}
 
     <td>
-        <a :href="warehouse_sheet.product.get_absolute_url">
-            <span v-text="warehouse_sheet.product.title"></span>
+        <a :href="warehouse_sheet.invoice_line.product_or_service.get_absolute_url">
+            <span v-text="warehouse_sheet.invoice_line.product_or_service.title"></span>
         </a>
     </td>
     {% endif %}
@@ -21,8 +21,8 @@
     {% if not invoice %}
 
     <td>
-        <a :href="warehouse_sheet.invoice.get_absolute_url">
-            <span v-text="warehouse_sheet.invoice.title"></span>
+        <a :href="warehouse_sheet.invoice_line.invoice.get_absolute_url">
+            <span v-text="warehouse_sheet.invoice_line.invoice.title"></span>
         </a>
     </td>
     {% endif %}
@@ -49,14 +49,17 @@
             </span>
         </div>
         <div>
-        <small v-text="warehouse_sheet.status"></small>
-
+            
         </div>
     </td>
     <td>
+        <h4>
+
+            <small v-text="warehouse_sheet.status"></small>
+        </h4>
         
         <div>
-            <button class="btn btn-sm mb-1 btn-success" @click="change_state('DONE')">تایید نهایی</button>
+            <button class="btn btn-sm mb-1 btn-success" @click="change_state('DONE')">تمام شده</button>
         </div>   
         <div>
             <button class="btn btn-sm mb-1 btn-warning" @click="change_state('IN_PROGRESS')">در جریان</button>

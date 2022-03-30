@@ -581,6 +581,15 @@ class InvoiceLine(models.Model):
     def get_absolute_url(self):
         return reverse("InvoiceLine_detail", kwargs={"pk": self.pk})
 
+
+    @property
+    def product(self):
+        return Product.objects.filter(pk=self.pk).first()
+
+    @property
+    def service(self):
+        return Service.objects.filter(pk=self.pk).first()
+  
   
 class Spend(Transaction,LinkHelper):    
     spend_type=models.CharField(_("spend_type"),choices=SpendTypeEnum.choices, max_length=50)
