@@ -1,7 +1,6 @@
 from django.contrib import admin
-from transport.enums import WorkEventEnum
 
-from transport.models import Area, Driver, Maintenance,Passenger, ServiceMan, Trip, TripCategory, TripPath, VehicleEvent, VehicleWorkEvent, WorkShift
+from transport.models import Area, Driver, Maintenance,Passenger, ServiceMan, Trip, TripCategory, TripPath, Vehicle, VehicleEvent, VehicleWorkEvent, WorkShift
 
 # Register your models here.
 admin.site.register(Driver)
@@ -13,5 +12,6 @@ admin.site.register(WorkShift)
 admin.site.register(VehicleWorkEvent)
 admin.site.register(VehicleEvent)
 admin.site.register(Maintenance)
+admin.site.register(Vehicle)
 admin.site.register(TripPath)
 admin.site.register(Trip)

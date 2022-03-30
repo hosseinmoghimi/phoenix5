@@ -5,9 +5,9 @@ from core.views import CoreContext,SearchForm
 # Create your views here.
 from django.views import View
 
-from .serializers import DriverSerializer,PassengerSerializer, TripPathSerializer
+from .serializers import DriverSerializer,PassengerSerializer, TripPathSerializer, TripSerializer
 
-from .repo import DriverRepo,PassengerRepo, TripPathRepo
+from .repo import DriverRepo,PassengerRepo, TripPathRepo, TripRepo
 from .apps import APP_NAME
 # from .repo import ProductRepo
 # from .serializers import ProductSerializer
@@ -61,6 +61,24 @@ class TripPathView(View):
         trip_path=TripPathRepo(request=request).trip_path(*args, **kwargs)
         context['trip_path']=trip_path
         return render(request,TEMPLATE_ROOT+"trip-path.html",context)
+
+class TripsView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        trips=TripRepo(request=request).list(*args, **kwargs)
+        context['trips']=trips
+        trips_s=json.dumps(TripSerializer(trips,many=True).data)
+        context['trips_s']=trips_s
+        return render(request,TEMPLATE_ROOT+"trips.html",context)
+
+
+
+class TripView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        trip=TripRepo(request=request).trip(*args, **kwargs)
+        context['trip']=trip
+        return render(request,TEMPLATE_ROOT+"trip.html",context)
 
 
 class DriversView(View):
