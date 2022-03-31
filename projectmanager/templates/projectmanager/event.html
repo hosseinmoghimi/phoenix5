@@ -1,9 +1,10 @@
 {% extends "projectmanager/wide-layout.html" %}
+{% load to_persian_date %}
 {% block content %}
 
 {% include "core/includes/page-app/navbar.html" %}
 <div class="row">
-    
+
     <div class="col-md-3">
         {% include "core/includes/page-app/thumbnail-card.html" %}
         {% include "core/includes/page-app/brief-card.html" %}
@@ -11,6 +12,80 @@
     </div>
     <div class="col-md-9">
         <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body text-right farsi">
+
+
+
+                        <a href="{{event.project_related.get_absolute_url}}">
+                            <div class="media">
+                                <img src="{{event.project_related.thumbnail}}" class="rounded" width="64" alt="">
+                                <div class="media-body mr-3">
+                                    <small class="text-muted ">
+                                        پروژه :
+                                    </small>
+
+                                    {{event.project_related.title}}
+
+                                </div>
+                            </div>
+                        </a>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <p>
+                                    <span class="my-2">
+
+                                        <small class="text-muted ">
+                                            تاریخ ثبت :
+                                        </small>
+                                        {{event.date_added|to_persian_datetime|safe}}
+                                    </span>
+                                </p>
+                            </div>
+                            <div class="col-md-4">
+
+
+                                <p>
+
+
+
+
+
+                                    <span class="my-2">
+
+                                        <small class="text-muted ">
+                                            تاریخ شروع :
+                                        </small>
+                                        {{event.start_datetime|to_persian_datetime|safe}}
+                                    </span>
+                                </p>
+
+                            </div>
+                            <div class="col-md-4">
+                                <p>
+
+
+
+                                    <span class="my-2">
+
+                                        <small class="text-muted ">
+                                            تاریخ پایان :
+                                        </small>
+                                        {{event.end_datetime|to_persian_datetime|safe}}
+                                    </span>
+
+
+
+                                </p>
+                            </div>
+                        </div>
+
+
+
+                    </div>
+                </div>
+            </div>
             <div class="col-md-12">
                 {% include "core/includes/page-description-app/short-description.html" %}
                 {% include "core/includes/page-description-app/description.html" %}
@@ -24,7 +99,7 @@
 
             </div>
             <div class="col-md-4">
-        {% include "core/includes/page-tags-app/template.html" %}
+                {% include "core/includes/page-tags-app/template.html" %}
 
             </div>
 
@@ -39,10 +114,7 @@
                 {% include "core/includes/page-comments-app/template.html" %}
 
             </div>
-            <div class="col-md-12">
-                {% include "projectmanager/includes/events-app/template.html" %}
 
-            </div>
 
             <div class="col-md-12">
                 {% include "core/includes/page-related-app/template.html" %}
