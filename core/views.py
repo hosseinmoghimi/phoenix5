@@ -25,13 +25,19 @@ TEMPLATE_ROOT = "core/"
 
 def CoreContext(request, *args, **kwargs):
     context = {}
+    context['apps'] = phoenix_apps
+    installed_apps=[]
+    for phoenix_app in phoenix_apps:
+        installed_apps.append(phoenix_app['name'])
+        context[phoenix_app['name']+'_app_is_installed']=True
+    context["installed_apps"]=installed_apps
+
     app_name = kwargs['app_name'] if 'app_name' in kwargs else 'core'
     context['APP_NAME'] = app_name
     context['ADMIN_URL'] = ADMIN_URL
     context['STATIC_URL'] = STATIC_URL
     context['MEDIA_URL'] = MEDIA_URL
     context['SITE_URL'] = SITE_URL
-    context['apps'] = phoenix_apps
 
     profile = ProfileRepo(request=request).me
     context['profile'] = profile

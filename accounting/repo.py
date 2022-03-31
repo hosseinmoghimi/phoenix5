@@ -359,7 +359,6 @@ class AccountRepo():
         if 'profile_id' in kwargs:
             profile_id=kwargs['profile_id']
             profile= ProfileRepo(request=self.request).profile(profile_id=profile_id)
-            print(profile)
             account=Account.objects.filter(profile_id=profile_id).first()
             if account is None:
                 account=Account()
@@ -437,8 +436,6 @@ class PaymentRepo():
         return objects.all()
 
     def add_payment(self,*args, **kwargs):
-        print(kwargs)
-        print(100*"#")
         if not self.request.user.has_perm(APP_NAME+".add_payment"):
             return
         payment=Payment()

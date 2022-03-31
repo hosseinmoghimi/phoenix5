@@ -85,7 +85,6 @@ class ProfileViews(View):
 
         profiles=ProfileRepo(request=request).list(user_id=selected_profile.user.id)
         if len(profiles)>1:
-            print(profiles)
             context['profiles']=profiles
             context['profiles_s']=json.dumps(ProfileSerializer(profiles,many=True).data)
             context['set_default_profile_form']=SetDefaultProfileForm()

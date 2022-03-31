@@ -46,16 +46,23 @@
         {% include "core/includes/page-related-app/template.html" %}
 
     </div>
-    
+
     <div class="col-md-12">
         {% include "core/includes/page-like-app/page-likes.html" %}
 
     </div>
 
+    {% if warehouse_app_is_installed %}
+
     <div class="col-md-12">
         {% include "warehouse/includes/warehouse-availables-app/template.html" %}
 
     </div>
+    <div class="col-md-12">
+        {% include "warehouse/includes/warehouse-sheets-app/template.html" %}
+
+    </div>
+    {% endif %}
 </div>
 
 {% endblock content %}
@@ -64,11 +71,14 @@
 {% block script %}
 
 {% include "core/includes/page-app/script.html" %}
-
-{% include "warehouse/includes/warehouse-availables-app/script.html" %}
- 
 {% include "projectmanager/includes/material-requests-app/script.html" %}
 {% include "accounting/includes/item-prices-app/script.html" %}
- 
+
+
+{% if warehouse_app_is_installed %}
+{% include "warehouse/includes/warehouse-availables-app/script.html" %}
+{% include "warehouse/includes/warehouse-sheets-app/script.html" %}
+{% endif %}
+
 
 {% endblock script %}

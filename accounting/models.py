@@ -497,6 +497,7 @@ class Invoice(Transaction):
     ship_fee=models.IntegerField(_("هزینه حمل"),default=0)
     discount=models.IntegerField(_("تخفیف"),default=0)
 
+
     def get_print_url(self):
         return reverse(APP_NAME+":invoice_print",kwargs={'pk':self.pk})
     def editable(self):
@@ -590,7 +591,7 @@ class InvoiceLine(models.Model):
     def service(self):
         return Service.objects.filter(pk=self.pk).first()
   
-  
+
 class Spend(Transaction,LinkHelper):    
     spend_type=models.CharField(_("spend_type"),choices=SpendTypeEnum.choices, max_length=50)
     class_name="spend"

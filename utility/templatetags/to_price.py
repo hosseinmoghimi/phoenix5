@@ -34,7 +34,6 @@ def to_horuf_rial(value):
 
 @register.filter
 def to_price_pure(value):
-    print('tuman')
     """converts int to string"""  
     try:
         sign=''

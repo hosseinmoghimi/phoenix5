@@ -7,6 +7,7 @@ from django.http import Http404, JsonResponse
 from django.shortcuts import render, reverse
 from django.views import View
 from projectmanager.enums import SignatureStatusEnum
+from projectmanager.repo import EmployeeRepo
 from utility.calendar import PersianCalendar
 
 from warehouse.apps import APP_NAME
@@ -131,11 +132,12 @@ class WareHouseSheetViews(View):
         ware_house_sheet_signatures_s = json.dumps(
             WareHouseSheetSignatureSerializer(ware_house_sheet_signatures, many=True).data)
         context['ware_house_sheet_signatures_s'] = ware_house_sheet_signatures_s
-            
 
         #add_signature_form
         if True:
             context['signature_statuses']=(i[0] for i in SignatureStatusEnum.choices)
-            context['add_signature_form']=AddSignatureForm()
+            employee=EmployeeRepo(request=self.request).me
+            if employee is not None:
+                context['add_signature_form']=AddSignatureForm()
 
         return render(request, TEMPLATE_ROOT+"ware-house-sheet.html", context)

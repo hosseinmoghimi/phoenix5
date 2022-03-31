@@ -38,7 +38,6 @@ class AddPageLocationApi(APIView):
                 log=3
                 location_id=add_location_form.cleaned_data['location_id']
                 page_id=add_location_form.cleaned_data['page_id']
-                print(add_location_form.cleaned_data)
                 page_location=PageLocationRepo(request=request).add_page_location(location_id=location_id,page_id=page_id)
                 if page_location is not None:
                     log=4

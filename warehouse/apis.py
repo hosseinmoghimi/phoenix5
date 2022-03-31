@@ -99,7 +99,7 @@ class AddSignatureApi(APIView):
             
                 signature=WareHouseSheetSignatureRepo(request=request).add_signature(**cd)
                 if signature is not None:
-                    context['signature']=WareHouseSheetSignatureSerializer(signature).data
+                    context['ware_house_sheet_signature']=WareHouseSheetSignatureSerializer(signature).data
                     context['result']=SUCCEED
         context['log']=log
         return JsonResponse(context)

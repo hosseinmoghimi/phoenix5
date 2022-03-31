@@ -13,8 +13,6 @@ class FavIconView(View):
         import os
         os.path.join(MEDIA_ROOT,"favicon.png")
         from django.http import HttpResponse
-        print(file_path)
-        print(100*"$$$$###")
         if os.path.exists(file_path):
             with open(file_path, 'rb') as fh:
                 response = HttpResponse(

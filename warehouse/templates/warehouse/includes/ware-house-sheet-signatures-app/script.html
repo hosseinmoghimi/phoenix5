@@ -1,5 +1,6 @@
 {% load to_json %}
 <script>
+    
     let ware_house_sheet_signatures = JSON.parse(`{{ware_house_sheet_signatures_s|escapejs}}`)
     let ware_house_sheet_signatures_app = new Vue({
         el:"#warehouse-sheet-signatures-app",
@@ -7,36 +8,33 @@
             ware_house_sheet_signatures: ware_house_sheet_signatures,
             search_for:'',
             waiting:false,
+            status:"",
+            description:"",
+            warehouse_sheet:warehouse_sheet_app.warehouse_sheet,
         },
         methods: {
             filter:function(){
                 // this.ware_house_sheet_signatures = ware_house_sheet_signatures.filter(ware_house_sheet_signature => ware_house_sheet_signature.title.indexOf(this.search_for) > -1)
          
             },
-            add_signature:function(){
+            add_signature:function(warehouse_sheet_id){
                 let aaa = this.warehouse_sheet
                 let url = "{% url 'warehouse:add_signature' %}"
                 let payload = {
                     csrfmiddlewaretoken: csrfmiddlewaretoken,
-                    ware_house_sheet_id: this.warehouse_sheet.id,
-                    status: status,
+                    ware_house_sheet_id: warehouse_sheet_id,
+                    status: this.status,
+                    description:this.description
                 }
+                console.log(payload)
                 $.post(url, payload).done(data => {
                     console.log(data)
                     if (data.result === 'SUCCEED') {
+                        ware_house_sheet_signatures_app.ware_house_sheet_signatures.push(data.ware_house_sheet_signature)
 
-                        warehouse_sheets_app.warehouse_sheets.forEach(warehouse_sheet => {
-                            if (warehouse_sheet.id == data.warehouse_sheet.id) {
-                                warehouse_sheet.status = data.warehouse_sheet.status
-                                console.log(warehouse_sheet.status)
-                            }
-                            if (typeof availables_list_app != 'undefined') {
-                                availables_list_app.refresh(warehouse_sheet.ware_house.id)
-                            }
-                        })
                     }
                 })
-            }
+            },
             to_price: function (vall) {
                 let color='danger'
                 if (vall>0)

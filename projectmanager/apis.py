@@ -150,7 +150,6 @@ class AddMaterialRequestApi(APIView):
                     description=description,
                 )
                 if material_request is not None:
-                    print(material_request)
                     context['material_request']=MaterialRequestSerializer(material_request).data
                     context['result']=SUCCEED
         context['log']=log
@@ -188,7 +187,6 @@ class AddServiceRequestApi(APIView):
                     description=description,
                 )
                 if service_request is not None:
-                    print(service_request)
                     context['service_request']=ServiceRequestSerializer(service_request).data
                     context['result']=SUCCEED
         context['log']=log

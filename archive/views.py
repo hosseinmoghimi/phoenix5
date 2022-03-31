@@ -79,7 +79,6 @@ class FolderView(View):
             context['folder']=FolderSerializer(folder).data
             context['folders']=FolderSerializer(folders,many=True).data
             files=FileSerializer(folder.files.all(),many=True).data
-            print(files)
             context['files']=files
             context['result']=SUCCEED
         return JsonResponse(context)

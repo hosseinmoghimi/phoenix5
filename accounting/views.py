@@ -5,6 +5,7 @@ from accounting.enums import PaymentMethodEnum, TransactionStatusEnum
 from accounting.models import Invoice
 from core.constants import CURRENCY, FAILED, SUCCEED
 from core.enums import UnitNameEnum
+from core.utils import app_is_installed
 from core.views import CoreContext, MessageView, PageContext,SearchForm
 # Create your views here.
 from django.views import View
@@ -13,10 +14,10 @@ from guarantee.serializers import GuaranteeSerializer
 from utility.calendar import PersianCalendar
 from warehouse.repo import WareHouseRepo, WareHouseSheetRepo
 from warehouse.serializers import WareHouseSerializer, WareHouseSheetSerializer
-from .apps import APP_NAME
-from .repo import AccountRepo,FinancialBalanceRepo, ChequeRepo, PaymentRepo, PriceRepo, ProductRepo,ServiceRepo,FinancialDocumentRepo,InvoiceRepo, TransactionRepo
-from .serializers import AccountSerializer, FinancialBalanceSerializer, InvoiceFullSerializer,InvoiceLineSerializer,ChequeSerializer, InvoiceSerializer, PaymentSerializer, PriceSerializer, ProductSerializer,ServiceSerializer,FinancialDocumentForAccountSerializer,FinancialDocumentSerializer, TransactionSerializer
-from .forms import *
+from accounting.apps import APP_NAME
+from accounting.repo import AccountRepo,FinancialBalanceRepo, ChequeRepo, PaymentRepo, PriceRepo, ProductRepo,ServiceRepo,FinancialDocumentRepo,InvoiceRepo, TransactionRepo
+from accounting.serializers import AccountSerializer, FinancialBalanceSerializer, InvoiceFullSerializer,InvoiceLineSerializer,ChequeSerializer, InvoiceSerializer, PaymentSerializer, PriceSerializer, ProductSerializer,ServiceSerializer,FinancialDocumentForAccountSerializer,FinancialDocumentSerializer, TransactionSerializer
+from accounting.forms import *
 import json
 from phoenix.server_settings import phoenix_apps
 
@@ -90,9 +91,13 @@ def get_invoice_context(request,*args, **kwargs):
     guarantees_s=json.dumps(GuaranteeSerializer(guarantees,many=True).data)
     context['guarantees_s']=guarantees_s
 
- 
-    warehouse_sheets=invoice.warehousesheet_set.all()
-    warehouse_sheets_s=json.dumps(WareHouseSheetSerializer(warehouse_sheets,many=True).data)
+    
+    # warehouse_sheets=[]
+    if True:
+        from warehouse.repo import WareHouseSheetRepo
+        warehouse_sheets=WareHouseSheetRepo(request=request).list(invoice_id=invoice.id)
+        warehouse_sheets_s=json.dumps(WareHouseSheetSerializer(warehouse_sheets,many=True).data)
+
     context['warehouse_sheets_s']=warehouse_sheets_s
 
 
@@ -210,12 +215,17 @@ def get_product_context(request,*args, **kwargs):
 
 
 
-    #warehouse availables
-    if True:
+    #warehouse availables , warehouse sheets
+    warehouse_app_is_installed= app_is_installed('warehouse')
+    print('warehouse_app_is_installed')
+    print(warehouse_app_is_installed)
+    if warehouse_app_is_installed:
+        from warehouse.repo import WareHouseSheetRepo
+        ware_house_sheet_repo=WareHouseSheetRepo(request=request)
         products=[product]
         ware_houses=WareHouseRepo(request=request).list()
         availables_list=[]
-        warehouse_sheets=WareHouseSheetRepo(request=request).list(product_id=product.id)
+        warehouse_sheets=ware_house_sheet_repo.list(product_id=product.id)
 
         for ware_house in ware_houses:    
             for product in products:    
@@ -227,7 +237,13 @@ def get_product_context(request,*args, **kwargs):
                     list_item['ware_house']=WareHouseSerializer(line.ware_house).data
                     availables_list.append(list_item)
         context['availables_list']=json.dumps(availables_list)
-    
+     
+        warehouse_sheets=ware_house_sheet_repo.list(product_id=product.id)
+        warehouse_sheets_s=json.dumps(WareHouseSheetSerializer(warehouse_sheets,many=True).data)
+        context['warehouse_sheets_s']=warehouse_sheets_s
+ 
+
+
     return context
 
 def get_service_context(request,*args, **kwargs):
@@ -410,7 +426,8 @@ class ProductView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
         product=ProductRepo(request=request).product(*args, **kwargs)
-        
+        print('warehouse_app_is_installed')
+        print(context['warehouse_app_is_installed'])
         if product is None:
             mv=MessageView(request=request)
             mv.title="چنین کالایی یافت نشد."

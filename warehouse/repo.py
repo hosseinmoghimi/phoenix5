@@ -1,4 +1,5 @@
 from inspect import signature
+from aiohttp import request
 from django.db.models import Q
 from authentication.repo import ProfileRepo
 from django.utils import timezone
@@ -8,13 +9,10 @@ from utility.calendar import PersianCalendar
 
 from warehouse.apps import APP_NAME
 from warehouse.models import WareHouse, WareHouseSheet, WareHouseSheetSignature
-   
-
-
-        
+  
+       
 class WareHouseRepo():
     def __init__(self, *args, **kwargs):
-        print(kwargs['request'].user)
         self.request = None
         self.user = None
         if 'request' in kwargs:
@@ -47,10 +45,10 @@ class WareHouseRepo():
             return self.objects.filter(owner_id=kwargs['owner_id']).first()
         if 'id' in kwargs:
             return self.objects.filter(pk=kwargs['id']).first()
-       
+
+
 class WareHouseSheetSignatureRepo():
     def __init__(self, *args, **kwargs):
-        print(kwargs['request'].user)
         self.request = None
         self.user = None
         if 'request' in kwargs:
@@ -59,7 +57,7 @@ class WareHouseSheetSignatureRepo():
         if 'user' in kwargs:
             self.user = kwargs['user']
         self.profile=ProfileRepo(*args, **kwargs).me
-        self.objects = WareHouseSheetSignature.objects.order_by('title')
+        self.objects = WareHouseSheetSignature.objects.order_by('date_added')
         return
         if self.user is not None and self.user.has_perm(APP_NAME+".view_warehouse"):
             self.objects = WareHouse.objects.order_by('title')
@@ -68,16 +66,29 @@ class WareHouseSheetSignatureRepo():
         else:
             self.objects = WareHouse.objects.filter(pk__lte=0).order_by('title')
 
-
     def add_signature(self,*args, **kwargs):
         if not self.user.has_perm(APP_NAME+".add_warehousesheetsignature"):
             return 
-        signature=WareHouseSheetSignature(*args, **kwargs)
+        from projectmanager.repo import EmployeeRepo
+        employee=EmployeeRepo(request=self.request).me
+        if employee is None:
+            return
+        signature=WareHouseSheetSignature()
+        if 'ware_house_sheet_id' in kwargs:
+            signature.request_id=kwargs['ware_house_sheet_id']
+        if 'status' in kwargs:
+            signature.status=kwargs['status']
+        if 'description' in kwargs:
+            signature.description=kwargs['description']
+        
+        signature.employee_id=employee.id
         signature.save()
         return signature
+    
     def list(self,*args, **kwargs):
         objects=self.objects
         return objects
+    
     def ware_house_sheet_signature(self, *args, **kwargs):
         if 'ware_house_sheet_signature_id' in kwargs:
             return self.objects.filter(pk=kwargs['ware_house_sheet_signature_id']).first()
@@ -90,7 +101,6 @@ class WareHouseSheetSignatureRepo():
         if 'id' in kwargs:
             return self.objects.filter(pk=kwargs['id']).first()
             
-
 
 class WareHouseSheetRepo:
     def __init__(self, *args, **kwargs):
@@ -113,7 +123,6 @@ class WareHouseSheetRepo:
             self.objects = WareHouseSheet.objects.filter(pk__lte=0).order_by('-date_registered')
 
     def list(self, *args, **kwargs):
-        print(kwargs)
         objects = self.objects.all()
         if 'for_home' in kwargs:
             objects = objects.filter(for_home=kwargs['for_home'])
