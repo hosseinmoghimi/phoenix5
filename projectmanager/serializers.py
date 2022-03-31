@@ -8,6 +8,7 @@ class ProjectBriefSerializer(serializers.ModelSerializer):
         model=Project
         fields=['id', 'title', 'get_absolute_url']
 
+
 class OrganizationUnitSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -20,16 +21,19 @@ class EventSerializerForChart(serializers.ModelSerializer):
         model=Event
         fields=['id','title','get_absolute_url','start_datetime2','end_datetime2']
 
+
 class EventSerializer(serializers.ModelSerializer):
     project_related=ProjectBriefSerializer()
     class Meta:
         model=Event
         fields=['id','project_related','thumbnail','likes_count','title','get_absolute_url','persian_event_datetime','persian_start_datetime','persian_end_datetime','get_edit_url']
 
+
 class LetterSerializer(serializers.ModelSerializer):
     class Meta:
         model=Letter
         fields=['id','thumbnail','title','get_absolute_url','persian_date_added','get_edit_url']
+
 
 class LetterSentSerializer(serializers.ModelSerializer):
     letter=LetterSerializer()
@@ -38,11 +42,6 @@ class LetterSentSerializer(serializers.ModelSerializer):
     class Meta:
         model=letterSent
         fields=['id','letter','sender','persian_date_sent','recipient']
-
-
-
-
-
  
 
 class EmployeeSerializer(serializers.ModelSerializer):
@@ -59,6 +58,7 @@ class RequestSignatureSerializer(serializers.ModelSerializer):
         model = RequestSignature
         fields = ['id','employee', 'get_status_tag','persian_date_added','description','get_delete_url','get_edit_url']
 
+
 class RequestSerializer(serializers.ModelSerializer):
     class Meta:
         model = Request
@@ -71,6 +71,7 @@ class RequestSignatureForEmployeeSerializer(serializers.ModelSerializer):
     class Meta:
         model = RequestSignature
         fields = ['id','request','employee', 'get_status_tag','persian_date_added','description','get_delete_url','get_edit_url']
+
 
 class MaterialSerializer(serializers.ModelSerializer):
     class Meta:
@@ -97,8 +98,6 @@ class ProjectSerializer(serializers.ModelSerializer):
         'persian_end_date','percentage_completed']
 
 
-
-
 class ServiceRequestSerializer(serializers.ModelSerializer):
     service=ServiceSerializer()
     project=ProjectSerializer()
@@ -109,6 +108,7 @@ class ServiceRequestSerializer(serializers.ModelSerializer):
         'quantity','persian_date_added','get_edit_url','get_delete_url',
         'get_status_tag','project','employee','unit_name','unit_price',
         'get_absolute_url']
+
 
 class MaterialRequestSerializer(serializers.ModelSerializer):
     material=MaterialSerializer()

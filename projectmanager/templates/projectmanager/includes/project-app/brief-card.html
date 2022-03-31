@@ -4,7 +4,11 @@
 <div class="card">
     <div class="card-header">
         <h5>
-            {{page.title}}
+            {{page.title}}  {% if project.archive %}
+            <span   class="badge badge-secondary">
+                آرشیو شده
+            </span>
+            {% endif %}
         </h5>
     </div>
     <div class="farsi card-body text-right">
@@ -20,6 +24,15 @@
 
                     </td>
                     <td>
+                        
+                        <div>
+                            {% if project.archive %}
+                            <span   class="badge badge-secondary">
+                                آرشیو شده
+                            </span>
+                            {% endif %}
+                            
+                        </div>
                         <div>
 
                             <a href="{% url 'projectmanager:project_chart' pk=project.id %}" title="نمودار"

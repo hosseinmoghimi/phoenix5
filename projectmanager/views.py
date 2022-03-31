@@ -129,6 +129,11 @@ class OrganizationUnitView(View):
         context = getContext(request=request)
         organization_unit = OrganizationUnitRepo(
             request=request).organization_unit(*args, **kwargs)
+        if organization_unit is None:
+            mv=MessageView(request=request)
+            mv.title="واحد سازمانی موردنظر یافت نشد."
+            mv.body="واحد سازمانی موردنظر یافت نشد."
+            return mv.response()
         context.update(PageContext(request=request, page=organization_unit))
         context['organization_unit'] = organization_unit
 
