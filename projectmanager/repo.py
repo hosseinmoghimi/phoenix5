@@ -614,6 +614,8 @@ class RequestSignatureRepo():
     
     def list(self,*args, **kwargs):
         objects=self.objects
+        if 'employee_id' in kwargs:
+            objects= objects.filter(employee_id=kwargs['employee_id'])
         return objects
     
     def request_signature(self, *args, **kwargs):

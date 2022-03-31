@@ -87,6 +87,10 @@ class Request(InvoiceLine,LinkHelper):
     class_name="request"
     app_name=APP_NAME
     @property
+    def title(self):
+        return f"درخواست {self.quantity}  {self.unit_name} {self.product_or_service.title} برای پروژه {self.project} "
+
+    @property
     def product(self):
         # from market.models import Product
         return Material.objects.filter(pk=self.product_or_service_id).first()

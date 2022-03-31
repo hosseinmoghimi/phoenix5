@@ -36,8 +36,8 @@
             </h4>
             {% endif %}
         </div>
-        <div id="collapse-request-signatures" class="collapse"
-            aria-labelledby="heading-request-signatures" data-parent="#accordion-request-signatures">
+        <div id="collapse-request-signatures" class="collapse" aria-labelledby="heading-request-signatures"
+            data-parent="#accordion-request-signatures">
 
 
             <div class="card-body pt-3">
@@ -47,12 +47,21 @@
 
 
                 <div v-for="request_signature in request_signatures">
+                    {% if not my_request %}
+                    <div class="text-right farsi">
 
+                        <a :href="request_signature.request.get_absolute_url">
+
+                            <span v-text="request_signature.request.title">
+
+                            </span>
+                        </a>
+                    </div>
+                    {% endif %}
                     <div class="media">
                         <a :href="request_signature.employee.get_absolute_url">
 
-                            <img :src="request_signature.employee.profile.image" class="rounded-circle"
-                                width="64">
+                            <img :src="request_signature.employee.profile.image" class="rounded-circle" width="64">
                         </a>
                         <div class="media-body farsi mr-3">
 
@@ -73,14 +82,12 @@
                             <div class="text-right">
 
                                 {% if perms.projectmanager.change_requestsignature %}
-                                <a class="mx-2" title="ویرایش" target="_blank"
-                                    :href="request_signature.get_edit_url">
+                                <a class="mx-2" title="ویرایش" target="_blank" :href="request_signature.get_edit_url">
                                     <i class="fa fa-edit text-warning"></i>
                                 </a>
                                 {% endif %}
                                 {% if perms.projectmanager.delete_requestsignature %}
-                                <a class="mx-2" title="حذف" target="_blank"
-                                    :href="request_signature.get_delete_url">
+                                <a class="mx-2" title="حذف" target="_blank" :href="request_signature.get_delete_url">
                                     <i class="fa fa-trash text-danger"></i>
                                 </a>
                                 {% endif %}

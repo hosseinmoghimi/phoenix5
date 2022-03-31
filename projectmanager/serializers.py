@@ -59,6 +59,19 @@ class RequestSignatureSerializer(serializers.ModelSerializer):
         model = RequestSignature
         fields = ['id','employee', 'get_status_tag','persian_date_added','description','get_delete_url','get_edit_url']
 
+class RequestSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Request
+        fields = ['id','title', 'get_absolute_url']
+
+
+class RequestSignatureForEmployeeSerializer(serializers.ModelSerializer):
+    employee=EmployeeSerializer()
+    request=RequestSerializer()
+    class Meta:
+        model = RequestSignature
+        fields = ['id','request','employee', 'get_status_tag','persian_date_added','description','get_delete_url','get_edit_url']
+
 class MaterialSerializer(serializers.ModelSerializer):
     class Meta:
         model = Material
