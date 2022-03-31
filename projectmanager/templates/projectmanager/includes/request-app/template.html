@@ -1,39 +1,64 @@
 {% load to_price %}
-<card id="request-app">
+<div class="card" id="request-app">
+    <div class="card-header">
+        <h5>
+            {{my_request.title}}
+            {% if perms.projectmanager.change_request %}
+            <a class="mx-2" title="ویرایش" target="_blank" href="{{my_request.get_edit_url}}"><i class="fa fa-edit text-warning"></i></a>
+            {% endif %}
+            {% if perms.projectmanager.delete_request %}
+            <a class="mx-2" title="حذف" target="_blank" href="{{my_request.get_delete_url}}"><i class="fa fa-trash text-danger"></i></a>
+            {% endif %} 
+        </h5>
+    </div>
     <div class="card-body text-right farsi">
-        {% if perms.projectmanager.change_request %}
-        <a class="mx-2" title="ویرایش" target="_blank"
-            href="{{my_request.get_edit_url}}">
-            <i class="fa fa-edit text-warning"></i>
-        </a>
-        {% endif %}
-        {% if perms.projectmanager.delete_request %}
-        <a class="mx-2" title="حذف" target="_blank"
-            href="{{my_request.get_delete_url}}">
-            <i class="fa fa-trash text-danger"></i>
-        </a>
-        {% endif %} 
+       
 
 
-        <h4>
+        <h5>
+            <small class="text-muted">
+                پروژه 
+            </small>
             <a href="{{my_request.project.get_absolute_url}}">
 
                 {{my_request.project.title}}
             </a>
-        </h4>
+        </h5>
 
-        <h4>
+        <h5>
+            
+            <small class="text-muted">
+                متریال 
+            </small>
             <a href="{{my_request.product_or_service.get_absolute_url}}">
 
                 {{my_request.product_or_service.title}}
             </a>
-        </h4>
+        </h5>
 
 
         <h5>
-            {{my_request.quantity}}   {{my_request.unit_name}} * {{my_request.unit_price|to_price}} = {{my_request.total|to_price}}
+            <small class="text-muted">
+                درخواست شده 
+            </small>
+           
+           {{my_request.quantity}}   {{my_request.unit_name}}
         </h5>
+        <div class="alert alert-info">
+
+            <p>
+                {{my_request.quantity}}   {{my_request.unit_name}} * {{my_request.unit_price|to_price}} = {{my_request.total|to_price}}
+            </p>
+               </div>
+
+        <div class="alert alert-success">
+
+             <h5>
+                {{my_request.total|to_horuf}} {{CURRENCY}}
+
+            </h5>
+        </div>
 
  
     </div>
-</card>
+</div>
