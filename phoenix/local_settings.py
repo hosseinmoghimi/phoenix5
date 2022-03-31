@@ -6,7 +6,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 HOME_APP_URLS='projectmanager.urls'
 ALLOW_REGISTER_ONLINE=False
 UPLOAD_ROOT="d:\\phoenix5\\uploads"
-PUBLIC_ROOT=BASE_DIR
+PUBLIC_ROOT=os.path.join(BASE_DIR,'public_html')
 DEBUG=True
 QRCODE_ROOT="d:\\phoenix5\\qrcode"
 INSTALLED_APPS = [
@@ -20,6 +20,7 @@ INSTALLED_APPS = [
     'django_social_share',
     # 'web3auth.apps.Web3AuthConfig',
     'market',
+    'resume',
     'core',
     'wallet',
     'authentication',
@@ -69,6 +70,14 @@ phoenix_apps=[
         'title':'هویت',
         'color':'warning',
         'home_url':SITE_URL+"authentication"+"/",
+        'has_help':False,
+        'show_on_menu':True,
+    },
+    {
+        'name':'resume',
+        'title':'رزومه',
+        'color':'success',
+        'home_url':SITE_URL+"resume"+"/",
         'has_help':False,
         'show_on_menu':True,
     },

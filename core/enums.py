@@ -66,9 +66,12 @@ class ParameterNameEnum(TextChoices):
     HOME_URL="لینک به خانه",_("لینک به خانه")
     THUMBNAIL_DIMENSION="عرض تصاویر کوچک",_("عرض تصاویر کوچک")
 
+
 class TextDirectionEnum(TextChoices):
     Rtl='rtl',_('rtl')
     Ltr='ltr',_('ltr')
+
+
 class UnitNameEnum(TextChoices):
     ADAD="عدد",_("عدد")
     GERAM="گرم",_("گرم")
@@ -145,7 +148,20 @@ class IconsEnum(TextChoices):
     vpn_key='vpn_key',_('vpn_key')
     weekend='weekend',_('weekend')
 
-
+class LanguageEnum(TextChoices):
+    FARSI="فارسی",_("فارسی")
+    ENGLISH="انگلیسی",_("انگلیسی")
+    
+def LanguageCode(language):
+    if language==LanguageEnum.FARSI:
+        return 'fa'
+    if language==LanguageEnum.ENGLISH:
+        return 'en'
+def LanguageFromCode(code):
+    if code=='fa':
+        return LanguageEnum.FARSI
+    if code=='en':
+        return LanguageEnum.ENGLISH
    
 class PictureNameEnum(TextChoices):
     LOGO="لوگو",_("لوگو")
