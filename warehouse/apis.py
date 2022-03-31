@@ -1,14 +1,15 @@
 import json
+from signal import signal
 from accounting.repo import ProductRepo
 from core.constants import FAILED,SUCCEED
 from rest_framework.views import APIView
 from warehouse.enums import *
 
 from utility.calendar import PersianCalendar
-from .repo import   WareHouseSheetRepo
+from warehouse.repo import   WareHouseSheetRepo, WareHouseSheetSignatureRepo
 from django.http import JsonResponse
-from .forms import *
-from .serializers import WareHouseSerializer, WareHouseSheetSerializer
+from warehouse.forms import *
+from warehouse.serializers import WareHouseSerializer, WareHouseSheetSerializer, WareHouseSheetSignatureSerializer
  
 
 class WareHouseSheetApi(APIView):
@@ -79,6 +80,26 @@ class ReportApi(APIView):
                         availables_list.append(list_item)
                         
                     context['availables_list']=availables_list
+                    context['result']=SUCCEED
+        context['log']=log
+        return JsonResponse(context)
+
+class AddSignatureApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        log=11
+        context['result']=FAILED
+        if request.method=='POST':
+            log=22
+            report_form=AddSignatureForm(request.POST)
+            availables_list=[]
+            if report_form.is_valid():
+                log=33
+                cd=report_form.cleaned_data
+            
+                signature=WareHouseSheetSignatureRepo(request=request).add_signature(**cd)
+                if signature is not None:
+                    context['signature']=WareHouseSheetSignatureSerializer(signature).data
                     context['result']=SUCCEED
         context['log']=log
         return JsonResponse(context)

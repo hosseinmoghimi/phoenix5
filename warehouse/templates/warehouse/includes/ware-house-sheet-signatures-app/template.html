@@ -1,0 +1,110 @@
+{% load to_persian_date %}
+{% load to_price %}
+{% load to_amount_color %}
+{% load static %}
+<div id="accordion-warehouse-sheet-signatures">
+
+
+    <div class="card" id="warehouse-sheet-signatures-app">
+        <div class="card-header" id="heading-warehouse-sheet-signatures">
+            <h5 class="text-center">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-warehouse-sheet-signatures"
+                    aria-expanded="true" aria-controls="collapse-warehouse-sheet-signatures">
+                    امضاهای برگه انبار
+
+
+                    <span v-if="ware_house_sheet_signatures.length>0">
+                        <small class="text-danger mx-2">
+                            <span v-text="ware_house_sheet_signatures.length"></span>
+                        </small>
+                    </span>
+
+
+                </button>
+            </h5>
+
+            {% if page_pre_description %}
+
+            <h5 class="text-center">
+                {{page_pre_description}}
+            </h5>
+            {% endif %}
+            {% if page_description %}
+
+            <h4 class="text-center">
+                {{page_description}}
+            </h4>
+            {% endif %}
+        </div>
+        <div id="collapse-warehouse-sheet-signatures" class="collapse"
+            aria-labelledby="heading-warehouse-sheet-signatures" data-parent="#accordion-warehouse-sheet-signatures">
+
+
+            <div class="card-body">
+
+                {% load static %}
+                <form @submit.prevent="search()">
+                    <img src="{% static 'leo/img/loading.gif' %}" width="32" v-if="waiting" alt="">
+
+                    <input type="text" v-model="search_for" class="form-control" placeholder="جستجو ..."
+                        @input="filter()">
+                </form>
+ 
+                    <img v-if="false" width="32" src="{% static 'leo/img/loading.gif' %}" alt="">
+                    <h6 v-if="false">
+
+                        <span class="text-muted">در حال بار گذاری ... </span>
+                    </h6>
+
+
+
+                    <div v-for="ware_house_sheet_signature in ware_house_sheet_signatures">
+                        <div class="media">
+                            <img :src="ware_house_sheet_signature.employee.profile.image" class="rounded-circle"
+                                width="32">
+                            <div class="media-body farsi">
+                                <div>
+
+                                    <span v-text="ware_house_sheet_signature.employee.title"></span>
+                                </div>
+                                <div>
+                                    <span v-html="ware_house_sheet_signature.persian_date_added"> </span>
+                                </div>
+                                <div>
+                                    <span v-text="ware_house_sheet_signature.description"> </span>
+                                </div>
+
+
+                            </div>
+                        </div>
+
+
+
+
+                        {% if perms.warehouse.change_warehousesheetsignature %}
+                        <a title="ویرایش" target="_blank" :href="ware_house_sheet_signature.get_edit_url">
+
+                            <i class="fa fa-edit text-warning"></i>
+                        </a>
+                        {% endif %}
+                        {% if perms.warehouse.delete_warehousesheetsignature %}
+                        <a title="حذف" target="_blank" :href="ware_house_sheet_signature.get_delete_url">
+
+                            <i class="fa fa-trash text-danger"></i>
+                        </a>
+                        {% endif %}
+
+                        <hr>
+
+
+                    </div>
+
+                    {% if add_signature_form %}
+                      
+                    {% include "warehouse/includes/ware-house-sheet-signatures-app/add-signature-form.html" %}
+                    {% endif %}
+                </div>
+         
+
+        </div>
+    </div>

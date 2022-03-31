@@ -220,9 +220,7 @@ class RequestSignature(models.Model,LinkHelper):
     def __str__(self):
         return f"""{self.request} : امضاءکننده" {self.employee}  " :{self.status} """
 
-    def get_absolute_url(self):
-        return reverse("RequestSignature_detail", kwargs={"pk": self.pk})
-
+  
 
 class Employee(Account):
     organization_unit=models.ForeignKey("organizationunit",null=True,blank=True, verbose_name=_("organization_unit"), on_delete=models.CASCADE)

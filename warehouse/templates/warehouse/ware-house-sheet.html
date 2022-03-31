@@ -8,94 +8,26 @@
 
 <div class="row">
     <div class="col-md-12">
-        <div class="card" id="warehouse-sheet-app">
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-12 text-right farsi">
-
-                        <span class="badge badge-{{warehouse_sheet.color}}">
-                            {{warehouse_sheet.direction}}
-                        </span>
-                    </div>
-                    <div class="col-md-4 text-right farsi">
-                        کالا :
-                        <a href="{{warehouse_sheet.product.get_absolute_url}}">{{warehouse_sheet.product.title}}</a>
-
-                    </div>
-                    <div class="col-md-4 text-right farsi">
-                        انبار :
-                        <a
-                            href="{{warehouse_sheet.ware_house.get_absolute_url}}">{{warehouse_sheet.ware_house.title}}</a>
-
-                    </div>
-
-                    <div class="col-md-4 text-right farsi">
-                        تعداد :
-                        {{warehouse_sheet.quantity}}
-                        {{warehouse_sheet.unit_name}}
-
-                    </div>
-
-
-                    <div class="col-md-4 text-right farsi">
-                        تاریخ :
-                        {{warehouse_sheet.persian_date_registered}}
-
-                    </div>
-
-
-
-                    <h4>
-
-                        <small v-text="warehouse_sheet.status"></small>
-                    </h4>
-
-                    <div>
-                        <button class="btn btn-sm mb-1 btn-success" @click="change_state('DONE')">تمام شده</button>
-                    </div>
-                    <div>
-                        <button class="btn btn-sm mb-1 btn-warning" @click="change_state('IN_PROGRESS')">در
-                            جریان</button>
-                    </div>
-                    <div>
-                        <button class="btn btn-sm mb-1 btn-danger" @click="change_state('INITIAL')">تعریف
-                            اولیه</button>
-                    </div>
-
-                </div>
-            </div>
-        </div>
+     
     </div>
+
+
+    <div class="col-md-12">
+        {% include "warehouse/includes/ware-house-app/template.html" %}
+          </div>
+    
+  <div class="col-md-12">
+    {% include "warehouse/includes/ware-house-sheet-signatures-app/template.html" %}
+  </div>
+ 
+
 </div>
 </div>
 {% endblock content %}
 
 {% block script %}
-<script>
-    let warehouse_sheet_app = new Vue({
-        el: "#warehouse-sheet-app",
-        data: {
-            status:"{{status}}",
-            warehouse_sheet:JSON.parse(`{{warehouse_sheet_s|escapejs}}`)
-        },
-        methods: {
-            change_state: function (status) {
-                let aaa = this.warehouse_sheet
-                let url = "{% url 'warehouse:change_warehouse_sheet_state' %}"
-                let payload = {
-                    csrfmiddlewaretoken: csrfmiddlewaretoken,
-                    warehouse_sheet_id: this.warehouse_sheet.id,
-                    status: status,
-                }
-                $.post(url, payload).done(data => {
-                    console.log(data)
-                    if (data.result === 'SUCCEED') {
-                        warehouse_sheet_app.warehouse_sheet=data.warehouse_sheet
-                    }
-                })
-            },
 
-        }
-    })
-</script>
+{% include "warehouse/includes/ware-house-app/script.html" %}
+{% include "warehouse/includes/ware-house-sheet-signatures-app/script.html" %}
+
 {% endblock script %}

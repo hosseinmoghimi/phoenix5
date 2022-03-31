@@ -1,0 +1,28 @@
+
+<script>
+    let warehouse_sheet_app = new Vue({
+        el: "#warehouse-sheet-app",
+        data: {
+            status:"{{status}}",
+            warehouse_sheet:JSON.parse(`{{warehouse_sheet_s|escapejs}}`)
+        },
+        methods: {
+            change_state: function (status) {
+                let aaa = this.warehouse_sheet
+                let url = "{% url 'warehouse:change_warehouse_sheet_state' %}"
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    warehouse_sheet_id: this.warehouse_sheet.id,
+                    status: status,
+                }
+                $.post(url, payload).done(data => {
+                    console.log(data)
+                    if (data.result === 'SUCCEED') {
+                        warehouse_sheet_app.warehouse_sheet=data.warehouse_sheet
+                    }
+                })
+            },
+
+        }
+    })
+</script>

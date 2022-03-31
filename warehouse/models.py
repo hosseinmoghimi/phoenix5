@@ -1,6 +1,7 @@
 from authentication.models import IMAGE_FOLDER
 from phoenix.server_settings import STATIC_URL
 from phoenix.settings import MEDIA_URL
+from projectmanager.enums import SignatureStatusEnum, StatusColor
 from utility.currency import to_price
 from utility.calendar import  PersianCalendar,to_persian_datetime_tag
 from core.middleware import get_request
@@ -33,6 +34,8 @@ class WareHouse(Page):
         self.app_name=APP_NAME
         return super(WareHouse,self).save(*args, **kwargs)
  
+
+
 class WareHouseSheet(models.Model,LinkHelper):
     date_added=models.DateTimeField(_("date_added"), auto_now=False, auto_now_add=True)
     date_registered=models.DateTimeField(_("date_registered"), auto_now=False, auto_now_add=False)
@@ -75,3 +78,40 @@ class WareHouseSheet(models.Model,LinkHelper):
         if self.direction==WareHouseSheetDirectionEnum.EXPORT:
             color="danger"
         return color
+
+
+
+
+class WareHouseSheetSignature(models.Model,LinkHelper):
+    request = models.ForeignKey("warehousesheet", verbose_name=_(
+        "ware_house_sheet"), on_delete=models.CASCADE)
+    employee = models.ForeignKey("projectmanager.employee", verbose_name=_(
+        "employee"), on_delete=models.PROTECT)
+    date_added = models.DateTimeField(
+        _("date_added"), auto_now=False, auto_now_add=True)
+    description = models.CharField(_("description"), max_length=200)
+    status = models.CharField(_("status"), choices=SignatureStatusEnum.choices,
+                              default=SignatureStatusEnum.REQUESTED, max_length=200)
+
+    class_name = "warehousesheetsignature"
+    app_name = APP_NAME
+
+    class Meta:
+        verbose_name = _("WareHouseSheetSignature")
+        verbose_name_plural = _("WareHouseSheetSignature")
+
+    def persian_date_added(self):
+        return to_persian_datetime_tag(self.date_added)
+
+    def get_status_color(self):
+        return StatusColor(self.status)
+
+    def get_status_tag(self):
+        return f"""
+            <span class="badge badge-{self.get_status_color()}">{self.status}</span>
+        """
+
+    def __str__(self):
+        return f"""{self.request} : امضاءکننده" {self.employee}  " :{self.status} """
+ 
+
