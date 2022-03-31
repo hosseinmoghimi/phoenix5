@@ -12,15 +12,15 @@ from core.views import CoreContext, MessageView, SearchForm, PageContext
 # Create your views here.
 from django.views import View
 
-from projectmanager.enums import ProjectStatusEnum
+from projectmanager.enums import ProjectStatusEnum, SignatureStatusEnum
 
 from .forms import *
 from .apps import APP_NAME
 # from .repo import MaterialRepo
 # from .serializers import MaterialSerializer
 import json
-from .repo import EmployeeRepo, EventRepo, LetterRepo, MaterialInvoiceRepo, MaterialRepo, OrganizationUnitRepo, ServiceInvoiceRepo, ServiceRepo, ProjectRepo
-from .serializers import EmployeeSerializer, EventSerializer, LetterSentSerializer, LetterSerializer, MaterialSerializer, OrganizationUnitSerializer, ServiceSerializer, ProjectSerializer, ServiceRequestSerializer, MaterialRequestSerializer
+from .repo import EmployeeRepo, EventRepo, LetterRepo, MaterialInvoiceRepo, MaterialRepo, MaterialRequestRepo, OrganizationUnitRepo, ServiceInvoiceRepo, ServiceRepo, ProjectRepo, ServiceRequestRepo
+from .serializers import EmployeeSerializer, EventSerializer, LetterSentSerializer, LetterSerializer, MaterialSerializer, OrganizationUnitSerializer, RequestSignatureSerializer, ServiceSerializer, ProjectSerializer, ServiceRequestSerializer, MaterialRequestSerializer
 
 TEMPLATE_ROOT = "projectmanager/"
 LAYOUT_PARENT = "phoenix/layout.html"
@@ -224,6 +224,36 @@ class LetterView(View):
             context['letter_sents_s'] = letter_sents_s
 
         return render(request, TEMPLATE_ROOT+"letter.html", context)
+
+
+class RequestView(View):
+    def get(self, request, *args, **kwargs):
+        context = getContext(request=request)
+
+        my_request = MaterialRequestRepo(request=request).material_request(*args, **kwargs)
+        if my_request is None:
+            my_request = ServiceRequestRepo(request=request).service_request(*args, **kwargs)
+
+        context['my_request'] = my_request
+  
+
+
+        request_signatures = my_request.requestsignature_set.all()
+        context['request_signatures'] = request_signatures
+        request_signatures_s = json.dumps(
+            RequestSignatureSerializer(request_signatures, many=True).data)
+        context['request_signatures_s'] = request_signatures_s
+
+        
+        #add_signature_form
+        if True:
+            context['signature_statuses']=(i[0] for i in SignatureStatusEnum.choices)
+            employee=EmployeeRepo(request=self.request).me
+            if employee is not None:
+                context['add_signature_form']=AddSignatureForm()
+                
+
+        return render(request, TEMPLATE_ROOT+"request.html", context)
 
 
 class ProjectView(View):

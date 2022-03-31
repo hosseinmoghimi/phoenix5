@@ -4,8 +4,8 @@ from django.utils import timezone
 from urllib import request
 
 from projectmanager.enums import RequestStatusEnum, SignatureStatusEnum
-from .apps import APP_NAME
-from .models import Employee, Event, Letter,Material, MaterialInvoice, MaterialRequest,PM_Service as Service, Project,OrganizationUnit, RequestSignature, ServiceInvoice, ServiceRequest,WareHouse
+from projectmanager.apps import APP_NAME
+from projectmanager.models import Employee, Event, Letter,Material, MaterialInvoice, MaterialRequest,PM_Service as Service, Project,OrganizationUnit, Request, RequestSignature, ServiceInvoice, ServiceRequest,WareHouse
 
 from authentication.repo import ProfileRepo
 from django.db.models import Q
@@ -85,7 +85,7 @@ class ServiceInvoiceRepo():
         if 'parent_id' in kwargs:
             objects=objects.filter(parent_id=kwargs['parent_id'])
         return objects.order_by('date_added') 
-
+ 
 
 class LetterRepo():
     def __init__(self, *args, **kwargs):
@@ -123,6 +123,7 @@ class LetterRepo():
         if 'parent_id' in kwargs:
             objects=objects.filter(parent_id=kwargs['parent_id'])
         return objects.order_by('date_added') 
+
 
 class MaterialRepo():
     def __init__(self, *args, **kwargs):
@@ -571,6 +572,62 @@ class ServiceRequestRepo():
             objects=project.organization_units.all()
         return objects.all()
 
+
+
+class RequestSignatureRepo():
+    def __init__(self, *args, **kwargs):
+        self.request = None
+        self.user = None
+        if 'request' in kwargs:
+            self.request = kwargs['request']
+            self.user = self.request.user
+        if 'user' in kwargs:
+            self.user = kwargs['user']
+        self.profile=ProfileRepo(*args, **kwargs).me
+        self.objects = RequestSignature.objects.order_by('date_added')
+        return
+        if self.user is not None and self.user.has_perm(APP_NAME+".view_warehouse"):
+            self.objects = WareHouse.objects.order_by('title')
+        elif self.profile is not None:
+            self.objects = WareHouse.objects.filter(account__profile=self.profile).order_by('title')
+        else:
+            self.objects = WareHouse.objects.filter(pk__lte=0).order_by('title')
+
+    def add_signature(self,*args, **kwargs):
+        if not self.user.has_perm(APP_NAME+".add_requestsignature"):
+            return 
+        from projectmanager.repo import EmployeeRepo
+        employee=EmployeeRepo(request=self.request).me
+        if employee is None:
+            return
+        signature=RequestSignature()
+        if 'request_id' in kwargs:
+            signature.request_id=kwargs['request_id']
+        if 'status' in kwargs:
+            signature.status=kwargs['status']
+        if 'description' in kwargs:
+            signature.description=kwargs['description']
+        
+        signature.employee_id=employee.id
+        signature.save()
+        return signature
+    
+    def list(self,*args, **kwargs):
+        objects=self.objects
+        return objects
+    
+    def request_signature(self, *args, **kwargs):
+        if 'request_signature_id' in kwargs:
+            return self.objects.filter(pk=kwargs['request_signature_id']).first()
+        if 'pk' in kwargs:
+            return self.objects.filter(pk=kwargs['pk']).first()
+        if 'store_id' in kwargs:
+            return self.objects.filter(store_id=kwargs['store_id']).first()
+        if 'owner_id' in kwargs:
+            return self.objects.filter(owner_id=kwargs['owner_id']).first()
+        if 'id' in kwargs:
+            return self.objects.filter(pk=kwargs['id']).first()
+            
 
 class MaterialRequestRepo():
     def __init__(self, *args, **kwargs):

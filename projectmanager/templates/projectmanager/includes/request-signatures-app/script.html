@@ -1,11 +1,11 @@
 {% load to_json %}
 <script>
     
-    let ware_house_sheet_signatures = JSON.parse(`{{ware_house_sheet_signatures_s|escapejs}}`)
-    let ware_house_sheet_signatures_app = new Vue({
-        el:"#warehouse-sheet-signatures-app",
+    let request_signatures = JSON.parse(`{{request_signatures_s|escapejs}}`)
+    let request_signatures_app = new Vue({
+        el:"#request-signatures-app",
         data: {
-            ware_house_sheet_signatures: ware_house_sheet_signatures,
+            request_signatures: request_signatures,
             search_for:'',
             waiting:false,
             status:"",
@@ -13,14 +13,15 @@
         },
         methods: {
             filter:function(){
-                // this.ware_house_sheet_signatures = ware_house_sheet_signatures.filter(ware_house_sheet_signature => ware_house_sheet_signature.title.indexOf(this.search_for) > -1)
+                // this.request_signatures = request_signatures.filter(request_signature => request_signature.title.indexOf(this.search_for) > -1)
          
             },
-            add_signature:function(warehouse_sheet_id){
-                let url = "{% url 'warehouse:add_signature' %}"
+            add_signature:function(request_id){
+                let aaa = this.warehouse_sheet
+                let url = "{% url 'projectmanager:add_signature' %}"
                 let payload = {
                     csrfmiddlewaretoken: csrfmiddlewaretoken,
-                    ware_house_sheet_id: warehouse_sheet_id,
+                    request_id: request_id,
                     status: this.status,
                     description:this.description
                 }
@@ -28,7 +29,7 @@
                 $.post(url, payload).done(data => {
                     console.log(data)
                     if (data.result === 'SUCCEED') {
-                        ware_house_sheet_signatures_app.ware_house_sheet_signatures.push(data.ware_house_sheet_signature)
+                        request_signatures_app.request_signatures.push(data.request_signature)
 
                     }
                 })

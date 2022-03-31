@@ -69,7 +69,7 @@ class CopyProjectRequestForm(forms.Form):
 class AddSignatureForm(forms.Form):
     service_request_id=forms.IntegerField(required=False)
     material_request_id=forms.IntegerField(required=False)
-    request_id=forms.IntegerField(required=False)
+    request_id=forms.IntegerField(required=True)
     description=forms.CharField(max_length=50,required=False)
     status=forms.CharField(max_length=50,required=True)
 
