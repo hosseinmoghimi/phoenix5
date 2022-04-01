@@ -47,8 +47,8 @@ class AttendanceRepo():
         description=kwargs['description'] if 'description' in kwargs else 0
         status=kwargs['status'] if 'status' in kwargs else AttendanceStatusEnum.NOT_SET
 
-        session=SessionRepo(request=self.request).session(*args, **kwargs)
-        student=StudentRepo(request=self.request).student(*args, **kwargs)
+        session=SessionRepo(request=self.request).session(pk=session_id)
+        student=StudentRepo(request=self.request).student(pk=student_id)
 
         if session is None or student is None:
             return
