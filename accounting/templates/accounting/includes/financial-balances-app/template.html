@@ -68,12 +68,15 @@
                                 </td>
                                 {% endif %}
                                 <td>
-                                    <span class="text-{{financial_balance.color}}">
+                                    <a href="{{financial_balance.get_absolute_url}}">
 
-
-
-                                        {{financial_balance.title}}
-                                    </span>
+                                        <span class="badge badge-{{financial_balance.color}}">
+                                            
+                                            
+                                            
+                                            {{financial_balance.title}}
+                                        </span>
+                                    </a>
                                 </td>
 
                                 {% if not financial_document %}

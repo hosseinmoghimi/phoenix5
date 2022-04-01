@@ -173,6 +173,7 @@ class ColorEnum(TextChoices):
     DANGER = 'danger', _('danger')
     WARNING = 'warning', _('warning')
     PRIMARY = 'primary', _('primary')
+    MUTED = 'muted', _('muted')
     SECONDARY = 'secondary', _('secondary')
     INFO = 'info', _('info')
     LIGHT = 'light', _('light')

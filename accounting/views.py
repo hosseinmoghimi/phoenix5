@@ -353,7 +353,15 @@ class FinancialBalancesView(View):
         context=getContext(request=request)
         financial_balances=FinancialBalanceRepo(request=request).list(*args, **kwargs)
         context['financial_balances']=financial_balances
+        context['financial_balances_s']=json.dumps(FinancialBalanceSerializer(financial_balances,many=True).data)
         return render(request,TEMPLATE_ROOT+"financial-balances.html",context)
+class FinancialBalanceView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        financial_balance=FinancialBalanceRepo(request=request).financial_balance(*args, **kwargs)
+
+        context['financial_balance']=financial_balance
+        return render(request,TEMPLATE_ROOT+"financial-balance.html",context)
 
  
 class InvoiceView(View):

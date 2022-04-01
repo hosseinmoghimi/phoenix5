@@ -1,6 +1,6 @@
 from django.utils.translation import gettext as _
 from django.db.models import TextChoices
-from core.enums import UnitNameEnum
+from core.enums import ColorEnum, UnitNameEnum
 
 
 class FinancialDocumentTypeEnum(TextChoices):
@@ -25,6 +25,23 @@ class ChequeStatusEnum(TextChoices):
     PASSED="پاس شده",_("پاس شده")
     PAID="تسویه شده",_("تسویه شده")
 
+def getColor(title):
+    color=ColorEnum.PRIMARY
+    if title==FinancialBalanceTitleEnum.ASSET:
+        color=ColorEnum.SUCCESS
+    if title==FinancialBalanceTitleEnum.MISC:
+        color=ColorEnum.MUTED
+    if title==FinancialBalanceTitleEnum.PROPERTY:
+        color=ColorEnum.SUCCESS
+    if title==FinancialBalanceTitleEnum.ASSET:
+        color=ColorEnum.SUCCESS
+    if title==FinancialBalanceTitleEnum.FURNITURE:
+        color=ColorEnum.WARNING
+    if title==FinancialBalanceTitleEnum.SELL:
+        color=ColorEnum.INFO
+    if title==FinancialBalanceTitleEnum.BUY:
+        color=ColorEnum.DANGER
+    return color
 
 class SpendTypeEnum(TextChoices):
     COST="هزینه",("هزینه")

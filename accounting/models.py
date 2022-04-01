@@ -422,7 +422,8 @@ class FinancialBalance(models.Model,LinkHelper):
     def save(self,*args, **kwargs):
         super(FinancialBalance,self).save(*args, **kwargs)
         # self.financial_document.normalize_sub_accounts()
-
+    def color(self):
+        return getColor(self.title)
 class FinancialDocumentTag(models.Model):
     title=models.CharField(_("title"), max_length=50)
 

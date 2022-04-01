@@ -120,17 +120,14 @@ class FinancialBalanceRepo:
             objects = objects.filter(financial_document_id=financial_document_id) 
         return objects
 
-    def financial_year(self, *args, **kwargs):
-        if 'date' in kwargs:
-            return self.objects.filter(start_date__lte=kwargs['date']).filter(end_date__gte=kwargs['date']).first()
-           
-        if 'financial_year_id' in kwargs:
-            return self.objects.filter(pk= kwargs['financial_year_id']).first()
+    def financial_balance(self, *args, **kwargs):
+            
+        if 'financial_balance_id' in kwargs:
+            return self.objects.filter(pk= kwargs['financial_balance_id']).first()
         if 'pk' in kwargs:
             return self.objects.filter(pk= kwargs['pk']).first()
         if 'id' in kwargs:
             return self.objects.filter(pk= kwargs['id']).first()
-   
 
 class PriceRepo:
     def __init__(self, *args, **kwargs):

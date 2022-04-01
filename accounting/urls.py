@@ -35,13 +35,12 @@ urlpatterns = [
     path("financial_document/<int:pk>/",login_required(views.FinancialDocumentView.as_view()),name="financialdocument"),
     path("financial_documents/",login_required(views.FinancialDocumentsView.as_view()),name="financial_documents"),
     
-    path("financial_balance/<int:pk>/",login_required(views.FinancialDocumentView.as_view()),name="financialbalance"),
-    path("financial_balances/",login_required(views.FinancialDocumentsView.as_view()),name="financial_balances"),
+    path("financial_balance/<int:pk>/",login_required(views.FinancialBalanceView.as_view()),name="financialbalance"),
+    path("financial_balances/",login_required(views.FinancialBalancesView.as_view()),name="financial_balances"),
     
     path("payment/<int:pk>/",login_required(views.PaymentView.as_view()),name="payment"),
     path("payments/",login_required(views.PaymentsView.as_view()),name="payments"),
     
-    path("financial_balances/",login_required(views.FinancialBalancesView.as_view()),name="financial_balances"),
 
 
 
