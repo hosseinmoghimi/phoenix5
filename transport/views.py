@@ -62,6 +62,13 @@ class TripPathView(View):
         context=getContext(request=request)
         trip_path=TripPathRepo(request=request).trip_path(*args, **kwargs)
         context['trip_path']=trip_path
+
+
+        trips=trip_path.trip_set.all()
+        context['trips']=trips
+        trips_s=json.dumps(TripSerializer(trips,many=True).data)
+        context['trips_s']=trips_s
+
         return render(request,TEMPLATE_ROOT+"trip-path.html",context)
 
 class TripsView(View):

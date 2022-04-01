@@ -1,4 +1,4 @@
-{% extends "transport/layout.html" %}
+{% extends "transport/wide-layout.html" %}
 {% load to_price %}
 {% block content %}
 
@@ -101,5 +101,16 @@
             </div>
         </div>
     </div>
+
+    <div class="col-md-12">
+        {% include "transport/includes/trips-app/template.html" %}
+    </div>
+
 </div>
 {% endblock content %}
+
+{% block script %}
+
+{% include "transport/includes/trips-app/script.html" %}
+  
+{% endblock script %}
