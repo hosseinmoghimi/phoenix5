@@ -54,7 +54,7 @@ class InvoiceLineSerializer(serializers.ModelSerializer):
     class Meta:
         model = InvoiceLine
         fields = ['id', 'row','product_or_service','unit_name', 'quantity', 'unit_price',
-                  'description']
+                  'description','get_absolute_url']
 
 class InvoiceLineWithInvoiceSerializer(serializers.ModelSerializer):
     invoice=InvoiceSerializer()

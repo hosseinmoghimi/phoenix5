@@ -560,7 +560,7 @@ class Invoice(Transaction):
         return reverse(APP_NAME+":edit_invoice",kwargs={'pk':self.pk})
 
 
-class InvoiceLine(models.Model):
+class InvoiceLine(models.Model,LinkHelper):
     date_added=models.DateTimeField(_("date_added"), auto_now=False, auto_now_add=True)
     invoice=models.ForeignKey("invoice",blank=True, verbose_name=_("invoice"),related_name="lines", on_delete=models.CASCADE)
     row=models.IntegerField(_("row"),blank=True)
@@ -569,6 +569,8 @@ class InvoiceLine(models.Model):
     unit_price=models.IntegerField(_("unit_price"))
     unit_name=models.CharField(_("unit_name"),max_length=50,choices=UnitNameEnum.choices,default=UnitNameEnum.ADAD)
     description=models.CharField(_("description"),null=True,blank=True, max_length=50)
+    class_name="invoiceline"
+    app_name=APP_NAME
     def save(self,*args, **kwargs):
         super(InvoiceLine,self).save(*args, **kwargs)
         self.invoice.save()
@@ -578,10 +580,7 @@ class InvoiceLine(models.Model):
 
     def __str__(self):
         return f"{self.invoice} {self.row} - {self.product_or_service.title} "
-
-    def get_absolute_url(self):
-        return reverse("InvoiceLine_detail", kwargs={"pk": self.pk})
-
+ 
 
     @property
     def product(self):

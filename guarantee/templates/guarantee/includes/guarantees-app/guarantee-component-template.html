@@ -1,8 +1,8 @@
 <tr>
     <td>
-        <a :href="guarantee.product.get_absolute_url">
+        <a :href="guarantee.invoice_line.product_or_service.get_absolute_url">
 
-            <span v-text="guarantee.product.title"></span>
+            <span v-text="guarantee.invoice_line.product_or_service.title"></span>
         </a>
     </td>
     {% if not invoice %}
@@ -10,7 +10,7 @@
     <td>
         <a :href="guarantee.invoice.get_absolute_url">
             
-            <span v-text="guarantee.invoice.title"></span>
+            <span v-text="guarantee.invoice_line.invoice.title"></span>
         </a>
     </td>
     {% endif %}

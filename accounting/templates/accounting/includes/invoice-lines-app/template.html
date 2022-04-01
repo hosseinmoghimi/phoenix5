@@ -47,7 +47,10 @@
             <tbody>
                 <tr v-for="invoice_line in invoice_lines">
                     <td class="bordered">
-                        <span v-text="invoice_line.row"></span>
+                        <a :href="invoice_line.get_absolute_url">
+
+                            <span v-text="invoice_line.row"></span>
+                        </a>
                     </td>
                     {% if not product and not service %}
 

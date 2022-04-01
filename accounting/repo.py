@@ -393,6 +393,57 @@ class AccountRepo():
             return self.objects.filter(profile=self.profile)
    
 
+class InvoiceLineRepo():
+    def __init__(self, *args, **kwargs):
+        self.request = None
+        self.me=None
+        self.user = None
+        if 'request' in kwargs:
+            self.request = kwargs['request']
+            self.user = self.request.user
+        if 'user' in kwargs:
+            self.user = kwargs['user']
+        
+        self.objects=InvoiceLine.objects.all()
+        self.profile=ProfileRepo(*args, **kwargs).me
+        if self.profile is not None:
+            self.me=Account.objects.filter(profile=self.profile).first()
+        
+
+    def invoice_line(self, *args, **kwargs):
+        pk=0
+        if 'invoice_line_id' in kwargs:
+            account_id=kwargs['invoice_line_id']
+            return self.objects.filter(pk=account_id).first()
+        
+        elif 'pk' in kwargs:
+            pk=kwargs['pk']
+            return self.objects.filter(pk=pk).first()
+        elif 'id' in kwargs:
+            id=kwargs['id']
+            return self.objects.filter(pk=id).first()
+     
+    def list(self, *args, **kwargs):
+        objects = self.objects
+        if 'search_for' in kwargs:
+            search_for=kwargs['search_for']
+            objects = objects.filter(Q(title__contains=search_for))
+        if 'for_home' in kwargs:
+            objects = objects.filter(Q(for_home=kwargs['for_home']))
+        if 'search_for' in kwargs:
+            objects=objects.filter(title__contains=kwargs['search_for'])
+        if 'profile_id' in kwargs:
+            objects=objects.filter(profile_id=kwargs['profile_id'])
+        if 'parent_id' in kwargs:
+            objects=objects.filter(parent_id=kwargs['parent_id'])
+        return objects.all()
+    def my_list(self,*args, **kwargs):
+        if self.request.user.has_perm(APP_NAME+".view_account"):
+            return self.objects.all()
+        else:
+            return self.objects.filter(profile=self.profile)
+   
+
 class PaymentRepo():
     def __init__(self, *args, **kwargs):
         self.request = None

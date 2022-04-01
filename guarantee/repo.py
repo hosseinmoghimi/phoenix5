@@ -27,8 +27,10 @@ class GuaranteeRepo:
         objects = self.objects.all()
         if 'for_home' in kwargs:
             objects = objects.filter(for_home=kwargs['for_home'])
+        if 'invoice_line_id' in kwargs:
+            objects = objects.filter(invoice_line_id=kwargs['invoice_line_id'])
         if 'invoice_id' in kwargs:
-            objects = objects.filter(invoice_id=kwargs['invoice_id'])
+            objects = objects.filter(invoice_line__invoice_id=kwargs['invoice_id'])
         if 'search_for' in kwargs:
             search_for=kwargs['search_for']
             objects = objects.filter(title__contains=search_for) 

@@ -25,6 +25,7 @@ urlpatterns = [
     path("account/<int:pk>/",login_required(views.AccountView.as_view()),name="account"),
     path("financial_accounts/",login_required(views.AccountsView.as_view()),name="accounts"),
 
+    path("invoice_line/<int:pk>/",login_required(views.InvoiceLineView.as_view()),name="invoiceline"),
     path("invoice/edit/<int:pk>/",login_required(views.InvoiceEditView.as_view()),name="edit_invoice"),
     path("invoices/",login_required(views.InvoicesView.as_view()),name="invoices"),
     path("invoice/<int:pk>/",login_required(views.InvoiceView.as_view()),name="invoice"),

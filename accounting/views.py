@@ -2,7 +2,6 @@ from django.http import Http404, JsonResponse
 from django.shortcuts import render,reverse
 from accounting.apis import EditInvoiceApi
 from accounting.enums import PaymentMethodEnum, TransactionStatusEnum
-from accounting.models import Invoice
 from core.constants import CURRENCY, FAILED, SUCCEED
 from core.enums import UnitNameEnum
 from core.utils import app_is_installed
@@ -15,7 +14,7 @@ from utility.calendar import PersianCalendar
 from warehouse.repo import WareHouseRepo, WareHouseSheetRepo
 from warehouse.serializers import WareHouseSerializer, WareHouseSheetSerializer
 from accounting.apps import APP_NAME
-from accounting.repo import AccountRepo,FinancialBalanceRepo, ChequeRepo, PaymentRepo, PriceRepo, ProductRepo,ServiceRepo,FinancialDocumentRepo,InvoiceRepo, TransactionRepo
+from accounting.repo import InvoiceLineRepo,AccountRepo,FinancialBalanceRepo, ChequeRepo, PaymentRepo, PriceRepo, ProductRepo,ServiceRepo,FinancialDocumentRepo,InvoiceRepo, TransactionRepo
 from accounting.serializers import AccountSerializer, FinancialBalanceSerializer, InvoiceFullSerializer,InvoiceLineSerializer,ChequeSerializer, InvoiceSerializer, PaymentSerializer, PriceSerializer, ProductSerializer,ServiceSerializer,FinancialDocumentForAccountSerializer,FinancialDocumentSerializer, TransactionSerializer
 from accounting.forms import *
 import json
@@ -85,20 +84,22 @@ def get_invoice_context(request,*args, **kwargs):
     invoice_lines_s=json.dumps(InvoiceLineSerializer(invoice_lines,many=True).data)
     context['invoice_lines_s']=invoice_lines_s
     context['invoice_s']=json.dumps(InvoiceFullSerializer(invoice).data)
-
-    guarantees=invoice.guarantee_set.all()
-    context['guarantees']=guarantees
-    guarantees_s=json.dumps(GuaranteeSerializer(guarantees,many=True).data)
-    context['guarantees_s']=guarantees_s
+    
+    
+    if app_is_installed('guarantee'):
+        from guarantee.repo import GuaranteeRepo
+        guarantees=GuaranteeRepo(request=request).list(invoice_id=invoice.id)
+        context['guarantees']=guarantees
+        guarantees_s=json.dumps(GuaranteeSerializer(guarantees,many=True).data)
+        context['guarantees_s']=guarantees_s
 
     
     # warehouse_sheets=[]
-    if True:
+    if app_is_installed('warehouse'):
         from warehouse.repo import WareHouseSheetRepo
         warehouse_sheets=WareHouseSheetRepo(request=request).list(invoice_id=invoice.id)
         warehouse_sheets_s=json.dumps(WareHouseSheetSerializer(warehouse_sheets,many=True).data)
-
-    context['warehouse_sheets_s']=warehouse_sheets_s
+        context['warehouse_sheets_s']=warehouse_sheets_s
 
 
 
@@ -395,6 +396,34 @@ class InvoiceEditView(View):
         
         return render(request,TEMPLATE_ROOT+"invoice-edit.html",context)
 
+
+class InvoiceLineView(View):
+    def post(self,request,*args, **kwargs):
+        return EditInvoiceApi().post(request=request,*args, **kwargs)
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        invoice_line=InvoiceLineRepo(request=request).invoice_line(*args, **kwargs)
+        context['invoice_line']=invoice_line
+
+            
+        
+        if app_is_installed('guarantee'):
+            from guarantee.repo import GuaranteeRepo
+            guarantees=GuaranteeRepo(request=request).list(invoice_line_id=invoice_line.id)
+            context['guarantees']=guarantees
+            guarantees_s=json.dumps(GuaranteeSerializer(guarantees,many=True).data)
+            context['guarantees_s']=guarantees_s
+
+        
+        # warehouse_sheets=[]
+        if app_is_installed('warehouse'):
+            from warehouse.repo import WareHouseSheetRepo
+            warehouse_sheets=WareHouseSheetRepo(request=request).list(invoice_line_id=invoice_line.id)
+            warehouse_sheets_s=json.dumps(WareHouseSheetSerializer(warehouse_sheets,many=True).data)
+            context['warehouse_sheets_s']=warehouse_sheets_s
+
+
+        return render(request,TEMPLATE_ROOT+"invoice-line.html",context)
 
 class TransactionView(View):
     def get(self,request,*args, **kwargs):
