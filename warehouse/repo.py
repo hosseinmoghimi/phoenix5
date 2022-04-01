@@ -130,6 +130,8 @@ class WareHouseSheetRepo:
             objects = objects.filter(invoice_line__product_or_service_id=kwargs['product_id'])
         if 'invoice_id'  in kwargs and kwargs['invoice_id'] is not None and kwargs['invoice_id']>0:
             objects = objects.filter(invoice_line__invoice_id=kwargs['invoice_id'])
+        if 'invoice_line_id'  in kwargs and kwargs['invoice_line_id'] is not None and kwargs['invoice_line_id']>0:
+            objects = objects.filter(invoice_line_id=kwargs['invoice_line_id'])
         if 'ware_house_id' in kwargs and kwargs['ware_house_id'] is not None and kwargs['ware_house_id']>0:
             objects = objects.filter(ware_house_id=kwargs['ware_house_id'])
         if 'search_for' in kwargs:

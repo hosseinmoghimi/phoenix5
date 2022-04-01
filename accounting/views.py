@@ -403,8 +403,6 @@ class InvoiceEditView(View):
         context.update(get_edit_invoice_context(request=request,invoice=invoice,*args, **kwargs))
         
         return render(request,TEMPLATE_ROOT+"invoice-edit.html",context)
-
-
 class InvoiceLineView(View):
     def post(self,request,*args, **kwargs):
         return EditInvoiceApi().post(request=request,*args, **kwargs)
