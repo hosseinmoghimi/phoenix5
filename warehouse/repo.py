@@ -152,8 +152,8 @@ class WareHouseSheetRepo:
             warehouse_sheet.status=kwargs['status']
         if 'ware_house_id' in kwargs:
             warehouse_sheet.ware_house_id=kwargs['ware_house_id']
-        if 'diection' in kwargs:
-            warehouse_sheet.diection=kwargs['diection']
+        if 'direction' in kwargs:
+            warehouse_sheet.direction=kwargs['direction']
         employee=EmployeeRepo(request=self.request).me
         warehouse_sheet.creator=employee.profile
         warehouse_sheet.date_registered=now

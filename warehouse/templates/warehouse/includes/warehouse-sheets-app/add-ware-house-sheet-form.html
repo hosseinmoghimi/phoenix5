@@ -1,30 +1,51 @@
-<div class="card">
-    <div class="card-body">
+<div id="accordion-add-warehouse-sheet">
+    <div class="card">
+        <div class="card-header" id="heading-add-warehouse-sheet">
+            <h5 class="text-center">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-add-warehouse-sheet"
+                    aria-expanded="true" aria-controls="collapse-add-warehouse-sheet">
+
+                    افزودن برگه انبار
+
+                   
+
+                </button>
+            </h5>
+
+        </div>
+        <div id="collapse-add-warehouse-sheet" class="collapse" aria-labelledby="heading-add-warehouse-sheet"
+            data-parent="#accordion-add-warehouse-sheet">
 
 
-        <form @submit.prevent="add_ware_house_sheet()">
-            <div class="row">
-                <div class="col-md-4">
-                    <select v-model="direction" class="form-control" id="">
-                        <option disabled>انتخاب جهت </option>
-                        <option value="ورود به انبار">ورود به انبار</option>
-                        <option value="خروج از انبار">خروج از انبار</option>
-                    </select>
-                </div>
-                <div class="col-md-4">
-                    <select v-model="ware_house_id" class="form-control" id="">
-                        <option disabled>انتخاب انبار</option>
+            <div class="card-body">
 
-                        {% for ware_house in ware_houses %}
-                        <option value="{{ware_house.id}}">{{ware_house.title}}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div class="col-md-4">
-                    <button class="btn btn-success" type="submit"> افزودن برگه انبار</button>
-                </div>
+
+                <form @submit.prevent="add_ware_house_sheet()">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <select v-model="direction" class="form-control" id="">
+                                <option disabled>انتخاب جهت </option>
+                                {% for direction in directions %}
+                                <option value="{{direction}}">{{direction}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <select v-model="ware_house_id" class="form-control" id="">
+                                <option disabled>انتخاب انبار</option>
+
+                                {% for ware_house in ware_houses %}
+                                <option value="{{ware_house.id}}">{{ware_house.title}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <button class="btn btn-success" type="submit"> افزودن برگه انبار</button>
+                        </div>
+                    </div>
+                </form>
+
             </div>
-        </form>
-
+        </div>
     </div>
 </div>

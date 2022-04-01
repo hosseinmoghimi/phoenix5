@@ -71,7 +71,7 @@ class WareHouseSheet(models.Model,LinkHelper):
     @property
     def available(self):
         a=0;
-        for aa in WareHouseSheet.objects.filter(ware_house=self.ware_house).filter(invoice_line__product_or_service_id=self.invoice_line.product_or_service.id).filter(status=WareHouseSheetStatusEnum.DONE):
+        for aa in WareHouseSheet.objects.filter(status=WareHouseSheetStatusEnum.DONE).filter(ware_house=self.ware_house).filter(invoice_line__product_or_service_id=self.invoice_line.product_or_service.id):
             if aa.direction==WareHouseSheetDirectionEnum.IMPORT:
                 a+=aa.quantity
             if aa.direction==WareHouseSheetDirectionEnum.EXPORT:
@@ -86,7 +86,9 @@ class WareHouseSheet(models.Model,LinkHelper):
             color="danger"
         return color
 
+    def __str__(self):
 
+        return f"{self.direction} {self.invoice_line.product_or_service.title} {self.ware_house}"
 
 
 class WareHouseSheetSignature(models.Model,LinkHelper):

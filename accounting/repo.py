@@ -549,8 +549,11 @@ class InvoiceRepo():
             objects = objects.filter(Q(title__contains=search_for)|Q(short_description__contains=search_for)|Q(description__contains=search_for))
         if 'for_home' in kwargs:
             objects = objects.filter(Q(for_home=kwargs['for_home']))
-        if 'parent_id' in kwargs:
-            objects=objects.filter(parent_id=kwargs['parent_id'])
+        if 'product_id' in kwargs:
+            product_id=kwargs['product_id']
+            invoice_lines=InvoiceLine.objects.filter(product_or_service_id=product_id)
+            ids=(invoice_line.invoice_id for invoice_line in invoice_lines)
+            objects= objects.filter(id__in=ids)
         return objects.all()
 
    

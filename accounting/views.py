@@ -213,7 +213,11 @@ def get_product_context(request,*args, **kwargs):
     
     context=get_product_or_service_context(request=request,item=product,*args, **kwargs)
 
-
+    # invoices
+    invoices=InvoiceRepo(request=request).list(product_id=product.id)
+    context['invoices']=invoices
+    invoices_s=json.dumps(InvoiceSerializer(invoices,many=True).data)
+    context['invoices_s']=invoices_s
 
 
     if app_is_installed('guarantee'):
@@ -230,11 +234,12 @@ def get_product_context(request,*args, **kwargs):
     print(warehouse_app_is_installed)
     if warehouse_app_is_installed:
         from warehouse.repo import WareHouseSheetRepo
+        from warehouse.enums import WareHouseSheetStatusEnum
         ware_house_sheet_repo=WareHouseSheetRepo(request=request)
         products=[product]
         ware_houses=WareHouseRepo(request=request).list()
         availables_list=[]
-        warehouse_sheets=ware_house_sheet_repo.list(product_id=product.id)
+        warehouse_sheets=ware_house_sheet_repo.list(product_id=product.id).filter(status=WareHouseSheetStatusEnum.DONE)
 
         for ware_house in ware_houses:    
             for product in products:    
@@ -400,6 +405,8 @@ class InvoicesView(View):
         context=getContext(request=request)
         invoices=InvoiceRepo(request=request).list(*args, **kwargs)
         context['invoices']=invoices
+        invoices_s=json.dumps(InvoiceSerializer(invoices,many=True).data)
+        context['invoices_s']=invoices_s
         return render(request,TEMPLATE_ROOT+"invoices.html",context)
 class InvoiceEditView(View):
     def post(self,request,*args, **kwargs):
@@ -431,6 +438,7 @@ class InvoiceLineView(View):
         
         # warehouse_sheets=[]
         if app_is_installed('warehouse'):
+            from warehouse.enums import WareHouseSheetDirectionEnum
             from warehouse.repo import WareHouseSheetRepo,WareHouseRepo
             from warehouse.forms import AddWarehouseSheetForm
             warehouse_sheets=WareHouseSheetRepo(request=request).list(invoice_line_id=invoice_line.id)
@@ -439,6 +447,7 @@ class InvoiceLineView(View):
             if request.user.has_perm('warehouse.add_warehousesheet'):
                 context['add_ware_house_sheet_form']=AddWarehouseSheetForm()
                 ware_houses=WareHouseRepo(request=request).list()
+                context['directions']=(direction[0] for direction in WareHouseSheetDirectionEnum.choices)
                 context['ware_houses']=ware_houses
 
         # context['add_ware_house_sheet_form']=AddWarehouseSheetForm()

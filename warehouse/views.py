@@ -1,5 +1,6 @@
 #
 import json
+from warehouse.enums import WareHouseSheetStatusEnum
 
 from accounting.repo import ProductRepo
 from core.views import CoreContext, PageContext, SearchForm
@@ -52,7 +53,8 @@ class WareHouseViews(View):
         availables_list = []
         for product in products:
             warehouse_sheets_ = warehouse_sheets.filter(
-                invoice_line__product_or_service_id=product.id)
+                invoice_line__product_or_service_id=product.id).filter(
+                status=WareHouseSheetStatusEnum.DONE)
             if len(warehouse_sheets_) > 0:
                 list_item = {}
                 unit_names = []
