@@ -103,3 +103,23 @@ class AddSignatureApi(APIView):
                     context['result']=SUCCEED
         context['log']=log
         return JsonResponse(context)
+
+class AddWareHouseSheetApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        log=11
+        context['result']=FAILED
+        if request.method=='POST':
+            log=22
+            report_form=AddWarehouseSheetForm(request.POST)
+            availables_list=[]
+            if report_form.is_valid():
+                log=33
+                cd=report_form.cleaned_data
+            
+                warehouse_sheet=WareHouseSheetRepo(request=request).add_ware_house_sheet(**cd)
+                if warehouse_sheet is not None:
+                    context['warehouse_sheet']=WareHouseSheetSerializer(warehouse_sheet).data
+                    context['result']=SUCCEED
+        context['log']=log
+        return JsonResponse(context)

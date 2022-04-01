@@ -1,3 +1,4 @@
+import profile
 from authentication.models import IMAGE_FOLDER
 from phoenix.server_settings import STATIC_URL
 from phoenix.settings import MEDIA_URL
@@ -60,6 +61,12 @@ class WareHouseSheet(models.Model,LinkHelper):
     def save(self,*args, **kwargs):
         self.class_name="warehousesheet"
         super(WareHouseSheet,self).save(*args, **kwargs)
+        if len(WareHouseSheetSignature.objects.filter(request=self))==0:
+            a=WareHouseSheetSignature()
+            a.request=self
+            from projectmanager.models import Employee
+            a.employee=Employee.objects.filter(profile=self.creator).first()
+            a.save()
 
     @property
     def available(self):

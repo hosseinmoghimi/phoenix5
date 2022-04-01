@@ -431,11 +431,17 @@ class InvoiceLineView(View):
         
         # warehouse_sheets=[]
         if app_is_installed('warehouse'):
-            from warehouse.repo import WareHouseSheetRepo
+            from warehouse.repo import WareHouseSheetRepo,WareHouseRepo
+            from warehouse.forms import AddWarehouseSheetForm
             warehouse_sheets=WareHouseSheetRepo(request=request).list(invoice_line_id=invoice_line.id)
             warehouse_sheets_s=json.dumps(WareHouseSheetSerializer(warehouse_sheets,many=True).data)
             context['warehouse_sheets_s']=warehouse_sheets_s
+            if request.user.has_perm('warehouse.add_warehousesheet'):
+                context['add_ware_house_sheet_form']=AddWarehouseSheetForm()
+                ware_houses=WareHouseRepo(request=request).list()
+                context['ware_houses']=ware_houses
 
+        # context['add_ware_house_sheet_form']=AddWarehouseSheetForm()
 
         return render(request,TEMPLATE_ROOT+"invoice-line.html",context)
 

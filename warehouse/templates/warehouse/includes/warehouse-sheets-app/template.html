@@ -3,9 +3,11 @@
 
 
 <div id="accordion-warehouse-sheets">
-
-
-    <div class="card" id="warehouse-sheets-app">
+<div id="warehouse-sheets-app">
+    {% if add_ware_house_sheet_form and invoice_line %}
+    {% include "warehouse/includes/warehouse-sheets-app/add-ware-house-sheet-form.html" %}
+    {% endif %}
+    <div class="card">
         <div class="card-header" id="heading-warehouse-sheets">
             <h5 class="text-center">
                 <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-warehouse-sheets"
@@ -98,6 +100,8 @@
 
             </div>
         </div>
+
+</div>
 
 
     </div>

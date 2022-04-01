@@ -1,5 +1,4 @@
 from inspect import signature
-from aiohttp import request
 from django.db.models import Q
 from authentication.repo import ProfileRepo
 from django.utils import timezone
@@ -10,6 +9,7 @@ from utility.calendar import PersianCalendar
 from warehouse.apps import APP_NAME
 from warehouse.models import WareHouse, WareHouseSheet, WareHouseSheetSignature
   
+now=timezone.now()
        
 class WareHouseRepo():
     def __init__(self, *args, **kwargs):
@@ -79,7 +79,7 @@ class WareHouseSheetSignatureRepo():
         if 'status' in kwargs:
             signature.status=kwargs['status']
         if 'description' in kwargs:
-            signature.description=kwargs['description']
+            signature.description=kwargs['description'] 
         
         signature.employee_id=employee.id
         signature.save()
@@ -138,7 +138,31 @@ class WareHouseSheetRepo:
             search_for=kwargs['search_for']
             objects = objects.filter(title__contains=search_for) 
         return objects
-
+    def add_ware_house_sheet(self,*args, **kwargs):
+        if not self.user.has_perm(APP_NAME+".add_warehousesheet"):
+            return 
+        from projectmanager.repo import EmployeeRepo
+        employee=EmployeeRepo(request=self.request).me
+        if employee is None:
+            return
+        warehouse_sheet=WareHouseSheet()
+        if 'invoice_line_id' in kwargs:
+            warehouse_sheet.invoice_line_id=kwargs['invoice_line_id']
+        if 'status' in kwargs:
+            warehouse_sheet.status=kwargs['status']
+        if 'ware_house_id' in kwargs:
+            warehouse_sheet.ware_house_id=kwargs['ware_house_id']
+        if 'diection' in kwargs:
+            warehouse_sheet.diection=kwargs['diection']
+        employee=EmployeeRepo(request=self.request).me
+        warehouse_sheet.creator=employee.profile
+        warehouse_sheet.date_registered=now
+        warehouse_sheet.quantity=0
+        warehouse_sheet.save()
+        warehouse_sheet.quantity=warehouse_sheet.invoice_line.quantity
+        warehouse_sheet.save()
+        
+        return warehouse_sheet
     def warehouse_sheet(self, *args, **kwargs):
         if 'ware_house_sheet_id' in kwargs:
             return self.objects.filter(pk= kwargs['ware_house_sheet_id']).first()

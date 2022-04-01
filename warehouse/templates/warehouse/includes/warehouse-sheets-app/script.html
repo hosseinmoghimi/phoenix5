@@ -1,12 +1,32 @@
 <script>
     let warehouse_sheets = JSON.parse(`{{warehouse_sheets_s|escapejs}}`)
     let warehouse_sheets_app_data = {
-        warehouse_sheets: warehouse_sheets
+        warehouse_sheets: warehouse_sheets,
+        direction:"",
+        ware_house_id:0,
     }
     let warehouse_sheets_app_methods = {
         to_price: function (vall) {
             return to_price(vall, "")
         },
+        add_ware_house_sheet:function(){
+                let url = "{% url 'warehouse:add_warehouse_sheet_state' %}"
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    invoice_line_id: parseInt("{{invoice_line.id}}"),
+                    direction: this.direction,
+                    ware_house_id: this.ware_house_id,
+                }
+                console.log(payload)
+                $.post(url, payload).done(data => {
+                    console.log(data)
+                    if (data.result === 'SUCCEED') {
+
+                        warehouse_sheets_app.warehouse_sheets.push(data.warehouse_sheet)
+                        
+                    }
+                })
+            },
 
     }
 </script>
@@ -19,6 +39,7 @@
             }
         },
         methods: {
+           
 
             change_state: function (status) {
                 let aaa = this.warehouse_sheet
