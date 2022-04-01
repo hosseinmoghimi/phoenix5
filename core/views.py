@@ -9,7 +9,7 @@ from .apps import APP_NAME
 from log.repo import LogRepo
 from core.enums import ColorEnum, IconsEnum, ParameterNameEnum, PictureNameEnum
 from core.models import Download, Link
-from core.repo import DownloadRepo, PageDownloadRepo, PageLikeRepo, PageRepo, ParameterRepo, PictureRepo, TagRepo
+from core.repo import DownloadRepo, ImageRepo, PageDownloadRepo, PageImageRepo, PageLikeRepo, PageRepo, ParameterRepo, PictureRepo, TagRepo
 from .serializers import PageBriefSerializer, PageCommentSerializer, PageImageSerializer, PageDownloadSerializer, PageLinkSerializer, PageTagSerializer
 from phoenix.settings import ADMIN_URL, MEDIA_URL, STATIC_URL, SITE_URL
 from django.shortcuts import render
@@ -132,6 +132,13 @@ def PageContext(request, *args, **kwargs):
             PageBriefSerializer(related_pages, many=True).data)
 
 
+
+    #keywords
+    if True:
+        keywords=page.meta_data
+        context['keywords'] = keywords
+
+
     # downloads
     if True:
         downloads = PageDownloadRepo(request=request).list(page_id=page.id)
@@ -202,6 +209,15 @@ class DownloadView(View):
         return message_view.response()
 
 
+class ImageDownloadView(View):
+    def get(self, request, *args, **kwargs): 
+        image = ImageRepo(request=request).image(*args, **kwargs)
+        if image is None:
+            raise Http404
+        return image.download_response()
+ 
+
+
 
 class TagView(View):
     def get(self, request, *args, **kwargs):
@@ -216,7 +232,28 @@ class TagView(View):
         return render(request,TEMPLATE_ROOT+"tag.html",context)
         
  
+class PageImageView(View):
+    def get(self, request, *args, **kwargs):
+        me = ProfileRepo(request=request).me
+        image = PageImageRepo(request=request).page_image(*args, **kwargs)
+        if image is None:
+            raise Http404
+        context=CoreContext(request=request,app_name=APP_NAME)
+        context['image']=image
+        return render(request,TEMPLATE_ROOT+"image.html",context)
+        
 
+
+class ImageView(View):
+    def get(self, request, *args, **kwargs):
+        me = ProfileRepo(request=request).me
+        image = ImageRepo(request=request).image(*args, **kwargs)
+        if image is None:
+            raise Http404
+        context=CoreContext(request=request,app_name=APP_NAME)
+        context['image']=image
+        return render(request,TEMPLATE_ROOT+"image.html",context)
+        
 class MessageView(View):
     def __init__(self, request, *args, **kwargs):
         self.request = request

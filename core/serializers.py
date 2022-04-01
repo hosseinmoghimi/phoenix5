@@ -46,12 +46,12 @@ class PageCommentSerializer(serializers.ModelSerializer):
 class ImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Image
-        fields=['id','title','thumbnail','image','get_edit_url','get_delete_url']
+        fields=['id','title','thumbnail','image','get_edit_url','get_delete_url','get_absolute_url']
 
 class PageImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = PageImage
-        fields=['id','title','thumbnail','image','get_edit_url','get_delete_url']
+        fields=['id','title','thumbnail','image','get_edit_url','get_delete_url','get_absolute_url']
 
 
 class PageLinkSerializer(serializers.ModelSerializer):
