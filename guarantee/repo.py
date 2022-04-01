@@ -29,6 +29,8 @@ class GuaranteeRepo:
             objects = objects.filter(for_home=kwargs['for_home'])
         if 'invoice_line_id' in kwargs:
             objects = objects.filter(invoice_line_id=kwargs['invoice_line_id'])
+        if 'product_id' in kwargs:
+            objects = objects.filter(invoice_line__product_or_service_id=kwargs['product_id'])
         if 'invoice_id' in kwargs:
             objects = objects.filter(invoice_line__invoice_id=kwargs['invoice_id'])
         if 'search_for' in kwargs:

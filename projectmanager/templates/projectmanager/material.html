@@ -63,6 +63,17 @@
 
     </div>
     {% endif %}
+
+
+    
+{% if guarantee_app_is_installed %}
+  
+<div class="col-md-12">
+    
+    {% include "guarantee/includes/guarantees-app/template.html" %}
+</div>
+{% endif %}
+
 </div>
 
 {% endblock content %}
@@ -79,6 +90,13 @@
 {% include "warehouse/includes/warehouse-availables-app/script.html" %}
 {% include "warehouse/includes/warehouse-sheets-app/script.html" %}
 {% endif %}
+
+{% if guarantee_app_is_installed %}
+  
+    
+    {% include "guarantee/includes/guarantees-app/script.html" %}
+{% endif %}
+
 
 
 {% endblock script %}

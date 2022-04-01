@@ -216,6 +216,14 @@ def get_product_context(request,*args, **kwargs):
 
 
 
+    if app_is_installed('guarantee'):
+        from guarantee.repo import GuaranteeRepo
+        guarantees=GuaranteeRepo(request=request).list(product_id=product.id)
+        context['guarantees']=guarantees
+        guarantees_s=json.dumps(GuaranteeSerializer(guarantees,many=True).data)
+        context['guarantees_s']=guarantees_s
+
+    
     #warehouse availables , warehouse sheets
     warehouse_app_is_installed= app_is_installed('warehouse')
     print('warehouse_app_is_installed')
