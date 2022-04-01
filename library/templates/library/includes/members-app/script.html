@@ -1,0 +1,59 @@
+<script>
+    let members = JSON.parse(`{{members_s|escapejs}}`)
+</script>
+{% if add_member_form %}
+<script>
+    let members_app_data = {
+        members: members,
+        new_member_price: "",
+        new_member_title: "",
+        new_member_year: "1400",
+        new_member_description: "",
+        new_member_shelf: 0,
+        new_member_col: 0,
+        new_member_row: 0,
+        profile_id: "",
+        description: "",
+        level: "",
+        search_for: "",
+
+    }
+</script>
+{% else %}
+<script>
+    let members_app_data = {
+        members: members,
+        search_for: "",
+    }
+</script>
+{% endif %}
+
+<script>
+    let members_app = new Vue({
+        el: "#members-app",
+        data: members_app_data,
+        methods: {
+            filter: function () {
+                this.members = members.filter((item) => {
+                    if ((item.profile.first_name+" "+item.profile.last_name).indexOf(members_app.search_for) > -1)
+                        return true
+                })
+            },
+            add_member: function () {
+                let url_add_member = "{% url 'library:add_member' %}"
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    description: this.new_member_description,
+                    profile_id: this.profile_id,
+                    level: this.level,
+                }
+                $.post(url_add_member, payload).done((data) => {
+                    if (data.result === 'SUCCEED') {
+                        members_app.members.push(data.member)
+                    }
+                })
+            },
+
+        }
+    })
+</script>

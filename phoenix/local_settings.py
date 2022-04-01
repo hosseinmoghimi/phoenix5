@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     'transport',
     'guarantee',
     'log',
+    'chef',
     'map',
     'archive',
     'messenger',
@@ -198,6 +199,14 @@ phoenix_apps=[
         'show_on_menu':True,
     },
 
+    {
+        'name':'chef',
+        'title':'سرآشپز',
+        'color':'danger',
+        'home_url':SITE_URL+'chef/',
+        'has_help':False,
+        'show_on_menu':True,
+    },
     {
         'name':'web',
         'title':'وب سایت',

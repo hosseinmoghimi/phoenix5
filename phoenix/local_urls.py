@@ -27,8 +27,10 @@ urlpatterns = [
     path('archive/', include('archive.urls')),
     path('resume/', include('resume.urls')),
     path('messenger/', include('messenger.urls')),
+    path('chef/', include('chef.urls')),
     path('wallet/', include('wallet.urls')),
     path('warehouse/', include('warehouse.urls')),
+    path('school/', include('school.urls')),
     # path('favicon.ico', FaviconView.as_view(),name="favicon"),
     # re_path(r'^', include(web3auth_urls)),
 # web3auth_urls
