@@ -183,30 +183,45 @@ class DownloadView(View):
     def get(self, request, *args, **kwargs): 
         me = ProfileRepo(request=request).me
         download = DownloadRepo(request=request).download(*args, **kwargs)
-        if me is None and not download.is_open:
+        if download is None or (me is None and not download.is_open):
             pass
         elif request.user.has_perm("core.change_download") or download.is_open or me in download.profiles.all():
-            if download is None:
-                LogRepo(request=request).add_log(
-                    title="Http404 core views 2"+str(kwargs), app_name=APP_NAME)
-                raise Http404
-            return download.download_response()
-
+            file_path = str(download.file.path)
+            # return JsonResponse({'download:':str(file_path)})
+            import os
+            from django.http import HttpResponse
+            if os.path.exists(file_path):
+                with open(file_path, 'rb') as fh:
+                    response = HttpResponse(
+                        fh.read(), content_type="application/force-download")
+                    response['Content-Disposition'] = 'inline; filename=' + \
+                        os.path.basename(file_path)
+                    download.download_counter += 1
+                    download.save()
+                    return response
+                    
         # if self.access(request=request,*args, **kwargs) and document is not None:
         #     return document.download_response()
         message_view = MessageView(request=request)
         message_view.links = []
-        message_view.links.append(Link(title='تلاش مجدد', color="warning",
-                                  icon_material="apartment", url=download.get_download_url()))
         message_view.message_color = 'warning'
         message_view.has_home_link = True
         message_view.header_color = "rose"
         message_view.message_icon = ''
         message_view.header_icon = '<i class="fa fa-exclamation-triangle" aria-hidden="true"></i>'
-        message_view.message_text = ' شما مجوز دسترسی به این صفحه را ندارید.'
-        message_view.header_text = 'دسترسی غیر مجاز'
+        message_view.body = ' شما مجوز دسترسی به این صفحه را ندارید.'
+        message_view.title = 'دسترسی غیر مجاز'
+        if download is None:
+            message_view.body = 'دانلود مورد نظر شما پیدا نشد.'
+            message_view.title = 'دانلود مورد نظر پیدا نشد.'
+        else:
+            message_view.links.append(Link(title='تلاش مجدد', color="warning",
+                                  icon_material="apartment", url=download.get_download_url()))
 
         return message_view.response()
+        
+         
+
 
 
 class ImageDownloadView(View):

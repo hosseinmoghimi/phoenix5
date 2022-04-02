@@ -263,24 +263,7 @@ class Download(Icon):
         else:
             return ''
 
-    def download_response(self):
-        #STATIC_ROOT2 = os.path.join(BASE_DIR, STATIC_ROOT)
-        file_path = str(self.file.path)
-        # return JsonResponse({'download:':str(file_path)})
-        import os
-        from django.http import HttpResponse
-        if os.path.exists(file_path):
-            with open(file_path, 'rb') as fh:
-                response = HttpResponse(
-                    fh.read(), content_type="application/force-download")
-                response['Content-Disposition'] = 'inline; filename=' + \
-                    os.path.basename(file_path)
-                self.download_counter += 1
-                self.save()
-                return response
-        from log.repo import LogRepo
-        LogRepo().add_log(title="Http404 core models", app_name=APP_NAME)
-        raise Http404
+          
 
     class Meta:
         verbose_name = _("Download")
