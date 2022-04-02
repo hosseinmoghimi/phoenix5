@@ -147,8 +147,8 @@ class TripRepo():
             objects = objects.filter(Q(title__contains=search_for)|Q(short_description__contains=search_for)|Q(description__contains=search_for))
         if 'for_home' in kwargs:
             objects = objects.filter(Q(for_home=kwargs['for_home']))
-        if 'parent_id' in kwargs:
-            objects=objects.filter(parent_id=kwargs['parent_id'])
+        if 'client_id' in kwargs:
+            objects=objects.filter(pay_to_id=kwargs['client_id'])
         if 'driver_id' in kwargs:
             objects=objects.filter(pay_from_id=kwargs['driver_id'])
         return objects.all()

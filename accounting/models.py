@@ -202,6 +202,8 @@ class Account(models.Model,LinkHelper):
     @property
     def class_title(self):
         class_title="حساب مالی"
+        if self.class_name=="client":
+            class_title="سرویس گیرنده رفت و آمد"
         if self.class_name=="account":
             class_title="حساب مالی"
         if self.class_name=="driver":

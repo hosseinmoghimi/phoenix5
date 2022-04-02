@@ -3,6 +3,7 @@
     let trip_paths = []
     let all_passengers = JSON.parse(`{{passengers_s|escapejs}}`)
     let passengers = []
+    let amount = 0
     let driver_id = 0
     let passenger_id = 0
     let client_id = 0
@@ -14,6 +15,7 @@
 <script>
     trip_paths = [JSON.parse(`{{trip_path_s|escapejs}}`)]
     trip_path_id = parseInt(`{{trip_path.id}}`)
+    amount = trip_paths[0].cost
 </script>
 {% endif %}
 
@@ -52,11 +54,11 @@
     let add_trip_app = new Vue({
         el: "#add-trip-app",
         data: {
-            message:{show:false},
+            message: { show: false },
             all_trip_paths: all_trip_paths,
             trip_paths: trip_paths,
             title: "",
-            client_id:client_id,
+            client_id: client_id,
             driver_id: driver_id,
             passenger_id: passenger_id,
             all_passengers: all_passengers,
@@ -65,9 +67,14 @@
             vehicle_id: vehicle_id,
             trip_path_id: trip_path_id,
             passenger_id: 0,
-            waiting:false,
+            waiting: false,
+            amount: amount,
+            delay: 0,
         },
         methods: {
+            to_price: function (vall) {
+                return to_price(vall, "")
+            },
             add_passenger: function () {
                 add_trip_app.all_passengers.forEach(passenger => {
                     if (passenger.id == add_trip_app.passenger_id) {
@@ -81,6 +88,7 @@
                     if (trip_path.id == add_trip_app.trip_path_id) {
                         add_trip_app.trip_paths.push(trip_path)
                         add_trip_app.all_trip_paths = add_trip_app.all_trip_paths.filter(trip_path2 => trip_path2.id != trip_path.id)
+                        add_trip_app.amount =parseInt(trip_path.cost)+parseInt(add_trip_app.amount)
                     }
                 });
             },
@@ -89,6 +97,8 @@
                 all_trip_paths.forEach(trip_path => {
                     if (trip_path.id == trip_path_id) {
                         add_trip_app.all_trip_paths.push(trip_path)
+                        add_trip_app.amount =parseInt(add_trip_app.amount)-parseInt(trip_path.cost)
+
                     }
                 });
             },
@@ -104,7 +114,7 @@
                 // console.log("select_path")
                 // this.add_trip_path()
             },
-            
+
             show_message: function (message_color, message) {
                 this.message.show = true
                 this.message.color = message_color
@@ -112,7 +122,7 @@
             },
             add_trip: function () {
 
-                if (add_trip_app.trip_paths.length<1) {
+                if (add_trip_app.trip_paths.length < 1) {
                     add_trip_app.show_message("warning", "مسیری یرای سفر را انتخاب کنید.")
                     return
                 }
@@ -131,23 +141,23 @@
                 add_trip_app.waiting = true
 
 
-                let trip_paths_ =[]
-                
+                let trip_paths_ = []
+
                 this.trip_paths.forEach(trip_path => {
                     trip_paths_.push(trip_path.id)
                 })
-                
-                trip_paths_ =JSON.stringify(trip_paths_)
+
+                trip_paths_ = JSON.stringify(trip_paths_)
 
 
-                
-                let passengers_ =[]
-                
+
+                let passengers_ = []
+
                 this.passengers.forEach(passenger => {
                     passengers_.push(passenger.id)
                 })
-                
-                passengers_ =JSON.stringify(passengers_)
+
+                passengers_ = JSON.stringify(passengers_)
 
                 let payload = {
                     csrfmiddlewaretoken: csrfmiddlewaretoken,
@@ -158,6 +168,8 @@
                     description: this.description,
                     client_id: this.client_id,
                     passengers: passengers_,
+                    amount: this.amount,
+                    delay: this.delay,
                 }
                 console.log(payload)
                 let url = "{% url 'transport:add_trip' %}"

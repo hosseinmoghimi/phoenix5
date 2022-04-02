@@ -82,27 +82,6 @@ class HomeView(View):
         return render(request,TEMPLATE_ROOT+"index.html",context)
 
 
-class DriverView(View):
-    def get(self,request,*args, **kwargs):
-        context=getContext(request=request)
-        driver=DriverRepo(request=request).driver(*args, **kwargs)
-        context['driver']=driver
-        context['driver_s']=json.dumps(DriverSerializer(driver).data)
-        context.update(get_account_context(request=request,account=driver))
-
-
-        #trips
-        if True:
-            trips=TripRepo(request=request).list(driver_id=driver.id)
-            context['trips']=trips
-            trips_s=json.dumps(TripSerializer(trips,many=True).data)
-            context['trips_s']=trips_s
-
-        context.update(get_add_trip_context(request=request))
-
-        return render(request,TEMPLATE_ROOT+"driver.html",context)
-
-
 class TripPathsView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -148,6 +127,27 @@ class TripView(View):
         context['trip']=trip
         context.update(get_transaction_context(request=request,transaction=trip))
         return render(request,TEMPLATE_ROOT+"trip.html",context)
+
+class DriverView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        driver=DriverRepo(request=request).driver(*args, **kwargs)
+        context['driver']=driver
+        context['driver_s']=json.dumps(DriverSerializer(driver).data)
+        context.update(get_account_context(request=request,account=driver))
+
+
+        #trips
+        if True:
+            trips=TripRepo(request=request).list(driver_id=driver.id)
+            context['trips']=trips
+            trips_s=json.dumps(TripSerializer(trips,many=True).data)
+            context['trips_s']=trips_s
+
+        context.update(get_add_trip_context(request=request))
+
+        return render(request,TEMPLATE_ROOT+"driver.html",context)
+
 
 
 class DriversView(View):
@@ -197,6 +197,7 @@ class AddTripView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
         context.update(get_add_trip_context(request=request))
+        context['show_add_trip_form_collapse']=True
         return render(request,TEMPLATE_ROOT+"add-trip.html",context)
 
        
@@ -209,6 +210,12 @@ class PassengerView(View):
         context.update(get_account_context(request=request,account=passenger))
         context.update(get_add_trip_context(request=request))
 
+        #trips
+        if True:
+            trips=TripRepo(request=request).list(passenger_id=passenger.id)
+            context['trips']=trips
+            trips_s=json.dumps(TripSerializer(trips,many=True).data)
+            context['trips_s']=trips_s
         return render(request,TEMPLATE_ROOT+"passenger.html",context)
 
 
@@ -234,6 +241,12 @@ class ClientView(View):
         context.update(get_account_context(request=request,account=client))
         context.update(get_add_trip_context(request=request))
 
+        #trips
+        if True:
+            trips=TripRepo(request=request).list(client_id=client.id)
+            context['trips']=trips
+            trips_s=json.dumps(TripSerializer(trips,many=True).data)
+            context['trips_s']=trips_s
         return render(request,TEMPLATE_ROOT+"client.html",context)
 
 

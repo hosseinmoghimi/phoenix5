@@ -16,7 +16,8 @@
 
 
         </div>
-        <div id="collapse-add-trip-apps" class="collapse show" aria-labelledby="heading-add-trip-apps"
+        
+        <div id="collapse-add-trip-apps" class="collapse {% if show_add_trip_form_collapse %}show{% endif %}" aria-labelledby="heading-add-trip-apps"
             data-parent="#accordion-add-trip-apps">
 
 
@@ -37,12 +38,12 @@
                         </div>
                     </div>
 
-                    <div class="col-md-12">
+                    <div class="col-md-8">
                         <div class="form-group">
                             <label for="">مسیر</label>
                             <select @input="select_path()" v-model="trip_path_id" class="form-control">
                                 <option v-for="trip_path in all_trip_paths" :value="trip_path.id"
-                                    v-text="trip_path.title"></option>
+                                    v-text="trip_path.title+'   ('+to_price(trip_path.cost)+' {{CURRENCY}} )'"></option>
                             </select>
                             <button @click="add_trip_path()" class="btn btn-info">
                                 <i class="fa fa-plus"></i>
@@ -51,13 +52,21 @@
                             <div class="alert alert-info" v-if="trip_paths.length>0">
                                 <div v-for="trip_path in trip_paths">
 
-                                    <h5>
+                                    <h6>
                                         <a :href="trip_path.get_absolute_url">
                                             <span v-text="trip_path.title">
 
                                             </span>
                                         </a>
+                                        <small>
+                                            (
 
+                                            <span v-text="to_price(trip_path.cost)">
+                                              
+
+                                            </span>  {{CURRENCY}}
+                                            )
+                                        </small>
                                         <span>
                                             <button @click="remove_trip_path(trip_path.id)" class="btn btn-link">
                                                 <span class="text-danger">
@@ -66,13 +75,30 @@
                                                 </span>
                                             </button>
                                         </span>
-                                    </h5>
+                                    </h6>
                                 </div>
                             </div>
                         </div>
                     </div>
 
+                    <div class="col-md-4 text-right">
+                        <div class="for-group">
+                            <label for="">هزینه سفر :
+                                <small class="mx-2">
 
+                                    <span v-text="to_price(amount)"></span> {{CURRENCY}}
+                                </small>
+                            </label>
+                            <input type="number" v-model="amount" class="form-control">
+                        </div>
+
+
+                        <div class="for-group">
+                            <label for="">تاخیر سفر</label>
+                            <input type="number" v-model="delay" class="form-control">
+                        </div>
+
+                    </div>
                     <div class="col-md-4">
                         <div class="form-group">
                             <label for="">مسافر ها</label>
@@ -151,21 +177,21 @@
 
                         <div class="form-group">
                             <div>
-                            <button @click="add_trip()" class="btn btn-success">
-                                <i class="fa fa-plus"></i>
-                                افزودن سفر
-                            </button>
-                        </div>
+                                <button @click="add_trip()" class="btn btn-success">
+                                    <i class="fa fa-plus"></i>
+                                    افزودن سفر
+                                </button>
+                            </div>
 
-                        <img src="{% static 'leo/img/loading.gif' %}" width="32" v-if="waiting" alt="">
-                        <div v-if="message.show" :class="'alert alert-'+message.color">
-                            <div class="farsi my-3 text-right">
+                            <img src="{% static 'leo/img/loading.gif' %}" width="32" v-if="waiting" alt="">
+                            <div v-if="message.show" :class="'alert alert-'+message.color">
+                                <div class="farsi my-3 text-right">
 
-                                <div v-html="message.text"></div>
+                                    <div v-html="message.text"></div>
+                                </div>
                             </div>
                         </div>
-                        </div>
-                        
+
 
                     </div>
 
