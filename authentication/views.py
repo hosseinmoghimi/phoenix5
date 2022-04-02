@@ -92,6 +92,57 @@ class ProfileViews(View):
         return render(request,TEMPLATE_ROOT+"profile.html",context)
 
 
+
+
+class EditProfileViews(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        selected_profile=ProfileRepo(request=request,forced=True).me
+        if 'pk' in kwargs:
+            selected_profile=ProfileRepo(request=request,forced=True).profile(*args, **kwargs)
+        if selected_profile is None:
+            mv=MessageView(request=request)
+            mv.has_home_link=True
+            mv.title="چنین پروفایلی پیدا نشد"
+            return mv.show()
+        context['edit_profile_form']=EditProfileForm()
+        context['selected_profile']=selected_profile
+        context['selected_profile_s']=json.dumps(ProfileSerializer(selected_profile).data)
+     
+        return render(request,TEMPLATE_ROOT+"edit-profile.html",context)
+
+    def post(self,request,*args, **kwargs):
+        context={'result':FAILED}
+        profile_id=0
+        if 'pk' in kwargs:
+            profile_id=kwargs['pk']
+        log=1
+        if request.method=='POST':
+            log=2
+            edit_profile_form=EditProfileForm(request.POST)
+            if edit_profile_form.is_valid():
+                log=3              
+                # profile_id=edit_profile_form.cleaned_data['profile_id']
+                first_name=edit_profile_form.cleaned_data['first_name']
+                last_name=edit_profile_form.cleaned_data['last_name']
+                email=edit_profile_form.cleaned_data['email']
+                bio=edit_profile_form.cleaned_data['bio']
+                mobile=edit_profile_form.cleaned_data['mobile']
+                address=edit_profile_form.cleaned_data['address']
+                result=ProfileRepo(request=request).edit_profile(profile_id=profile_id,
+                first_name=first_name,
+                last_name=last_name,
+                email=email,
+                bio=bio,
+                mobile=mobile,
+                address=address,
+                )
+                if result:
+                    context['result']=SUCCEED
+
+        context['log']=log
+        return JsonResponse(context)  
+
 class ProfilesViews(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)

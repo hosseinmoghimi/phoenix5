@@ -5,6 +5,20 @@ from .models import Profile
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
+
+
+class EditProfileForm(forms.Form):
+    # profile_id=forms.IntegerField(required=True)
+    first_name=forms.CharField(max_length=100, required=True)
+    last_name=forms.CharField(max_length=100, required=True)
+    email=forms.CharField(max_length=150, required=False)
+    bio=forms.CharField(max_length=150, required=False)
+    mobile=forms.CharField(max_length=150, required=False)
+    address=forms.CharField(max_length=150, required=False)
+
+
+
+
 class RegisterForm(UserCreationForm):
     mobile=forms.CharField(max_length=15, required=False)
     class Meta:

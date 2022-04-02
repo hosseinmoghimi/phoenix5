@@ -133,8 +133,8 @@ class Profile(models.Model,LinkHelper):
     def __str__(self):
         return self.name
 
-    def get_absolute_url(self):
-        return reverse(APP_NAME+":profile", kwargs={"pk": self.pk})
+    def get_edit_page_url(self):
+        return reverse(APP_NAME+":edit_profile", kwargs={"pk": self.pk})
     def get_reset_password_url(self):
         return ''
         return reverse(APP_NAME+":reset_password_view", kwargs={"profile_id": self.pk})
