@@ -12,7 +12,7 @@
 <h4 class="text-center">
     {{account.title}}
 
-     
+
 </h4>
 
 <h4 class="text-center">
@@ -59,6 +59,17 @@
         {% include "accounting/includes/transactions-app/template.html" %}
     </div>
 
+    <div class="col-md-12">
+        {% include "transport/includes/trips-app/template.html" %}
+    </div>
+    {% if add_trip_form %}
+
+    <div class="col-md-12">
+        {% include "transport/includes/add-trip-app/template.html" %}
+    </div>
+    {% endif %}
+
+
 </div>
 {% endblock content %}
 
@@ -67,5 +78,10 @@
 {% include "accounting/includes/financial-documents-app/script.html" %}
 {% include "accounting/includes/payments-app/script.html" %}
 {% include "accounting/includes/transactions-app/script.html" %}
+{% include "transport/includes/trips-app/script.html" %}
+{% if add_trip_form %}
+
+{% include "transport/includes/add-trip-app/script.html" %}
+{% endif %}
 
 {% endblock script %}

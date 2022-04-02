@@ -1,0 +1,26 @@
+{% extends "transport/layout.html" %}
+
+{% block content %}
+<div class="row">
+  <div class="col-md-12">
+    {% include "transport/includes/vehicle-app/template.html" %}
+
+  </div>
+
+  {% if add_trip_form %}
+
+  <div class="col-md-12">
+    {% include "transport/includes/add-trip-app/template.html" %}
+  </div>
+  {% endif %}
+
+</div>
+{% endblock content %}
+{% block script %}
+{% include "transport/includes/vehicle-app/script.html" %}
+{% if add_trip_form %}
+
+{% include "transport/includes/add-trip-app/script.html" %}
+{% endif %}
+
+{% endblock script %}

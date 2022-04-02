@@ -105,6 +105,12 @@
     <div class="col-md-12">
         {% include "transport/includes/trips-app/template.html" %}
     </div>
+    {% if add_trip_form %}
+      
+    <div class="col-md-12">
+        {% include "transport/includes/add-trip-app/template.html" %}
+    </div>
+    {% endif %}
 
 </div>
 {% endblock content %}
@@ -112,5 +118,9 @@
 {% block script %}
 
 {% include "transport/includes/trips-app/script.html" %}
-  
+
+{% if add_trip_form %}
+
+{% include "transport/includes/add-trip-app/script.html" %}
+{% endif %}
 {% endblock script %}

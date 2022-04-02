@@ -44,6 +44,23 @@ class Passenger(Account):
         return super(Passenger,self).save(*args, **kwargs)
 
 
+class Client(Account):
+
+    def get_trips_url(self):
+        return reverse(APP_NAME+":trips",kwargs={'category_id':0,'driver_id':0,'vehicle_id':0,'passenger_id':self.pk,'trip_path_id':0})
+    
+    class Meta:
+        verbose_name = _("Client")
+        verbose_name_plural = _("Client")
+ 
+    def save(self,*args, **kwargs):
+        if self.class_name is None or self.class_name=="":
+            self.class_name='client'
+        if self.app_name is None or self.app_name=="":
+            self.app_name=APP_NAME
+        return super(Client,self).save(*args, **kwargs)
+
+
 class Area(models.Model,LinkHelper):
     code=models.CharField(_("code"), max_length=50)
     name=models.CharField(_("area"), max_length=50)
@@ -137,6 +154,7 @@ class WorkShift(models.Model,LinkHelper):
 
 
 class TripPath(models.Model,LinkHelper):
+    area=models.ForeignKey("area", null=True,blank=True, verbose_name=_("area"), on_delete=models.CASCADE)
     source=models.ForeignKey("map.location",related_name="trip_source_set", verbose_name=_("مبدا"), on_delete=models.CASCADE)
     destination=models.ForeignKey("map.location",related_name="trip_destination_set", verbose_name=_("مقصد"), on_delete=models.CASCADE)
     cost=models.IntegerField(_("هزینه"),default=0)

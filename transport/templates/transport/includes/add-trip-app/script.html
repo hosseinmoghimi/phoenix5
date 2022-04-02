@@ -1,0 +1,174 @@
+<script>
+    let all_trip_paths = JSON.parse(`{{trip_paths_s|escapejs}}`)
+    let trip_paths = []
+    let all_passengers = JSON.parse(`{{passengers_s|escapejs}}`)
+    let passengers = []
+    let driver_id = 0
+    let passenger_id = 0
+    let client_id = 0
+    driver = null
+    let vehicle_id = 0
+    let trip_path_id = 0
+</script>
+{% if trip_path %}
+<script>
+    trip_paths = [JSON.parse(`{{trip_path_s|escapejs}}`)]
+    trip_path_id = parseInt(`{{trip_path.id}}`)
+</script>
+{% endif %}
+
+{% if driver %}
+<script>
+    driver_id = parseInt("{{driver.id}}")
+</script>
+{% endif %}
+
+
+{% if client %}
+<script>
+    client_id = parseInt("{{client.id}}")
+</script>
+{% endif %}
+
+{% if vehicle %}
+<script>
+    vehicle_id = parseInt("{{vehicle.id}}")
+</script>
+{% endif %}
+
+{% if driver %}
+<script>
+</script>
+{% endif %}
+{% if passenger %}
+<script>
+    passenger_id = parseInt("{{passenger.id}}")
+    passengers = [JSON.parse(`{{passenger_s|escapejs}}`)]
+
+</script>
+{% endif %}
+
+<script>
+    let add_trip_app = new Vue({
+        el: "#add-trip-app",
+        data: {
+            message:{show:false},
+            all_trip_paths: all_trip_paths,
+            trip_paths: trip_paths,
+            title: "",
+            client_id:client_id,
+            driver_id: driver_id,
+            passenger_id: passenger_id,
+            all_passengers: all_passengers,
+            passengers: passengers,
+            description: "",
+            vehicle_id: vehicle_id,
+            trip_path_id: trip_path_id,
+            passenger_id: 0,
+            waiting:false,
+        },
+        methods: {
+            add_passenger: function () {
+                add_trip_app.all_passengers.forEach(passenger => {
+                    if (passenger.id == add_trip_app.passenger_id) {
+                        add_trip_app.passengers.push(passenger)
+                        add_trip_app.all_passengers = add_trip_app.all_passengers.filter(passenger2 => passenger2.id != passenger.id)
+                    }
+                });
+            },
+            add_trip_path: function () {
+                add_trip_app.all_trip_paths.forEach(trip_path => {
+                    if (trip_path.id == add_trip_app.trip_path_id) {
+                        add_trip_app.trip_paths.push(trip_path)
+                        add_trip_app.all_trip_paths = add_trip_app.all_trip_paths.filter(trip_path2 => trip_path2.id != trip_path.id)
+                    }
+                });
+            },
+            remove_trip_path: function (trip_path_id) {
+                add_trip_app.trip_paths = add_trip_app.trip_paths.filter(trip_path2 => trip_path2.id != trip_path_id)
+                all_trip_paths.forEach(trip_path => {
+                    if (trip_path.id == trip_path_id) {
+                        add_trip_app.all_trip_paths.push(trip_path)
+                    }
+                });
+            },
+            remove_passenger: function (passenger_id) {
+                add_trip_app.passengers = add_trip_app.passengers.filter(passenger => passenger.id != passenger_id)
+                all_passengers.forEach(passenger => {
+                    if (passenger.id == passenger_id) {
+                        add_trip_app.all_passengers.push(passenger)
+                    }
+                });
+            },
+            select_path: function () {
+                // console.log("select_path")
+                // this.add_trip_path()
+            },
+            
+            show_message: function (message_color, message) {
+                this.message.show = true
+                this.message.color = message_color
+                this.message.text = message
+            },
+            add_trip: function () {
+
+                if (add_trip_app.trip_paths.length<1) {
+                    add_trip_app.show_message("warning", "مسیری یرای سفر را انتخاب کنید.")
+                    return
+                }
+                if (add_trip_app.title === "") {
+                    add_trip_app.show_message("warning", "عنوان سفر را وارد کنید.")
+                    return
+                }
+                if (add_trip_app.vehicle_id == 0) {
+                    add_trip_app.show_message("warning", "وسیله را وارد کنید.")
+                    return
+                }
+                if (add_trip_app.driver_id == 0) {
+                    add_trip_app.show_message("warning", "راننده را وارد کنید.")
+                    return
+                }
+                add_trip_app.waiting = true
+
+
+                let trip_paths_ =[]
+                
+                this.trip_paths.forEach(trip_path => {
+                    trip_paths_.push(trip_path.id)
+                })
+                
+                trip_paths_ =JSON.stringify(trip_paths_)
+
+
+                
+                let passengers_ =[]
+                
+                this.passengers.forEach(passenger => {
+                    passengers_.push(passenger.id)
+                })
+                
+                passengers_ =JSON.stringify(passengers_)
+
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    trip_paths: trip_paths_,
+                    title: this.title,
+                    driver_id: this.driver_id,
+                    vehicle_id: this.vehicle_id,
+                    description: this.description,
+                    client_id: this.client_id,
+                    passengers: passengers_,
+                }
+                console.log(payload)
+                let url = "{% url 'transport:add_trip' %}"
+                $.post(url, payload).done(data => {
+                    console.log(data)
+                    if (data.result === 'SUCCEED') {
+
+                    }
+
+                })
+            }
+        }
+    })
+</script>

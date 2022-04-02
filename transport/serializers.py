@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from authentication.serializers import ProfileSerializer
-from transport.models import Passenger,Driver, Trip, TripCategory, TripPath, Vehicle
+from transport.models import Passenger,Driver, Trip, TripCategory, TripPath, Vehicle,Client
 from map.serializers import LocationSerializer
 from accounting.serializers import AccountSerializer
 class DriverSerializer(serializers.ModelSerializer):
@@ -13,6 +13,12 @@ class PassengerSerializer(serializers.ModelSerializer):
     profile=ProfileSerializer()
     class Meta:
         model=Passenger
+        fields=['id','title','logo','profile','get_absolute_url','balance_rest']
+
+class ClientSerializer(serializers.ModelSerializer):
+    profile=ProfileSerializer()
+    class Meta:
+        model=Client
         fields=['id','title','logo','profile','get_absolute_url','balance_rest']
 
 class TripPathSerializer(serializers.ModelSerializer):
