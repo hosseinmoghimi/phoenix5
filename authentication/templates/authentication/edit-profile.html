@@ -11,7 +11,16 @@
             <div class="card-body">
                 <div class="text-center">
                     <img src="{{selected_profile.image}}" width="192" class="rounded-circle" alt="">
+                    <form enctype="multipart/form-data" action="{% url 'authentication:change_profile_image'  pk=selected_profile.id %}"
+                        method="POST">
+                        {% csrf_token %}
+                        <input type="hidden" name="profile_id" value="{{selected_profile.id}}">
+                        <input type="file" name="image" id="">
 
+                        <button type="submit" class="btn btn-success">
+                            تایید
+                        </button>
+                    </form>
                 </div>
 
                 <h5 class="text-center my-2">
@@ -65,10 +74,8 @@
 
 
                 <div class="text-center farsi">
-                    {% if perms.authentication.change_profile %}
-                    <a href="{% url 'authentication:login_as' pk=selected_profile.id %}" title="login_as"
-                        class="mx-2 text-info"><i class="fa fa-edit"></i> ورود</a>
-                    {% endif %}
+                    <a href="{% url 'authentication:profile' pk=selected_profile.id %}" title="login_as"
+                        class="mx-2 text-info"><i class="fa fa-edit"></i> پروفایل</a>
 
 
 
@@ -77,12 +84,7 @@
                         class="mx-2 text-warning"><i class="fa fa-edit"></i> ویرایش</a>
                     {% endif %}
 
-
-                    {% if perms.authentication.change_profile %}
-                    <a href="{{selected_profile.get_edit_page_url}}" target="_blank" title="ویرایش"
-                        class="mx-2 text-warning"><i class="fa fa-edit"></i> ویرایش</a>
-                    {% endif %}
-
+ 
 
 
                     {% if perms.authentication.delete_profile %}

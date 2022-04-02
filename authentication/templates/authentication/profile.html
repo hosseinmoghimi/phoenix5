@@ -74,14 +74,11 @@
 
 
 
-                    {% if perms.authentication.change_profile %}
-                    <a href="{{selected_profile.get_edit_url}}" target="_blank" title="ویرایش"
-                        class="mx-2 text-warning"><i class="fa fa-edit"></i> ویرایش</a>
-                    {% endif %}
+                 
 
 
                     {% if perms.authentication.change_profile %}
-                    <a href="{{selected_profile.get_edit_page_url}}" target="_blank" title="ویرایش"
+                    <a href="{{selected_profile.get_edit_page_url}}" title="ویرایش"
                         class="mx-2 text-warning"><i class="fa fa-edit"></i> ویرایش</a>
                     {% endif %}
 

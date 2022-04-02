@@ -1,5 +1,5 @@
 from django.http import JsonResponse
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render,reverse
 import json
 from authentication.serializers import ProfileSerializer
 from core.constants import FAILED, SUCCEED
@@ -91,6 +91,26 @@ class ProfileViews(View):
 
         return render(request,TEMPLATE_ROOT+"profile.html",context)
 
+
+
+class ChangeProfileImageViews(View):
+    def post(self,request,*args, **kwargs):
+        context={'result':FAILED}
+        profile_id=0
+        if 'pk' in kwargs:
+            profile_id=kwargs['pk']
+        log=1
+        if request.method=='POST':
+            log=2
+            edit_profile_form=ChangeProfileImageForm(request.POST,request.FILES)
+            if edit_profile_form.is_valid():
+                log=3              
+                # profile_id=edit_profile_form.cleaned_data['profile_id']
+                image=request.FILES['image']
+                result=ProfileRepo(request=request).change_profile_image(profile_id=profile_id,
+                image=image,
+                )
+        return redirect(reverse(APP_NAME+":profile",kwargs={'pk':profile_id}))
 
 
 

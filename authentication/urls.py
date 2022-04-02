@@ -7,6 +7,7 @@ urlpatterns = [
     path('search/',views.SearchViews.as_view(),name="search"),
     path('profile/<int:pk>/',views.ProfileViews.as_view(),name="profile"),
     path('edit_profile/<int:pk>/',views.EditProfileViews.as_view(),name="edit_profile"),
+    path('change_profile_image/<int:pk>/',views.ChangeProfileImageViews.as_view(),name="change_profile_image"),
     path('me/',views.ProfileViews.as_view(),name="me"),
     path('profiles/',views.ProfilesViews.as_view(),name="profiles"),
     path('logout/',views.LogoutViews.as_view(),name="logout"),

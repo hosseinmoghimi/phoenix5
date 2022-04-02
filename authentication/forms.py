@@ -17,6 +17,10 @@ class EditProfileForm(forms.Form):
     address=forms.CharField(max_length=150, required=False)
 
 
+class ChangeProfileImageForm(forms.Form):
+    profile_id=forms.IntegerField(required=True)
+    image=forms.ImageField(required=True)
+
 
 
 class RegisterForm(UserCreationForm):
