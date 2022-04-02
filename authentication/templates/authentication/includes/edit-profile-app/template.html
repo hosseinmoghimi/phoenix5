@@ -1,79 +1,78 @@
 <div class="card mb-3" id="edit-profile-app">
     <div class="card-body">
         <form @submit.prevent="edit_profile()">
-
             <div class="row">
-                <div class="col-sm-3">
-                    <h6 class="mb-0">نام</h6>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="">نام</label>
+                        <input required placeholder="" v-model="selected_profile.first_name" type="text"
+                            class="form-control">
+                    </div>
                 </div>
-                <div class="col-sm-9 text-secondary farsi">
-                    <input placeholder="first_name" v-model="selected_profile.first_name" type="text" class="form-control">
-                </div>
-            </div>
-            <hr>
-            <div class="row">
 
-                <div class="col-sm-3">
-                    <h6 class="mb-0">نام خانوادگی</h6>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="">نام خانوادگی</label>
+                        <input required placeholder="" v-model="selected_profile.last_name" type="text"
+                            class="form-control">
+                    </div>
                 </div>
-                <div class="col-sm-9 text-secondary farsi">
-                    <input placeholder="last_name" v-model="selected_profile.last_name" type="text" class="form-control">
 
-                </div>
-            </div>
-            <hr>
 
-            <div class="row">
 
-                <div class="col-sm-3">
-                    <h6 class="mb-0">ایمیل</h6>
-                </div>
-                <div class="col-sm-9 text-secondary farsi">
-                    <input placeholder="email" v-model="selected_profile.email" type="text" class="form-control">
 
-                </div>
-            </div>
-            <hr>
 
-            <div class="row">
-                <div class="col-sm-3">
-                    <h6 class="mb-0">همراه</h6>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="">شماره همراه</label>
+                        <input required placeholder="" v-model="selected_profile.mobile" type="text"
+                            class="form-control">
+                    </div>
                 </div>
-                <div class="col-sm-9 text-secondary farsi">
-                    <input placeholder="mobile" v-model="selected_profile.mobile" type="text" class="form-control">
 
-                </div>
-            </div>
-            <hr>
-            <div class="row">
-                <div class="col-sm-3">
-                    <h6 class="mb-0">بیو</h6>
-                </div>
-                <div class="col-sm-9 text-secondary farsi">
-                    <input placeholder="bio" v-model="selected_profile.bio" type="text" class="form-control">
 
-                </div>
-            </div>
-            <hr>
-            <div class="row">
-                <div class="col-sm-3">
-                    <h6 class="mb-0">آدرس</h6>
-                </div>
-                <div class="col-sm-9 text-secondary farsi">
-                    <input placeholder="address" v-model="selected_profile.address" type="text" class="form-control">
 
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="">ایمیل</label>
+                        <input required placeholder="" v-model="selected_profile.email" type="text"
+                            class="form-control">
+                    </div>
                 </div>
-            </div>
-            <hr>
-            <div class="row">
+
+
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="">بیو</label>
+                        <input required placeholder="" v-model="selected_profile.bio" type="text" class="form-control">
+                    </div>
+                </div>
+
+
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="">آدرس</label>
+                        <input required placeholder="" v-model="selected_profile.address" type="text"
+                            class="form-control">
+                    </div>
+                </div>
+
+
+
+
                 <div class="col-sm-12">
-                    <button class="btn btn-info farsi btn-outline-info text-light" type="submit">ویرایش</button>
+                    <p>
+
+                        <button class="btn btn-success farsi btn-outline-info text-light" type="submit">ویرایش</button>
+                    </p>
+                </div>
+                <div class="col-md-12">
+                    <p v-if="edited_successfully" class="px-3 my-3 text-center alert alert-success">
+                        با موفقیت ویرایش شد.
+                    </p>
                 </div>
             </div>
-            <p v-if="edited_successfully" class="px-3 my-3 text-center alert alert-success">
-                    با موفقیت ویرایش شد.
-            </p>
         </form>
-
     </div>
 </div>

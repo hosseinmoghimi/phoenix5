@@ -18,7 +18,11 @@
 
                     {{selected_profile.name}}
                 </h5>
-
+                {% if selected_profile.bio %}
+                <p class="text-center my-0 text-muted">
+                    {{profile.bio}}
+                </p>
+                {% endif %}
 
                 {% if selected_profile.mobile %}
 
@@ -32,12 +36,24 @@
                 </h5>
                 {% endif %}
 
+                {% if selected_profile.email %}
 
+                <h6 class="text-center my-2">
+                    <a href="mailto:{{selected_profile.email}}">
+                        <span class="text-info ">
+
+                            {{selected_profile.email}}
+                        </span>
+                    </a>
+                </h6>
+                {% endif %}
 
 
 
             </div>
         </div>
+
+
         <div class="card">
             <div class="card-body">
 
@@ -92,8 +108,8 @@
 
     {% endif %}
 
-    
- 
+
+
 
     {% if edit_profile_form %}
 
@@ -102,12 +118,12 @@
     </div>
 
     {% endif %}
-   
+
 </div>
 {% endblock content %}
 
 {% block script %}
- 
+
 
 {% if edit_profile_form %}
 {% include "authentication/includes/edit-profile-app/script.html" %}
