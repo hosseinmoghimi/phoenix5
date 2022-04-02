@@ -32,6 +32,8 @@ def class_title(*args, **kwargs):
     class_title = ""
     if class_name == "page":
         class_title = "صفحه"
+    if class_name == "appointment":
+        class_title = "قرار ملاقات"
     if class_name == "letter":
         class_title = "نامه"
     if class_name == "file":

@@ -1,4 +1,4 @@
-from .apps import APP_NAME
+from transport.apps import APP_NAME
 from .models import Driver,Passenger,Area,ServiceMan, Trip, TripPath
 from authentication.repo import ProfileRepo
 from django.utils import timezone

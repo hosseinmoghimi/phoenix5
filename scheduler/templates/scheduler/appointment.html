@@ -1,4 +1,4 @@
-{% extends "phoenix/layout.html" %}
+{% extends "phoenix/wide-layout.html" %}
 
 {% block content %}
 {% include "core/includes/page-app/navbar.html" %}
@@ -45,10 +45,9 @@
 
             </div>
             <div class="col-md-12">
-                {% include "map/includes/locations-app/template.html" %}
+                {% include "map/includes/locations-app/template-with-preview.html" %}
 
             </div>
-
             
         </div>
     </div>

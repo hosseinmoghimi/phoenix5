@@ -26,6 +26,7 @@ urlpatterns = [
     path('log/', include('log.urls')),
     path('archive/', include('archive.urls')),
     path('resume/', include('resume.urls')),
+    path('scheduler/', include('scheduler.urls')),
     path('messenger/', include('messenger.urls')),
     path('chef/', include('chef.urls')),
     path('wallet/', include('wallet.urls')),

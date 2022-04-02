@@ -1,0 +1,128 @@
+{% load to_persian_date %}
+{% load to_price %}
+{% load to_amount_color %}
+{% load static %}
+<div id="accordion-appointments">
+
+
+    <div class="card" id="appointments-app">
+        <div class="card-header" id="heading-appointments">
+            <h5 class="text-center">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-appointments"
+                    aria-expanded="true" aria-controls="collapse-appointments">
+                    قرار ملاقات ها
+
+
+                    <span v-if="appointments.length>0">
+                        <small class="text-danger mx-2">
+                            <span v-text="appointments.length"></span>
+                        </small>
+                    </span>
+
+
+                </button>
+            </h5>
+
+        </div>
+        <div id="collapse-appointments" class="collapse" aria-labelledby="heading-appointments"
+            data-parent="#accordion-appointments">
+
+
+            <div class="card-body">
+
+                {% load static %}
+                <img src="{% static 'leo/img/loading.gif' %}" width="32" v-if="waiting" alt="">
+
+                <input type="text" v-model="search_for" class="form-control" placeholder="جستجو ..." @input="filter()">
+
+
+                <div class="table-responsive">
+                    <img v-if="false" width="32" src="{% static 'leo/img/loading.gif' %}" alt="">
+                    <h6 v-if="false">
+
+                        <span class="text-muted">در حال بار گذاری ... </span>
+                    </h6>
+                    <table class="table table-striped">
+                        <thead>
+                            <th>
+                                قرار ملاقات
+                            </th>
+                            <th>
+                                پروفایل ها
+                            </th>
+                            <th>
+                                مکان
+                            </th>
+                            <th>
+                                زمان
+                            </th>
+                            <th>
+
+                            </th>
+                        </thead>
+                        <tbody>
+
+
+                            <tr v-for="appointment in appointments">
+                                <td>
+                                    <a :href="appointment.get_absolute_url">
+                                        <div class="media">
+                                            <div class="media-body mr-3">
+                                                <div>
+
+                                                    <span v-text="appointment.title"></span>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </a>
+
+
+                                </td>
+                                <td>
+                                    <div v-for="profile in appointment.profiles">
+
+                                        <a :href="profile.get_absolute_url">
+                                            <img :src="profile.image" class="rounded-circle" width="32" alt="">
+                                            <span v-text="profile.name"></span>
+                                        </a>
+                                    </div>
+
+                                </td>
+                                <td>
+                                    <div v-for="location in appointment.locations">
+                                        <a :href="location.get_absolute_url">
+
+                                            <span v-html="location.title"></span>
+                                        </a>
+                                    </div>
+                                </td>
+                                <td>
+
+                                    <span v-html="appointment.persian_date_fixed"></span>
+
+
+                                </td>
+                                <td>
+
+                                    {% if perms.projectmanager.add_employee and not appointment.employee %}
+                                    <form @submit.prevent="create_employee(appointment.id)">
+                                        {% csrf_token %}
+                                        <button class="btn btn-warning" type="submit">
+                                            ایجاد پرسنل
+                                        </button>
+                                    </form>
+                                    {% endif %}
+
+
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+</div>

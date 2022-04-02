@@ -20,6 +20,7 @@ INSTALLED_APPS = [
     'django_social_share',
     # 'web3auth.apps.Web3AuthConfig',
     'market',
+    'scheduler',
     'resume',
     'core',
     'wallet',
@@ -33,12 +34,13 @@ INSTALLED_APPS = [
     'stock',
     'transport',
     'guarantee',
-    'log',
     'chef',
+    'log',
     'map',
     'archive',
     'messenger',
-    'warehouse'
+    'warehouse',
+    'school',
 
 ]
 DATABASES = {
@@ -71,6 +73,31 @@ phoenix_apps=[
         'title':'هویت',
         'color':'warning',
         'home_url':SITE_URL+"authentication"+"/",
+        'has_help':False,
+        'show_on_menu':True,
+    },
+
+    {
+        'name':'scheduler',
+        'title':'برنامه ریز',
+        'color':'warning',
+        'home_url':SITE_URL+"scheduler"+"/",
+        'has_help':False,
+        'show_on_menu':True,
+    },
+    {
+        'name':'school',
+        'title':'آموزشگاه',
+        'color':'warning',
+        'home_url':SITE_URL+"school"+"/",
+        'has_help':False,
+        'show_on_menu':True,
+    },
+    {
+        'name':'chef',
+        'title':'سرآشپز',
+        'color':'danger',
+        'home_url':SITE_URL+'chef/',
         'has_help':False,
         'show_on_menu':True,
     },
@@ -199,14 +226,6 @@ phoenix_apps=[
         'show_on_menu':True,
     },
 
-    {
-        'name':'chef',
-        'title':'سرآشپز',
-        'color':'danger',
-        'home_url':SITE_URL+'chef/',
-        'has_help':False,
-        'show_on_menu':True,
-    },
     {
         'name':'web',
         'title':'وب سایت',

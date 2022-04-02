@@ -71,64 +71,103 @@
         <div class="col-md-6">
             {% if location.pagelocation_set.all %}
 
-            <div class="card">
-                <div class="card-body">
-                    <div>
-                        <h4 class="mb-4">
-                            صفحات مرتبط
-                        </h4>
-                        {% for pagelocation in location.pagelocation_set.all %}
-                        <div class="text-right farsi mb-2">
+            <div id="accordion-page-locations">
+
+                <div class="card">
+                    <div class="card-header" id="heading-page-locations">
+                        <h5 class="text-center">
+                            <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-page-locations"
+                                aria-expanded="true" aria-controls="collapse-page-locations">
+                                صفحات مرتبط
 
 
-                            <small class="text-muted ml-3">
-                                {{pagelocation.page.class_title}}
-                            </small>
-                            <a class="farsi" href="{{pagelocation.page.get_absolute_url}}">
-                                {{pagelocation.page.title}}
-                            </a>
+
+
+
+
+                            </button>
+                        </h5>
+
+
+                    </div>
+
+                    <div id="collapse-page-locations" class="collapse" aria-labelledby="heading-page-locations"
+                        data-parent="#accordion-page-locations">
+                        <div class="card-body">
+                            <div class="card-body">
+                                <div>
+
+                                    <table class="table">
+                                        <!-- <thead>
+                                <th>
+                                    نوع
+                                </th>
+
+                                <th>
+                                    عنوان
+                                </th>
+                            </thead> -->
+                                        <tbody>
+                                            {% for pagelocation in location.pagelocation_set.all %}
+                                            <tr>
+                                                <td class="text-left farsi">
+                                                    <small class="text-muted ml-3">
+                                                        {{pagelocation.page.class_title}}
+                                                    </small>
+                                                </td>
+                                                <td class="text-right farsi">
+                                                    <a class="farsi" href="{{pagelocation.page.get_absolute_url}}">
+                                                        {{pagelocation.page.title}}
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
                         </div>
-                        {% endfor %}
+                    </div>
+                </div>
 
+
+
+                {% endif %}
+            </div>
+            {% if location.trip_source_set.all or location.trip_destination_set.all%}
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="title">
+                            مسیر های سفر
+                        </h4>
+                    </div>
+                    <div class="card-body">
+
+                        {% for trip_path in location.trip_source_set.all %}
+                        <h5 class="mr-5">
+                            مبدا :
+                            <a href="{{trip_path.get_absolute_url}}">
+
+                                {{trip_path.title}}
+                            </a>
+                        </h5>
+                        {% endfor %}
+                        {% for trip_path in location.trip_destination_set.all %}
+                        <h5 class="mr-5">
+                            مقصد :
+                            <a href="{{trip_path.get_absolute_url}}">
+
+                                {{trip_path.title}}
+                            </a>
+                        </h5>
+                        {% endfor %}
                     </div>
                 </div>
             </div>
             {% endif %}
         </div>
-        {% if location.trip_source_set.all or location.trip_destination_set.all%}
-        <div class="col-md-12">
-            <div class="card">
-                <div class="card-header">
-                    <h4 class="title">
-                        مسیر های سفر
-                    </h4>
-                </div>
-                <div class="card-body">
-
-                    {% for trip_path in location.trip_source_set.all %}
-                    <h5 class="mr-5">
-                        مبدا :
-                        <a href="{{trip_path.get_absolute_url}}">
-
-                            {{trip_path.title}}
-                        </a>
-                    </h5>
-                    {% endfor %}
-                    {% for trip_path in location.trip_destination_set.all %}
-                    <h5 class="mr-5">
-                        مقصد :
-                        <a href="{{trip_path.get_absolute_url}}">
-
-                            {{trip_path.title}}
-                        </a>
-                    </h5>
-                    {% endfor %}
-                </div>
-            </div>
-        </div>
-        {% endif %}
     </div>
-</div>
-{% endblock %}
-{% block script %}
-{% endblock %}
+    {% endblock %}
+    {% block script %}
+    {% endblock %}
