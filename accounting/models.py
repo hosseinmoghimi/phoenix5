@@ -8,6 +8,8 @@ from django.db import models
 from core.models import Page
 from django.shortcuts import reverse
 from django.utils.translation import gettext as _
+
+from utility.excel import get_excel_report
 from .apps import APP_NAME
 from utility.utils import LinkHelper
 from .enums import *
@@ -424,6 +426,8 @@ class FinancialBalance(models.Model,LinkHelper):
         # self.financial_document.normalize_sub_accounts()
     def color(self):
         return getColor(self.title)
+
+
 class FinancialDocumentTag(models.Model):
     title=models.CharField(_("title"), max_length=50)
 
@@ -497,10 +501,13 @@ class Invoice(Transaction):
     invoice_datetime=models.DateTimeField(_("تاریخ فاکتور"), auto_now=False, auto_now_add=False)
     ship_fee=models.IntegerField(_("هزینه حمل"),default=0)
     discount=models.IntegerField(_("تخفیف"),default=0)
+ 
 
 
     def get_print_url(self):
         return reverse(APP_NAME+":invoice_print",kwargs={'pk':self.pk})
+    def get_excel_url(self):
+        return reverse(APP_NAME+":invoice_excel",kwargs={'pk':self.pk})
     def editable(self):
         if self.status==TransactionStatusEnum.DRAFT:
             return True
@@ -581,7 +588,8 @@ class InvoiceLine(models.Model,LinkHelper):
 
     def __str__(self):
         return f"{self.invoice} {self.row} - {self.product_or_service.title} "
- 
+    def line_total(self):
+        return self.unit_price*self.quantity
 
     @property
     def product(self):

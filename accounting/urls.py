@@ -28,6 +28,7 @@ urlpatterns = [
     path("invoice_line/<int:pk>/",login_required(views.InvoiceLineView.as_view()),name="invoiceline"),
     path("invoice/edit/<int:pk>/",login_required(views.InvoiceEditView.as_view()),name="edit_invoice"),
     path("invoices/",login_required(views.InvoicesView.as_view()),name="invoices"),
+    path("invoice/excel/<int:pk>/",login_required(views.InvoiceExcelView.as_view()),name="invoice_excel"),
     path("invoice/<int:pk>/",login_required(views.InvoiceView.as_view()),name="invoice"),
     path("invoice/print/<int:pk>/",login_required(views.InvoicePrintView.as_view()),name="invoice_print"),
     path("invoice/print/<int:pk>/<currency>/",login_required(views.InvoicePrintView.as_view()),name="invoice_print_currency"),
