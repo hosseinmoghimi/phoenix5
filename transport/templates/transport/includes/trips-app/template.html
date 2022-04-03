@@ -48,6 +48,9 @@
                                 سفر
                             </th>
                             <th>
+                                زمان
+                            </th>
+                            <th>
                                 راننده
                             </th>
                             <th>
@@ -96,7 +99,7 @@
                                     <div class="my-2">
 
                                         {% if perms.transport.change_trip %}
-                                        <a href="{{trip.get_edit_url}}" target="_blank" title="ویرایش"
+                                        <a :href="trip.get_edit_url" target="_blank" title="ویرایش"
                                             class="mx-2 text-warning"><i class="fa fa-edit"></i> ویرایش</a>
 
                                         <span class="mx-2">
@@ -109,7 +112,7 @@
                                         {% if perms.transport.delete_trip %}
 
 
-                                        <a href="{{trip.get_delete_url}}" target="_blank" title="حذف"
+                                        <a :href="trip.get_delete_url" target="_blank" title="حذف"
                                             class="mx-2 text-danger"><i class="fa fa-trash"></i> حذف</a>
 
                                         <span class="mx-2">
@@ -118,13 +121,22 @@
                                         {% endif %}
                                     </div>
                                 </td>
-
-
+                                <td>
+                                    <div>
+                                        <span class="text-success1">
+                                            <span v-html="trip.persian_date_started"></span>
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <span class="text-muted">
+                                            <span v-html="trip.persian_date_ended"></span>
+                                        </span>
+                                    </div>
+                                </td>
                                 <td>
                                     <a :href="trip.driver.get_absolute_url">
-                                     
-                                        <img :src="trip.driver.logo" class="rounded-circle" width="32"
-                                        alt="">
+
+                                        <img :src="trip.driver.logo" class="rounded-circle" width="32" alt="">
                                         <span v-text="trip.driver.title"></span>
                                     </a>
 
@@ -165,8 +177,6 @@
                                     </div>
 
                                 </td>
-
-
                                 <td>
                                     <span v-html="to_price(trip.cost)"></span>
                                     </span>

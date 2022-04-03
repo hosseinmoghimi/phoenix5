@@ -1,5 +1,5 @@
 from accounting.models import Asset, Transaction
-from utility.calendar import PERSIAN_MONTH_NAMES, PersianCalendar
+from utility.calendar import PERSIAN_MONTH_NAMES, PersianCalendar, to_persian_datetime_tag
 from phoenix.settings import STATIC_URL
 from django.db import models
 from core.models import  Page
@@ -203,7 +203,11 @@ class Trip(Transaction):
     trip_paths=models.ManyToManyField("trippath",blank=True, verbose_name=_("مسیر های سرویس"))
     passengers=models.ManyToManyField("passenger",blank=True, verbose_name=_("مسافر ها"))
     delay=models.IntegerField(_("تاخیر"),default=0)
- 
+    
+    def persian_date_started(self):
+        return to_persian_datetime_tag(self.date_started)
+    def persian_date_ended(self):
+        return to_persian_datetime_tag(self.date_ended)
 
     @property
     def driver(self):

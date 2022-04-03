@@ -64,6 +64,8 @@
             all_passengers: all_passengers,
             passengers: passengers,
             description: "",
+            distance:0,
+            duration:0,
             vehicle_id: vehicle_id,
             trip_path_id: trip_path_id,
             passenger_id: 0,
@@ -90,6 +92,8 @@
                         add_trip_app.trip_paths.push(trip_path)
                         add_trip_app.all_trip_paths = add_trip_app.all_trip_paths.filter(trip_path2 => trip_path2.id != trip_path.id)
                         add_trip_app.amount =parseInt(trip_path.cost)+parseInt(add_trip_app.amount)
+                        add_trip_app.duration =parseInt(trip_path.duration)+parseInt(add_trip_app.duration)
+                        add_trip_app.distance =parseInt(trip_path.distance)+parseInt(add_trip_app.distance)
                     }
                 });
             },
