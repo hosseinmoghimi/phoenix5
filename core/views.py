@@ -9,7 +9,7 @@ from .apps import APP_NAME
 from log.repo import LogRepo
 from core.enums import ColorEnum, IconsEnum, ParameterNameEnum, PictureNameEnum
 from core.models import Download, Link
-from core.repo import DownloadRepo, PageDownloadRepo, PageLikeRepo, PageRepo, ParameterRepo, PictureRepo, TagRepo
+from core.repo import DownloadRepo, ImageRepo, PageDownloadRepo, PageImageRepo, PageLikeRepo, PageRepo, ParameterRepo, PictureRepo, TagRepo
 from .serializers import PageBriefSerializer, PageCommentSerializer, PageImageSerializer, PageDownloadSerializer, PageLinkSerializer, PageTagSerializer
 from phoenix.settings import ADMIN_URL, MEDIA_URL, STATIC_URL, SITE_URL
 from django.shortcuts import render
@@ -25,13 +25,19 @@ TEMPLATE_ROOT = "core/"
 
 def CoreContext(request, *args, **kwargs):
     context = {}
+    context['apps'] = phoenix_apps
+    installed_apps=[]
+    for phoenix_app in phoenix_apps:
+        installed_apps.append(phoenix_app['name'])
+        context[phoenix_app['name']+'_app_is_installed']=True
+    context["installed_apps"]=installed_apps
+
     app_name = kwargs['app_name'] if 'app_name' in kwargs else 'core'
     context['APP_NAME'] = app_name
     context['ADMIN_URL'] = ADMIN_URL
     context['STATIC_URL'] = STATIC_URL
     context['MEDIA_URL'] = MEDIA_URL
     context['SITE_URL'] = SITE_URL
-    context['apps'] = phoenix_apps
 
     profile = ProfileRepo(request=request).me
     context['profile'] = profile
@@ -126,6 +132,13 @@ def PageContext(request, *args, **kwargs):
             PageBriefSerializer(related_pages, many=True).data)
 
 
+
+    #keywords
+    if True:
+        keywords=page.meta_data
+        context['keywords'] = keywords
+
+
     # downloads
     if True:
         downloads = PageDownloadRepo(request=request).list(page_id=page.id)
@@ -138,6 +151,7 @@ def PageContext(request, *args, **kwargs):
     if True:
         page_images = page.pageimage_set.all()
         context['images_s'] = json.dumps(PageImageSerializer(page_images, many=True).data)
+
 
     # likes
     if True:
@@ -170,30 +184,54 @@ class DownloadView(View):
     def get(self, request, *args, **kwargs): 
         me = ProfileRepo(request=request).me
         download = DownloadRepo(request=request).download(*args, **kwargs)
-        if me is None and not download.is_open:
+        if download is None or (me is None and not download.is_open):
             pass
         elif request.user.has_perm("core.change_download") or download.is_open or me in download.profiles.all():
-            if download is None:
-                LogRepo(request=request).add_log(
-                    title="Http404 core views 2"+str(kwargs), app_name=APP_NAME)
-                raise Http404
-            return download.download_response()
-
+            file_path = str(download.file.path)
+            # return JsonResponse({'download:':str(file_path)})
+            import os
+            from django.http import HttpResponse
+            if os.path.exists(file_path):
+                with open(file_path, 'rb') as fh:
+                    response = HttpResponse(
+                        fh.read(), content_type="application/force-download")
+                    response['Content-Disposition'] = 'inline; filename=' + \
+                        os.path.basename(file_path)
+                    download.download_counter += 1
+                    download.save()
+                    return response
+                    
         # if self.access(request=request,*args, **kwargs) and document is not None:
         #     return document.download_response()
         message_view = MessageView(request=request)
         message_view.links = []
-        message_view.links.append(Link(title='تلاش مجدد', color="warning",
-                                  icon_material="apartment", url=download.get_download_url()))
         message_view.message_color = 'warning'
         message_view.has_home_link = True
         message_view.header_color = "rose"
         message_view.message_icon = ''
         message_view.header_icon = '<i class="fa fa-exclamation-triangle" aria-hidden="true"></i>'
-        message_view.message_text = ' شما مجوز دسترسی به این صفحه را ندارید.'
-        message_view.header_text = 'دسترسی غیر مجاز'
+        message_view.body = ' شما مجوز دسترسی به این صفحه را ندارید.'
+        message_view.title = 'دسترسی غیر مجاز'
+        if download is None:
+            message_view.body = 'دانلود مورد نظر شما پیدا نشد.'
+            message_view.title = 'دانلود مورد نظر پیدا نشد.'
+        else:
+            message_view.links.append(Link(title='تلاش مجدد', color="warning",
+                                  icon_material="apartment", url=download.get_download_url()))
 
         return message_view.response()
+        
+         
+
+
+
+class ImageDownloadView(View):
+    def get(self, request, *args, **kwargs): 
+        image = ImageRepo(request=request).image(*args, **kwargs)
+        if image is None:
+            raise Http404
+        return image.download_response()
+ 
 
 
 
@@ -210,7 +248,28 @@ class TagView(View):
         return render(request,TEMPLATE_ROOT+"tag.html",context)
         
  
+class PageImageView(View):
+    def get(self, request, *args, **kwargs):
+        me = ProfileRepo(request=request).me
+        image = PageImageRepo(request=request).page_image(*args, **kwargs)
+        if image is None:
+            raise Http404
+        context=CoreContext(request=request,app_name=APP_NAME)
+        context['image']=image
+        return render(request,TEMPLATE_ROOT+"image.html",context)
+        
 
+
+class ImageView(View):
+    def get(self, request, *args, **kwargs):
+        me = ProfileRepo(request=request).me
+        image = ImageRepo(request=request).image(*args, **kwargs)
+        if image is None:
+            raise Http404
+        context=CoreContext(request=request,app_name=APP_NAME)
+        context['image']=image
+        return render(request,TEMPLATE_ROOT+"image.html",context)
+        
 class MessageView(View):
     def __init__(self, request, *args, **kwargs):
         self.request = request

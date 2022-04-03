@@ -18,7 +18,14 @@
 
                     {{selected_profile.name}}
                 </h5>
+                {% if selected_profile.bio %}
+                <p class="text-center my-0 text-muted">
+                    <small>
 
+                        {{profile.bio}}
+                    </small>
+                </p>
+                {% endif %}
 
                 {% if selected_profile.mobile %}
 
@@ -32,12 +39,26 @@
                 </h5>
                 {% endif %}
 
+                {% if selected_profile.email %}
+
+                <h6 class="text-center my-2">
+                    <a href="mailto:{{selected_profile.email}}">
+                        <span class="text-info ">
+
+                            {{selected_profile.email}}
+                        </span>
+                    </a>
+                </h6>
+                {% endif %}
+
+
 
 
 
 
             </div>
         </div>
+
         <div class="card">
             <div class="card-body">
 
@@ -56,9 +77,12 @@
 
 
 
+
+
+
                     {% if perms.authentication.change_profile %}
-                    <a href="{{selected_profile.get_edit_url}}" target="_blank" title="ویرایش"
-                        class="mx-2 text-warning"><i class="fa fa-edit"></i> ویرایش</a>
+                    <a href="{{selected_profile.get_edit_page_url}}" title="ویرایش" class="mx-2 text-warning"><i
+                            class="fa fa-edit"></i> ویرایش</a>
                     {% endif %}
 
 
@@ -84,6 +108,7 @@
         </div>
     </div>
 
+
     {% endif %}
 
     {% if employees %}
@@ -93,6 +118,36 @@
 
     </div>
     {% endif %}
+
+    {% if transport_app_is_installed %}
+
+
+    <div class="col-md-4">
+        <div class="card" id="create-account-app">
+            <div class="card-body">
+                <div>
+                    <button @click="create_driver({{selected_profile.id}})" class="btn btn-success btn-block">
+                        <i class="fa fa-user"></i>
+                        افزودن راننده
+                    </button>
+
+                    <button @click="create_passenger({{selected_profile.id}})" class="btn btn-success btn-block">
+                        <i class="fa fa-user"></i>
+                        افزودن مسافر
+                    </button>
+
+                    <button @click="create_client({{selected_profile.id}})" class="btn btn-success btn-block">
+                        <i class="fa fa-user"></i>
+                        افزودن مشتری حمل و نقل
+                    </button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% endif %}
+
     {% if profiles %}
 
     <div class="col-md-4">
@@ -121,6 +176,33 @@
 {% include "projectmanager/includes/employees-app/script.html" %}
 {% if profiles %}
 {% include "authentication/includes/profiles-app/script.html" %}
+{% endif %}
+
+{% if transport_app_is_installed %}
+<script>
+    let create_account_app = new Vue({
+        el: "#create-account-app",
+        data: {
+
+        },
+        methods: {
+            create_driver: function (profile_id) {
+                console.log("create_driver")
+                console.log(profile_id)
+            },
+            create_passenger: function (profile_id) {
+                console.log("create_passenger")
+                console.log(profile_id)
+
+            },
+            create_client: function (profile_id) {
+                console.log("create_client")
+                console.log(profile_id)
+
+            },
+        }
+    })
+</script>
 {% endif %}
 
 {% endblock script %}

@@ -1,9 +1,31 @@
+{% load to_json %}
 <script>
-let drivers=JSON.parse(`{{drivers_s|escapejs}}`)
-    let drivers_app=new Vue({
+    let drivers = JSON.parse(`{{drivers_s|escapejs}}`)
+    let drivers_app = new Vue({
         el:"#drivers-app",
-        data:{
-            drivers:drivers,
+        data: {
+            drivers: drivers,
+            search_for:'',
+            waiting:false,
+        },
+        methods: {
+            filter:function(){
+                this.drivers = drivers.filter(driver => driver.title.indexOf(this.search_for) > -1)
+         
+            },
+            to_price: function (vall) {
+                let color='primary'
+                if (vall<0)
+                color='danger'
+                if (vall>0)
+                color='success'
+                vall=to_price(vall,"{{CURRENCY}}")
+                return `
+                    <span class="text-${color}">${vall}</span>
+                    `
+            },
+          
         }
     })
+
 </script>

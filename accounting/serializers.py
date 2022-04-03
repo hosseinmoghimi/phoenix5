@@ -21,7 +21,7 @@ class AccountSerializer(serializers.ModelSerializer):
     profile=ProfileSerializer()
     class Meta:
         model = Account
-        fields = ['id','logo','balance_rest', 'title','profile', 'get_absolute_url']
+        fields = ['id','logo','class_title','balance_rest', 'title','profile', 'get_absolute_url']
 
 
 class InvoiceSerializer(serializers.ModelSerializer):
@@ -54,6 +54,14 @@ class InvoiceLineSerializer(serializers.ModelSerializer):
     class Meta:
         model = InvoiceLine
         fields = ['id', 'row','product_or_service','unit_name', 'quantity', 'unit_price',
+                  'description','get_absolute_url']
+
+class InvoiceLineWithInvoiceSerializer(serializers.ModelSerializer):
+    invoice=InvoiceSerializer()
+    product_or_service=ProductOrServiceSerializer()
+    class Meta:
+        model = InvoiceLine
+        fields = ['id', 'row','product_or_service','unit_name', 'quantity', 'unit_price','invoice',
                   'description']
 
 
@@ -91,6 +99,7 @@ class FinancialDocumentSerializer(serializers.ModelSerializer):
         fields = ['id', 'title','transaction','get_state_badge', 'account', 'get_absolute_url', 'bedehkar','rest',
                   'bestankar', 'persian_document_datetime', 'get_edit_url','get_delete_url']
 
+ 
 class PriceSerializer(serializers.ModelSerializer):
     account=AccountSerializer()
     class Meta:
@@ -120,5 +129,5 @@ class FinancialBalanceSerializer(serializers.ModelSerializer):
     financial_document = FinancialDocumentSerializer()
     class Meta:
         model = FinancialBalance
-        fields = ['id','financial_document','bedehkar', 'title', 'bestankar','get_absolute_url']
+        fields = ['id','financial_document','color','bedehkar', 'title', 'bestankar','get_absolute_url']
 

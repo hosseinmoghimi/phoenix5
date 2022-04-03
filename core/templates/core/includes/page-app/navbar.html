@@ -15,6 +15,12 @@
     {% endif %}
     {{page.title}}
 
+  {% if page.archive %}
+    <span   class="badge badge-secondary">
+        آرشیو شده
+    </span>
+    {% endif %}
+
     {% if False %}
 
     {% if perms.core.change_page %}

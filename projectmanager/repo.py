@@ -1,14 +1,17 @@
-from core.repo import PageRepo
+from core.enums import ParameterNameEnum
+from core.repo import PageRepo, ParameterRepo
 from map.repo import LocationRepo
 from django.utils import timezone
 from urllib import request
 
-from projectmanager.enums import RequestStatusEnum, SignatureStatusEnum
-from .apps import APP_NAME
-from .models import Employee, Event, Letter,Material, MaterialInvoice, MaterialRequest,PM_Service as Service, Project,OrganizationUnit, RequestSignature, ServiceInvoice, ServiceRequest,WareHouse
+from projectmanager.enums import ProjectManagerParameterEnum, RequestStatusEnum, SignatureStatusEnum
+from projectmanager.apps import APP_NAME
+from projectmanager.models import Employee, Event, Letter,Material, MaterialInvoice, MaterialRequest,PM_Service as Service, Project,OrganizationUnit, Request, RequestSignature, ServiceInvoice, ServiceRequest,WareHouse
 
 from authentication.repo import ProfileRepo
 from django.db.models import Q
+
+
 
 class MaterialInvoiceRepo():
     def __init__(self, *args, **kwargs):
@@ -85,7 +88,7 @@ class ServiceInvoiceRepo():
         if 'parent_id' in kwargs:
             objects=objects.filter(parent_id=kwargs['parent_id'])
         return objects.order_by('date_added') 
-
+ 
 
 class LetterRepo():
     def __init__(self, *args, **kwargs):
@@ -124,6 +127,7 @@ class LetterRepo():
             objects=objects.filter(parent_id=kwargs['parent_id'])
         return objects.order_by('date_added') 
 
+
 class MaterialRepo():
     def __init__(self, *args, **kwargs):
         self.request = None
@@ -134,8 +138,13 @@ class MaterialRepo():
         if 'user' in kwargs:
             self.user = kwargs['user']
         
-        self.objects=Material.objects.all()
         self.profile=ProfileRepo(*args, **kwargs).me
+        self.objects=Material.objects
+        
+        show_archive_projects=ParameterRepo(request=self.request,app_name=APP_NAME).parameter(name=ProjectManagerParameterEnum.SHOW_ARCHIVE_PAGES,default="0").boolean_value
+        if not show_archive_projects:
+            self.objects=self.objects.filter(archive=False)
+
        
 
     def material(self, *args, **kwargs):
@@ -157,7 +166,7 @@ class MaterialRepo():
             objects = objects.filter(Q(for_home=kwargs['for_home']))
         if 'parent_id' in kwargs:
             objects=objects.filter(parent_id=kwargs['parent_id'])
-        return objects
+        return objects.all()
 
 
 class ServiceRepo():
@@ -170,7 +179,11 @@ class ServiceRepo():
         if 'user' in kwargs:
             self.user = kwargs['user']
         
-        self.objects=Service.objects.all()
+        self.objects=Service.objects 
+        
+        show_archive_projects=ParameterRepo(request=self.request,app_name=APP_NAME).parameter(name=ProjectManagerParameterEnum.SHOW_ARCHIVE_PAGES,default="0").boolean_value
+        if not show_archive_projects:
+            self.objects=self.objects.filter(archive=False)
         self.profile=ProfileRepo(*args, **kwargs).me
        
 
@@ -206,16 +219,21 @@ class ProjectRepo():
         if 'user' in kwargs:
             self.user = kwargs['user']
         
-        self.objects=Project.objects.order_by("-start_date")
+
+        show_archive_projects=ParameterRepo(request=self.request,app_name=APP_NAME).parameter(name=ProjectManagerParameterEnum.SHOW_ARCHIVE_PAGES,default="0").boolean_value
+        self.objects=Project.objects
+        if not show_archive_projects:
+            self.objects=self.objects.filter(archive=False)
+
         self.profile=ProfileRepo(*args, **kwargs).me
         if self.user is not None and self.user.is_authenticated and self.user.has_perm(APP_NAME+".view_project"):
-            self.objects=Project.objects.all()
+            self.objects=self.objects.all()
         else:
             me_emp=Employee.objects.filter(profile_id=self.profile.id).first()
             if me_emp is not None:
-                self.objects=Project.objects.filter(id__in=me_emp.my_project_ids())
+                self.objects=self.objects.filter(id__in=me_emp.my_project_ids())
             else:
-                self.objects=Project.objects.filter(id__in=[0])
+                self.objects=self.objects.filter(id__in=[0])
 
 
        
@@ -250,7 +268,7 @@ class ProjectRepo():
                 projects_contracted =organization_unit.projects_contracted.all()
                 org_projects=organization_unit.project_set.all()
                 return (projects_employed,projects_contracted,org_projects)
-        return objects.all()
+        return objects.all().order_by("-start_date")
     
     def add_project(self,*args, **kwargs):
         if not self.user.has_perm(APP_NAME+'.add_project'):
@@ -328,18 +346,25 @@ class EventRepo():
             self.user = kwargs['user']
         self.profile=ProfileRepo(*args, **kwargs).me
         me_employer=EmployeeRepo(request=self.request).me
+        
+        show_archive_projects=ParameterRepo(request=self.request,app_name=APP_NAME).parameter(name=ProjectManagerParameterEnum.SHOW_ARCHIVE_PAGES,default="0").boolean_value
+        self.objects=Event.objects
+        if not show_archive_projects:
+            self.objects=self.objects.filter(archive=False)
+
+
         if self.user is None:
-            self.objects=Event.objects.filter(id=0)
+            self.objects=self.objects.filter(id=0)
         elif self.user.has_perm(APP_NAME+".view_event"):
-            self.objects=Event.objects.all()
+            self.objects=self.objects.all()
         elif me_employer is not None:
             if me_employer is not None:
                 my_project_ids=me_employer.my_project_ids()
-            self.objects = Event.objects.filter(project_related_id__in=my_project_ids)
+            self.objects = self.objects.filter(project_related_id__in=my_project_ids)
         elif self.profile is not None:
-            self.objects=Event.objects.filter(id=0)
+            self.objects=self.objects.filter(id=0)
         else:
-            self.objects=Event.objects.filter(id=0)
+            self.objects=self.objects.filter(id=0)
 
 
         self.objects=self.objects.order_by('-event_datetime')
@@ -572,6 +597,64 @@ class ServiceRequestRepo():
         return objects.all()
 
 
+
+class RequestSignatureRepo():
+    def __init__(self, *args, **kwargs):
+        self.request = None
+        self.user = None
+        if 'request' in kwargs:
+            self.request = kwargs['request']
+            self.user = self.request.user
+        if 'user' in kwargs:
+            self.user = kwargs['user']
+        self.profile=ProfileRepo(*args, **kwargs).me
+        self.objects = RequestSignature.objects.order_by('date_added')
+        return
+        if self.user is not None and self.user.has_perm(APP_NAME+".view_warehouse"):
+            self.objects = WareHouse.objects.order_by('title')
+        elif self.profile is not None:
+            self.objects = WareHouse.objects.filter(account__profile=self.profile).order_by('title')
+        else:
+            self.objects = WareHouse.objects.filter(pk__lte=0).order_by('title')
+
+    def add_signature(self,*args, **kwargs):
+        if not self.user.has_perm(APP_NAME+".add_requestsignature"):
+            return 
+        from projectmanager.repo import EmployeeRepo
+        employee=EmployeeRepo(request=self.request).me
+        if employee is None:
+            return
+        signature=RequestSignature()
+        if 'request_id' in kwargs:
+            signature.request_id=kwargs['request_id']
+        if 'status' in kwargs:
+            signature.status=kwargs['status']
+        if 'description' in kwargs:
+            signature.description=kwargs['description']
+        
+        signature.employee_id=employee.id
+        signature.save()
+        return signature
+    
+    def list(self,*args, **kwargs):
+        objects=self.objects
+        if 'employee_id' in kwargs:
+            objects= objects.filter(employee_id=kwargs['employee_id'])
+        return objects
+    
+    def request_signature(self, *args, **kwargs):
+        if 'request_signature_id' in kwargs:
+            return self.objects.filter(pk=kwargs['request_signature_id']).first()
+        if 'pk' in kwargs:
+            return self.objects.filter(pk=kwargs['pk']).first()
+        if 'store_id' in kwargs:
+            return self.objects.filter(store_id=kwargs['store_id']).first()
+        if 'owner_id' in kwargs:
+            return self.objects.filter(owner_id=kwargs['owner_id']).first()
+        if 'id' in kwargs:
+            return self.objects.filter(pk=kwargs['id']).first()
+            
+
 class MaterialRequestRepo():
     def __init__(self, *args, **kwargs):
         self.request = None
@@ -672,7 +755,10 @@ class OrganizationUnitRepo():
         if 'user' in kwargs:
             self.user = kwargs['user']
         
-        self.objects=OrganizationUnit.objects.order_by("title")
+        self.objects=OrganizationUnit.objects 
+        show_archive_projects=ParameterRepo(request=self.request,app_name=APP_NAME).parameter(name=ProjectManagerParameterEnum.SHOW_ARCHIVE_PAGES,default="0").boolean_value
+        if not show_archive_projects:
+            self.objects=self.objects.filter(archive=False)
         self.profile=ProfileRepo(*args, **kwargs).me
        
     def add_organization_unit(self,*args, **kwargs):
@@ -733,6 +819,6 @@ class OrganizationUnitRepo():
         if 'project_id' in kwargs:
             project=ProjectRepo(request=self.request).project(project_id=kwargs['project_id'])
             objects=project.organization_units.all()
-        return objects.all()
+        return objects.order_by("title") 
 
    

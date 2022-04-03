@@ -1,0 +1,41 @@
+{% load to_json %}
+<script>
+    let foods = JSON.parse(`{{foods_s|escapejs}}`)
+    let foods_app = new Vue({
+        el:"#foods-app",
+        data: {
+            foods: foods,
+            search_for:'',
+            waiting:false,
+        },
+        methods: {
+            filter:function(){
+                this.foods = foods.filter(account => account.title.indexOf(this.search_for) > -1)
+         
+            },
+            to_price: function (vall) {
+                let color='primary'
+                if (vall<0)
+                color='danger'
+                if (vall>0)
+                color='success'
+                vall=to_price(vall,"{{CURRENCY}}")
+                return `
+                    <span class="text-${color}">${vall}</span>
+                    `
+            },
+            create_employee: function (account_id) {
+                let url = "{% url 'projectmanager:employee' pk=0 %}"
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    account_id: account_id
+                }
+                $.post(url, payload).done((data) => {
+                    console.log(data)
+                })
+            },
+           
+        }
+    })
+
+</script>

@@ -1,0 +1,19 @@
+{% extends "scheduler/layout.html" %}
+
+{% block content %}
+  <h4 class="text-center">
+    Scheduler
+  </h4>
+
+  <div class="row">
+      <div class="col-md-12">
+          {% include "scheduler/includes/appointments-app/template.html" %}
+      </div>
+  </div>
+{% endblock content %}
+
+
+{% block script %}
+{% include "scheduler/includes/appointments-app/script.html" %}
+  
+{% endblock script %}

@@ -1,0 +1,49 @@
+{% load to_json %}
+<script>
+    
+    let request_signatures = JSON.parse(`{{request_signatures_s|escapejs}}`)
+    let request_signatures_app = new Vue({
+        el:"#request-signatures-app",
+        data: {
+            request_signatures: request_signatures,
+            search_for:'',
+            waiting:false,
+            status:"",
+            description:"",
+        },
+        methods: {
+            filter:function(){
+                // this.request_signatures = request_signatures.filter(request_signature => request_signature.title.indexOf(this.search_for) > -1)
+         
+            },
+            add_signature:function(request_id){
+                let aaa = this.warehouse_sheet
+                let url = "{% url 'projectmanager:add_signature' %}"
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    request_id: request_id,
+                    status: this.status,
+                    description:this.description
+                }
+                console.log(payload)
+                $.post(url, payload).done(data => {
+                    console.log(data)
+                    if (data.result === 'SUCCEED') {
+                        request_signatures_app.request_signatures.push(data.request_signature)
+
+                    }
+                })
+            },
+            to_price: function (vall) {
+                let color='danger'
+                if (vall>0)
+                color='success'
+                vall=to_price(vall,"{{CURRENCY}}")
+                return `
+                    <span class="text-${color}">${vall}</span>
+                    `
+            }, 
+        }
+    })
+
+</script>

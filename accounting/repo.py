@@ -120,17 +120,14 @@ class FinancialBalanceRepo:
             objects = objects.filter(financial_document_id=financial_document_id) 
         return objects
 
-    def financial_year(self, *args, **kwargs):
-        if 'date' in kwargs:
-            return self.objects.filter(start_date__lte=kwargs['date']).filter(end_date__gte=kwargs['date']).first()
-           
-        if 'financial_year_id' in kwargs:
-            return self.objects.filter(pk= kwargs['financial_year_id']).first()
+    def financial_balance(self, *args, **kwargs):
+            
+        if 'financial_balance_id' in kwargs:
+            return self.objects.filter(pk= kwargs['financial_balance_id']).first()
         if 'pk' in kwargs:
             return self.objects.filter(pk= kwargs['pk']).first()
         if 'id' in kwargs:
             return self.objects.filter(pk= kwargs['id']).first()
-   
 
 class PriceRepo:
     def __init__(self, *args, **kwargs):
@@ -359,13 +356,63 @@ class AccountRepo():
         if 'profile_id' in kwargs:
             profile_id=kwargs['profile_id']
             profile= ProfileRepo(request=self.request).profile(profile_id=profile_id)
-            print(profile)
             account=Account.objects.filter(profile_id=profile_id).first()
             if account is None:
                 account=Account()
                 account.profile_id=profile.id
                 account.save()
                 return account
+        elif 'pk' in kwargs:
+            pk=kwargs['pk']
+            return self.objects.filter(pk=pk).first()
+        elif 'id' in kwargs:
+            id=kwargs['id']
+            return self.objects.filter(pk=id).first()
+     
+    def list(self, *args, **kwargs):
+        objects = self.objects
+        if 'search_for' in kwargs:
+            search_for=kwargs['search_for']
+            objects = objects.filter(Q(title__contains=search_for))
+        if 'for_home' in kwargs:
+            objects = objects.filter(Q(for_home=kwargs['for_home']))
+        if 'search_for' in kwargs:
+            objects=objects.filter(title__contains=kwargs['search_for'])
+        if 'profile_id' in kwargs:
+            objects=objects.filter(profile_id=kwargs['profile_id'])
+        if 'parent_id' in kwargs:
+            objects=objects.filter(parent_id=kwargs['parent_id'])
+        return objects.all()
+    def my_list(self,*args, **kwargs):
+        if self.request.user.has_perm(APP_NAME+".view_account"):
+            return self.objects.all()
+        else:
+            return self.objects.filter(profile=self.profile)
+   
+
+class InvoiceLineRepo():
+    def __init__(self, *args, **kwargs):
+        self.request = None
+        self.me=None
+        self.user = None
+        if 'request' in kwargs:
+            self.request = kwargs['request']
+            self.user = self.request.user
+        if 'user' in kwargs:
+            self.user = kwargs['user']
+        
+        self.objects=InvoiceLine.objects.all()
+        self.profile=ProfileRepo(*args, **kwargs).me
+        if self.profile is not None:
+            self.me=Account.objects.filter(profile=self.profile).first()
+        
+
+    def invoice_line(self, *args, **kwargs):
+        pk=0
+        if 'invoice_line_id' in kwargs:
+            account_id=kwargs['invoice_line_id']
+            return self.objects.filter(pk=account_id).first()
+        
         elif 'pk' in kwargs:
             pk=kwargs['pk']
             return self.objects.filter(pk=pk).first()
@@ -437,8 +484,6 @@ class PaymentRepo():
         return objects.all()
 
     def add_payment(self,*args, **kwargs):
-        print(kwargs)
-        print(100*"#")
         if not self.request.user.has_perm(APP_NAME+".add_payment"):
             return
         payment=Payment()
@@ -504,8 +549,11 @@ class InvoiceRepo():
             objects = objects.filter(Q(title__contains=search_for)|Q(short_description__contains=search_for)|Q(description__contains=search_for))
         if 'for_home' in kwargs:
             objects = objects.filter(Q(for_home=kwargs['for_home']))
-        if 'parent_id' in kwargs:
-            objects=objects.filter(parent_id=kwargs['parent_id'])
+        if 'product_id' in kwargs:
+            product_id=kwargs['product_id']
+            invoice_lines=InvoiceLine.objects.filter(product_or_service_id=product_id)
+            ids=(invoice_line.invoice_id for invoice_line in invoice_lines)
+            objects= objects.filter(id__in=ids)
         return objects.all()
 
    

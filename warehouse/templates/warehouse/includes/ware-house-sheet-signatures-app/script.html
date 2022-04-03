@@ -1,0 +1,48 @@
+{% load to_json %}
+<script>
+    
+    let ware_house_sheet_signatures = JSON.parse(`{{ware_house_sheet_signatures_s|escapejs}}`)
+    let ware_house_sheet_signatures_app = new Vue({
+        el:"#warehouse-sheet-signatures-app",
+        data: {
+            ware_house_sheet_signatures: ware_house_sheet_signatures,
+            search_for:'',
+            waiting:false,
+            status:"",
+            description:"",
+        },
+        methods: {
+            filter:function(){
+                // this.ware_house_sheet_signatures = ware_house_sheet_signatures.filter(ware_house_sheet_signature => ware_house_sheet_signature.title.indexOf(this.search_for) > -1)
+         
+            },
+            add_signature:function(warehouse_sheet_id){
+                let url = "{% url 'warehouse:add_signature' %}"
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    ware_house_sheet_id: warehouse_sheet_id,
+                    status: this.status,
+                    description:this.description
+                }
+                console.log(payload)
+                $.post(url, payload).done(data => {
+                    console.log(data)
+                    if (data.result === 'SUCCEED') {
+                        ware_house_sheet_signatures_app.ware_house_sheet_signatures.push(data.ware_house_sheet_signature)
+
+                    }
+                })
+            },
+            to_price: function (vall) {
+                let color='danger'
+                if (vall>0)
+                color='success'
+                vall=to_price(vall,"{{CURRENCY}}")
+                return `
+                    <span class="text-${color}">${vall}</span>
+                    `
+            }, 
+        }
+    })
+
+</script>

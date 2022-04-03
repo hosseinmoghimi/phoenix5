@@ -1,0 +1,137 @@
+{% extends "transport/wide-layout.html" %}
+{% load to_price %}
+{% block content %}
+
+<div class="row">
+
+    <div class="col-md-12">
+        <h4 class="text-center">
+            {{trip_path.title}}
+
+            {% if perms.transport.change_trippath %}
+            <a href="{{trip_path.get_edit_url}}" target="_blank" title="ویرایش" class="mx-2"><i
+                    class="fa fa-edit text-info"></i></a>
+                     
+            {% endif %}
+            {% if perms.transport.delete_trippath %}
+            <a href="{{trip_path.get_delete_url}}" target="_blank" title="حذف" class="mx-2"><i
+                    class="fa fa-trash text-danger"></i></a>
+            {% endif %}
+
+        </h4>
+    </div>
+</div>
+<div class="row">
+
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5>
+                    <div class="text-muted">
+                        هزینه
+                    </div>
+                </h5>
+                <h4>
+                    {{trip_path.cost|to_price}}
+
+                </h4>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5>
+                    <div class="text-muted">
+                        فاصله مکانی
+                    </div>
+                </h5>
+                <h4>
+                    {{trip_path.distance}}
+                    کیلومتر
+
+                </h4>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5>
+                    <div class="text-muted">
+                        فاصله زمانی
+                    </div>
+                </h5>
+                <h4>
+                    {{trip_path.duration}}
+                    دقیقه
+                </h4>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5>
+                    <small class="text-muted">
+                        مبدا
+
+                    </small>
+                    <a href="{{trip_path.source.get_absolute_url}}">
+
+                        {{trip_path.source.title}}
+                    </a>
+                </h5>
+            </div>
+            <div class="card-body">
+
+                {{trip_path.source.location|safe}}
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5>
+                    <small class="text-muted">
+                        مقصد
+
+                    </small>
+
+                    <a href="{{trip_path.destination.get_absolute_url}}">
+
+                        {{trip_path.destination.title}}
+                    </a>
+                </h5>
+            </div>
+            <div class="card-body">
+
+                {{trip_path.destination.location|safe}}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-12">
+        {% include "transport/includes/trips-app/template.html" %}
+    </div>
+    {% if add_trip_form %}
+      
+    <div class="col-md-12">
+        {% include "transport/includes/add-trip-app/template.html" %}
+    </div>
+    {% endif %}
+
+</div>
+{% endblock content %}
+
+{% block script %}
+
+{% include "transport/includes/trips-app/script.html" %}
+
+{% if add_trip_form %}
+
+{% include "transport/includes/add-trip-app/script.html" %}
+{% endif %}
+{% endblock script %}

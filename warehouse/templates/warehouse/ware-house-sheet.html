@@ -8,49 +8,26 @@
 
 <div class="row">
     <div class="col-md-12">
-        <div class="card">
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-12 text-right farsi">
-                       
-                        <span class="badge badge-{{warehouse_sheet.color}}">
-                            {{warehouse_sheet.direction}}
-                        </span>
-                    </div>
-                    <div class="col-md-4 text-right farsi">
-                        کالا :
-                        <a href="{{warehouse_sheet.product.get_absolute_url}}">{{warehouse_sheet.product.title}}</a>
-
-                    </div>
-                    <div class="col-md-4 text-right farsi">
-                        انبار :
-                        <a href="{{warehouse_sheet.ware_house.get_absolute_url}}">{{warehouse_sheet.ware_house.title}}</a>
-
-                    </div>
-
-                    <div class="col-md-4 text-right farsi">
-                        تعداد :
-                      {{warehouse_sheet.quantity}}
-                      {{warehouse_sheet.unit_name}}
-
-                    </div>
-
-                    
-                    <div class="col-md-4 text-right farsi">
-                        تاریخ :
-                      {{warehouse_sheet.persian_date_registered}}
-
-                    </div>
-
-
-                    <div class="col-md-4 text-right farsi"></div>
-                </div>
-            </div>
-        </div>
+     
     </div>
+
+
+    <div class="col-md-12">
+        {% include "warehouse/includes/warehouse-sheet-app/template.html" %}
+          </div>
+    
+  <div class="col-md-12">
+    {% include "warehouse/includes/ware-house-sheet-signatures-app/template.html" %}
+  </div>
+ 
+
+</div>
 </div>
 {% endblock content %}
 
 {% block script %}
+
+{% include "warehouse/includes/warehouse-sheet-app/script.html" %}
+{% include "warehouse/includes/ware-house-sheet-signatures-app/script.html" %}
 
 {% endblock script %}

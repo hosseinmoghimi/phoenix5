@@ -43,7 +43,7 @@ class AddEventForm(forms.Form):
 
 class AddMaterialRequestForm(forms.Form):
     project_id=forms.IntegerField(required=True)
-    quantity=forms.IntegerField(required=True)
+    quantity=forms.FloatField(required=True)
     employee_id=forms.IntegerField(required=False)
     material_id=forms.IntegerField(required=True)
     unit_price=forms.IntegerField(required=True)
@@ -69,7 +69,7 @@ class CopyProjectRequestForm(forms.Form):
 class AddSignatureForm(forms.Form):
     service_request_id=forms.IntegerField(required=False)
     material_request_id=forms.IntegerField(required=False)
-    request_id=forms.IntegerField(required=False)
+    request_id=forms.IntegerField(required=True)
     description=forms.CharField(max_length=50,required=False)
     status=forms.CharField(max_length=50,required=True)
 
@@ -97,7 +97,7 @@ class AddServiceForm(forms.Form):
 class AddServiceRequestForm(forms.Form):
     employee_id=forms.IntegerField(required=False)
     project_id=forms.IntegerField(required=True)
-    quantity=forms.IntegerField(required=True)
+    quantity=forms.FloatField(required=True)
     unit_price=forms.IntegerField(required=True)
     service_id=forms.IntegerField(required=False)
     unit_name=forms.CharField(max_length=50, required=True)

@@ -217,22 +217,16 @@ class ProfileRepo():
         # bio=""
         if 'first_name' in kwargs:
             edited_user.first_name=kwargs['first_name']
-            first_name=kwargs['first_name']
         if 'last_name' in kwargs:
             edited_user.last_name=kwargs['last_name']
-            last_name=kwargs['last_name']
         if 'email' in kwargs:
             edited_user.email=kwargs['email']
-            email=kwargs['email']
         if 'bio' in kwargs:
             edited_profile.bio=kwargs['bio']
-            bio=kwargs['bio']
         if 'mobile' in kwargs:
             edited_profile.mobile=kwargs['mobile']
-            mobile=kwargs['mobile']
         if 'address' in kwargs:
             edited_profile.address=kwargs['address']
-            address=kwargs['address']
         
         edited_user.save()
         edited_profile.save()

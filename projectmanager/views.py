@@ -12,15 +12,15 @@ from core.views import CoreContext, MessageView, SearchForm, PageContext
 # Create your views here.
 from django.views import View
 
-from projectmanager.enums import ProjectStatusEnum
+from projectmanager.enums import ProjectStatusEnum, SignatureStatusEnum
 
 from .forms import *
 from .apps import APP_NAME
 # from .repo import MaterialRepo
 # from .serializers import MaterialSerializer
 import json
-from .repo import EmployeeRepo, EventRepo, LetterRepo, MaterialInvoiceRepo, MaterialRepo, OrganizationUnitRepo, ServiceInvoiceRepo, ServiceRepo, ProjectRepo
-from .serializers import EmployeeSerializer, EventSerializer, LetterSentSerializer, LetterSerializer, MaterialSerializer, OrganizationUnitSerializer, ServiceSerializer, ProjectSerializer, ServiceRequestSerializer, MaterialRequestSerializer
+from .repo import EmployeeRepo, EventRepo, LetterRepo, MaterialInvoiceRepo, MaterialRepo, MaterialRequestRepo, OrganizationUnitRepo, RequestSignatureRepo, ServiceInvoiceRepo, ServiceRepo, ProjectRepo, ServiceRequestRepo
+from .serializers import EmployeeSerializer, EventSerializer, LetterSentSerializer, LetterSerializer, MaterialSerializer, OrganizationUnitSerializer, RequestSignatureForEmployeeSerializer, RequestSignatureSerializer, ServiceSerializer, ProjectSerializer, ServiceRequestSerializer, MaterialRequestSerializer
 
 TEMPLATE_ROOT = "projectmanager/"
 LAYOUT_PARENT = "phoenix/layout.html"
@@ -103,6 +103,14 @@ class EmployeeView(View):
         projects_s = json.dumps(ProjectSerializer(projects, many=True).data)
         context['projects_s'] = projects_s
 
+        request_signatures = RequestSignatureRepo(
+            request=request).list(employee_id=employee.id)
+
+        context['request_signatures'] = request_signatures
+        request_signatures_s = json.dumps(
+            RequestSignatureForEmployeeSerializer(request_signatures, many=True).data)
+        context['request_signatures_s'] = request_signatures_s
+
         return render(request, TEMPLATE_ROOT+"employee.html", context)
 
 
@@ -121,6 +129,11 @@ class OrganizationUnitView(View):
         context = getContext(request=request)
         organization_unit = OrganizationUnitRepo(
             request=request).organization_unit(*args, **kwargs)
+        if organization_unit is None:
+            mv=MessageView(request=request)
+            mv.title="واحد سازمانی موردنظر یافت نشد."
+            mv.body="واحد سازمانی موردنظر یافت نشد."
+            return mv.response()
         context.update(PageContext(request=request, page=organization_unit))
         context['organization_unit'] = organization_unit
 
@@ -226,6 +239,35 @@ class LetterView(View):
         return render(request, TEMPLATE_ROOT+"letter.html", context)
 
 
+class RequestView(View):
+    def get(self, request, *args, **kwargs):
+        context = getContext(request=request)
+
+        my_request = MaterialRequestRepo(
+            request=request).material_request(*args, **kwargs)
+        if my_request is None:
+            my_request = ServiceRequestRepo(
+                request=request).service_request(*args, **kwargs)
+
+        context['my_request'] = my_request
+
+        request_signatures = my_request.requestsignature_set.all()
+        context['request_signatures'] = request_signatures
+        request_signatures_s = json.dumps(
+            RequestSignatureSerializer(request_signatures, many=True).data)
+        context['request_signatures_s'] = request_signatures_s
+
+        # add_signature_form
+        if True:
+            context['signature_statuses'] = (
+                i[0] for i in SignatureStatusEnum.choices)
+            employee = EmployeeRepo(request=self.request).me
+            if employee is not None:
+                context['add_signature_form'] = AddSignatureForm()
+
+        return render(request, TEMPLATE_ROOT+"request.html", context)
+
+
 class ProjectView(View):
     def get(self, request, *args, **kwargs):
         context = getContext(request=request)
@@ -244,12 +286,12 @@ class ProjectView(View):
         events_s = json.dumps(EventSerializer(events, many=True).data)
         context['events_s'] = events_s
 
-   
-
         context['project'] = project
-        organization_units = OrganizationUnitRepo(request=request).list(project_id=project.id, *args, **kwargs)
+        organization_units = OrganizationUnitRepo(request=request).list(
+            project_id=project.id, *args, **kwargs)
         context['organization_units'] = organization_units
-        organization_units_s = json.dumps(OrganizationUnitSerializer(organization_units, many=True).data)
+        organization_units_s = json.dumps(
+            OrganizationUnitSerializer(organization_units, many=True).data)
         context['organization_units_s'] = organization_units_s
 
         service_requests = project.service_requests()
@@ -433,32 +475,38 @@ class ProjectChartView(View):
 
 class MaterialInvoiceView(View):
 
-    def get(self,request,*args, **kwargs):
-        context=getContext(request=request)
-        material_invoice=MaterialInvoiceRepo(request=request).material_invoice(*args, **kwargs)
-        context['material_invoice']=material_invoice
+    def get(self, request, *args, **kwargs):
+        context = getContext(request=request)
+        material_invoice = MaterialInvoiceRepo(
+            request=request).material_invoice(*args, **kwargs)
+        context['material_invoice'] = material_invoice
         if material_invoice is None:
-            mv=MessageView(request=request)
-            mv.title="چنین فاکتوری یافت نشد."
+            mv = MessageView(request=request)
+            mv.title = "چنین فاکتوری یافت نشد."
             return mv.response()
-        context.update(get_invoice_context(request=request,invoice=material_invoice,*args, **kwargs))
-        context['no_navbar']=True
-        context['no_footer']=True
-        return render(request,TEMPLATE_ROOT+"material-invoice.html",context)
+        context.update(get_invoice_context(request=request,
+                       invoice=material_invoice, *args, **kwargs))
+        context['no_navbar'] = True
+        context['no_footer'] = True
+        return render(request, TEMPLATE_ROOT+"material-invoice.html", context)
+
 
 class ServiceInvoiceView(View):
-    def get(self,request,*args, **kwargs):
-        context=getContext(request=request)
-        service_invoice=ServiceInvoiceRepo(request=request).service_invoice(*args, **kwargs)
-        context['service_invoice']=service_invoice
+    def get(self, request, *args, **kwargs):
+        context = getContext(request=request)
+        service_invoice = ServiceInvoiceRepo(
+            request=request).service_invoice(*args, **kwargs)
+        context['service_invoice'] = service_invoice
         if service_invoice is None:
-            mv=MessageView(request=request)
-            mv.title="چنین فاکتوری یافت نشد."
+            mv = MessageView(request=request)
+            mv.title = "چنین فاکتوری یافت نشد."
             return mv.response()
-        context.update(get_invoice_context(request=request,invoice=service_invoice,*args, **kwargs))
-        context['no_navbar']=True
-        context['no_footer']=True
-        return render(request,TEMPLATE_ROOT+"service-invoice.html",context)
+        context.update(get_invoice_context(request=request,
+                       invoice=service_invoice, *args, **kwargs))
+        context['no_navbar'] = True
+        context['no_footer'] = True
+        return render(request, TEMPLATE_ROOT+"service-invoice.html", context)
+
 
 class MaterialsView(View):
     def get(self, request, *args, **kwargs):

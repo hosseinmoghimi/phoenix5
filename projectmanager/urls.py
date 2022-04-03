@@ -8,9 +8,11 @@ urlpatterns = [
     path("search/",views.SearchView.as_view(),name="search"),
     path("employee/<int:pk>/",login_required(views.EmployeeView.as_view()),name="employee"),
     path("employees/",login_required(views.EmployeesView.as_view()),name="employees"),
-    path("material_request/<int:pk>/",login_required(views.ProjectView.as_view()),name="materialrequest"),
-    path("service_request/<int:pk>/",login_required(views.ProjectView.as_view()),name="servicerequest"),
+    path("material_request/<int:pk>/",login_required(views.RequestView.as_view()),name="materialrequest"),
+    path("service_request/<int:pk>/",login_required(views.RequestView.as_view()),name="servicerequest"),
     path("request/<int:pk>/",login_required(views.ProjectView.as_view()),name="request"),
+    
+    path("request/<int:pk>/",login_required(views.RequestView.as_view()),name="request"), 
 
     path("letters/",login_required(views.LettersView.as_view()),name="letters"),
     path("letter/<int:pk>/",login_required(views.LetterView.as_view()),name="letter"),
@@ -45,5 +47,6 @@ urlpatterns = [
     path('add_project/',login_required(apis.AddProjectApi.as_view()),name="add_project"),
     path('edit_project/',login_required(apis.EditProjectApi.as_view()),name="edit_project"),
     path('add_event/',login_required(apis.AddEventApi.as_view()),name="add_event"),
+    path('add_signature/',login_required(apis.AddSignatureApi.as_view()),name="add_signature"),
 
 ]

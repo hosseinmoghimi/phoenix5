@@ -25,8 +25,10 @@ urlpatterns = [
     path("account/<int:pk>/",login_required(views.AccountView.as_view()),name="account"),
     path("financial_accounts/",login_required(views.AccountsView.as_view()),name="accounts"),
 
+    path("invoice_line/<int:pk>/",login_required(views.InvoiceLineView.as_view()),name="invoiceline"),
     path("invoice/edit/<int:pk>/",login_required(views.InvoiceEditView.as_view()),name="edit_invoice"),
     path("invoices/",login_required(views.InvoicesView.as_view()),name="invoices"),
+    path("invoice/excel/<int:pk>/",login_required(views.InvoiceExcelView.as_view()),name="invoice_excel"),
     path("invoice/<int:pk>/",login_required(views.InvoiceView.as_view()),name="invoice"),
     path("invoice/print/<int:pk>/",login_required(views.InvoicePrintView.as_view()),name="invoice_print"),
     path("invoice/print/<int:pk>/<currency>/",login_required(views.InvoicePrintView.as_view()),name="invoice_print_currency"),
@@ -34,13 +36,12 @@ urlpatterns = [
     path("financial_document/<int:pk>/",login_required(views.FinancialDocumentView.as_view()),name="financialdocument"),
     path("financial_documents/",login_required(views.FinancialDocumentsView.as_view()),name="financial_documents"),
     
-    path("financial_balance/<int:pk>/",login_required(views.FinancialDocumentView.as_view()),name="financialbalance"),
-    path("financial_balances/",login_required(views.FinancialDocumentsView.as_view()),name="financial_balances"),
+    path("financial_balance/<int:pk>/",login_required(views.FinancialBalanceView.as_view()),name="financialbalance"),
+    path("financial_balances/",login_required(views.FinancialBalancesView.as_view()),name="financial_balances"),
     
     path("payment/<int:pk>/",login_required(views.PaymentView.as_view()),name="payment"),
     path("payments/",login_required(views.PaymentsView.as_view()),name="payments"),
     
-    path("financial_balances/",login_required(views.FinancialBalancesView.as_view()),name="financial_balances"),
 
 
 

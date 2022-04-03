@@ -32,6 +32,8 @@ def class_title(*args, **kwargs):
     class_title = ""
     if class_name == "page":
         class_title = "صفحه"
+    if class_name == "appointment":
+        class_title = "قرار ملاقات"
     if class_name == "letter":
         class_title = "نامه"
     if class_name == "file":
@@ -64,12 +66,14 @@ class ParameterNameEnum(TextChoices):
     TITLE="عنوان",_("عنوان")
     FARSI_FONT_NAME="نام فونت فارسی",_("نام فونت فارسی")
     HOME_URL="لینک به خانه",_("لینک به خانه")
-
     THUMBNAIL_DIMENSION="عرض تصاویر کوچک",_("عرض تصاویر کوچک")
+
 
 class TextDirectionEnum(TextChoices):
     Rtl='rtl',_('rtl')
     Ltr='ltr',_('ltr')
+
+
 class UnitNameEnum(TextChoices):
     ADAD="عدد",_("عدد")
     GERAM="گرم",_("گرم")
@@ -146,7 +150,20 @@ class IconsEnum(TextChoices):
     vpn_key='vpn_key',_('vpn_key')
     weekend='weekend',_('weekend')
 
-
+class LanguageEnum(TextChoices):
+    FARSI="فارسی",_("فارسی")
+    ENGLISH="انگلیسی",_("انگلیسی")
+    
+def LanguageCode(language):
+    if language==LanguageEnum.FARSI:
+        return 'fa'
+    if language==LanguageEnum.ENGLISH:
+        return 'en'
+def LanguageFromCode(code):
+    if code=='fa':
+        return LanguageEnum.FARSI
+    if code=='en':
+        return LanguageEnum.ENGLISH
    
 class PictureNameEnum(TextChoices):
     LOGO="لوگو",_("لوگو")
@@ -158,6 +175,7 @@ class ColorEnum(TextChoices):
     DANGER = 'danger', _('danger')
     WARNING = 'warning', _('warning')
     PRIMARY = 'primary', _('primary')
+    MUTED = 'muted', _('muted')
     SECONDARY = 'secondary', _('secondary')
     INFO = 'info', _('info')
     LIGHT = 'light', _('light')

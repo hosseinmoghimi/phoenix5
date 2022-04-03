@@ -3,100 +3,104 @@
 
 
 <div id="accordion-warehouse-sheets">
+    <div id="warehouse-sheets-app">
+        {% if add_ware_house_sheet_form and invoice_line %}
+        {% include "warehouse/includes/warehouse-sheets-app/add-ware-house-sheet-form.html" %}
+        {% endif %}
+        <div class="card">
+            <div class="card-header" id="heading-warehouse-sheets">
+                <h5 class="text-center">
+                    <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-warehouse-sheets"
+                        aria-expanded="true" aria-controls="collapse-warehouse-sheets">
+                        برگه های انبار
 
 
-    <div class="card" id="warehouse-sheets-app">
-        <div class="card-header" id="heading-warehouse-sheets">
-            <h5 class="text-center">
-                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-warehouse-sheets"
-                    aria-expanded="true" aria-controls="collapse-warehouse-sheets">
-                    برگه های انبار
+                        <span v-if="warehouse_sheets.length>0">
+                            <small class="text-danger mx-2">
+                                <span v-text="warehouse_sheets.length"></span>
+                            </small>
+                        </span>
 
 
-                    <span v-if="warehouse_sheets.length>0">
-                        <small class="text-danger mx-2">
-                            <span v-text="warehouse_sheets.length"></span>
-                        </small>
-                    </span>
+                    </button>
+                </h5>
 
+                {% if page_pre_description %}
 
-                </button>
-            </h5>
+                <h5 class="text-center">
+                    {{page_pre_description}}
+                </h5>
+                {% endif %}
+                {% if page_description %}
 
-            {% if page_pre_description %}
-
-            <h5 class="text-center">
-                {{page_pre_description}}
-            </h5>
-            {% endif %}
-            {% if page_description %}
-
-            <h4 class="text-center">
-                {{page_description}}
-            </h4>
-            {% endif %}
-        </div>
-        <div id="collapse-warehouse-sheets" class="collapse" aria-labelledby="heading-warehouse-sheets"
-            data-parent="#accordion-warehouse-sheets">
-
-
-            <div class="card-body">
-                <div class="table-responsive">
-
-                    <table class="table table-striped">
-                        <thead>
-
-                            <th>
-                                تاریخ
-                            </th>
-                            {% if not product %}
-
-                            <th>
-                                کالا
-                            </th>
-                            {% endif %}
-
-                            {% if not ware_house %}
-
-                            <th>
-                                انبار
-                            </th>
-                            {% endif %}
-                            {% if not invoice %}
-
-                            <th>
-                                فاکتور
-                            </th>
-                            {% endif %}
-
-                            <th>
-                                تعداد
-                            </th>
-
-                            <th>
-                                جهت
-                            </th>
-
-                            <th>
-                                وضعیت
-                            </th>
-                            <th>
-
-                            </th>
-
-                        </thead>
-                        <tbody>
-                            <template v-for="warehouse_sheet in warehouse_sheets">
-
-                                <warehouse-sheet-component :warehouse_sheet="warehouse_sheet">
-                                </warehouse-sheet-component>
-                            </template>
-
-                        </tbody>
-                    </table>
-                </div>
-
+                <h4 class="text-center">
+                    {{page_description}}
+                </h4>
+                {% endif %}
             </div>
+            <div id="collapse-warehouse-sheets" class="collapse" aria-labelledby="heading-warehouse-sheets"
+                data-parent="#accordion-warehouse-sheets">
+
+
+                <div class="card-body">
+                    <div class="table-responsive">
+
+                        <table class="table table-striped">
+                            <thead>
+
+                                <th>
+                                    تاریخ
+                                </th>
+                                {% if not product %}
+
+                                <th>
+                                    کالا
+                                </th>
+                                {% endif %}
+
+                                {% if not ware_house %}
+
+                                <th>
+                                    انبار
+                                </th>
+                                {% endif %}
+                                {% if not invoice %}
+
+                                <th>
+                                    فاکتور
+                                </th>
+                                {% endif %}
+
+                                <th>
+                                    تعداد
+                                </th>
+
+                                <th>
+                                    جهت
+                                </th>
+
+                                <th>
+                                    وضعیت
+                                </th>
+                                <th>
+
+                                </th>
+
+                            </thead>
+                            <tbody>
+                                <template v-for="warehouse_sheet in warehouse_sheets">
+
+                                    <warehouse-sheet-component :warehouse_sheet="warehouse_sheet">
+                                    </warehouse-sheet-component>
+                                </template>
+
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+
         </div>
 
 

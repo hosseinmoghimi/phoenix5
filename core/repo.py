@@ -1,10 +1,34 @@
-from aiohttp import request
 from .models import ContactMessage, Download, Image, Page, PageComment, PageDownload, PageImage, PageLike, PageLink, PageTag, Parameter,Picture, Tag
 from .constants import *
 from django.db.models import Q
 from authentication.repo import ProfileRepo
 from .apps import APP_NAME
 
+class ImageRepo:
+    def __init__(self,*args, **kwargs):
+        self.request=None
+        self.user=None
+        if 'user' in kwargs:
+            self.user=kwargs['user']
+        if 'request' in kwargs:
+            self.request=kwargs['request']
+            self.user=self.request.user
+        self.profile=ProfileRepo(request=self.request).me
+        self.objects=Image.objects
+    
+    def image(self,*args, **kwargs):
+        pk=0
+        if 'image_id' in kwargs:
+            pk=kwargs['image_id']
+        if 'pk' in kwargs:
+            pk=kwargs['pk']
+        if 'picture_id' in kwargs:
+            pk=kwargs['picture_id']
+        return self.objects.filter(pk=pk).first()
+
+    def list(self,*args, **kwargs):
+        objects=self.objects
+        return objects
 class PageRepo:
     
     def __init__(self,*args, **kwargs):
@@ -408,6 +432,18 @@ class PageImageRepo:
 
                 return True
   
+
+    def page_image(self,*args, **kwargs):
+        pk=0
+        if 'page_image_id' in kwargs:
+            pk=kwargs['page_image_id']
+        elif 'image_id' in kwargs:
+            pk=kwargs['image_id']
+        elif 'pk' in kwargs:
+            pk=kwargs['pk']
+        elif 'picture_id' in kwargs:
+            pk=kwargs['picture_id']
+        return self.objects.filter(pk=pk).first()
 
 class PageDownloadRepo:
     def __init__(self,*args, **kwargs):

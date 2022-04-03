@@ -1,12 +1,40 @@
-
 <script>
-    let availables_list=JSON.parse(`{{availables_list|escapejs}}`)
-    let availables_list_app=new Vue({
-        el:"#warehouse-availables-app",
-        data:{
-            availables_list:availables_list,
-            waiting:false,
-            search_for:"",
+    let availables_list = JSON.parse(`{{availables_list|escapejs}}`)
+    let availables_list_app = new Vue({
+        el: "#warehouse-availables-app",
+        data: {
+            availables_list: availables_list,
+            waiting: false,
+            search_for: "",
+        },
+        methods: {
+            refresh: function (ware_house_id) {
+                let url = "{% url 'warehouse:report' %}"
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    ware_house_id: ware_house_id,
+                }
+                $.post(url, payload).done(data => {
+                    console.log(data)
+                    if (data.result === 'SUCCEED') {
+
+                        data.availables_list.forEach(available_item => {
+
+                            let is_new = true
+                            availables_list_app.availables_list.forEach(element => {
+                                if (element.product.id == available_item.product.id && element.ware_house.id == available_item.ware_house.id) {
+                                    element.available = available_item.available
+                                    is_new = false
+                                }
+
+                            })
+                            if(is_new){
+                                availables_list_app.availables_list.push(available_item)
+                            }
+                        })
+                    }
+                })
+            }
         }
     })
 </script>

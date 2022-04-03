@@ -34,6 +34,9 @@
                     <img :src="project.thumbnail" class="rounded ml-2" width="64" alt="">
                     <span v-text="project.title"></span>
                 </a>
+                <span  class="pull-left" v-if="project.archive" title="آرشیو شده">
+                    <i class="fa fa-archive text-danger"  aria-hidden="true"></i>
+                </span>
                 <span class="pull-left">
                     <small class="d-inline text-primary">
                         <!-- <i  class="fa fa-star-o text-secondary" aria-hidden="true"></i> -->

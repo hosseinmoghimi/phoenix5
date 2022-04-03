@@ -18,8 +18,7 @@ from django.utils import timezone
   
 
 class Guarantee(models.Model,LinkHelper):
-    invoice=models.ForeignKey("accounting.invoice", verbose_name=_("فاکتور"), on_delete=models.CASCADE)
-    product=models.ForeignKey("accounting.product", verbose_name=_("کالا"), on_delete=models.CASCADE)
+    invoice_line=models.ForeignKey("accounting.invoiceline", verbose_name=_("ردیف فاکتور"), on_delete=models.CASCADE)
     start_date=models.DateField(_("شروع گارانتی"), auto_now=False, auto_now_add=False)
     end_date=models.DateField(_("پابان گارانتی"), auto_now=False, auto_now_add=False)
     status=models.CharField(_("وضعیت"),choices=GuaranteeStatusEnum.choices,default=GuaranteeStatusEnum.VALID, max_length=50)

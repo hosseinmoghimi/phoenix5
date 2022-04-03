@@ -1,0 +1,42 @@
+{% load to_json %}
+<script>
+    let appointments = JSON.parse(`{{appointments_s|escapejs}}`)
+    let appointments_app = new Vue({
+        el:"#appointments-app",
+        data: {
+            appointments: appointments,
+            search_for:'',
+            waiting:false,
+            title:"",
+        },
+        methods: {
+            filter:function(){
+                this.appointments = appointments.filter(appointment => appointment.title.indexOf(this.search_for) > -1)
+         
+            },
+            to_price: function (vall) {
+                let color='primary'
+                if (vall<0)
+                color='danger'
+                if (vall>0)
+                color='success'
+                vall=to_price(vall,"{{CURRENCY}}")
+                return `
+                    <span class="text-${color}">${vall}</span>
+                    `
+            },
+            add_appointment: function () {
+                let url = "{% url 'projectmanager:employee' pk=0 %}"
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    title: this.title
+                }
+                $.post(url, payload).done((data) => {
+                    console.log(data)
+                })
+            },
+           
+        }
+    })
+
+</script>

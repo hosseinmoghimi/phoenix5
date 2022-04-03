@@ -1,9 +1,31 @@
+{% load to_json %}
 <script>
-let passengers=JSON.parse(`{{passengers_s|escapejs}}`)
-    let passengers_app=new Vue({
+    let passengers = JSON.parse(`{{passengers_s|escapejs}}`)
+    let passengers_app = new Vue({
         el:"#passengers-app",
-        data:{
-            passengers:passengers,
+        data: {
+            passengers: passengers,
+            search_for:'',
+            waiting:false,
+        },
+        methods: {
+            filter:function(){
+                this.passengers = passengers.filter(passenger => passenger.title.indexOf(this.search_for) > -1)
+         
+            },
+            to_price: function (vall) {
+                let color='primary'
+                if (vall<0)
+                color='danger'
+                if (vall>0)
+                color='success'
+                vall=to_price(vall,"{{CURRENCY}}")
+                return `
+                    <span class="text-${color}">${vall}</span>
+                    `
+            },
+          
         }
     })
+
 </script>

@@ -263,24 +263,7 @@ class Download(Icon):
         else:
             return ''
 
-    def download_response(self):
-        #STATIC_ROOT2 = os.path.join(BASE_DIR, STATIC_ROOT)
-        file_path = str(self.file.path)
-        # return JsonResponse({'download:':str(file_path)})
-        import os
-        from django.http import HttpResponse
-        if os.path.exists(file_path):
-            with open(file_path, 'rb') as fh:
-                response = HttpResponse(
-                    fh.read(), content_type="application/force-download")
-                response['Content-Disposition'] = 'inline; filename=' + \
-                    os.path.basename(file_path)
-                self.download_counter += 1
-                self.save()
-                return response
-        from log.repo import LogRepo
-        LogRepo().add_log(title="Http404 core models", app_name=APP_NAME)
-        raise Http404
+          
 
     class Meta:
         verbose_name = _("Download")
@@ -415,6 +398,30 @@ class Image(models.Model, LinkHelper):
     class Meta:
         verbose_name = _("Image")
         verbose_name_plural = _("تصاویر")
+    def get_download_url(self): 
+        if self.image_main_origin:
+            return reverse(APP_NAME+':image_download', kwargs={'pk': self.pk})
+        else:
+            return ''
+
+    def download_response(self):
+        #STATIC_ROOT2 = os.path.join(BASE_DIR, STATIC_ROOT)
+        file_path = str(self.image_main_origin.path)
+        # return JsonResponse({'download:':str(file_path)})
+        import os
+        from django.http import HttpResponse
+        if os.path.exists(file_path):
+            with open(file_path, 'rb') as fh:
+                response = HttpResponse(
+                    fh.read(), content_type="application/force-download")
+                response['Content-Disposition'] = 'inline; filename=' + \
+                    os.path.basename(file_path)
+                return response
+        from log.repo import LogRepo
+        LogRepo().add_log(title="Http404 core models", app_name=APP_NAME)
+        raise Http404
+
+
 
     @property
     def image(self):
@@ -424,6 +431,7 @@ class Image(models.Model, LinkHelper):
     @property
     def thumbnail(self):
         return self.get_or_create_thumbnail()
+         
 
     def get_or_create_thumbnail(self, *args, **kwargs):
         if self.thumbnail_origin:
@@ -457,21 +465,22 @@ class Image(models.Model, LinkHelper):
         #     THUMBNAIL_DIMENSION = 250
         # Resize/modify the image
         image = image.resize((THUMBNAIL_DIMENSION, int(ratio11*float(THUMBNAIL_DIMENSION))), PilImage.ANTIALIAS)
-        
+        try:
         # after modifications, save it to the output
-        image.save(output, format='JPEG', quality=95)
+            image.save(output, format='JPEG', quality=95)
    
+            output.seek(0)
 
-        output.seek(0)
-
-        # change the imagefield value to be the newley modifed image value
-        image_name = f"{self.image_main_origin.name.split('.')[0]}.jpg"
-        image_path = IMAGE_FOLDER+'ImageBase/Thumbnail'
-        self.thumbnail_origin = InMemoryUploadedFile(output, 'ImageField', image_name, image_path, sys.getsizeof(output), None)
-       
-        self.save()
-        # return MEDIA_URL+str(self.image_main_origin)
-        return MEDIA_URL+str(self.thumbnail_origin)
+            # change the imagefield value to be the newley modifed image value
+            image_name = f"{self.image_main_origin.name.split('.')[0]}.jpg"
+            image_path = IMAGE_FOLDER+'ImageBase/Thumbnail'
+            self.thumbnail_origin = InMemoryUploadedFile(output, 'ImageField', image_name, image_path, sys.getsizeof(output), None)
+        
+            self.save()
+            # return MEDIA_URL+str(self.image_main_origin)
+            return MEDIA_URL+str(self.thumbnail_origin)
+        except:
+            return self.image
 
 
 class PageImage(Image,LinkHelper):

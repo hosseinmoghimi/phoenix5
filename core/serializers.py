@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Image, Page, PageComment, PageDownload, PageImage, PageLike, PageTag, Parameter,PageLink, Tag
+from .models import Download, Image, Page, PageComment, PageDownload, PageImage, PageLike, PageTag, Parameter,PageLink, Tag
 from authentication.serializers import ProfileSerializer
 
 
@@ -46,12 +46,12 @@ class PageCommentSerializer(serializers.ModelSerializer):
 class ImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Image
-        fields=['id','title','thumbnail','image','get_edit_url','get_delete_url']
+        fields=['id','title','thumbnail','image','get_edit_url','get_delete_url','get_absolute_url']
 
 class PageImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = PageImage
-        fields=['id','title','thumbnail','image','get_edit_url','get_delete_url']
+        fields=['id','title','thumbnail','image','get_edit_url','get_delete_url','get_absolute_url']
 
 
 class PageLinkSerializer(serializers.ModelSerializer):
@@ -64,6 +64,13 @@ class PageLinkSerializer(serializers.ModelSerializer):
 class PageDownloadSerializer(serializers.ModelSerializer):
     class Meta:
         model=PageDownload
+        fields=['id','title','get_edit_url','get_delete_url','get_download_url']
+
+
+
+class DownloadSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Download
         fields=['id','title','get_edit_url','get_delete_url','get_download_url']
 
 

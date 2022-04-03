@@ -1,0 +1,137 @@
+{% extends "accounting/layout.html" %}
+{% load to_persian_date %}
+{% load to_price %}
+{% load to_transaction_side %}
+{% block content %}
+<h4 class="text-center">
+    <small class="text-muted">
+        ریز حساب
+
+
+    </small>
+    {{financial_balance.title}}
+</h4>
+
+
+<div class="row">
+
+    <div class="col-md-12">
+        <p>
+
+            <small class="text-muted">
+                حساب مربوطه
+
+            </small>
+            <a href="{{financial_balance.financial_document.account.get_absolute_url}}">
+                <div class="media">
+                    <img src="{{financial_balance.financial_document.account.logo}}" class="rounded" width="96" alt="">
+                    <div class="media-body mr-3 mt-2">
+                        {{financial_balance.financial_document.account.title}}
+
+                    </div>
+                </div>
+            </a>
+        </p>
+    </div>
+    <div class="col-md-12">
+        <p>
+
+            <span class="badge badge-{{financial_balance.color}}">
+                <span class="text-muted ml-2">
+                    ریز حساب
+
+
+                </span>
+                <span class="h4">
+
+                    {{financial_balance.title}}
+                </span>
+            </span>
+
+        </p>
+
+    </div>
+
+
+    <div class="col-md-12">
+        <p>
+
+          <span class="text-muted ml-2">
+تاریخ
+
+                </span>
+                <span class="">
+
+                    {{financial_balance.financial_document.transaction.transaction_datetime|to_persian_datetime|safe}}
+                </span>
+           
+
+        </p>
+
+    </div>
+
+    <div class="col-md-12">
+        <p>
+
+          <span class="text-muted ml-2">
+سند
+
+                </span>
+                <a href="{{financial_balance.financial_document.get_absolute_url}}">
+                    {{financial_balance.financial_document.title}}
+                </a>
+           
+
+        </p>
+
+    </div>
+
+
+    <div class="col-md-12">
+        <p>
+
+          <span class="text-muted ml-2">
+تراکنش
+
+                </span>
+                <span class="">
+
+                    <a href="{{financial_balance.financial_document.transaction.get_absolute_url}}">
+                        {{financial_balance.financial_document.transaction.title}}
+                    </a>
+                </span>
+           
+
+        </p>
+
+    </div>
+
+    <div class="col-md-12">
+        <p>
+
+            <small class="text-muted">
+                بدهکار
+
+            </small>
+            {{financial_balance.bedehkar|to_price}}
+        </p>
+    </div>
+
+
+    <div class="col-md-12">
+        <p>
+
+            <small class="text-muted">
+                بستانکار
+
+            </small>
+            {{financial_balance.bestankar|to_price}}
+        </p>
+    </div>
+</div>
+{% endblock content %}
+
+{% block script %}
+
+
+{% endblock script %}

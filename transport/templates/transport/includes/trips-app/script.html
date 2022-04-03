@@ -1,0 +1,25 @@
+{% load to_json %}
+<script>
+    let trips = JSON.parse(`{{trips_s|escapejs}}`)
+    let trips_app = new Vue({
+        el:"#trips-app",
+        data: {
+            trips: trips,
+            search_for:'',
+            waiting:false,
+        },
+        methods: {
+            filter:function(){
+                this.trips = trips.filter(trip => trip.title.indexOf(this.search_for) > -1)
+         
+            },
+            to_price: function (vall) {
+                let color='primary'
+                vall=to_price(vall,"{{CURRENCY}}")
+                return  vall 
+            },
+          
+        }
+    })
+
+</script>

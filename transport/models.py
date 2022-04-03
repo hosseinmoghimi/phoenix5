@@ -1,6 +1,5 @@
-from accounting.models import Asset
-from utility.calendar import PERSIAN_MONTH_NAMES, PersianCalendar
-from core.middleware import get_request
+from accounting.models import Asset, Transaction
+from utility.calendar import PERSIAN_MONTH_NAMES, PersianCalendar, to_persian_datetime_tag
 from phoenix.settings import STATIC_URL
 from django.db import models
 from core.models import  Page
@@ -11,25 +10,23 @@ from utility.utils import LinkHelper
 from .enums import *
 from tinymce.models import HTMLField
 from core.enums import ColorEnum,UnitNameEnum
+from accounting.models import Account
 
-
-class Driver(models.Model,LinkHelper):
-    profile=models.ForeignKey("authentication.profile", verbose_name=_("profile"), on_delete=models.CASCADE)
-    title=models.CharField(_("title"), max_length=50)
+class Driver(Account):
     color=models.CharField(_("color"),max_length=50,choices=ColorEnum.choices,default=ColorEnum.PRIMARY)
-    class_name='driver'
-    app_name=APP_NAME
     class Meta:
         verbose_name = 'Driver'
-        verbose_name_plural = 'Drivers'
-    def __str__(self):
-        return self.profile.name
+        verbose_name_plural = 'Drivers' 
+
+    def save(self,*args, **kwargs):
+        if self.class_name is None or self.class_name=="":
+            self.class_name='driver'
+        if self.app_name is None or self.app_name=="":
+            self.app_name=APP_NAME
+        return super(Driver,self).save(*args, **kwargs)
 
 
-class Passenger(models.Model,LinkHelper):
-    profile=models.ForeignKey("authentication.profile", verbose_name=_("profile"), on_delete=models.CASCADE)
-    class_name="passenger"
-    app_name=APP_NAME
+class Passenger(Account):
 
     def get_trips_url(self):
         return reverse(APP_NAME+":trips",kwargs={'category_id':0,'driver_id':0,'vehicle_id':0,'passenger_id':self.pk,'trip_path_id':0})
@@ -37,9 +34,30 @@ class Passenger(models.Model,LinkHelper):
     class Meta:
         verbose_name = _("Passenger")
         verbose_name_plural = _("Passengers")
+ 
+    def save(self,*args, **kwargs):
+        if self.class_name is None or self.class_name=="":
+            self.class_name='passenger'
+        if self.app_name is None or self.app_name=="":
+            self.app_name=APP_NAME
+        return super(Passenger,self).save(*args, **kwargs)
 
-    def __str__(self):
-        return self.profile.name
+
+class Client(Account):
+
+    def get_trips_url(self):
+        return reverse(APP_NAME+":trips",kwargs={'category_id':0,'driver_id':0,'vehicle_id':0,'passenger_id':self.pk,'trip_path_id':0})
+    
+    class Meta:
+        verbose_name = _("Client")
+        verbose_name_plural = _("Client")
+ 
+    def save(self,*args, **kwargs):
+        if self.class_name is None or self.class_name=="":
+            self.class_name='client'
+        if self.app_name is None or self.app_name=="":
+            self.app_name=APP_NAME
+        return super(Client,self).save(*args, **kwargs)
 
 
 class Area(models.Model,LinkHelper):
@@ -55,22 +73,21 @@ class Area(models.Model,LinkHelper):
         return self.name
 
 
-
-class ServiceMan(models.Model,LinkHelper):
-    profile=models.ForeignKey("authentication.profile", verbose_name=_("profile"), on_delete=models.CASCADE)
-    name=models.CharField(_("نام تعمیرگاه"),null=True,blank=True, max_length=50)
-    address=models.CharField(_("address"),null=True,blank=True, max_length=50)
-    tel=models.CharField(_("tel"),null=True,blank=True, max_length=50)
-    
-    app_name=APP_NAME
-    class_name="serviceman"
+class ServiceMan(Account):
     class Meta:
         verbose_name = _("ServiceMan")
         verbose_name_plural = _("ServiceMans")
 
     def __str__(self):
-        return self.name if self.name is not None else self.profile.name
+        return self.title if self.title is not None else self.profile.name
  
+    def save(self,*args, **kwargs):
+        if self.class_name is None or self.class_name=="":
+            self.class_name='serviceman'
+        if self.app_name is None or self.app_name=="":
+            self.app_name=APP_NAME
+        return super(ServiceMan,self).save(*args, **kwargs)
+
 
 class Vehicle(Asset):
     vehicle_type=models.CharField(_("نوع وسیله "),choices=VehicleTypeEnum.choices,default=VehicleTypeEnum.SEDAN, max_length=50)
@@ -111,6 +128,7 @@ class Vehicle(Asset):
             pic='grader.jpg'
         return f'{STATIC_URL}{APP_NAME}/images/thumbnail/{pic}/' 
 
+
 class WorkShift(models.Model,LinkHelper):
     area=models.ForeignKey("area", verbose_name=_("area"), on_delete=models.CASCADE)
     vehicle=models.ForeignKey("vehicle", verbose_name=_("vehicle"), on_delete=models.CASCADE)
@@ -133,13 +151,9 @@ class WorkShift(models.Model,LinkHelper):
     def __str__(self):
         return f'{self.vehicle.title} {self.persian_start_time()}'
 
-  
-
-
-
- 
 
 class TripPath(models.Model,LinkHelper):
+    area=models.ForeignKey("area", null=True,blank=True, verbose_name=_("area"), on_delete=models.CASCADE)
     source=models.ForeignKey("map.location",related_name="trip_source_set", verbose_name=_("مبدا"), on_delete=models.CASCADE)
     destination=models.ForeignKey("map.location",related_name="trip_destination_set", verbose_name=_("مقصد"), on_delete=models.CASCADE)
     cost=models.IntegerField(_("هزینه"),default=0)
@@ -158,7 +172,6 @@ class TripPath(models.Model,LinkHelper):
     def get_trips_url(self):
         return reverse(APP_NAME+":trips",kwargs={'category_id':0,'driver_id':0,'passenger_id':0,'vehicle_id':0,'trip_path_id':self.pk})
      
-
 
 class TripCategory(models.Model,LinkHelper):
     title=models.CharField(_("عنوان"), max_length=50)
@@ -179,23 +192,29 @@ class TripCategory(models.Model,LinkHelper):
     def __str__(self):
         return self.title
  
-class Trip(models.Model,LinkHelper):
-    status=models.CharField(_("status"), choices=TripStatusEnum.choices,default=TripStatusEnum.REQUESTED, max_length=50)
-    title=models.CharField(_("title"), max_length=200)
-    category=models.ForeignKey("tripcategory",null=True,blank=True, verbose_name=_("نوع سفر"), on_delete=models.SET_NULL)
+ 
+class Trip(Transaction):
+    trip_category=models.ForeignKey("tripcategory",null=True,blank=True, verbose_name=_("نوع سفر"), on_delete=models.SET_NULL)
     vehicle=models.ForeignKey("vehicle", verbose_name=_("vehicle"), on_delete=models.CASCADE)
-    driver=models.ForeignKey("driver", verbose_name=_("driver"), on_delete=models.CASCADE)
-    distance=models.IntegerField(_("distance"),default=5)
-    cost=models.IntegerField(_("cost"))
-    date_added=models.DateTimeField(_("date_added"), auto_now=False, auto_now_add=True)
+    distance=models.IntegerField(_("distance"))
+    duration=models.IntegerField(_("duration"))
     date_started=models.DateTimeField(_("شروع سرویس"),null=True,blank=True, auto_now=False, auto_now_add=False)
     date_ended=models.DateTimeField(_("پایان سرویس"),null=True,blank=True, auto_now=False, auto_now_add=False)
-    paths=models.ManyToManyField("trippath",blank=True, verbose_name=_("مسیر های سرویس"))
+    trip_paths=models.ManyToManyField("trippath",blank=True, verbose_name=_("مسیر های سرویس"))
     passengers=models.ManyToManyField("passenger",blank=True, verbose_name=_("مسافر ها"))
     delay=models.IntegerField(_("تاخیر"),default=0)
-    description=models.CharField(_("توضیحات"),null=True,blank=True, max_length=5000)
-    class_name="trip"
-    app_name=APP_NAME
+    
+    def persian_date_started(self):
+        return to_persian_datetime_tag(self.date_started)
+    def persian_date_ended(self):
+        return to_persian_datetime_tag(self.date_ended)
+
+    @property
+    def driver(self):
+        return self.pay_from
+    @property
+    def cost(self):
+        return self.amount
     def get_status_color(self):
         color="primary"
         if self.status==TripStatusEnum.REQUESTED:
@@ -221,6 +240,26 @@ class Trip(models.Model,LinkHelper):
         return self.title
   
 
+    def save(self,*args, **kwargs):
+        if self.class_name is None or self.class_name=="":
+            self.class_name='trip'
+        if self.app_name is None or self.app_name=="":
+            self.app_name=APP_NAME
+        duration=0
+        distance=0
+        super(Trip,self).save(*args, **kwargs)
+
+        if self.distance==0 or self.duration==0:
+            for trip_path in self.trip_paths.all():
+                distance+=trip_path.distance
+                duration+=trip_path.duration
+            if self.distance==0:
+                self.distance=distance
+            if self.duration==0:
+                self.duration=duration
+                super(Trip,self).save(*args, **kwargs)
+
+ 
 
   
 class VehicleEvent(Page):

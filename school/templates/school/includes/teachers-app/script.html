@@ -1,0 +1,24 @@
+<script>
+    let teachers = JSON.parse(`{{teachers_s|escapejs}}`)
+    let teachers_app = new Vue({
+        el: "#teachers-app",
+        data: {
+            teachers: teachers,
+            profile_id:"",
+        },
+        methods: {
+            add_teacher:function(){
+                let payload={
+                    csrfmiddlewaretoken:csrfmiddlewaretoken,
+                    profile_id:this.profile_id,
+                }
+                $.post("{% url 'school:add_teacher' %}",payload).done((data)=>{
+                    if(data.result==='SUCCEED'){
+                        teachers_app.teachers.push(data.teacher)
+                    }
+                })
+            },
+
+        }
+    })
+</script>

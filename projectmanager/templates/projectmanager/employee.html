@@ -41,6 +41,11 @@
         <div class="col-md-12">
             {% include "projectmanager/includes/all-projects-app/template.html" %}
         </div>
+        
+    <div class="col-md-12">
+        {% include "projectmanager/includes/request-signatures-app/template.html" %}
+    </div>
+
     </div>
 
 {% endblock content %}
@@ -48,5 +53,6 @@
 
 {% block script %}
             {% include "projectmanager/includes/all-projects-app/script.html" %}
+        {% include "projectmanager/includes/request-signatures-app/script.html" %}
   
 {% endblock script %}

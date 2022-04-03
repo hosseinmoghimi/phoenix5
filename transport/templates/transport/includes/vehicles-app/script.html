@@ -1,0 +1,41 @@
+{% load to_json %}
+<script>
+    let vehicles = JSON.parse(`{{vehicles_s|escapejs}}`)
+    let vehicles_app = new Vue({
+        el:"#vehicles-app",
+        data: {
+            vehicles: vehicles,
+            search_for:'',
+            waiting:false,
+        },
+        methods: {
+            filter:function(){
+                this.vehicles = vehicles.filter(vehicle => vehicle.title.indexOf(this.search_for) > -1)
+         
+            },
+            to_price: function (vall) {
+                let color='primary'
+                if (vall<0)
+                color='danger'
+                if (vall>0)
+                color='success'
+                vall=to_price(vall,"{{CURRENCY}}")
+                return `
+                    <span class="text-${color}">${vall}</span>
+                    `
+            },
+            create_employee: function (vehicle_id) {
+                let url = "{% url 'projectmanager:employee' pk=0 %}"
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    vehicle_id: vehicle_id
+                }
+                $.post(url, payload).done((data) => {
+                    console.log(data)
+                })
+            },
+           
+        }
+    })
+
+</script>

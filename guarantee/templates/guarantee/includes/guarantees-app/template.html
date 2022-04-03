@@ -8,7 +8,7 @@
             <h5 class="text-center">
                 <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-guarantees"
                     aria-expanded="true" aria-controls="collapse-guarantees">
-برگه های گارانتی
+                    برگه های گارانتی
 
 
 
@@ -42,60 +42,57 @@
 
             <div class="card-body">
                 <div class="table-responsive">
-            
+
                     <table class="table table-striped">
                         <thead>
-            
-                            {% if not product %}
-            
+
+                            {% if not product and not material %}
+  
                             <th>
                                 کالا
                             </th>
                             {% endif %}
-            
-                            
+
+
                             {% if not invoice %}
-            
+
                             <th>
                                 فاکتور
                             </th>
                             {% endif %}
-            
+
                             <th>
                                 سریال
                             </th>
                             <th>
                                 تاریخ
                             </th>
-            
+
                             <th>
                                 نوع
                             </th>
-            
+
                             <th>
                                 وضعیت
                             </th>
                             <th>
-            
+
                             </th>
-            
+
                         </thead>
                         <tbody>
                             <template v-for="guarantee in guarantees">
-            
+
                                 <guarantee-component :guarantee="guarantee"></guarantee-component>
                             </template>
-                         
+
                         </tbody>
                     </table>
-                    </div>
-        
+                </div>
+
             </div>
         </div>
 
 
     </div>
 </div>
-
-
- 

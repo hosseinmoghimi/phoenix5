@@ -8,6 +8,8 @@ from django.db import models
 from core.models import Page
 from django.shortcuts import reverse
 from django.utils.translation import gettext as _
+
+from utility.excel import get_excel_report
 from .apps import APP_NAME
 from utility.utils import LinkHelper
 from .enums import *
@@ -88,7 +90,6 @@ class Transaction(Page,LinkHelper):
         if self.transaction_datetime is None:
             from django.utils import timezone
             self.transaction_datetime=timezone.now()
-        print(self.pay_from_id)
         super(Transaction,self).save(*args, **kwargs)
         # FinancialDocument.objects.filter(transaction=self).delete()
 
@@ -193,8 +194,25 @@ class Account(models.Model,LinkHelper):
     logo_origin=models.ImageField(_("logo"), null=True,blank=True,upload_to=IMAGE_FOLDER+"account/", height_field=None, width_field=None, max_length=None)
     title=models.CharField(_("title"), null=True,blank=True,max_length=500)
     profile=models.ForeignKey("authentication.profile", verbose_name=_("profile"), on_delete=models.CASCADE)
-    class_name="account"
-    app_name=APP_NAME
+    
+    address=models.CharField(_("address"),null=True,blank=True, max_length=50)
+    tel=models.CharField(_("tel"),null=True,blank=True, max_length=50)
+    class_name=models.CharField(_("class_name"),blank=True, max_length=50)
+    app_name=models.CharField(_("app_name"),blank=True,max_length=50)
+    @property
+    def class_title(self):
+        class_title="حساب مالی"
+        if self.class_name=="client":
+            class_title="سرویس گیرنده رفت و آمد"
+        if self.class_name=="account":
+            class_title="حساب مالی"
+        if self.class_name=="driver":
+            class_title="راننده"
+        if self.class_name=="passenger":
+            class_title="مسافر"
+        if self.class_name=="serviceman":
+            class_title="سرویس کار"
+        return class_title
     def balance_rest(self):
         return self.balance['rest']
     def invoices(self):
@@ -221,13 +239,16 @@ class Account(models.Model,LinkHelper):
         return self.title
 
     def save(self,*args, **kwargs):
+        if self.class_name is None or self.class_name=="":
+            self.class_name='account'
+        if self.app_name is None or self.app_name=="":
+            self.app_name=APP_NAME
+            
         # from projectmanager.models import Employee
         # a=Account.objects.filter(fff="")
         if self.title is None or self.title=="":
             if self.profile is not None:
-                self.title=self.profile.name
-            else:
-                self.title=self.profile_ptr_id
+                self.title=self.profile.name 
         super(Account,self).save(*args, **kwargs)
     
     @property
@@ -405,6 +426,9 @@ class FinancialBalance(models.Model,LinkHelper):
     def save(self,*args, **kwargs):
         super(FinancialBalance,self).save(*args, **kwargs)
         # self.financial_document.normalize_sub_accounts()
+    def color(self):
+        return getColor(self.title)
+
 
 class FinancialDocumentTag(models.Model):
     title=models.CharField(_("title"), max_length=50)
@@ -479,9 +503,13 @@ class Invoice(Transaction):
     invoice_datetime=models.DateTimeField(_("تاریخ فاکتور"), auto_now=False, auto_now_add=False)
     ship_fee=models.IntegerField(_("هزینه حمل"),default=0)
     discount=models.IntegerField(_("تخفیف"),default=0)
+ 
+
 
     def get_print_url(self):
         return reverse(APP_NAME+":invoice_print",kwargs={'pk':self.pk})
+    def get_excel_url(self):
+        return reverse(APP_NAME+":invoice_excel",kwargs={'pk':self.pk})
     def editable(self):
         if self.status==TransactionStatusEnum.DRAFT:
             return True
@@ -542,7 +570,7 @@ class Invoice(Transaction):
         return reverse(APP_NAME+":edit_invoice",kwargs={'pk':self.pk})
 
 
-class InvoiceLine(models.Model):
+class InvoiceLine(models.Model,LinkHelper):
     date_added=models.DateTimeField(_("date_added"), auto_now=False, auto_now_add=True)
     invoice=models.ForeignKey("invoice",blank=True, verbose_name=_("invoice"),related_name="lines", on_delete=models.CASCADE)
     row=models.IntegerField(_("row"),blank=True)
@@ -551,6 +579,8 @@ class InvoiceLine(models.Model):
     unit_price=models.IntegerField(_("unit_price"))
     unit_name=models.CharField(_("unit_name"),max_length=50,choices=UnitNameEnum.choices,default=UnitNameEnum.ADAD)
     description=models.CharField(_("description"),null=True,blank=True, max_length=50)
+    class_name="invoiceline"
+    app_name=APP_NAME
     def save(self,*args, **kwargs):
         super(InvoiceLine,self).save(*args, **kwargs)
         self.invoice.save()
@@ -560,11 +590,18 @@ class InvoiceLine(models.Model):
 
     def __str__(self):
         return f"{self.invoice} {self.row} - {self.product_or_service.title} "
+    def line_total(self):
+        return self.unit_price*self.quantity
 
-    def get_absolute_url(self):
-        return reverse("InvoiceLine_detail", kwargs={"pk": self.pk})
+    @property
+    def product(self):
+        return Product.objects.filter(pk=self.pk).first()
 
+    @property
+    def service(self):
+        return Service.objects.filter(pk=self.pk).first()
   
+
 class Spend(Transaction,LinkHelper):    
     spend_type=models.CharField(_("spend_type"),choices=SpendTypeEnum.choices, max_length=50)
     class_name="spend"

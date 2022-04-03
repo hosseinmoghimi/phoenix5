@@ -50,7 +50,6 @@ class LocationRepo():
         location.longitude="gfgf"
         location.save()
         if 'page_id' in kwargs and kwargs['page_id'] is not None and kwargs['page_id']>0:
-            print(kwargs['page_id'])
             page_location=PageLocation()
             page_location.page_id=kwargs['page_id']
             page_location.location=location

@@ -5,10 +5,10 @@ from core.serializers import PageLinkSerializer
 from .enums import *
 
 from utility.calendar import PersianCalendar
-from .repo import  EventRepo, MaterialRequestRepo, OrganizationUnitRepo, ProjectRepo, ServiceRequestRepo
+from .repo import  EventRepo, MaterialRequestRepo, OrganizationUnitRepo, ProjectRepo, RequestSignatureRepo, ServiceRequestRepo
 from django.http import JsonResponse
 from .forms import *
-from .serializers import EventSerializer, MaterialRequestSerializer, OrganizationUnitSerializer, ProjectSerializer, ServiceRequestSerializer
+from .serializers import EventSerializer, MaterialRequestSerializer, OrganizationUnitSerializer, ProjectSerializer, RequestSignatureSerializer, ServiceRequestSerializer
 
 class AddOrganizationUnitApi(APIView):
     def post(self,request,*args, **kwargs):
@@ -65,6 +65,28 @@ class AddProjectApi(APIView):
         context['log']=log
         return JsonResponse(context)
         
+
+        
+class AddSignatureApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        log=11
+        context['result']=FAILED
+        if request.method=='POST':
+            log=22
+            report_form=AddSignatureForm(request.POST)
+            availables_list=[]
+            if report_form.is_valid():
+                log=33
+                cd=report_form.cleaned_data
+            
+                signature=RequestSignatureRepo(request=request).add_signature(**cd)
+                if signature is not None:
+                    context['request_signature']=RequestSignatureSerializer(signature).data
+                    context['result']=SUCCEED
+        context['log']=log
+        return JsonResponse(context)
+
 class AddEventApi(APIView):
     def post(self,request,*args, **kwargs):
         context={}
@@ -150,7 +172,6 @@ class AddMaterialRequestApi(APIView):
                     description=description,
                 )
                 if material_request is not None:
-                    print(material_request)
                     context['material_request']=MaterialRequestSerializer(material_request).data
                     context['result']=SUCCEED
         context['log']=log
@@ -188,7 +209,6 @@ class AddServiceRequestApi(APIView):
                     description=description,
                 )
                 if service_request is not None:
-                    print(service_request)
                     context['service_request']=ServiceRequestSerializer(service_request).data
                     context['result']=SUCCEED
         context['log']=log

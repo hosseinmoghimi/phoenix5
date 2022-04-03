@@ -1,22 +1,24 @@
-from django.http import Http404, JsonResponse
+from django.http import Http404, HttpResponse, JsonResponse
 from django.shortcuts import render,reverse
+from django.utils import timezone
 from accounting.apis import EditInvoiceApi
 from accounting.enums import PaymentMethodEnum, TransactionStatusEnum
-from accounting.models import Invoice
 from core.constants import CURRENCY, FAILED, SUCCEED
 from core.enums import UnitNameEnum
+from core.utils import app_is_installed
 from core.views import CoreContext, MessageView, PageContext,SearchForm
 # Create your views here.
 from django.views import View
 from guarantee.serializers import GuaranteeSerializer
 
 from utility.calendar import PersianCalendar
+from utility.excel import ReportSheet,ReportWorkBook, get_style
 from warehouse.repo import WareHouseRepo, WareHouseSheetRepo
 from warehouse.serializers import WareHouseSerializer, WareHouseSheetSerializer
-from .apps import APP_NAME
-from .repo import AccountRepo,FinancialBalanceRepo, ChequeRepo, PaymentRepo, PriceRepo, ProductRepo,ServiceRepo,FinancialDocumentRepo,InvoiceRepo, TransactionRepo
-from .serializers import AccountSerializer, FinancialBalanceSerializer, InvoiceFullSerializer,InvoiceLineSerializer,ChequeSerializer, InvoiceSerializer, PaymentSerializer, PriceSerializer, ProductSerializer,ServiceSerializer,FinancialDocumentForAccountSerializer,FinancialDocumentSerializer, TransactionSerializer
-from .forms import *
+from accounting.apps import APP_NAME
+from accounting.repo import InvoiceLineRepo,AccountRepo,FinancialBalanceRepo, ChequeRepo, PaymentRepo, PriceRepo, ProductRepo,ServiceRepo,FinancialDocumentRepo,InvoiceRepo, TransactionRepo
+from accounting.serializers import AccountSerializer, FinancialBalanceSerializer, InvoiceFullSerializer,InvoiceLineSerializer,ChequeSerializer, InvoiceSerializer, PaymentSerializer, PriceSerializer, ProductSerializer,ServiceSerializer,FinancialDocumentForAccountSerializer,FinancialDocumentSerializer, TransactionSerializer
+from accounting.forms import *
 import json
 from phoenix.server_settings import phoenix_apps
 
@@ -84,16 +86,22 @@ def get_invoice_context(request,*args, **kwargs):
     invoice_lines_s=json.dumps(InvoiceLineSerializer(invoice_lines,many=True).data)
     context['invoice_lines_s']=invoice_lines_s
     context['invoice_s']=json.dumps(InvoiceFullSerializer(invoice).data)
+    
+    
+    if app_is_installed('guarantee'):
+        from guarantee.repo import GuaranteeRepo
+        guarantees=GuaranteeRepo(request=request).list(invoice_id=invoice.id)
+        context['guarantees']=guarantees
+        guarantees_s=json.dumps(GuaranteeSerializer(guarantees,many=True).data)
+        context['guarantees_s']=guarantees_s
 
-    guarantees=invoice.guarantee_set.all()
-    context['guarantees']=guarantees
-    guarantees_s=json.dumps(GuaranteeSerializer(guarantees,many=True).data)
-    context['guarantees_s']=guarantees_s
-
- 
-    warehouse_sheets=invoice.warehousesheet_set.all()
-    warehouse_sheets_s=json.dumps(WareHouseSheetSerializer(warehouse_sheets,many=True).data)
-    context['warehouse_sheets_s']=warehouse_sheets_s
+    
+    # warehouse_sheets=[]
+    if app_is_installed('warehouse'):
+        from warehouse.repo import WareHouseSheetRepo
+        warehouse_sheets=WareHouseSheetRepo(request=request).list(invoice_id=invoice.id)
+        warehouse_sheets_s=json.dumps(WareHouseSheetSerializer(warehouse_sheets,many=True).data)
+        context['warehouse_sheets_s']=warehouse_sheets_s
 
 
 
@@ -112,6 +120,45 @@ def get_price_app_context(request,*args, **kwargs):
     context['unit_names']=unit_names
     prices=PriceRepo(request=request).list(item_id=items[0].id)
     context['prices']=prices
+    return context
+
+def get_account_context(request,*args, **kwargs):
+    context={}
+    if 'account' in kwargs:
+        account=kwargs['account']
+    else:
+        account=AccountRepo(request=request).account(*args, **kwargs)
+    if account is None:
+        raise Http404
+    context['account']=account
+
+    invoices=account.invoices()
+    context['invoices']=invoices
+    context['invoices_s']=json.dumps(InvoiceSerializer(invoices,many=True).data)
+
+    financial_documents=FinancialDocumentRepo(request=request).list(account_id=account.id)
+    context['financial_documents']=financial_documents
+    context['financial_documents_s']=json.dumps(FinancialDocumentForAccountSerializer(financial_documents,many=True).data)
+
+    financial_balances=FinancialBalanceRepo(request=request).list(account_id=account.id)
+    context['financial_balances']=financial_balances
+    context['financial_balances_s']=json.dumps(FinancialBalanceSerializer(financial_balances,many=True).data)
+
+
+
+    if request.user.has_perm(APP_NAME+".add_payment"):
+        context.update(get_add_payment_context(request=request))
+
+
+
+    transactions=TransactionRepo(request=request).list(account_id=account.id)
+    context['transactions']=transactions
+    context['transactions_s']=json.dumps(TransactionSerializer(transactions,many=True).data)
+
+    payments=PaymentRepo(request=request).list(account_id=account.id)
+    context['payments']=payments
+    context['payments_s']=json.dumps(PaymentSerializer(payments,many=True).data)
+    
     return context
 
 def get_transaction_context(request,*args, **kwargs):
@@ -135,6 +182,8 @@ def get_transaction_context(request,*args, **kwargs):
 
     financial_balances=FinancialBalanceRepo(request=request).list(transaction_id=transaction.id)
     context['financial_balances']=financial_balances
+    financial_balances_s=json.dumps(FinancialBalanceSerializer(financial_balances,many=True).data)
+    context['financial_balances_s']=financial_balances_s
 
     return context
 
@@ -166,27 +215,49 @@ def get_product_context(request,*args, **kwargs):
     
     context=get_product_or_service_context(request=request,item=product,*args, **kwargs)
 
+    # invoices
+    invoices=InvoiceRepo(request=request).list(product_id=product.id)
+    context['invoices']=invoices
+    invoices_s=json.dumps(InvoiceSerializer(invoices,many=True).data)
+    context['invoices_s']=invoices_s
 
 
+    if app_is_installed('guarantee'):
+        from guarantee.repo import GuaranteeRepo
+        guarantees=GuaranteeRepo(request=request).list(product_id=product.id)
+        context['guarantees']=guarantees
+        guarantees_s=json.dumps(GuaranteeSerializer(guarantees,many=True).data)
+        context['guarantees_s']=guarantees_s
 
-    #warehouse availables
-    if True:
+    
+    #warehouse availables , warehouse sheets
+    warehouse_app_is_installed= app_is_installed('warehouse')
+    if warehouse_app_is_installed:
+        from warehouse.repo import WareHouseSheetRepo
+        from warehouse.enums import WareHouseSheetStatusEnum
+        ware_house_sheet_repo=WareHouseSheetRepo(request=request)
         products=[product]
         ware_houses=WareHouseRepo(request=request).list()
         availables_list=[]
-        warehouse_sheets=WareHouseSheetRepo(request=request).list(product_id=product.id)
+        warehouse_sheets=ware_house_sheet_repo.list(product_id=product.id).filter(status=WareHouseSheetStatusEnum.DONE)
 
         for ware_house in ware_houses:    
             for product in products:    
-                line=warehouse_sheets.filter(product_id=product.id).filter(ware_house=ware_house).first()
+                line=warehouse_sheets.filter(ware_house=ware_house).first()
                 if line is not None:
                     list_item={'product':{'id':product.pk,'title':product.title,'get_absolute_url':product.get_absolute_url()}}
-                    list_item['available']=line.available()
+                    list_item['available']=line.available
                     list_item['unit_name']=line.unit_name
                     list_item['ware_house']=WareHouseSerializer(line.ware_house).data
                     availables_list.append(list_item)
         context['availables_list']=json.dumps(availables_list)
-    
+     
+        warehouse_sheets=ware_house_sheet_repo.list(product_id=product.id)
+        warehouse_sheets_s=json.dumps(WareHouseSheetSerializer(warehouse_sheets,many=True).data)
+        context['warehouse_sheets_s']=warehouse_sheets_s
+ 
+
+
     return context
 
 def get_service_context(request,*args, **kwargs):
@@ -209,7 +280,6 @@ class HomeView(View):
         products_s=json.dumps(ProductSerializer(products,many=True).data)
         context['products_s']=products_s
         return render(request,TEMPLATE_ROOT+"index.html",context)
-
 
 
 class SearchView(View):
@@ -248,7 +318,6 @@ class SearchView(View):
         return render(request,TEMPLATE_ROOT+"search.html",context)
 
 
-
 class SearchJsonView(View):
     def post(self,request,*args, **kwargs):
         context={
@@ -284,16 +353,99 @@ class SearchJsonView(View):
         return JsonResponse(context)
 
 
-
 class FinancialBalancesView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
         financial_balances=FinancialBalanceRepo(request=request).list(*args, **kwargs)
         context['financial_balances']=financial_balances
+        context['financial_balances_s']=json.dumps(FinancialBalanceSerializer(financial_balances,many=True).data)
         return render(request,TEMPLATE_ROOT+"financial-balances.html",context)
+class FinancialBalanceView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        financial_balance=FinancialBalanceRepo(request=request).financial_balance(*args, **kwargs)
 
+        context['financial_balance']=financial_balance
+        return render(request,TEMPLATE_ROOT+"financial-balance.html",context)
 
-    
+class InvoiceExcelView(View):
+    def get(self,request,*args, **kwargs):
+        now=timezone.now()
+        invoice=InvoiceRepo(request=request).invoice(*args, **kwargs)
+        date=PersianCalendar().from_gregorian(now)
+        lines=[]
+        for i,invoice_line in enumerate(invoice.invoice_lines(),1):
+            line={
+                'ردیف':i,
+                'title':invoice_line.product_or_service.title,
+                'آدرس':invoice_line.quantity,      
+                'unit_name':invoice_line.unit_name,      
+                'unit_price':invoice_line.unit_price,      
+                'line_total':invoice_line.line_total(),      
+            }
+            lines.append(line)
+               
+        report_work_book=ReportWorkBook()
+        report_work_book=ReportWorkBook(origin_file_name=f'Page.xlsx')
+        style=get_style(font_name='B Koodak',size=12,bold=False,color='FF000000',start_color='FFFFFF',end_color='FF000000')
+        # sheet1=ReportSheet(
+        #     data=lines,
+        #     start_row=3,
+        #     start_col=1,
+        #     table_has_header=False,
+        #     table_headers=None,
+        #     style=style,
+        #     sheet_name='links',
+            
+        # )
+        report_work_book.add_sheet(
+             data=lines,
+            start_row=3,
+            start_col=1,
+            table_has_header=False,
+            table_headers=None,
+            style=style,
+            sheet_name='links',
+        )
+        lines=[]
+        for i,document in enumerate([{'title':'dddd','get_download_url':'7654erftgh'}],1):
+            line={
+                'ردیف':i,
+                'عنوان ':document['title'],
+                'آدرس':document['get_download_url'],          
+            }
+            lines.append(line)
+            
+
+        # sheet2=ReportSheet(
+        #     # data=json.dumps(DocumentSerializer(page.documents.all(),many=True).data),
+        #     data=lines,
+        #     current_row=3,
+        #     table_has_header=False,
+        #     table_headers=None,
+        #     style=style,
+        #     sheet_name='docs',
+           
+        # )
+        report_work_book.add_sheet(
+              data=lines,
+            start_row=3,
+            table_has_header=False,
+            table_headers=None,
+            style=style,
+            sheet_name='docs',
+        )
+            
+        file_name=f"""{date.replace('/','').replace(':','')}   Page {1}.xlsx"""
+        
+        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        # response.AppendHeader("Content-Type", "application/vnd.ms-excel");
+        response["Content-disposition"]=f"attachment; filename={file_name}"
+        report_work_book.work_book.save(response)
+        report_work_book.work_book.close()
+        return response
+
+ 
 class InvoiceView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -330,6 +482,8 @@ class InvoicesView(View):
         context=getContext(request=request)
         invoices=InvoiceRepo(request=request).list(*args, **kwargs)
         context['invoices']=invoices
+        invoices_s=json.dumps(InvoiceSerializer(invoices,many=True).data)
+        context['invoices_s']=invoices_s
         return render(request,TEMPLATE_ROOT+"invoices.html",context)
 class InvoiceEditView(View):
     def post(self,request,*args, **kwargs):
@@ -341,13 +495,48 @@ class InvoiceEditView(View):
         context.update(get_edit_invoice_context(request=request,invoice=invoice,*args, **kwargs))
         
         return render(request,TEMPLATE_ROOT+"invoice-edit.html",context)
+class InvoiceLineView(View):
+    def post(self,request,*args, **kwargs):
+        return EditInvoiceApi().post(request=request,*args, **kwargs)
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        invoice_line=InvoiceLineRepo(request=request).invoice_line(*args, **kwargs)
+        context['invoice_line']=invoice_line
 
+            
+        
+        if app_is_installed('guarantee'):
+            from guarantee.repo import GuaranteeRepo
+            guarantees=GuaranteeRepo(request=request).list(invoice_line_id=invoice_line.id)
+            context['guarantees']=guarantees
+            guarantees_s=json.dumps(GuaranteeSerializer(guarantees,many=True).data)
+            context['guarantees_s']=guarantees_s
+
+        
+        # warehouse_sheets=[]
+        if app_is_installed('warehouse'):
+            from warehouse.enums import WareHouseSheetDirectionEnum
+            from warehouse.repo import WareHouseSheetRepo,WareHouseRepo
+            from warehouse.forms import AddWarehouseSheetForm
+            warehouse_sheets=WareHouseSheetRepo(request=request).list(invoice_line_id=invoice_line.id)
+            warehouse_sheets_s=json.dumps(WareHouseSheetSerializer(warehouse_sheets,many=True).data)
+            context['warehouse_sheets_s']=warehouse_sheets_s
+            if request.user.has_perm('warehouse.add_warehousesheet'):
+                context['add_ware_house_sheet_form']=AddWarehouseSheetForm()
+                ware_houses=WareHouseRepo(request=request).list()
+                context['directions']=(direction[0] for direction in WareHouseSheetDirectionEnum.choices)
+                context['ware_houses']=ware_houses
+
+        # context['add_ware_house_sheet_form']=AddWarehouseSheetForm()
+
+        return render(request,TEMPLATE_ROOT+"invoice-line.html",context)
 
 class TransactionView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
+        
         context.update(get_transaction_context(request=request,*args, **kwargs))
-        if context['transacion'] is None:
+        if context['transaction'] is None:
             mv=MessageView(request=request)
             mv.title="چنین تراکنشی یافت نشد."
         return render(request,TEMPLATE_ROOT+"transaction.html",context)
@@ -372,7 +561,8 @@ class ProductView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
         product=ProductRepo(request=request).product(*args, **kwargs)
-        
+        print('warehouse_app_is_installed')
+        print(context['warehouse_app_is_installed'])
         if product is None:
             mv=MessageView(request=request)
             mv.title="چنین کالایی یافت نشد."
@@ -417,8 +607,7 @@ class ChequeView(View):
         return render(request,TEMPLATE_ROOT+"cheque.html",context)
     
 
-class AccountView(View):
-    
+class AccountView(View):  
     def post(self,request,*args, **kwargs):
         context={
             'result':FAILED
@@ -440,34 +629,7 @@ class AccountView(View):
         account=AccountRepo(request=request).account(*args, **kwargs)
         context['account']=account
 
-        invoices=account.invoices()
-        context['invoices']=invoices
-        context['invoices_s']=json.dumps(InvoiceSerializer(invoices,many=True).data)
-
-        financial_documents=FinancialDocumentRepo(request=request).list(account_id=account.id)
-        context['financial_documents']=financial_documents
-        context['financial_documents_s']=json.dumps(FinancialDocumentForAccountSerializer(financial_documents,many=True).data)
-        rest=0
-        context['rest']=rest
-
-        financial_balances=FinancialBalanceRepo(request=request).list(account_id=account.id)
-        context['financial_balances']=financial_balances
-        context['financial_balances_s']=json.dumps(FinancialBalanceSerializer(financial_balances,many=True).data)
-
-
-
-
-        transactions=TransactionRepo(request=request).list(account_id=account.id)
-        context['transactions']=transactions
-        context['transactions_s']=json.dumps(TransactionSerializer(transactions,many=True).data)
-
-        payments=PaymentRepo(request=request).list(account_id=account.id)
-        context['payments']=payments
-        context['payments_s']=json.dumps(PaymentSerializer(payments,many=True).data)
-        if request.user.has_perm(APP_NAME+".add_payment"):
-            context.update(get_add_payment_context(request=request))
-
-
+        context.update(get_account_context(request=request,account=account))
         return render(request,TEMPLATE_ROOT+"account.html",context)      
 class AccountsView(View):
     def get(self,request,*args, **kwargs):

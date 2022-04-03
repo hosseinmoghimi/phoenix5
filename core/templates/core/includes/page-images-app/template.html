@@ -30,7 +30,10 @@
 
 
                         <h6 class="text-center mt-4 mb-2">
-                            <span v-text="image.title"></span>
+                            <a target="_blank" :href="image.get_absolute_url">
+
+                                <span v-text="image.title"></span>
+                            </a>
                             {% if perms.core.change_image %}
 
                             <a title="ویرایش" target="_blank" :href="image.get_edit_url">
@@ -50,7 +53,7 @@
 
 
                         </h6>
-                        <a target="_blank" :href="image.image">
+                        <a target="_blank" :href="image.get_absolute_url">
 
                             <img :src="image.thumbnail" width="80%" :alt="image.title"
                                 class="rounded">

@@ -12,7 +12,7 @@
                     aria-expanded="true" aria-controls="collapse-accounts">
                     حساب های مالی
 
-                  
+
 
                     <span v-if="accounts.length>0">
                         <small class="text-danger mx-2">
@@ -46,8 +46,9 @@
                 {% load static %}
                 <form @submit.prevent="search()">
                     <img src="{% static 'leo/img/loading.gif' %}" width="32" v-if="waiting" alt="">
-                
-                    <input type="text" v-model="search_for" class="form-control" placeholder="جستجو ..." @input="filter()">
+
+                    <input type="text" v-model="search_for" class="form-control" placeholder="جستجو ..."
+                        @input="filter()">
                 </form>
 
 
@@ -73,16 +74,28 @@
                             </th>
                         </thead>
                         <tbody>
-                          
+
 
                             <tr v-for="account in accounts">
                                 <td>
                                     <a :href="account.get_absolute_url">
-                                        <img :src="account.logo" class="rounded-circle" width="32" alt="">
-                                        <span v-text="account.title"></span>
+                                        <div class="media">
+                                            <img :src="account.logo" class="rounded-circle" width="32" alt="">
+                                            <div class="media-body mr-3">
+                                                <div>
+
+                                                    <span v-text="account.title"></span>
+                                                </div>
+                                                <div>
+                                                    <small class="text-muted">
+                                                        <span v-text="account.class_title"></span>
+                                                    </small>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </a>
 
-                                     
+
                                 </td>
                                 <td>
                                     <a :href="account.profile.get_absolute_url">

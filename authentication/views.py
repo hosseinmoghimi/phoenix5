@@ -1,9 +1,10 @@
 from django.http import JsonResponse
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render,reverse
 import json
 from authentication.serializers import ProfileSerializer
 from core.constants import FAILED, SUCCEED
 from core.enums import ParameterNameEnum
+from core.utils import app_is_installed
 from .forms import *
 from core.repo import PageLikeRepo, ParameterRepo
 from .repo import ProfileRepo
@@ -69,10 +70,13 @@ class ProfileViews(View):
             accounts=AccountRepo(request=request).list(profile_id=selected_profile.id)
             context['accounts']=accounts
         if selected_profile.enabled:
+            if app_is_installed('projectmanager'):
                 from projectmanager.views import EmployeeRepo,EmployeeSerializer
                 employees=EmployeeRepo(request=request).list(profile_id=selected_profile.id)
                 context['employees']=employees
                 context['employees_s']=json.dumps(EmployeeSerializer(employees,many=True).data)
+
+                
         if not selected_profile.enabled:
             context['no_navbar']=True
             context['no_footer']=True
@@ -85,12 +89,82 @@ class ProfileViews(View):
 
         profiles=ProfileRepo(request=request).list(user_id=selected_profile.user.id)
         if len(profiles)>1:
-            print(profiles)
             context['profiles']=profiles
             context['profiles_s']=json.dumps(ProfileSerializer(profiles,many=True).data)
             context['set_default_profile_form']=SetDefaultProfileForm()
 
         return render(request,TEMPLATE_ROOT+"profile.html",context)
+
+
+
+class ChangeProfileImageViews(View):
+    def post(self,request,*args, **kwargs):
+        context={'result':FAILED}
+        profile_id=0
+        if 'pk' in kwargs:
+            profile_id=kwargs['pk']
+        log=1
+        if request.method=='POST':
+            log=2
+            edit_profile_form=ChangeProfileImageForm(request.POST,request.FILES)
+            if edit_profile_form.is_valid():
+                log=3              
+                # profile_id=edit_profile_form.cleaned_data['profile_id']
+                image=request.FILES['image']
+                result=ProfileRepo(request=request).change_profile_image(profile_id=profile_id,
+                image=image,
+                )
+        return redirect(reverse(APP_NAME+":profile",kwargs={'pk':profile_id}))
+
+
+class EditProfileViews(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        selected_profile=ProfileRepo(request=request,forced=True).me
+        if 'pk' in kwargs:
+            selected_profile=ProfileRepo(request=request,forced=True).profile(*args, **kwargs)
+        if selected_profile is None:
+            mv=MessageView(request=request)
+            mv.has_home_link=True
+            mv.title="چنین پروفایلی پیدا نشد"
+            return mv.show()
+        context['edit_profile_form']=EditProfileForm()
+        context['selected_profile']=selected_profile
+        context['selected_profile_s']=json.dumps(ProfileSerializer(selected_profile).data)
+     
+        return render(request,TEMPLATE_ROOT+"edit-profile.html",context)
+
+    def post(self,request,*args, **kwargs):
+        context={'result':FAILED}
+        profile_id=0
+        if 'pk' in kwargs:
+            profile_id=kwargs['pk']
+        log=1
+        if request.method=='POST':
+            log=2
+            edit_profile_form=EditProfileForm(request.POST)
+            if edit_profile_form.is_valid():
+                log=3              
+                # profile_id=edit_profile_form.cleaned_data['profile_id']
+                first_name=edit_profile_form.cleaned_data['first_name']
+                last_name=edit_profile_form.cleaned_data['last_name']
+                email=edit_profile_form.cleaned_data['email']
+                bio=edit_profile_form.cleaned_data['bio']
+                mobile=edit_profile_form.cleaned_data['mobile']
+                address=edit_profile_form.cleaned_data['address']
+                result=ProfileRepo(request=request).edit_profile(profile_id=profile_id,
+                first_name=first_name,
+                last_name=last_name,
+                email=email,
+                bio=bio,
+                mobile=mobile,
+                address=address,
+                )
+                if result:
+                    context['result']=SUCCEED
+
+        context['log']=log
+        return JsonResponse(context)  
 
 
 class ProfilesViews(View):
@@ -100,6 +174,8 @@ class ProfilesViews(View):
         context['profiles']=profiles
         context['profiles_s']=json.dumps(ProfileSerializer(profiles,many=True).data)
         return render(request,TEMPLATE_ROOT+"profiles.html",context)
+
+
 class LoginViews(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -115,6 +191,8 @@ class LoginViews(View):
             if a is not None:
                 (request,user)=a
                 return redirect(APP_NAME+":me")
+
+
 class LoginAsViews(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)

@@ -1,0 +1,24 @@
+<script>
+    let majors = JSON.parse(`{{majors_s|escapejs}}`)
+    let majors_app = new Vue({
+        el: "#majors-app",
+        data: {
+            majors: majors,
+            title:"",
+        },
+        methods:{
+            add_major:function(){
+                let payload={
+                    csrfmiddlewaretoken:csrfmiddlewaretoken,
+                    title:this.title,
+                }
+                $.post("{% url 'school:add_major' %}",payload).done((data)=>{
+                    if(data.result==='SUCCEED'){
+                        majors_app.majors.push(data.major)
+                        majors_app.title=""
+                    }
+                })
+            }
+        }
+    })
+</script>
