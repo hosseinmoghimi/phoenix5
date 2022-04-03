@@ -56,7 +56,7 @@ TIME_ZONE = 'Asia/Tehran'
 
 SITE_URL='/'
 
-STATIC_ROOT=os.path.join(PUBLIC_ROOT,'staticfiles')
+STATIC_ROOT=os.path.join(PUBLIC_ROOT,'static')
 MEDIA_ROOT=os.path.join(PUBLIC_ROOT,'media')
 STATIC_URL = SITE_URL+'static/'
 MEDIA_URL =  SITE_URL+'media/'

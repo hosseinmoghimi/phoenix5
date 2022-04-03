@@ -8,7 +8,20 @@
     }
     let materials_app_methods = {
         add:function(){
+            let url = "{% url 'projectmanager:add_material' %}"
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    title: this.search_for,
+                }
 
+                $.post(url, payload).done(data => {
+                    console.log(data)
+                    if (data.result === 'SUCCEED') {
+                        if (typeof materials_app != 'undefined') {
+                            materials_app.materials.push(data.material)
+                        }
+                    }
+                })
         },
         filter: function (search_for) {
             this.materials = materials.filter((material) => {

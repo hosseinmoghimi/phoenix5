@@ -1,0 +1,32 @@
+<script>
+    let add_material_app = new Vue({
+        el: "#add-material-app",
+        data: {
+            title: "",
+            waiting: false
+        },
+        methods: {
+            filter: function () {
+                if (typeof materials_app != 'undefined') {
+                    materials_app.filter(this.title)
+                }
+            },
+            add_material: function () {
+                let url = "{% url 'projectmanager:add_material' %}"
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    title: this.title,
+                }
+
+                $.post(url, payload).done(data => {
+                    console.log(data)
+                    if (data.result === 'SUCCEED') {
+                        if (typeof materials_app != 'undefined') {
+                            materials_app.materials.push(data.material)
+                        }
+                    }
+                })
+            },
+        }
+    })
+</script>

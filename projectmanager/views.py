@@ -515,6 +515,9 @@ class MaterialsView(View):
         context['materials'] = materials
         materials_s = json.dumps(MaterialSerializer(materials, many=True).data)
         context['materials_s'] = materials_s
+        
+        if request.user.has_perm(APP_NAME+".add_material"):
+            context['add_material_form']=AddMaterialForm()
         return render(request, TEMPLATE_ROOT+"materials.html", context)
 
 
@@ -541,6 +544,9 @@ class ServicesView(View):
         context['services'] = services
         services_s = json.dumps(ServiceSerializer(services, many=True).data)
         context['services_s'] = services_s
+
+        if request.user.has_perm(APP_NAME+".add_service"):
+            context['add_service_form']=AddServiceForm()
         return render(request, TEMPLATE_ROOT+"services.html", context)
 
 

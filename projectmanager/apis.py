@@ -5,10 +5,10 @@ from core.serializers import PageLinkSerializer
 from .enums import *
 
 from utility.calendar import PersianCalendar
-from .repo import  EventRepo, MaterialRequestRepo, OrganizationUnitRepo, ProjectRepo, RequestSignatureRepo, ServiceRequestRepo
+from projectmanager.repo import  EventRepo, MaterialRepo, MaterialRequestRepo, OrganizationUnitRepo, ProjectRepo, RequestSignatureRepo, ServiceRepo, ServiceRequestRepo
 from django.http import JsonResponse
-from .forms import *
-from .serializers import EventSerializer, MaterialRequestSerializer, OrganizationUnitSerializer, ProjectSerializer, RequestSignatureSerializer, ServiceRequestSerializer
+from projectmanager.forms import *
+from projectmanager.serializers import EventSerializer, MaterialRequestSerializer, MaterialSerializer, OrganizationUnitSerializer, ProjectSerializer, RequestSignatureSerializer, ServiceRequestSerializer, ServiceSerializer
 
 class AddOrganizationUnitApi(APIView):
     def post(self,request,*args, **kwargs):
@@ -65,6 +65,47 @@ class AddProjectApi(APIView):
         context['log']=log
         return JsonResponse(context)
         
+        
+class AddMaterialApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        log=11
+        context['result']=FAILED
+        if request.method=='POST':
+            log=22
+            report_form=AddMaterialForm(request.POST)
+            if report_form.is_valid():
+                log=33
+                cd=report_form.cleaned_data
+            
+                material=MaterialRepo(request=request).add_material(**cd)
+                if material is not None:
+                    context['material']=MaterialSerializer(material).data
+                    context['result']=SUCCEED
+        context['log']=log
+        return JsonResponse(context)
+
+
+        
+class AddServiceApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        log=11
+        context['result']=FAILED
+        if request.method=='POST':
+            log=22
+            report_form=AddServiceForm(request.POST)
+            if report_form.is_valid():
+                log=33
+                cd=report_form.cleaned_data
+            
+                service=ServiceRepo(request=request).add_service(**cd)
+                if service is not None:
+                    context['service']=ServiceSerializer(service).data
+                    context['result']=SUCCEED
+        context['log']=log
+        return JsonResponse(context)
+
 
         
 class AddSignatureApi(APIView):

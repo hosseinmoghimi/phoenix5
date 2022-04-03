@@ -1,0 +1,48 @@
+{% load to_persian_date %}
+{% load to_price %}
+{% load to_amount_color %}
+{% load static %}
+<div id="accordion-add-material">
+
+
+    <div class="card" id="add-material-app">
+        <div class="card-header" id="heading-add-material">
+            <h5 class="text-center">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-add-material"
+                    aria-expanded="true" aria-controls="collapse-add-material">
+
+                    متریال جدید
+
+
+
+
+                </button>
+            </h5>
+
+
+        </div>
+        <div id="collapse-add-material" class="collapse" aria-labelledby="heading-add-material"
+            data-parent="#accordion-add-material">
+
+
+            <div class="card-body">
+
+                {% load static %}
+                <form @submit.prevent="add_material()">
+                    <img src="{% static 'leo/img/loading.gif' %}" width="32" v-if="waiting" alt="">
+
+                    <input type="text" v-model="title" class="form-control" placeholder="جستجو ..." @input="filter()">
+                    <button type="submit" class="btn btn-success">
+                        <i class="fa fa-plus"></i>
+                        افزودن
+                    </button>
+                </form>
+
+
+
+            </div>
+        </div>
+
+
+    </div>
+</div>

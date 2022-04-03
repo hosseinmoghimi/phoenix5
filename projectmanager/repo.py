@@ -168,7 +168,18 @@ class MaterialRepo():
             objects=objects.filter(parent_id=kwargs['parent_id'])
         return objects.all()
 
+    def add_material(self,*args, **kwargs):
+        if not self.user.has_perm(APP_NAME+".add_material"):
+            return None
+ 
+        if 'title' in kwargs:
+            title = kwargs['title']
 
+        material=Material()
+        material.title=title
+        material.save()
+        return material
+         
 class ServiceRepo():
     def __init__(self, *args, **kwargs):
         self.request = None
@@ -209,6 +220,17 @@ class ServiceRepo():
         return objects.all()
 
 
+    def add_service(self,*args, **kwargs):
+        if not self.user.has_perm(APP_NAME+".add_service"):
+            return None
+ 
+        if 'title' in kwargs:
+            title = kwargs['title']
+
+        service=Service()
+        service.title=title
+        service.save()
+        return service
 class ProjectRepo():
     def __init__(self, *args, **kwargs):
         self.request = None
