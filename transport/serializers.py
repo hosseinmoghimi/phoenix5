@@ -40,7 +40,7 @@ class VehicleSerializer(serializers.ModelSerializer):
 
 
 class TripSerializer(serializers.ModelSerializer):
-    paths=TripPathSerializer(many=True)
+    trip_paths=TripPathSerializer(many=True)
     pay_to=AccountSerializer()
     driver=DriverSerializer()
     passengers=PassengerSerializer(many=True)
@@ -48,4 +48,6 @@ class TripSerializer(serializers.ModelSerializer):
     vehicle=VehicleSerializer()
     class Meta:
         model=Trip
-        fields=['id','paths','pay_to','status','vehicle','passengers','title','cost','distance','driver','get_absolute_url','duration','delay','trip_category']
+        fields=['id','trip_paths','pay_to','status','vehicle','passengers','title','cost','distance','driver','get_absolute_url','duration','delay','trip_category']
+
+ 

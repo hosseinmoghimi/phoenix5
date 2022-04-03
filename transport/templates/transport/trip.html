@@ -7,10 +7,13 @@
 <div class="row">
     <div class="col-md-4">
         {% include "core/includes/page-app/brief-card.html" %}
-
     </div>
     <div class="col-md-8">
         {% include "accounting/includes/transaction-app/brief.html" %}
+
+    </div>
+    <div class="col-md-12">
+        {% include "transport/includes/passengers-app/template.html" %}
 
     </div>
     <div class="col-md-4">
@@ -22,13 +25,13 @@
     </div>
 
     <div class="col-md-4">
-      {% include "core/includes/page-tags-app/template.html" %}
+        {% include "core/includes/page-tags-app/template.html" %}
 
-  </div>
-  <div class="col-md-12">
-    {% include "core/includes/page-images-app/template.html" %}
+    </div>
+    <div class="col-md-12">
+        {% include "core/includes/page-images-app/template.html" %}
 
-</div>
+    </div>
     <div class="col-md-12">
         {% include "accounting/includes/financial-documents-app/template.html" %}
     </div>
@@ -40,7 +43,8 @@
 
 
 
-{% block script %}  
+{% block script %}
 {% include "accounting/includes/transaction-app/script.html" %}
+{% include "transport/includes/passengers-app/script.html" %}
 
 {% endblock script %}

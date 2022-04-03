@@ -1,3 +1,6 @@
+
+from core.constants import FAILED,SUCCEED
+from django.http import JsonResponse
 from django.shortcuts import render
 # Create your views here.
 from django.shortcuts import render,reverse
@@ -5,11 +8,11 @@ from core.views import CoreContext,SearchForm
 # Create your views here.
 from django.views import View
 
-from transport.forms import *
+from transport.forms import * 
 
 from .serializers import ClientSerializer, DriverSerializer,PassengerSerializer, TripPathSerializer, TripSerializer, VehicleSerializer
 
-from .repo import ClientRepo, DriverRepo,PassengerRepo, TripPathRepo, TripRepo, VehicleRepo
+from .repo import ClientRepo,TripCategoryRepo, DriverRepo,PassengerRepo, TripPathRepo, TripRepo, VehicleRepo
 from .apps import APP_NAME
 # from .repo import ProductRepo
 # from .serializers import ProductSerializer
@@ -19,15 +22,12 @@ from accounting.views import get_transaction_context,get_account_context
 TEMPLATE_ROOT = "transport/"
 LAYOUT_PARENT = "phoenix/layout.html"
 
-
 def getContext(request, *args, **kwargs):
     context = CoreContext(request=request, app_name=APP_NAME)
     context['search_form'] = SearchForm()
     context['search_action'] = reverse(APP_NAME+":search")
     context['LAYOUT_PARENT'] = LAYOUT_PARENT
     return context
-
-
 
 def get_add_trip_context(request,*args, **kwargs):
     context={}
@@ -37,6 +37,10 @@ def get_add_trip_context(request,*args, **kwargs):
     context['vehicles']=vehicles
     vehicles_s=json.dumps(VehicleSerializer(vehicles,many=True).data)
     context['vehicles_s']=vehicles_s
+
+     #trip_categories
+    trip_categories=TripCategoryRepo(request=request).list(*args, **kwargs)
+    context['trip_categories']=trip_categories 
 
 
 
@@ -125,8 +129,13 @@ class TripView(View):
         context=getContext(request=request)
         trip=TripRepo(request=request).trip(*args, **kwargs)
         context['trip']=trip
+        passengers=trip.passengers.all()
+        context['passengers']=passengers
+        passengers_s=json.dumps(PassengerSerializer(passengers,many=True).data)
+        context['passengers_s']=passengers_s
         context.update(get_transaction_context(request=request,transaction=trip))
         return render(request,TEMPLATE_ROOT+"trip.html",context)
+
 
 class DriverView(View):
     def get(self,request,*args, **kwargs):
@@ -147,7 +156,6 @@ class DriverView(View):
         context.update(get_add_trip_context(request=request))
 
         return render(request,TEMPLATE_ROOT+"driver.html",context)
-
 
 
 class DriversView(View):
@@ -200,7 +208,20 @@ class AddTripView(View):
         context['show_add_trip_form_collapse']=True
         return render(request,TEMPLATE_ROOT+"add-trip.html",context)
 
-       
+    def post(self,request,*args, **kwargs):
+        context={}
+        context['result']=FAILED
+        fm=AddTripForm(request.POST)
+        if fm.is_valid():
+            cd=fm.cleaned_data
+            cd['passengers']=json.loads(cd['passengers'])
+            cd['trip_paths']=json.loads(cd['trip_paths'])
+            trip=TripRepo(request=request).add_trip(**cd)
+            if trip is not None:
+                context['trip']=TripSerializer(trip).data
+                context['result']=SUCCEED
+        return JsonResponse(context)
+            
 class PassengerView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -229,9 +250,6 @@ class PassengersView(View):
         return render(request,TEMPLATE_ROOT+"passengers.html",context)
 
 
-
-
-
 class ClientView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -258,7 +276,6 @@ class ClientsView(View):
         clients_s=json.dumps(ClientSerializer(clients,many=True).data)
         context['clients_s']=clients_s
         return render(request,TEMPLATE_ROOT+"clients.html",context)
-
 
 
 class SearchView(View):

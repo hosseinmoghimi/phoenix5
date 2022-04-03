@@ -24,10 +24,22 @@
             <div class="card-body">
 
                 <div class="row">
-                    <div class="col-md-12 text-right">
+                    <div class="col-md-6 text-right">
                         <div class="for-group">
                             <label for="">عنوان سفر</label>
                             <input type="text" v-model="title" class="form-control">
+                        </div>
+                    </div>
+                    <div class="col-md-6 text-right">
+                        <div class="for-group">
+                            <label for="">دسته بندی سفر</label>
+                            <select v-model="trip_category_id" class="form-control">
+                                {% for trip_category in trip_categories %}
+                                <option value="{{trip_category.id}}">{{trip_category.title}}</option>
+
+                                {% endfor %}
+                            </select>
+
                         </div>
                     </div>
 

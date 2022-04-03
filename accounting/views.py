@@ -232,8 +232,6 @@ def get_product_context(request,*args, **kwargs):
     
     #warehouse availables , warehouse sheets
     warehouse_app_is_installed= app_is_installed('warehouse')
-    print('warehouse_app_is_installed')
-    print(warehouse_app_is_installed)
     if warehouse_app_is_installed:
         from warehouse.repo import WareHouseSheetRepo
         from warehouse.enums import WareHouseSheetStatusEnum

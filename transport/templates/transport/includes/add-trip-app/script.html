@@ -69,6 +69,7 @@
             passenger_id: 0,
             waiting: false,
             amount: amount,
+            trip_category_id:0,
             delay: 0,
         },
         methods: {
@@ -163,13 +164,14 @@
                     csrfmiddlewaretoken: csrfmiddlewaretoken,
                     trip_paths: trip_paths_,
                     title: this.title,
-                    driver_id: this.driver_id,
+                    pay_from_id: this.driver_id,
                     vehicle_id: this.vehicle_id,
                     description: this.description,
-                    client_id: this.client_id,
+                    pay_to_id: this.client_id,
                     passengers: passengers_,
                     amount: this.amount,
                     delay: this.delay,
+                    trip_category_id: this.trip_category_id,
                 }
                 console.log(payload)
                 let url = "{% url 'transport:add_trip' %}"

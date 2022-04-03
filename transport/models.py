@@ -1,6 +1,5 @@
 from accounting.models import Asset, Transaction
 from utility.calendar import PERSIAN_MONTH_NAMES, PersianCalendar
-from core.middleware import get_request
 from phoenix.settings import STATIC_URL
 from django.db import models
 from core.models import  Page
@@ -201,7 +200,7 @@ class Trip(Transaction):
     duration=models.IntegerField(_("duration"))
     date_started=models.DateTimeField(_("شروع سرویس"),null=True,blank=True, auto_now=False, auto_now_add=False)
     date_ended=models.DateTimeField(_("پایان سرویس"),null=True,blank=True, auto_now=False, auto_now_add=False)
-    paths=models.ManyToManyField("trippath",blank=True, verbose_name=_("مسیر های سرویس"))
+    trip_paths=models.ManyToManyField("trippath",blank=True, verbose_name=_("مسیر های سرویس"))
     passengers=models.ManyToManyField("passenger",blank=True, verbose_name=_("مسافر ها"))
     delay=models.IntegerField(_("تاخیر"),default=0)
  
@@ -242,7 +241,19 @@ class Trip(Transaction):
             self.class_name='trip'
         if self.app_name is None or self.app_name=="":
             self.app_name=APP_NAME
-        return super(Trip,self).save(*args, **kwargs)
+        duration=0
+        distance=0
+        super(Trip,self).save(*args, **kwargs)
+
+        if self.distance==0 or self.duration==0:
+            for trip_path in self.trip_paths.all():
+                distance+=trip_path.distance
+                duration+=trip_path.duration
+            if self.distance==0:
+                self.distance=distance
+            if self.duration==0:
+                self.duration=duration
+                super(Trip,self).save(*args, **kwargs)
 
  
 

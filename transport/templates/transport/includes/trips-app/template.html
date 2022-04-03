@@ -24,7 +24,7 @@
 
 
             <div class="card-body">
-             
+
 
                 {% load static %}
                 <form @submit.prevent="search()">
@@ -44,6 +44,7 @@
                     <table class="table table-striped">
                         <thead>
                             <th>
+
                                 سفر
                             </th>
                             <th>
@@ -76,16 +77,54 @@
 
                             <tr v-for="trip in trips">
                                 <td>
-                                    <a :href="trip.get_absolute_url">
-                                        <span v-text="trip.title"></span>
-                                    </a>
+
+                                    <div v-if="trip.trip_category">
+
+                                        <a :href="trip.trip_category.get_absolute_url">
+                                            <span :class="'badge badge-'+trip.trip_category.color">
+
+                                                <span v-text="trip.trip_category.title"></span>
+                                            </span>
+                                        </a>
+                                    </div>
+                                    <div>
+
+                                        <a :href="trip.get_absolute_url">
+                                            <span v-text="trip.title"></span>
+                                        </a>
+                                    </div>
+                                    <div class="my-2">
+
+                                        {% if perms.transport.change_trip %}
+                                        <a href="{{trip.get_edit_url}}" target="_blank" title="ویرایش"
+                                            class="mx-2 text-warning"><i class="fa fa-edit"></i> ویرایش</a>
+
+                                        <span class="mx-2">
+
+                                        </span>
+                                        {% endif %}
 
 
+
+                                        {% if perms.transport.delete_trip %}
+
+
+                                        <a href="{{trip.get_delete_url}}" target="_blank" title="حذف"
+                                            class="mx-2 text-danger"><i class="fa fa-trash"></i> حذف</a>
+
+                                        <span class="mx-2">
+
+                                        </span>
+                                        {% endif %}
+                                    </div>
                                 </td>
 
 
                                 <td>
                                     <a :href="trip.driver.get_absolute_url">
+                                     
+                                        <img :src="trip.driver.logo" class="rounded-circle" width="32"
+                                        alt="">
                                         <span v-text="trip.driver.title"></span>
                                     </a>
 
@@ -99,7 +138,7 @@
 
                                 </td>
                                 <td>
-                                    <div v-for="trip_path in trip.paths">
+                                    <div v-for="trip_path in trip.trip_paths">
 
                                         <a :href="trip_path.get_absolute_url">
                                             <span v-text="trip_path.title"></span>
@@ -139,7 +178,8 @@
 
                                 </td>
                                 <td>
-                                    <span v-html="trip.duration"></span> دقیقه
+                                    <span v-html="trip.duration"></span>
+                                    دقیقه
                                     </span>
 
                                 </td>

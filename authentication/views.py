@@ -4,6 +4,7 @@ import json
 from authentication.serializers import ProfileSerializer
 from core.constants import FAILED, SUCCEED
 from core.enums import ParameterNameEnum
+from core.utils import app_is_installed
 from .forms import *
 from core.repo import PageLikeRepo, ParameterRepo
 from .repo import ProfileRepo
@@ -69,10 +70,13 @@ class ProfileViews(View):
             accounts=AccountRepo(request=request).list(profile_id=selected_profile.id)
             context['accounts']=accounts
         if selected_profile.enabled:
+            if app_is_installed('projectmanager'):
                 from projectmanager.views import EmployeeRepo,EmployeeSerializer
                 employees=EmployeeRepo(request=request).list(profile_id=selected_profile.id)
                 context['employees']=employees
                 context['employees_s']=json.dumps(EmployeeSerializer(employees,many=True).data)
+
+                
         if not selected_profile.enabled:
             context['no_navbar']=True
             context['no_footer']=True
@@ -111,7 +115,6 @@ class ChangeProfileImageViews(View):
                 image=image,
                 )
         return redirect(reverse(APP_NAME+":profile",kwargs={'pk':profile_id}))
-
 
 
 class EditProfileViews(View):
@@ -163,6 +166,7 @@ class EditProfileViews(View):
         context['log']=log
         return JsonResponse(context)  
 
+
 class ProfilesViews(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -170,6 +174,8 @@ class ProfilesViews(View):
         context['profiles']=profiles
         context['profiles_s']=json.dumps(ProfileSerializer(profiles,many=True).data)
         return render(request,TEMPLATE_ROOT+"profiles.html",context)
+
+
 class LoginViews(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -185,6 +191,8 @@ class LoginViews(View):
             if a is not None:
                 (request,user)=a
                 return redirect(APP_NAME+":me")
+
+
 class LoginAsViews(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
