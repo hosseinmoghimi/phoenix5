@@ -9,6 +9,20 @@
     let products_app_methods = {
         add: function () {
 
+            let url = "{% url 'accounting:add_product' %}"
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    title: this.search_for,
+                }
+
+                $.post(url, payload).done(data => {
+                    console.log(data)
+                    if (data.result === 'SUCCEED') {
+                        if (typeof products_app != 'undefined') {
+                            products_app.products.push(data.product)
+                        }
+                    }
+                })
         },
         filter: function (search_for) {
             this.products = products.filter((product) => {

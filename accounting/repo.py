@@ -47,6 +47,17 @@ class ProductRepo():
             objects=objects.filter(parent_id=kwargs['parent_id'])
         return objects.all()
 
+    def add_product(self,*args, **kwargs):
+        if not self.user.has_perm(APP_NAME+".add_product"):
+            return None
+ 
+        if 'title' in kwargs:
+            title = kwargs['title']
+
+        product=Product()
+        product.title=title
+        product.save()
+        return product
 
 class ServiceRepo():
     def __init__(self, *args, **kwargs):
@@ -83,6 +94,17 @@ class ServiceRepo():
             objects=objects.filter(parent_id=kwargs['parent_id'])
         return objects.all()
 
+    def add_service(self,*args, **kwargs):
+        if not self.user.has_perm(APP_NAME+".add_service"):
+            return None
+ 
+        if 'title' in kwargs:
+            title = kwargs['title']
+
+        service=Service()
+        service.title=title
+        service.save()
+        return service
 
 class FinancialBalanceRepo:
     def __init__(self, *args, **kwargs):

@@ -2,6 +2,11 @@
 
 {% block content %}
   <div class="row">
+    {% if add_root_project_form %}
+        <div class="col-md-12">
+          {% include "projectmanager/includes/add-project-app/template.html" %}
+      </div>
+    {% endif %}
       <div class="col-md-12">
           {% include "projectmanager/includes/all-projects-app/template.html" %}
       </div>
@@ -11,5 +16,8 @@
 
 {% block script %}
 {% include "projectmanager/includes/all-projects-app/script.html" %}
-  
+  {% if add_root_project_form %}
+  {% include "projectmanager/includes/add-project-app/script.html" %}
+    
+  {% endif %}
 {% endblock script %}

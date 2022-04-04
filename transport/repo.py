@@ -130,7 +130,6 @@ class TripRepo():
         self.profile=ProfileRepo(*args, **kwargs).me
 
     def add_trip(self, *args, **kwargs):
-        print(kwargs)
         if not self.user.has_perm(APP_NAME+".add_trip"):
             return
         trip=Trip()

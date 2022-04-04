@@ -556,6 +556,8 @@ class ProductsView(View):
         context['products']=products
         products_s=json.dumps(ProductSerializer(products,many=True).data)
         context['products_s']=products_s
+        if request.user.has_perm(APP_NAME+".add_product"):
+            context['add_product_form']=AddProductForm()
         return render(request,TEMPLATE_ROOT+"products.html",context)
 class ProductView(View):
     def get(self,request,*args, **kwargs):
@@ -577,6 +579,8 @@ class ServicesView(View):
         context['services']=services
         services_s=json.dumps(ServiceSerializer(services,many=True).data)
         context['services_s']=services_s
+        if request.user.has_perm(APP_NAME+".add_service"):
+            context['add_service_form']=AddServiceForm()
         return render(request,TEMPLATE_ROOT+"services.html",context)
 class ServiceView(View):
     def get(self,request,*args, **kwargs):

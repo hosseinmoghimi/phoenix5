@@ -8,6 +8,13 @@ class CreateEmployeeForm(forms.Form):
 class AddProjectForm(forms.Form):
     parent_id=forms.IntegerField(required=False)
     title=forms.CharField(max_length=50, required=True)
+    contractor_id=forms.IntegerField(required=False)
+    employer_id=forms.IntegerField(required=False)
+    percentage_completed=forms.IntegerField(required=False)
+    start_date=forms.CharField(max_length=50, required=False)
+    end_date=forms.CharField(max_length=50, required=False)
+    status=forms.CharField(max_length=50, required=False)
+    
 
 class AddOrganizationUnitForm(forms.Form):
     page_id=forms.IntegerField( required=False)

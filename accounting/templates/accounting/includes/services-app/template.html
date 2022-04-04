@@ -48,10 +48,14 @@
 
                 <input type="text" v-model="search_for" class="form-control" placeholder="جستجو ..."
                     @input="filter(search_for)">
-                <button @click="add()" class="btn btn-success">
-                    <i class="fa fa-plus"></i>
-                    افزودن
-                </button>
+                    {% if add_service_form %}
+                    <div class="text-right my-2">
+                         <button @click="add()" class="btn btn-success">
+                  <i class="fa fa-plus"></i>
+                  افزودن
+              </button>
+                    </div>
+                  {% endif %}
 
                 <div class="text-right my-2">
 

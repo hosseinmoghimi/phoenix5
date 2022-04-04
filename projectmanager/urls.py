@@ -49,6 +49,6 @@ urlpatterns = [
     path('add_event/',login_required(apis.AddEventApi.as_view()),name="add_event"),
     path('add_signature/',login_required(apis.AddSignatureApi.as_view()),name="add_signature"),
     path('add_material/',login_required(apis.AddMaterialApi.as_view()),name="add_material"),
-    path('add_service/',login_required(apis.AddServiceApi.as_view()),name="add_service"),
+    path('add_service/',login_required(apis.AddServiceApi.as_view()),name="add_service"), 
 
 ]

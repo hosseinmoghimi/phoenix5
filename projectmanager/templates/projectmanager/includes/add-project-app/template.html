@@ -1,0 +1,130 @@
+{% load to_persian_date %}
+{% load to_price %}
+{% load to_amount_color %}
+{% load static %}
+<div id="accordion-add-project">
+
+
+    <div class="card" id="add-project-app">
+        <div class="card-header" id="heading-add-project">
+            <h5 class="text-center">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-add-project"
+                    aria-expanded="true" aria-controls="collapse-add-project">
+
+                    پروژه جدید
+
+
+
+
+                </button>
+            </h5>
+
+
+        </div>
+        <div id="collapse-add-project" class="collapse" aria-labelledby="heading-add-project"
+            data-parent="#accordion-add-project">
+
+
+            <div class="card-body">
+
+                {% load static %}
+                <form @submit.prevent="add_project()">
+                    <img src="{% static 'leo/img/loading.gif' %}" width="32" v-if="waiting" alt="">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="">عنوان</label>
+                                <input type="text" v-model="title" class="form-control" placeholder="عنوان"
+                                    @input="filter()">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="">وضعیت</label>
+                                <select v-model="status" class="form-control" id="">
+                                    {% for status in statuses %}
+                                    <option value="{{status}}">
+                                        {{status}}
+                                    </option>
+                                    {% endfor %}
+
+                                </select>
+                            </div>
+
+                        </div>
+
+
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="">کارفرما</label>
+                                <select v-model="employer_id" class="form-control" id="">
+                                    {% for employer in employers %}
+                                    <option value="{{employer.id}}">
+                                        {{employer.title}}
+                                    </option>
+                                    {% endfor %}
+
+                                </select>
+                            </div>
+
+                        </div>
+
+
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="">پیمانکار</label>
+                                <select v-model="contractor_id" class="form-control" id="">
+                                    {% for contractor in employers %}
+                                    <option value="{{contractor.id}}">
+                                        {{contractor.title}}
+                                    </option>
+                                    {% endfor %}
+
+                                </select>
+                            </div>
+
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="">درصد پیشرفت پروژه</label>
+                                <input v-model="percentage_completed" class="form-control" type="number">
+                            </div>
+
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="">تاریخ شروع</label>
+                                <date-picker v-model="start_date"></date-picker>
+                            </div>
+
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="">تاریخ پایان</label>
+                                <date-picker v-model="end_date"></date-picker>
+                            </div>
+
+                        </div>
+                        <div class="col-md-12"></div>
+                        <div class="col-md-12">
+                            <div class="text-right">
+                                <button type="submit" class="btn btn-success">
+                                    <i class="fa fa-plus"></i>
+                                    افزودن
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                </form>
+
+
+
+            </div>
+        </div>
+
+
+    </div>
+</div>

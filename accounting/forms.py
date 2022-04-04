@@ -16,6 +16,14 @@ class AddStorePriceForm(forms.Form):
 class CreateAccountForm(forms.Form):
     profile_id=forms.IntegerField(required=False)
 
+class AddProductForm(forms.Form):
+    title=forms.CharField(max_length=50,required=True)
+
+    
+class AddServiceForm(forms.Form):
+    title=forms.CharField(max_length=50,required=True)
+
+    
 class GetReportForm(forms.Form):
     financial_account_id=forms.IntegerField(required=True)
     start_date=forms.CharField(max_length=50, required=True)

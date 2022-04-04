@@ -54,10 +54,15 @@ class AddProjectApi(APIView):
                 fm=AddProjectForm_.cleaned_data
                 title=fm['title']
                 parent_id=fm['parent_id']
+                cd=AddProjectForm_.cleaned_data
                 
+                if 'start_date' in cd:
+                    cd['start_date']=PersianCalendar().to_gregorian(cd['start_date'])
+                if 'end_date' in cd:
+                    cd['end_date']=PersianCalendar().to_gregorian(cd['end_date'])
+
                 project=ProjectRepo(request=request).add_project(
-                    title=title,
-                    parent_id=parent_id,
+                    **cd
                 )
                 if project is not None:
                     context['project']=ProjectSerializer(project).data

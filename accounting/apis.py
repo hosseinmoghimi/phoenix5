@@ -5,10 +5,10 @@ from core.serializers import PageLinkSerializer
 from .models import Transaction
 
 from utility.calendar import PersianCalendar
-from .repo import ChequeRepo,  FinancialDocumentRepo, InvoiceRepo, PaymentRepo, PriceRepo, TransactionRepo
+from .repo import ChequeRepo,  FinancialDocumentRepo, InvoiceRepo, PaymentRepo, PriceRepo, ProductRepo, ServiceRepo, TransactionRepo
 from django.http import JsonResponse
 from .forms import *
-from .serializers import ChequeSerializer, FinancialDocumentSerializer, InvoiceFullSerializer, InvoiceLineSerializer, PaymentSerializer, PriceSerializer
+from .serializers import ChequeSerializer, FinancialDocumentSerializer, InvoiceFullSerializer, InvoiceLineSerializer, PaymentSerializer, PriceSerializer, ProductSerializer, ServiceSerializer
 
 class AddChequeApi(APIView):
     def post(self,request,*args, **kwargs):
@@ -143,6 +143,48 @@ class AddPriceApi(APIView):
                 )
                 if price is not None:
                     context['price']=PriceSerializer(price).data
+                    context['result']=SUCCEED
+        context['log']=log
+        return JsonResponse(context)
+
+     
+        
+class AddProductApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        log=11
+        context['result']=FAILED
+        if request.method=='POST':
+            log=22
+            report_form=AddProductForm(request.POST)
+            if report_form.is_valid():
+                log=33
+                cd=report_form.cleaned_data
+            
+                product=ProductRepo(request=request).add_product(**cd)
+                if product is not None:
+                    context['product']=ProductSerializer(product).data
+                    context['result']=SUCCEED
+        context['log']=log
+        return JsonResponse(context)
+
+
+        
+class AddServiceApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        log=11
+        context['result']=FAILED
+        if request.method=='POST':
+            log=22
+            report_form=AddServiceForm(request.POST)
+            if report_form.is_valid():
+                log=33
+                cd=report_form.cleaned_data
+            
+                service=ServiceRepo(request=request).add_service(**cd)
+                if service is not None:
+                    context['service']=ServiceSerializer(service).data
                     context['result']=SUCCEED
         context['log']=log
         return JsonResponse(context)

@@ -1,0 +1,57 @@
+<script>
+    let add_project_app = new Vue({
+        el: "#add-project-app",
+        data: {
+            title: "",
+            waiting: false,
+            contractor_id:0,
+            employer_id:0,
+            percentage_completed:0,
+            start_date:current_date,
+            end_date:current_date,
+            status:"",
+            parent_id:0,
+
+        },
+        components: {
+            DatePicker: VuePersianDatetimePicker
+
+        },
+        methods: {
+            filter: function () {
+                if (typeof projects_app != 'undefined') {
+                    projects_app.filter(this.title)
+                }
+            },
+            add_project: function () {
+                let url = "{% url 'projectmanager:add_project' %}"
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    title: this.title,
+                    contractor_id: this.contractor_id,
+                    employer_id: this.employer_id,
+                    percentage_completed: this.percentage_completed,
+                    status: this.status,
+                    start_date: this.start_date,
+                    end_date: this.end_date,
+                }
+                console.log(payload)
+
+                $.post(url, payload).done(data => {
+                    console.log(data)
+                    if (data.result === 'SUCCEED') {
+                        if (typeof projects_app != 'undefined') {
+                            projects_app.projects.push(data.project)
+                        }
+                        if (typeof all_projects_app != 'undefined') {
+                            all_projects_app.projects.push(data.project)
+                        }
+                        if (typeof projects_list_app != 'undefined') {
+                            projects_list_app.projects.push(data.project)
+                        }
+                    }
+                })
+            },
+        }
+    })
+</script>

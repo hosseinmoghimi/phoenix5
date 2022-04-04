@@ -293,6 +293,7 @@ class ProjectRepo():
         return objects.all().order_by("-start_date")
     
     def add_project(self,*args, **kwargs):
+        print(kwargs)
         if not self.user.has_perm(APP_NAME+'.add_project'):
             return
         project=Project()
@@ -304,6 +305,8 @@ class ProjectRepo():
 
         if 'employer_id' in kwargs and kwargs['employer_id'] is not None and kwargs['employer_id']>0:
             project.employer_id=kwargs['employer_id']
+        if 'percentage_completed' in kwargs and kwargs['percentage_completed'] is not None and kwargs['percentage_completed']>0:
+            project.percentage_completed=kwargs['percentage_completed']
 
         if 'parent_id' in kwargs and kwargs['parent_id'] is not None and kwargs['parent_id']>0:
             parent_id=kwargs['parent_id']
@@ -837,7 +840,10 @@ class OrganizationUnitRepo():
         if 'for_home' in kwargs:
             objects = objects.filter(Q(for_home=kwargs['for_home']))
         if 'parent_id' in kwargs:
-            objects=objects.filter(parent_id=kwargs['parent_id'])
+            parent_id=kwargs['parent_id']
+            if parent_id==0:
+                parent_id=None
+            objects=objects.filter(parent_id=parent_id)
         if 'project_id' in kwargs:
             project=ProjectRepo(request=self.request).project(project_id=kwargs['project_id'])
             objects=project.organization_units.all()

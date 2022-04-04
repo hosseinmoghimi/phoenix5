@@ -57,14 +57,14 @@ class PageImageSerializer(serializers.ModelSerializer):
 class PageLinkSerializer(serializers.ModelSerializer):
     class Meta:
         model=PageLink
-        fields=['id','title','url','get_edit_url','get_delete_url']
+        fields=['id','title','url','get_edit_url','get_delete_url','get_icon_tag']
 
 
 
 class PageDownloadSerializer(serializers.ModelSerializer):
     class Meta:
         model=PageDownload
-        fields=['id','title','get_edit_url','get_delete_url','get_download_url']
+        fields=['id','title','get_edit_url','get_delete_url','get_download_url','get_icon_tag']
 
 
 

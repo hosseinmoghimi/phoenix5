@@ -208,6 +208,10 @@ class ProjectsView(View):
         context['show_all_projects'] = True
         projects_s = json.dumps(ProjectSerializer(projects, many=True).data)
         context['projects_s'] = projects_s
+        if request.user.has_perm(APP_NAME+".add_project"):
+            context['add_root_project_form']=AddProjectForm()
+            context['statuses']=(i[0] for i in ProjectStatusEnum.choices)
+            context['employers']=OrganizationUnitRepo(request=request).list(parent_id=None)
         return render(request, TEMPLATE_ROOT+"projects.html", context)
 
 
@@ -342,8 +346,11 @@ class ProjectView(View):
             context['unit_names'] = (i[0] for i in UnitNameEnum.choices)
             context['unit_names2'] = (i[0] for i in UnitNameEnum.choices)
 
-            item_prices = PriceRepo(request=request).list(
-                account_id=project.contractor.account.id)
+            if project.contractor.account is not None:
+                item_prices = PriceRepo(request=request).list(
+                    account_id=project.contractor.account.id)
+            else:
+                item_prices=[]
             item_prices_s = json.dumps(
                 PriceBriefSerializer(item_prices, many=True).data)
             context['item_prices_s'] = item_prices_s
