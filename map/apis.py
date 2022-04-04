@@ -1,9 +1,9 @@
 from rest_framework.views import APIView
 
 from core.constants import FAILED, SUCCEED
-from .serializers import *
-from .forms import AddLocationForm, AddPageLocationForm
-from .repo import LocationRepo, PageLocationRepo
+from map.serializers import *
+from map.forms import *
+from map.repo import AreaRepo, LocationRepo, PageLocationRepo
 import json
 from django.http import JsonResponse
 
@@ -28,6 +28,37 @@ class AddLocationApi(APIView):
         return JsonResponse({'result':FAILED,'log':log})
     
 
+class AddAreaApi(APIView):
+    def post(self,request):
+        context={'result':FAILED}
+        log=1
+        user=request.user
+        if request.method=='POST':
+            log=2
+            add_area_form=AddAreaForm(request.POST)
+            if add_area_form.is_valid():
+                log=3
+                
+                title=add_area_form.cleaned_data['title']
+                code=add_area_form.cleaned_data['code']
+                area=add_area_form.cleaned_data['area']
+                color=add_area_form.cleaned_data['color']
+              
+                area=AreaRepo(request=request).add_area(
+                    title=title,
+                    code=code,
+                    color=color,
+                    area=area,
+                )
+                
+                if area is not None:
+                    log=4
+                    context['area']=AreaSerializer(area).data
+                    context['result']=SUCCEED
+        context['log']=log
+        return JsonResponse(context)
+    
+    
 class AddPageLocationApi(APIView):
     def post(self,request,*args, **kwargs):
         log=1

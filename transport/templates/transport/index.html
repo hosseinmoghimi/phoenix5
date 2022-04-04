@@ -7,36 +7,54 @@
   </h4>
 
   <div class="row">
-      <div class="col-md-12">
-          <div class="card">
-              <div class="card-body ">
-                <p>
-                    <a href="{% url 'transport:drivers' %}">راننده ها</a>
-                </p>
-                <p>
-                    <a href="{% url 'transport:passengers' %}">مسافر ها</a>
-                </p>
-                <p>
-                    <a href="{% url 'transport:trip_paths' %}">مسیر ها</a>
-                </p>
-                <p>
-                    <a href="{% url 'transport:trips' %}">سفر ها</a>
-                </p>
-                <p>
-                    <a href="{% url 'transport:vehicles' %}">وسایل نقلیه</a>
-                </p>
-                <p>
-                    <a href="{% url 'transport:clients' %}">مشتری ها</a>
-                </p>
-                <p>
-                    <a href="{% url 'transport:add_trip' %}">سفر جدید</a>
-                </p>
-                <p>
-                    <a href="{% url 'transport:add_trip_path' %}">مسیر جدید</a>
-                </p>
-              </div>
-          </div>
-      </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body ">
+              <p>
+                  <a href="{% url 'transport:drivers' %}">راننده ها</a>
+              </p>
+              <p>
+                  <a href="{% url 'transport:passengers' %}">مسافر ها</a>
+              </p>
+              <p>
+                  <a href="{% url 'transport:trip_paths' %}">مسیر ها</a>
+              </p>
+              <p>
+                  <a href="{% url 'transport:trips' %}">سفر ها</a>
+              </p>
+              <p>
+                  <a href="{% url 'transport:vehicles' %}">وسایل نقلیه</a>
+              </p>
+              <p>
+                  <a href="{% url 'transport:clients' %}">مشتری ها</a>
+              </p>
+              <p>
+                  <a href="{% url 'transport:add_trip' %}">سفر جدید</a>
+              </p>
+              <p>
+                  <a href="{% url 'transport:add_trip_path' %}">مسیر جدید</a>
+              </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body ">
+              <p>
+                  <a href="{% url 'transport:servicemans' %}">سرویس کار ها</a>
+              </p>
+           
+              <p>
+                <a href="{% url 'transport:workshifts' %}">شیفت های کاری</a>
+            </p>
+            <p>
+                <a href="{% url 'transport:maintenances' %}">تعمیر و نگهداری ها</a>
+            </p>
+            </div>
+        </div>
+    </div>
+
   </div>
 {% endblock content %}
 

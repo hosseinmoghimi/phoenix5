@@ -60,19 +60,6 @@ class Client(Account):
         return super(Client,self).save(*args, **kwargs)
 
 
-class Area(models.Model,LinkHelper):
-    code=models.CharField(_("code"), max_length=50)
-    name=models.CharField(_("area"), max_length=50)
-    app_name=APP_NAME
-    class_name="area"
-    class Meta:
-        verbose_name = _("Area")
-        verbose_name_plural = _("Areas")
-
-    def __str__(self):
-        return self.name
-
-
 class ServiceMan(Account):
     class Meta:
         verbose_name = _("ServiceMan")
@@ -129,31 +116,41 @@ class Vehicle(Asset):
         return f'{STATIC_URL}{APP_NAME}/images/thumbnail/{pic}/' 
 
 
-class WorkShift(models.Model,LinkHelper):
-    area=models.ForeignKey("area", verbose_name=_("area"), on_delete=models.CASCADE)
+class WorkShift(Transaction):
+    area=models.ForeignKey("map.area", verbose_name=_("area"), on_delete=models.CASCADE)
     vehicle=models.ForeignKey("vehicle", verbose_name=_("vehicle"), on_delete=models.CASCADE)
     driver=models.ForeignKey("driver", verbose_name=_("driver"), on_delete=models.CASCADE)
     start_time=models.DateTimeField(_("start_time"), auto_now=False, auto_now_add=False)
     end_time=models.DateTimeField(_("end_date"), auto_now=False, auto_now_add=False)
-    income=models.IntegerField(_("درآمد"),default=0)
-    outcome=models.IntegerField(_("هزینه"),default=0)
-    description=models.CharField(_("توضیحات"), null=True,blank=True,max_length=500)
-    class_name="workshift"
-    app_name=APP_NAME
+    wage=models.IntegerField(_("اجرت راننده"),default=0)
+     
+    
+    @property
+    def income(self):
+        return self.amount
+    @property
+    def outcome(self):
+        return self.wage
+
     def persian_start_time(self):
-        return PersianCalendar().from_gregorian(self.start_time)
+        return to_persian_datetime_tag(self.start_time)
     def persian_end_time(self):
-        return PersianCalendar().from_gregorian(self.end_time)
+        return to_persian_datetime_tag(self.end_time)
     class Meta:
         verbose_name = _("WorkShift")
         verbose_name_plural = _("WorkShifts")
-
-    def __str__(self):
-        return f'{self.vehicle.title} {self.persian_start_time()}'
-
+ 
+    def save(self,*args, **kwargs):
+        if self.title is None or self.title=="":
+            self.title=f"شیفت کاری {self.vehicle.title} توسط {self.driver.title} "
+        if self.class_name is None or self.class_name=="":
+            self.class_name='workshift'
+        if self.app_name is None or self.app_name=="":
+            self.app_name=APP_NAME
+        return super(WorkShift,self).save(*args, **kwargs)
 
 class TripPath(models.Model,LinkHelper):
-    area=models.ForeignKey("area", null=True,blank=True, verbose_name=_("area"), on_delete=models.CASCADE)
+    area=models.ForeignKey("map.area", null=True,blank=True, verbose_name=_("area"), on_delete=models.CASCADE)
     source=models.ForeignKey("map.location",related_name="trip_source_set", verbose_name=_("مبدا"), on_delete=models.CASCADE)
     destination=models.ForeignKey("map.location",related_name="trip_destination_set", verbose_name=_("مقصد"), on_delete=models.CASCADE)
     cost=models.IntegerField(_("هزینه"),default=0)
@@ -259,15 +256,14 @@ class Trip(Transaction):
                 self.duration=duration
                 super(Trip,self).save(*args, **kwargs)
 
- 
-
   
-class VehicleEvent(Page):
+class VehicleEvent(Transaction):
     # title=models.CharField(_("title"),blank=True, max_length=50)
     vehicle=models.ForeignKey("vehicle", verbose_name=_("ماشین"), on_delete=models.CASCADE)
-    event_datetime=models.DateTimeField(_("event_datetime"), auto_now=False, auto_now_add=False)
     kilometer=models.IntegerField(_("کارکرد"),null=True,blank=True)
-
+    @property
+    def event_datetime(self):
+        return self.transaction_datetime
     # description=models.CharField(_("توضیحات"), null=True,blank=True,max_length=500)
     # child_class=models.CharField(_("child_class"),default='vehicleworkevent', max_length=50)
     # images=models.ManyToManyField("core.galleryphoto",blank=True, verbose_name=_("images"))
@@ -289,11 +285,14 @@ class VehicleEvent(Page):
         return PersianCalendar().from_gregorian(self.event_datetime)
 
 
-class Maintenance(VehicleEvent,LinkHelper):
+class Maintenance(VehicleEvent):
     maintenance_type=models.CharField(_("سرویس"),choices=MaintenanceEnum.choices, max_length=100)
-    service_man=models.ForeignKey("serviceman", verbose_name=_("سرویس کار"),null=True,blank=True, on_delete=models.CASCADE)
-    paid=models.IntegerField(_("هزینه به تومان"))
- 
+    @property
+    def paid(self):
+        return self.amount
+    @property
+    def service_man(self):
+        return ServiceMan.objects.filter(pk=self.pay_from.pk).first()
     def get_icon(self):
         icon="settings"
         color="primary"
@@ -347,7 +346,8 @@ class Maintenance(VehicleEvent,LinkHelper):
     def __str__(self):
         return f'{self.service_man} {self.maintenance_type} {self.vehicle}'
  
-class VehicleWorkEvent(VehicleEvent,LinkHelper):
+
+class VehicleWorkEvent(VehicleEvent):
     work_shift=models.ForeignKey("workshift", verbose_name=_("شیفت کاری"), on_delete=models.CASCADE)
     event_type=models.CharField(_("event_type"),choices=WorkEventEnum.choices, max_length=50)
     def get_icon(self):

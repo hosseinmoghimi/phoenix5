@@ -29,35 +29,45 @@ def class_title(*args, **kwargs):
     if 'app_name' in kwargs:
         app_name=kwargs['app_name']
 
-    class_title = ""
+    class_title = "صفحه"
     if class_name == "page":
         class_title = "صفحه"
-    if class_name == "appointment":
+    elif class_name == "appointment":
         class_title = "قرار ملاقات"
-    if class_name == "letter":
+    elif class_name == "letter":
         class_title = "نامه"
-    if class_name == "file":
+    elif class_name == "file":
         class_title = "فایل"
-    if class_name == "ourwork":
+    elif class_name == "ourwork":
         class_title = "پروژه"
-    if class_name == "feature":
+    elif class_name == "feature":
         class_title = "خدمات"
-    if class_name == "blog":
+    elif class_name == "blog":
         class_title = "مقاله"
-    if class_name == "material":
+    elif class_name == "material":
         class_title = "متریال"
-    if class_name == "product":
+    elif class_name == "product":
         class_title = "کالا"
-    if class_name == "project":
+    elif class_name == "project":
         class_title = "پروژه"
-    if class_name == "service":
+    elif class_name == "service":
         class_title = "سرویس"
-    if class_name=="pm_service":
+    elif class_name=="pm_service":
         class_title = "سرویس"
-    if class_name == "organizationunit":
+    elif class_name == "organizationunit":
         class_title = "واحد سازمانی"
-    if class_name == "event":
+    elif class_name == "event":
         class_title = "رویداد"
+    elif class_name=="invoice":
+        class_title= "فاکتور"
+    elif class_name=="maintenance":
+        class_title= "تعمیر و نگهداری"
+    elif class_name=="materialinvoice":
+        class_title= "فاکتور متریال"
+    elif class_name=="serviceinvoice":
+        class_title ="فاکتور خدمات"
+    elif class_name=="workshift":
+        class_title= "شیفت کاری"
     return class_title
 
 class ParameterNameEnum(TextChoices):

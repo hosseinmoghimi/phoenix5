@@ -67,6 +67,7 @@ class Transaction(Page,LinkHelper):
     amount=models.IntegerField(_("مبلغ"),default=0)
     payment_method=models.CharField(_("نوع پرداخت"),choices=PaymentMethodEnum.choices,default=PaymentMethodEnum.DRAFT, max_length=50)
     transaction_datetime=models.DateTimeField(_("تاریخ تراکنش"), auto_now=False, auto_now_add=False)
+    
     def color(self):
         color="primary"
         if self.status==TransactionStatusEnum.DRAFT:

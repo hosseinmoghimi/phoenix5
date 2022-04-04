@@ -1,6 +1,7 @@
 from django.db import models
 from django.db.models import Sum
 from django.shortcuts import reverse
+from core.enums import ColorEnum
 
 from core.settings import ADMIN_URL
 from .apps import APP_NAME
@@ -35,8 +36,9 @@ class Location(models.Model,LinkHelper):
 
     
     def save(self, *args, **kwargs):
-        self.location = self.location.replace('width="600"', 'width="100%"')
-        self.location = self.location.replace('height="450"', 'height="400"')
+        if self.location is not None:
+            self.location = self.location.replace('width="600"', 'width="100%"')
+            self.location = self.location.replace('height="450"', 'height="400"')
         super(Location, self).save(*args, **kwargs)
  
 
@@ -53,7 +55,26 @@ class Location(models.Model,LinkHelper):
             </a>
         """
  
+class Area(models.Model,LinkHelper):
+    title=models.CharField(_("title"), max_length=50)
+    code=models.CharField(_("code"), max_length=50)
+    area = models.CharField(_("area"),blank=True,null=True, max_length=1000)
+    color=models.CharField(_("color"),choices=ColorEnum.choices,default=ColorEnum.PRIMARY, max_length=50)
+    app_name=APP_NAME
+    class_name="area"
+    class Meta:
+        verbose_name = _("Area")
+        verbose_name_plural = _("Areas")
 
+    def __str__(self):
+        return self.title
+
+
+    def save(self, *args, **kwargs):
+        if self.area is not None:
+            self.area = self.area.replace('width="600"', 'width="100%"')
+            self.area = self.area.replace('height="450"', 'height="400"')
+        super(Area, self).save(*args, **kwargs)
 
 class PageLocation(models.Model,LinkHelper):
     page=models.ForeignKey("core.page", verbose_name=_("page"), on_delete=models.CASCADE)

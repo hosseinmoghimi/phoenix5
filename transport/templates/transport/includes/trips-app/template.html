@@ -89,6 +89,14 @@
                                                 <span v-text="trip.trip_category.title"></span>
                                             </span>
                                         </a>
+
+  <a :href="trip.trip_category.area.get_absolute_url">
+                                            <span class="'badge badge-'+trip.trip_category.area.color">
+
+                                                <span v-text="trip.trip_category.trip_category.title"></span>
+                                            </span>
+                                        </a>
+                                        
                                     </div>
                                     <div>
 

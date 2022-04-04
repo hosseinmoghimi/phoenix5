@@ -1,7 +1,7 @@
 from authentication.repo import ProfileRepo
 from core.repo import PageRepo
 from map.apps import APP_NAME
-from map.models import Location, PageLocation
+from map.models import Area, Location, PageLocation
 
 class LocationRepo():
     def __init__(self, *args, **kwargs):
@@ -134,4 +134,51 @@ class PageLocationRepo():
         objects = self.objects.filter(title__contains=search_for)
         return objects 
 
+     
         
+class AreaRepo():
+    def __init__(self, *args, **kwargs):
+        self.request = None
+        self.user = None
+        if 'request' in kwargs:
+            self.request = kwargs['request']
+            self.user = self.request.user
+        if 'user' in kwargs:
+            self.user = kwargs['user']
+        self.profile=ProfileRepo(*args, **kwargs).me
+        self.objects = Area.objects
+    def list(self,*args, **kwargs):
+        objects= self.objects
+        if 'page_id' in kwargs:
+            objects=objects.filter(page_id=kwargs['page_id'])
+        if 'location_id' in kwargs:
+            objects=objects.filter(location_id=kwargs['location_id'])
+        if 'search_for' in kwargs:
+            objects=objects.filter(location__title__contains=kwargs['search_for'])
+        return objects.all()
+    def add_area(self,*args, **kwargs):
+        if not self.user.has_perm(APP_NAME+".add_area"):
+            return None
+        area=Area()
+        if 'code' in kwargs:
+            area.code=kwargs['code']
+        if 'title' in kwargs:
+            area.title=kwargs['title']
+        if 'color' in kwargs:
+            area.color=kwargs['color']
+        if 'area' in kwargs:
+            area.area=kwargs['area']
+        print(area.area)
+        area.save()
+         
+        return area
+
+    def area(self, *args, **kwargs):
+        if 'area_id' in kwargs:
+            return self.objects.filter(pk=kwargs['area_id']).first()
+        if 'pk' in kwargs:
+            return self.objects.filter(pk=kwargs['pk']).first()
+        if 'id' in kwargs:
+            return self.objects.filter(pk=kwargs['id']).first()
+        if 'title' in kwargs:
+            return self.objects.filter(pk=kwargs['title']).first()

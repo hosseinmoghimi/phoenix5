@@ -1,0 +1,115 @@
+{% load static %}
+
+{% load static %}
+<div class="card">
+    <div class="card-header">
+<h6>
+    <small class="text-muted">
+
+        {{page.class_title}}
+    </small>
+</h6>
+        <h5>
+          
+
+            {{page.title}}
+
+
+        </h5>
+    </div>
+    <div class="farsi card-body text-right">
+        <div class="my-2">
+            {% include "core/includes/page-like-app/template.html" %}
+
+        </div>
+
+ 
+      
+        
+
+  
+        
+        <div class="table-responsive">
+            <table class="table">
+                <tbody>
+                    <tr>
+                        <td class="text-left">
+                            وسیله تعمیر شده 
+
+                        </td>
+                        <td class="text-left">
+                            <a href="{{maintenance.vehicle.get_absolute_url}}">
+                                {{maintenance.vehicle.title}}
+
+                            </a>
+                        </td>
+                    </tr>
+
+
+                    <tr>
+                        <td class="text-left">
+تعمیر کار
+                        </td>
+                        <td class="text-left">
+                            <a href="{{maintenance.service_man.get_absolute_url}}">
+                                {{maintenance.service_man.title}}
+
+                            </a>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="text-left">
+تعمیر 
+                        </td>
+                        <td class="text-left">
+                                {{maintenance.maintenance_type}}
+
+                        </td>
+                    </tr>
+
+
+                </tbody>
+            </table>
+        </div>
+     
+        <div>
+
+        
+        {% if perms.core.change_page %}
+        <span class="my-2">
+
+            <a href="{{page.get_edit_url}}" target="_blank" title="ویرایش" class="mx-2 text-warning"><i
+                    class="fa fa-edit"></i> ویرایش</a>
+        </span>
+        {% endif %}
+
+
+
+        {% if perms.core.delete_page %}
+        <span class="my-2">
+
+            <a href="{{page.get_delete_url}}" target="_blank" title="حذف" class="mx-2 text-danger"><i
+                    class="fa fa-trash"></i> حذف</a>
+        </span>
+        {% endif %}
+    </div>
+   
+        
+
+
+        {% if page.meta_data %}
+        <p>
+            <small>
+
+                <small class="text-muted">
+                    کلید واژه ها :
+                </small>
+                {{keywords}}
+            </small>
+        </p>
+        {% endif %}
+
+    </div>
+
+</div>

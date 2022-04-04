@@ -7,12 +7,14 @@ from django.shortcuts import render,reverse
 from core.views import CoreContext,SearchForm
 # Create your views here.
 from django.views import View
+from map.repo import AreaRepo
+from map.serializers import AreaSerializer
 
 from transport.forms import * 
 
-from .serializers import ClientSerializer, DriverSerializer,PassengerSerializer, TripPathSerializer, TripSerializer, VehicleSerializer
+from .serializers import ClientSerializer, DriverSerializer, MaintenanceSerializer,PassengerSerializer, ServiceManSerializer, TripPathSerializer, TripSerializer, VehicleSerializer, WorkShiftSerializer
 
-from .repo import ClientRepo,TripCategoryRepo, DriverRepo,PassengerRepo, TripPathRepo, TripRepo, VehicleRepo
+from .repo import ClientRepo, MaintenanceRepo, ServiceManRepo,TripCategoryRepo, DriverRepo,PassengerRepo, TripPathRepo, TripRepo, VehicleRepo, WorkShiftRepo
 from .apps import APP_NAME
 # from .repo import ProductRepo
 # from .serializers import ProductSerializer
@@ -30,6 +32,128 @@ def getContext(request, *args, **kwargs):
     return context
 
 def get_add_trip_context(request,*args, **kwargs):
+    context={}
+
+     #vehicles
+    vehicles=VehicleRepo(request=request).list(*args, **kwargs)
+    context['vehicles']=vehicles
+    vehicles_s=json.dumps(VehicleSerializer(vehicles,many=True).data)
+    context['vehicles_s']=vehicles_s
+
+     #trip_categories
+    trip_categories=TripCategoryRepo(request=request).list(*args, **kwargs)
+    context['trip_categories']=trip_categories 
+
+
+
+     #clients
+    clients=ClientRepo(request=request).list(*args, **kwargs)
+    context['clients']=clients
+    clients_s=json.dumps(ClientSerializer(clients,many=True).data)
+    context['clients_s']=clients_s
+
+
+
+     #drivers
+    drivers=DriverRepo(request=request).list(*args, **kwargs)
+    context['drivers']=drivers
+    drivers_s=json.dumps(DriverSerializer(drivers,many=True).data)
+    context['drivers_s']=drivers_s
+
+
+    #passengers
+    passengers=PassengerRepo(request=request).list(*args, **kwargs)
+    context['passengers']=passengers
+    passengers_s=json.dumps(PassengerSerializer(passengers,many=True).data)
+    context['passengers_s']=passengers_s
+    
+
+    #trip_paths
+    trip_paths=TripPathRepo(request=request).list(*args, **kwargs)
+    context['trip_paths']=trip_paths
+    trip_paths_s=json.dumps(TripPathSerializer(trip_paths,many=True).data)
+    context['trip_paths_s']=trip_paths_s
+
+    context['add_trip_form']=AddTripForm()
+    return context
+
+def get_work_shifts_context(request,*args, **kwargs):
+    context={}
+      
+     #areas
+    areas=AreaRepo(request=request).list(*args, **kwargs)
+    context['areas']=areas
+    areas_s=json.dumps(AreaSerializer(areas,many=True).data)
+    context['areas_s']=areas_s
+ 
+
+      
+     #drivers
+    drivers=DriverRepo(request=request).list(*args, **kwargs)
+    context['drivers']=drivers
+    drivers_s=json.dumps(DriverSerializer(drivers,many=True).data)
+    context['drivers_s']=drivers_s
+ 
+    #work_shifts
+    work_shifts=WorkShiftRepo(request=request).list(*args, **kwargs)
+    context['work_shifts']=work_shifts
+    work_shifts_s=json.dumps(WorkShiftSerializer(work_shifts,many=True).data)
+    context['work_shifts_s']=work_shifts_s
+
+
+
+    if request.user.has_perm(APP_NAME+".add_workshift"):
+        context['add_work_shif_form']=AddWorkShiftForm()
+
+    return context
+
+def get_add_maintenance_context(request,*args, **kwargs):
+    context={}
+
+     #vehicles
+    vehicles=VehicleRepo(request=request).list(*args, **kwargs)
+    context['vehicles']=vehicles
+    vehicles_s=json.dumps(VehicleSerializer(vehicles,many=True).data)
+    context['vehicles_s']=vehicles_s
+
+     #trip_categories
+    trip_categories=TripCategoryRepo(request=request).list(*args, **kwargs)
+    context['trip_categories']=trip_categories 
+
+
+
+     #clients
+    clients=ClientRepo(request=request).list(*args, **kwargs)
+    context['clients']=clients
+    clients_s=json.dumps(ClientSerializer(clients,many=True).data)
+    context['clients_s']=clients_s
+
+
+
+     #drivers
+    drivers=DriverRepo(request=request).list(*args, **kwargs)
+    context['drivers']=drivers
+    drivers_s=json.dumps(DriverSerializer(drivers,many=True).data)
+    context['drivers_s']=drivers_s
+
+
+    #passengers
+    passengers=PassengerRepo(request=request).list(*args, **kwargs)
+    context['passengers']=passengers
+    passengers_s=json.dumps(PassengerSerializer(passengers,many=True).data)
+    context['passengers_s']=passengers_s
+    
+
+    #trip_paths
+    trip_paths=TripPathRepo(request=request).list(*args, **kwargs)
+    context['trip_paths']=trip_paths
+    trip_paths_s=json.dumps(TripPathSerializer(trip_paths,many=True).data)
+    context['trip_paths_s']=trip_paths_s
+
+    context['add_trip_form']=AddTripForm()
+    return context
+
+def get_add_work_event_context(request,*args, **kwargs):
     context={}
 
      #vehicles
@@ -137,6 +261,101 @@ class TripView(View):
         return render(request,TEMPLATE_ROOT+"trip.html",context)
 
 
+class WorkShiftsView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        work_shifts=WorkShiftRepo(request=request).list(*args, **kwargs)
+        context['work_shifts']=work_shifts
+        work_shifts_s=json.dumps(WorkShiftSerializer(work_shifts,many=True).data)
+        context['work_shifts_s']=work_shifts_s
+        return render(request,TEMPLATE_ROOT+"work-shifts.html",context)
+
+
+class WorkShiftView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        
+        work_shift=WorkShiftRepo(request=request).work_shift(*args, **kwargs)
+        context['work_shift']=work_shift
+        work_shift_s=json.dumps(WorkShiftSerializer(work_shift).data)
+        context['work_shift_s']=work_shift_s
+        context.update(get_transaction_context(request=request,transaction=work_shift))
+
+        return render(request,TEMPLATE_ROOT+"work-shift.html",context)
+
+
+class ServiceMansView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        service_mans=ServiceManRepo(request=request).list(*args, **kwargs)
+        context['service_mans']=service_mans
+        work_shifts_s=json.dumps(ServiceManSerializer(service_mans,many=True).data)
+        context['work_shifts_s']=work_shifts_s
+        return render(request,TEMPLATE_ROOT+"service-mans.html",context)
+
+
+class ServiceManView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        
+        service_man=ServiceManRepo(request=request).service_man(*args, **kwargs)
+        context['service_man']=service_man
+        service_man_s=json.dumps(ServiceManSerializer(service_man).data)
+        context['service_man_s']=service_man_s
+        context.update(get_account_context(request=request,account=service_man))
+
+
+        #maintenances
+        if False:
+            trips=TripRepo(request=request).list(driver_id=driver.id)
+            context['trips']=trips
+            trips_s=json.dumps(TripSerializer(trips,many=True).data)
+            context['trips_s']=trips_s
+
+        context.update(get_add_trip_context(request=request))
+
+        
+
+        return render(request,TEMPLATE_ROOT+"service-man.html",context)
+
+
+
+class MaintenancesView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        maintenances=MaintenanceRepo(request=request).list(*args, **kwargs)
+        context['maintenances']=maintenances
+        maintenances_s=json.dumps(MaintenanceSerializer(maintenances,many=True).data)
+        context['maintenances_s']=maintenances_s
+        return render(request,TEMPLATE_ROOT+"maintenances.html",context)
+
+
+class MaintenanceView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        
+        maintenance=MaintenanceRepo(request=request).maintenance(*args, **kwargs)
+        context['maintenance']=maintenance
+        maintenance_s=json.dumps(MaintenanceSerializer(maintenance).data)
+        context['maintenance_s']=maintenance_s
+        context.update(get_transaction_context(request=request,transaction=maintenance))
+
+
+        #maintenances
+        if False:
+            trips=TripRepo(request=request).list(driver_id=driver.id)
+            context['trips']=trips
+            trips_s=json.dumps(TripSerializer(trips,many=True).data)
+            context['trips_s']=trips_s
+
+        # context.update(get_add_trip_context(request=request))
+
+        
+
+        return render(request,TEMPLATE_ROOT+"maintenance.html",context)
+
+
+
 class DriverView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -187,6 +406,7 @@ class VehicleView(View):
         context['vehicle_s']=vehicle_s
 
         context.update(get_add_trip_context(request=request))
+        context.update(get_work_shifts_context(request=request,vehicle_id=vehicle.id))
         return render(request,TEMPLATE_ROOT+"vehicle.html",context)
 
    

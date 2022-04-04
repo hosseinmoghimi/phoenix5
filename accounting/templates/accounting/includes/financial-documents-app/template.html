@@ -100,8 +100,7 @@
                                     <div v-if="financial_document.transaction">
                                         <a :href="financial_document.transaction.get_absolute_url">
                                             <!-- <span v-text="financial_document.transaction.title"></span> -->
-                                            <span class="text-muted small">
-                                                تراکنش
+                                            <span class="text-muted small" v-text="financial_document.transaction.class_title">
 
                                             </span>
                                         </a>
