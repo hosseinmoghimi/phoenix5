@@ -15,13 +15,17 @@
         {% if not no_navbar%}
           
         {% include "phoenix/includes/navbar.html" %}
+     
+             
         {% endif %}
-
-        <div class="pt-5" style="margin-top:50px;">
-
+         <div class="{% if not no_navbar%}pt-5{% endif %}" style="margin-top:50px;">
             {% block content %}
 
             {% endblock content %}
+        </div>
+
+
+            
         </div>
 
 

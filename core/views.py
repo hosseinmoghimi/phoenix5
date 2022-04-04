@@ -256,6 +256,8 @@ class PageImageView(View):
             raise Http404
         context=CoreContext(request=request,app_name=APP_NAME)
         context['image']=image
+        context['no_navbar']=True
+        context['no_footer']=True
         return render(request,TEMPLATE_ROOT+"image.html",context)
         
 
@@ -268,6 +270,8 @@ class ImageView(View):
             raise Http404
         context=CoreContext(request=request,app_name=APP_NAME)
         context['image']=image
+        context['no_navbar']=True
+        context['no_footer']=True
         return render(request,TEMPLATE_ROOT+"image.html",context)
         
 class MessageView(View):
