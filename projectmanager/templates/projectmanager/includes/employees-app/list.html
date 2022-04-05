@@ -61,9 +61,12 @@
                                     </h6>
                                 </td>
                                 <td>
-                                    <a :href="employee.organization_unit.get_absolute_url">
-                                        <span v-text=employee.organization_unit.title></span>
-                                    </a>
+                                    <div v-if="employee.organization_unit">
+
+                                        <a :href="employee.organization_unit.get_absolute_url">
+                                            <span v-text=employee.organization_unit.title></span>
+                                        </a>
+                                    </div>
                                 </td>
                                 <td>
                                     {% if perms.projectmanager.change_employee %}
