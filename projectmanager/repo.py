@@ -293,7 +293,6 @@ class ProjectRepo():
         return objects.all().order_by("-start_date")
     
     def add_project(self,*args, **kwargs):
-        print(kwargs)
         if not self.user.has_perm(APP_NAME+'.add_project'):
             return
         project=Project()

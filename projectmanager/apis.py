@@ -61,9 +61,7 @@ class AddProjectApi(APIView):
                 if 'end_date' in cd:
                     cd['end_date']=PersianCalendar().to_gregorian(cd['end_date'])
 
-                project=ProjectRepo(request=request).add_project(
-                    **cd
-                )
+                project=ProjectRepo(request=request).add_project(**cd)
                 if project is not None:
                     context['project']=ProjectSerializer(project).data
                     context['result']=SUCCEED
