@@ -17,11 +17,11 @@ class CreateAccountForm(forms.Form):
     profile_id=forms.IntegerField(required=False)
 
 class AddProductForm(forms.Form):
-    title=forms.CharField(max_length=50,required=True)
+    title=forms.CharField(max_length=500,required=True)
 
     
 class AddServiceForm(forms.Form):
-    title=forms.CharField(max_length=50,required=True)
+    title=forms.CharField(max_length=500,required=True)
 
     
 class GetReportForm(forms.Form):

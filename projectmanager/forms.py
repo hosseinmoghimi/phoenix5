@@ -24,10 +24,6 @@ class AddOrganizationUnitForm(forms.Form):
     is_ware_house=forms.BooleanField(required=False)
     title=forms.CharField(max_length=50, required=False)
 
-class AddMaterialForm(forms.Form):
-    parent_id=forms.IntegerField(required=False)
-    title=forms.CharField(max_length=50, required=True)
-
 class AddMaterialRequestToWareHouseSheetForm(forms.Form):
     material_request_id=forms.IntegerField(required=True)
     ware_house_import_sheet_id=forms.IntegerField(required=False)
@@ -94,11 +90,11 @@ class SearchForm(forms.Form):
     search_for=forms.CharField(max_length=50, required=True)
           
 class AddMaterialForm(forms.Form):
-    title=forms.CharField(max_length=50, required=True)
+    title=forms.CharField(max_length=500, required=True)
     parent_id=forms.IntegerField( required=False)
           
 class AddServiceForm(forms.Form):
-    title=forms.CharField(max_length=50, required=True)
+    title=forms.CharField(max_length=500, required=True)
     parent_id=forms.IntegerField( required=False)
          
 class AddServiceRequestForm(forms.Form):
