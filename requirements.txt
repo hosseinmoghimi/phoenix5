@@ -1,5 +1,5 @@
 django
-django-web3-auth
+# django-web3-auth
 django-social-share
 cryptography 
 django-cleanup
