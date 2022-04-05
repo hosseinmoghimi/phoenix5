@@ -19,6 +19,7 @@
                     if (data.result === 'SUCCEED') {
                         if (typeof services_app != 'undefined') {
                             services_app.services.push(data.service)
+                            services.push(data.service)
                         }
                     }
                 })
