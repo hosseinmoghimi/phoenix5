@@ -10,7 +10,8 @@ from django.views import View
 from map.repo import AreaRepo
 from map.serializers import AreaSerializer
 
-from transport.forms import * 
+from transport.forms import *
+from utility.calendar import PersianCalendar 
 
 from .serializers import ClientSerializer, DriverSerializer, MaintenanceSerializer,PassengerSerializer, ServiceManSerializer, TripPathSerializer, TripSerializer, VehicleSerializer, WorkShiftSerializer
 
@@ -404,7 +405,12 @@ class VehicleView(View):
         context['vehicle']=vehicle
         vehicle_s=json.dumps(VehicleSerializer(vehicle).data)
         context['vehicle_s']=vehicle_s
-
+        
+        trips=TripRepo(request=request).list(vehicle_id=vehicle.id)
+        trips_s=json.dumps(TripSerializer(trips,many=True).data)
+        context['trips']=trips
+        context['trips_s']=trips_s
+        
         context.update(get_add_trip_context(request=request))
         context.update(get_work_shifts_context(request=request,vehicle_id=vehicle.id))
         return render(request,TEMPLATE_ROOT+"vehicle.html",context)
@@ -436,6 +442,8 @@ class AddTripView(View):
             cd=fm.cleaned_data
             cd['passengers']=json.loads(cd['passengers'])
             cd['trip_paths']=json.loads(cd['trip_paths'])
+            cd['date_started']=PersianCalendar().to_gregorian(cd['date_started'])
+            cd['date_ended']=PersianCalendar().to_gregorian(cd['date_ended'])
             trip=TripRepo(request=request).add_trip(**cd)
             if trip is not None:
                 context['trip']=TripSerializer(trip).data

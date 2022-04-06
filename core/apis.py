@@ -3,7 +3,7 @@ from core.serializers import PageBriefSerializer, PageCommentSerializer, PageDow
 from rest_framework.views import APIView
 from django.http import JsonResponse
 from .forms import *
-from .repo import ContactMessageRepo, PageCommentRepo, PageLinkRepo, PageRepo,  ParameterRepo,PageDownloadRepo,PageImageRepo
+from .repo import ContactMessageRepo, PageCommentRepo, PageLinkRepo, PageRepo, PageTagRepo,  ParameterRepo,PageDownloadRepo,PageImageRepo
 from .constants import SUCCEED, FAILED
 from utility.utils import str_to_html
 

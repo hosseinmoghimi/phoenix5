@@ -87,16 +87,17 @@ def PageContext(request, *args, **kwargs):
     context['page'] = page
     profile=ProfileRepo(request=request).me
 
-    
-    my_pages_ids=[]
-    if profile is not None:
-        page_permissions=PagePermissionRepo(request=request).list()
-        # my_pages_ids=( page_permissions)
-        for page_permission in page_permissions:
-            my_pages_ids.append(page_permission.page.id)
-
-
     can_read=False
+    can_write=False
+    
+    if profile is not None:
+        page_permission=PagePermissionRepo(request=request).list(page_id=page.id,profile_id=profile.id).first()
+        if page_permission is not None:
+            can_write=page_permission.can_write
+        # my_pages_ids=( page_permissions)
+        
+
+
     can_add_link=False
     can_add_image=False
     can_add_download=False
@@ -107,7 +108,8 @@ def PageContext(request, *args, **kwargs):
     
     if request.user.has_perm(APP_NAME+".view_page"):
         can_read=True
-    if page.id in my_pages_ids or request.user.has_perm(APP_NAME+".change_page"):
+    if can_write or request.user.has_perm(APP_NAME+".change_page"):
+        can_read=True
         can_add_link=True
         can_add_image=True
         can_add_download=True

@@ -11,6 +11,8 @@ class AddTripForm(forms.Form):
     delay=forms.IntegerField(required=False)
     pay_to_id=forms.IntegerField(required=False)
     trip_category_id=forms.IntegerField(required=False)
+    date_started=forms.CharField(max_length=50,required=False)
+    date_ended=forms.CharField(max_length=50,required=False)
     description=forms.CharField(max_length=500,required=False)
 
 class AddWorkShiftForm(forms.Form):

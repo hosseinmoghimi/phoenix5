@@ -54,8 +54,18 @@ class PageRepo:
         new_page.save()
         return new_page
     def add_related_page(self,*args, **kwargs):
-        if not self.user.has_perm(APP_NAME+".change_page"):
-            return None
+
+        self.profile=ProfileRepo(request=self.request).me
+        can_write=False
+        page=PageRepo(request=self.request).page(*args, **kwargs)
+        if self.profile is not None:
+            page_permission=PagePermission.objects.filter(page_id=page.id).filter(profile_id=self.profile.id).first()
+            if page_permission is not None:
+                can_write=page_permission.can_write
+        if page is None or not can_write:
+            return
+
+        
         page_id=0
         related_page_id=0
         bidirectional=True
@@ -159,6 +169,7 @@ class PageTagRepo():
             self.request=kwargs['request']
             self.user=self.request.user
         self.objects=PageTag.objects.all()
+        self.profile=ProfileRepo(request=self.request).me
     def list(self,*args, **kwargs):
         objects=self.objects
         if 'tag_id' in kwargs and kwargs['tag_id']>0:
@@ -168,11 +179,13 @@ class PageTagRepo():
         return objects.order_by('-date_added')
 
     def add_tag(self,*args, **kwargs):
-        my_pages_ids=PagePermissionRepo(request=self.request).my_pages_ids()
-        if not page.id in my_pages_ids:
-            return
+        can_write=False
         page=PageRepo(request=self.request).page(*args, **kwargs)
-        if page is None:
+        if self.profile is not None:
+            page_permission=PagePermission.objects.filter(page_id=page.id).filter(profile_id=self.profile.id).first()
+            if page_permission is not None:
+                can_write=page_permission.can_write
+        if page is None or not can_write:
             return
         if not 'tag_title' in kwargs:
             return
@@ -221,6 +234,16 @@ class PageCommentRepo:
             self.user=self.request.user
         self.objects=PageComment.objects
     def add_comment(self,comment,page_id,*args, **kwargs):
+        
+        can_write=False
+        page=PageRepo(request=self.request).page(*args, **kwargs)
+        if self.profile is not None:
+            page_permission=PagePermission.objects.filter(page_id=page.id).filter(profile_id=self.profile.id).first()
+            if page_permission is not None:
+                can_write=page_permission.can_write
+        if page is None or not can_write:
+            return
+
         profile=ProfileRepo(user=self.user).me
         page_comment=PageComment(comment=comment,page_id=page_id,profile=profile)
         
@@ -424,11 +447,15 @@ class PageImageRepo:
         self.objects=PageImage.objects
     def add_page_image(self,title,image,*args, **kwargs):
         
+        
+        can_write=False
         page=PageRepo(request=self.request).page(*args, **kwargs)
-        if page is not None:
-            my_pages_ids=PagePermissionRepo(request=self.request).my_pages_ids()
-            if not page.id in my_pages_ids:
-                return
+        if self.profile is not None:
+            page_permission=PagePermission.objects.filter(page_id=page.id).filter(profile_id=self.profile.id).first()
+            if page_permission is not None:
+                can_write=page_permission.can_write
+        if page is None or not can_write:
+            return
         
         # image=Image(title=title,image_main_origin=image)
         # image.save()
@@ -480,13 +507,16 @@ class PageDownloadRepo:
         self.objects=PageDownload.objects.all()
      
     def add_page_download(self,title,file,priority=1000,*args, **kwargs):
+        
+        can_write=False
         page=PageRepo(request=self.request).page(*args, **kwargs)
-        if page is not None:
-            my_pages_ids=PagePermissionRepo(request=self.request).my_pages_ids()
-            if page.id in my_pages_ids:
-                pass
-            else:
-                return
+        if self.profile is not None:
+            page_permission=PagePermission.objects.filter(page_id=page.id).filter(profile_id=self.profile.id).first()
+            if page_permission is not None:
+                can_write=page_permission.can_write
+        if page is None or not can_write:
+            return
+
         if page.app_name=='web':
             is_open=True
         else:
@@ -595,13 +625,17 @@ class PageLinkRepo:
             objects=objects.filter(page_id=kwargs['page_id'])
         return objects
     def add_page_link(self,title,url,*args, **kwargs):
+        
+        can_write=False
         page=PageRepo(request=self.request).page(*args, **kwargs)
-        if page is not None:
-            my_pages_ids=PagePermissionRepo(request=self.request).my_pages_ids()
-            if page.id in my_pages_ids:
-                pass
-            else:
-                return
+        if self.profile is not None:
+            page_permission=PagePermission.objects.filter(page_id=page.id).filter(profile_id=self.profile.id).first()
+            if page_permission is not None:
+                can_write=page_permission.can_write
+        if page is None or not can_write:
+            return
+
+
         new_page_link=PageLink(title=title,page_id=page.id,url=url,icon_fa="fa fa-link",profile=self.profile)
         new_page_link.new_tab=True
         new_page_link.save()

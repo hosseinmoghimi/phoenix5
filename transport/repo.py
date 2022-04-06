@@ -52,22 +52,21 @@ class VehicleRepo():
         if 'user' in kwargs:
             self.user = kwargs['user']
         
-        self.objects=Vehicle.objects.all()
+        self.objects=Vehicle.objects
         self.profile=ProfileRepo(*args, **kwargs).me
        
 
     def vehicle(self, *args, **kwargs):
         pk=0
         if 'vehicle_id' in kwargs:
-            pk=kwargs['vehicle_id']
+            return self.objects.filter(pk=kwargs['vehicle_id']).first()
         elif 'pk' in kwargs:
-            pk=kwargs['pk']
+            return self.objects.filter(pk=kwargs['pk']).first()
         elif 'id' in kwargs:
-            pk=kwargs['id']
-        return self.objects.filter(pk=pk).first()
+            return self.objects.filter(pk=kwargs['id']).first()
      
     def list(self, *args, **kwargs):
-        objects = self.objects.all()
+        objects = self.objects
         if 'search_for' in kwargs:
             search_for=kwargs['search_for']
             objects = objects.filter(Q(title__contains=search_for)|Q(short_description__contains=search_for)|Q(description__contains=search_for))
@@ -153,6 +152,16 @@ class TripRepo():
         key='description'
         if key in kwargs and kwargs[key] is not None:
             trip.description=kwargs[key]
+
+
+        key='date_started'
+        if key in kwargs and kwargs[key] is not None:
+            trip.date_started=kwargs[key]
+
+        key='date_ended'
+        if key in kwargs and kwargs[key] is not None:
+            trip.date_ended=kwargs[key]
+
 
         key='title'
         if key in kwargs and kwargs[key] is not None:

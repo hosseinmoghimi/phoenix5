@@ -64,15 +64,21 @@
             all_passengers: all_passengers,
             passengers: passengers,
             description: "",
-            distance:0,
-            duration:0,
+            distance: 0,
+            duration: 0,
             vehicle_id: vehicle_id,
             trip_path_id: trip_path_id,
             passenger_id: 0,
             waiting: false,
             amount: amount,
-            trip_category_id:0,
+            trip_category_id: 0,
             delay: 0,
+            date_started: current_datetime,
+            date_ended: current_datetime,
+        },
+        components: {
+            DatePicker: VuePersianDatetimePicker
+
         },
         methods: {
             to_price: function (vall) {
@@ -91,9 +97,10 @@
                     if (trip_path.id == add_trip_app.trip_path_id) {
                         add_trip_app.trip_paths.push(trip_path)
                         add_trip_app.all_trip_paths = add_trip_app.all_trip_paths.filter(trip_path2 => trip_path2.id != trip_path.id)
-                        add_trip_app.amount =parseInt(trip_path.cost)+parseInt(add_trip_app.amount)
-                        add_trip_app.duration =parseInt(trip_path.duration)+parseInt(add_trip_app.duration)
-                        add_trip_app.distance =parseInt(trip_path.distance)+parseInt(add_trip_app.distance)
+                        add_trip_app.amount = parseInt(trip_path.cost) + parseInt(add_trip_app.amount)
+                        add_trip_app.duration = parseInt(trip_path.duration) + parseInt(add_trip_app.duration)
+                        add_trip_app.distance = parseInt(trip_path.distance) + parseInt(add_trip_app.distance)
+
                     }
                 });
             },
@@ -102,7 +109,7 @@
                 all_trip_paths.forEach(trip_path => {
                     if (trip_path.id == trip_path_id) {
                         add_trip_app.all_trip_paths.push(trip_path)
-                        add_trip_app.amount =parseInt(add_trip_app.amount)-parseInt(trip_path.cost)
+                        add_trip_app.amount = parseInt(add_trip_app.amount) - parseInt(trip_path.cost)
 
                     }
                 });
@@ -175,14 +182,20 @@
                     passengers: passengers_,
                     amount: this.amount,
                     delay: this.delay,
+                    date_started: this.date_started,
+                    date_ended: this.date_ended,
                     trip_category_id: this.trip_category_id,
                 }
-                console.log(payload)
+                // console.log(payload)
                 let url = "{% url 'transport:add_trip' %}"
                 $.post(url, payload).done(data => {
-                    console.log(data)
-                    if (data.result === 'SUCCEED') {
+                add_trip_app.waiting = false
 
+                    // console.log(data)
+                    if (data.result === 'SUCCEED') {
+                        if (typeof trips_app != "undefined") {
+                            trips_app.trips.push(data.trip)
+                        }
                     }
 
                 })
