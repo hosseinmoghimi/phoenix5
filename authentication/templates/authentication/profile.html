@@ -185,6 +185,12 @@
         {% include "core/includes/page-like-app/page-likes.html" %}
 
     </div>
+    {% if resumes %}
+      <div class="col-md-12">
+        {% include "resume/fa/includes/resumes-app/template.html" %}
+
+      </div>
+    {% endif %}
 
 </div>
 {% endblock content %}
@@ -222,5 +228,12 @@
     })
 </script>
 {% endif %}
+
+
+{% if resumes %}
+  {% include "resume/fa/includes/resumes-app/script.html" %}
+
+{% endif %}
+
 
 {% endblock script %}

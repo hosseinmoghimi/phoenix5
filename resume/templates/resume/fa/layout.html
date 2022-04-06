@@ -118,7 +118,7 @@
         {% endif %}
         {% if resume_index %}
 
-        <li><a href="{% url 'resume:resume_index' language='en' pk=resume_index.profile.id%}"
+        <li><a href="{% url 'resume:resume_index' pk=resume_index.id %}"
             class="nav-link scrollto">
 
 

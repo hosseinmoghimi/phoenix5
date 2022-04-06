@@ -95,6 +95,9 @@ class ProfileViews(View):
 
         if request.user.has_perm(APP_NAME+".change_profile") or selected_profile.user.id==request.user.id:
             context['can_edit_profile']=True
+
+        if 'resume_app_is_installed' in context and context['resume_app_is_installed']:
+            context['resumes']=selected_profile.resumeindex_set.all()
         return render(request,TEMPLATE_ROOT+"profile.html",context)
 
 

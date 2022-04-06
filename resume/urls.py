@@ -4,10 +4,10 @@ from django.urls import path
 app_name=APP_NAME
 urlpatterns = [
     path("",(views.HomeView.as_view()),name="home"),
-    path("<language>/<int:pk>/",(views.HomeView.as_view()),name="resume_index"),
-    path('<int:profile_id>/',(views.HomeView.as_view()),name="resume_index2"),
+    path("resume/<int:pk>/",(views.ResumeIndexView.as_view()),name="resume_index"),
+    # path('<int:profile_id>/',(views.HomeView.as_view()),name="resume_index2"),
     path("search/",(views.SearchView.as_view()),name="search"),
-    path("resume/<int:pk>/",(views.ResumeIndexView.as_view()),name="resume"),
+    # path("resume/<int:pk>/",(views.ResumeIndexView.as_view()),name="resume"),
  
     path('<int:profile_id>/<int:language_index>/',views.BasicViews().home,name="resume_index_language"),
     path('print/<int:pk>/',views.BasicViews().resume_print,name="resume_print"),

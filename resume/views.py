@@ -2,7 +2,8 @@ from django.http import Http404
 from django.shortcuts import render
 from authentication.repo import ProfileRepo
 
-from core.enums import LanguageCode, LanguageEnum, LanguageFromCode
+from core.enums import  LanguageEnum
+from .enums import LanguageFromCode,LanguageCode,ResumeLanguageEnum
 from core.repo import ParameterRepo
 from resume.repo import PortfolioRepo, ResumeIndexRepo
 from resume.serializers import ResumeFactSerializer, ResumeSkillSerializer
@@ -24,14 +25,7 @@ LAYOUT_PARENT = "material-kit-pro/layout.html"
 
 def getContext(request, *args, **kwargs):
     context = CoreContext(request=request, app_name=APP_NAME)
-    
-    if 'language' in kwargs:
-        language=kwargs['language']
-    else:
-        language=LanguageEnum.FARSI
-    context['language']=language
-    tm_l=LanguageCode(language)
-    context['TEMPLATE_ROOT']=TEMPLATE_ROOT+tm_l+"/"
+     
     context['search_form'] = SearchForm()
     context['search_action'] = reverse(APP_NAME+":search")
     context['LAYOUT_PARENT'] = LAYOUT_PARENT
@@ -40,7 +34,9 @@ def getContext(request, *args, **kwargs):
 
 class HomeView(View):
     def get(self,request,*args, **kwargs):
-        return ResumeIndexView().get(request=request,*args, **kwargs)
+        context=getContext(request=request)
+        context['resumes']=ResumeIndexRepo(request=request).list()
+        return render(request,context['TEMPLATE_ROOT']+"index.html",context)
 
 
 class SearchView(View):
@@ -68,15 +64,13 @@ class ResumeIndexView(View):
             mv=MessageView(request=request)
             mv.title="رزومه مورد نظر یافت نشد."
             return mv.response()
-        language = LanguageEnum.ENGLISH
         # language=LanguageEnum.ENGLISH
-        if 'language' in kwargs:
-                language = LanguageFromCode(code=kwargs['language'])
-        print(language)
-        context = getContext(request=request,language=language)
+         
         profile_id = kwargs['pk']
         resume_index = ResumeIndexRepo(
-            request=request,language=language).resume_index(profile_id=profile_id)
+            request=request).resume_index(*args, **kwargs)
+        language = resume_index.language
+        context = getContext(request=request,language=language)
         context['resume_index'] = resume_index
         parameter_repo = ParameterRepo(request=request, app_name=APP_NAME)
         context['location'] = parameter_repo.parameter(name='location')
@@ -112,8 +106,12 @@ class ResumeIndexView(View):
             context['add_resume_fact_form'] = AddResumeFactForm()
             context['add_resume_skill_form'] = AddResumeSkillForm()
             # context['resume_item_enums']=(i[0] for i in ResumeItemEnum.choices)
-        TEMPLATE_ROOT = context['TEMPLATE_ROOT']
-        return render(request, TEMPLATE_ROOT+"index.html", context)
+        print(resume_index.language)
+        print(LanguageCode(resume_index.language))
+        print(100*"#")
+        tml=LanguageCode(resume_index.language)+"/"
+        TEMPLATE_ROOT = APP_NAME+"/"+tml
+        return render(request, TEMPLATE_ROOT+"resume-index.html", context)
 
   
         

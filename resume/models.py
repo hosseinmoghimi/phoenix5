@@ -1,6 +1,4 @@
-import imp
-from resume.enums import FilterEnum, IconEnum, LinkClassEnum,ServiceColorEnum,LanguageEnum, languageToIndex
-from django.db.models.fields import DateField
+from resume.enums import FilterEnum, IconEnum, LinkClassEnum, ResumeLanguageEnum
 from tinymce.models import HTMLField
 from phoenix.server_settings import ADMIN_URL, MEDIA_URL, STATIC_URL
 from django.db import models
@@ -55,7 +53,7 @@ class Resume(ResumePage):
 
 class ResumeIndex(models.Model):
     class_name="resumeindex"
-    language=models.CharField(_("language"),choices=LanguageEnum.choices,default=LanguageEnum.ENGLISH, max_length=50)
+    language=models.CharField(_("language"),choices=ResumeLanguageEnum.choices,default=ResumeLanguageEnum.ENGLISH, max_length=50)
     image_header_origin =models.ImageField(_("تصویر سربرگ"),null=True, blank=True, upload_to=IMAGE_FOLDER +
                                      'Resume/Header/', height_field=None, width_field=None, max_length=None)                              
   
@@ -130,8 +128,7 @@ class ResumeIndex(models.Model):
     
     def get_absolute_url(self):
         
-        language_index=languageToIndex(language=self.language)
-        return reverse(APP_NAME+":resume_index_language", kwargs={"profile_id": self.profile.pk,'language_index':language_index})
+        return reverse(APP_NAME+":resume_index", kwargs={"pk": self.pk})
     def get_edit_btn(self):
         return f"""
           <a target="_blank" title="edit" href="{self.get_edit_url()}">

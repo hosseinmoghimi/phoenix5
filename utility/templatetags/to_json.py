@@ -5,6 +5,7 @@ from archive.serializers import FolderSerializer,FileSerializer
 import json
 
 
+from resume.serializers import ResumeSerializer
 from warehouse.serializers import WareHouseSerializer
 from accounting.serializers import AccountSerializer,ProfileSerializer, TransactionSerializer
 
@@ -12,6 +13,9 @@ from accounting.serializers import AccountSerializer,ProfileSerializer, Transact
 @register.filter
 def to_json_warehouses(warehouses):
     return json.dumps(WareHouseSerializer(warehouses,many=True).data)
+@register.filter
+def to_json_resumes(resumes):
+    return json.dumps(ResumeSerializer(resumes,many=True).data)
 
 @register.filter
 def to_json_accounts(accounts):

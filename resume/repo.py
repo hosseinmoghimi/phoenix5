@@ -1,5 +1,5 @@
 from .apps import APP_NAME
-from .enums import IconEnum, LanguageEnum
+from .enums import IconEnum, ResumeLanguageEnum
 from .models import Resume, ResumeCategory, ResumeFact, ResumeIndex, ResumePortfolio, ResumeService, ResumeSkill, ResumeTestimonial,ContactMessage
 from authentication.repo import ProfileRepo
 
@@ -7,7 +7,7 @@ class ResumeIndexRepo:
     def __init__(self,*args, **kwargs):
         self.request=None
         self.user=None
-        self.language=LanguageEnum.ENGLISH
+        self.language=ResumeLanguageEnum.ENGLISH
         if 'request' in kwargs:
             self.request=kwargs['request']
             self.user=self.request.user
@@ -16,7 +16,13 @@ class ResumeIndexRepo:
         if 'language' in kwargs:
             self.language=kwargs['language']
         self.profile=ProfileRepo(user=self.user).me
-        self.objects=ResumeIndex.objects.filter(language=self.language)
+        self.objects=ResumeIndex.objects.filter(pk__gte=0)
+    def list(self,*args, **kwargs):
+        objects=self.objects
+        if 'language' in kwargs:
+            objects=objects.filter(language=kwargs['language'])
+
+        return objects.all()
     def resume_index(self,*args, **kwargs):
         pk=0
         if 'profile_id' in kwargs:
@@ -137,7 +143,7 @@ class ResumeFactRepo:
     def __init__(self,*args, **kwargs):
         self.request=None
         self.user=None
-        self.language=LanguageEnum.ENGLISH
+        self.language=ResumeLanguageEnum.ENGLISH
         
         if 'language' in kwargs:
             self.language=kwargs['language']        
@@ -191,7 +197,7 @@ class ResumeSkillRepo:
     def __init__(self,*args, **kwargs):
         self.request=None
         self.user=None
-        self.language=LanguageEnum.ENGLISH
+        self.language=ResumeLanguageEnum.ENGLISH
         
         if 'language' in kwargs:
             self.language=kwargs['language']        

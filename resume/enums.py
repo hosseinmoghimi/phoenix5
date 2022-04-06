@@ -19,29 +19,24 @@ class ServiceColorEnum(TextChoices):
     yellow='yellow',_('yellow')
     red='red',_('red')
     teal='teal',_('teal')
-class LanguageEnum(TextChoices):
+class ResumeLanguageEnum(TextChoices):
     ENGLISH='english',_('english')
     DUTCH='dutch',_('dutch')
     FARSI='farsi',_('farsi')
     RUSSIAN='russian',_('russian')
     ARABIC='arabic',_('arabic')
-def languageToIndex(*args, **kwargs):
-    if 'language' in kwargs:
-        if kwargs['language']==LanguageEnum.FARSI:
-            return 2
-        if kwargs['language']==LanguageEnum.ENGLISH:
-            return 1
-        return 1
+
         
-    if 'index' in kwargs:
-        if kwargs['index']==2:
-            return LanguageEnum.FARSI
-        if kwargs['index']==1:
-            return LanguageEnum.ENGLISH
-        return LanguageEnum.ENGLISH
-    
-        
-    
+def LanguageCode(language):
+    if language==ResumeLanguageEnum.FARSI:
+        return 'fa'
+    if language==ResumeLanguageEnum.ENGLISH:
+        return 'en'
+def LanguageFromCode(code):
+    if code=='fa':
+        return ResumeLanguageEnum.FARSI
+    if code=='en':
+        return ResumeLanguageEnum.ENGLISH
 
 class LinkClassEnum(TextChoices):
     twitter="""twitter"""
