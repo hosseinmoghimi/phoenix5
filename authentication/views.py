@@ -93,6 +93,8 @@ class ProfileViews(View):
             context['profiles_s']=json.dumps(ProfileSerializer(profiles,many=True).data)
             context['set_default_profile_form']=SetDefaultProfileForm()
 
+        if request.user.has_perm(APP_NAME+".change_profile") or selected_profile.user.id==request.user.id:
+            context['can_edit_profile']=True
         return render(request,TEMPLATE_ROOT+"profile.html",context)
 
 
@@ -185,10 +187,10 @@ class LoginViews(View):
         build_absolute_uri=request.build_absolute_uri()
         print(build_absolute_uri)
         ONLY_HTTPS=ParameterRepo(request=request,app_name=APP_NAME).parameter(name=ParameterNameEnum.ONLY_HTTPS,default=False).boolean_value
-        if ONLY_HTTPS and "http://" in build_absolute_uri :
-            build_absolute_uri="https://"+build_absolute_uri[7:]
-            return redirect(build_absolute_uri)
-        return render(request,TEMPLATE_ROOT+"login.html",context)  
+        # if ONLY_HTTPS and "http://" in build_absolute_uri :
+        #     build_absolute_uri="https://"+build_absolute_uri[7:]
+        #     return redirect(build_absolute_uri)
+        return render(request,TEMPLATE_ROOT+"login.html",context)
     def post(self,request):
         login_form=LoginForm(request.POST)
         if login_form.is_valid():

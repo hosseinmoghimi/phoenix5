@@ -70,17 +70,21 @@
 
 
                 <div class="text-center farsi">
+
+
                     {% if perms.authentication.change_profile %}
+
+
                     <a href="{% url 'authentication:login_as' pk=selected_profile.id %}" title="login_as"
                         class="mx-2 text-info"><i class="fa fa-edit"></i> ورود</a>
+
                     {% endif %}
 
+                    {% if can_edit_profile %}
 
 
 
 
-
-                    {% if perms.authentication.change_profile %}
                     <a href="{{selected_profile.get_edit_page_url}}" title="ویرایش" class="mx-2 text-warning"><i
                             class="fa fa-edit"></i> ویرایش</a>
                     {% endif %}
@@ -119,7 +123,7 @@
     </div>
     {% endif %}
 
-    {% if transport_app_is_installed %}
+    {% if transport_app_is_installed and perms.authentication.change_profile%}
 
 
     <div class="col-md-4">

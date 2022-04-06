@@ -228,6 +228,14 @@ class Employee(Account):
     job_title = models.CharField(
         _("job title"), default="سرپرست", max_length=50)
 
+
+
+    def my_pages_ids(self):
+        my_pages_ids=[]
+        my_project_ids=self.my_project_ids()
+        my_pages_ids=my_pages_ids+ my_project_ids
+        return my_pages_ids
+
     @property
     def mobile(self):
         return self.profile.mobile
@@ -252,6 +260,7 @@ class Employee(Account):
             # for org in self.organization_unit_set.all():
             for proj in self.organization_unit.project_set.all():
                 ids.append(proj.id)
+            # ids=(proj for proj in self.organization_unit.project_set.all())
         return ids
 
     def save(self, *args, **kwargs):

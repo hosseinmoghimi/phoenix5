@@ -140,7 +140,17 @@ class Profile(models.Model,LinkHelper):
         return reverse(APP_NAME+":reset_password_view", kwargs={"profile_id": self.pk})
  
 
-
+    def my_pages_ids(self):
+        from core.utils import app_is_installed
+        my_pages_ids=[]
+        if app_is_installed('projectmanager'):
+            from projectmanager.models import Employee
+            for employee in Employee.objects.filter(profile_id=self.id):
+                ss=employee.my_pages_ids()
+                my_pages_ids=my_pages_ids+ss
+        print(my_pages_ids)
+        print(100*"#")
+        return my_pages_ids
 
 
 

@@ -75,6 +75,10 @@ def CoreContext(request, *args, **kwargs):
 
 def PageContext(request, *args, **kwargs):
     profile=ProfileRepo(request=request).me
+    my_pages_ids=[]
+    if profile is not None:
+        my_pages_ids=profile.my_pages_ids()
+        print(my_pages_ids)
     context = {}
     if 'page' in kwargs:
         page = kwargs['page']
