@@ -1,7 +1,10 @@
 from rest_framework import serializers
-from .models import Product
+from market.models import Category
+from accounting.serializers import ProductSerializer as ProductSerializer_origin
 
-class ProductSerializer(serializers.ModelSerializer):
+class ProductSerializer(ProductSerializer_origin):
+    pass
+class CategorySerializer(serializers.ModelSerializer):
     class Meta:
-        model = Product
+        model=Category
         fields=['id','title','get_absolute_url']

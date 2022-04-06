@@ -22,6 +22,11 @@ class ChangeProfileImageForm(forms.Form):
     image=forms.ImageField(required=True)
 
 
+class AddMembershipRequestForm(forms.Form):
+    profile_id=forms.IntegerField(required=True)
+    image=forms.ImageField(required=True)
+
+
 
 class RegisterForm(UserCreationForm):
     mobile=forms.CharField(max_length=15, required=False)

@@ -17,4 +17,5 @@ urlpatterns = [
     path('register/',views.RegisterViews.as_view(),name="register"),
     path('set_default/',apis.SetDefaultProfileApi.as_view(),name="set_default"),
     path('membership_requests_app/<app_name>/',views.LogoutViews.as_view(),name="membership_requests_app"),
+    path('add_membership_request/',views.BasicViews.as_view(),name="add_membership_request"),
 ]

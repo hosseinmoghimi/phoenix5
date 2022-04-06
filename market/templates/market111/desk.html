@@ -1,0 +1,103 @@
+{% extends "market/layout.html" %}
+{% load to_price %}
+{% load to_persian_date %}
+{% load static %}
+
+{% block page_header %}
+<div class="page-header header-filter" data-parallax="true" filter-color="rose"
+    style="background-image: url('{{desk.image_header}}');">
+    <div class="container">
+    </div>
+</div>
+<div class="section" id="supplier-title">
+    <div class="container">
+        <div class="main main-raised main-product">
+            <div class="row">
+                <div class="col-md-6 col-sm-6">
+                    <div class="px-3 text-center">
+                        <img src="{{desk.image}}" class="rounded w-100 ">
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6">
+                    <h2 class="title">{{desk.title}}
+                        {% if perms.market.change_desk %}
+                        {{desk.get_edit_btn|safe}}
+                        {% endif %}
+                    </h2>
+                    <h3 class="main-price">
+                        <span class="material-icons">
+                            public
+                        </span>
+                        {{desk.region.name}}
+                    </h3>
+                    <div class="farsi text-right">
+                        {% for menu in menus %}
+                        <a href="{{menu.get_absolute_url}}" class="mx-2 my-2 btn btn-{{menu.color}}">منوی {{menu.title}}</a>
+                        {% endfor %}
+                    </div>
+                    <div>
+                        <img src="{{desk.get_qrcode_url}}" width="256" height="256" alt="">
+                    </div>
+                    {% include "core/includes/page-like-app/template.html" %}
+                    <div id="accordion" role="tablist">
+                        {% if supplier.short_description %}
+                        <div class="card card-collapse">
+                            <div class="card-header" role="tab" id="headingShortDescription">
+                                <h5 class="mb-0">
+                                    <a data-toggle="collapse" href="#collapseShortDescription" aria-expanded="true"
+                                        aria-controls="collapseShortDescription">
+                                        توضیحات کوتاه
+                                        <i class="material-icons">keyboard_arrow_down</i>
+                                    </a>
+                                </h5>
+                            </div>
+                            <div id="collapseShortDescription" class="collapse" role="tabpanel"
+                                aria-labelledby="headingShortDescription" data-parent="#accordion">
+                                <div class="card-body">
+                                    {{supplier.short_description|safe}}
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% if supplier.description %}
+                        <div class="card card-collapse">
+                            <div class="card-header" role="tab" id="headingDescription">
+                                <h5 class="mb-0">
+                                    <a data-toggle="collapse" href="#collapseDescription" aria-expanded="true"
+                                        aria-controls="collapseShortDescription">
+                                        توضیحات کامل
+                                        <i class="material-icons">keyboard_arrow_down</i>
+                                    </a>
+                                </h5>
+                            </div>
+                            <div id="collapseDescription" class="collapse" role="tabpanel"
+                                aria-labelledby="headingDescription" data-parent="#accordion">
+                                <div class="card-body">
+                                    {{supplier.description|safe}}
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+        
+        
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+{% endblock %}
+
+{% block modal %}
+{% endblock %}
+{% block script %}
+<script>
+    let page_id = "{{supplier.id}}"
+</script>
+<script src="{% static 'vendor/js/vue.min.js' %}"></script>
+{% include "core/includes/page-like-app/script.html" %}
+{% endblock %}

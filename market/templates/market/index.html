@@ -1,16 +1,15 @@
 {% extends "market/layout.html" %}
 
-
 {% block content %}
-<h4 class="text-center">
-    Market
-</h4>
   <div class="row">
-      <div class="col-md-6">
-
-      </div>
-      <div class="col-md-6">
-
+      <div class="col-md-12">
+          {% include "market/includes/index-app/template.html" %}
       </div>
   </div>
 {% endblock content %}
+
+
+{% block script %}
+{% include "market/includes/index-app/script.html" %}
+  
+{% endblock script %}

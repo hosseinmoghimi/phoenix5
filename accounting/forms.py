@@ -17,6 +17,7 @@ class CreateAccountForm(forms.Form):
     profile_id=forms.IntegerField(required=False)
 
 class AddProductForm(forms.Form):
+    category_id=forms.IntegerField(required=False)
     title=forms.CharField(max_length=500,required=True)
 
     
