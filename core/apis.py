@@ -1,9 +1,9 @@
 from core.models import Page, PageLink
-from core.serializers import PageBriefSerializer, PageCommentSerializer, PageDownloadSerializer, PageImageSerializer, PageLikeSerializer, PageLinkSerializer, PageTagSerializer, ParameterSerializer, TagSerializer
+from core.serializers import PageBriefSerializer, PageCommentSerializer, PageDownloadSerializer, PageImageSerializer, PageLikeSerializer, PageLinkSerializer, PagePermissionSerializer, PageTagSerializer, ParameterSerializer, TagSerializer
 from rest_framework.views import APIView
 from django.http import JsonResponse
 from .forms import *
-from .repo import ContactMessageRepo, PageCommentRepo, PageLinkRepo, PageRepo, PageTagRepo,  ParameterRepo,PageDownloadRepo,PageImageRepo
+from .repo import ContactMessageRepo, PageCommentRepo, PageLinkRepo, PagePermissionRepo, PageRepo, PageTagRepo,  ParameterRepo,PageDownloadRepo,PageImageRepo
 from .constants import SUCCEED, FAILED
 from utility.utils import str_to_html
 
@@ -82,6 +82,33 @@ class AddPageTagApi(APIView):
                     )
                 if page_tags is not None:
                     context['page_tags'] = PageTagSerializer(page_tags,many=True).data
+                    context['result'] = SUCCEED
+        context['log'] = log
+        return JsonResponse(context)
+
+    
+class AddPagePermissionApi(APIView):
+    def post(self, request, *args, **kwargs):
+        log = 1
+        context = {}
+        context['result'] = FAILED
+        if request.method == 'POST':
+            log += 1
+            add_page_tag_form = AddPagePermissionForm(request.POST)
+            if add_page_tag_form.is_valid():
+                log += 1
+                cd=add_page_tag_form.cleaned_data
+                page_id = cd['page_id']
+                can_write = cd['can_write']
+                profile_id = cd['profile_id']
+                
+                page_permission = PagePermissionRepo(request=request).add_page_permission(
+                    page_id=page_id,
+                    can_write=can_write,
+                    profile_id=profile_id
+                    )
+                if page_permission is not None:
+                    context['page_permission'] = PagePermissionSerializer(page_permission).data
                     context['result'] = SUCCEED
         context['log'] = log
         return JsonResponse(context)

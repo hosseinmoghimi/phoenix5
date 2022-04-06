@@ -13,6 +13,11 @@ class AddRelatedPageForm(forms.Form):
     bidirectional=forms.BooleanField(required=False)
     add_or_remove=forms.BooleanField(required=False)
 
+class AddPagePermissionForm(forms.Form):
+    page_id=forms.IntegerField(required=True)
+    profile_id=forms.IntegerField(required=True)
+    can_write=forms.BooleanField(required=False)
+
 
 
 class ChangeParameterForm(forms.Form):

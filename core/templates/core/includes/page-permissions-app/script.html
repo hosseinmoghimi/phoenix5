@@ -4,6 +4,26 @@
         el: "#page-permissions-app",
         data: {
             page_permissions: page_permissions,
+            profile_id:0,
+            can_write:false,
+        },
+        methods: {
+            add_page_permission: function (page_id) {
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    page_id: page_id,
+                    profile_id: this.profile_id,
+                    can_write: this.can_write,
+                }
+                console.log(payload)
+                let url = "{% url 'core:add_page_permission' %}"
+                $.post(url, payload).done(data => {
+                    console.log(data)
+                    if (data.result === 'SUCCEED') {
+                        page_permissions_app.page_permissions.push(data.page_permission)
+                    }
+                })
+            },
         }
     })
 </script>

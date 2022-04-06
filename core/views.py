@@ -171,6 +171,10 @@ def PageContext(request, *args, **kwargs):
         context['page_permissions']=page_permissions
         page_permissions_s=json.dumps(PagePermissionSerializer(page_permissions,many=True).data)
         context['page_permissions_s']=page_permissions_s
+        if request.user.has_perm(APP_NAME+".change_page"):
+            context['add_page_permission_form']=AddPagePermissionForm()
+            all_profiles=ProfileRepo(request=request).list()
+            context['all_profiles']=all_profiles
 
     # related_pages
     if True:

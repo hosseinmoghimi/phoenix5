@@ -51,10 +51,6 @@
 
 
             <div class="col-md-12">
-
-                {% include "core/includes/page-permissions-app/template.html" %}
-            </div>
-            <div class="col-md-12">
                 {% include "core/includes/page-like-app/page-likes.html" %}
 
             </div>
@@ -62,6 +58,12 @@
             <div class="col-md-12">
                 {% include "map/includes/locations-app/template-with-preview.html" %}
             </div>
+            
+            <div class="col-md-12">
+
+                {% include "core/includes/page-permissions-app/template.html" %}
+            </div>
+            
         </div>
 
 
@@ -70,7 +72,6 @@
 {% endblock content %}
 
 {% block script %}
-{% include "core/includes/page-app/script.html" %}
-{% include "map/includes/locations-app/script.html" %}
+{% include "core/includes/page-app/script.html" %} 
 
 {% endblock script %}

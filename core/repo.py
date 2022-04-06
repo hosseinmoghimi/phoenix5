@@ -593,10 +593,12 @@ class PagePermissionRepo():
         # profile=ProfileRepo(request=self.request).profile(*args, **kwargs)
         # if page is None or profile is None:
         #     return
-
+        PagePermission.objects.filter(page_id=kwargs['page_id']).filter(profile_id=kwargs['profile_id']).delete()
         page_permission=PagePermission()
         page_permission.page_id=kwargs['page_id']
         page_permission.profile_id=kwargs['profile_id']
+        page_permission.can_write=kwargs['can_write']
+
         page_permission.save()
         return page_permission
          

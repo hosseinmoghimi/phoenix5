@@ -10,7 +10,7 @@
             <h5 class="text-center">
                 <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-page-permissions"
                     aria-expanded="true" aria-controls="collapse-page-permissions">
-مجوز های دسترسی 
+                    مجوز های دسترسی
 
 
                     <span v-if="page_permissions.length>0">
@@ -22,40 +22,77 @@
 
                 </button>
             </h5>
- 
+
         </div>
         <div id="collapse-page-permissions" class="collapse" aria-labelledby="heading-page-permissions"
             data-parent="#accordion-page-permissions">
 
 
             <div class="card-body">
+                {% if add_page_permission_form and page %}
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="">
+                                پروفایل
+                            </label>
+                            <select v-model="profile_id" class="form-control">
+                                {% for profile in all_profiles %}
 
-            
+                                <option value="{{profile.id}}">{{profile.name}}</option>
+                                {% endfor %}
+                            </select>
+
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="">تغییر و ویرایش</label>
+                            <input type="checkbox" v-model="can_write" class="form-control">
+
+
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for=""></label>
+                           
+                            <button @click="add_page_permission({{page.id}})" class="btn btn-success">
+
+                                افزودن
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
 
                 <div class="table-responsive">
 
                     <table class="table table-striped">
                         <thead>
                             {% if not page %}
-        
+
                             <th>
                                 عنوان صفحه
                             </th>
                             {% endif %}
                             {% if not selected_profile %}
-        
+
                             <th>
-        
+
                             </th>
                             {% endif %}
                             <th>
-        
+
                             </th>
                         </thead>
                         <tbody>
                             <tr v-for="page_permission in page_permissions">
                                 {% if not page %}
-        
+
                                 <td>
                                     <a :href="page_permission.page.get_absolute_url">
                                         <span v-text="page_permission.page.title"></span>
@@ -63,11 +100,12 @@
                                 </td>
                                 {% endif %}
                                 {% if not selected_profile %}
-        
+
                                 <td>
                                     <a :href="page_permission.profile.get_absolute_url">
                                         <div class="media">
-                                            <img :src="page_permission.profile.image" width="32" class="rounded-circle" alt="">
+                                            <img :src="page_permission.profile.image" width="32" class="rounded-circle"
+                                                alt="">
                                             <div class="media-body mr-2">
                                                 <span v-text="page_permission.profile.name"></span>
                                             </div>
@@ -77,12 +115,12 @@
                                 {% endif %}
                                 <td>
                                     <span v-if="page_permission.can_write" class="text-danger">w</span>
-        
+
                                 </td>
                             </tr>
-        
-        
-        
+
+
+
                         </tbody>
                     </table>
                 </div>
@@ -92,5 +130,3 @@
 
     </div>
 </div>
-
- 
