@@ -1,4 +1,3 @@
-import ssl
 from django.http import JsonResponse
 from django.shortcuts import redirect, render,reverse
 import json
@@ -181,7 +180,12 @@ class ProfilesViews(View):
 
 class LoginViews(View):
     def get(self,request,*args, **kwargs):
+        messages=[]
+        if 'messages' in kwargs:
+            messages=kwargs['messages']
+
         context=getContext(request=request)
+        context['messages']=messages
         ProfileRepo(request=request).logout(request)
         context['login_form']=LoginForm()
         context['build_absolute_uri']=request.build_absolute_uri()
@@ -193,6 +197,7 @@ class LoginViews(View):
             return redirect(build_absolute_uri)
         return render(request,TEMPLATE_ROOT+"login.html",context)
     def post(self,request):
+        messages=[]
         login_form=LoginForm(request.POST)
         if login_form.is_valid():
             username=login_form.cleaned_data['username']
@@ -201,7 +206,10 @@ class LoginViews(View):
             if a is not None:
                 (request,user)=a
                 return redirect(APP_NAME+":me")
-
+            messages.append("نام کاربری و کلمه عبور صحیح نمی باشد.")
+        return self.get(request=request,messages=messages)
+            
+        
 
 
 class LoginAsViews(View):

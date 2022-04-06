@@ -13,6 +13,9 @@
         href="https://preview.colorlib.com/theme/bootstrap/login-form-15/css/A.style.css.pagespeed.cf.AxmTFBrhes.css">
 
     
+{% include "phoenix/includes/head-farsi-font.html" %}
+
+
 </head>
 
 <body>
@@ -45,6 +48,15 @@
                                     </p>
                                 </div>
                             </div>
+                            {% if messages %}
+                            <div class="my-3">
+
+                                {% for message in messages %}
+                                <div class="alert alert-danger farsi" >{{message}}</div>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+
                             <form method="POST" action="{% url 'authentication:register' %}" class="signin-form">
                                 {% csrf_token %}
                                 <div class="form-group mt-3">
@@ -60,7 +72,7 @@
 
 
                                 <div class="form-group mt-3">
-                                    <input type="tel" class="form-control" name="mobile" required>
+                                    <input type="tel" class="form-control" name="mobile" >
                                     <label class="form-control-placeholder" for="mobile">Mobile</label>
                                 </div>
 
