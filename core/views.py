@@ -165,6 +165,13 @@ def PageContext(request, *args, **kwargs):
             context['add_page_comment_form'] = AddPageCommentForm()
 
 
+    #permissions
+    if True:
+        page_permissions=PagePermissionRepo(request=request).list(page_id=page.id)
+        context['page_permissions']=page_permissions
+        page_permissions_s=json.dumps(PagePermissionSerializer(page_permissions,many=True).data)
+        context['page_permissions_s']=page_permissions_s
+
     # related_pages
     if True:
         related_pages = page.related_pages.all()
@@ -252,10 +259,12 @@ class DownloadView(View):
         
          
 
-class ProfilePagesView(View):
+class PagePermissionsView(View):
     def get(self,request,*args, **kwargs):
         context=CoreContext(request=request)
+
         profile_id=kwargs['pk']
+
         page_permissions=PagePermissionRepo(request=request).list(profile_id=profile_id)
         context['page_permissions']=page_permissions
         page_permissions_s=json.dumps(PagePermissionSerializer(page_permissions,many=True).data)

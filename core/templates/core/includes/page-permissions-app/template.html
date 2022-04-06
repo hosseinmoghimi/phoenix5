@@ -1,41 +1,96 @@
-<div class="card" id="page-permissions-app">
-    <div class="card-body">
-        <div class="table-responsive">
+{% load to_persian_date %}
+{% load to_price %}
+{% load to_amount_color %}
+{% load static %}
+<div id="accordion-page-permissions">
 
-            <table class="table table-striped">
-                <thead>
-                    <th>
-                        عنوان صفحه
-                    </th>
-                    <th>
 
-                    </th>
-                    <th>
+    <div class="card" id="page-permissions-app">
+        <div class="card-header" id="heading-page-permissions">
+            <h5 class="text-center">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-page-permissions"
+                    aria-expanded="true" aria-controls="collapse-page-permissions">
+مجوز های دسترسی 
 
-                    </th>
-                </thead>
-                <tbody>
-                    <tr v-for="page_permission in page_permissions">
-                        <td>
-                            <a :href="page_permission.page.get_absolute_url">
-                                <span v-text="page_permission.page.title"></span>
-                            </a>
-                        </td>
-                        <td>
-                            <a :href="page_permission.profile.get_absolute_url">
-                                <span v-text="page_permission.profile.name"></span>
-                            </a>
-                        </td>
-                        <td>
-                            <span v-if="page_permission.can_write" class="text-danger">w</span>
 
-                        </td>
-                    </tr>
+                    <span v-if="page_permissions.length>0">
+                        <small class="text-danger mx-2">
+                            <span v-text="page_permissions.length"></span>
+                        </small>
+                    </span>
 
-                 
 
-                </tbody>
-            </table>
+                </button>
+            </h5>
+ 
         </div>
+        <div id="collapse-page-permissions" class="collapse" aria-labelledby="heading-page-permissions"
+            data-parent="#accordion-page-permissions">
+
+
+            <div class="card-body">
+
+            
+
+                <div class="table-responsive">
+
+                    <table class="table table-striped">
+                        <thead>
+                            {% if not page %}
+        
+                            <th>
+                                عنوان صفحه
+                            </th>
+                            {% endif %}
+                            {% if not selected_profile %}
+        
+                            <th>
+        
+                            </th>
+                            {% endif %}
+                            <th>
+        
+                            </th>
+                        </thead>
+                        <tbody>
+                            <tr v-for="page_permission in page_permissions">
+                                {% if not page %}
+        
+                                <td>
+                                    <a :href="page_permission.page.get_absolute_url">
+                                        <span v-text="page_permission.page.title"></span>
+                                    </a>
+                                </td>
+                                {% endif %}
+                                {% if not selected_profile %}
+        
+                                <td>
+                                    <a :href="page_permission.profile.get_absolute_url">
+                                        <div class="media">
+                                            <img :src="page_permission.profile.image" width="32" class="rounded-circle" alt="">
+                                            <div class="media-body mr-2">
+                                                <span v-text="page_permission.profile.name"></span>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </td>
+                                {% endif %}
+                                <td>
+                                    <span v-if="page_permission.can_write" class="text-danger">w</span>
+        
+                                </td>
+                            </tr>
+        
+        
+        
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+
     </div>
 </div>
+
+ 
