@@ -1,3 +1,4 @@
+import ssl
 from django.http import JsonResponse
 from django.shortcuts import redirect, render,reverse
 import json
@@ -200,6 +201,7 @@ class LoginViews(View):
             if a is not None:
                 (request,user)=a
                 return redirect(APP_NAME+":me")
+
 
 
 class LoginAsViews(View):

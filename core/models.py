@@ -535,6 +535,19 @@ class ContactMessage(models.Model):
         return self.full_name
 
 
+class PagePermission(models.Model):
+    page=models.ForeignKey("Page", verbose_name=_("page"), on_delete=models.CASCADE)
+    profile=models.ForeignKey("authentication.profile", verbose_name=_("profile"), on_delete=models.CASCADE)
+    can_write=models.BooleanField(_("can write"),default=False)
+    
+
+    class Meta:
+        verbose_name = _("PagePermission")
+        verbose_name_plural = _("PagePermissions")
+
+    def __str__(self):
+        return f"""{"rw" if self.can_write else "r"} ^ {self.page.title} @ {self.profile.name} """
+ 
 
 class Tag(models.Model,LinkHelper):
     title=models.CharField(_("title"), max_length=50)

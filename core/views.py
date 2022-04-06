@@ -5,12 +5,12 @@ from django.shortcuts import render
 from django.utils import timezone
 
 from utility.calendar import PersianCalendar
-from .apps import APP_NAME
+from core.apps import APP_NAME
 from log.repo import LogRepo
 from core.enums import ColorEnum, IconsEnum, ParameterNameEnum, PictureNameEnum
 from core.models import Download, Link
-from core.repo import DownloadRepo, ImageRepo, PageDownloadRepo, PageImageRepo, PageLikeRepo, PageRepo, ParameterRepo, PictureRepo, TagRepo
-from .serializers import PageBriefSerializer, PageCommentSerializer, PageImageSerializer, PageDownloadSerializer, PageLinkSerializer, PageTagSerializer
+from core.repo import DownloadRepo, ImageRepo, PageDownloadRepo, PageImageRepo, PageLikeRepo, PagePermissionRepo, PageRepo, ParameterRepo, PictureRepo, TagRepo
+from core.serializers import PagePermissionSerializer,PageBriefSerializer, PageCommentSerializer, PageImageSerializer, PageDownloadSerializer, PageLinkSerializer, PageTagSerializer
 from phoenix.settings import ADMIN_URL, MEDIA_URL, STATIC_URL, SITE_URL
 from django.shortcuts import render
 from authentication.repo import ProfileRepo
@@ -18,14 +18,17 @@ from core.constants import CURRENCY
 
 from phoenix.server_settings import phoenix_apps
 from django.views import View
-from .forms import *
+from core.forms import *
 # Create your views here.
 TEMPLATE_ROOT = "core/"
+LAYOUT_PARENT='phoenix/layout.html'
 
 
 def CoreContext(request, *args, **kwargs):
     context = {}
     context['apps'] = phoenix_apps
+    context['LAYOUT_PARENT'] = LAYOUT_PARENT
+
     installed_apps=[]
     for phoenix_app in phoenix_apps:
         installed_apps.append(phoenix_app['name'])
@@ -74,19 +77,45 @@ def CoreContext(request, *args, **kwargs):
 
 
 def PageContext(request, *args, **kwargs):
-    profile=ProfileRepo(request=request).me
-    my_pages_ids=[]
-    if profile is not None:
-        my_pages_ids=profile.my_pages_ids()
-        print(my_pages_ids)
-    context = {}
     if 'page' in kwargs:
         page = kwargs['page']
     if 'page_id' in kwargs:
         page = PageRepo(request=request).page(pk=kwargs['page_id'])
     if page is None:
         raise Http404
+    context = {}
     context['page'] = page
+    profile=ProfileRepo(request=request).me
+
+    
+    my_pages_ids=[]
+    if profile is not None:
+        page_permissions=PagePermissionRepo(request=request).list()
+        # my_pages_ids=( page_permissions)
+        for page_permission in page_permissions:
+            my_pages_ids.append(page_permission.page.id)
+
+
+    can_read=False
+    can_add_link=False
+    can_add_image=False
+    can_add_download=False
+    can_add_comment=False
+    can_add_tag=False
+    can_add_location=False
+    can_add_related_page=False
+    
+    if request.user.has_perm(APP_NAME+".view_page"):
+        can_read=True
+    if page.id in my_pages_ids or request.user.has_perm(APP_NAME+".change_page"):
+        can_add_link=True
+        can_add_image=True
+        can_add_download=True
+        can_add_comment=True
+        can_add_tag=True
+        can_add_location=True
+        can_add_related_page=True
+
 
     
     # links
@@ -95,6 +124,9 @@ def PageContext(request, *args, **kwargs):
         links_s = json.dumps(PageLinkSerializer(links, many=True).data)
         context['links_s'] = links_s
         context['links'] = links
+        if  can_add_link:
+            context['add_page_link_form'] = AddPageLinkForm()
+    
 
     # locations
     if True:
@@ -105,7 +137,7 @@ def PageContext(request, *args, **kwargs):
         context['page_locations_s'] = json.dumps(PageLocationSerializer(page_locations, many=True).data)
         context['locations_s'] = json.dumps(LocationSerializer([], many=True).data)
         context['all_locations']=LocationRepo(request=request).list()
-        if request.user.has_perm(APP_NAME+".change_page") or page.id in my_pages_ids:
+        if can_add_location :
             from map.forms import AddLocationForm,AddPageLocationForm
             context['add_page_location_form']=AddPageLocationForm()
             context['add_location_form']=AddLocationForm()
@@ -117,6 +149,8 @@ def PageContext(request, *args, **kwargs):
         page_tags_s = json.dumps(PageTagSerializer(page_tags, many=True).data)
         context['page_tags_s'] = page_tags_s
         context['page_tags'] = page_tags
+        if  can_add_tag:
+            context['add_page_tag_form'] = AddPageTagForm()
 
 
     # commnets
@@ -125,7 +159,7 @@ def PageContext(request, *args, **kwargs):
         context['page_comments'] = page_comments
         context['page_comments_s'] = json.dumps(
             PageCommentSerializer(page_comments, many=True).data)
-        if ProfileRepo(request=request).me is not None:
+        if can_add_comment:
             context['add_page_comment_form'] = AddPageCommentForm()
 
 
@@ -134,6 +168,8 @@ def PageContext(request, *args, **kwargs):
         related_pages = page.related_pages.all()
         context['related_pages_s'] = json.dumps(
             PageBriefSerializer(related_pages, many=True).data)
+        if can_add_related_page:
+            context['add_related_page_form'] = AddRelatedPageForm()
 
 
 
@@ -149,12 +185,15 @@ def PageContext(request, *args, **kwargs):
         context['downloads'] = downloads
         downloads_s = json.dumps(PageDownloadSerializer(downloads, many=True).data)
         context['page_downloads_s'] = downloads_s
-
+        if can_add_download:
+            context['add_page_download_form'] = AddPageDownloadForm()
 
     #images
     if True:
         page_images = page.pageimage_set.all()
         context['images_s'] = json.dumps(PageImageSerializer(page_images, many=True).data)
+        if can_add_image:
+            context['add_page_image_form'] = AddPageImageForm()
 
 
     # likes
@@ -164,22 +203,6 @@ def PageContext(request, *args, **kwargs):
         if profile is not None:
             my_like = page.my_like(profile_id=profile.id)
             context['my_like'] = my_like
-
-
-
-        
-
-    my_pages_ids = PageRepo(request=request).my_pages_ids()
-    if request.user.has_perm(APP_NAME+".add_link") or page.id in my_pages_ids:
-        context['add_page_link_form'] = AddPageLinkForm()
-    if request.user.has_perm(APP_NAME+".add_download") or page.id in my_pages_ids:
-        context['add_page_download_form'] = AddPageDownloadForm()
-
-    if request.user.has_perm(APP_NAME+".add_pageimage") or page.id in my_pages_ids:
-        context['add_page_image_form'] = AddPageImageForm()
-    if request.user.has_perm(APP_NAME+".change_page") or page.id in my_pages_ids:
-        context['add_related_page_form'] = AddRelatedPageForm()
-        context['add_page_tag_form'] = AddPageTagForm()
 
     return context
 
@@ -227,7 +250,16 @@ class DownloadView(View):
         
          
 
-
+class ProfilePagesView(View):
+    def get(self,request,*args, **kwargs):
+        context=CoreContext(request=request)
+        profile_id=kwargs['pk']
+        page_permissions=PagePermissionRepo(request=request).list(profile_id=profile_id)
+        context['page_permissions']=page_permissions
+        page_permissions_s=json.dumps(PagePermissionSerializer(page_permissions,many=True).data)
+        context['page_permissions_s']=page_permissions_s
+        return render(request,TEMPLATE_ROOT+"page-permissions.html",context)
+    
 
 class ImageDownloadView(View):
     def get(self, request, *args, **kwargs): 

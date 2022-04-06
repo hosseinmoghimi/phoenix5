@@ -1,0 +1,41 @@
+<div class="card" id="page-permissions-app">
+    <div class="card-body">
+        <div class="table-responsive">
+
+            <table class="table table-striped">
+                <thead>
+                    <th>
+                        عنوان صفحه
+                    </th>
+                    <th>
+
+                    </th>
+                    <th>
+
+                    </th>
+                </thead>
+                <tbody>
+                    <tr v-for="page_permission in page_permissions">
+                        <td>
+                            <a :href="page_permission.page.get_absolute_url">
+                                <span v-text="page_permission.page.title"></span>
+                            </a>
+                        </td>
+                        <td>
+                            <a :href="page_permission.profile.get_absolute_url">
+                                <span v-text="page_permission.profile.name"></span>
+                            </a>
+                        </td>
+                        <td>
+                            <span v-if="page_permission.can_write" class="text-danger">w</span>
+
+                        </td>
+                    </tr>
+
+                 
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

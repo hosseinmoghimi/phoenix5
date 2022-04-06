@@ -1,0 +1,9 @@
+<script>
+    let page_permissions = JSON.parse(`{{page_permissions_s|escapejs}}`)
+    let page_permissions_app = new Vue({
+        el: "#page-permissions-app",
+        data: {
+            page_permissions: page_permissions,
+        }
+    })
+</script>

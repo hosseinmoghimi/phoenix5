@@ -1,4 +1,5 @@
-from .models import ContactMessage, Download, Image, Page, PageComment, PageDownload, PageImage, PageLike, PageLink, PageTag, Parameter,Picture, Tag
+from aiohttp import request
+from .models import ContactMessage, Download, Image, Page, PageComment, PageDownload, PageImage, PageLike, PageLink, PagePermission, PageTag, Parameter,Picture, Tag
 from .constants import *
 from django.db.models import Q
 from authentication.repo import ProfileRepo
@@ -29,6 +30,8 @@ class ImageRepo:
     def list(self,*args, **kwargs):
         objects=self.objects
         return objects
+
+
 class PageRepo:
     
     def __init__(self,*args, **kwargs):
@@ -82,7 +85,16 @@ class PageRepo:
                 related_page.related_pages.remove(page)
             return related_page
 
-
+    def profile_pages(self,*args, **kwargs):
+        my_pages_ids=[]
+        if 'profile_id' in kwargs:
+            profile_id=kwargs['profile_id']
+        else:
+            profile=ProfileRepo(request=self.request).me
+            if profile is not None:
+                profile_id=profile.id
+        my_pages_ids=PagePermissionRepo(request=self.request).list(profile_id=profile_id)
+        return Page.objects.filter(id__in=my_pages_ids)
     def toggle_like(self,*args, **kwargs):
         page=self.page(*args, **kwargs)
         profile=ProfileRepo(request=self.request).me
@@ -137,21 +149,27 @@ class PageRepo:
         return objects.all()
 
     
-    def my_pages_ids(self):
-        pages_ids=[]
-        if not self.request.user.is_authenticated:
-            return []
-        if self.request.user.has_perm('core.view_basicpage'):
-            return Page.objects.all()
-        # from projectmanager.repo import EmployeeRepo
-        # employee = EmployeeRepo(request=self.request).me
-        # if employee is not None:
-        #     for project in employee.organization_unit.project_set.all():
-        #         pages_ids.append(project.id)
-        return pages_ids
-        # return BasicPage.objects.filter(id__in=pages_ids)
+class PageTagRepo():
+    def __init__(self,*args, **kwargs):
+        self.request=None
+        self.user=None
+        if 'user' in kwargs:
+            self.user=kwargs['user']
+        if 'request' in kwargs:
+            self.request=kwargs['request']
+            self.user=self.request.user
+        self.objects=PageTag.objects.all()
+    def list(self,*args, **kwargs):
+        objects=self.objects
+        if 'tag_id' in kwargs and kwargs['tag_id']>0:
+            objects=objects.filter(tag_id=kwargs['tag_id'])
+        if 'page_id' in kwargs and kwargs['page_id']>0:
+            objects=objects.filter(page_id=kwargs['page_id'])
+        return objects.order_by('-date_added')
+
     def add_tag(self,*args, **kwargs):
-        if not self.user.has_perm(APP_NAME+".change_tag"):
+        my_pages_ids=PagePermissionRepo(request=self.request).my_pages_ids()
+        if not page.id in my_pages_ids:
             return
         page=PageRepo(request=self.request).page(*args, **kwargs)
         if page is None:
@@ -172,6 +190,7 @@ class PageRepo:
             page_tag.save()
         return PageTag.objects.filter(page_id=page.id)
 
+
 class PageLikeRepo():
     def __init__(self,*args, **kwargs):
         self.request=None
@@ -189,7 +208,8 @@ class PageLikeRepo():
         if 'page_id' in kwargs and kwargs['page_id']>0:
             objects=objects.filter(page_id=kwargs['page_id'])
         return objects.order_by('-date_added')
-    
+
+
 class PageCommentRepo:
     def __init__(self,*args, **kwargs):
         self.request=None
@@ -227,7 +247,6 @@ class PageCommentRepo:
             return self.objects.filter(pk=kwargs['title']).first()
 
 
- 
 class TagRepo:
     def __init__(self,*args, **kwargs):
         self.request=None
@@ -249,6 +268,7 @@ class TagRepo:
             return self.objects.filter(pk=kwargs['id']).first()
         if 'title' in kwargs:
             return self.objects.filter(pk=kwargs['title']).first()
+
 
 class PictureRepo:
     
@@ -299,8 +319,6 @@ class PictureRepo:
 
     def get(self,*args, **kwargs):
         return self.picture(*args, **kwargs)
-
-
 
 
 class ParameterRepo:
@@ -408,11 +426,8 @@ class PageImageRepo:
         
         page=PageRepo(request=self.request).page(*args, **kwargs)
         if page is not None:
-            my_pages_ids=PageRepo(request=self.request).my_pages_ids()
-            
-            if self.user.has_perm(APP_NAME+".add_pageimage") or page.id in my_pages_ids:
-                pass
-            else:
+            my_pages_ids=PagePermissionRepo(request=self.request).my_pages_ids()
+            if not page.id in my_pages_ids:
                 return
         
         # image=Image(title=title,image_main_origin=image)
@@ -445,6 +460,7 @@ class PageImageRepo:
             pk=kwargs['picture_id']
         return self.objects.filter(pk=pk).first()
 
+
 class PageDownloadRepo:
     def __init__(self,*args, **kwargs):
         self.request=None
@@ -466,9 +482,8 @@ class PageDownloadRepo:
     def add_page_download(self,title,file,priority=1000,*args, **kwargs):
         page=PageRepo(request=self.request).page(*args, **kwargs)
         if page is not None:
-            my_pages_ids=PageRepo(request=self.request).my_pages_ids()
-            
-            if self.user.has_perm(APP_NAME+".add_pagedownload") or page.id in my_pages_ids:
+            my_pages_ids=PagePermissionRepo(request=self.request).my_pages_ids()
+            if page.id in my_pages_ids:
                 pass
             else:
                 return
@@ -488,6 +503,72 @@ class PageDownloadRepo:
         if 'page_id' in kwargs:
             objects=objects.filter(page_id=kwargs['page_id'])
         return objects
+
+
+class PagePermissionRepo():
+    def __init__(self,*args, **kwargs):
+        self.request=None
+        self.user=None
+        self.app_name=None
+        if 'request' in kwargs:
+            self.request=kwargs['request']
+            self.user=self.request.user
+        if 'user' in kwargs:
+            self.user=kwargs['user']
+        if 'app_name' in kwargs:
+            self.app_name=kwargs['app_name']
+        else:
+            self.app_name=None
+        self.profile=ProfileRepo(user=self.user).me
+        
+        self.objects=PagePermission.objects
+        if self.user.has_perm(APP_NAME+".view_pagepermission"):
+            # self.objects=self.objects
+            pass
+        elif self.profile is not None:
+            self.objects=self.objects.filter(profile_id=self.profile.id)
+        else:
+            self.objects=PagePermission.objects.filter(pk=0)
+    def my_pages_ids(self):
+        my_pages_ids=[]
+        if self.profile is not None:
+            page_permissions=PagePermissionRepo(request=self.request).list()
+            # my_pages_ids=( page_permissions)
+            for page_permission in page_permissions:
+                my_pages_ids.append(page_permission.page.id)
+        return my_pages_ids
+     
+    def add_page_permission(self,*args, **kwargs):
+        if not self.user.has_perm(APP_NAME+".add_pagepermission"):
+            return
+        # page=PageRepo(request=self.request).page(*args, **kwargs)
+        # profile=ProfileRepo(request=self.request).profile(*args, **kwargs)
+        # if page is None or profile is None:
+        #     return
+
+        page_permission=PagePermission()
+        page_permission.page_id=kwargs['page_id']
+        page_permission.profile_id=kwargs['profile_id']
+        page_permission.save()
+        return page_permission
+         
+    def page_permission(self,*args, **kwargs):
+        if 'page_permission_id' in kwargs:
+            return self.objects.filter(pk=kwargs['page_permission_id']).first()
+        if 'id' in kwargs:
+            return self.objects.filter(pk=kwargs['id']).first()
+        if 'pk' in kwargs:
+            return self.objects.filter(pk=kwargs['pk']).first()
+
+
+    def list(self,*args, **kwargs):
+        objects= self.objects
+        if 'page_id' in kwargs:
+            objects=objects.filter(page_id=kwargs['page_id'])
+        if 'profile_id' in kwargs:
+            objects=objects.filter(profile_id=kwargs['profile_id'])
+        return objects.all()
+
 
 class PageLinkRepo:
     def __init__(self,*args, **kwargs):
@@ -516,9 +597,8 @@ class PageLinkRepo:
     def add_page_link(self,title,url,*args, **kwargs):
         page=PageRepo(request=self.request).page(*args, **kwargs)
         if page is not None:
-            my_pages_ids=PageRepo(request=self.request).my_pages_ids()
-            
-            if self.user.has_perm(APP_NAME+".add_pagelink") or page.id in my_pages_ids:
+            my_pages_ids=PagePermissionRepo(request=self.request).my_pages_ids()
+            if page.id in my_pages_ids:
                 pass
             else:
                 return

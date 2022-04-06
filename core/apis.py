@@ -33,7 +33,8 @@ class ChangeParameterApi(APIView):
                     context['result'] = SUCCEED
         context['log'] = log
         return JsonResponse(context)
-    
+
+
 class AddPageLinkApi(APIView):
     def post(self, request, *args, **kwargs):
         log = 1
@@ -59,7 +60,8 @@ class AddPageLinkApi(APIView):
                     context['result'] = SUCCEED
         context['log'] = log
         return JsonResponse(context)
-    
+
+
 class AddPageTagApi(APIView):
     def post(self, request, *args, **kwargs):
         log = 1
@@ -74,7 +76,7 @@ class AddPageTagApi(APIView):
                 page_id = cd['page_id']
                 tag_title = cd['tag_title']
                 
-                page_tags = PageRepo(request=request).add_tag(
+                page_tags = PageTagRepo(request=request).add_tag(
                     page_id=page_id,
                     tag_title=tag_title,
                     )
@@ -138,6 +140,7 @@ class AddPageImageApi(APIView):
         context['log'] = log
         return JsonResponse(context)
     
+
 class AddPageCommentApi(APIView):
     def post(self, request, *args, **kwargs):
         log = 10
@@ -160,7 +163,8 @@ class AddPageCommentApi(APIView):
                     context['result'] = SUCCEED
         context['log'] = log
         return JsonResponse(context)
-    
+
+
 class DeletePageCommentApi(APIView):
     def post(self, request, *args, **kwargs):
         log = 1
@@ -178,6 +182,7 @@ class DeletePageCommentApi(APIView):
                     context['result'] = SUCCEED
         context['log'] = log
         return JsonResponse(context)
+
 
 class AddContactMessageApi(APIView):
     def post(self,request,*args, **kwargs):
@@ -198,7 +203,8 @@ class AddContactMessageApi(APIView):
                     return JsonResponse({'result':SUCCEED})
         context['log']=log
         return JsonResponse(context)
-        
+
+
 class AddRelatedPageApi(APIView):
     def post(self,request,*args, **kwargs):
         context={}
@@ -218,7 +224,8 @@ class AddRelatedPageApi(APIView):
                     context['result'] = SUCCEED
         context['log']=log
         return JsonResponse(context)
-          
+
+
 class TogglePageLikeApi(APIView):
     def post(self,request,*args, **kwargs):
         context={}

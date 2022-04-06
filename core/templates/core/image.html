@@ -5,23 +5,20 @@
     {{image.title}}
 </h5>
 <p class="text-center">
-     <a class="mx-3" href="{{image.get_download_url}}">
+     <a class="mx-3 text-success" href="{{image.get_download_url}}">
         <i class="material-icons text-success">
             get_app
         </i>
         دانلود تصویر
     </a>
 
-    <a class="mx-3" href="{{image.get_edit_url}}">
-        <i class="material-icons text-success">
-            get_app
-        </i>
+    <a class="mx-3 text-warning" href="{{image.get_edit_url}}">
+       <i class="fa fa-edit"></i>
         ویرایش تصویر
     </a>
-    <a class="mx-3" href="{{image.get_delete_url}}">
-        <i class="material-icons text-success">
-            get_app
-        </i>
+    <a class="mx-3 text-danger" href="{{image.get_delete_url}}">
+        <i class="fa fa-trash "></i>
+
         حذف تصویر
     </a>
  
@@ -33,7 +30,7 @@
 
     <a href="{{image.image}}">
 
-        <img src="{{image.image}}" width="auto" alt="">
+        <img src="{{image.image}}" style="max-width: 100%;" alt="">
     </a>
 </div>
 
