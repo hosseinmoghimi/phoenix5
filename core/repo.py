@@ -239,7 +239,7 @@ class PageCommentRepo:
             self.request=kwargs['request']
             self.user=self.request.user
         self.objects=PageComment.objects
-    def add_comment(self,comment,page_id,*args, **kwargs):
+    def add_comment(self,*args, **kwargs):
         
         can_write=False
         if self.user.has_perm(APP_NAME+".change_page"):
@@ -255,7 +255,7 @@ class PageCommentRepo:
             return
 
         profile=ProfileRepo(user=self.user).me
-        page_comment=PageComment(comment=comment,page_id=page_id,profile=profile)
+        page_comment=PageComment(comment=kwargs['comment'],page_id=kwargs['page_id'],profile=profile)
         
         page_comment.save()
         return page_comment
