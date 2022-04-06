@@ -54,6 +54,7 @@ class PageRepo:
         return new_page
     def add_related_page(self,*args, **kwargs):
         can_write=False
+        page=PageRepo(request=self.request).page(*args, **kwargs)
         if self.user.has_perm(APP_NAME+".change_page"):
             can_write=True
         if not can_write:
@@ -62,7 +63,6 @@ class PageRepo:
                 page_permission=PagePermission.objects.filter(page_id=page.id).filter(profile_id=self.profile.id).first()
                 if page_permission is not None:
                     can_write=page_permission.can_write
-        page=PageRepo(request=self.request).page(*args, **kwargs)
         if page is None or not can_write:
             return
 
@@ -182,6 +182,7 @@ class PageTagRepo():
     def add_tag(self,*args, **kwargs):
        
         can_write=False
+        page=PageRepo(request=self.request).page(*args, **kwargs)
         if self.user.has_perm(APP_NAME+".change_page"):
             can_write=True
         if not can_write:
@@ -190,7 +191,6 @@ class PageTagRepo():
                 page_permission=PagePermission.objects.filter(page_id=page.id).filter(profile_id=self.profile.id).first()
                 if page_permission is not None:
                     can_write=page_permission.can_write
-        page=PageRepo(request=self.request).page(*args, **kwargs)
         if page is None or not can_write:
             return
         if not 'tag_title' in kwargs:
@@ -242,6 +242,7 @@ class PageCommentRepo:
     def add_comment(self,*args, **kwargs):
         
         can_write=False
+        page=PageRepo(request=self.request).page(*args, **kwargs)
         if self.user.has_perm(APP_NAME+".change_page"):
             can_write=True
         if not can_write:
@@ -250,7 +251,6 @@ class PageCommentRepo:
                 page_permission=PagePermission.objects.filter(page_id=page.id).filter(profile_id=self.profile.id).first()
                 if page_permission is not None:
                     can_write=page_permission.can_write
-        page=PageRepo(request=self.request).page(*args, **kwargs)
         if page is None or not can_write:
             return
 
@@ -459,6 +459,7 @@ class PageImageRepo:
         
         
         can_write=False
+        page=PageRepo(request=self.request).page(*args, **kwargs)
         if self.user.has_perm(APP_NAME+".change_page"):
             can_write=True
         if not can_write:
@@ -467,7 +468,6 @@ class PageImageRepo:
                 page_permission=PagePermission.objects.filter(page_id=page.id).filter(profile_id=self.profile.id).first()
                 if page_permission is not None:
                     can_write=page_permission.can_write
-        page=PageRepo(request=self.request).page(*args, **kwargs)
         if page is None or not can_write:
             return
         
@@ -523,6 +523,7 @@ class PageDownloadRepo:
     def add_page_download(self,title,file,priority=1000,*args, **kwargs):
         
         can_write=False
+        page=PageRepo(request=self.request).page(*args, **kwargs)
         if self.user.has_perm(APP_NAME+".change_page"):
             can_write=True
         if not can_write:
@@ -531,7 +532,6 @@ class PageDownloadRepo:
                 page_permission=PagePermission.objects.filter(page_id=page.id).filter(profile_id=self.profile.id).first()
                 if page_permission is not None:
                     can_write=page_permission.can_write
-        page=PageRepo(request=self.request).page(*args, **kwargs)
         if page is None or not can_write:
             return
 
@@ -648,6 +648,7 @@ class PageLinkRepo:
         
        
         can_write=False
+        page=PageRepo(request=self.request).page(*args, **kwargs)
         if self.user.has_perm(APP_NAME+".change_page"):
             can_write=True
         if not can_write:
@@ -656,7 +657,6 @@ class PageLinkRepo:
                 page_permission=PagePermission.objects.filter(page_id=page.id).filter(profile_id=self.profile.id).first()
                 if page_permission is not None:
                     can_write=page_permission.can_write
-        page=PageRepo(request=self.request).page(*args, **kwargs)
         if page is None or not can_write:
             return
 
