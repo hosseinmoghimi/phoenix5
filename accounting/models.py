@@ -330,7 +330,6 @@ class FinancialDocument(models.Model,LinkHelper):
     account=models.ForeignKey("account", verbose_name=_("account"), on_delete=models.CASCADE)
     bedehkar=models.IntegerField(_("bedehkar"),default=0)
     bestankar=models.IntegerField(_("bestankar"),default=0)
-    document_datetime=models.DateTimeField(_("document_datetime"), auto_now=False, auto_now_add=True)
     transaction=models.ForeignKey("transaction",verbose_name=_("transaction"), on_delete=models.CASCADE)
     tags=models.ManyToManyField("FinancialDocumentTag", blank=True,verbose_name=_("tags"))
     color=models.CharField(_("color"),max_length=50,choices=ColorEnum.choices,default=ColorEnum.PRIMARY)
@@ -341,14 +340,16 @@ class FinancialDocument(models.Model,LinkHelper):
     @property
     def rest(self):
         rest=0
-        for fd in FinancialDocument.objects.filter(account=self.account).filter(document_datetime__lte=self.transaction.transaction_datetime):
+        fds=FinancialDocument.objects.filter(account=self.account)
+        fds=fds.filter(transaction__transaction_datetime__lte=self.transaction.transaction_datetime)
+        for fd in fds :
             rest+=fd.bestankar
             rest-=fd.bedehkar
         return rest
 
     def get_state_badge(self):
         color="muted"
-        state="خنثی"
+        state="تسویه"
         if self.bedehkar>0:
             color="danger"
             state="بدهکار"
@@ -362,8 +363,8 @@ class FinancialDocument(models.Model,LinkHelper):
     @property
     def persian_document_datetime(self,no_tag=False):
         if no_tag:
-            return PersianCalendar().from_gregorian(self.document_datetime)
-        return to_persian_datetime_tag(self.document_datetime)
+            return PersianCalendar().from_gregorian(self.transaction.transaction_datetime)
+        return to_persian_datetime_tag(self.transaction.transaction_datetime)
     @property
     def title(self):
         return self.transaction.title 

@@ -67,7 +67,7 @@
                             <th>
                                 بستانکار
                             </th>
-                            {% if financial_account %}
+                            {% if account %}
                             <th>
                                 مانده
                             </th>
@@ -100,7 +100,8 @@
                                     <div v-if="financial_document.transaction">
                                         <a :href="financial_document.transaction.get_absolute_url">
                                             <!-- <span v-text="financial_document.transaction.title"></span> -->
-                                            <span class="text-muted small" v-text="financial_document.transaction.class_title">
+                                            <span class="text-muted small"
+                                                v-text="financial_document.transaction.class_title">
 
                                             </span>
                                         </a>
@@ -161,7 +162,7 @@
                                         v-text="to_price(financial_document.bestankar,'')"></span>
 
                                 </td>
-                                {% if financial_account %}
+                                {% if account %}
                                 <td>
                                     <span v-text="to_price(financial_document.rest,'')"></span>
 
@@ -195,12 +196,24 @@
                             </th>
                             {% if financial_account %}
                             <th>
-                                
+
                             </th>
                             {% endif %}
                             </thead>
 
                     </table>
+                </div>
+            </div>
+            <div class="card-footer">
+                <div class="text-right">
+
+                    <a :href="get_print_url" target="_blank" title="حذف" class="mx-2"><i
+                            class="material-icons text-success">print</i></a>
+
+
+                    <a :href="get_excel_url" title="اکسل" class="mx-2"><i class="fa fa-file-excel-o"
+                            aria-hidden="true"></i></a>
+
                 </div>
             </div>
         </div>
