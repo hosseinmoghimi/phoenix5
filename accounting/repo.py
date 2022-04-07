@@ -59,6 +59,7 @@ class ProductRepo():
         product.save()
         return product
 
+
 class ServiceRepo():
     def __init__(self, *args, **kwargs):
         self.request = None
@@ -106,6 +107,7 @@ class ServiceRepo():
         service.save()
         return service
 
+
 class FinancialBalanceRepo:
     def __init__(self, *args, **kwargs):
         self.request = None
@@ -150,6 +152,7 @@ class FinancialBalanceRepo:
             return self.objects.filter(pk= kwargs['pk']).first()
         if 'id' in kwargs:
             return self.objects.filter(pk= kwargs['id']).first()
+
 
 class PriceRepo:
     def __init__(self, *args, **kwargs):
