@@ -2,7 +2,7 @@
     let material_requests = JSON.parse(`{{material_requests_s|escapejs}}`)
 </script>
 <script>
-    let material_requests_app_data={}
+    let material_requests_app_data = {}
 </script>
 {% if add_material_request_form %}
 <script>
@@ -31,6 +31,7 @@
         material_requests: material_requests,
         waiting: false,
         sum_material_requests: 0,
+        count_material_requests: 0,
         show_add_material_request_form: false,
     }
 </script>
@@ -46,10 +47,20 @@
             this.sum_material_requests = 0
             this.material_requests.forEach(material_request => {
                 this.sum_material_requests += material_request.total
+                this.count_material_requests += material_request.quantity
 
-            });
+            })
         },
         methods: {
+            // sum_price_requested: () => {
+            //     let sum_material_requests = 0
+            //     this.material_requests.forEach(material_request => {
+            //         sum_material_requests += material_request.unit_price*material_request.quantity
+
+            //     })
+
+            //     return to_price(sum_material_requests,'')
+            // },
             to_price: function (value, CURRENCY) {
                 return to_price(value, CURRENCY)
             },
@@ -113,7 +124,7 @@
                 //             this.add_material_request_form_unit_name =item_price.unit_name
                 //             this.add_material_request_form_unit_price =item_price.unit_price
                 //         }
-                        
+
                 //     });
                 // }
             },

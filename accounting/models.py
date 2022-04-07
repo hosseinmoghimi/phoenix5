@@ -158,6 +158,8 @@ class Product(ProductOrService):
         verbose_name_plural = _("Products")
 
 
+    def get_pm_absolute_url(self):
+        return reverse('projectmanager:material',kwargs={'pk':self.pk})
 
 
 
@@ -181,7 +183,8 @@ class Service(ProductOrService):
         verbose_name = _("Service")
         verbose_name_plural = _("Services")
  
- 
+    def get_pm_absolute_url(self):
+        return reverse('projectmanager:service',kwargs={'pk':self.pk})
 
     def save(self,*args, **kwargs):
         if self.class_name is None or self.class_name=="":

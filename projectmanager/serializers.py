@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Event,Employee, Letter, Material, MaterialRequest, PM_Service, Request,Project,OrganizationUnit, RequestSignature, ServiceRequest, letterSent
+from .models import Service,Material,Event,Employee, Letter, MaterialRequest, Request,Project,OrganizationUnit, RequestSignature, ServiceRequest, letterSent
 from authentication.serializers import ProfileSerializer
 
 
@@ -76,13 +76,13 @@ class RequestSignatureForEmployeeSerializer(serializers.ModelSerializer):
 class MaterialSerializer(serializers.ModelSerializer):
     class Meta:
         model = Material
-        fields = ['id', 'title', 'get_absolute_url','full_title','buy_price','available','unit_price','unit_name','thumbnail']
+        fields = ['id', 'title', 'get_pm_absolute_url','full_title','buy_price','available','unit_price','unit_name','thumbnail']
 
 
 class ServiceSerializer(serializers.ModelSerializer):
     class Meta:
-        model = PM_Service
-        fields = ['id', 'title', 'get_absolute_url','full_title','buy_price','unit_price','unit_name','thumbnail']
+        model = Service
+        fields = ['id', 'title', 'get_pm_absolute_url','full_title','buy_price','unit_price','unit_name','thumbnail']
 
 
 class ProjectSerializer(serializers.ModelSerializer):

@@ -52,7 +52,7 @@
                     {% if add_material_form %}
                       <div class="text-right my-2">
 
-                          <button @click="add()" class="btn btn-success">
+                          <button v-show="show_add_btn" @click="add()" class="btn btn-success">
                               <i class="fa fa-plus"></i>
                               افزودن
                             </button>
@@ -90,7 +90,7 @@
                             <tr v-for="material in materials">
 
                                 <td>
-                                    <a :href="material.get_absolute_url">
+                                    <a :href="material.get_pm_absolute_url">
 
                                         <div class="media">
                                             <img :src="material.thumbnail" class="rounded" width="64" alt="">

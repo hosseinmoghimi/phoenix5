@@ -531,11 +531,11 @@ class MaterialsView(View):
 class MaterialView(View):
     def get(self, request, *args, **kwargs):
         context = getContext(request=request)
-        material = MaterialRepo(request=request).material(*args, **kwargs)
+        material = MaterialRepo(request=request).product(*args, **kwargs)
         context.update(get_product_context(request=request, product=material))
         context['material'] = material
 
-        material_requests = material.material_requests()
+        material_requests = MaterialRequestRepo(request=request).list(material_id=material.id)
         context['material_requests'] = material_requests
         material_requests_s = json.dumps(
             MaterialRequestSerializer(material_requests, many=True).data)
@@ -564,7 +564,7 @@ class ServiceView(View):
         service = ServiceRepo(request=request).service(*args, **kwargs)
         context.update(get_service_context(request=request, service=service))
 
-        service_requests = service.service_requests()
+        service_requests = ServiceRequestRepo(request=request).list(service_id=service.id)
         context['service_requests'] = service_requests
         service_requests_s = json.dumps(
             ServiceRequestSerializer(service_requests, many=True).data)

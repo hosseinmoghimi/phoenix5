@@ -1,4 +1,4 @@
-import json
+from accounting.apis import AddServiceApi,AddProductApi as AddMaterialApi   
 from core.constants import FAILED,SUCCEED
 from rest_framework.views import APIView
 from core.serializers import PageLinkSerializer
@@ -69,47 +69,9 @@ class AddProjectApi(APIView):
         return JsonResponse(context)
         
         
-class AddMaterialApi(APIView):
-    def post(self,request,*args, **kwargs):
-        context={}
-        log=11
-        context['result']=FAILED
-        if request.method=='POST':
-            log=22
-            report_form=AddMaterialForm(request.POST)
-            if report_form.is_valid():
-                log=33
-                cd=report_form.cleaned_data
-            
-                material=MaterialRepo(request=request).add_material(**cd)
-                if material is not None:
-                    context['material']=MaterialSerializer(material).data
-                    context['result']=SUCCEED
-        context['log']=log
-        return JsonResponse(context)
+ 
 
-
-        
-class AddServiceApi(APIView):
-    def post(self,request,*args, **kwargs):
-        context={}
-        log=11
-        context['result']=FAILED
-        if request.method=='POST':
-            log=22
-            report_form=AddServiceForm(request.POST)
-            if report_form.is_valid():
-                log=33
-                cd=report_form.cleaned_data
-            
-                service=ServiceRepo(request=request).add_service(**cd)
-                if service is not None:
-                    context['service']=ServiceSerializer(service).data
-                    context['result']=SUCCEED
-        context['log']=log
-        return JsonResponse(context)
-
-
+ 
         
 class AddSignatureApi(APIView):
     def post(self,request,*args, **kwargs):
