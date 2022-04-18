@@ -1,10 +1,8 @@
 from rest_framework import serializers
-from market.models import Category
+from market.models import Category,Product
 from accounting.serializers import ProductSerializer as ProductSerializer_origin
 
-
-class ProductSerializerForApi(ProductSerializer_origin):
-    pass
+ 
 
 class ProductSerializer(ProductSerializer_origin):
     pass
@@ -15,4 +13,9 @@ class CategorySerializer(serializers.ModelSerializer):
 class CategorySerializerForApi(serializers.ModelSerializer):
     class Meta:
         model=Category
-        fields=['id','title','get_absolute_url','parent_id','get_products_list_url']
+        fields=['id','title','thumbnail','get_absolute_url','parent_id','get_products_list_url']
+
+class ProductSerializerForApi(serializers.ModelSerializer):
+    class Meta:
+        model=Product
+        fields=['id','title','thumbnail','get_absolute_url',]
