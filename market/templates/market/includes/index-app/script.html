@@ -5,6 +5,7 @@
     let market_index_app = new Vue({
         el:"#market-index-app",
         data: {
+            category:{},
             categories: categories,
             products: products,
             search_for:'',
@@ -26,14 +27,15 @@
                     <span class="text-${color}">${vall}</span>
                     `
             },
-            create_employee: function (account_id) {
-                let url = "{% url 'projectmanager:employee' pk=0 %}"
-                let payload = {
-                    csrfmiddlewaretoken: csrfmiddlewaretoken,
-                    account_id: account_id
-                }
-                $.post(url, payload).done((data) => {
+            select_category: function (category_id) {
+                let url = "{% url 'market:api_category' category_id=1234 %}"
+                url=url.replace('1234',category_id)
+                 
+                $.get(url).done((data) => {
                     console.log(data)
+                    market_index_app.category=data.category
+                    market_index_app.categories=data.categories
+                    market_index_app.products=data.products
                 })
             },
            

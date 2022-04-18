@@ -11,6 +11,10 @@ class ProductRepo(ProductRepo_origin):
             category=Category.objects.get(pk=kwargs['category_id'])
             if category is not None:
                 return category.products.order_by('priority')
+
+        if 'for_home' in kwargs:
+            hps=objects=HomeProducts.objects.all()
+            objects = objects.filter(Q(for_home=kwargs['for_home']))
         if 'search_for' in kwargs:
             return objects.filter(Q(title__contains=kwargs['search_for'])|Q(short_description__contains=kwargs['search_for']))
         return objects

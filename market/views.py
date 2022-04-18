@@ -55,7 +55,7 @@ class HomeView(View):
         context['categories_s'] = json.dumps(CategorySerializer(categories,many=True).data)
         # context['offers'] = OfferRepo(request=request).list(for_home=True)
         # context['blogs'] = BlogRepo(request=request).list(for_home=True)
-        products = ProductRepo(request=request).list(for_home=True)
+        products = ProductRepo(request=request).objects.filter(pk=0)
         context['products'] = products
         context['products_s'] = json.dumps(ProductSerializer(products,many=True).data)
         # context['top_products'] = products.order_by('-priority')[:3]

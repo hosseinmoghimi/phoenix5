@@ -14,7 +14,8 @@ urlpatterns = [
     path("suppliers/",login_required(views.HomeView.as_view()),name="suppliers"),
 
 
-    path("api/categories/",(apis.CategoryApi.as_view()),name="api_categories"),
+    path("api/categories/",(apis.CategoriesApi.as_view()),name="api_categories"),
+    path("api/category/<int:category_id>/",(apis.CategoryApi.as_view()),name="api_category"),
     path("api/products/<int:category_id>/",(apis.ProductsApi.as_view()),name="api_category_products"),
     
 ]

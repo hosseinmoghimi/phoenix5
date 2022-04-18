@@ -9,6 +9,20 @@ class CategoryApi(APIView):
     def get(self,request,*args, **kwargs):
         context={}
         context['result']=FAILED
+        category=CategoryRepo(request=request).category(*args, **kwargs)
+        categories=category.childs.all()
+        categories=CategorySerializerForApi(categories,many=True).data
+        context['category']=CategorySerializerForApi(category).data
+        context['categories']=categories
+        products=category.products.all()
+        products=ProductSerializerForApi(products,many=True).data
+        context['products']=products
+        context['result']=SUCCEED
+        return JsonResponse(context)
+class CategoriesApi(APIView):
+    def get(self,request,*args, **kwargs):
+        context={}
+        context['result']=FAILED
         categories=CategoryRepo(request=request).list(*args, **kwargs)
         categories=CategorySerializerForApi(categories,many=True).data
         context['categories']=categories
@@ -22,7 +36,9 @@ class ProductsApi(APIView):
         products=category.products.all()
         products=ProductSerializerForApi(products,many=True).data
         context['products']=products
-        category=CategorySerializerForApi(category).data
-        context['category']=category
+        categories=category.childs.all()
+        categories=CategorySerializerForApi(categories,many=True).data
+        context['categories']=categories
+        context['category']=CategorySerializerForApi(category).data
         context['result']=SUCCEED
         return JsonResponse(context)

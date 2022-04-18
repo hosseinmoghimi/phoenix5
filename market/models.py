@@ -24,8 +24,7 @@ class Order(Invoice):
         if self.app_name is None or self.app_name=="":
             self.app_name=APP_NAME
         return super(Order,self).save(*args, **kwargs)
-
-
+ 
 class Category(models.Model,LinkHelper, ImageMixin):
     thumbnail_origin = models.ImageField(_("تصویر کوچک"), upload_to=IMAGE_FOLDER+'Category/Thumbnail/',null=True, blank=True, height_field=None, width_field=None, max_length=None)
     parent=models.ForeignKey("category",blank=True,null=True, verbose_name=_("parent"),related_name="childs", on_delete=models.SET_NULL)
