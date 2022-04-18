@@ -37,7 +37,8 @@ class Category(models.Model,LinkHelper):
         verbose_name = 'Category'
         verbose_name_plural = 'Categories'
 
- 
+    def get_products_list_url(self):
+        return reverse(APP_NAME+":api_category_products",kwargs={'category_id':self.pk})
 
 
 class Cart(Invoice):

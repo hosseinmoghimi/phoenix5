@@ -37,7 +37,7 @@ urlpatterns = [
     path("event/<int:pk>/",login_required(views.EventView.as_view()),name="event"),
     path("events/",login_required(views.EventsView.as_view()),name="events"),
 
-    path("service/<int:pk>/",login_required(views.ServiceView.as_view()),name="pm_service"),
+    path("service/<int:pk>/",login_required(views.ServiceView.as_view()),name="service"),
     path("services/",login_required(views.ServicesView.as_view()),name="services"),
     path("guantt_chart/<int:pk>/",login_required(views.GuanttChartView.as_view()),name="guantt_chart"),
   

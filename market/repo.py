@@ -32,13 +32,15 @@ class CategoryRepo():
     def category(self, *args, **kwargs):
         pk=0
         if 'category_id' in kwargs:
-            return kwargs['category_id']
+            pk= kwargs['category_id']
+            return self.objects.filter(pk=pk).first()
        
         elif 'pk' in kwargs:
             pk=kwargs['pk']
+            return self.objects.filter(pk=pk).first()
         elif 'id' in kwargs:
             pk=kwargs['id']
-        return self.objects.filter(pk=pk).first()
+            return self.objects.filter(pk=pk).first()
      
     def list(self, *args, **kwargs):
         objects = self.objects

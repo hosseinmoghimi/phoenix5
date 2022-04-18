@@ -7,7 +7,7 @@ from django.shortcuts import reverse
 
 from core.models import Page
 from projectmanager.enums import *
-from accounting.models import Product as Material, Service as Service
+from accounting.models import Product as Material, Service
 from utility.utils import LinkHelper
 from .apps import APP_NAME
 # Create your models here.
