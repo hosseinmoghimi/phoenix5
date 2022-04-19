@@ -1,6 +1,6 @@
 from django.urls import path
 from .apps import APP_NAME
-from . import views,apis
+from . import views,apis,apk_apis
 app_name=APP_NAME
 urlpatterns = [
     path('',views.BasicViews.as_view(),name="home"),
@@ -18,4 +18,6 @@ urlpatterns = [
     path('set_default/',apis.SetDefaultProfileApi.as_view(),name="set_default"),
     path('membership_requests_app/<app_name>/',views.LogoutViews.as_view(),name="membership_requests_app"),
     path('add_membership_request/',views.BasicViews.as_view(),name="add_membership_request"),
+    # path('api/login/',apis.LoginApi.as_view(),name="api_login"),
+    path('apk/api/login/',apk_apis.CustomAuthToken.as_view(),name="api_login"),
 ]

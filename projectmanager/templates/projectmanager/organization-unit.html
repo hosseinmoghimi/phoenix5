@@ -65,6 +65,18 @@
             <div class="col-md-12">
                 {% include "projectmanager/includes/letters-app/template.html" %}
             </div>
+            {% if account %}
+
+            <div class="col-md-12">
+                {% include "accounting/includes/financial-documents-app/template.html" %}
+            </div> 
+            <div class="col-md-12">
+                {% include "accounting/includes/transactions-app/template.html" %}
+            </div>
+   
+            {% endif %}
+           
+           
         </div>
     </div>
 
@@ -82,7 +94,11 @@
 {% include "projectmanager/includes/employees-app/script.html" %}
 {% include "projectmanager/includes/all-projects-app/script.html" %}
 {% include "projectmanager/includes/letters-app/script.html" %}
- 
+{% if account %}
+{% include "accounting/includes/financial-documents-app/script.html" %}
+{% include "accounting/includes/transactions-app/script.html" %}
+   
+ {% endif %}
 
 
 

@@ -100,8 +100,10 @@ class UnitNameEnum(TextChoices):
     PACK="بسته",_("بسته")
     POCKET="کیسه",_("کیسه")
     SHOT="شات",_("شات")
+    SET="ست",_("ست")
     CUP="فنجان",_("فنجان")
     JOFT="جفت",_("جفت")
+    DAST="دست",_("دست")
 
 
 class IconsEnum(TextChoices):

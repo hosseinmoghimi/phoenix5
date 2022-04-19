@@ -42,7 +42,11 @@ class ProfileRepo():
             return default_profiles.first()
         elif len(default_profiles)>0:
             return self.set_default(default_profiles.first().id)
-    
+    def authenticate_for_apk(self,username,password):
+        (request,user)=ProfileRepo(request=request).login(request=self.request,username=username,password=password)
+        token, created = Token.objects.get_or_create(user=user)
+        profile=self.objects.filter(user=user).first()
+        return request,profile,token,created
     def set_default(self,*args, **kwargs):
         profile=self.profile(*args, **kwargs)
         if profile is None:

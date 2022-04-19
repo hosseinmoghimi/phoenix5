@@ -2,7 +2,7 @@
 from django.http import JsonResponse
 from accounting.repo import InvoiceRepo, PriceRepo
 from accounting.serializers import PriceBriefSerializer
-from accounting.views import InvoiceView, get_invoice_context, get_service_context, get_product_context
+from accounting.views import InvoiceView, get_invoice_context, get_service_context, get_product_context,get_account_context
 from django.shortcuts import redirect, render
 # Create your views here.
 from django.shortcuts import render, reverse
@@ -169,6 +169,11 @@ class OrganizationUnitView(View):
                 ProjectSerializer(projects, many=True).data)
             context['projects_s'] = projects_s
 
+        account=organization_unit.account
+        if account is not None:
+            context['account']=account
+            
+            context.update(get_account_context(request=request,account=account))
         # childs
         if True:
             organization_units = OrganizationUnitRepo(request=request).list(

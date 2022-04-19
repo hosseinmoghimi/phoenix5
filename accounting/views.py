@@ -1,3 +1,4 @@
+from email.policy import default
 from django.http import Http404, HttpResponse, JsonResponse
 from django.shortcuts import render,reverse
 from django.utils import timezone
@@ -21,7 +22,8 @@ from accounting.serializers import AccountSerializer, FinancialBalanceSerializer
 from accounting.forms import *
 import json
 from phoenix.server_settings import phoenix_apps
-
+from core.repo import ParameterRepo
+from accounting.enums import ParameterAccountingEnum
 LAYOUT_PARENT = "phoenix/layout.html"
 TEMPLATE_ROOT = "accounting/"
 
@@ -135,8 +137,9 @@ def get_account_context(request,*args, **kwargs):
     invoices=account.invoices()
     context['invoices']=invoices
     context['invoices_s']=json.dumps(InvoiceSerializer(invoices,many=True).data)
-
-    financial_documents=FinancialDocumentRepo(request=request).list(account_id=account.id)
+    count=int(ParameterRepo(request=request,app_name=APP_NAME).parameter(name=ParameterAccountingEnum.COUNT_OF_ITEM_PER_PAGE,default=10).value)
+    count=kwargs['count'] if 'count' in kwargs else count
+    financial_documents=FinancialDocumentRepo(request=request).list(account_id=account.id)[:count]
     context['financial_documents']=financial_documents
     context['financial_documents_s']=json.dumps(FinancialDocumentForAccountSerializer(financial_documents,many=True).data)
 
@@ -151,11 +154,11 @@ def get_account_context(request,*args, **kwargs):
 
 
 
-    transactions=TransactionRepo(request=request).list(account_id=account.id)
+    transactions=TransactionRepo(request=request).list(account_id=account.id)[:count]
     context['transactions']=transactions
     context['transactions_s']=json.dumps(TransactionSerializer(transactions,many=True).data)
 
-    payments=PaymentRepo(request=request).list(account_id=account.id)
+    payments=PaymentRepo(request=request).list(account_id=account.id)[:count]
     context['payments']=payments
     context['payments_s']=json.dumps(PaymentSerializer(payments,many=True).data)
     

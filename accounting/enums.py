@@ -13,6 +13,8 @@ class WareHouseSheetDirectionEnum(TextChoices):
     EXPORT="خروج از انبار",_("خروج از انبار")
  
 
+class ParameterAccountingEnum(TextChoices):
+    COUNT_OF_ITEM_PER_PAGE="تعداد آیتم در صفحه",_("تعداد آیتم در صفحه")
 
 class ChequeStatusEnum(TextChoices):
     DRAFT="پیش نویس",_("پیش نویس")
