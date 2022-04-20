@@ -1,5 +1,4 @@
-from django.db.models.fields import BooleanField
-from core.settings import SITE_URL
+from phoenix.settings import SITE_URL
 from django import forms
 from .apps import APP_NAME
 from django.shortcuts import reverse

@@ -5,6 +5,9 @@ from core.models import _,LinkHelper
 
 class Feeder(models.Model,LinkHelper):
     name=models.CharField(_("name"), max_length=50)
+    ip=models.CharField(_("ip"),default="192.168.1.100", max_length=20)
+    port=models.CharField(_("port"),default="8000", max_length=5)
+    color=models.CharField(_("color"),choices=ColorEnum.choices,default=ColorEnum.PRIMARY, max_length=50)
     app_name=APP_NAME
     class_name="feeder"
     @property
@@ -35,6 +38,7 @@ class Scenario(models.Model,LinkHelper):
 class Relay(models.Model,LinkHelper):
     name=models.CharField(_("name"), max_length=50)
     feeder=models.ForeignKey("feeder", verbose_name=_("feeder"), on_delete=models.CASCADE)
+    color=models.CharField(_("color"),choices=ColorEnum.choices,default=ColorEnum.PRIMARY, max_length=50)
     app_name=APP_NAME
     class_name="relay"
     

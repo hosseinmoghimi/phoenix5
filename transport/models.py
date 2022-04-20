@@ -12,21 +12,28 @@ from tinymce.models import HTMLField
 from core.enums import ColorEnum,UnitNameEnum
 from accounting.models import Account
 
-class Driver(Account):
+class Driver(models.Model,LinkHelper):
+    title=models.CharField(_("title"),null=True,blank=True, max_length=100)
+    account=models.ForeignKey("accounting.account", verbose_name=_("account"), on_delete=models.CASCADE)
+    class_name='driver'
+    app_name=APP_NAME
     color=models.CharField(_("color"),max_length=50,choices=ColorEnum.choices,default=ColorEnum.PRIMARY)
+
     class Meta:
         verbose_name = 'Driver'
         verbose_name_plural = 'Drivers' 
 
     def save(self,*args, **kwargs):
-        if self.class_name is None or self.class_name=="":
-            self.class_name='driver'
-        if self.app_name is None or self.app_name=="":
-            self.app_name=APP_NAME
+        if self.title is None or self.title=="":
+            self.titlee=self.account.title
         return super(Driver,self).save(*args, **kwargs)
 
 
-class Passenger(Account):
+class Passenger(models.Model,LinkHelper):
+    title=models.CharField(_("title"),null=True,blank=True, max_length=100)
+    account=models.ForeignKey("accounting.account", verbose_name=_("account"), on_delete=models.CASCADE)
+    class_name='passenger'
+    app_name=APP_NAME
 
     def get_trips_url(self):
         return reverse(APP_NAME+":trips",kwargs={'category_id':0,'driver_id':0,'vehicle_id':0,'passenger_id':self.pk,'trip_path_id':0})
@@ -35,16 +42,18 @@ class Passenger(Account):
         verbose_name = _("Passenger")
         verbose_name_plural = _("Passengers")
  
-    def save(self,*args, **kwargs):
-        if self.class_name is None or self.class_name=="":
-            self.class_name='passenger'
-        if self.app_name is None or self.app_name=="":
-            self.app_name=APP_NAME
+    def save(self,*args, **kwargs): 
+        if self.title is None or self.title=="":
+            self.titlee=self.account.title
         return super(Passenger,self).save(*args, **kwargs)
 
 
-class Client(Account):
 
+class Client(models.Model,LinkHelper):
+    title=models.CharField(_("title"),null=True,blank=True, max_length=100)
+    account=models.ForeignKey("accounting.account", verbose_name=_("account"), on_delete=models.CASCADE)
+    class_name='client'
+    app_name=APP_NAME
     def get_trips_url(self):
         return reverse(APP_NAME+":trips",kwargs={'category_id':0,'driver_id':0,'vehicle_id':0,'passenger_id':self.pk,'trip_path_id':0})
     
@@ -53,14 +62,18 @@ class Client(Account):
         verbose_name_plural = _("Client")
  
     def save(self,*args, **kwargs):
-        if self.class_name is None or self.class_name=="":
-            self.class_name='client'
-        if self.app_name is None or self.app_name=="":
-            self.app_name=APP_NAME
+       
+        if self.title is None or self.title=="":
+            self.titlee=self.account.title
         return super(Client,self).save(*args, **kwargs)
 
 
-class ServiceMan(Account):
+class ServiceMan(models.Model,LinkHelper):
+    title=models.CharField(_("title"),null=True,blank=True, max_length=100)
+    account=models.ForeignKey("accounting.account", verbose_name=_("account"), on_delete=models.CASCADE)
+    class_name='serviceman'
+    app_name=APP_NAME
+
     class Meta:
         verbose_name = _("ServiceMan")
         verbose_name_plural = _("ServiceMans")
@@ -69,10 +82,9 @@ class ServiceMan(Account):
         return self.title if self.title is not None else self.profile.name
  
     def save(self,*args, **kwargs):
-        if self.class_name is None or self.class_name=="":
-            self.class_name='serviceman'
-        if self.app_name is None or self.app_name=="":
-            self.app_name=APP_NAME
+       
+        if self.title is None or self.title=="":
+            self.titlee=self.account.title
         return super(ServiceMan,self).save(*args, **kwargs)
 
 

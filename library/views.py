@@ -3,7 +3,7 @@ from django.shortcuts import render
 # Create your views here.
 from django.views import View
 from authentication.repo import ProfileRepo
-from core.enums import ParametersEnum
+from core.enums import ParameterNameEnum
 
 from core.repo import ParameterRepo
 from library.enums import MemberShipLevelEnum

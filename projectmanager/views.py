@@ -52,6 +52,7 @@ class SearchView(View):
         if search_form.is_valid():
             cd = search_form.cleaned_data
             search_for = cd['search_for']
+            context['search_for'] = search_for
 
             materials = MaterialRepo(request=request).list(
                 search_for=search_for)
@@ -70,6 +71,13 @@ class SearchView(View):
             context['events'] = events
             events_s = json.dumps(EventSerializer(events, many=True).data)
             context['events_s'] = events_s
+
+            
+            organization_units = OrganizationUnitRepo(request=request).list(search_for=search_for)
+            context['organization_units'] = organization_units
+            organization_units_s = json.dumps(OrganizationUnitSerializer(organization_units, many=True).data)
+            context['organization_units_s'] = organization_units_s
+
 
         return render(request, TEMPLATE_ROOT+"search.html", context)
 

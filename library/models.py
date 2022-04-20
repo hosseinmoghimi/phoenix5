@@ -2,11 +2,11 @@ from django.db import models
 from django.db.models import Sum
 from .apps import APP_NAME
 from .enums import *
-from core.models import BasicPage as CoreBasicPage
+from core.models import Page as CoreBasicPage
 from django.utils.translation import gettext as _
 from django.shortcuts import reverse
-from core.settings import ADMIN_URL, MEDIA_URL, STATIC_URL
-from utility.persian import PersianCalendar
+from phoenix.settings import ADMIN_URL, MEDIA_URL, STATIC_URL
+from utility.calendar import PersianCalendar
 
 class Admin_Model():
     def get_edit_url(self):

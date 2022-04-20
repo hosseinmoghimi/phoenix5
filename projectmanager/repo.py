@@ -371,9 +371,9 @@ class EmployeeRepo():
         if 'user' in kwargs:
             self.user = kwargs['user']
         
-        self.objects=Employee.objects.order_by("title")
+        self.objects=Employee.objects.order_by("account__title")
         self.profile=ProfileRepo(*args, **kwargs).me
-        self.me=Employee.objects.filter(profile=self.profile).first()
+        self.me=Employee.objects.filter(account__profile=self.profile).first()
        
     def employee(self, *args, **kwargs):
         if 'employee_id' in kwargs:

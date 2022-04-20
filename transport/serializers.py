@@ -15,22 +15,22 @@ class VehicleSerializer(serializers.ModelSerializer):
 
 
 class DriverSerializer(serializers.ModelSerializer):
-    profile=ProfileSerializer()
+    account=AccountSerializer()
     class Meta:
         model=Driver
-        fields=['id','title','logo','profile','get_absolute_url','balance_rest']
+        fields=['id','title','account','get_absolute_url']
         
 class PassengerSerializer(serializers.ModelSerializer):
-    profile=ProfileSerializer()
+    account=AccountSerializer()
     class Meta:
         model=Passenger
-        fields=['id','title','logo','profile','get_absolute_url','balance_rest']
+        fields=['id','title','account','get_absolute_url']
 
 class ClientSerializer(serializers.ModelSerializer):
-    profile=ProfileSerializer()
+    account=AccountSerializer()
     class Meta:
         model=Client
-        fields=['id','title','logo','profile','get_absolute_url','balance_rest']
+        fields=['id','title','account','get_absolute_url']
 
 class TripPathSerializer(serializers.ModelSerializer):
     source=LocationSerializer()

@@ -222,11 +222,14 @@ class RequestSignature(models.Model, LinkHelper):
         return f"""{self.request} : امضاءکننده" {self.employee}  " :{self.status} """
 
 
-class Employee(Account):
+class Employee(models.Model,LinkHelper):
+    account=models.ForeignKey("accounting.account", verbose_name=_("account"), on_delete=models.CASCADE)
     organization_unit = models.ForeignKey("organizationunit", null=True, blank=True, verbose_name=_(
         "organization_unit"), on_delete=models.CASCADE)
     job_title = models.CharField(
         _("job title"), default="سرپرست", max_length=50)
+    class_name = 'employee'
+    app_name = APP_NAME
 
 
 
@@ -264,10 +267,6 @@ class Employee(Account):
         return ids
 
     def save(self, *args, **kwargs):
-        if self.class_name is None or self.class_name == "":
-            self.class_name = 'employee'
-        if self.app_name is None or self.app_name == "":
-            self.app_name = APP_NAME
         return super(Employee, self).save(*args, **kwargs)
 
 

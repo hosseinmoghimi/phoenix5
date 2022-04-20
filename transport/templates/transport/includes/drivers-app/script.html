@@ -10,7 +10,7 @@
         },
         methods: {
             filter:function(){
-                this.drivers = drivers.filter(driver => driver.title.indexOf(this.search_for) > -1)
+                this.drivers = drivers.filter(driver => driver.account.title.indexOf(this.search_for) > -1)
          
             },
             to_price: function (vall) {

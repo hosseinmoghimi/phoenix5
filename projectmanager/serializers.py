@@ -1,4 +1,6 @@
 from rest_framework import serializers
+
+from accounting.serializers import AccountSerializer
 from .models import Service,Material,Event,Employee, Letter, MaterialRequest, Request,Project,OrganizationUnit, RequestSignature, ServiceRequest, letterSent
 from authentication.serializers import ProfileSerializer
 
@@ -45,11 +47,11 @@ class LetterSentSerializer(serializers.ModelSerializer):
  
 
 class EmployeeSerializer(serializers.ModelSerializer):
-    profile=ProfileSerializer()
+    account=AccountSerializer()
     organization_unit=OrganizationUnitSerializer()
     class Meta:
         model=Employee
-        fields=['id','organization_unit','mobile','job_title','get_absolute_url','get_delete_url','get_edit_url','profile','title']
+        fields=['id','organization_unit','mobile','job_title','get_absolute_url','get_delete_url','get_edit_url','account','title']
 
 
 class RequestSignatureSerializer(serializers.ModelSerializer):

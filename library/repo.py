@@ -2,14 +2,14 @@ from django.db.models.aggregates import Avg
 from django.utils import timezone
 from authentication.repo import ProfileRepo
 from django.db.models import Q,Sum
-from .apps import APP_NAME
+from library.apps import APP_NAME
 from .models import Book, Lend, Member
 from core.repo import ParameterRepo
-from .enums import ParametersEnum
+from .enums import ParameterNameEnum 
 
 def show_archives(request):
         parameter_repo = ParameterRepo(request=request,app_name=APP_NAME)
-        show_archives=parameter_repo.parameter(ParametersEnum.SHOW_ARCHIVES).boolean_value
+        show_archives=parameter_repo.parameter(ParameterNameEnum.SHOW_ARCHIVES).boolean_value
         return show_archives
 class BookRepo():
     def __init__(self, *args, **kwargs):

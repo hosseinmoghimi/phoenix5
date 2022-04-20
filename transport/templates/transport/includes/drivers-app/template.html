@@ -70,27 +70,20 @@
 
                                 </td>
                                 <td>
-                                    <a :href="driver.profile.get_absolute_url">
-                                        <img :src="driver.profile.image" class="rounded-circle" width="32" alt="">
-                                        <span v-text="driver.profile.name"></span>
+                                    <a :href="driver.account.profile.get_absolute_url">
+                                        <img :src="driver.account.profile.image" class="rounded-circle" width="32" alt="">
+                                        <span v-text="driver.account.profile.name"></span>
                                     </a>
 
                                 </td>
                                 <td>
-                                    <span v-html="to_price(driver.balance_rest)"></span>
+                                    <span v-html="to_price(driver.account.balance_rest)"></span>
                                     </span>
 
                                 </td>
                                 <td>
 
-                                    {% if perms.projectmanager.add_employee and not driver.employee %}
-                                    <form @submit.prevent="create_employee(driver.id)">
-                                        {% csrf_token %}
-                                        <button class="btn btn-warning" type="submit">
-                                            ایجاد پرسنل
-                                        </button>
-                                    </form>
-                                    {% endif %}
+                                   
 
 
                                 </td>
