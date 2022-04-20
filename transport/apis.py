@@ -1,8 +1,8 @@
 from core.constants import SUCCEED,FAILED
 from rest_framework.views import APIView
 from transport.forms import *
-from transport.repo import DriverRepo, MaintenanceRepo, WorkShiftRepo
-from transport.serializers import DriverSerializer, WorkShiftSerializer
+from transport.repo import DriverRepo, MaintenanceRepo, PassengerRepo, WorkShiftRepo
+from transport.serializers import DriverSerializer, PassengerSerializer, WorkShiftSerializer
 from django.http import JsonResponse
  
 
@@ -20,6 +20,24 @@ class AddDriverApi(APIView):
                 context={
                     'result':SUCCEED,
                     'driver':DriverSerializer(driver).data
+                }
+        return JsonResponse(context)
+
+    
+class AddPassengerApi(APIView):
+    def post(self,request,*args, **kwargs):
+        
+        context={
+            'result':FAILED
+        }
+        fm=AddPassengerForm(request.POST)
+        if fm.is_valid():
+            cd=fm.cleaned_data
+            passenger=PassengerRepo(request=request).add_passenger(**cd)
+            if passenger is not None:
+                context={
+                    'result':SUCCEED,
+                    'passenger':PassengerSerializer(passenger).data
                 }
         return JsonResponse(context)
 

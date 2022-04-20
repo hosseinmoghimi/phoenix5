@@ -6,6 +6,14 @@
 
 
   <div class="row">
+    
+    {% if add_passenger_form %}
+      
+    <div class="col-md-12">
+      {% include "transport/includes/add-passenger-app/template.html" %}
+    </div>
+    {% endif %}
+    
       <div class="col-md-12">
           {% include "transport/includes/passengers-app/template.html" %}
       </div>
@@ -16,4 +24,8 @@
 {% block script %}
 {% include "transport/includes/passengers-app/script.html" %}
   
+{% if add_passenger_form %}
+      
+  {% include "transport/includes/add-passenger-app/script.html" %}
+{% endif %}
 {% endblock script %}

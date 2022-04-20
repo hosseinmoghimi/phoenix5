@@ -62,7 +62,7 @@
                             <tr v-for="passenger in passengers">
                                 <td>
                                     <a :href="passenger.get_absolute_url">
-                                        <img :src="passenger.logo" class="rounded1" width="32" alt="">
+                                        <img :src="passenger.account.logo" class="rounded1" width="32" alt="">
 
                                         <span v-text="passenger.title"></span>
                                     </a>
@@ -70,28 +70,20 @@
 
                                 </td>
                                 <td>
-                                    <a :href="passenger.profile.get_absolute_url">
-                                        <img :src="passenger.profile.image" class="rounded-circle" width="32" alt="">
-                                        <span v-text="passenger.profile.name"></span>
+                                    <a :href="passenger.account.profile.get_absolute_url">
+                                        <img :src="passenger.account.profile.image" class="rounded-circle" width="32" alt="">
+                                        <span v-text="passenger.account.profile.name"></span>
                                     </a>
 
                                 </td>
                                 <td>
-                                    <span v-html="to_price(passenger.balance_rest)"></span>
+                                    <span v-html="to_price(passenger.account.balance_rest)"></span>
                                     </span>
 
                                 </td>
                                 <td>
 
-                                    {% if perms.projectmanager.add_employee and not passenger.employee %}
-                                    <form @submit.prevent="create_employee(passenger.id)">
-                                        {% csrf_token %}
-                                        <button class="btn btn-warning" type="submit">
-                                            ایجاد پرسنل
-                                        </button>
-                                    </form>
-                                    {% endif %}
-
+                                   
 
                                 </td>
                             </tr>

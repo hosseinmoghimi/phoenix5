@@ -18,6 +18,15 @@ class AddTripForm(forms.Form):
 class AddDriverForm(forms.Form):
     account_id=forms.IntegerField(required=False)
 
+class AddPassengerForm(forms.Form):
+    account_id=forms.IntegerField(required=False)
+
+class AddClientForm(forms.Form):
+    account_id=forms.IntegerField(required=False)
+
+class AddServiceManForm(forms.Form):
+    account_id=forms.IntegerField(required=False)
+
 class AddWorkShiftForm(forms.Form):
     vehicle_id=forms.IntegerField(required=False)
     driver_id=forms.IntegerField(required=False)

@@ -45,10 +45,12 @@ class Passenger(models.Model,LinkHelper):
  
     def save(self,*args, **kwargs): 
         if self.title is None or self.title=="":
-            self.titlee=self.account.title
+            self.title=self.account.title
         return super(Passenger,self).save(*args, **kwargs)
 
 
+    def __str__(self):
+        return str(self.title)
 
 class Client(models.Model,LinkHelper):
     title=models.CharField(_("title"),null=True,blank=True, max_length=100)
@@ -65,9 +67,11 @@ class Client(models.Model,LinkHelper):
     def save(self,*args, **kwargs):
        
         if self.title is None or self.title=="":
-            self.titlee=self.account.title
+            self.title=self.account.title
         return super(Client,self).save(*args, **kwargs)
 
+    def __str__(self):
+        return str(self.title)
 
 class ServiceMan(models.Model,LinkHelper):
     title=models.CharField(_("title"),null=True,blank=True, max_length=100)
@@ -80,12 +84,11 @@ class ServiceMan(models.Model,LinkHelper):
         verbose_name_plural = _("ServiceMans")
 
     def __str__(self):
-        return self.title if self.title is not None else self.profile.name
- 
+        return str(self.title)
     def save(self,*args, **kwargs):
        
         if self.title is None or self.title=="":
-            self.titlee=self.account.title
+            self.title=self.account.title
         return super(ServiceMan,self).save(*args, **kwargs)
 
 

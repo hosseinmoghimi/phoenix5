@@ -44,6 +44,7 @@ urlpatterns = [
     
     path("passengers/",views.PassengersView.as_view(),name="passengers"),
     path("passenger/<int:pk>/",views.PassengerView.as_view(),name="passenger"),
+    path("add_passenger/",apis.AddPassengerApi.as_view(),name="add_passenger"),
 
 
 ]

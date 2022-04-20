@@ -303,7 +303,7 @@ class ServiceManView(View):
         context['service_man']=service_man
         service_man_s=json.dumps(ServiceManSerializer(service_man).data)
         context['service_man_s']=service_man_s
-        context.update(get_account_context(request=request,account=service_man))
+        context.update(get_account_context(request=request,account=service_man.account))
 
 
         #maintenances
@@ -459,7 +459,7 @@ class PassengerView(View):
         passenger=PassengerRepo(request=request).passenger(*args, **kwargs)
         context['passenger']=passenger
         context['passenger_s']=json.dumps(PassengerSerializer(passenger).data)
-        context.update(get_account_context(request=request,account=passenger))
+        context.update(get_account_context(request=request,account=passenger.account))
         context.update(get_add_trip_context(request=request))
 
         #trips
@@ -478,6 +478,9 @@ class PassengersView(View):
         context['passengers']=passengers
         passengers_s=json.dumps(PassengerSerializer(passengers,many=True).data)
         context['passengers_s']=passengers_s
+        if request.user.has_perm(APP_NAME+".add_passenger"):
+            context['add_passenger_form']=AddPassengerForm()
+            context.update(add_from_accounts_context(request=request))
         return render(request,TEMPLATE_ROOT+"passengers.html",context)
 
 
@@ -487,7 +490,7 @@ class ClientView(View):
         client=ClientRepo(request=request).client(*args, **kwargs)
         context['client']=client
         context['client_s']=json.dumps(ClientSerializer(client).data)
-        context.update(get_account_context(request=request,account=client))
+        context.update(get_account_context(request=request,account=client.account))
         context.update(get_add_trip_context(request=request))
 
         #trips
