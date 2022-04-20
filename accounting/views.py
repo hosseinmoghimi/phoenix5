@@ -45,7 +45,14 @@ def get_add_payment_context(request,*args, **kwargs):
         context['add_payment_form']=AddPaymentForm()
     return context
     
-    
+def add_from_accounts_context(request):
+    context={}
+    accounts=AccountRepo(request=request).list()
+    accounts_s=json.dumps(AccountSerializer(accounts,many=True).data)
+    context['accounts']=accounts
+    context['accounts_s']=accounts_s
+    return context
+
 
 def get_edit_invoice_context(request,*args, **kwargs):
     context={}

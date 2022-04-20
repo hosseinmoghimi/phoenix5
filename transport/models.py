@@ -25,9 +25,10 @@ class Driver(models.Model,LinkHelper):
 
     def save(self,*args, **kwargs):
         if self.title is None or self.title=="":
-            self.titlee=self.account.title
+            self.title=self.account.title
         return super(Driver,self).save(*args, **kwargs)
-
+    def __str__(self):
+        return str(self.title)
 
 class Passenger(models.Model,LinkHelper):
     title=models.CharField(_("title"),null=True,blank=True, max_length=100)

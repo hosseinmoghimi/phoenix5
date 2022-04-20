@@ -9,7 +9,7 @@ from core.views import CoreContext,SearchForm
 from django.views import View
 from map.repo import AreaRepo
 from map.serializers import AreaSerializer
-
+from accounting.views import add_from_accounts_context
 from transport.forms import *
 from utility.calendar import PersianCalendar 
 
@@ -363,7 +363,7 @@ class DriverView(View):
         driver=DriverRepo(request=request).driver(*args, **kwargs)
         context['driver']=driver
         context['driver_s']=json.dumps(DriverSerializer(driver).data)
-        context.update(get_account_context(request=request,account=driver))
+        context.update(get_account_context(request=request,account=driver.account))
 
 
         #trips
@@ -385,6 +385,9 @@ class DriversView(View):
         context['drivers']=drivers
         drivers_s=json.dumps(DriverSerializer(drivers,many=True).data)
         context['drivers_s']=drivers_s
+        if request.user.has_perm(APP_NAME+".add_driver"):
+            context['add_driver_form']=AddDriverForm()
+            context.update(add_from_accounts_context(request=request))
         return render(request,TEMPLATE_ROOT+"drivers.html",context)
 
    

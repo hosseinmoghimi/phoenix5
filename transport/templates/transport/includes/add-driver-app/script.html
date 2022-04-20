@@ -1,0 +1,68 @@
+{% load to_json %}
+<script>
+    let accounts = JSON.parse(`{{accounts_s|escapejs}}`)
+    let add_driver_app = new Vue({
+        el: "#add-driver-app",
+        data: {
+            account_id: 0,
+            accounts: accounts,
+            name: "",
+            search_for: '',
+            waiting: false,
+            message: {
+                show: false
+            }
+        },
+        methods: {
+            filter: function () {
+                this.accounts = accounts.filter(account => account.title.indexOf(this.search_for) > -1)
+                if (this.accounts.length > 0)
+                    this.account_id = this.accounts[0].id
+            },
+            add_driver: function () {
+                let url = "{% url 'transport:add_driver' %}"
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    account_id: this.account_id
+                }
+                add_driver_app.waiting = true
+
+                $.post(url, payload).done((data) => {
+                    add_driver_app.waiting = false
+
+                    if (data.result === 'FAILED') {
+                        add_driver_app.message = {
+                            color: "danger",
+                            body: "خطا در ایجاد راننده جدید.",
+                            show: true,
+                        }
+                        setTimeout(() => {
+                            add_driver_app.message = {
+                                show: false,
+                            }
+                        }, 3000);
+                    }
+                    if (data.result === 'SUCCEED') {
+                        if (typeof drivers_app != "undefined") {
+                            drivers_app.drivers.push(data.driver)
+                        }
+
+                        add_driver_app.message = {
+                            color: "success",
+                            body: "با موفقیت افزوده شد.",
+                            show: true,
+                        }
+                        setTimeout(() => {
+                            add_driver_app.message = {
+                                show: false,
+                            }
+                        }, 3000);
+                    }
+                })
+
+            }
+
+        }
+    })
+
+</script>

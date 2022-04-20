@@ -16,10 +16,24 @@ class DriverRepo():
         
         self.objects=Driver.objects.all()
         self.profile=ProfileRepo(*args, **kwargs).me
-       
+    def add_driver(self,*args, **kwargs):
+        if not self.user.has_perm(APP_NAME+".add_driver"):
+            return
+        if 'account_id' in kwargs:
+            account_id=kwargs['account_id']
+            driver=self.driver(account_id=account_id)
+
+            if driver is None:
+                driver=Driver(account_id=account_id)
+                driver.save()
+                return driver
+        
 
     def driver(self, *args, **kwargs):
         pk=0
+        if 'account_id' in kwargs:
+            account_id=kwargs['account_id']
+            return self.objects.filter(account_id=account_id).first()
         if 'driver_id' in kwargs:
             pk=kwargs['driver_id']
         elif 'pk' in kwargs:

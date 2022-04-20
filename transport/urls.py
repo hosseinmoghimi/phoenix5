@@ -10,8 +10,11 @@ urlpatterns = [
     path("add_work_shift/",views.AddTripPathView.as_view(),name="add_work_shift"),
     path("add_maintenance/",apis.AddMaintenanceApi.as_view(),name="add_maintenance"),
     path("add_trip/",views.AddTripView.as_view(),name="add_trip"),
+
     path("drivers/",views.DriversView.as_view(),name="drivers"),
     path("driver/<int:pk>/",views.DriverView.as_view(),name="driver"),
+    path("add_driver/",apis.AddDriverApi.as_view(),name="add_driver"),
+
     path("trippath/<int:pk>/",views.TripPathView.as_view(),name="trippath"),
     path("trip_paths/",views.TripPathsView.as_view(),name="trip_paths"),
 
