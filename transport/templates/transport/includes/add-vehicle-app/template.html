@@ -1,0 +1,75 @@
+{% load static %}
+<div id="accordion-add-vehicle">
+    <div class="card" id="add-vehicle-app">
+        <div class="card-header" id="heading-add-vehicle">
+            <h5 class="text-center">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-add-vehicle"
+                    aria-expanded="true" aria-controls="collapse-add-vehicle">
+                    افزودن ماشین
+
+
+
+
+                </button>
+            </h5>
+
+
+        </div>
+        <div id="collapse-add-vehicle" class="collapse" aria-labelledby="heading-add-vehicle"
+            data-parent="#accordion-add-vehicle">
+
+
+            <div class="card-body">
+
+                {% load static %}
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="">
+                                نام
+                            </label>
+                            <input placeholder="جستجو ..." v-model="search_for" class="form-control" type="text"
+                                @input="filter()">
+                        </div>
+             
+                        <div class="form-group">
+                            <label for="">
+                                انتخاب حساب
+                            </label>
+                            <select v-model="account_id" class="form-control" id="">
+                                <option :value="account.id" v-for="account in accounts" v-text="account.title"></option>
+                            </select>
+                        </div>
+                        <div class="text-right">
+
+                            <button @click="add_vehicle()" class="btn btn-success">
+                                <i class="fa fa-plus"></i>
+                                افزودن
+                            </button>
+                            <img src="{% static 'leo/img/loading.gif' %}" width="32" v-if="waiting" alt="">
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="col-md-12">
+                        <div class="text-right farsi mx-3 my-3">
+
+
+                            <div v-html="message.body" v-if="message.show" :class="'alert alert-'+message.color"></div>
+                        </div>
+                    </div>
+
+
+
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+
+
+</div>
