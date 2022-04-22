@@ -233,6 +233,9 @@ class Trip(Transaction):
     def driver(self):
         return Driver.objects.filter(account_id=self.pay_from.id).first()
     @property
+    def client(self):
+        return Client.objects.filter(account_id=self.pay_to.id).first()
+    @property
     def cost(self):
         return self.amount
     def get_status_color(self):

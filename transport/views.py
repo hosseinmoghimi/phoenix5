@@ -36,6 +36,8 @@ def getContext(request, *args, **kwargs):
 def get_add_trip_context(request,*args, **kwargs):
     context={}
 
+    if not request.user.has_perm(APP_NAME+".add_trip"):
+        return context
      #vehicles
     vehicles=VehicleRepo(request=request).list(*args, **kwargs)
     context['vehicles']=vehicles
@@ -404,7 +406,6 @@ class DriversView(View):
             context.update(add_from_accounts_context(request=request))
         return render(request,TEMPLATE_ROOT+"drivers.html",context)
 
-   
 
 class TripCategoriesView(View):
     def get(self,request,*args, **kwargs):
@@ -418,25 +419,25 @@ class TripCategoriesView(View):
             context['colors']=(color[0] for color in ColorEnum.choices)
         return render(request,TEMPLATE_ROOT+"trip-categories.html",context)
 
+
 class TripCategoryView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
-        driver=DriverRepo(request=request).driver(*args, **kwargs)
-        context['driver']=driver
-        context['driver_s']=json.dumps(DriverSerializer(driver).data)
-        context.update(get_account_context(request=request,account=driver.account))
-
-
+        trip_category=TripCategoryRepo(request=request).trip_category(*args, **kwargs)
+        context['trip_category']=trip_category
+        context['trip_category_s']=json.dumps(TripCategorySerializer(trip_category).data)
         #trips
         if True:
-            trips=TripRepo(request=request).list(driver_id=driver.id)
+            trips=TripRepo(request=request).list(trip_category_id=trip_category.id)
             context['trips']=trips
             trips_s=json.dumps(TripSerializer(trips,many=True).data)
             context['trips_s']=trips_s
 
-        context.update(get_add_trip_context(request=request))
 
-        return render(request,TEMPLATE_ROOT+"driver.html",context)
+        if request.user.has_perm(APP_NAME+".add_trip"):
+            context.update(get_add_trip_context(request=request))
+            
+        return render(request,TEMPLATE_ROOT+"trip-category.html",context)
 
 
 class VehiclesView(View):

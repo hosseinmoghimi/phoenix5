@@ -74,13 +74,13 @@ class TripCategorySerializer(serializers.ModelSerializer):
 
 class TripSerializer(serializers.ModelSerializer):
     trip_paths=TripPathSerializer(many=True)
-    pay_to=AccountSerializer()
+    client=ClientSerializer()
     driver=DriverSerializer()
     passengers=PassengerSerializer(many=True)
     trip_category=TripCategorySerializer()
     vehicle=VehicleSerializer()
     class Meta:
         model=Trip
-        fields=['id','persian_date_started','persian_date_ended','get_edit_url','get_delete_url','trip_paths','pay_to','status','vehicle','passengers','title','cost','distance','driver','get_absolute_url','duration','delay','trip_category']
+        fields=['id','persian_date_started','persian_date_ended','get_edit_url','get_delete_url','trip_paths','client','status','vehicle','passengers','title','cost','distance','driver','get_absolute_url','duration','delay','trip_category']
 
  

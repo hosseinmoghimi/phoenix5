@@ -177,6 +177,7 @@ class TripRepo():
         self.profile=ProfileRepo(*args, **kwargs).me
 
     def add_trip(self, *args, **kwargs):
+        print(kwargs)
         if not self.user.has_perm(APP_NAME+".add_trip"):
             return
         trip=Trip()
@@ -184,6 +185,18 @@ class TripRepo():
         key='pay_to_id'
         if key in kwargs and kwargs[key] is not None and kwargs[key]>0:
             trip.pay_to_id=kwargs[key]
+
+        key='client_id'
+        if key in kwargs and kwargs[key] is not None and kwargs[key]>0:
+            client=Client.objects.filter(pk=kwargs[key]).first()
+            if client is not None:
+                trip.pay_to_id=client.account.id
+
+        key='driver_id'
+        if key in kwargs and kwargs[key] is not None and kwargs[key]>0:
+            driver=Driver.objects.filter(pk=kwargs[key]).first()
+            if driver is not None:
+                trip.pay_from_id=driver.account.id
 
         key='pay_from_id'
         if key in kwargs and kwargs[key] is not None and kwargs[key]>0:
@@ -275,6 +288,8 @@ class TripRepo():
             objects=objects.filter(pay_to_id=kwargs['client_id'])
         if 'driver_id' in kwargs:
             objects=objects.filter(pay_from_id=kwargs['driver_id'])
+        if 'trip_category_id' in kwargs:
+            objects=objects.filter(trip_category_id=kwargs['trip_category_id'])
         return objects.all()
 
 class ServiceManRepo():

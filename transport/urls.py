@@ -16,7 +16,7 @@ urlpatterns = [
     path("add_driver/",apis.AddDriverApi.as_view(),name="add_driver"),
 
     path("trip_categories/",views.TripCategoriesView.as_view(),name="trip_categories"),
-    path("trip_category/<int:pk>/",views.TripCategoryView.as_view(),name="trip_category"),
+    path("trip_category/<int:pk>/",views.TripCategoryView.as_view(),name="tripcategory"),
     path("add_trip_category/",apis.AddTripCategoryApi.as_view(),name="add_trip_category"),
 
 
@@ -46,9 +46,7 @@ urlpatterns = [
     path("client/<int:pk>/",views.ClientView.as_view(),name="client"),
     path("clients/",views.ClientsView.as_view(),name="clients"),
     path("add_client/",apis.AddClientApi.as_view(),name="add_client"),
-
-    path("tripcategory/<int:pk>/",views.TripView.as_view(),name="tripcategory"),
-    path("tripcategories/",views.TripsView.as_view(),name="tripcategories"),
+ 
     
     path("passengers/",views.PassengersView.as_view(),name="passengers"),
     path("passenger/<int:pk>/",views.PassengerView.as_view(),name="passenger"),
