@@ -1,0 +1,138 @@
+{% load static %}
+<div id="accordion-add-trippath">
+    <div class="card" id="add-trippath-app">
+        <div class="card-header" id="heading-add-trippath">
+            <h5 class="text-center">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-add-trippath"
+                    aria-expanded="true" aria-controls="collapse-add-trippath">
+                    افزودن مسیر
+
+
+
+
+                </button>
+            </h5>
+
+
+        </div>
+        <div id="collapse-add-trippath" class="collapse" aria-labelledby="heading-add-trippath"
+            data-parent="#accordion-add-trippath">
+
+
+            <div class="card-body">
+
+                {% load static %}
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="">
+                                عنوان مسیر
+                            </label>
+                            <input v-model="new_trip_title" class="form-control" type="text">
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+
+                        <div class="form-group">
+                            <label for="">
+                                انتخاب محدوده
+                            </label>
+                            <select v-model="new_trip_area_id" class="form-control" id="">
+                                <option :value="area.id" v-for="area in areas" v-text="area.title">
+                                </option>
+                            </select>
+
+
+
+                        </div>
+                    </div>
+
+
+
+
+
+                </div>
+                <div class="row">
+
+                    <div class="col-md-6">
+
+                        <div class="form-group">
+                            <label for="">
+                                انتخاب مبدا
+                            </label>
+                            <select v-model="new_trip_source_id" class="form-control" id="">
+                                <option :value="location.id" v-for="location in locations" v-text="location.title">
+                                </option>
+                            </select>
+
+
+
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="">
+                                انتخاب مقصد
+                            </label>
+                            <select v-model="new_trip_destination_id" class="form-control" id="">
+                                <option :value="location.id" v-for="location in locations" v-text="location.title">
+                                </option>
+                            </select>
+
+
+
+                        </div>
+
+
+                    </div>
+
+
+
+
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="">
+                                فاصله
+                            </label>
+                            <input v-model="new_trip_distance" class="form-control" type="number">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="">
+                                زمان
+                            </label>
+                            <input v-model="new_trip_duration" class="form-control" type="number">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="">
+                                هزینه
+                            </label>
+                            <input v-model="new_trip_cost" class="form-control" type="number">
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12 text-right">
+                        <button @click="add_trip_path()" class="btn btn-success">
+                            <i class="fa fa-plus"></i>
+                            افزودن
+                        </button>
+                        <img src="{% static 'leo/img/loading.gif' %}" width="32" v-if="waiting" alt="">
+                    </div>
+                    <div class="col-md-12">
+                        <div class="text-right farsi mx-3 my-3">
+                            <div v-html="message.body" v-if="message.show" :class="'alert alert-'+message.color"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

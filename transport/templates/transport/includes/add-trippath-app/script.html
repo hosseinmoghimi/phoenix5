@@ -1,0 +1,83 @@
+{% load to_json %}
+<script>
+    let locations = JSON.parse(`{{locations_s|escapejs}}`)
+    let areas = JSON.parse(`{{areas_s|escapejs}}`)
+    let add_trippath_app = new Vue({
+        el: "#add-trippath-app",
+        data: {
+            locations: locations,
+            areas: areas,
+            search_for: '',
+            waiting: false,
+            message: {
+                show: false
+            },
+            new_trip_area_id:0,
+            new_trip_source_id:0,
+            new_trip_destination_id:0,
+            new_trip_title:"",
+            new_trip_distance:0,
+            new_trip_duration:0,
+            new_trip_cost:0,
+
+        },
+        methods: {
+            filter: function () {
+                this.accounts = accounts.filter(account => account.title.indexOf(this.search_for) > -1)
+                if (this.accounts.length > 0)
+                    this.account_id = this.accounts[0].id
+            },
+            add_trip_path: function () {
+                let url = "{% url 'transport:add_trippath' %}"
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    area_id: parseInt(this.new_trip_area_id),
+                    source_id: parseInt(this.new_trip_source_id),
+                    destination_id: parseInt(this.new_trip_destination_id),
+                    title: this.new_trip_title,
+                    distance: parseInt(this.new_trip_distance),
+                    duration: parseInt(this.new_trip_duration),
+                    cost: parseInt(this.new_trip_cost),
+                }
+                console.log(payload)
+                add_trippath_app.waiting = true
+
+                $.post(url, payload).done((data) => {
+                    add_trippath_app.waiting = false
+
+                    if (data.result === 'FAILED') {
+                        add_trippath_app.message = {
+                            color: "danger",
+                            body: "خطا در ایجاد مسیر جدید.",
+                            show: true,
+                        }
+                        setTimeout(() => {
+                            add_trippath_app.message = {
+                                show: false,
+                            }
+                        }, 3000);
+                    }
+                    if (data.result === 'SUCCEED') {
+                        if (typeof trippaths_app != "undefined") {
+                            trippaths_app.trippaths.push(data.trippath)
+                        }
+
+                        add_trippath_app.message = {
+                            color: "success",
+                            body: "با موفقیت افزوده شد.",
+                            show: true,
+                        }
+                        setTimeout(() => {
+                            add_trippath_app.message = {
+                                show: false,
+                            }
+                        }, 3000);
+                    }
+                })
+
+            }
+
+        }
+    })
+
+</script>

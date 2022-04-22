@@ -6,6 +6,12 @@
 
 
   <div class="row">
+    {% if add_client_form %}
+      
+    <div class="col-md-12">
+      {% include "transport/includes/add-client-app/template.html" %}
+    </div>
+    {% endif %}
       <div class="col-md-12">
           {% include "transport/includes/clients-app/template.html" %}
       </div>
@@ -16,4 +22,8 @@
 {% block script %}
 {% include "transport/includes/clients-app/script.html" %}
   
+{% if add_client_form %}
+      
+  {% include "transport/includes/add-client-app/script.html" %}
+{% endif %}
 {% endblock script %}

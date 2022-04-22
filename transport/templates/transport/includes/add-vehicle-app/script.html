@@ -1,12 +1,9 @@
 {% load to_json %}
 <script>
-    let accounts = JSON.parse(`{{accounts_s|escapejs}}`)
     let add_vehicle_app = new Vue({
         el: "#add-vehicle-app",
         data: {
-            account_id: 0,
-            accounts: accounts,
-            name: "",
+            title:"",
             search_for: '',
             waiting: false,
             message: {
@@ -23,17 +20,17 @@
                 let url = "{% url 'transport:add_vehicle' %}"
                 let payload = {
                     csrfmiddlewaretoken: csrfmiddlewaretoken,
-                    account_id: this.account_id
+                    title: this.title
                 }
                 add_vehicle_app.waiting = true
-
+                console.log(payload)
                 $.post(url, payload).done((data) => {
                     add_vehicle_app.waiting = false
 
                     if (data.result === 'FAILED') {
                         add_vehicle_app.message = {
                             color: "danger",
-                            body: "خطا در ایجاد راننده جدید.",
+                            body: "خطا در ایجاد ماشین جدید.",
                             show: true,
                         }
                         setTimeout(() => {

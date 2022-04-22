@@ -1,70 +1,86 @@
 {% load static %}
-<div id="accordion-clients">
-    <div class="card" id="clients-app">
-        <div class="card-header" id="heading-clients">
+<div id="accordion-trip-categories">
+
+
+    <div class="card" id="trip-categories-app">
+        <div class="card-header" id="heading-trip-categories">
             <h5 class="text-center">
-                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-clients" aria-expanded="true"
-                    aria-controls="collapse-clients">
-                    سرویس گیرنده ها
-                    <span v-if="clients.length>0">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-trip-categories" aria-expanded="true"
+                    aria-controls="collapse-trip-categories">
+                    دسته بندی سفر ها
+                    <span v-if="trip_categories.length>0">
                         <small class="text-danger mx-2">
-                            <span v-text="clients.length"></span>
+                            <span v-text="trip_categories.length"></span>
                         </small>
                     </span>
+
+
                 </button>
             </h5>
+
+
         </div>
-        <div id="collapse-clients" class="collapse" aria-labelledby="heading-clients" data-parent="#accordion-clients">
+        <div id="collapse-trip-categories" class="collapse" aria-labelledby="heading-trip-categories" data-parent="#accordion-trip-categories">
+
+
             <div class="card-body">
+
                 {% load static %}
                 <form @submit.prevent="search()">
                     <img src="{% static 'leo/img/loading.gif' %}" width="32" v-if="waiting" alt="">
+
                     <input type="text" v-model="search_for" class="form-control" placeholder="جستجو ..."
                         @input="filter()">
                 </form>
+
+
                 <div class="table-responsive">
                     <img v-if="false" width="32" src="{% static 'leo/img/loading.gif' %}" alt="">
                     <h6 v-if="false">
+
                         <span class="text-muted">در حال بار گذاری ... </span>
                     </h6>
                     <table class="table table-striped">
                         <thead>
                             <th>
-                                سرویس گیرنده
+                                دسته بندی
+                            </th>
+                             
+                            <th>
+رنگ
                             </th>
                             <th>
-                                پروفایل
-                            </th>
-                            <th>
-                                مانده
-                            </th>
-                            <th>
-
+تعداد سفر ها
                             </th>
                         </thead>
                         <tbody>
-                            <tr v-for="client in clients">
+
+
+                            <tr v-for="trip_category in trip_categories">
                                 <td>
-                                    <a :href="client.get_absolute_url">
-                                        <img :src="client.account.logo" class="rounded1" width="32" alt="">
-                                        <span v-text="client.title"></span>
+                                    <a :href="trip_category.get_absolute_url">
+                                        <span v-text="trip_category.title"></span>
                                     </a>
                                 </td>
                                 <td>
-                                    <a :href="client.account.profile.get_absolute_url">
-                                        <img :src="client.account.profile.image" class="rounded-circle" width="32"
-                                            alt="">
-                                        <span v-text="client.account.profile.name"></span>
-                                    </a>
-                                </td>
-                                <td>
-                                    <span v-html="to_price(client.account.balance_rest)"></span>
+                                    <span :class="'badge badge-'+trip_category.color">
+
+                                        
+                                        <span v-text="trip_category.color"></span>
                                     </span>
 
                                 </td>
                                 <td>
+                                    <span>
 
+                                        <span v-text="trip_category.count_of_trips"></span>
+
+                                        سفر
+                                    </span>
+
+                                    
                                 </td>
+                               
                             </tr>
                         </tbody>
                     </table>

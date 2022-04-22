@@ -69,9 +69,22 @@ class VehicleRepo():
         self.objects=Vehicle.objects
         self.profile=ProfileRepo(*args, **kwargs).me
        
+    def add_vehicle(self,*args, **kwargs):
+        if not self.user.has_perm(APP_NAME+".add_vehicle"):
+            return
+        if 'title' in kwargs:
+            title=kwargs['title']
+            vehicle=self.vehicle(title=title)
+
+            if vehicle is None:
+                vehicle=Vehicle(title=title)
+                vehicle.save()
+                return vehicle
 
     def vehicle(self, *args, **kwargs):
         pk=0
+        if 'title' in kwargs:
+            return self.objects.filter(title=kwargs['title']).first()
         if 'vehicle_id' in kwargs:
             return self.objects.filter(pk=kwargs['vehicle_id']).first()
         elif 'pk' in kwargs:
@@ -103,7 +116,28 @@ class TripPathRepo():
         
         self.objects=TripPath.objects.all()
         self.profile=ProfileRepo(*args, **kwargs).me
-       
+    def add_trip_path(self,*args, **kwargs):
+        if not self.user.has_perm(APP_NAME+".add_trippath"):
+            return
+        trip_path=TripPath()
+        if 'source_id' in kwargs:
+            trip_path.source_id=kwargs['source_id']
+        if 'destination_id' in kwargs:
+            trip_path.destination_id=kwargs['destination_id']
+        if 'cost' in kwargs:
+            trip_path.cost=kwargs['cost']
+        if 'distance' in kwargs:
+            trip_path.distance=kwargs['distance']
+        if 'title' in kwargs:
+            trip_path.title=kwargs['title']
+        if 'duration' in kwargs:
+            trip_path.duration=kwargs['duration']
+        if 'area_id' in kwargs:
+            trip_path.area_id=kwargs['area_id']
+        trip_path.save()
+        return trip_path
+    
+   
 
     def trip_path(self, *args, **kwargs):
         pk=0
@@ -570,7 +604,7 @@ class PassengerRepo():
                 passenger.save()
                 return passenger
 
-                
+
     def passenger(self, *args, **kwargs):
         pk=0
         if 'passenger_id' in kwargs:
@@ -607,8 +641,25 @@ class ClientRepo():
         self.profile=ProfileRepo(*args, **kwargs).me
        
 
+    def add_client(self,*args, **kwargs):
+        if not self.user.has_perm(APP_NAME+".add_passenger"):
+            return
+        if 'account_id' in kwargs:
+            account_id=kwargs['account_id']
+            client=self.client(account_id=account_id)
+
+            if client is None:
+                client=Client(account_id=account_id)
+                if 'title' in kwargs and kwargs['title'] is not None and not kwargs['title']=="":
+                    client.title=kwargs['title']
+                client.save()
+                return client
+
     def client(self, *args, **kwargs):
         pk=0
+        if 'account_id' in kwargs:
+            account_id=kwargs['account_id']
+            return self.objects.filter(account_id=account_id).first()
         if 'client_id' in kwargs:
             pk=kwargs['client_id']
         elif 'pk' in kwargs:
@@ -639,12 +690,28 @@ class TripCategoryRepo():
         if 'user' in kwargs:
             self.user = kwargs['user']
         
-        self.objects=TripCategory.objects.all()
+        self.objects=TripCategory.objects.order_by('title')
         self.profile=ProfileRepo(*args, **kwargs).me
-       
+    def add_trip_category(self,*args, **kwargs):
+        if not self.user.has_perm(APP_NAME+".add_tripcategory"):
+            return
+        if 'title' in kwargs:
+            title=kwargs['title']
+            trip_category=self.trip_category(title=title)
+
+
+            if trip_category is None:
+                trip_category=TripCategory(title=title)
+                if 'color' in kwargs:
+                    trip_category.color=kwargs['color']
+                trip_category.save()
+                return trip_category
 
     def trip_category(self, *args, **kwargs):
         pk=0
+        if 'title' in kwargs:
+            title=kwargs['title']
+            return self.objects.filter(title=title).first()
         if 'trip_category_id' in kwargs:
             pk=kwargs['trip_category_id']
         elif 'pk' in kwargs:

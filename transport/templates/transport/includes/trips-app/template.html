@@ -139,7 +139,7 @@
                                 <td>
                                     <a :href="trip.driver.get_absolute_url">
 
-                                        <img :src="trip.driver.logo" class="rounded-circle" width="32" alt="">
+                                        <img :src="trip.driver.account.logo" class="rounded-circle" width="32" alt="">
                                         <span v-text="trip.driver.title"></span>
                                     </a>
 
@@ -173,7 +173,7 @@
                                     <div v-for="passenger in trip.passengers">
 
                                         <a :href="passenger.get_absolute_url">
-                                            <img :src="passenger.profile.image" class="rounded-circle" width="32"
+                                            <img :src="passenger.account.logo" class="rounded-circle" width="32"
                                                 alt="">
                                             <span v-text="passenger.title"></span>
                                         </a>
@@ -201,7 +201,8 @@
 
                                         <span v-text="trip.delay"></span> دقیقه
                                     </span>
-                                    </span>
+ 
+
 
 
 

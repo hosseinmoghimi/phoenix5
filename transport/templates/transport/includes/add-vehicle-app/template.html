@@ -6,10 +6,6 @@
                 <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-add-vehicle"
                     aria-expanded="true" aria-controls="collapse-add-vehicle">
                     افزودن ماشین
-
-
-
-
                 </button>
             </h5>
 
@@ -27,20 +23,12 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="">
-                                نام
+                                عنوان
                             </label>
-                            <input placeholder="جستجو ..." v-model="search_for" class="form-control" type="text"
-                                @input="filter()">
+                            <input v-model="title" class="form-control" type="text">
                         </div>
-             
-                        <div class="form-group">
-                            <label for="">
-                                انتخاب حساب
-                            </label>
-                            <select v-model="account_id" class="form-control" id="">
-                                <option :value="account.id" v-for="account in accounts" v-text="account.title"></option>
-                            </select>
-                        </div>
+
+
                         <div class="text-right">
 
                             <button @click="add_vehicle()" class="btn btn-success">

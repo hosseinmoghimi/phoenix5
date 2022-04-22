@@ -1,12 +1,10 @@
 {% load to_json %}
 <script>
-    let accounts = JSON.parse(`{{accounts_s|escapejs}}`)
-    let add_passenger_app = new Vue({
-        el: "#add-passenger-app",
+    let add_trip_category_app = new Vue({
+        el: "#add-trip-category-app",
         data: {
-            account_id: 0,
-            accounts: accounts,
-            name: "",
+            title: "",
+            color: "primary",
             search_for: '',
             waiting: false,
             message: {
@@ -14,46 +12,43 @@
             }
         },
         methods: {
-            filter: function () {
-                this.accounts = accounts.filter(account => account.title.indexOf(this.search_for) > -1)
-                if (this.accounts.length > 0)
-                    this.account_id = this.accounts[0].id
-            },
-            add_passenger: function () {
-                let url = "{% url 'transport:add_passenger' %}"
+             
+            add_trip_category: function () {
+                let url = "{% url 'transport:add_trip_category' %}"
                 let payload = {
                     csrfmiddlewaretoken: csrfmiddlewaretoken,
-                    account_id: this.account_id
+                    color: this.color,
+                    title: this.title,
                 }
-                add_passenger_app.waiting = true
+                add_trip_category_app.waiting = true
 
                 $.post(url, payload).done((data) => {
-                    add_passenger_app.waiting = false
+                    add_trip_category_app.waiting = false
 
                     if (data.result === 'FAILED') {
-                        add_passenger_app.message = {
+                        add_trip_category_app.message = {
                             color: "danger",
-                            body: "خطا در ایجاد مسافر جدید.",
+                            body: "خطا در ایجاد دسته بندی سفر جدید.",
                             show: true,
                         }
                         setTimeout(() => {
-                            add_passenger_app.message = {
+                            add_trip_category_app.message = {
                                 show: false,
                             }
                         }, 3000);
                     }
                     if (data.result === 'SUCCEED') {
-                        if (typeof passengers_app != "undefined") {
-                            passengers_app.passengers.push(data.passenger)
+                        if (typeof trip_categories_app != "undefined") {
+                            trip_categories_app.trip_categories.push(data.trip_category)
                         }
 
-                        add_passenger_app.message = {
+                        add_trip_category_app.message = {
                             color: "success",
                             body: "با موفقیت افزوده شد.",
                             show: true,
                         }
                         setTimeout(() => {
-                            add_passenger_app.message = {
+                            add_trip_category_app.message = {
                                 show: false,
                             }
                         }, 3000);

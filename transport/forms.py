@@ -16,20 +16,40 @@ class AddTripForm(forms.Form):
     description=forms.CharField(max_length=500,required=False)
     
 class AddDriverForm(forms.Form):
-    account_id=forms.IntegerField(required=False)
+    account_id=forms.IntegerField(required=True)
+    title=forms.CharField(max_length=100,required=False)
+
+class AddVehicleForm(forms.Form):
+    title=forms.CharField(max_length=100,required=True)
+
+class AddTripCategoryForm(forms.Form):
+    title=forms.CharField(max_length=100,required=True)
+    color=forms.CharField(max_length=100,required=True)
+
+class AddTripPathForm(forms.Form):
+    source_id=forms.IntegerField(required=True)
+    destination_id=forms.IntegerField(required=True)
+    duration=forms.IntegerField(required=False)
+    distance=forms.IntegerField(required=False)
+    area_id=forms.IntegerField(required=False)
+    cost=forms.IntegerField(required=False)
+
 
 class AddPassengerForm(forms.Form):
-    account_id=forms.IntegerField(required=False)
+    account_id=forms.IntegerField(required=True)
+    title=forms.CharField(max_length=100,required=False)
 
 class AddClientForm(forms.Form):
-    account_id=forms.IntegerField(required=False)
+    account_id=forms.IntegerField(required=True)
+    title=forms.CharField(max_length=100,required=False)
 
 class AddServiceManForm(forms.Form):
-    account_id=forms.IntegerField(required=False)
+    account_id=forms.IntegerField(required=True)
+    title=forms.CharField(max_length=100,required=False)
 
 class AddWorkShiftForm(forms.Form):
-    vehicle_id=forms.IntegerField(required=False)
-    driver_id=forms.IntegerField(required=False)
+    vehicle_id=forms.IntegerField(required=True)
+    driver_id=forms.IntegerField(required=True)
     amount=forms.IntegerField(required=False)
     pay_from_id=forms.IntegerField(required=False)
     title=forms.CharField(max_length=50,required=False)

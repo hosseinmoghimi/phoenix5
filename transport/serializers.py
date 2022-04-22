@@ -70,7 +70,7 @@ class MaintenanceSerializer(serializers.ModelSerializer):
 class TripCategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = TripCategory
-        fields=['id','title','color','get_absolute_url']
+        fields=['id','title','count_of_trips','color','get_absolute_url']
 
 class TripSerializer(serializers.ModelSerializer):
     trip_paths=TripPathSerializer(many=True)

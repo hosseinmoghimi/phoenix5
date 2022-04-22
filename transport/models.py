@@ -12,6 +12,7 @@ from tinymce.models import HTMLField
 from core.enums import ColorEnum,UnitNameEnum
 from accounting.models import Account
 
+
 class Driver(models.Model,LinkHelper):
     title=models.CharField(_("title"),null=True,blank=True, max_length=100)
     account=models.ForeignKey("accounting.account", verbose_name=_("account"), on_delete=models.CASCADE)
@@ -29,6 +30,7 @@ class Driver(models.Model,LinkHelper):
         return super(Driver,self).save(*args, **kwargs)
     def __str__(self):
         return str(self.title)
+
 
 class Passenger(models.Model,LinkHelper):
     title=models.CharField(_("title"),null=True,blank=True, max_length=100)
@@ -52,6 +54,7 @@ class Passenger(models.Model,LinkHelper):
     def __str__(self):
         return str(self.title)
 
+
 class Client(models.Model,LinkHelper):
     title=models.CharField(_("title"),null=True,blank=True, max_length=100)
     account=models.ForeignKey("accounting.account", verbose_name=_("account"), on_delete=models.CASCADE)
@@ -72,6 +75,7 @@ class Client(models.Model,LinkHelper):
 
     def __str__(self):
         return str(self.title)
+
 
 class ServiceMan(models.Model,LinkHelper):
     title=models.CharField(_("title"),null=True,blank=True, max_length=100)
@@ -165,6 +169,7 @@ class WorkShift(Transaction):
             self.app_name=APP_NAME
         return super(WorkShift,self).save(*args, **kwargs)
 
+
 class TripPath(models.Model,LinkHelper):
     area=models.ForeignKey("map.area", null=True,blank=True, verbose_name=_("area"), on_delete=models.CASCADE)
     source=models.ForeignKey("map.location",related_name="trip_source_set", verbose_name=_("مبدا"), on_delete=models.CASCADE)
@@ -188,9 +193,11 @@ class TripPath(models.Model,LinkHelper):
 
 class TripCategory(models.Model,LinkHelper):
     title=models.CharField(_("عنوان"), max_length=50)
-    color=models.CharField(_("color"),choices=ColorEnum.choices,default=ColorEnum.PRIMARY, max_length=50)
+    color=models.CharField(_("رنگ"),choices=ColorEnum.choices,default=ColorEnum.PRIMARY, max_length=50)
     class_name="tripcategory"
     app_name=APP_NAME
+    def count_of_trips(self):
+        return len(self.trip_set.all())
     def get_badge(self):
         return f"""
             <span class="badge badge-{self.color}">{self.title}</span>
@@ -224,7 +231,7 @@ class Trip(Transaction):
 
     @property
     def driver(self):
-        return self.pay_from
+        return Driver.objects.filter(account_id=self.pay_from.id).first()
     @property
     def cost(self):
         return self.amount
