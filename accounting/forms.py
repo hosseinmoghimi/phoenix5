@@ -7,6 +7,12 @@ class SearchForm(forms.Form):
     account_id=forms.IntegerField(required=False)
     profile_id=forms.IntegerField(required=False)
     
+class AddFinancialBalanceForm(forms.Form):
+    title=forms.CharField(max_length=50, required=True)
+    financial_document_id=forms.IntegerField(required=True)
+    bedehkar=forms.IntegerField(required=False)
+    bestanker=forms.IntegerField(required=False)
+    amount=forms.IntegerField(required=False)
 class AddStorePriceForm(forms.Form):
     product_or_service_id=forms.IntegerField(required=True)
     store_id=forms.IntegerField(required=True)

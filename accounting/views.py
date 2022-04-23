@@ -3,7 +3,7 @@ from django.http import Http404, HttpResponse, JsonResponse
 from django.shortcuts import render,reverse
 from django.utils import timezone
 from accounting.apis import EditInvoiceApi
-from accounting.enums import PaymentMethodEnum, TransactionStatusEnum
+from accounting.enums import FinancialBalanceTitleEnum, PaymentMethodEnum, TransactionStatusEnum
 from core.constants import CURRENCY, FAILED, SUCCEED
 from core.enums import UnitNameEnum
 from core.utils import app_is_installed
@@ -717,4 +717,7 @@ class FinancialDocumentView(View):
         context['financial_document']=financial_document
         financial_balances=FinancialBalanceRepo(request=request).list(financial_document_id=financial_document.id)
         context['financial_balances']=financial_balances
+        if request.user.has_perm(APP_NAME+".add_financialdocument"):
+            context['add_financial_balance_form']=AddFinancialBalanceForm()
+            context['financial_balance_title_enum']=(cc[0] for cc in FinancialBalanceTitleEnum.choices)
         return render(request,TEMPLATE_ROOT+"financial-document.html",context)

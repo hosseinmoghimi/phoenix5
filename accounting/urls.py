@@ -38,6 +38,7 @@ urlpatterns = [
     
     path("financial_balance/<int:pk>/",login_required(views.FinancialBalanceView.as_view()),name="financialbalance"),
     path("financial_balances/",login_required(views.FinancialBalancesView.as_view()),name="financial_balances"),
+    path("add_financial_balance/",login_required(apis.AddFinancialBalancesApi.as_view()),name="add_financial_balance"),
     
     path("payment/<int:pk>/",login_required(views.PaymentView.as_view()),name="payment"),
     path("payments/",login_required(views.PaymentsView.as_view()),name="payments"),

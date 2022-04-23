@@ -372,7 +372,26 @@ class FinancialDocument(models.Model,LinkHelper):
     def title(self):
         return self.transaction.title 
      
-    
+    def normalize_sub_accounts(self):
+        sum_bestankar=0
+        sum_bedehkar=0
+        financial_balances=FinancialBalance.objects.filter(financial_document_id=self.pk)
+        for financialbalance in financial_balances.exclude(title=FinancialBalanceTitleEnum.MISC):
+            sum_bedehkar+=financialbalance.bedehkar
+            sum_bestankar+=financialbalance.bestankar
+
+        misc=financial_balances.filter(title=FinancialBalanceTitleEnum.MISC).first()
+        if misc is None:
+            misc=FinancialBalance()
+            misc.financial_document_id=self.pk
+            misc.title=FinancialBalanceTitleEnum.MISC
+            misc.save()
+
+        misc.bestankar=self.bestankar-sum_bestankar
+        misc.bedehkar=self.bedehkar-sum_bedehkar
+        misc.save()
+        print(sum_bedehkar)
+        print(sum_bestankar)
     
 
     class Meta:
@@ -382,7 +401,7 @@ class FinancialDocument(models.Model,LinkHelper):
     def __str__(self):
         return f"""{self.account.title} : {self.transaction.title} : {self.transaction.amount}"""
     def normalize_balances(self,*args, **kwargs):
-        balances=FinancialBalance.objects.filter(financial_document=self)
+        balances=FinancialBalance.objects.filter(financial_document_id=self.pk)
         sum_bestankar=0
         sum_bedehkar=0
         for balance in balances:

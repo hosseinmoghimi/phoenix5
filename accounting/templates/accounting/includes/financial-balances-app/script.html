@@ -1,0 +1,35 @@
+{% load to_json %}
+<script>
+    let financial_balances_fff = JSON.parse(`{{financial_balances|to_json_financial_balances|escapejs}}`)
+    let financial_balances_app = new Vue({
+        el: "#financial-balances-app",
+        data: {
+            financial_balances: financial_balances_fff,
+            title: "",
+            amount: 0,
+
+        },
+        methods: {
+            to_price:function(vall){
+                return to_price(vall,"")
+            },
+            add_financial_balance: function (financial_document_id) {
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    title: this.title,
+                    amount: this.amount,
+                    financial_document_id: parseInt("{{financial_document.id}}"),
+                }
+                console.log(payload)
+                let url="{% url 'accounting:add_financial_balance' %}"
+                $.post(url, payload).done(data => {
+                    console.log(data)
+                    if(data.result==='SUCCEED'){
+                        financial_balances_app.financial_balances=data.financial_balances
+                    }
+                })
+            },
+        }
+    }
+    )
+</script>

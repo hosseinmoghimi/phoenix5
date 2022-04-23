@@ -1,6 +1,6 @@
 from datetime import timedelta
 from urllib import request
-from accounting.enums import TransactionStatusEnum
+from accounting.enums import FinancialDocumentTypeEnum, TransactionStatusEnum
 
 from core.enums import UnitNameEnum
 from .apps import APP_NAME
@@ -143,7 +143,33 @@ class FinancialBalanceRepo:
             financial_document_id=kwargs['financial_document_id']
             objects = objects.filter(financial_document_id=financial_document_id) 
         return objects
+    def add_financial_balance(self,*args, **kwargs):
+        print(kwargs)
+        if not self.user.has_perm(APP_NAME+".add_financialbalance"):
+            return None
+        financial_balance=FinancialBalance()
+        if 'title' in kwargs:
+            financial_balance.title = kwargs['title']
+        if 'bedehkar' in kwargs:
+            financial_balance.bedehkar = kwargs['bedehkar']
+        if 'bestankar' in kwargs:
+            financial_balance.bestankar = kwargs['bestankar']
+        if 'financial_document_id' in kwargs:
+            financial_balance.financial_document_id = kwargs['financial_document_id']
+        financial_balance.bestankar=0
+        financial_balance.bedehkar=0
+     
+        financial_balance.save()
+        if 'amount' in kwargs:
 
+            if financial_balance.financial_document.direction==FinancialDocumentTypeEnum.BEDEHKAR:
+                financial_balance.bedehkar=kwargs['amount']
+            if financial_balance.financial_document.direction==FinancialDocumentTypeEnum.BESTANKAR:
+                financial_balance.bestankar=kwargs['amount']
+            financial_balance.save()
+        # financial_balance.financial_document.normalize_balances()
+        financial_balance.financial_document.normalize_sub_accounts()
+        return financial_balance.financial_document.financialbalance_set.all()
     def financial_balance(self, *args, **kwargs):
             
         if 'financial_balance_id' in kwargs:

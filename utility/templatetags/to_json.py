@@ -7,12 +7,18 @@ import json
 
 from resume.serializers import ResumeSerializer
 from warehouse.serializers import WareHouseSerializer
-from accounting.serializers import AccountSerializer,ProfileSerializer, TransactionSerializer
+from accounting.serializers import AccountSerializer, FinancialBalanceSerializer,ProfileSerializer, TransactionSerializer
 
 
 @register.filter
 def to_json_warehouses(warehouses):
     return json.dumps(WareHouseSerializer(warehouses,many=True).data)
+
+    
+@register.filter
+def to_json_financial_balances(financial_balances):
+    return json.dumps(FinancialBalanceSerializer(financial_balances,many=True).data)
+
 @register.filter
 def to_json_resumes(resumes):
     return json.dumps(ResumeSerializer(resumes,many=True).data)
