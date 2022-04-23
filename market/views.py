@@ -1,4 +1,3 @@
-from multiprocessing import parent_process
 from django.shortcuts import render
 from core.enums import ParameterNameEnum
 from market.enums import ParameterMarketEnum

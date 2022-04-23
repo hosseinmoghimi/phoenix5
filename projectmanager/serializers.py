@@ -84,7 +84,7 @@ class MaterialSerializer(serializers.ModelSerializer):
 class ServiceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Service
-        fields = ['id', 'title', 'get_pm_absolute_url','full_title','buy_price','unit_price','unit_name','thumbnail']
+        fields = ['id', 'title', 'get_pm_absolute_url','get_absolute_url','full_title','buy_price','unit_price','unit_name','thumbnail']
 
 
 class ProjectSerializer(serializers.ModelSerializer):

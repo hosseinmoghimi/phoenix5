@@ -27,11 +27,11 @@
 
                 <div v-for="employee in employees" class="mb-3">
                     <div class="media">
-                        <img class="rounded-circle mr-3 " width="64" :src="employee.profile.image" alt="">
+                        <img class="rounded-circle mr-3 " width="64" :src="employee.account.profile.image" alt="">
                         <div class="media-body farsi">
                             
                             <a :href="employee.get_absolute_url">
-                            <h5 v-text="employee.title">
+                            <h5 v-text="employee.account.title">
                                 
                             </h5>
                         </a>
@@ -55,26 +55,7 @@
                 </div>
 
 
-                <div v-for="profile in profiles">
-                    <div class="media">
-                        <img class="rounded-circle mr-3 " width="64" :src="profile.image" alt="">
-                        <div class="media-body farsi">
-
-                            <a :href="profile.get_absolute_url">
-                                <h5 v-text="profile.name">
-
-                                </h5>
-                            </a>
-                            <button class="btn btn-primary" @click="add_employee(profile.id)">
-                                <i class="material-icons">
-                                    add
-                                </i>
-                            </button>
-
-                        </div>
-                    </div>
-                </div>
-
+            
             </div>
             {% if add_employee_form %}
             <div class="card-footer ">

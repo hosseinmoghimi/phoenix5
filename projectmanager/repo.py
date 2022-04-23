@@ -422,7 +422,7 @@ class EmployeeRepo():
         if 'organization_unit_id' in kwargs:
             objects=objects.filter(organization_unit_id=kwargs['organization_unit_id'])
         if 'profile_id' in kwargs:
-            objects=objects.filter(profile_id=kwargs['profile_id'])
+            objects=objects.filter(account__profile_id=kwargs['profile_id'])
         if 'project_id' in kwargs:
             project=ProjectRepo(request=self.request).project(project_id=kwargs['project_id'])
             objects=project.organization_units.all()
@@ -737,6 +737,9 @@ class OrganizationUnitRepo():
      
     def list(self, *args, **kwargs):
         objects = self.objects
+        if 'project_id' in kwargs:
+            project=ProjectRepo(request=self.request).project(project_id=kwargs['project_id'])
+            objects=project.organization_units.all()
         if 'search_for' in kwargs:
             search_for=kwargs['search_for']
             objects = objects.filter(Q(title__contains=search_for)|Q(short_description__contains=search_for)|Q(description__contains=search_for))
@@ -747,9 +750,7 @@ class OrganizationUnitRepo():
             if parent_id==0:
                 parent_id=None
             objects=objects.filter(parent_id=parent_id)
-        if 'project_id' in kwargs:
-            project=ProjectRepo(request=self.request).project(project_id=kwargs['project_id'])
-            objects=project.organization_units.all()
+        
         return objects.order_by("title") 
 
    

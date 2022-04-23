@@ -230,7 +230,9 @@ class Employee(models.Model,LinkHelper):
         _("job title"), default="سرپرست", max_length=50)
     class_name = 'employee'
     app_name = APP_NAME
-
+    @property
+    def title(self):
+        return self.account.title
 
 
     def my_pages_ids(self):
@@ -241,18 +243,18 @@ class Employee(models.Model,LinkHelper):
 
     @property
     def mobile(self):
-        return self.profile.mobile
+        return self.account.profile.mobile
 
     @property
     def name(self):
-        return self.profile.name
+        return self.account.profile.name
 
     class Meta:
         verbose_name = _("Employee")
         verbose_name_plural = _("Employees")
 
     def __str__(self):
-        return f"""{self.profile.name} : {self.job_title} {str(self.organization_unit) if self.organization_unit is not None else ""} """
+        return f"""{self.account.profile.name} : {self.job_title} {str(self.organization_unit) if self.organization_unit is not None else ""} """
 
     def get_absolute_url(self):
         return reverse(APP_NAME+":employee", kwargs={"pk": self.pk})
@@ -292,7 +294,6 @@ class OrganizationUnit(Page):
         if self.app_name is None or self.app_name == "":
             self.app_name = APP_NAME
         return super(OrganizationUnit, self).save(*args, **kwargs)
-
     def logo(self):
         if self.thumbnail_origin:
             return self.thumbnail
