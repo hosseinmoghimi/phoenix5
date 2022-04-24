@@ -21,6 +21,11 @@ class AddDriverForm(forms.Form):
 
 class AddVehicleForm(forms.Form):
     title=forms.CharField(max_length=100,required=True)
+    plaque=forms.CharField(max_length=100,required=True)
+    color=forms.CharField(max_length=100,required=False)
+    vehicle_type=forms.CharField(max_length=100,required=False)
+    brand=forms.CharField(max_length=100,required=False)
+    description=forms.CharField(max_length=500,required=False)
 
 class AddTripCategoryForm(forms.Form):
     title=forms.CharField(max_length=100,required=True)

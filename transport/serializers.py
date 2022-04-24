@@ -9,7 +9,7 @@ from accounting.serializers import AccountSerializer
 class VehicleSerializer(serializers.ModelSerializer):
     class Meta:
         model =Vehicle
-        fields=['id','title','plaque','get_absolute_url']
+        fields=['id','title','plaque','thumbnail','brand','vehicle_type','color','get_absolute_url','get_edit_url','get_delete_url']
 
 
 

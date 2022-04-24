@@ -11,6 +11,7 @@ from django.views import View
 from map.repo import AreaRepo, LocationRepo
 from map.serializers import AreaSerializer, LocationSerializer
 from accounting.views import add_from_accounts_context
+from transport.enums import VehicleBrandEnum, VehicleColorEnum, VehicleTypeEnum
 from transport.forms import *
 from utility.calendar import PersianCalendar 
 
@@ -449,6 +450,9 @@ class VehiclesView(View):
         context['vehicles_s']=vehicles_s
         if request.user.has_perm(APP_NAME+".add_vehicle"):
             context['add_vehicle_form']=AddVehicleForm()
+            context['colors']=(color[0] for color in VehicleColorEnum.choices)
+            context['brands']=(brand[0] for brand in VehicleBrandEnum.choices)
+            context['vehicle_types']=(type[0] for type in VehicleTypeEnum.choices)
         return render(request,TEMPLATE_ROOT+"vehicles.html",context)
 
 

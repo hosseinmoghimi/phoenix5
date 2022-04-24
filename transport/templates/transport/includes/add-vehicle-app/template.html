@@ -20,13 +20,73 @@
                 {% load static %}
 
                 <div class="row">
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <div class="form-group">
                             <label for="">
                                 عنوان
                             </label>
                             <input v-model="title" class="form-control" type="text">
                         </div>
+                    </div>
+
+
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="">
+                                پلاک
+                            </label>
+                            <input v-model="plaque" class="form-control" type="text">
+                        </div>
+                    </div>
+
+
+
+
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="">
+                                رنگ
+                            </label>
+                            <select v-model="color" class="form-control">
+                                {% for color in colors %}
+
+                                <option value="{{color}}">{{color}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="">
+                                نوع
+                            </label>
+                            <select v-model="vehicle_type" class="form-control">
+                                {% for vehicle_type in vehicle_types %}
+
+                                <option value="{{vehicle_type}}">{{vehicle_type}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="">
+                                برند
+                            </label>
+                            <select v-model="brand" class="form-control">
+                                {% for brand in brands %}
+
+                                <option value="{{brand}}">{{brand}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+
+                    <div class="col-md-12">
 
 
                         <div class="text-right">

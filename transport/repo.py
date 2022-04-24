@@ -75,16 +75,39 @@ class VehicleRepo():
         if 'title' in kwargs:
             title=kwargs['title']
             vehicle=self.vehicle(title=title)
-
+            if vehicle is not None:
+                message="عنوان تکراری برای ماشین"
+                return None,message
+            if vehicle is None and 'plaque' in kwargs:
+                vehicle=self.vehicle(plaque=kwargs['plaque'])
+                if vehicle is not None:
+                    message="پلاک تکراری برای ماشین"
+                    return None,message
+                    
             if vehicle is None:
-                vehicle=Vehicle(title=title)
+                vehicle=Vehicle()
+                if 'title' in kwargs:
+                    vehicle.title=kwargs['title']
+                if 'plaque' in kwargs:
+                    vehicle.plaque=kwargs['plaque']
+                if 'color' in kwargs:
+                    vehicle.color=kwargs['color']
+                if 'description' in kwargs:
+                    vehicle.description=kwargs['description']
+                if 'vehicle_type' in kwargs:
+                    vehicle.vehicle_type=kwargs['vehicle_type']
+                if 'brand' in kwargs:
+                    vehicle.brand=kwargs['brand']
                 vehicle.save()
-                return vehicle
+                message=""
+                return vehicle,message
 
     def vehicle(self, *args, **kwargs):
         pk=0
         if 'title' in kwargs:
             return self.objects.filter(title=kwargs['title']).first()
+        if 'plaque' in kwargs:
+            return self.objects.filter(plaque=kwargs['plaque']).first()
         if 'vehicle_id' in kwargs:
             return self.objects.filter(pk=kwargs['vehicle_id']).first()
         elif 'pk' in kwargs:

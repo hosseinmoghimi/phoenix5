@@ -3,8 +3,13 @@
     let add_vehicle_app = new Vue({
         el: "#add-vehicle-app",
         data: {
-            title:"",
+            title: "",
             search_for: '',
+            plaque: "",
+            brand: "",
+            model: "",
+            vehicle_type: "",
+            color: "primary",
             waiting: false,
             message: {
                 show: false
@@ -17,45 +22,91 @@
                     this.account_id = this.accounts[0].id
             },
             add_vehicle: function () {
-                let url = "{% url 'transport:add_vehicle' %}"
-                let payload = {
-                    csrfmiddlewaretoken: csrfmiddlewaretoken,
-                    title: this.title
+                this.message.body = ""
+                let sw = true
+                if (this.plaque.length == 0) {
+                    this.message.body += "<span>پلاک ماشین را وارد کنید .</span><br>"
+                    sw = false
                 }
-                add_vehicle_app.waiting = true
-                console.log(payload)
-                $.post(url, payload).done((data) => {
-                    add_vehicle_app.waiting = false
+                if (this.title.length == 0) {
+                    this.message.body += "<span>عنوان ماشین را وارد کنید .</span><br>"
+                    sw = false
+                }
+                if (this.color.length == 0) {
+                    this.message.body += "<span>رنگ ماشین را وارد کنید .</span><br>"
+                    sw = false
+                }
+                if (this.vehicle_type.length == 0) {
+                    this.message.body += "<span>نوع ماشین را وارد کنید .</span><br>"
+                    sw = false
+                }
+                if (this.brand.length == 0) {
+                    this.message.body += "<span>برند ماشین را وارد کنید .</span><br>"
+                    sw = false
+                }
+                if (!sw) {
+                    this.message.color="danger"
+                    this.message.show=true
+                }
+                else {
 
-                    if (data.result === 'FAILED') {
-                        add_vehicle_app.message = {
-                            color: "danger",
-                            body: "خطا در ایجاد ماشین جدید.",
-                            show: true,
-                        }
-                        setTimeout(() => {
-                            add_vehicle_app.message = {
-                                show: false,
-                            }
-                        }, 3000);
+                    let url = "{% url 'transport:add_vehicle' %}"
+                    let payload = {
+                        csrfmiddlewaretoken: csrfmiddlewaretoken,
+                        title: this.title,
+                        plaque: this.plaque,
+                        color: this.color,
+                        vehicle_type: this.vehicle_type,
+                        brand: this.brand,
                     }
-                    if (data.result === 'SUCCEED') {
-                        if (typeof vehicles_app != "undefined") {
-                            vehicles_app.vehicles.push(data.vehicle)
-                        }
+                    add_vehicle_app.waiting = true
+                    console.log(payload)
+                    $.post(url, payload).done((data) => {
+                        add_vehicle_app.waiting = false
 
-                        add_vehicle_app.message = {
-                            color: "success",
-                            body: "با موفقیت افزوده شد.",
-                            show: true,
-                        }
-                        setTimeout(() => {
+                        if (data.result === 'FAILED') {
                             add_vehicle_app.message = {
-                                show: false,
+                                color: "danger",
+                                body: data.message,
+                                show: true,
                             }
-                        }, 3000);
-                    }
-                })
+                            setTimeout(() => {
+                                add_vehicle_app.message = {
+                                    show: false,
+                                }
+                            }, 3000);
+                        }
+                        else if (data.result === 'SUCCEED') {
+                            if (typeof vehicles_app != "undefined") {
+                                vehicles_app.vehicles.push(data.vehicle)
+                            }
+
+                            add_vehicle_app.message = {
+                                color: "success",
+                                body: "با موفقیت افزوده شد.",
+                                show: true,
+                            }
+                            setTimeout(() => {
+                                add_vehicle_app.message = {
+                                    show: false,
+                                }
+                            }, 3000);
+                        }
+                        else{
+                            add_vehicle_app.message = {
+                                color: "danger",
+                                body: "خطا در ایجاد ماشین جدید",
+                                show: true,
+                            }
+                            setTimeout(() => {
+                                add_vehicle_app.message = {
+                                    show: false,
+                                }
+                            }, 3000);
+                        }
+                         
+                    })
+                }
 
             }
 

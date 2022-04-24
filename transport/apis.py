@@ -87,11 +87,16 @@ class AddVehicleApi(APIView):
         fm=AddVehicleForm(request.POST)
         if fm.is_valid():
             cd=fm.cleaned_data
-            vehicle=VehicleRepo(request=request).add_vehicle(**cd)
+            vehicle,message=VehicleRepo(request=request).add_vehicle(**cd)
             if vehicle is not None:
                 context={
                     'result':SUCCEED,
                     'vehicle':VehicleSerializer(vehicle).data
+                }
+            else:
+                context={
+                    'result':FAILED,
+                    'message':message
                 }
         return JsonResponse(context)
 

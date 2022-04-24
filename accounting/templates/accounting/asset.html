@@ -1,0 +1,85 @@
+{% extends "accounting/layout.html" %}
+
+{% load to_persian_date %}
+{% load to_price %}
+
+{% load to_variz_text %}
+{% block content %}
+
+<h4 class="text-center my-3">
+    {{asset.title}}
+  
+    <span class="badge badge-{{asset.color}}">
+        {{asset.status}}
+    </span>
+
+</h4>
+<div class="row">
+    <div class="col-md-4">
+        {% include "core/includes/page-app/brief-card.html" %}
+
+    </div>
+    <div class="col-md-8">
+        {% include "accounting/includes/transaction-app/brief.html" %}
+
+    </div>
+
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body farsi text-right">
+                <div>
+                    وضعیت :
+                    <span class="badge badge-{{asset.color}}">
+
+                        {{asset.status}}
+                    </span>
+                </div>
+
+
+                <div>
+                    مبلغ چک :
+                    {{asset.amount|to_price}}
+                </div>
+                <div>
+                    تاریخ چک :
+                    {{asset.asset_date|to_persian_date|safe}}
+                </div>
+
+
+                <div>
+                    <a href="{{asset.pay_from.get_absolute_url}}">
+                        <img src="{{asset.pay_from.profile.image}}" class="rounded-circle" width="64" alt="">
+                        {{asset.pay_from.title}}
+                    </a>
+                </div>
+
+
+
+                <div>
+                    <a href="{{asset.pay_to.get_absolute_url}}">
+                        <img src="{{asset.pay_to.profile.image}}" class="rounded-circle" width="64" alt="">
+                        {{asset.pay_to.title}}
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        {% include "core/includes/page-links-app/template.html" %}
+
+    </div>
+    <div class="col-md-4">
+        {% include "core/includes/page-downloads-app/template.html" %}
+
+    </div>
+
+</div>
+{% endblock content %}
+
+
+{% block script %}
+{% include "accounting/includes/transaction-app/script.html" %}
+
+{% endblock script %}

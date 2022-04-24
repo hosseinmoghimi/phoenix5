@@ -1,4 +1,3 @@
-from email.policy import default
 from django.http import Http404, HttpResponse, JsonResponse
 from django.shortcuts import render,reverse
 from django.utils import timezone
@@ -17,8 +16,8 @@ from utility.excel import ReportSheet,ReportWorkBook, get_style
 from warehouse.repo import WareHouseRepo, WareHouseSheetRepo
 from warehouse.serializers import WareHouseSerializer, WareHouseSheetSerializer
 from accounting.apps import APP_NAME
-from accounting.repo import InvoiceLineRepo,AccountRepo,FinancialBalanceRepo, ChequeRepo, PaymentRepo, PriceRepo, ProductRepo,ServiceRepo,FinancialDocumentRepo,InvoiceRepo, TransactionRepo
-from accounting.serializers import AccountSerializer, FinancialBalanceSerializer, InvoiceFullSerializer,InvoiceLineSerializer,ChequeSerializer, InvoiceSerializer, PaymentSerializer, PriceSerializer, ProductSerializer,ServiceSerializer,FinancialDocumentForAccountSerializer,FinancialDocumentSerializer, TransactionSerializer
+from accounting.repo import AssetRepo, InvoiceLineRepo,AccountRepo,FinancialBalanceRepo, ChequeRepo, PaymentRepo, PriceRepo, ProductRepo,ServiceRepo,FinancialDocumentRepo,InvoiceRepo, TransactionRepo
+from accounting.serializers import AccountSerializer, AssetSerializer, FinancialBalanceSerializer, InvoiceFullSerializer,InvoiceLineSerializer,ChequeSerializer, InvoiceSerializer, PaymentSerializer, PriceSerializer, ProductSerializer,ServiceSerializer,FinancialDocumentForAccountSerializer,FinancialDocumentSerializer, TransactionSerializer
 from accounting.forms import *
 import json
 from phoenix.server_settings import phoenix_apps
@@ -721,3 +720,20 @@ class FinancialDocumentView(View):
             context['add_financial_balance_form']=AddFinancialBalanceForm()
             context['financial_balance_title_enum']=(cc[0] for cc in FinancialBalanceTitleEnum.choices)
         return render(request,TEMPLATE_ROOT+"financial-document.html",context)
+
+class AssetsView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        assets=AssetRepo(request=request).list(*args, **kwargs)
+        context['assets']=assets
+        assets_s=json.dumps(AssetSerializer(assets,many=True).data)
+        context['assets_s']=assets_s
+        return render(request,TEMPLATE_ROOT+"assets.html",context)
+
+class AssetView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        asset=AssetRepo(request=request).asset(*args, **kwargs)
+        context['asset']=asset
+        context.update(PageContext(request=request,page=asset))
+        return render(request,TEMPLATE_ROOT+"asset.html",context)

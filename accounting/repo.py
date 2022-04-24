@@ -4,10 +4,60 @@ from accounting.enums import FinancialDocumentTypeEnum, TransactionStatusEnum
 
 from core.enums import UnitNameEnum
 from .apps import APP_NAME
-from .models import Account, Cheque, FinancialBalance, FinancialDocument, FinancialYear, Invoice, InvoiceLine, Payment, Price, Product,Service, Transaction
+from .models import Account, Asset, Cheque, FinancialBalance, FinancialDocument, FinancialYear, Invoice, InvoiceLine, Payment, Price, Product,Service, Transaction
 from django.db.models import Q
 from authentication.repo import ProfileRepo
 from django.utils import timezone
+
+class AssetRepo():
+    def __init__(self, *args, **kwargs):
+        self.request = None
+        self.user = None
+        if 'request' in kwargs:
+            self.request = kwargs['request']
+            self.user = self.request.user
+        if 'user' in kwargs:
+            self.user = kwargs['user']
+        
+        self.objects=Asset.objects.all()
+        self.profile=ProfileRepo(*args, **kwargs).me
+       
+
+    def asset(self, *args, **kwargs):
+        pk=0
+        if 'asset' in kwargs:
+            return kwargs['asset']
+        if 'asset_id' in kwargs:
+            pk=kwargs['asset_id']
+        elif 'pk' in kwargs:
+            pk=kwargs['pk']
+        elif 'id' in kwargs:
+            pk=kwargs['id']
+        return self.objects.filter(pk=pk).first()
+     
+    def list(self, *args, **kwargs):
+        objects = self.objects
+        if 'search_for' in kwargs:
+            search_for=kwargs['search_for']
+            objects = objects.filter(Q(title__contains=search_for)|Q(short_description__contains=search_for)|Q(description__contains=search_for))
+        if 'for_home' in kwargs:
+            objects = objects.filter(Q(for_home=kwargs['for_home']))
+        if 'parent_id' in kwargs:
+            objects=objects.filter(parent_id=kwargs['parent_id'])
+        return objects.all()
+
+    def add_product(self,*args, **kwargs):
+        if not self.user.has_perm(APP_NAME+".add_product"):
+            return None
+ 
+        if 'title' in kwargs:
+            title = kwargs['title']
+
+        product=Product()
+        product.title=title
+        product.save()
+        return product
+
 
 
 class ProductRepo():
@@ -144,7 +194,6 @@ class FinancialBalanceRepo:
             objects = objects.filter(financial_document_id=financial_document_id) 
         return objects
     def add_financial_balance(self,*args, **kwargs):
-        print(kwargs)
         if not self.user.has_perm(APP_NAME+".add_financialbalance"):
             return None
         financial_balance=FinancialBalance()
