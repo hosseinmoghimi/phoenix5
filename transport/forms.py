@@ -27,6 +27,18 @@ class AddVehicleForm(forms.Form):
     brand=forms.CharField(max_length=100,required=False)
     description=forms.CharField(max_length=500,required=False)
 
+
+class AddMaintenanceForm(forms.Form):
+    title=forms.CharField(max_length=100,required=True)
+    event_datetime=forms.CharField(max_length=50, required=False)
+    maintenance_type=forms.CharField(max_length=50, required=False)
+    description=forms.CharField(max_length=500, required=False)
+    kilometer=forms.IntegerField( required=False)
+    vehicle_id=forms.IntegerField( required=False)
+    client_id=forms.IntegerField( required=False)
+    service_man_id=forms.IntegerField( required=False)
+    amount=forms.IntegerField(required=False)
+
 class AddTripCategoryForm(forms.Form):
     title=forms.CharField(max_length=100,required=True)
     color=forms.CharField(max_length=100,required=True)

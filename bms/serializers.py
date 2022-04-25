@@ -9,7 +9,7 @@ class FeederSerializer(serializers.ModelSerializer):
 class RelaySerializer(serializers.ModelSerializer):
     class Meta:
         model=Relay
-        fields=['id','name','get_absolute_url']
+        fields=['id','name','state','color','get_absolute_url']
         
 class CommandSerializer(serializers.ModelSerializer):
     class Meta:
@@ -20,7 +20,7 @@ class RelayFullSerializer(serializers.ModelSerializer):
     commands=CommandSerializer(many=True)
     class Meta:
         model=Relay
-        fields=['id','commands','name','get_absolute_url']
+        fields=['id','commands','state','name','get_absolute_url']
 
 class FeederFullSerializer(serializers.ModelSerializer):
     relays=RelayFullSerializer(many=True)

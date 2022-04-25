@@ -52,17 +52,18 @@ class WorkShiftSerializer(serializers.ModelSerializer):
 
 
 class ServiceManSerializer(serializers.ModelSerializer):
-    profile=ProfileSerializer()
+    account=AccountSerializer()
     class Meta:
         model=ServiceMan
-        fields=['id','title','profile','get_absolute_url']
+        fields=['id','title','account','get_absolute_url']
 
 class MaintenanceSerializer(serializers.ModelSerializer):
     service_man=ServiceManSerializer()
+    client=ClientSerializer()
     vehicle=VehicleSerializer()
     class Meta:
         model=Maintenance
-        fields=['id','maintenance_type','get_edit_url','kilometer','service_man','paid','vehicle','get_absolute_url','persian_event_datetime']
+        fields=['id','maintenance_type','get_edit_url','kilometer','service_man','client','amount','vehicle','get_absolute_url','persian_event_datetime']
 
 
 

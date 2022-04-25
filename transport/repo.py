@@ -1,4 +1,5 @@
 from transport.apps import APP_NAME
+from transport.serializers import MaintenanceSerializer
 from .models import Driver, Maintenance,Passenger,ServiceMan, Trip, TripCategory, TripPath, Vehicle,Client, WorkShift
 from authentication.repo import ProfileRepo
 from django.utils import timezone
@@ -54,8 +55,6 @@ class DriverRepo():
         return objects.all()
 
 
-
-
 class VehicleRepo():
     def __init__(self, *args, **kwargs):
         self.request = None
@@ -104,6 +103,8 @@ class VehicleRepo():
 
     def vehicle(self, *args, **kwargs):
         pk=0
+        if 'vehicle' in kwargs:
+            return kwargs['vehicle']
         if 'title' in kwargs:
             return self.objects.filter(title=kwargs['title']).first()
         if 'plaque' in kwargs:
@@ -315,6 +316,7 @@ class TripRepo():
             objects=objects.filter(trip_category_id=kwargs['trip_category_id'])
         return objects.all()
 
+
 class ServiceManRepo():
     def __init__(self, *args, **kwargs):
         self.request = None
@@ -420,7 +422,6 @@ class ServiceManRepo():
         if 'vehicle_id' in kwargs:
             objects=objects.filter(vehicle_id=kwargs['vehicle_id'])
         return objects.all()
-
 
 
 class MaintenanceRepo():
@@ -529,6 +530,32 @@ class MaintenanceRepo():
             objects=objects.filter(vehicle_id=kwargs['vehicle_id'])
         return objects.all()
 
+    def add_maintenance(self,*args, **kwargs):
+        print(kwargs)
+        if not self.user.has_perm(APP_NAME+".add_maintenance"):
+            return
+        maintenance=Maintenance()
+        if 'amount' in kwargs:
+            maintenance.amount=kwargs['amount']
+        if 'title' in kwargs:
+            maintenance.title=kwargs['title']
+        if 'kilometer' in kwargs:
+            maintenance.kilometer=kwargs['kilometer']
+        if 'description' in kwargs:
+            maintenance.description=kwargs['description']
+        if 'event_datetime' in kwargs:
+            maintenance.transaction_datetime=kwargs['event_datetime']
+        if 'maintenance_type' in kwargs:
+            maintenance.maintenance_type=kwargs['maintenance_type']
+        if 'service_man_id' in kwargs:
+            maintenance.pay_from_id=kwargs['service_man_id']
+        if 'client_id' in kwargs:
+            maintenance.pay_to_id=kwargs['client_id']
+        if 'vehicle_id' in kwargs:
+            maintenance.vehicle_id=kwargs['vehicle_id']
+        maintenance.save()
+        return maintenance
+
 
 class WorkShiftRepo():
     def __init__(self, *args, **kwargs):
@@ -615,6 +642,7 @@ class WorkShiftRepo():
         if 'vehicle_id' in kwargs:
             objects=objects.filter(vehicle_id=kwargs['vehicle_id'])
         return objects.all()
+
 
 class PassengerRepo():
     def __init__(self, *args, **kwargs):

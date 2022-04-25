@@ -1,80 +1,78 @@
-{% if DEBUG %}
 <script>
-    /*
-    must be initialized:
-                    drivers_s
-                    work_shifts_s
-                    vehicle_id
-                    areas
-    */
-</script>
-{% endif %}
-<script>
-
+    let vehicle_id_=0
+    if(typeof vehicle_id !="undefined"){
+        vehicle_id_=vehicle_id
+    }
     let maintenances = JSON.parse(`{{maintenances_s|escapejs}}`)
+    let maintenances_app_data = {
+        maintenances: maintenances,
+    }
 </script>
 {% if add_maintenance_form %}
 <script>
-
     let service_mans = JSON.parse(`{{service_mans_s|escapejs}}`)
-    // let maintenance_types = JSON.parse(`{{maintenance_types|escapejs}}`)
-    data = {
+    let clients = JSON.parse(`{{clients_s|escapejs}}`)
+    maintenances_app_data = {
         maintenances: maintenances,
         service_mans: service_mans,
         event_datetime: current_datetime,
+        clients:clients,
         service_man_id: "",
+        client_id:"",
         maintenance_type: "",
         show_form: false,
         // maintenance_types: maintenance_types,
-        paid: "",
+        amount: "",
         description: "",
         title: "",
+        vehicle_id:vehicle_id_,
         kilometer: "",
+        waiting:false,
+        message:{show:false},
+        search_for:"",
     }
-</script>
-{% else %}
-<script>
-    data = {
-        maintenances: maintenances,
 
-    }
 </script>
 {% endif %}
+
 <script>
 
 
     let maintenances_app = new Vue({
         el: "#maintenances-app",
-        data: data,
+        data: maintenances_app_data,
         components: {
             DatePicker: VuePersianDatetimePicker
 
         },
         methods: {
-            to_price: (vall,curr) => to_price(vall,curr),
+            to_price: (vall, curr) => to_price(vall, curr),
             total: function () {
                 let tt = 0
                 this.maintenances.forEach(maintenance => {
-                    tt += maintenance.paid
+                    tt += maintenance.amount
                 });
                 return tt
             },
             add_maintenance: function () {
                 let url_add_maintenance = "{% url 'transport:add_maintenance' %}"
                 let payload = {
-                    vehicle_id: vehicle_id,
+                    vehicle_id: this.vehicle_id,
                     service_man_id: this.service_man_id,
+                    client_id: this.client_id,
                     event_datetime: this.event_datetime,
                     kilometer: this.kilometer,
-                    paid: this.paid,
+                    amount: this.amount,
                     title: this.title,
                     maintenance_type: this.maintenance_type,
                     description: this.description,
                     csrfmiddlewaretoken: csrfmiddlewaretoken,
 
                 }
+                console.log(payload)
                 let posting = $.post(url_add_maintenance, payload)
                 posting.done((data) => {
+                    console.log(data)
                     if (data.result === "SUCCEED") {
                         maintenances_app.maintenances.push(data.maintenance)
                     }

@@ -2,8 +2,10 @@ from core.constants import SUCCEED,FAILED
 from rest_framework.views import APIView
 from transport.forms import *
 from transport.repo import ClientRepo, DriverRepo, MaintenanceRepo, PassengerRepo, TripCategoryRepo, TripPathRepo, VehicleRepo, WorkShiftRepo
-from transport.serializers import ClientSerializer, DriverSerializer, PassengerSerializer, TripCategorySerializer, TripPathSerializer, VehicleSerializer, WorkShiftSerializer
+from transport.serializers import ClientSerializer, DriverSerializer, MaintenanceSerializer, PassengerSerializer, TripCategorySerializer, TripPathSerializer, VehicleSerializer, WorkShiftSerializer
 from django.http import JsonResponse
+
+from utility.calendar import PersianCalendar
  
 class AddTripPathApi(APIView):
     def post(self,request,*args, **kwargs):
@@ -122,19 +124,20 @@ class AddPassengerApi(APIView):
     
 class AddMaintenanceApi(APIView):
     def post(self,request,*args, **kwargs):
-        
-        context={
-            'result':FAILED
-        }
+        log=1
+        context={}
+        context['result']=FAILED
         fm=AddMaintenanceForm(request.POST)
         if fm.is_valid():
+            log=2
             cd=fm.cleaned_data
-            work_shift=MaintenanceRepo(request=request).add_maintenance(**cd)
-            if work_shift is not None:
-                context={
-                    'result':SUCCEED,
-                    'work_shift':WorkShiftSerializer(work_shift).data
-                }
+            cd['event_datetime']=PersianCalendar().to_gregorian(cd['event_datetime'])
+            maintenance=MaintenanceRepo(request=request).add_maintenance(**cd)
+            if maintenance is not None:
+                log=3
+                context['result']=SUCCEED
+                context['maintenance']=MaintenanceSerializer(maintenance).data
+        context['log']=log
         return JsonResponse(context)
 
     

@@ -82,7 +82,7 @@
                                                 </div>
                                                 <div>
                                                     <small class="text-muted">
-                                                        <span v-text="relay.class_title"></span>
+                                                        <span v-text="relay.state"></span>
                                                     </small>
                                                 </div>
                                             </div>
@@ -95,7 +95,7 @@
                                 <td>
                                     <span v-for="command in relay.commands">
 
-                                        <button :class="'mx-2 my-2 btn btn-'+command.color">
+                                        <button :class="'mx-2 my-2 btn btn-'+command.color" @click="execute_command(command.id)">
                                             <span v-text="command.name"></span>
                                         </button>
                                     </span>

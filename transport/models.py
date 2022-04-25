@@ -319,6 +319,9 @@ class Maintenance(VehicleEvent):
     @property
     def service_man(self):
         return ServiceMan.objects.filter(pk=self.pay_from.pk).first()
+    @property
+    def client(self):
+        return Client.objects.filter(pk=self.pay_to.pk).first()
     def get_icon(self):
         icon="settings"
         color="primary"

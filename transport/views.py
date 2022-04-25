@@ -11,7 +11,7 @@ from django.views import View
 from map.repo import AreaRepo, LocationRepo
 from map.serializers import AreaSerializer, LocationSerializer
 from accounting.views import add_from_accounts_context
-from transport.enums import VehicleBrandEnum, VehicleColorEnum, VehicleTypeEnum
+from transport.enums import MaintenanceEnum, VehicleBrandEnum, VehicleColorEnum, VehicleTypeEnum
 from transport.forms import *
 from utility.calendar import PersianCalendar 
 
@@ -112,6 +112,63 @@ def get_work_shifts_context(request,*args, **kwargs):
 
     return context
 
+def get_work_events_context(request,*args, **kwargs):
+    context={}
+      
+     #areas
+    # areas=AreaRepo(request=request).list(*args, **kwargs)
+    # context['areas']=areas
+    # areas_s=json.dumps(AreaSerializer(areas,many=True).data)
+    # context['areas_s']=areas_s
+ 
+
+      
+    #  #drivers
+    # drivers=DriverRepo(request=request).list(*args, **kwargs)
+    # context['drivers']=drivers
+    # drivers_s=json.dumps(DriverSerializer(drivers,many=True).data)
+    # context['drivers_s']=drivers_s
+ 
+    # #work_shifts
+    # work_shifts=WorkShiftRepo(request=request).list(*args, **kwargs)
+    # context['work_shifts']=work_shifts
+    # work_shifts_s=json.dumps(WorkShiftSerializer(work_shifts,many=True).data)
+    # context['work_shifts_s']=work_shifts_s
+
+
+
+    if request.user.has_perm(APP_NAME+".add_workshift"):
+        context['add_work_shif_form']=AddWorkShiftForm()
+
+    return context
+
+def get_maintenances_context(request,*args, **kwargs):
+    context={}
+      
+     
+    #maintenances
+    maintenances=MaintenanceRepo(request=request).list(*args, **kwargs)
+    context['maintenances']=maintenances
+    maintenances_s=json.dumps(MaintenanceSerializer(maintenances,many=True).data)
+    context['maintenances_s']=maintenances_s
+
+
+
+    if request.user.has_perm(APP_NAME+".add_maintenance"):
+        context['add_maintenance_form']=AddMaintenanceForm()
+        service_mans=ServiceManRepo(request=request).list()
+        context['service_mans']=service_mans
+        context['service_mans_s']=json.dumps(ServiceManSerializer(service_mans,many=True).data)
+
+        
+        clients=ClientRepo(request=request).list()
+        context['clients']=clients
+        context['clients_s']=json.dumps(ClientSerializer(clients,many=True).data)
+
+        context['maintenance_types']=(maintenance_type[0] for maintenance_type in MaintenanceEnum.choices)
+
+    return context
+
 def get_add_maintenance_context(request,*args, **kwargs):
     context={}
 
@@ -204,6 +261,15 @@ def get_add_work_event_context(request,*args, **kwargs):
     context['add_trip_form']=AddTripForm()
     return context
 
+def get_vehicle_context(request,*args, **kwargs):
+    context={}
+    vehicle=VehicleRepo(request=request).vehicle(*args, **kwargs)
+    context['vehicle']=vehicle
+    context.update(get_work_shifts_context(request=request,vehicle_id=vehicle.id))
+    context.update(get_work_events_context(request=request,vehicle_id=vehicle.id))
+    context.update(get_maintenances_context(request=request,vehicle_id=vehicle.id))
+
+    return context
 
 class HomeView(View):
     def get(self,request,*args, **kwargs):
@@ -342,10 +408,7 @@ class ServiceManView(View):
 class MaintenancesView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
-        maintenances=MaintenanceRepo(request=request).list(*args, **kwargs)
-        context['maintenances']=maintenances
-        maintenances_s=json.dumps(MaintenanceSerializer(maintenances,many=True).data)
-        context['maintenances_s']=maintenances_s
+        context.update(get_maintenances_context(request=request))
         return render(request,TEMPLATE_ROOT+"maintenances.html",context)
 
 
@@ -470,7 +533,7 @@ class VehicleView(View):
         context['trips_s']=trips_s
         
         context.update(get_add_trip_context(request=request))
-        context.update(get_work_shifts_context(request=request,vehicle_id=vehicle.id))
+        context.update(get_vehicle_context(request=request,vehicle=vehicle))
         return render(request,TEMPLATE_ROOT+"vehicle.html",context)
 
    
