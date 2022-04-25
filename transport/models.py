@@ -139,18 +139,16 @@ class Vehicle(Asset):
 class WorkShift(Transaction):
     area=models.ForeignKey("map.area", verbose_name=_("area"), on_delete=models.CASCADE)
     vehicle=models.ForeignKey("vehicle", verbose_name=_("vehicle"), on_delete=models.CASCADE)
-    driver=models.ForeignKey("driver", verbose_name=_("driver"), on_delete=models.CASCADE)
     start_time=models.DateTimeField(_("start_time"), auto_now=False, auto_now_add=False)
     end_time=models.DateTimeField(_("end_date"), auto_now=False, auto_now_add=False)
-    wage=models.IntegerField(_("اجرت راننده"),default=0)
      
-    
     @property
-    def income(self):
-        return self.amount
+    def driver(self):
+        return Driver.objects.filter(account_id=self.pay_from_id).first()
     @property
-    def outcome(self):
-        return self.wage
+    def client(self):
+        return Client.objects.filter(account_id=self.pay_to_id).first()
+  
 
     def persian_start_time(self):
         return to_persian_datetime_tag(self.start_time)

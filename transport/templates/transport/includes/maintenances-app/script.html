@@ -6,6 +6,9 @@
     let maintenances = JSON.parse(`{{maintenances_s|escapejs}}`)
     let maintenances_app_data = {
         maintenances: maintenances,
+        waiting:false,
+        message:{show:false},
+        search_for:"",
     }
 </script>
 {% if add_maintenance_form %}

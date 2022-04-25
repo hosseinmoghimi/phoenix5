@@ -43,11 +43,12 @@ class TripPathSerializer(serializers.ModelSerializer):
  
 class WorkShiftSerializer(serializers.ModelSerializer):
     driver=DriverSerializer()
+    client=ClientSerializer()
     vehicle=VehicleSerializer()
     area=AreaSerializer()
     class Meta:
         model=WorkShift
-        fields=['id','vehicle','income','outcome','driver','persian_start_time','persian_end_time','area','get_absolute_url','get_edit_url']
+        fields=['id','vehicle','client','income','outcome','driver','persian_start_time','persian_end_time','area','get_absolute_url','get_edit_url']
 
 
 

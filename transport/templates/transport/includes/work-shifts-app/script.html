@@ -1,7 +1,7 @@
 <script>
-    let work_shifts =[]
-    let drivers =[]
-    let areas =[]
+    let work_shifts = []
+    let drivers = []
+    let areas = []
     let work_shifts_app_data = {}
 </script>
 {% if add_work_shift_form %}
@@ -29,6 +29,9 @@
 
     work_shifts_app_data = {
         work_shifts: work_shifts,
+        waiting: false,
+        message: { show: false },
+        search_for: "",
 
     }
 </script>
@@ -64,6 +67,9 @@
                     income: this.income,
                     description: this.description,
                     csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    waiting: false,
+                    message: { show: false },
+                    search_for: "",
 
                 }
                 console.log(payload)

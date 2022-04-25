@@ -350,10 +350,7 @@ class TripView(View):
 class WorkShiftsView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
-        work_shifts=WorkShiftRepo(request=request).list(*args, **kwargs)
-        context['work_shifts']=work_shifts
-        work_shifts_s=json.dumps(WorkShiftSerializer(work_shifts,many=True).data)
-        context['work_shifts_s']=work_shifts_s
+        context.update(get_work_shifts_context(request=request))
         return render(request,TEMPLATE_ROOT+"work-shifts.html",context)
 
 
