@@ -48,6 +48,8 @@ def class_title(*args, **kwargs):
         class_title = "متریال"
     elif class_name == "product":
         class_title = "کالا"
+    elif class_name == "vehicle":
+        class_title = "وسیله نقلیه"
     elif class_name == "project":
         class_title = "پروژه"
     elif class_name == "service":

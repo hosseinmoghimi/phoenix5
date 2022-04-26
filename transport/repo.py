@@ -571,6 +571,7 @@ class WorkShiftRepo():
         self.profile=ProfileRepo(*args, **kwargs).me
 
     def add_work_shift(self, *args, **kwargs):
+        print(kwargs)
         if not self.user.has_perm(APP_NAME+".add_workshift"):
             return
         work_shift=WorkShift()
@@ -602,10 +603,6 @@ class WorkShiftRepo():
         key='title'
         if key in kwargs and kwargs[key] is not None:
             work_shift.title=kwargs[key]
-
-       
-
-
 
         key='trip_category_id'
         if key in kwargs and kwargs[key] is not None and kwargs[key]>0:

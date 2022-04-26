@@ -72,10 +72,8 @@
                     csrfmiddlewaretoken: csrfmiddlewaretoken,
 
                 }
-                console.log(payload)
                 let posting = $.post(url_add_maintenance, payload)
                 posting.done((data) => {
-                    console.log(data)
                     if (data.result === "SUCCEED") {
                         maintenances_app.maintenances.push(data.maintenance)
                     }

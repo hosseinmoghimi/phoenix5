@@ -38,6 +38,7 @@ urlpatterns = [
     
     path("work_shift/<int:pk>/",views.WorkShiftView.as_view(),name="workshift"),
     path("work_shifts/",views.WorkShiftsView.as_view(),name="workshifts"),
+    path("add_work_shift/",login_required(apis.AddWorkShiftApi.as_view()),name="add_work_shift"),
 
     path("vehicle/<int:pk>/",views.VehicleView.as_view(),name="vehicle"),
     path("vehicles/",views.VehiclesView.as_view(),name="vehicles"),

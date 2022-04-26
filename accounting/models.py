@@ -390,8 +390,8 @@ class FinancialDocument(models.Model,LinkHelper):
         misc.bestankar=self.bestankar-sum_bestankar
         misc.bedehkar=self.bedehkar-sum_bedehkar
         misc.save()
-        print(sum_bedehkar)
-        print(sum_bestankar)
+        if misc.bestankar==0 and misc.bedehkar==0:
+            misc.delete()
     
 
     class Meta:

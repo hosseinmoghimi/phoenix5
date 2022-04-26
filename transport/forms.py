@@ -65,10 +65,10 @@ class AddServiceManForm(forms.Form):
     title=forms.CharField(max_length=100,required=False)
 
 class AddWorkShiftForm(forms.Form):
+    title=forms.CharField(max_length=50,required=False)
     vehicle_id=forms.IntegerField(required=True)
     driver_id=forms.IntegerField(required=True)
     amount=forms.IntegerField(required=False)
     pay_from_id=forms.IntegerField(required=False)
-    title=forms.CharField(max_length=50,required=False)
     pay_to_id=forms.IntegerField(required=False)
     description=forms.CharField(max_length=500,required=False)

@@ -143,18 +143,21 @@ class AddMaintenanceApi(APIView):
     
 class AddWorkShiftApi(APIView):
     def post(self,request,*args, **kwargs):
-        context={
-            'result':FAILED
-        }
-        fm=AddWorkShiftForm(request.POST)
+        log=1
+        context={}
+        context['result']=FAILED
+        fm=AddWorkShiftApi(request.POST)
         if fm.is_valid():
+            log=2
             cd=fm.cleaned_data
+            cd['event_datetime']=PersianCalendar().to_gregorian(cd['event_datetime'])
             work_shift=WorkShiftRepo(request=request).add_work_shift(**cd)
             if work_shift is not None:
-                context={
-                    'result':SUCCEED,
-                    'work_shift':WorkShiftSerializer(work_shift).data
-                }
+                log=3
+                context['result']=SUCCEED
+                context['work_shift']=WorkShiftSerializer(work_shift).data
+        context['log']=log
         return JsonResponse(context)
 
+ 
 

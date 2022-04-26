@@ -20,10 +20,8 @@
                     amount: this.amount,
                     financial_document_id: parseInt("{{financial_document.id}}"),
                 }
-                console.log(payload)
                 let url="{% url 'accounting:add_financial_balance' %}"
                 $.post(url, payload).done(data => {
-                    console.log(data)
                     if(data.result==='SUCCEED'){
                         financial_balances_app.financial_balances=data.financial_balances
                     }

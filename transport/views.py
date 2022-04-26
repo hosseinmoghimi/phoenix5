@@ -5,7 +5,7 @@ from django.shortcuts import render
 # Create your views here.
 from django.shortcuts import render,reverse
 from core.enums import ColorEnum
-from core.views import CoreContext,SearchForm
+from core.views import CoreContext, PageContext,SearchForm
 # Create your views here.
 from django.views import View
 from map.repo import AreaRepo, LocationRepo
@@ -108,7 +108,7 @@ def get_work_shifts_context(request,*args, **kwargs):
 
 
     if request.user.has_perm(APP_NAME+".add_workshift"):
-        context['add_work_shif_form']=AddWorkShiftForm()
+        context['add_work_shift_form']=AddWorkShiftForm()
 
     return context
 
@@ -264,6 +264,7 @@ def get_add_work_event_context(request,*args, **kwargs):
 def get_vehicle_context(request,*args, **kwargs):
     context={}
     vehicle=VehicleRepo(request=request).vehicle(*args, **kwargs)
+    context.update(PageContext(request=request,page=vehicle))
     context['vehicle']=vehicle
     context.update(get_work_shifts_context(request=request,vehicle_id=vehicle.id))
     context.update(get_work_events_context(request=request,vehicle_id=vehicle.id))

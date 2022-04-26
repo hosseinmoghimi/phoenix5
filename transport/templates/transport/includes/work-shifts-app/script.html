@@ -16,11 +16,15 @@
         end_datetime: current_datetime,
         driver_id: "",
         areas: areas,
-        area_id: "",
+        title:"",
+        area_id: 0,
         description: "",
-        income: "",
+        amount: 0,
         outcome: "",
         show_form: false,
+        waiting: false,
+        message: { show: false },
+        search_for: "",
     }
 </script>
 {% else %}
@@ -32,6 +36,7 @@
         waiting: false,
         message: { show: false },
         search_for: "",
+        areas:areas,
 
     }
 </script>
@@ -51,7 +56,7 @@
             total: function () {
                 let tt = 0
                 this.work_shifts.forEach(work_shift => {
-                    tt += (work_shift.income - work_shift.outcome)
+                    tt += (work_shift.amount)
                 });
                 return tt
             },
@@ -63,18 +68,20 @@
                     start_datetime: this.start_datetime,
                     end_datetime: this.end_datetime,
                     area_id: this.area_id,
-                    outcome: this.outcome,
-                    income: this.income,
+                    amount: this.amount,
                     description: this.description,
                     csrfmiddlewaretoken: csrfmiddlewaretoken,
                     waiting: false,
                     message: { show: false },
                     search_for: "",
+                    title:this.title,
 
                 }
+                console.log(url_add_work_shift)
                 console.log(payload)
                 let posting = $.post(url_add_work_shift, payload)
                 posting.done((data) => {
+                    console.log(data)
                     if (data.result === "SUCCEED") {
                         work_shifts_app.work_shifts.push(data.work_shift)
                     }

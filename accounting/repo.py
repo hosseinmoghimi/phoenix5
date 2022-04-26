@@ -9,6 +9,7 @@ from django.db.models import Q
 from authentication.repo import ProfileRepo
 from django.utils import timezone
 
+
 class AssetRepo():
     def __init__(self, *args, **kwargs):
         self.request = None
