@@ -139,8 +139,8 @@ class Vehicle(Asset):
 class WorkShift(Transaction):
     area=models.ForeignKey("map.area", verbose_name=_("area"), on_delete=models.CASCADE)
     vehicle=models.ForeignKey("vehicle", verbose_name=_("vehicle"), on_delete=models.CASCADE)
-    start_time=models.DateTimeField(_("start_time"), auto_now=False, auto_now_add=False)
-    end_time=models.DateTimeField(_("end_date"), auto_now=False, auto_now_add=False)
+    start_datetime=models.DateTimeField(_("start_datetime"), auto_now=False, auto_now_add=False)
+    end_datetime=models.DateTimeField(_("end_datetime"), auto_now=False, auto_now_add=False)
      
     @property
     def driver(self):
@@ -150,10 +150,10 @@ class WorkShift(Transaction):
         return Client.objects.filter(account_id=self.pay_to_id).first()
   
 
-    def persian_start_time(self):
-        return to_persian_datetime_tag(self.start_time)
-    def persian_end_time(self):
-        return to_persian_datetime_tag(self.end_time)
+    def persian_start_datetime(self):
+        return to_persian_datetime_tag(self.start_datetime)
+    def persian_end_datetime(self):
+        return to_persian_datetime_tag(self.end_datetime)
     class Meta:
         verbose_name = _("WorkShift")
         verbose_name_plural = _("WorkShifts")

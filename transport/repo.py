@@ -596,9 +596,22 @@ class WorkShiftRepo():
         if key in kwargs and kwargs[key] is not None and kwargs[key]>0:
             work_shift.driver_id=kwargs[key]
 
+        key='area_id'
+        if key in kwargs and kwargs[key] is not None and kwargs[key]>0:
+            work_shift.area_id=kwargs[key]
+
         key='description'
         if key in kwargs and kwargs[key] is not None:
             work_shift.description=kwargs[key]
+
+        key='start_datetime'
+        if key in kwargs and kwargs[key] is not None:
+            work_shift.start_datetime=kwargs[key]
+
+        key='end_datetime'
+        if key in kwargs and kwargs[key] is not None:
+            work_shift.end_datetime=kwargs[key]
+            work_shift.transaction_datetime=kwargs[key]
 
         key='title'
         if key in kwargs and kwargs[key] is not None:

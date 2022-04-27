@@ -2,12 +2,12 @@
 
 <p>
 
-    <button v-if="!show_form" @click="show_form=!show_form" class="btn btn-success">
-        <span class="material-icons">
+    <button @click="show_form=true" v-if="!show_form" class="btn btn-success">
+        <i class="fa fa-plus">
 
-            add
-        </span>
-    </button>
+        </i>
+        افزودن
+    </button
 </p>
 <form v-show="show_form" @submit.prevent="add_maintenance()">
     <div class="row">

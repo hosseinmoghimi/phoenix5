@@ -146,11 +146,12 @@ class AddWorkShiftApi(APIView):
         log=1
         context={}
         context['result']=FAILED
-        fm=AddWorkShiftApi(request.POST)
+        fm=AddWorkShiftForm(request.POST)
         if fm.is_valid():
             log=2
             cd=fm.cleaned_data
-            cd['event_datetime']=PersianCalendar().to_gregorian(cd['event_datetime'])
+            cd['start_datetime']=PersianCalendar().to_gregorian(cd['start_datetime'])
+            cd['end_datetime']=PersianCalendar().to_gregorian(cd['end_datetime'])
             work_shift=WorkShiftRepo(request=request).add_work_shift(**cd)
             if work_shift is not None:
                 log=3

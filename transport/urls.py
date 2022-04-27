@@ -7,8 +7,6 @@ urlpatterns = [
     path("",views.HomeView.as_view(),name="home"),
     path("search/",views.SearchView.as_view(),name="search"),
     path("add_trip_path/",views.AddTripPathView.as_view(),name="add_trip_path"),
-    path("add_work_shift/",views.AddTripPathView.as_view(),name="add_work_shift"),
-    path("add_maintenance/",apis.AddMaintenanceApi.as_view(),name="add_maintenance"),
     path("add_trip/",views.AddTripView.as_view(),name="add_trip"),
 
     path("drivers/",views.DriversView.as_view(),name="drivers"),
@@ -35,6 +33,7 @@ urlpatterns = [
     
     path("maintenance/<int:pk>/",views.MaintenanceView.as_view(),name="maintenance"),
     path("maintenances/",views.MaintenancesView.as_view(),name="maintenances"),
+    path("add_maintenance/",apis.AddMaintenanceApi.as_view(),name="add_maintenance"),
     
     path("work_shift/<int:pk>/",views.WorkShiftView.as_view(),name="workshift"),
     path("work_shifts/",views.WorkShiftsView.as_view(),name="workshifts"),

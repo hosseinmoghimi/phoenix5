@@ -1,11 +1,11 @@
 {% if add_work_shift_form %}
 <p>
 
-    <button @click="show_form=!show_form" class="btn btn-success">
-        <span class="material-icons">
+    <button @click="show_form=true" v-if="!show_form" class="btn btn-success">
+        <i class="fa fa-plus">
 
-            add
-        </span>
+        </i>
+        افزودن
     </button>
 </p>
 <form v-show="show_form" @submit.prevent="add_work_shift()">
@@ -44,7 +44,28 @@
             </div>
 
         </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="service_man_id">مشتری</label>
+                <select required v-model="client_id" id="client_id" class="form-control">
+                    <template v-for="client in clients">
 
+                        <option :value="client.id">
+                            <span v-text="client.title"></span>
+                            (<small class="mx-2 px-2" v-text="client.account.profile.name"></small>)
+                        </option>
+                    </template>
+                </select>
+
+                <small id="emailHele324p" class="form-text farsi text-muted">
+                    مشتری مرتبط را انتخاب کنید.
+                </small>
+            </div>
+
+        </div>
+
+
+        
         <div class="col-md-4">
             <div class="form-group">
                 <label for="description">توضیحات</label>
@@ -107,7 +128,7 @@
                         {{area.title}}
                     </option>
                     {% endfor %}
-                    
+
                 </select>
 
                 <small id="emailHeewrle324p" class="form-text farsi text-muted">
@@ -118,7 +139,11 @@
         </div>
 
         <div class="col-md-4">
-            <button class="btn btn-success btn-block" type="submit">افزودن</button>
+            <button class="btn btn-success btn-block" type="submit">
+                <i class="fa fa-plus"></i>
+                افزودن</button>
+            <button @click="show_form=false" class="btn btn-secondary btn-block">افزودن</button>
+
         </div>
 
 
