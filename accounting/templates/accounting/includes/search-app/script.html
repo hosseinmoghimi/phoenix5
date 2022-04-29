@@ -25,12 +25,12 @@
                     end_date: this.end_date,
                     search_for: this.search_for,
                 }
-                console.log(payload)
+                // console.log(payload)
 
                 $.post(url, payload).done((data) => {
                     console.log(data)
                     if (typeof financial_documents_app != 'undefined') {
-                        console.log(financial_documents_app.financial_documents.length)
+                        // console.log(financial_documents_app.financial_documents.length)
                         financial_documents_app.financial_documents = data.financial_documents
                     }
                 })
