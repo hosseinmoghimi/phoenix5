@@ -1,8 +1,9 @@
 from django.contrib import admin
 
-from .models import ContactMessage,Image, NavLink, Page,Link,Icon,Download, PageComment, PageImage, PageLike, PageLink, PagePermission, PageTag, Parameter, Picture,PageDownload, Tag
+from .models import Color,ContactMessage,Image, NavLink, Page,Link,Icon,Download, PageComment, PageImage, PageLike, PageLink, PagePermission, PageTag, Parameter, Picture,PageDownload, Tag
 
 # Register your models here.
+admin.site.register(Color)
 admin.site.register(ContactMessage)
 admin.site.register(PagePermission)
 # admin.site.register(SocialLink)

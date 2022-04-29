@@ -1,0 +1,12 @@
+<div class="text-right">
+    <input type="text" @input="filter()" v-model="search_for" placeholder="جستجو ..." class="form-control">
+    <form action="{% url 'accounting:transactions_print' %}" method="POST">
+        <input type="hidden" name="title" value="عنوان">
+        <input type="hidden" name="transactions" :value="toString()">
+        {% csrf_token %}
+          <button title="چاپ" class="btn btn-link" type="submit">
+        <i class="fa fa-print"></i>
+    </button>
+    </form>
+  
+</div>

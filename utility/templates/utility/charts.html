@@ -1,0 +1,112 @@
+{% extends "utility/layout.html" %}
+
+{% block content %}
+<div class="row">
+  <div class="col-md-4">
+    <div class="card">
+      <div class="card-header">
+        <h5>
+          Line Chart
+        </h5>
+      </div>
+      <div class="farsi card-body">
+
+        <canvas id="LineChart"></canvas>
+
+
+
+
+      </div>
+    </div>
+  </div>
+
+
+  <div class="col-md-4">
+    <div class="card">
+      <div class="card-header">
+        <h5>
+          Pie Chart
+        </h5>
+      </div>
+      <div class="farsi card-body">
+
+        <canvas id="PieChart"></canvas>
+
+
+
+
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock content %}
+
+
+{% block script %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  // Line Chart
+  const line_chart_labels = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+  ]
+
+  const line_chart_data = {
+    labels: line_chart_labels,
+    datasets: [{
+      label: 'My First dataset',
+      backgroundColor: 'rgb(255, 99, 132)',
+      borderColor: 'rgb(255, 99, 132)',
+      data: [0, 10, 5, 2, 20, 30, 45],
+    }]
+  }
+
+  const line_chart_config = {
+    type: 'line',
+    data: line_chart_data,
+    options: {}
+  }
+  const LineChart = new Chart(
+    document.getElementById('LineChart'),
+    line_chart_config
+  )
+</script>
+<script>
+  // Pie Chart
+ 
+
+  const pie_chart_data = {
+    labels: [
+      'Red',
+      'Blue',
+      'Yellow'
+    ],
+    datasets: [{
+      label: 'My First Dataset',
+      data: [300, 50, 100],
+      backgroundColor: [
+        'rgb(255, 99, 132)',
+        'rgb(54, 162, 235)',
+        'rgb(255, 205, 86)'
+      ],
+      hoverOffset: 4
+    }]
+  };
+
+
+  const pie_chart_config = {
+    type: 'pie',
+    data: pie_chart_data,
+  }
+  const PieChart = new Chart(
+    document.getElementById('PieChart'),
+    pie_chart_config
+  )
+</script>
+
+{% endblock script %}

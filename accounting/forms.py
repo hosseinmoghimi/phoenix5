@@ -6,6 +6,10 @@ class SearchForm(forms.Form):
     end_date=forms.CharField(max_length=20, required=False)
     account_id=forms.IntegerField(required=False)
     profile_id=forms.IntegerField(required=False)
+
+class TransactionsPrintForm(forms.Form):
+    title=forms.CharField(max_length=200, required=True)
+    transactions=forms.CharField( max_length=5000, required=True)
     
 class AddFinancialBalanceForm(forms.Form):
     title=forms.CharField(max_length=50, required=True)
@@ -13,6 +17,8 @@ class AddFinancialBalanceForm(forms.Form):
     bedehkar=forms.IntegerField(required=False)
     bestanker=forms.IntegerField(required=False)
     amount=forms.IntegerField(required=False)
+
+    
 class AddStorePriceForm(forms.Form):
     product_or_service_id=forms.IntegerField(required=True)
     store_id=forms.IntegerField(required=True)

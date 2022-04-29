@@ -1,4 +1,11 @@
 {% load to_price %}
+{% if draw_chart %}
+  
+<div class="farsi">
+    <canvas id="PieChart"></canvas>
+</div>
+
+{% endif %}
 <div id="accordion-financial-balances">
     <div class="card" id="financial-balances-app">
         <div class="card-header" id="heading-financial-balances">
@@ -21,6 +28,10 @@
 
 
             <div class="card-body farsi text-right">
+                <div>
+                    
+
+                </div>
                 <div class="table-responsive">
                     <table class="table table-striped">
                         <thead>
@@ -68,7 +79,7 @@
                                 <td>
                                     <a :href="financial_balance.get_absolute_url">
 
-                                        <span :class="'badge badge-'+financial_balance.color">
+                                        <span :class="'badge badge-'+financial_balance.bs_color">
 
 
                                             <span v-text="financial_balance.title"></span>
@@ -140,7 +151,7 @@
                             <label for="">مبلغ</label>
                             <div class="row">
                                 <div class="col-md-6">
-                            <input type="number" class="form-control" v-model="amount">
+                                    <input type="number" class="form-control" v-model="amount">
 
                                 </div>
                                 <div class="col-md-6 text-right">

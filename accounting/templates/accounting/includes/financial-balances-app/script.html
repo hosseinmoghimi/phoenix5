@@ -1,6 +1,62 @@
+{% load static %}
 {% load to_json %}
 <script>
     let financial_balances_fff = JSON.parse(`{{financial_balances|to_json_financial_balances|escapejs}}`)
+
+</script>
+
+{% if draw_chart %}
+  
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // this script is for pie chart
+
+    function draw_pie_chart() {
+        let labels = []
+        let data = []
+        let backgroundColor = []
+
+        financial_balances_fff.forEach(financial_balance => {
+            labels.push(financial_balance.title)
+            data.push(financial_balance.bedehkar + financial_balance.bestankar)
+            backgroundColor.push(financial_balance.color)
+        })
+
+        let pie_chart_data = {
+            labels: labels,
+            datasets: [{
+                label: 'My First Dataset',
+                data: data,
+                backgroundColor: backgroundColor,
+                hoverOffset: 4
+            }]
+        };
+
+
+        let pie_chart_config = {
+            type: 'pie',
+            data: pie_chart_data,
+        }
+
+        const PieChart = new Chart(
+            document.getElementById('PieChart'),
+            pie_chart_config
+        )
+
+    }
+
+
+    $(document).ready(() => {
+        draw_pie_chart()
+    })
+</script>
+
+{% endif %}
+
+ 
+
+
+<script>
     let financial_balances_app = new Vue({
         el: "#financial-balances-app",
         data: {
@@ -8,10 +64,14 @@
             title: "",
             amount: 0,
 
+
+        },
+        mounted: function () {
+
         },
         methods: {
-            to_price:function(vall){
-                return to_price(vall,"")
+            to_price: function (vall) {
+                return to_price(vall, "")
             },
             add_financial_balance: function (financial_document_id) {
                 let payload = {
@@ -20,10 +80,10 @@
                     amount: this.amount,
                     financial_document_id: parseInt("{{financial_document.id}}"),
                 }
-                let url="{% url 'accounting:add_financial_balance' %}"
+                let url = "{% url 'accounting:add_financial_balance' %}"
                 $.post(url, payload).done(data => {
-                    if(data.result==='SUCCEED'){
-                        financial_balances_app.financial_balances=data.financial_balances
+                    if (data.result === 'SUCCEED') {
+                        financial_balances_app.financial_balances = data.financial_balances
                     }
                 })
             },

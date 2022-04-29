@@ -1,6 +1,7 @@
 from django.http import Http404, HttpResponse, JsonResponse
 from django.shortcuts import render,reverse
 from django.utils import timezone
+from requests import request
 from accounting.apis import EditInvoiceApi
 from accounting.enums import FinancialBalanceTitleEnum, PaymentMethodEnum, TransactionStatusEnum
 from core.constants import CURRENCY, FAILED, SUCCEED
@@ -291,6 +292,7 @@ class HomeView(View):
         return render(request,TEMPLATE_ROOT+"index.html",context)
 
 
+
 class SearchView(View):
     def post(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -557,6 +559,19 @@ class TransactionsView(View):
         transactions_s=json.dumps(TransactionSerializer(transactions,many=True).data)
         context['transactions_s']=transactions_s
         return render(request,TEMPLATE_ROOT+"transactions.html",context)
+class TransactionsPrintView(View):
+    def post(self,request,*args, **kwargs):
+        transactions_print_form=TransactionsPrintForm(request.POST)
+        if transactions_print_form.is_valid():
+            context=getContext(request=request)
+            cd=transactions_print_form.cleaned_data
+            transactions=cd['transactions']
+            context['transactions']=transactions
+            context['title']=cd['title']
+            context['no_footer']=True
+            context['no_navbar']=True
+            return render(request,TEMPLATE_ROOT+"transactions-print.html",context)
+
 
 class ProductsView(View):
     def get(self,request,*args, **kwargs):

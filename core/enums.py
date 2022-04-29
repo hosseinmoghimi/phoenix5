@@ -85,7 +85,55 @@ class ParameterNameEnum(TextChoices):
 class TextDirectionEnum(TextChoices):
     Rtl='rtl',_('rtl')
     Ltr='ltr',_('ltr')
-
+def BS_ColorCode(bs_color):
+    if bs_color=='success':
+        return "#28a745"
+    if bs_color=='danger':
+        return "#dc3545"
+    if bs_color=='warning':
+        return "#ffc107"
+    if bs_color=='muted':
+        return "#34345455"
+    if bs_color=='info':
+        return "#17a2b8"
+    if bs_color=='rose':
+        return "#34345455"
+    if bs_color=='secondary':
+        return "#6c757d"
+    if bs_color=='light':
+        return "#f8f9fa"
+    if bs_color=='dark':
+        return "#343a40"
+    if bs_color=='primary':
+        return "#007bff"
+    if bs_color=='blue':
+        return "#007bff"
+    if bs_color=='indigo':
+        return "#6610f2"
+    if bs_color=='purple':
+        return "#6f42c1"
+    if bs_color=='pink':
+        return "#e83e8c"
+    if bs_color=='red':
+        return "#dc3545"
+    if bs_color=='orange':
+        return "#fd7e14"
+    if bs_color=='yellow':
+        return "#ffc107"
+    if bs_color=='green':
+        return "#28a745"
+    if bs_color=='teal':
+        return "#20c997"
+    if bs_color=='cyan':
+        return "#17a2b8"
+    if bs_color=='white':
+        return "#fff"
+    if bs_color=='gray':
+        return "#6c757d"
+    if bs_color=='gray-dark':
+        return "#343a40"
+   
+  
 
 class UnitNameEnum(TextChoices):
     ADAD="عدد",_("عدد")

@@ -129,7 +129,7 @@ class FinancialBalanceSerializer(serializers.ModelSerializer):
     financial_document = FinancialDocumentSerializer()
     class Meta:
         model = FinancialBalance
-        fields = ['id','financial_document','color','bedehkar', 'title', 'bestankar','get_absolute_url','get_delete_url','get_edit_url']
+        fields = ['id','bs_color','financial_document','color','bedehkar', 'title', 'bestankar','get_absolute_url','get_delete_url','get_edit_url']
 
 
 class AssetSerializer(serializers.ModelSerializer):

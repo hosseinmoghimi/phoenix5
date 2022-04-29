@@ -21,6 +21,7 @@ urlpatterns = [
     path("transaction/<int:pk>/",login_required(views.TransactionView.as_view()),name="transaction"),
     path("transactions/",login_required(views.TransactionsView.as_view()),name="transactions"),
     path("transactions/<int:account_id_1>/<int:account_id_2>/",login_required(views.TransactionsView.as_view()),name="transactions2"),
+    path("transactions_print/",login_required(views.TransactionsPrintView.as_view()),name="transactions_print"),
     
     path("account/<int:pk>/",login_required(views.AccountView.as_view()),name="account"),
     path("financial_accounts/",login_required(views.AccountsView.as_view()),name="accounts"),

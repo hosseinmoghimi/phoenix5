@@ -1,22 +1,24 @@
 from authentication.models import IMAGE_FOLDER
+from core.enums import ColorEnum, UnitNameEnum,BS_ColorCode
+from core.middleware import get_request
+from core.models import Color, Page
+from django.db import models
+from django.shortcuts import reverse
+from django.utils import timezone
+from django.utils.translation import gettext as _
 from phoenix.server_settings import STATIC_URL
 from phoenix.settings import MEDIA_URL
-from utility.currency import to_price
-from utility.calendar import PERSIAN_MONTH_NAMES, PersianCalendar,to_persian_datetime_tag
-from core.middleware import get_request
-from django.db import models
-from core.models import Page
-from django.shortcuts import reverse
-from django.utils.translation import gettext as _
-
-from utility.excel import get_excel_report
-from .apps import APP_NAME
-from utility.utils import LinkHelper
-from .enums import *
 from tinymce.models import HTMLField
-from core.enums import ColorEnum,UnitNameEnum
-from django.utils import timezone
- 
+from utility.calendar import (PERSIAN_MONTH_NAMES, PersianCalendar,
+                              to_persian_datetime_tag)
+from utility.currency import to_price
+from utility.excel import get_excel_report
+from utility.utils import LinkHelper
+
+from accounting.apps import APP_NAME
+from accounting.enums import *
+
+
 class Asset(Page,LinkHelper):
     
     class Meta:
@@ -435,6 +437,17 @@ class FinancialBalance(models.Model,LinkHelper):
     financial_document=models.ForeignKey("FinancialDocument", verbose_name=_("FinancialDocument"), on_delete=models.CASCADE)
     bestankar=models.IntegerField(_("بستانکار"),default=0)
     bedehkar=models.IntegerField(_("بدهکار"),default=0)
+    color_origin=models.ForeignKey("core.color", verbose_name=_("color"),null=True,blank=True, on_delete=models.SET_NULL)
+
+    
+    @property
+    def color(self):
+        if self.color_origin is None:
+            # return Color(name="blue",code="#0000ff")
+            color= getColor(self.title)
+            return BS_ColorCode(color)
+        else:
+            return self.color_origin.code
      
     def amount(self):
         return self.bedehkar+self.bestankar
@@ -450,7 +463,7 @@ class FinancialBalance(models.Model,LinkHelper):
     def save(self,*args, **kwargs):
         super(FinancialBalance,self).save(*args, **kwargs)
         # self.financial_document.normalize_sub_accounts()
-    def color(self):
+    def bs_color(self):
         return getColor(self.title)
 
 
