@@ -66,9 +66,10 @@
                 {% endif %}
                 {% if not material %}
                 <td>
+                    <a target="_blank" :href="material_request.material.get_pm_absolute_url"
+                    >
                     <img :src="material_request.material.thumbnail" class="ml-2 rounded" width="32" alt="">
-                    <a target="_blank" :href="material_request.material.get_absolute_url"
-                        v-text="material_request.material.title">
+                    <span v-text="material_request.material.title"></span>
                     </a>
                 </td>
                 {% endif %}

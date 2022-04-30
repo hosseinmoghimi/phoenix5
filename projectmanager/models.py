@@ -66,7 +66,7 @@ class ServiceInvoice(ProjectInvoice):
         self.class_name = "serviceinvoice"
         self.app_name = APP_NAME
         return super(ServiceInvoice, self).save(*args, **kwargs)
-
+ 
 
 class Request(InvoiceLine, LinkHelper):
     project = models.ForeignKey("project", verbose_name=_(
@@ -96,7 +96,7 @@ class Request(InvoiceLine, LinkHelper):
     @property
     def material(self):
         return self.product
-
+ 
     @property
     def service(self):
         from accounting.models import Service
@@ -124,6 +124,7 @@ class Request(InvoiceLine, LinkHelper):
                 invoice = ServiceInvoice()
                 invoice.project_id = self.project.pk
                 invoice.save()
+        
         self.invoice = invoice
         self.row = len(invoice.lines.all())+1
         super(Request, self).save(*args, **kwargs)
@@ -176,7 +177,7 @@ class MaterialRequest(Request, LinkHelper):
         self.type = RequestTypeEnum.MATERIAL_REQUEST
         return super(MaterialRequest, self).save(*args, **kwargs)
 
-
+ 
 class ServiceRequest(Request, LinkHelper):
     class Meta:
         verbose_name = 'ServiceRequest'

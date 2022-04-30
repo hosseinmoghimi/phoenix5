@@ -517,6 +517,10 @@ class Picture(models.Model, LinkHelper):
     def image(self):
         if self.image_origin and self.image_origin is not None:
             return f'{MEDIA_URL}{str(self.image_origin)}'
+        if self.image_origin =="":
+            return f'{STATIC_URL}logo.png'
+        if self.image_origin is None:
+            return f'{STATIC_URL}logo.png'
         return None
 
     class Meta:

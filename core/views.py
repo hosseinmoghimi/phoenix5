@@ -61,8 +61,8 @@ def CoreContext(request, *args, **kwargs):
     context['app'] = {
         'title': parameter_repo.parameter(name=ParameterNameEnum.TITLE, default=app_name).value,
         'home_url': parameter_repo.parameter(name=ParameterNameEnum.HOME_URL, default="/"+app_name+"/").value,
-        'icon': picture_repo.picture(name=PictureNameEnum.FAVICON, default=STATIC_URL+"").image,
-        'logo': picture_repo.picture(name=PictureNameEnum.LOGO, default=STATIC_URL+"").image,
+        'icon': picture_repo.picture(name=PictureNameEnum.FAVICON, default="").image,
+        'logo': picture_repo.picture(name=PictureNameEnum.LOGO, default="").image,
     }
     pc = PersianCalendar()
     now = timezone.now()
