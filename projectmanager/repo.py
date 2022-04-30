@@ -149,7 +149,7 @@ class ProjectRepo():
         if self.user is not None and self.user.is_authenticated and self.user.has_perm(APP_NAME+".view_project"):
             self.objects=self.objects.all()
         else:
-            me_emp=Employee.objects.filter(profile_id=self.profile.id).first()
+            me_emp=Employee.objects.filter(account__profile_id=self.profile.id).first()
             if me_emp is not None:
                 self.objects=self.objects.filter(id__in=me_emp.my_project_ids())
             else:

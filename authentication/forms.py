@@ -37,6 +37,16 @@ class RegisterForm(UserCreationForm):
 class SetDefaultProfileForm(forms.Form):
     profile_id=forms.IntegerField(required=True)
 
+class ResetPasswordForm(forms.Form):
+    username=forms.CharField(max_length=50, required=True)
+    password=forms.CharField(max_length=100, required=True)
+    
+
+class ChangePasswordForm(forms.Form):
+    username=forms.CharField(max_length=50, required=True)
+    old_password=forms.CharField(max_length=100, required=True)
+    new_password=forms.CharField(max_length=100, required=True)
+    
 class LoginForm(forms.Form):
     username=forms.CharField(max_length=50, required=True)
     password=forms.CharField(max_length=50, required=True)

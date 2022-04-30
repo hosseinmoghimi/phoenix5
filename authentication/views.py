@@ -238,6 +238,31 @@ class RegisterViews(View):
             a=ProfileRepo(request=request).login(request=request,user=a)
             return redirect(APP_NAME+":me")
 
+class ChangePasswordViews(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        context['change_password_form']=ChangePasswordForm()
+        return render(request,TEMPLATE_ROOT+"change-password.html",context)  
+    def post(self,request):
+        change_password_form=ChangePasswordForm(request.POST)
+        if change_password_form.is_valid():
+            cd=change_password_form.cleaned_data
+            (request,user)=ProfileRepo(request=request).change_password(request=request,**cd)
+            return redirect(APP_NAME+":me")
+
+
+class ResetPasswordViews(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        context['reset_password_form']=ResetPasswordForm()
+        return render(request,TEMPLATE_ROOT+"reset-password.html",context)  
+    def post(self,request):
+        register_form=RegisterForm(request.POST)
+        if register_form.is_valid():
+            a=register_form.save()
+            a=ProfileRepo(request=request).login(request=request,user=a)
+            return redirect(APP_NAME+":me")
+
 
 class LogoutViews(View):
     def get(self,request,*args, **kwargs):
