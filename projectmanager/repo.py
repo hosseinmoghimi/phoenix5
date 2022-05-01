@@ -14,7 +14,6 @@ from django.db.models import Q
 from accounting.repo import ServiceRepo,ProductRepo as MaterialRepo
  
 
-
 class MaterialInvoiceRepo():
     def __init__(self, *args, **kwargs):
         self.request = None
@@ -51,7 +50,6 @@ class MaterialInvoiceRepo():
         if 'parent_id' in kwargs:
             objects=objects.filter(parent_id=kwargs['parent_id'])
         return objects.order_by('date_added') 
-
 
 
 class ServiceInvoiceRepo():
@@ -128,6 +126,7 @@ class LetterRepo():
         if 'parent_id' in kwargs:
             objects=objects.filter(parent_id=kwargs['parent_id'])
         return objects.order_by('date_added') 
+
 
 class ProjectRepo():
     def __init__(self, *args, **kwargs):
@@ -519,7 +518,6 @@ class ServiceRequestRepo():
             project=ProjectRepo(request=self.request).project(project_id=kwargs['project_id'])
             objects=project.organization_units.all()
         return objects.all()
-
 
 
 class RequestSignatureRepo():
