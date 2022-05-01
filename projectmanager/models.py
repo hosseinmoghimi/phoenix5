@@ -4,7 +4,6 @@ from django.db import models
 from accounting.models import Invoice, InvoiceLine
 from django.utils.translation import gettext as _
 from django.shortcuts import reverse
-
 from core.models import Page
 from projectmanager.enums import *
 from accounting.models import Product as Material, Service
@@ -12,7 +11,7 @@ from utility.utils import LinkHelper
 from .apps import APP_NAME
 # Create your models here.
 from accounting.models import Account
-
+from organization.models import OrganizationUnit,Employee
 IMAGE_FOLDER = APP_NAME+"/images/"
 
 
@@ -75,8 +74,8 @@ class Request(InvoiceLine, LinkHelper):
         _("date_delivered"), auto_now=False, null=True, blank=True, auto_now_add=False)
     date_requested = models.DateTimeField(
         _("date_requested"), auto_now=False, null=True, blank=True, auto_now_add=False)
-    employee = models.ForeignKey("employee", verbose_name=_(
-        "employee"), on_delete=models.CASCADE)
+    employee = models.ForeignKey("organization.employee", verbose_name=_(
+        "organization.employee"), on_delete=models.CASCADE)
     status = models.CharField(
         _("status"), choices=RequestStatusEnum.choices, max_length=50)
     type = models.CharField(_("type"), choices=RequestTypeEnum.choices,
@@ -193,8 +192,8 @@ class ServiceRequest(Request, LinkHelper):
 class RequestSignature(models.Model, LinkHelper):
     request = models.ForeignKey("request", verbose_name=_(
         "request"), on_delete=models.CASCADE)
-    employee = models.ForeignKey("employee", verbose_name=_(
-        "employee"), on_delete=models.PROTECT)
+    employee = models.ForeignKey("organization.employee", verbose_name=_(
+        "organization.employee"), on_delete=models.PROTECT)
     date_added = models.DateTimeField(
         _("date_added"), auto_now=False, auto_now_add=True)
     description = models.CharField(_("description"), max_length=200)
@@ -223,91 +222,10 @@ class RequestSignature(models.Model, LinkHelper):
         return f"""{self.request} : امضاءکننده" {self.employee}  " :{self.status} """
 
 
-class Employee(models.Model,LinkHelper):
-    account=models.ForeignKey("accounting.account", verbose_name=_("account"), on_delete=models.CASCADE)
-    organization_unit = models.ForeignKey("organizationunit", null=True, blank=True, verbose_name=_(
-        "organization_unit"), on_delete=models.CASCADE)
-    job_title = models.CharField(
-        _("job title"), default="سرپرست", max_length=50)
-    class_name = 'employee'
-    app_name = APP_NAME
-    @property
-    def title(self):
-        return self.account.title
-
-
-    def my_pages_ids(self):
-        my_pages_ids=[]
-        my_project_ids=self.my_project_ids()
-        my_pages_ids=my_pages_ids+ my_project_ids
-        return my_pages_ids
-
-    @property
-    def mobile(self):
-        return self.account.profile.mobile
-
-    @property
-    def name(self):
-        return self.account.profile.name
-
-    class Meta:
-        verbose_name = _("Employee")
-        verbose_name_plural = _("Employees")
-
-    def __str__(self):
-        return f"""{self.account.profile.name} : {self.job_title} {str(self.organization_unit) if self.organization_unit is not None else ""} """
-
-    def get_absolute_url(self):
-        return reverse(APP_NAME+":employee", kwargs={"pk": self.pk})
-
-    def my_project_ids(self):
-        ids = []
-        if self.organization_unit is not None:
-            # for org in self.organization_unit_set.all():
-            for proj in self.organization_unit.project_set.all():
-                ids.append(proj.id)
-            # ids=(proj for proj in self.organization_unit.project_set.all())
-        return ids
-
-    def save(self, *args, **kwargs):
-        return super(Employee, self).save(*args, **kwargs)
-
-
-class OrganizationUnit(Page):
-    pre_title = models.CharField(
-        _("pre_title"), blank=True, null=True, max_length=50)
-    account = models.ForeignKey("accounting.account", null=True, blank=True, verbose_name=_(
-        "account"), on_delete=models.CASCADE)
-    parent = models.ForeignKey("OrganizationUnit", related_name="childs",
-                               null=True, blank=True, verbose_name=_("parent"), on_delete=models.CASCADE)
-
-    def __str__(self):
-        # return self.title
-        return self.full_title
-
-    class Meta:
-        verbose_name = _("OrganizationUnit")
-        verbose_name_plural = _("واحد های سازمانی")
-
-    def save(self, *args, **kwargs):
-        if self.class_name is None or self.class_name == "":
-            self.class_name = "organizationunit"
-        if self.app_name is None or self.app_name == "":
-            self.app_name = APP_NAME
-        return super(OrganizationUnit, self).save(*args, **kwargs)
-    def logo(self):
-        if self.thumbnail_origin:
-            return self.thumbnail
-        elif self.parent is not None:
-            return self.parent.thumbnail
-        else:
-            return self.thumbnail
-
-
 class letterSent(models.Model):
-    sender = models.ForeignKey("organizationunit", related_name="sent_letters", verbose_name=_(
+    sender = models.ForeignKey("organization.organizationunit", related_name="sent_letters", verbose_name=_(
         "فرستنده"), on_delete=models.CASCADE)
-    recipient = models.ForeignKey("organizationunit", related_name="inbox_letters", verbose_name=_(
+    recipient = models.ForeignKey("organization.organizationunit", related_name="inbox_letters", verbose_name=_(
         "گیرنده"), on_delete=models.CASCADE)
     letter = models.ForeignKey("letter", verbose_name=_(
         "letter"), on_delete=models.CASCADE)
@@ -357,9 +275,9 @@ class Project(Page):
         "parent"), null=True, blank=True, on_delete=models.CASCADE)
     status = models.CharField(_("status"), choices=ProjectStatusEnum.choices,
                               default=ProjectStatusEnum.DRAFT, max_length=50)
-    employer = models.ForeignKey("organizationunit", related_name="projects_employed", verbose_name=_(
+    employer = models.ForeignKey("organization.organizationunit", related_name="projects_employed", verbose_name=_(
         "کارفرما"), on_delete=models.CASCADE)
-    contractor = models.ForeignKey("organizationunit", related_name="projects_contracted", verbose_name=_(
+    contractor = models.ForeignKey("organization.organizationunit", related_name="projects_contracted", verbose_name=_(
         "پیمانکار"), on_delete=models.CASCADE)
     percentage_completed = models.IntegerField(
         _("درصد تکمیل پروژه"), default=0)
@@ -368,7 +286,7 @@ class Project(Page):
     end_date = models.DateTimeField(
         _("زمان پایان پروژه"), null=True, blank=True, auto_now=False, auto_now_add=False)
     organization_units = models.ManyToManyField(
-        "organizationunit", verbose_name=_("واحد های سازمانی"), blank=True)
+        "organization.organizationunit", verbose_name=_("واحد های سازمانی"), blank=True)
     weight = models.IntegerField(_("ضریب و وزن پروژه"), default=10)
     # locations = models.ManyToManyField("map.location", blank=True, verbose_name=_("locations"))
 

@@ -1,0 +1,118 @@
+{% load to_persian_date %}
+{% load to_price %}
+{% load to_amount_color %}
+{% load static %}
+<div id="accordion-organization-units">
+
+
+    <div class="card" id="organization_units-app">
+        <div class="card-header" id="heading-organization-units">
+            <h5 class="text-center">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-organization-units"
+                    aria-expanded="true" aria-controls="collapse-organization-units">
+واحد های سازمانی
+
+                    <span v-if="organization_units.length>0">
+                        <small class="text-danger mx-2">
+                            <span v-text="organization_units.length"></span>
+                        </small>
+                    </span>
+
+
+                </button>
+            </h5>
+
+            {% if page_pre_description %}
+
+            <h5 class="text-center">
+                {{page_pre_description}}
+            </h5>
+            {% endif %}
+            {% if page_description %}
+
+            <h4 class="text-center">
+                {{page_description}}
+            </h4>
+            {% endif %}
+        </div>
+        <div id="collapse-organization-units" class="collapse" aria-labelledby="heading-organization-units"
+            data-parent="#accordion-organization-units">
+
+
+            <div class="card-body">
+
+                {% load static %}
+                <form @submit.prevent="search()">
+                    <img src="{% static 'leo/img/loading.gif' %}" width="32" v-if="waiting" alt="">
+
+                    <input type="text" v-model="search_for" class="form-control" placeholder="جستجو ..."
+                        @input="filter()">
+                </form>
+
+
+                <div class="table-responsive">
+                    <img v-if="false" width="32" src="{% static 'leo/img/loading.gif' %}" alt="">
+                    <h6 v-if="false">
+
+                        <span class="text-muted">در حال بار گذاری ... </span>
+                    </h6>
+                    <table class="table table-striped">
+                        <thead>
+                            <th>
+                                واحد سازمانی
+                            </th>
+                            <th>
+                                حساب مالی
+                            </th>
+                            <th>
+
+                            </th>
+                        </thead>
+                        <tbody>
+
+
+                            <tr v-for="organization_unit in organization_units">
+                                <td>
+                                    <a :href="organization_unit.get_absolute_url">
+                                        <div class="media">
+                                            <img :src="organization_unit.logo" class="rounded-circle" width="32" alt="">
+                                            <div class="media-body mr-3">
+                                                <div>
+
+                                                    <span v-text="organization_unit.title"></span>
+                                                </div>
+                                                <div>
+                                                    <small class="text-muted">
+                                                        <span v-text="organization_unit.class_title"></span>
+                                                    </small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </a>
+
+
+                                </td>
+                                <td>
+                                    <a :href="organization_unit.account.profile.get_absolute_url">
+                                        <img :src="organization_unit.account.profile.image" class="rounded-circle" width="32" alt="">
+                                        <span v-text="organization_unit.account.profile.name"></span>
+                                    </a>
+
+                                </td>
+                                
+                                <td>
+
+                                   
+
+
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+</div>

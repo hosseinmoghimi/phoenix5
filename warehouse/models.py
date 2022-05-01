@@ -94,8 +94,8 @@ class WareHouseSheet(models.Model,LinkHelper):
 class WareHouseSheetSignature(models.Model,LinkHelper):
     request = models.ForeignKey("warehousesheet", verbose_name=_(
         "ware_house_sheet"), on_delete=models.CASCADE)
-    employee = models.ForeignKey("projectmanager.employee", verbose_name=_(
-        "employee"), on_delete=models.PROTECT)
+    employee = models.ForeignKey("organization.employee", verbose_name=_(
+        "organization.employee"), on_delete=models.PROTECT)
     date_added = models.DateTimeField(
         _("date_added"), auto_now=False, auto_now_add=True)
     description = models.CharField(_("description"), max_length=200)

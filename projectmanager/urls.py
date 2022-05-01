@@ -6,8 +6,6 @@ app_name=APP_NAME
 urlpatterns = [
     path("",views.HomeView.as_view(),name="home"),
     path("search/",views.SearchView.as_view(),name="search"),
-    path("employee/<int:pk>/",login_required(views.EmployeeView.as_view()),name="employee"),
-    path("employees/",login_required(views.EmployeesView.as_view()),name="employees"),
     path("material_request/<int:pk>/",login_required(views.RequestView.as_view()),name="materialrequest"),
     path("service_request/<int:pk>/",login_required(views.RequestView.as_view()),name="servicerequest"),
     path("request/<int:pk>/",login_required(views.ProjectView.as_view()),name="request"),
@@ -24,10 +22,6 @@ urlpatterns = [
     path("project/<int:pk>/",login_required(views.ProjectView.as_view()),name="project"),
     path("project_chart/<int:pk>/",login_required(views.ProjectChartView.as_view()),name="project_chart"),
 
-    path("organization_units/",login_required(views.OrganizationUnitsView.as_view()),name="organization_units"),
-    path("organization_unit/<int:pk>/",login_required(views.OrganizationUnitView.as_view()),name="organizationunit"),
-
-
     path("material_invoice/<int:pk>/",login_required(views.MaterialInvoiceView.as_view()),name="materialinvoice"),
     path("service_invoice/<int:pk>/",login_required(views.ServiceInvoiceView.as_view()),name="serviceinvoice"),
 
@@ -43,7 +37,6 @@ urlpatterns = [
   
     path('add_material_request/',login_required(apis.AddMaterialRequestApi.as_view()),name="add_material_request"),
     path('add_service_request/',login_required(apis.AddServiceRequestApi.as_view()),name="add_service_request"),
-    path('add_organization_unit/',login_required(apis.AddOrganizationUnitApi.as_view()),name="add_organization_unit"),
     path('add_project/',login_required(apis.AddProjectApi.as_view()),name="add_project"),
     path('edit_project/',login_required(apis.EditProjectApi.as_view()),name="edit_project"),
     path('add_event/',login_required(apis.AddEventApi.as_view()),name="add_event"),

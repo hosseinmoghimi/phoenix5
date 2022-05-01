@@ -8,7 +8,7 @@ from django.http import Http404, JsonResponse
 from django.shortcuts import render, reverse
 from django.views import View
 from projectmanager.enums import SignatureStatusEnum
-from projectmanager.repo import EmployeeRepo
+from organization.repo import EmployeeRepo
 from utility.calendar import PersianCalendar
 
 from warehouse.apps import APP_NAME

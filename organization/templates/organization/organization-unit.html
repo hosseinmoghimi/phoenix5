@@ -1,4 +1,4 @@
-{% extends "projectmanager/wide-layout.html" %}
+{% extends "organization/wide-layout.html" %}
 
 {% block content %}
 
@@ -9,7 +9,7 @@
         {% include "core/includes/page-app/thumbnail-card.html" %}
         {% include "core/includes/page-app/brief-card.html" %}
 
-        {% include "projectmanager/includes/organization-unit-app/brief-card.html" %}
+        {% include "organization/includes/organization-unit-app/brief-card.html" %}
     </div>
     <div class="col-md-9">
         <div class="row">
@@ -18,7 +18,7 @@
                 {% include "core/includes/page-description-app/description.html" %}
             </div>
             <div class="col-md-12">
-                {% include "projectmanager/includes/employees-app/template.html" %}
+                {% include "organization/includes/employees-app/template.html" %}
             </div>
             <div class="col-md-4">
                 {% include "core/includes/page-downloads-app/template.html" %}
@@ -30,7 +30,7 @@
                 {% include "core/includes/page-tags-app/template.html" %}
             </div>
             <div class="col-md-12">
-                {% include "projectmanager/includes/organization-units-app/template.html" %}
+                {% include "organization/includes/organization-units-app/template.html" %}
             </div>
             <div class="col-md-12">
                 {% include "projectmanager/includes/all-projects-app/template.html" %}
@@ -76,8 +76,8 @@
 
 {% include "core/includes/page-app/script.html" %}
 
-{% include "projectmanager/includes/organization-units-app/script.html" %}
-{% include "projectmanager/includes/employees-app/script.html" %}
+{% include "organization/includes/organization-units-app/script.html" %}
+{% include "organization/includes/employees-app/script.html" %}
 {% include "projectmanager/includes/all-projects-app/script.html" %}
 {% include "projectmanager/includes/letters-app/script.html" %}
 {% if account %}
