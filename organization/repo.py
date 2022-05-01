@@ -4,7 +4,6 @@ from organization.enums import *
 from organization.apps import APP_NAME
 from authentication.repo import ProfileRepo
 
-
 class OrganizationUnitRepo():
     def __init__(self, *args, **kwargs):
         self.request = None
@@ -46,6 +45,7 @@ class OrganizationUnitRepo():
             new_organization_unit=organization_unit
 
             project_id=kwargs['page_id']
+            from projectmanager.repo import ProjectRepo
             project=ProjectRepo(request=self.request).project(pk=project_id)
             if project is not None:
                 project.organization_units.add(organization_unit)
@@ -70,6 +70,7 @@ class OrganizationUnitRepo():
     def list(self, *args, **kwargs):
         objects = self.objects
         if 'project_id' in kwargs:
+            from projectmanager.repo import ProjectRepo
             project=ProjectRepo(request=self.request).project(project_id=kwargs['project_id'])
             objects=project.organization_units.all()
         if 'search_for' in kwargs:
@@ -150,6 +151,7 @@ class EmployeeRepo():
         if 'profile_id' in kwargs:
             objects=objects.filter(account__profile_id=kwargs['profile_id'])
         if 'project_id' in kwargs:
+            from projectmanager.repo import ProjectRepo
             project=ProjectRepo(request=self.request).project(project_id=kwargs['project_id'])
             objects=project.organization_units.all()
         return objects.all()

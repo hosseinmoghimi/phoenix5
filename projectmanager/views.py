@@ -193,7 +193,7 @@ class ProjectView(View):
             MaterialRequestSerializer(material_requests, many=True).data)
         context['material_requests_s'] = material_requests_s
 
-        projects = project.project_set.order_by('priority')
+        projects = project.childs.order_by('priority')
         projects_s = json.dumps(ProjectSerializer(projects, many=True).data)
         context['project_s'] = json.dumps(ProjectSerializer(project).data)
         context['projects_s'] = projects_s
@@ -245,11 +245,23 @@ class ProjectView(View):
         return render(request, TEMPLATE_ROOT+"project.html", context)
 
 
-class GuanttChartView(View):
+class ProjectGuanttView(View):
     def get(self, request, *args, **kwargs):
         context = getContext(request=request)
         project = ProjectRepo(request=request).project(*args, **kwargs)
         context.update(PageContext(request=request, page=project))
+
+        my_project_ids = []
+        me_emp = EmployeeRepo(request=request).me
+        if me_emp is not None:
+            my_project_ids = me_emp.my_project_ids()
+
+        context['invoices'] = project.invoices()
+
+        events = EventRepo(request=request).list(project_id=project.id)
+        context['events'] = events
+        events_s = json.dumps(EventSerializer(events, many=True).data)
+        context['events_s'] = events_s
 
         context['project'] = project
         organization_units = OrganizationUnitRepo(request=request).list(
@@ -273,12 +285,22 @@ class GuanttChartView(View):
 
         projects = project.project_set.order_by('priority')
         projects_s = json.dumps(ProjectSerializer(projects, many=True).data)
+        context['project_s'] = json.dumps(ProjectSerializer(project).data)
         context['projects_s'] = projects_s
 
         if request.user.has_perm(APP_NAME+".add_project"):
             context['add_project_form'] = AddProjectForm()
 
-        if request.user.has_perm(APP_NAME+".change_project"):
+        if request.user.has_perm(APP_NAME+".change_project") or project.id in my_project_ids:
+            employers = OrganizationUnitRepo(request=request).list()
+            context['employers'] = employers
+            context['employers_s'] = json.dumps(
+                OrganizationUnitSerializer(employers, many=True).data)
+            context['project_status_enum'] = (i[0]
+                                              for i in ProjectStatusEnum.choices)
+
+            context['add_event_form'] = AddEventForm()
+            context['edit_project_form'] = EditProjectForm()
             all_organization_units = OrganizationUnitRepo(
                 request=request).list()
             context['all_organization_units'] = all_organization_units
@@ -297,12 +319,21 @@ class GuanttChartView(View):
             context['unit_names'] = (i[0] for i in UnitNameEnum.choices)
             context['unit_names2'] = (i[0] for i in UnitNameEnum.choices)
 
+            if project.contractor.account is not None:
+                item_prices = PriceRepo(request=request).list(
+                    account_id=project.contractor.account.id)
+            else:
+                item_prices=[]
+            item_prices_s = json.dumps(
+                PriceBriefSerializer(item_prices, many=True).data)
+            context['item_prices_s'] = item_prices_s
+
             all_materials = MaterialRepo(request=request).list()
             context['all_materials_s'] = json.dumps(
                 MaterialSerializer(all_materials, many=True).data)
 
         return render(request, TEMPLATE_ROOT+"project.html", context)
-
+ 
 
 class ProjectChartView(View):
     def get(self, request, *args, **kwargs):
@@ -311,56 +342,45 @@ class ProjectChartView(View):
         context.update(PageContext(request=request, page=project))
 
         context['project'] = project
-        organization_units = OrganizationUnitRepo(request=request).list(
-            project_id=project.id, *args, **kwargs)
-        context['organization_units'] = organization_units
-        organization_units_s = json.dumps(
-            OrganizationUnitSerializer(organization_units, many=True).data)
-        context['organization_units_s'] = organization_units_s
+           
 
-        service_requests = project.service_requests()
-        context['service_requests'] = service_requests
-        service_requests_s = json.dumps(
-            ServiceRequestSerializer(service_requests, many=True).data)
-        context['service_requests_s'] = service_requests_s
+        # childs
+        if True:
+            projects = OrganizationUnitRepo(request=request).list(
+                parent_id=project.id, *args, **kwargs)
+            context['projects'] = projects 
+            
+        pages = project.all_sub_projects()
 
-        material_requests = project.material_requests()
-        context['material_requests'] = material_requests
-        material_requests_s = json.dumps(
-            MaterialRequestSerializer(material_requests, many=True).data)
-        context['material_requests_s'] = material_requests_s
+        pages_s=[]
+        for page in pages:
+            names=""
+            pages_s.append({
+                'title': f"""{page.title}""",
+                'parent_id': page.parent_id,
+                'parent': page.parent_id,
+                'get_absolute_url': page.get_absolute_url(),
+                'id': page.id,
+                'sub_title': names,
 
-        projects = project.project_set.order_by('priority')
-        projects_s = json.dumps(ProjectSerializer(projects, many=True).data)
-        context['projects_s'] = projects_s
+            })
+        for page in [project]:
+            names=""
+            pages_s.append({
+                'title': f"""{page.title}""",
+                'parent_id': page.parent_id,
+                'parent': page.parent_id,
+                'get_absolute_url': page.get_absolute_url(),
+                'id': page.id,
+                'sub_title': names,
 
-        if request.user.has_perm(APP_NAME+".add_project"):
-            context['add_project_form'] = AddProjectForm()
+            })
+        context['pages_s'] = json.dumps(pages_s)
+     
 
-        if request.user.has_perm(APP_NAME+".change_project"):
-            all_organization_units = OrganizationUnitRepo(
-                request=request).list()
-            context['all_organization_units'] = all_organization_units
-            all_organization_units_s = json.dumps(
-                OrganizationUnitSerializer(all_organization_units, many=True).data)
-            context['all_organization_units_s'] = all_organization_units_s
-            context['select_organization_unit_form'] = True
-            context['add_service_request_form'] = True
-            context['add_material_request_form'] = True
-            context['employees_s'] = json.dumps(
-                EmployeeSerializer(project.employees(), many=True).data)
-            all_service = ServiceRepo(request=request).list()
-            context['all_services_s'] = json.dumps(
-                ServiceSerializer(all_service, many=True).data)
 
-            context['unit_names'] = (i[0] for i in UnitNameEnum.choices)
-            context['unit_names2'] = (i[0] for i in UnitNameEnum.choices)
 
-            all_materials = MaterialRepo(request=request).list()
-            context['all_materials_s'] = json.dumps(
-                MaterialSerializer(all_materials, many=True).data)
-
-        return render(request, TEMPLATE_ROOT+"project.html", context)
+        return render(request, TEMPLATE_ROOT+"project-chart.html", context)
 
 
 class MaterialInvoiceView(View):

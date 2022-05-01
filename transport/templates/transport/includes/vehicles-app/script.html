@@ -25,7 +25,7 @@
                     `
             },
             create_employee: function (vehicle_id) {
-                let url = "{% url 'projectmanager:employee' pk=0 %}"
+                let url = "{% url 'organization:employee' pk=0 %}"
                 let payload = {
                     csrfmiddlewaretoken: csrfmiddlewaretoken,
                     vehicle_id: vehicle_id

@@ -90,7 +90,7 @@ class Page(models.Model, LinkHelper, ImageMixin):
         return class_title(app_name=self.app_name,class_name=self.class_name)
 
 
-
+    
 
     def save(self,*args, **kwargs):
         if self.app_name is None:

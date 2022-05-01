@@ -106,7 +106,7 @@
                     {% csrf_token %}
                     <input type="hidden" name="username" value="{{selected_profile.user.username}}">
                     <input type="hidden" name="old_password" value="2345678923456">
-                    <input type="password" name="new_password" class="form-control" required>
+                    <input type="password" placeholder="کلمه عبور جدید" name="new_password" class="form-control" required>
                     <div class="form-group">
                         <button type="submit" class="form-control btn btn-primary rounded submit px-3">
                             تغییر دادن کلمه عبور

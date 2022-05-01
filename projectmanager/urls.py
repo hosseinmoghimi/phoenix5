@@ -20,6 +20,7 @@ urlpatterns = [
 
     path("projects/",login_required(views.ProjectsView.as_view()),name="projects"),
     path("project/<int:pk>/",login_required(views.ProjectView.as_view()),name="project"),
+    path("project_guantt/<int:pk>/",login_required(views.ProjectGuanttView.as_view()),name="project_guantt"),
     path("project_chart/<int:pk>/",login_required(views.ProjectChartView.as_view()),name="project_chart"),
 
     path("material_invoice/<int:pk>/",login_required(views.MaterialInvoiceView.as_view()),name="materialinvoice"),
@@ -33,7 +34,6 @@ urlpatterns = [
 
     path("service/<int:pk>/",login_required(views.ServiceView.as_view()),name="service"),
     path("services/",login_required(views.ServicesView.as_view()),name="services"),
-    path("guantt_chart/<int:pk>/",login_required(views.GuanttChartView.as_view()),name="guantt_chart"),
   
     path('add_material_request/',login_required(apis.AddMaterialRequestApi.as_view()),name="add_material_request"),
     path('add_service_request/',login_required(apis.AddServiceRequestApi.as_view()),name="add_service_request"),

@@ -77,6 +77,57 @@ class EmployeesView(View):
         context['employees_s'] = employees_s
         return render(request, TEMPLATE_ROOT+"employees.html", context)
 
+class OrganizationUnitChartView(View):
+    def get(self, request, *args, **kwargs):
+        context = getContext(request=request)
+        organization_unit = OrganizationUnitRepo(
+            request=request).organization_unit(*args, **kwargs)
+        if organization_unit is None:
+            mv=MessageView(request=request)
+            mv.title="واحد سازمانی موردنظر یافت نشد."
+            mv.body="واحد سازمانی موردنظر یافت نشد."
+            return mv.response()
+        context.update(PageContext(request=request, page=organization_unit))
+        context['organization_unit'] = organization_unit
+
+        # employees
+        if True:
+            employees = EmployeeRepo(request=request).list(
+                organization_unit_id=organization_unit.id)
+            context['employees_s'] = json.dumps(
+                EmployeeSerializer(employees, many=True).data)
+
+     
+        # childs
+        if True:
+            organization_units = OrganizationUnitRepo(request=request).list(
+                parent_id=organization_unit.id, *args, **kwargs)
+            context['organization_units'] = organization_units
+            organization_units_s = json.dumps(
+                OrganizationUnitSerializer(organization_units, many=True).data)
+            context['organization_units_s'] = organization_units_s
+            
+        pages = organization_unit.all_sub_orgs()
+
+        pages_s=[]
+        for page in pages:
+            names=""
+            employees=page.employee_set.all()
+            for employee in employees:
+                names+=(f"""<div style="direction:rtl;"><a href="{employee.get_absolute_url()}"><img src="{employee.account.profile.image}" class="rounded-circle" width="32"><small class="text-muted" >{employee.account.title}</small></a></div>""")
+            pages_s.append({
+                'title': f"""{page.title}""",
+                'parent_id': page.parent_id,
+                'parent': page.parent_id,
+                'get_absolute_url': page.get_absolute_url(),
+                'id': page.id,
+                'sub_title': names,
+
+            })
+        context['pages_s'] = json.dumps(pages_s)
+     
+        return render(request, TEMPLATE_ROOT+"organization-unit-chart.html", context)
+
 
 class OrganizationUnitView(View):
     def get(self, request, *args, **kwargs):

@@ -11,7 +11,7 @@ from utility.utils import LinkHelper
 from .apps import APP_NAME
 # Create your models here.
 from accounting.models import Account
-from organization.models import OrganizationUnit,Employee
+from organization.models import OrganizationUnit,Employee,Letter,letterSent
 IMAGE_FOLDER = APP_NAME+"/images/"
 
 
@@ -222,24 +222,6 @@ class RequestSignature(models.Model, LinkHelper):
         return f"""{self.request} : امضاءکننده" {self.employee}  " :{self.status} """
 
 
-class letterSent(models.Model):
-    sender = models.ForeignKey("organization.organizationunit", related_name="sent_letters", verbose_name=_(
-        "فرستنده"), on_delete=models.CASCADE)
-    recipient = models.ForeignKey("organization.organizationunit", related_name="inbox_letters", verbose_name=_(
-        "گیرنده"), on_delete=models.CASCADE)
-    letter = models.ForeignKey("letter", verbose_name=_(
-        "letter"), on_delete=models.CASCADE)
-    date_sent = models.DateTimeField(
-        _("date sent"), auto_now=False, auto_now_add=False)
-
-    class Meta:
-        verbose_name = 'letterSent'
-        verbose_name_plural = 'letterSents'
-
-    def persian_date_sent(self):
-        return to_persian_datetime_tag(self.date_sent)
-
-
 class WareHouse(OrganizationUnit):
 
     def save(self, *args, **kwargs):
@@ -254,25 +236,10 @@ class WareHouse(OrganizationUnit):
         verbose_name_plural = 'WareHouses'
 
 
-class Letter(Page):
-    def persian_date_added(self):
-        return to_persian_datetime_tag(self.date_added)
-
-    def save(self, *args, **kwargs):
-        if self.class_name is None:
-            self.class_name = "letter"
-        if self.app_name is None:
-            self.app_name = APP_NAME
-        return super(Letter, self).save(*args, **kwargs)
-
-    class Meta:
-        verbose_name = 'Letter'
-        verbose_name_plural = 'Letters'
-
 
 class Project(Page):
     parent = models.ForeignKey("project", verbose_name=_(
-        "parent"), null=True, blank=True, on_delete=models.CASCADE)
+        "parent"),related_name="childs", null=True, blank=True, on_delete=models.CASCADE)
     status = models.CharField(_("status"), choices=ProjectStatusEnum.choices,
                               default=ProjectStatusEnum.DRAFT, max_length=50)
     employer = models.ForeignKey("organization.organizationunit", related_name="projects_employed", verbose_name=_(
@@ -289,6 +256,19 @@ class Project(Page):
         "organization.organizationunit", verbose_name=_("واحد های سازمانی"), blank=True)
     weight = models.IntegerField(_("ضریب و وزن پروژه"), default=10)
     # locations = models.ManyToManyField("map.location", blank=True, verbose_name=_("locations"))
+    def all_childs_ids(self):
+        pages_ids=[]
+        for page in self.childs.all():
+            chds= page.all_childs_ids()
+            pages_ids.append(page.pk)
+            for page1 in chds:
+                pages_ids.append(page1)
+        print(pages_ids)
+        return pages_ids
+    
+    def all_sub_projects(self):
+        return Project.objects.filter(id__in=self.all_childs_ids())
+
 
     def material_requests(self):
         return Request.objects.filter(project=self).filter(type=RequestTypeEnum.MATERIAL_REQUEST)
@@ -396,6 +376,11 @@ class Project(Page):
     def invoices(self):
         return ProjectInvoice.objects.filter(project_id=self.pk)
 
+    def get_guantt_chart_url(self):
+        return reverse(APP_NAME+":project_guantt",kwargs={'pk':self.pk})
+
+    def get_sub_chart_url(self):
+        return reverse(APP_NAME+":project_chart",kwargs={'pk':self.pk})
 
 class SampleForm(Page):
 

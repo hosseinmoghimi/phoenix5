@@ -2,12 +2,11 @@ from core.enums import ParameterNameEnum
 from core.repo import PageRepo, ParameterRepo
 from map.repo import LocationRepo
 from django.utils import timezone
-from urllib import request
 
 from projectmanager.enums import ProjectManagerParameterEnum, RequestStatusEnum, SignatureStatusEnum
 from projectmanager.apps import APP_NAME
-from projectmanager.models import Employee, Event, Letter,Material, MaterialInvoice, MaterialRequest,Service, Project,OrganizationUnit, Request, RequestSignature, ServiceInvoice, ServiceRequest,WareHouse
-
+from projectmanager.models import  Event, Letter,Material, MaterialInvoice, MaterialRequest,Service, Project,OrganizationUnit, Request, RequestSignature, ServiceInvoice, ServiceRequest,WareHouse
+from organization.repo import EmployeeRepo,OrganizationUnitRepo
 from authentication.repo import ProfileRepo
 from django.db.models import Q
 

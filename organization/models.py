@@ -1,7 +1,9 @@
+from importlib.resources import read_text
 from django.db import models
+from requests import request
 from organization.apps import APP_NAME
 from core.models import _,reverse,Page,LinkHelper
-
+from utility.calendar import to_persian_datetime_tag
 
 class OrganizationUnit(Page):
     pre_title = models.CharField(
@@ -10,7 +12,23 @@ class OrganizationUnit(Page):
         "account"), on_delete=models.CASCADE)
     parent = models.ForeignKey("organizationunit", related_name="childs",
                                null=True, blank=True, verbose_name=_("parent"), on_delete=models.CASCADE)
+    def all_childs_ids(self):
+        pages_ids=[]
+        for page in self.childs.all():
+            chds= page.all_childs_ids()
+            pages_ids.append(page.pk)
+            for page1 in chds:
+                pages_ids.append(page1)
+        print(pages_ids)
+        return pages_ids
 
+                               
+    def all_sub_orgs(self):
+        ids=self.all_childs_ids()
+        ids.append(self.pk)
+        return OrganizationUnit.objects.filter(id__in=ids)
+
+    
     def __str__(self):
         # return self.title
         return self.full_title
@@ -33,7 +51,8 @@ class OrganizationUnit(Page):
         else:
             return self.thumbnail
 
-
+    def get_chart_url(self):
+        return reverse(APP_NAME+":org_chart",kwargs={'pk':self.pk})
 class Employee(models.Model,LinkHelper):
     account=models.ForeignKey("accounting.account", verbose_name=_("account"), on_delete=models.CASCADE)
     organization_unit = models.ForeignKey("organizationunit", null=True, blank=True, verbose_name=_(
@@ -82,4 +101,39 @@ class Employee(models.Model,LinkHelper):
 
     def save(self, *args, **kwargs):
         return super(Employee, self).save(*args, **kwargs)
+
+
+
+class letterSent(models.Model):
+    sender = models.ForeignKey("organization.organizationunit", related_name="sent_letters", verbose_name=_(
+        "فرستنده"), on_delete=models.CASCADE)
+    recipient = models.ForeignKey("organization.organizationunit", related_name="inbox_letters", verbose_name=_(
+        "گیرنده"), on_delete=models.CASCADE)
+    letter = models.ForeignKey("letter", verbose_name=_(
+        "letter"), on_delete=models.CASCADE)
+    date_sent = models.DateTimeField(
+        _("date sent"), auto_now=False, auto_now_add=False)
+
+    class Meta:
+        verbose_name = 'letterSent'
+        verbose_name_plural = 'letterSents'
+
+    def persian_date_sent(self):
+        return to_persian_datetime_tag(self.date_sent)
+
+
+class Letter(Page):
+    def persian_date_added(self):
+        return to_persian_datetime_tag(self.date_added)
+
+    def save(self, *args, **kwargs):
+        if self.class_name is None:
+            self.class_name = "letter"
+        if self.app_name is None:
+            self.app_name = APP_NAME
+        return super(Letter, self).save(*args, **kwargs)
+
+    class Meta:
+        verbose_name = 'Letter'
+        verbose_name_plural = 'Letters'
 

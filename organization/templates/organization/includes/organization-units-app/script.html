@@ -45,7 +45,7 @@
 
                 }
                 organization_units_app.waiting = true
-                let url = "{% url 'projectmanager:add_organization_unit' %}"
+                let url = "{% url 'organization:add_organization_unit' %}"
                 let payload = {
                     csrfmiddlewaretoken: csrfmiddlewaretoken,
                     title: this.new_organization_unit_title,
@@ -81,7 +81,7 @@
             select_organization_unit: function (organization_unit_id) {
 
                 organization_units_app.waiting = true
-                let url = "{% url 'projectmanager:add_organization_unit' %}"
+                let url = "{% url 'organization:add_organization_unit' %}"
                 let payload = {
                     csrfmiddlewaretoken: csrfmiddlewaretoken,
                     organization_unit_id: organization_unit_id,
