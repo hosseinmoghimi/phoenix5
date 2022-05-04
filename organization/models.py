@@ -1,4 +1,3 @@
-from importlib.resources import read_text
 from django.db import models
 from requests import request
 from organization.apps import APP_NAME

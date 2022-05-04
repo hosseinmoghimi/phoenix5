@@ -1,0 +1,20 @@
+<script>
+    let suppliers = JSON.parse(`{{suppliers_s|escapejs}}`)
+    let suppliers_app = new Vue({
+        el:"#suppliers-app",
+        data: {
+            suppliers: suppliers,
+            search_for:'',
+            waiting:false,
+        },
+        methods: {
+            filter:function(){
+                this.suppliers = suppliers.filter(supplier => supplier.title.indexOf(this.search_for) > -1)
+         
+            },
+        
+           
+        }
+    })
+
+</script>

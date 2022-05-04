@@ -1,7 +1,12 @@
 from rest_framework import serializers
-from market.models import Category,Product
+from market.models import Category,Product, Supplier
 from accounting.serializers import ProductSerializer as ProductSerializer_origin
 
+ 
+class SupplierSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Supplier
+        fields=['id','title','thumbnail','get_absolute_url']
  
  
 class CategorySerializer(serializers.ModelSerializer):

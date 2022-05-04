@@ -1,6 +1,8 @@
 from django.shortcuts import render
 from core.enums import ParameterNameEnum
 from market.enums import ParameterMarketEnum
+from market.repo import SupplierRepo
+from market.serializers import SupplierSerializer
 from market.forms import *
 from authentication.forms import AddMembershipRequestForm
 from core.repo import ParameterRepo, PictureRepo
@@ -16,7 +18,7 @@ from accounting.forms import AddProductForm
 # from .repo import ProductRepo
 # from .serializers import ProductSerializer
 import json
-
+ 
 
 TEMPLATE_ROOT = "market/"
 LAYOUT_PARENT = "material-kit-pro/layout.html"
@@ -31,14 +33,6 @@ def getContext(request, *args, **kwargs):
 
 
 class HomeView(View):
-    def get2(self,request,*args, **kwargs):
-        context=getContext(request=request)
-        products=ProductRepo(request=request).list()
-        context['products']=products
-        products_s=json.dumps(ProductSerializer(products,many=True).data)
-        context['products_s']=products_s
-        return render(request,TEMPLATE_ROOT+"index.html",context)
-    
     def get(self, request, *args, **kwargs):
         context = getContext(request)
         context['body_class'] = "ecommerce-page"
@@ -64,6 +58,13 @@ class HomeView(View):
             context['add_category_form'] = AddCategoryFrom()
 
         context['add_membership_request_form'] = AddMembershipRequestForm()
+
+
+        #suppliers
+        if True:
+            suppliers = SupplierRepo(request=request).list()
+            context['suppliers'] = suppliers
+            context['suppliers_s'] = json.dumps(SupplierSerializer(suppliers,many=True).data)
 
         return render(request, TEMPLATE_ROOT+"index.html", context)
 

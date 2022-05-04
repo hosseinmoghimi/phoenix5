@@ -1,0 +1,52 @@
+{% load to_persian_date %}
+{% load to_price %}
+{% load to_amount_color %}
+{% load static %}
+<div id="accordion-roles">
+    <div class="card" id="roles-app">
+        <div class="card-header" id="heading-roles">
+            <h5 class="text-center">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-roles" aria-expanded="true"
+                    aria-controls="collapse-roles">
+                    نقش ها
+                    <span v-if="roles.length>0">
+                        <small class="text-danger mx-2">
+                            <span v-text="roles.length"></span>
+                        </small>
+                    </span>
+                </button>
+            </h5>
+
+        </div>
+        <div id="collapse-roles" class="collapse" aria-labelledby="heading-roles" data-parent="#accordion-roles">
+            <div class="card-body">
+                {% load static %}
+                <form @submit.prevent="search()">
+                    <img src="{% static 'leo/img/loading.gif' %}" width="32" v-if="waiting" alt="">
+                    <input type="text" v-model="search_for" class="form-control" placeholder="جستجو ..."
+                        @input="filter()">
+                </form>
+                {% if add_role_form %}
+                {% include "mafia/includes/roles-app/form.html" %}
+                {% endif %}
+                <img v-if="false" width="32" src="{% static 'leo/img/loading.gif' %}" alt="">
+                <h6 v-if="false">
+                    <span class="text-muted">در حال بار گذاری ... </span>
+                </h6>
+                <div class="row">
+                    <div class="col-md-3 farsi" v-for="role in roles">
+                        <div>
+                            <a href="role.get_absolute_url">
+                                <img :src="role.thumbnail" width="100%" class="rounded" alt="">
+                                <h4 class="mt-2 text-center" v-text="role.title"></h4>
+                            </a>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+</div>

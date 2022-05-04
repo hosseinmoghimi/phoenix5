@@ -2,14 +2,20 @@
 
 {% block content %}
   <div class="row">
-      <div class="col-md-12">
-          {% include "market/includes/index-app/template.html" %}
-      </div>
+    <div class="col-md-4">
+      {% include "market/includes/suppliers-app/template.html" %}
+  </div>
+
+  <div class="col-md-8">
+    {% include "market/includes/index-app/template.html" %}
+</div>
+
   </div>
 {% endblock content %}
 
 
 {% block script %}
 {% include "market/includes/index-app/script.html" %}
+{% include "market/includes/suppliers-app/script.html" %}
   
 {% endblock script %}
