@@ -9,8 +9,8 @@ IMAGE_FOLDER="mafia/images/"
 class Game(Page):
  
     class Meta:
-        verbose_name = _("Role")
-        verbose_name_plural = _("Roles")
+        verbose_name = _("Game")
+        verbose_name_plural = _("Games")
 
     
 

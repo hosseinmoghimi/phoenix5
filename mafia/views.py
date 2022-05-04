@@ -1,12 +1,12 @@
 import json
 from django.shortcuts import render
 from django.views import View
-from core.apps import APP_NAME
+from mafia.apps import APP_NAME
 from core.views import CoreContext,PageContext
 from mafia.enums import RoleSideEnum
 from mafia.forms import AddRoleForm
-from mafia.repo import RoleRepo
-from mafia.serializers import RoleSerializer
+from mafia.repo import RolePlayerRepo, RoleRepo
+from mafia.serializers import RolePlayerSerializer, RoleSerializer
 
 TEMPLATE_ROOT="mafia/"
 LAYOUT_PARENT="phoenix/layout.html"
@@ -39,5 +39,27 @@ class RoleView(View):
         role=RoleRepo(request=request).role(*args, **kwargs)
         context['role']=role
         return render(request,TEMPLATE_ROOT+"role.html",context)
+
+
+
+
+class RolePlayersView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        role_players=RolePlayerRepo(request=request).list(*args, **kwargs)
+        context['role_players']=role_players
+        role_players_s=json.dumps(RolePlayerSerializer(role_players,many=True).data)
+        context['role_players_s']=role_players_s
+        if request.user.has_perm(APP_NAME+".add_role"):
+            context['sides']=(side[0] for side in RoleSideEnum.choices)
+            context['add_role_form']=AddRoleForm()
+        return render(request,TEMPLATE_ROOT+"role-players.html",context)
+
+class RolePlayerView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        role_player=RolePlayerRepo(request=request).role_player(*args, **kwargs)
+        context['role_player']=role_player
+        return render(request,TEMPLATE_ROOT+"role-player.html",context)
 
 

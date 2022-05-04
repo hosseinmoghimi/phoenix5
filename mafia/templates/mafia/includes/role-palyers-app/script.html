@@ -1,0 +1,42 @@
+<script>
+    let role_players = JSON.parse(`{{role_players_s|escapejs}}`)
+    let role_players_app = new Vue({
+        el:"#role-players-app",
+        data: {
+            role_players: role_players,
+            description:"",
+            title:"",
+            side:"",
+            search_for:'',
+            waiting:false,
+            show_form:false,
+        },
+        methods: {
+            filter:function(){
+                this.role_players = role_players.filter(role_player => role_player.title.indexOf(this.search_for) > -1)
+         
+            },
+         
+            add_role_player: function (role_player_id) {
+                let url = "{% url 'mafia:add_role_player' %}"
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    title: this.title,
+                    side: this.side,
+                    description: this.description,
+                }
+                console.log(payload)
+                $.post(url, payload).done((data) => {
+                    console.log(data)
+                    if(data.result==='SUCCEED'){
+                        role_players_app.role_players.push(data.role_player)
+                        role_players_app.title=""
+                        role_players_app.description=""
+                    }
+                })
+            },
+           
+        }
+    })
+
+</script>

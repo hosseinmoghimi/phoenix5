@@ -2,14 +2,14 @@
 {% load to_price %}
 {% load to_amount_color %}
 {% load static %}
-<div id="accordion-roles">
+<div id="accordion-role-players">
     <div class="card" id="roles-app">
-        <div class="card-header" id="heading-roles">
+        <div class="card-header" id="heading-role-players">
             <h5 class="text-center">
-                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-roles" aria-expanded="true"
-                    aria-controls="collapse-roles">
-                    نقش ها
-                    <span v-if="roles.length>0">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-role-players"
+                    aria-expanded="true" aria-controls="collapse-role-players">
+                    نقش های بازیکنان
+                    <span v-if="role_players.length>0">
                         <small class="text-danger mx-2">
                             <span v-text="roles.length"></span>
                         </small>
@@ -18,7 +18,8 @@
             </h5>
 
         </div>
-        <div id="collapse-roles" class="collapse" aria-labelledby="heading-roles" data-parent="#accordion-roles">
+        <div id="collapse-role-players" class="collapse" aria-labelledby="heading-role-players"
+            data-parent="#accordion-role-players">
             <div class="card-body">
                 {% load static %}
                 <form @submit.prevent="search()">
@@ -34,14 +35,17 @@
                     <span class="text-muted">در حال بار گذاری ... </span>
                 </h6>
                 <div class="row">
-                    <div class="col-md-3 farsi" v-for="role in roles">
+                    <div class="col-md-3 farsi" v-for="role_player in role_players">
                         <div>
-                            <a href="role.get_absolute_url">
-                                <div class="text-center">
+                            <div class="text-center">
 
-                                    <img :src="role.thumbnail" width="80%" class="rounded" alt="">
-                                </div>
-                                <h4 class="mt-2 text-center" v-text="role.title"></h4>
+                                <img :src="role_player.role.thumbnail" width="80%" class="rounded" alt="">
+                            </div>
+                            <a href="role_player.role.get_absolute_url">
+                                <h4 class="mt-2 text-center" v-text="role_player.role.title"></h4>
+                            </a>
+                            <a href="role_player.player.get_absolute_url">
+                                <h4 class="mt-2 text-center" v-text="role_player.player.profile.name"></h4>
                             </a>
                         </div>
 
