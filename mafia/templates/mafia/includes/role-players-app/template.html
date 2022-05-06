@@ -3,7 +3,7 @@
 {% load to_amount_color %}
 {% load static %}
 <div id="accordion-role-players">
-    <div class="card" id="roles-app">
+    <div class="card" id="role-players-app">
         <div class="card-header" id="heading-role-players">
             <h5 class="text-center">
                 <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-role-players"
@@ -11,7 +11,7 @@
                     نقش های بازیکنان
                     <span v-if="role_players.length>0">
                         <small class="text-danger mx-2">
-                            <span v-text="roles.length"></span>
+                            <span v-text="role_players.length"></span>
                         </small>
                     </span>
                 </button>
@@ -41,11 +41,20 @@
 
                                 <img :src="role_player.role.thumbnail" width="80%" class="rounded" alt="">
                             </div>
-                            <a href="role_player.role.get_absolute_url">
-                                <h4 class="mt-2 text-center" v-text="role_player.role.title"></h4>
+                            <a :href="role_player.role.get_absolute_url">
+                                <h4 class="mt-2 text-center">
+                                    <span :class="'text-'+role_player.role.color" v-text="role_player.role.title">
+
+                                    </span>
+                                </h4>
                             </a>
-                            <a href="role_player.player.get_absolute_url">
-                                <h4 class="mt-2 text-center" v-text="role_player.player.profile.name"></h4>
+                            <a :href="role_player.player.get_absolute_url">
+                                <h4 class="mt-2 text-center">
+
+                                    <span  :class="'text-'+role_player.role.color"  v-text="role_player.player.profile.name">
+
+                                    </span>
+                                </h4>
                             </a>
                         </div>
 

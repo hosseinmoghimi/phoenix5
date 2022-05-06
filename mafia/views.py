@@ -10,9 +10,11 @@ from mafia.serializers import GameSerializer, RolePlayerSerializer, RoleSerializ
 
 TEMPLATE_ROOT="mafia/"
 LAYOUT_PARENT="phoenix/layout.html"
+LAYOUT_WIDE_PARENT="phoenix/wide-layout.html"
 def getContext(request,*args, **kwargs):
     context=CoreContext(request=request,app_name=APP_NAME)
     context['LAYOUT_PARENT']=LAYOUT_PARENT
+    context['LAYOUT_WIDE_PARENT']=LAYOUT_WIDE_PARENT
     return context
 class HomeView(View):
     def get(self,request,*args, **kwargs):
@@ -37,6 +39,7 @@ class RoleView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
         role=RoleRepo(request=request).role(*args, **kwargs)
+        context.update(PageContext(request=request,page=role))
         context['role']=role
         return render(request,TEMPLATE_ROOT+"role.html",context)
 
@@ -106,6 +109,14 @@ class GameView(View):
         game=GameRepo(request=request).game(*args, **kwargs)
         # context.update(PageContext(request=request,page=game))
         context['game']=game
+
+        # role_players
+        if True:
+            role_players=RolePlayerRepo(request=request).list(game_id=game.id)
+            role_players_s=json.dumps(RolePlayerSerializer(role_players,many=True).data)
+            context['role_players_s']=role_players_s
+            context['role_players']=role_players
+
         return render(request,TEMPLATE_ROOT+"game.html",context)
 
 

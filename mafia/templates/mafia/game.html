@@ -18,7 +18,9 @@
                             سناریو
                         </td>
                         <td class="text-right">
-                            {{game.scenario}}
+                            <a href="{{game.game_scenario.get_absolute_url}}">
+                                {{game.game_scenario.title}}
+                            </a>
 
                         </td>
                     </tr>
@@ -37,7 +39,7 @@
 
                     <tr>
                         <td class="text-left">
-تاریخ
+                            تاریخ
                         </td>
                         <td class="text-right">
                             {{game.date_added|to_persian_datetime|safe}}
@@ -83,11 +85,17 @@
             </div>
         </div>
     </div>
+
+    <div class="col-md-12">
+        {% include "mafia/includes/role-players-app/template.html" %}
+    </div>
+
 </div>
 {% endblock content %}
 
 
 {% block script %}
 {% include "mafia/includes/game-app/script.html" %}
+        {% include "mafia/includes/role-players-app/script.html" %}
 
 {% endblock script %}

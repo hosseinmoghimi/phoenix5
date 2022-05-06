@@ -70,6 +70,8 @@ def class_title(*args, **kwargs):
         class_title ="فاکتور خدمات"
     elif class_name=="workshift":
         class_title= "شیفت کاری"
+    elif class_name=="role":
+        class_title= "نقش"
     return class_title
 
 class ParameterNameEnum(TextChoices):
@@ -85,6 +87,7 @@ class ParameterNameEnum(TextChoices):
 class TextDirectionEnum(TextChoices):
     Rtl='rtl',_('rtl')
     Ltr='ltr',_('ltr')
+
 def BS_ColorCode(bs_color):
     if bs_color=='success':
         return "#28a745"

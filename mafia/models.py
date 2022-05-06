@@ -35,6 +35,8 @@ class Game(models.Model,LinkHelper):
     class Meta:
         verbose_name = _("Game")
         verbose_name_plural = _("Games")
+    def __str__(self):
+        return self.title
 
     @property
     def title(self):
@@ -85,7 +87,8 @@ class Role(Page):
 class Player(models.Model,LinkHelper):
     profile=models.ForeignKey("authentication.profile", verbose_name=_("profile"), on_delete=models.CASCADE)
 
-
+    class_name="player"
+    app_name=APP_NAME
     class Meta:
         verbose_name = _("Player")
         verbose_name_plural = _("Players")
@@ -108,11 +111,12 @@ class God(models.Model,LinkHelper):
         return self.profile.name
  
 
-class RolePlayer(models.Model):
+class RolePlayer(models.Model,LinkHelper):
     role=models.ForeignKey("role", verbose_name=_("role"), on_delete=models.CASCADE)
     player=models.ForeignKey("player", verbose_name=_("player"), on_delete=models.CASCADE)
     game=models.ForeignKey("game", verbose_name=_("game"), on_delete=models.CASCADE)
-
+    class_name="roleplayer"
+    app_name=APP_NAME
     
 
     class Meta:
@@ -121,6 +125,4 @@ class RolePlayer(models.Model):
 
     def __str__(self):
         return self.game.title
-
-    def get_absolute_url(self):
-        return reverse("RolePlayer_detail", kwargs={"pk": self.pk})
+ 

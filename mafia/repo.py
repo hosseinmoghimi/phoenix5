@@ -5,6 +5,7 @@ from core.repo import ProfileRepo
 from mafia.enums import RoleSideEnum
 from mafia.models import Role,Game,Player,RolePlayer,God,GameScenario
 from mafia.apps import APP_NAME
+from mafia.default import init_roles,init_scenarioes
 
 class RoleRepo():
     def __init__(self, *args, **kwargs):
@@ -20,88 +21,8 @@ class RoleRepo():
         self.profile=ProfileRepo(*args, **kwargs).me
        
     def initialize(self,*args, **kwargs):
-        Role.objects.all().delete()
+        init_roles()
         
-        
-        
-
-
-        role=Role(title="تفنگ دار")
-        role.side=RoleSideEnum.CITIZEN
-        role.save()
-
-        role=Role(title="تک تیر انداز")
-        role.side=RoleSideEnum.CITIZEN
-        role.save()
-        
-        
-        role=Role(title="تکاور")
-        role.side=RoleSideEnum.CITIZEN
-        role.save()
-
-        role=Role(title="حرفه ای")
-        role.side=RoleSideEnum.CITIZEN
-        role.save()
-
-        
-        role=Role(title="روانشناس")
-        role.side=RoleSideEnum.CITIZEN
-        role.save()
-
-        
-        role=Role(title="زره پوش")
-        role.side=RoleSideEnum.CITIZEN
-        role.save()
-
-        role=Role()
-        role.title="شهروند ساده"
-        role.side=RoleSideEnum.CITIZEN
-        role.save()
-
-
-
-        role=Role()
-        role.title="کارآگاه"
-        role.side=RoleSideEnum.CITIZEN
-        role.save()
-
-        role=Role()
-        role.title="کابوی"
-        role.side=RoleSideEnum.CITIZEN
-        role.save()
-
-        role=Role()
-        role.title="نگهبان"
-        role.side=RoleSideEnum.CITIZEN
-        role.save()
-
-
-        
-        role=Role()
-        role.title="پدرخوانده"
-        role.side=RoleSideEnum.MAFIA
-        role.save()
-        
-        
-        role=Role()
-        role.title="تروریست"
-        role.side=RoleSideEnum.MAFIA
-        role.save()
-
-        role=Role()
-        role.title="خراب کار"
-        role.side=RoleSideEnum.MAFIA
-        role.save()
-
-        role=Role()
-        role.title="گروگان گیر"
-        role.side=RoleSideEnum.MAFIA
-        role.save()
-        
-        role=Role()
-        role.title="ناتو"
-        role.side=RoleSideEnum.MAFIA
-        role.save()
 
 
     def role(self, *args, **kwargs):
@@ -160,36 +81,7 @@ class GameScenarioRepo():
     
     
     def initialize(self,*args, **kwargs):
-        role_repo=RoleRepo(request=self.request)
-        GameScenario.objects.all().delete()
-        game_scenario=GameScenario()
-        game_scenario.title="گروگان گیری"
-        game_scenario.save()
-        game_scenario.roles.add(role_repo.role(title="پدرخوانده"))
-        game_scenario.roles.add(role_repo.role(title="کارآگاه"))
-        game_scenario.roles.add(role_repo.role(title="پزشک"))
-        game_scenario.roles.add(role_repo.role(title="شهروند ساده"))
-        game_scenario.roles.add(role_repo.role(title="نگهبان"))
-
-        
-        game_scenario=GameScenario()
-        game_scenario.title="تفنگ دار"
-        game_scenario.save()
-        game_scenario.roles.add(role_repo.role(title="پدرخوانده"))
-        game_scenario.roles.add(role_repo.role(title="کارآگاه"))
-        game_scenario.roles.add(role_repo.role(title="پزشک"))
-        game_scenario.roles.add(role_repo.role(title="شهروند ساده"))
-        game_scenario.roles.add(role_repo.role(title="تفنگ دار"))
-        game_scenario.roles.add(role_repo.role(title="خراب کار"))
-
-        
-        game_scenario=GameScenario()
-        game_scenario.title="مذاکره"
-        game_scenario.save()
-
-        game_scenario=GameScenario()
-        game_scenario.title="تایلر ماسون"
-        game_scenario.save()
+        init_scenarioes()
 
 
     def game_scenario(self, *args, **kwargs):
@@ -396,7 +288,7 @@ class RolePlayerRepo():
         if 'user' in kwargs:
             self.user = kwargs['user']
         
-        self.objects=RolePlayer.objects.all()
+        self.objects=RolePlayer.objects
         self.profile=ProfileRepo(*args, **kwargs).me
        
 
@@ -420,8 +312,8 @@ class RolePlayerRepo():
             objects = objects.filter(Q(title__contains=search_for)|Q(short_description__contains=search_for)|Q(description__contains=search_for))
         if 'for_home' in kwargs:
             objects = objects.filter(Q(for_home=kwargs['for_home']))
-        if 'parent_id' in kwargs:
-            objects=objects.filter(parent_id=kwargs['parent_id'])
+        if 'game_id' in kwargs:
+            objects=objects.filter(game_id=kwargs['game_id'])
         return objects.all()
 
     def add_role_player(self,*args, **kwargs):
