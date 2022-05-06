@@ -1,0 +1,74 @@
+{% load to_persian_date %}
+{% load to_price %}
+{% load to_amount_color %}
+{% load static %}
+<div id="accordion-players">
+    <div class="card" id="players-app">
+        <div class="card-header" id="heading-players">
+            <h5 class="text-center">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-players" aria-expanded="true"
+                    aria-controls="collapse-players">
+                    بازیکن ها
+                    <span>
+                        <small class="text-danger mx-2">
+                            {{players|length}}
+                        </small>
+                    </span>
+                </button>
+            </h5>
+
+        </div>
+        <div id="collapse-players" class="collapse" aria-labelledby="heading-players" data-parent="#accordion-players">
+            <div class="card-body">
+               
+              
+
+
+                <div class="table-responsive">
+
+                    <table class="table table-striped">
+                        <thead>
+                            <th>
+                                بازیکن
+                            </th>
+                            <th>
+                              امتیاز
+                            </th>
+                        </thead>
+                        <tbody>
+
+                            {% for player in players %}
+
+                            <tr>
+                                <td>
+                                    <a href="{{player.profile.get_absolute_url}}">
+                                        <div class="media">
+                                            <img src="{{player.profile.image}}" class="rounded-circle" width="32"
+                                                alt="">
+                                            <div class="media-body mr-2">
+                                                {{player.profile.name}}
+                                            </div>
+                                        </div>
+
+                                    </a>
+
+                                </td>
+                                <td>
+                                  
+
+                                {{player.score}}
+
+                                </td>
+                            </tr>
+                            {% endfor %}
+
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+
+
+    </div>
+</div>

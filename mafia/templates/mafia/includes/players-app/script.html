@@ -1,0 +1,41 @@
+<script>
+    let players = JSON.parse(`{{players_s|escapejs}}`)
+    let players_app = new Vue({
+        el:"#players-app",
+        data: {
+            players: players,
+            description:"",
+            title:"",
+            search_for:'',
+            waiting:false,
+            show_form:false,
+        },
+        methods: {
+            filter:function(){
+                this.players = players.filter(player => player.title.indexOf(this.search_for) > -1)
+         
+            },
+         
+            add_player: function (player_id) {
+                let url = "{% url 'mafia:add_player' %}"
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    title: this.title,
+                    side: this.side,
+                    description: this.description,
+                }
+                console.log(payload)
+                $.post(url, payload).done((data) => {
+                    console.log(data)
+                    if(data.result==='SUCCEED'){
+                        players_app.players.push(data.player)
+                        players_app.title=""
+                        players_app.description=""
+                    }
+                })
+            },
+           
+        }
+    })
+
+</script>

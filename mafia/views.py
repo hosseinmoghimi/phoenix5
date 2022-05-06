@@ -5,8 +5,8 @@ from mafia.apps import APP_NAME
 from core.views import CoreContext, MessageView,PageContext
 from mafia.enums import RoleSideEnum
 from mafia.forms import *
-from mafia.repo import GameRepo, GameScenarioRepo, GodRepo, RolePlayerRepo, RoleRepo
-from mafia.serializers import GameSerializer, RolePlayerSerializer, RoleSerializer,GameScenarioSerializer
+from mafia.repo import GameRepo, GameScenarioRepo, GodRepo, PlayerRepo, RolePlayerRepo, RoleRepo
+from mafia.serializers import GameSerializer, PlayerSerializer, RolePlayerSerializer, RoleSerializer,GameScenarioSerializer
 
 TEMPLATE_ROOT="mafia/"
 LAYOUT_PARENT="phoenix/layout.html"
@@ -169,5 +169,26 @@ class RolePlayerView(View):
         role_player=RolePlayerRepo(request=request).role_player(*args, **kwargs)
         context['role_player']=role_player
         return render(request,TEMPLATE_ROOT+"role-player.html",context)
+
+
+
+class PlayersView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        players=PlayerRepo(request=request).list(*args, **kwargs)
+        context['players']=players
+        players_s=json.dumps(PlayerSerializer(players,many=True).data)
+        context['players_s']=players_s
+        if request.user.has_perm(APP_NAME+".add_role"):
+            context['sides']=(side[0] for side in RoleSideEnum.choices)
+            context['add_role_form']=AddRoleForm()
+        return render(request,TEMPLATE_ROOT+"players.html",context)
+
+class PlayerView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        player=PlayerRepo(request=request).player(*args, **kwargs)
+        context['player']=player
+        return render(request,TEMPLATE_ROOT+"player.html",context)
 
 

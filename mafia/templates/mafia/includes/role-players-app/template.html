@@ -27,9 +27,12 @@
                     <input type="text" v-model="search_for" class="form-control" placeholder="جستجو ..."
                         @input="filter()">
                 </form>
+                <div class="mb-3"></div>
                 {% if add_role_form %}
                 {% include "mafia/includes/roles-app/form.html" %}
                 {% endif %}
+
+                <div class="mb-3"></div>
                 <img v-if="false" width="32" src="{% static 'leo/img/loading.gif' %}" alt="">
                 <h6 v-if="false">
                     <span class="text-muted">در حال بار گذاری ... </span>
@@ -38,8 +41,10 @@
                     <div class="col-md-3 farsi" v-for="role_player in role_players">
                         <div>
                             <div class="text-center">
+<a :href="role_player.get_absolute_url">
 
-                                <img :src="role_player.role.thumbnail" width="80%" class="rounded" alt="">
+    <img :src="role_player.role.thumbnail" width="80%" class="rounded" alt="">
+</a>
                             </div>
                             <a :href="role_player.role.get_absolute_url">
                                 <h4 class="mt-2 text-center">
@@ -48,14 +53,36 @@
                                     </span>
                                 </h4>
                             </a>
-                            <a :href="role_player.player.get_absolute_url">
-                                <h4 class="mt-2 text-center">
+                            <div class="text-center">
 
-                                    <span  :class="'text-'+role_player.role.color"  v-text="role_player.player.profile.name">
+                                <a :href="role_player.player.get_absolute_url">
+                                    <img :src="role_player.player.profile.image" class="rounded-circle" width="48"
+                                        alt="">
+                                </a>
+
+                            </div>
+                            <a :href="role_player.player.get_absolute_url">
+                                <h5 class="mt-2 text-center">
+
+                                    <span :class="'text-'+role_player.role.color"
+                                        v-text="role_player.player.profile.name">
 
                                     </span>
-                                </h4>
+
+                                   
+                                </h5>
                             </a>
+                            <div class="text-center">
+                                <span  
+                                v-text="role_player.player.score">
+
+                            </span>
+                            <i aria-hidden="true" class="fa fa-star " style="color: rgb(245, 193, 3);"></i>
+
+                                <a :href="role_player.get_edit_url" title="ویرایش">
+                                    <i class="fa fa-edit"></i>
+                                </a>
+                            </div>
                         </div>
 
                     </div>

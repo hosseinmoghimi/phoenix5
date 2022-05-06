@@ -17,7 +17,7 @@ class PlayerSerializer(serializers.ModelSerializer):
     profile=ProfileSerializer()
     class Meta:
         model=Player
-        fields=['id','profile','get_absolute_url']
+        fields=['id','profile','score','get_absolute_url']
 
 class GodSerializer(serializers.ModelSerializer):
     profile=ProfileSerializer()
@@ -36,4 +36,4 @@ class RolePlayerSerializer(serializers.ModelSerializer):
     role=RoleSerializer()
     class Meta:
         model=RolePlayer
-        fields=['id','role','get_absolute_url','player']
+        fields=['id','role','get_absolute_url','player','get_edit_url']

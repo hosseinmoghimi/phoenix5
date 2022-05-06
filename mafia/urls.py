@@ -15,8 +15,8 @@ urlpatterns = [
     path("add_role/",apis.AddRoleApi.as_view(),name="add_role_player"),
 
     
-    path("players/",views.RolesView.as_view(),name="players"),
-    path("player/<int:pk>/",views.RoleView.as_view(),name="player"),
+    path("players/",views.PlayersView.as_view(),name="players"),
+    path("player/<int:pk>/",views.PlayerView.as_view(),name="player"),
     path("add_player/",apis.AddRoleApi.as_view(),name="add_player"),
     
     path("leages/",views.GamesView.as_view(),name="leages"),

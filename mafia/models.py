@@ -86,7 +86,9 @@ class Role(Page):
 
 class Player(models.Model,LinkHelper):
     profile=models.ForeignKey("authentication.profile", verbose_name=_("profile"), on_delete=models.CASCADE)
-
+    @property
+    def score(self):
+        return 4*23
     class_name="player"
     app_name=APP_NAME
     class Meta:

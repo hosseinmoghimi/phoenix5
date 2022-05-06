@@ -1,0 +1,48 @@
+{% extends "mafia/layout.html" %}
+
+
+{% block content %}
+<div class="row">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5>
+                    گاد
+                </h5>
+            </div>
+
+            <div class="card-body">
+                <div>
+
+                    <a href="{{role_player.player.get_absolute_url}}">
+                        <div class="media">
+                            <img src="{{role_player.player.profile.image}}" class="rounded-circle" width="64" alt="">
+                            <div class="media-body mr-2">
+                                {{role_player.player.profile.name}}
+                            </div>
+                        </div>
+
+                    </a>
+                </div>
+
+
+
+                <div>
+
+                    <a href="{{role_player.role.get_absolute_url}}">
+                        <div class="media">
+                            <img src="{{role_player.role.thumbnail}}" class="rounded" width="64" alt="">
+                            <div class="media-body mr-2">
+                                {{role_player.role.title}}
+                            </div>
+                        </div>
+
+                    </a>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
