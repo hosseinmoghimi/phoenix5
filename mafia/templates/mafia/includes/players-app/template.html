@@ -37,16 +37,15 @@
                         </thead>
                         <tbody>
 
-                            {% for player in players %}
 
-                            <tr>
+                            <tr v-for="player in players">
                                 <td>
-                                    <a href="{{player.profile.get_absolute_url}}">
+                                    <a :href="player.profile.get_absolute_url">
                                         <div class="media">
-                                            <img src="{{player.profile.image}}" class="rounded-circle" width="32"
+                                            <img :src="player.profile.image" class="rounded-circle" width="32"
                                                 alt="">
                                             <div class="media-body mr-2">
-                                                {{player.profile.name}}
+                                                <span v-text="player.profile.name"></span>
                                             </div>
                                         </div>
 
@@ -55,12 +54,12 @@
                                 </td>
                                 <td>
                                   
+                                    <span v-text="player.score"></span>
+                                    <i aria-hidden="true" class="fa fa-star " style="color: rgb(245, 193, 3);"></i>
 
-                                {{player.score}}
 
                                 </td>
                             </tr>
-                            {% endfor %}
 
                         </tbody>
                     </table>
