@@ -1,0 +1,41 @@
+<script>
+    let games = JSON.parse(`{{games_s|escapejs}}`)
+    let games_app = new Vue({
+        el:"#games-app",
+        data: {
+            games: games,
+            description:"",
+            title:"",
+            search_for:'',
+            waiting:false,
+            show_form:false,
+        },
+        methods: {
+            filter:function(){
+                this.games = games.filter(game => game.title.indexOf(this.search_for) > -1)
+         
+            },
+         
+            add_game: function (game_id) {
+                let url = "{% url 'mafia:add_game' %}"
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    title: this.title,
+                    side: this.side,
+                    description: this.description,
+                }
+                console.log(payload)
+                $.post(url, payload).done((data) => {
+                    console.log(data)
+                    if(data.result==='SUCCEED'){
+                        games_app.games.push(data.game)
+                        games_app.title=""
+                        games_app.description=""
+                    }
+                })
+            },
+           
+        }
+    })
+
+</script>

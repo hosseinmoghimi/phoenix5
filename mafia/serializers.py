@@ -1,17 +1,35 @@
 from rest_framework import serializers
-from mafia.models import God,Game,Role,Player,RolePlayer
+from mafia.models import GameScenario, God,Game,Role,Player,RolePlayer
 from authentication.serializers import ProfileSerializer
 
 class RoleSerializer(serializers.ModelSerializer):
     class Meta:
         model=Role
-        fields=['id','title','get_absolute_url','thumbnail']
+        fields=['id','title','color','side','get_absolute_url','thumbnail']
+
+class GameScenarioSerializer(serializers.ModelSerializer):
+    roles=RoleSerializer(many=True)
+    class Meta:
+        model=GameScenario
+        fields=['id','title','roles','get_absolute_url']
 
 class PlayerSerializer(serializers.ModelSerializer):
     profile=ProfileSerializer()
     class Meta:
-        model=Role
+        model=Player
         fields=['id','profile','get_absolute_url']
+
+class GodSerializer(serializers.ModelSerializer):
+    profile=ProfileSerializer()
+    class Meta:
+        model=God
+        fields=['id','profile','get_absolute_url']
+
+class GameSerializer(serializers.ModelSerializer):
+    god=GodSerializer()
+    class Meta:
+        model=Game
+        fields=['id','god','title','scenario','get_absolute_url']
 
 class RolePlayerSerializer(serializers.ModelSerializer):
     player=PlayerSerializer()

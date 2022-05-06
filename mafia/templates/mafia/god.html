@@ -1,0 +1,30 @@
+{% extends "mafia/layout.html" %}
+
+
+{% block content %}
+<div class="row">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5>
+                    گاد
+                </h5>
+            </div>
+
+            <div class="card-body">
+                    <a href="{{god.get_absolute_url}}">
+                        <div class="media">
+                            <img src="{{god.profile.image}}" class="rounded-circle" width="32"
+                                alt="">
+                            <div class="media-body mr-2">
+                                {{god.profile.name}}
+                            </div>
+                        </div>
+
+                    </a>
+ 
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

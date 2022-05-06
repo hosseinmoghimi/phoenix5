@@ -1,0 +1,93 @@
+{% extends "mafia/layout.html" %}
+{% load to_persian_date %}
+{% block content %}
+<div class="row">
+
+
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5>
+                    {{game.title}}
+                </h5>
+            </div>
+            <div class="card-body">
+                <table class="table">
+                    <tr>
+                        <td class="text-left">
+                            سناریو
+                        </td>
+                        <td class="text-right">
+                            {{game.scenario}}
+
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="text-left">
+                            گاد
+                        </td>
+                        <td class="text-right">
+                            <a href="{{game.god.get_absolute_url}}">
+                                {{game.god.profile.name}}
+                            </a>
+                        </td>
+                    </tr>
+
+
+                    <tr>
+                        <td class="text-left">
+تاریخ
+                        </td>
+                        <td class="text-right">
+                            {{game.date_added|to_persian_datetime|safe}}
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="text-left">
+
+                        </td>
+                        <td class="text-right">
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="text-left">
+
+                        </td>
+                        <td class="text-right">
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="text-left">
+
+                        </td>
+                        <td class="text-right">
+
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="text-left">
+
+                        </td>
+                        <td class="text-right">
+
+                        </td>
+                    </tr>
+
+                </table>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+
+{% block script %}
+{% include "mafia/includes/game-app/script.html" %}
+
+{% endblock script %}

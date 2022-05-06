@@ -13,10 +13,31 @@ urlpatterns = [
     path("role_players/",views.RolePlayersView.as_view(),name="role_players"),
     path("role_player/<int:pk>/",views.RolePlayerView.as_view(),name="roleplayer"),
     path("add_role/",apis.AddRoleApi.as_view(),name="add_role_player"),
+
+    path("game_scenarios/",views.RolesView.as_view(),name="game_scenarios"),
+    path("game_scenario/<int:pk>/",views.RoleView.as_view(),name="gamescenario"),
+    path("add_game_scenarios/",apis.AddRoleApi.as_view(),name="add_game_scenarios"),
     
     path("players/",views.RolesView.as_view(),name="players"),
     path("player/<int:pk>/",views.RoleView.as_view(),name="player"),
     path("add_player/",apis.AddRoleApi.as_view(),name="add_player"),
+    
+    path("leages/",views.GamesView.as_view(),name="leages"),
+    path("leage/<int:pk>/",views.GameView.as_view(),name="leage"),
+    
+    path("games/",views.GamesView.as_view(),name="games"),
+    path("game/<int:pk>/",views.GameView.as_view(),name="game"),
+    path("add_game/",views.AddGameView.as_view(),name="add_game"),
+
+
+    path("gods/",views.GodsView.as_view(),name="gods"),
+    path("god/<int:pk>/",views.GodView.as_view(),name="god"),
+
+    path("game_scenarioes/",views.GameScenarioesView.as_view(),name="game_scenarioes"),
+    path("game_scenario/<int:pk>/",views.GameScenarioView.as_view(),name="gamescenario"),
+
+
+    path("initialize/",views.InitializeView.as_view(),name="initialize"),
 
 
 ]
