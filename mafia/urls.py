@@ -14,9 +14,6 @@ urlpatterns = [
     path("role_player/<int:pk>/",views.RolePlayerView.as_view(),name="roleplayer"),
     path("add_role/",apis.AddRoleApi.as_view(),name="add_role_player"),
 
-    path("game_scenarios/",views.RolesView.as_view(),name="game_scenarios"),
-    path("game_scenario/<int:pk>/",views.RoleView.as_view(),name="gamescenario"),
-    path("add_game_scenarios/",apis.AddRoleApi.as_view(),name="add_game_scenarios"),
     
     path("players/",views.RolesView.as_view(),name="players"),
     path("player/<int:pk>/",views.RoleView.as_view(),name="player"),
@@ -35,6 +32,7 @@ urlpatterns = [
 
     path("game_scenarioes/",views.GameScenarioesView.as_view(),name="game_scenarioes"),
     path("game_scenario/<int:pk>/",views.GameScenarioView.as_view(),name="gamescenario"),
+    path("add_game_scenarios/",apis.AddRoleApi.as_view(),name="add_game_scenarios"),
 
 
     path("initialize/",views.InitializeView.as_view(),name="initialize"),

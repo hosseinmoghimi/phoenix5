@@ -1,0 +1,35 @@
+{% extends "mafia/layout.html" %}
+
+{% block content %}
+<div class="row">
+
+
+    <div class="col-md-12">
+
+        <div class="card">
+            <div class="card-header">
+                <h5>
+                    {{game_scenario.title}}
+                </h5>
+            </div>
+            <div class="card-body">
+            
+                
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        {% include "mafia/includes/roles-app/template.html" %}
+    </div>
+</div>
+{% endblock content %}
+
+
+{% block script %}
+{% include "mafia/includes/roles-app/script.html" %}
+
+{% endblock script %}

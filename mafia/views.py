@@ -76,9 +76,15 @@ class GameScenarioesView(View):
 class GameScenarioView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
-        god=GodRepo(request=request).god(*args, **kwargs)
-        context['god']=god
-        return render(request,TEMPLATE_ROOT+"god.html",context)
+        game_scenario=GameScenarioRepo(request=request).game_scenario(*args, **kwargs)
+        context['game_scenario']=game_scenario
+
+        roles=game_scenario.roles.all().order_by("side")
+        context['roles']=roles
+        roles_s=json.dumps(RoleSerializer(roles,many=True).data)
+        context['roles_s']=roles_s
+
+        return render(request,TEMPLATE_ROOT+"game-scenario.html",context)
 
 
 class GamesView(View):
