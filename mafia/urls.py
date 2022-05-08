@@ -31,6 +31,7 @@ urlpatterns = [
     path("god/<int:pk>/",views.GodView.as_view(),name="god"),
 
     path("game_act/<int:pk>/",views.GameActView.as_view(),name="gameact"),
+    path("add_player_to_game/",apis.AddPlayerToGameApi.as_view(),name="add_player_to_game"),
     path("add_game_act/",views.GameActView.as_view(),name="add_game_act"),
 
     path("game_scenarioes/",views.GameScenarioesView.as_view(),name="game_scenarioes"),

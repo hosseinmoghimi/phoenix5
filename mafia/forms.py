@@ -12,6 +12,11 @@ class AddRolePlayerForm(forms.Form):
     title=forms.CharField(max_length=50, required=True)
     description=forms.CharField(max_length=5000, required=False)
 
+class AddPlayerToGameForm(forms.Form):
+    game_id=forms.IntegerField(required=True)
+    role_id=forms.IntegerField(required=True)
+    player_id=forms.IntegerField(required=True)
+
 class AddGameForm(forms.Form):
     # title=forms.CharField(max_length=50, required=False)
     game_scenario_id=forms.IntegerField (required=True)

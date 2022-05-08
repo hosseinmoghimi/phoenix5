@@ -131,7 +131,7 @@ class God(models.Model,LinkHelper):
 
 class RolePlayer(models.Model,LinkHelper):
     role=models.ForeignKey("role", verbose_name=_("role"), on_delete=models.CASCADE)
-    player=models.ForeignKey("player", verbose_name=_("player"), on_delete=models.CASCADE)
+    player=models.ForeignKey("player", verbose_name=_("player"), null=True,blank=True,on_delete=models.CASCADE)
     game=models.ForeignKey("game", verbose_name=_("game"), on_delete=models.CASCADE)
     class_name="roleplayer"
     app_name=APP_NAME
@@ -142,5 +142,6 @@ class RolePlayer(models.Model,LinkHelper):
         verbose_name_plural = _("RolePlayers")
 
     def __str__(self):
-        return f"{self.player.profile.name} : {self.role.title} : {self.game.title}"
+        aa=(self.player.profile.name) if self.player is not None else ""
+        return f"{aa} : {self.role.title} : {self.game.title}"
  

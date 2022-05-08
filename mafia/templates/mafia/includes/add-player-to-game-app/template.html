@@ -1,0 +1,86 @@
+{% load to_persian_date %}
+{% load to_price %}
+{% load to_amount_color %}
+{% load static %}
+<div id="accordion-add-player-to-game">
+    <div class="card" id="add-player-to-game-app">
+        <div class="card-header" id="heading-add-player-to-game">
+            <h5 class="text-center">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-add-player-to-game"
+                    aria-expanded="true" aria-controls="collapse-add-player-to-game">
+                    اکت های بازی
+                    <span>
+                        <small class="text-danger mx-2">
+                            {{game_acts|length}}
+                        </small>
+                    </span>
+                </button>
+            </h5>
+
+        </div>
+        <div id="collapse-add-player-to-game" class="collapse" aria-labelledby="heading-add-player-to-game"
+            data-parent="#accordion-add-player-to-game">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <th>
+                                بازیکن
+                            </th>
+                            <th>
+                                اکت
+                            </th>
+                            <th>
+                                هدف
+                            </th>
+                            <th>
+                                شب
+                            </th>
+                            <th>
+                                امتیاز
+                            </th>
+                        </thead>
+                        <tbody>
+                            <tr v-for="game_act in game_acts">
+                                <td>
+                                    <a :href="game_act.actor.get_absolute_url">
+                                        <span v-text="game_act.actor.player.profile.name"></span>
+                                        <small>
+                                            (
+                                            <span v-text="game_act.actor.role.title"></span>
+                                            )
+                                        </small>
+                                    </a>
+                                </td>
+                                <td>
+                                    <span v-text="game_act.act"></span>
+                                </td>
+                                <td>
+                                    <a :href="game_act.acted.get_absolute_url">
+                                        <span v-text="game_act.acted.player.profile.name"></span>
+                                        <small>
+                                            (
+
+                                            <span v-text="game_act.acted.role.title"></span>
+                                            )
+                                        </small>
+                                    </a>
+                                </td>
+                                <td>
+                                    شب
+                                    <span v-text="game_act.night"></span>
+                                </td>
+                                <td>
+                                    <span v-text="game_act.score"></span>
+                                    <small>
+                                    امتیاز
+                                    </small>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -94,21 +94,24 @@
                                 </td>
 
                                 <td>
-                                    <a :href="role_player.player.get_absolute_url">
-                                        <img :src="role_player.player.profile.image" width="64" class="rounded-circle"
-                                            alt=""><span class="farsi mr-2">
-                                            <span :class="'text-'+role_player.role.color"
-                                                v-text="role_player.player.profile.name">
+                                    <div v-if="role_player.player">
+                                        <a :href="role_player.player.get_absolute_url">
+                                            <img :src="role_player.player.profile.image" width="64"
+                                                class="rounded-circle" alt=""><span class="farsi mr-2">
+                                                <span :class="'text-'+role_player.role.color"
+                                                    v-text="role_player.player.profile.name">
+
+                                                </span>
+                                                <small v-text="role_player.player.score">
+
+                                                </small>
+                                                <i aria-hidden="true" class="fa fa-star "
+                                                    style="color: rgb(245, 193, 3);"></i>
 
                                             </span>
-                                            <small v-text="role_player.player.score">
+                                        </a>
+                                    </div>
 
-                                            </small>
-                                            <i aria-hidden="true" class="fa fa-star "
-                                                style="color: rgb(245, 193, 3);"></i>
-
-                                        </span>
-                                    </a>
                                 </td>
                                 <td>
                                     <a :href="role_player.get_edit_url" class=" text-warning" title="ویرایش">

@@ -163,15 +163,31 @@ class GameRepo():
         game=Game()
         if 'title' in kwargs and kwargs['title'] is not None and not kwargs['title']=="":
             game.title = kwargs['title'] 
+        
         if 'game_scenario_id' in kwargs:
-            game.game_scenario_id = kwargs['game_scenario_id'] 
+            game.game_scenario_id = kwargs['game_scenario_id']
+                
         if 'god_id' in kwargs:
             game.god_id = kwargs['god_id']
         if 'description' in kwargs:
             game.description = kwargs['description'] 
         if 'status' in kwargs:
-            game.status = kwargs['status'] 
+            game.status = kwargs['status']
+
+        
+            
         game.save()
+        if 'game_scenario_id' in kwargs:
+            game_scenario=GameScenario.objects.filter(pk=kwargs['game_scenario_id']).first()
+            if game_scenario is not None:
+                roles=game_scenario.roles.all()
+                for role in roles:
+                    role_player=RolePlayer()
+                    role_player.role_id=role.id
+                    role_player.game_id=game.id
+                    role_player.player=None
+                    role_player.save()
+
         return game
 
 
@@ -327,7 +343,7 @@ class GameActRepo():
         return game_act
 
 
-class RolePlayerRepo():  
+class RolePlayerRepo():
     def __init__(self, *args, **kwargs):
         self.request = None
         self.user = None
@@ -369,10 +385,16 @@ class RolePlayerRepo():
         if not self.user.has_perm(APP_NAME+".add_roleplayer"):
             return None
         role_player=RolePlayer()
-        if 'player_id' in kwargs:
-            role_player.player_id = kwargs['player_id'] 
-        if 'role_id' in kwargs:
-            role_player.role_id = kwargs['role_id'] 
+
+        if 'player_id' in kwargs and kwargs['player_id'] is not None and not kwargs['player_id']=="":
+            role_player.player_id = kwargs['player_id']
+
+        if 'role_id' in kwargs and kwargs['role_id'] is not None and not kwargs['role_id']=="":
+            role_player.role_id = kwargs['role_id']
+            
+        if 'game_id' in kwargs and kwargs['game_id'] is not None and not kwargs['game_id']=="":
+            role_player.game_id = kwargs['game_id']
+            
         role_player.save()
         return role_player
 
