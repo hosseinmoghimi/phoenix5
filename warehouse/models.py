@@ -72,10 +72,8 @@ class WareHouseSheet(models.Model,LinkHelper):
     def available(self):
         a=0
         aaa=WareHouseSheet.objects.filter(status=WareHouseSheetStatusEnum.DONE).filter(ware_house=self.ware_house).filter(invoice_line__product_or_service_id=self.invoice_line.product_or_service.id)
-        print(len(aaa))
 
         for aa in aaa:
-            print(aa.quantity)
             if aa.direction==WareHouseSheetDirectionEnum.IMPORT:
                 a+=aa.quantity
             if aa.direction==WareHouseSheetDirectionEnum.EXPORT:
