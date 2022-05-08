@@ -151,7 +151,7 @@ def PageContext(request, *args, **kwargs):
         page_tags_s = json.dumps(PageTagSerializer(page_tags, many=True).data)
         context['page_tags_s'] = page_tags_s
         context['page_tags'] = page_tags
-        if  can_add_tag:
+        if can_add_tag:
             context['add_page_tag_form'] = AddPageTagForm()
 
 

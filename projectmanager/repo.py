@@ -1,5 +1,5 @@
 from core.enums import ParameterNameEnum
-from core.repo import PageRepo, ParameterRepo
+from core.repo import PagePermissionRepo, PageRepo, ParameterRepo
 from map.repo import LocationRepo
 from django.utils import timezone
 
@@ -302,10 +302,17 @@ class EventRepo():
     def add_event(self,*args, **kwargs):
         if 'project_id' in kwargs:
             project_id= kwargs['project_id']
-        my_project_ids=PageRepo(request=self.request).my_pages_ids()
+        # my_project_ids=PageRepo(request=self.request).my_pages_ids()
+
+        can_write=False
+        if self.profile is not None:
+            page_permission=PagePermissionRepo(request=self.request).list(page_id=project_id,profile_id=self.profile.id).first()
+            if page_permission is not None:
+                can_write=page_permission.can_write
+
         if self.user.has_perm(APP_NAME+".add_event")  :
             pass
-        elif project_id in my_project_ids:
+        elif can_write:
             pass
         else:
             return

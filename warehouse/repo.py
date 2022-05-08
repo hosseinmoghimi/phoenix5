@@ -155,7 +155,7 @@ class WareHouseSheetRepo:
         if 'direction' in kwargs:
             warehouse_sheet.direction=kwargs['direction']
         employee=EmployeeRepo(request=self.request).me
-        warehouse_sheet.creator=employee.profile
+        warehouse_sheet.creator=employee.account.profile
         warehouse_sheet.date_registered=now
         warehouse_sheet.quantity=0
         warehouse_sheet.save()
