@@ -11,6 +11,14 @@ class ProjectBriefSerializer(serializers.ModelSerializer):
         fields=['id', 'title', 'get_absolute_url']
 
 
+
+class ProjectSerializerForGuantt(serializers.ModelSerializer):
+    class Meta:
+        model=Project
+        fields=['id','title','get_status_color','color','start_date','end_date','status','sum_total','get_absolute_url','short_description','thumbnail','percentage_completed']
+
+
+
 class EventSerializerForChart(serializers.ModelSerializer):
     class Meta:
         model=Event

@@ -255,6 +255,7 @@ class Project(Page):
     organization_units = models.ManyToManyField(
         "organization.organizationunit", verbose_name=_("واحد های سازمانی"), blank=True)
     weight = models.IntegerField(_("ضریب و وزن پروژه"), default=10)
+    color=models.CharField(_("color"),choices=ColorEnum.choices,default=ColorEnum.PRIMARY, max_length=50)
     # locations = models.ManyToManyField("map.location", blank=True, verbose_name=_("locations"))
     def all_childs_ids(self):
         pages_ids=[]
@@ -263,7 +264,6 @@ class Project(Page):
             pages_ids.append(page.pk)
             for page1 in chds:
                 pages_ids.append(page1)
-        print(pages_ids)
         return pages_ids
     
     def all_sub_projects(self):

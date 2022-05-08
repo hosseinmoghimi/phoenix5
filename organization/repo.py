@@ -1,4 +1,5 @@
 from organization.models import OrganizationUnit,Employee
+from django.db.models import Q
 from core.repo import ParameterRepo
 from organization.enums import *
 from organization.apps import APP_NAME
