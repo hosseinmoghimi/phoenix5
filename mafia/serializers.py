@@ -29,7 +29,7 @@ class GameSerializer(serializers.ModelSerializer):
     god=GodSerializer()
     class Meta:
         model=Game
-        fields=['id','god','title','scenario','get_absolute_url']
+        fields=['id','god','title','scenario','status','get_absolute_url']
 
 class RolePlayerSerializer(serializers.ModelSerializer):
     player=PlayerSerializer()

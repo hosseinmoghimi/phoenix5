@@ -7,12 +7,19 @@
         <div class="card">
             <div class="card-header">
                 <h5>
-                    گاد
+                    {{role_player.game.title}}
                 </h5>
             </div>
 
             <div class="card-body">
                 <div>
+
+                    <h5>
+                        <a href="{{role_player.game.get_absolute_url}}">
+                            {{role_player.game.title}}
+                        </a>
+                    </h5>
+                    {% if role_player.player %}
 
                     <a href="{{role_player.player.get_absolute_url}}">
                         <div class="media">
@@ -23,6 +30,7 @@
                         </div>
 
                     </a>
+                    {% endif %}
                 </div>
 
 

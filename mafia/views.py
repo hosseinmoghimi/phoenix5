@@ -117,6 +117,30 @@ class GameView(View):
         # context.update(PageContext(request=request,page=game))
         context['game']=game
 
+        if True:
+            context['MAFIA']=RoleSideEnum.MAFIA
+            context['CITIZEN']=RoleSideEnum.CITIZEN
+            context['INDEPENDENT']=RoleSideEnum.INDEPENDENT
+        # players
+        if True:
+            players=PlayerRepo(request=request).list()
+            players_s=json.dumps(PlayerSerializer(players,many=True).data)
+            context['players']=players
+            context['players_s']=players_s
+
+        # roles
+        if True:
+            roles=RoleRepo(request=request).list()
+            roles_s=json.dumps(RoleSerializer(roles,many=True).data)
+            context['roles']=roles
+            context['roles_s']=roles_s
+            selected_roles=[]
+            for role_player in game.roleplayer_set.all():
+                selected_roles.append(role_player.role)
+            selected_roles_s=json.dumps(RoleSerializer(selected_roles,many=True).data)
+            context['selected_roles_s']=selected_roles_s
+
+
         # role_players
         if True:
             role_players=RolePlayerRepo(request=request).list(game_id=game.id).order_by('role__side')

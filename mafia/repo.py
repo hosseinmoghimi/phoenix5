@@ -187,7 +187,6 @@ class GameRepo():
                     role_player.game_id=game.id
                     role_player.player=None
                     role_player.save()
-
         return game
 
 
