@@ -3,7 +3,7 @@
 from requests import request
 from core.repo import ProfileRepo
 from mafia.enums import RoleSideEnum
-from mafia.models import Role,Game,Player,RolePlayer,God,GameScenario
+from mafia.models import GameAct, Role,Game,Player,RolePlayer,God,GameScenario
 from mafia.apps import APP_NAME
 from mafia.default import init_roles,init_scenarioes
 
@@ -120,7 +120,7 @@ class GameScenarioRepo():
         return game_scenario
 
 
-class GameRepo():  
+class GameRepo():
     def __init__(self, *args, **kwargs):
         self.request = None
         self.user = None
@@ -132,7 +132,6 @@ class GameRepo():
         
         self.objects=Game.objects.all()
         self.profile=ProfileRepo(*args, **kwargs).me
-       
 
     def game(self, *args, **kwargs):
         pk=0
@@ -167,13 +166,13 @@ class GameRepo():
         if 'game_scenario_id' in kwargs:
             game.game_scenario_id = kwargs['game_scenario_id'] 
         if 'god_id' in kwargs:
-            game.god_id = kwargs['god_id'] 
+            game.god_id = kwargs['god_id']
         if 'description' in kwargs:
             game.description = kwargs['description'] 
+        if 'status' in kwargs:
+            game.status = kwargs['status'] 
         game.save()
         return game
-
-
 
 
 class PlayerRepo():  
@@ -225,8 +224,6 @@ class PlayerRepo():
         return player
 
 
-
-
 class GodRepo():  
     def __init__(self, *args, **kwargs):
         self.request = None
@@ -276,6 +273,58 @@ class GodRepo():
         return god
 
 
+class GameActRepo():  
+    def __init__(self, *args, **kwargs):
+        self.request = None
+        self.user = None
+        if 'request' in kwargs:
+            self.request = kwargs['request']
+            self.user = self.request.user
+        if 'user' in kwargs:
+            self.user = kwargs['user']
+        
+        self.objects=GameAct.objects.all()
+        self.profile=ProfileRepo(*args, **kwargs).me
+       
+
+    def game_act(self, *args, **kwargs):
+        pk=0
+        if 'game_act' in kwargs:
+            pk= kwargs['game_act']
+            return self.objects.filter(pk=pk).first()
+        elif 'game_act_id' in kwargs:
+            pk=kwargs['game_act_id']
+            return self.objects.filter(pk=pk).first()
+       
+        elif 'pk' in kwargs:
+            pk=kwargs['pk']
+            return self.objects.filter(pk=pk).first()
+        elif 'id' in kwargs:
+            pk=kwargs['id']
+            return self.objects.filter(pk=pk).first()
+     
+    def list(self, *args, **kwargs):
+        objects = self.objects
+        if 'search_for' in kwargs:
+            search_for=kwargs['search_for']
+            objects = objects.filter(Q(title__contains=search_for)|Q(short_description__contains=search_for)|Q(description__contains=search_for))
+        if 'for_home' in kwargs:
+            objects = objects.filter(Q(for_home=kwargs['for_home']))
+        if 'parent_id' in kwargs:
+            objects=objects.filter(parent_id=kwargs['parent_id'])
+        if 'game_id' in kwargs:
+            objects=objects.filter(actor__game_id=kwargs['game_id'])
+        return objects.all()
+
+    def add_game_act(self,*args, **kwargs):
+        if not self.user.has_perm(APP_NAME+".add_god"):
+            return None
+        game_act=GameAct()
+        if 'role_player_id' in kwargs:
+            game_act.role_player_id = kwargs['role_player_id'] 
+         
+        game_act.save()
+        return game_act
 
 
 class RolePlayerRepo():  

@@ -31,6 +31,9 @@
                         </td>
                         <td class="text-right">
                             <a href="{{game.god.get_absolute_url}}">
+                                <img src="{{game.god.profile.image}}" width="64" class="rounded-circle" alt="">
+
+
                                 {{game.god.profile.name}}
                             </a>
                         </td>
@@ -48,9 +51,10 @@
                     </tr>
                     <tr>
                         <td class="text-left">
-
+                            وضعیت
                         </td>
                         <td class="text-right">
+                            {{game.status}}
 
                         </td>
                     </tr>
@@ -89,6 +93,9 @@
     <div class="col-md-12">
         {% include "mafia/includes/role-players-app/template.html" %}
     </div>
+    <div class="col-md-12">
+        {% include "mafia/includes/game-acts-app/template.html" %}
+    </div>
 
 </div>
 {% endblock content %}
@@ -96,6 +103,7 @@
 
 {% block script %}
 {% include "mafia/includes/game-app/script.html" %}
-        {% include "mafia/includes/role-players-app/script.html" %}
+{% include "mafia/includes/role-players-app/script.html" %}
+{% include "mafia/includes/game-acts-app/script.html" %}
 
 {% endblock script %}

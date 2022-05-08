@@ -30,6 +30,9 @@ urlpatterns = [
     path("gods/",views.GodsView.as_view(),name="gods"),
     path("god/<int:pk>/",views.GodView.as_view(),name="god"),
 
+    path("game_act/<int:pk>/",views.GameActView.as_view(),name="gameact"),
+    path("add_game_act/",views.GameActView.as_view(),name="add_game_act"),
+
     path("game_scenarioes/",views.GameScenarioesView.as_view(),name="game_scenarioes"),
     path("game_scenario/<int:pk>/",views.GameScenarioView.as_view(),name="gamescenario"),
     path("add_game_scenarios/",apis.AddRoleApi.as_view(),name="add_game_scenarios"),

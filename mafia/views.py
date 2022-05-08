@@ -5,8 +5,8 @@ from mafia.apps import APP_NAME
 from core.views import CoreContext, MessageView,PageContext
 from mafia.enums import RoleSideEnum
 from mafia.forms import *
-from mafia.repo import GameRepo, GameScenarioRepo, GodRepo, PlayerRepo, RolePlayerRepo, RoleRepo
-from mafia.serializers import GameSerializer, PlayerSerializer, RolePlayerSerializer, RoleSerializer,GameScenarioSerializer
+from mafia.repo import GameActRepo, GameRepo, GameScenarioRepo, GodRepo, PlayerRepo, RolePlayerRepo, RoleRepo
+from mafia.serializers import GameActSerializer, GameSerializer, PlayerSerializer, RolePlayerSerializer, RoleSerializer,GameScenarioSerializer
 
 TEMPLATE_ROOT="mafia/"
 LAYOUT_PARENT="phoenix/layout.html"
@@ -64,6 +64,13 @@ class GodView(View):
         return render(request,TEMPLATE_ROOT+"god.html",context)
 
 
+class GameActView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        game_acts=GameActRepo(request=request).list(*args, **kwargs)
+        context['game_acts']=game_acts
+        return render(request,TEMPLATE_ROOT+"game-acts.html",context)
+
 class GameScenarioesView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -112,10 +119,17 @@ class GameView(View):
 
         # role_players
         if True:
-            role_players=RolePlayerRepo(request=request).list(game_id=game.id)
+            role_players=RolePlayerRepo(request=request).list(game_id=game.id).order_by('role__side')
             role_players_s=json.dumps(RolePlayerSerializer(role_players,many=True).data)
             context['role_players_s']=role_players_s
             context['role_players']=role_players
+
+        # game_acts
+        if True:
+            game_acts=GameActRepo(request=request).list(game_id=game.id).order_by('night')
+            game_acts_s=json.dumps(GameActSerializer(game_acts,many=True).data)
+            context['game_acts']=game_acts
+            context['game_acts_s']=game_acts_s
 
         return render(request,TEMPLATE_ROOT+"game.html",context)
 

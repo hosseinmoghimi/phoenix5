@@ -1,9 +1,9 @@
 <script>
-    let role_players = JSON.parse(`{{role_players_s|escapejs}}`)
-    let role_players_app = new Vue({
-        el: "#role-players-app",
+    let game_acts = JSON.parse(`{{game_acts_s|escapejs}}`)
+    let game_acts_app = new Vue({
+        el: "#game-acts-app",
         data: {
-            role_players: role_players,
+            game_acts: game_acts,
             description: "",
             title: "",
             side: "",
@@ -13,13 +13,13 @@
         },
         methods: {
             filter: function () {
-                this.role_players = role_players.filter(function (role_player) {
-                    let search_for=role_players_app.search_for
-                    if (role_player.role.title.indexOf(search_for) > -1)
+                this.game_acts = game_acts.filter(function (game_act) {
+                    let search_for=game_acts_app.search_for
+                    if (game_act.role.title.indexOf(search_for) > -1)
                         return true
 
 
-                    if (role_player.player.profile.name.indexOf(search_for) > -1)
+                    if (game_act.player.profile.name.indexOf(search_for) > -1)
                         return true
 
 
@@ -30,8 +30,8 @@
 
             },
 
-            add_role_player: function (role_player_id) {
-                let url = "{% url 'mafia:add_role_player' %}"
+            add_game_act: function (game_act_id) {
+                let url = "{% url 'mafia:add_game_act' %}"
                 let payload = {
                     csrfmiddlewaretoken: csrfmiddlewaretoken,
                     title: this.title,
@@ -42,9 +42,9 @@
                 $.post(url, payload).done((data) => {
                     console.log(data)
                     if (data.result === 'SUCCEED') {
-                        role_players_app.role_players.push(data.role_player)
-                        role_players_app.title = ""
-                        role_players_app.description = ""
+                        game_acts_app.game_acts.push(data.game_act)
+                        game_acts_app.title = ""
+                        game_acts_app.description = ""
                     }
                 })
             },

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from mafia.models import GameScenario, God,Game,Role,Player,RolePlayer
+from mafia.models import GameAct, GameScenario, God,Game,Role,Player,RolePlayer
 from authentication.serializers import ProfileSerializer
 
 class RoleSerializer(serializers.ModelSerializer):
@@ -37,3 +37,10 @@ class RolePlayerSerializer(serializers.ModelSerializer):
     class Meta:
         model=RolePlayer
         fields=['id','role','get_absolute_url','player','get_edit_url']
+
+class GameActSerializer(serializers.ModelSerializer):
+    actor=RolePlayerSerializer()
+    acted=RolePlayerSerializer()
+    class Meta:
+        model=GameAct
+        fields=['id','actor','acted','score','act','night','get_absolute_url','get_edit_url']

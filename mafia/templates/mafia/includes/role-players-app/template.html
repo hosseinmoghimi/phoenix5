@@ -37,55 +37,91 @@
                 <h6 v-if="false">
                     <span class="text-muted">در حال بار گذاری ... </span>
                 </h6>
-                <div class="row">
-                    <div class="col-md-3 farsi" v-for="role_player in role_players">
-                        <div>
-                            <div class="text-center">
-<a :href="role_player.get_absolute_url">
 
-    <img :src="role_player.role.thumbnail" width="80%" class="rounded" alt="">
-</a>
-                            </div>
-                            <a :href="role_player.role.get_absolute_url">
-                                <h4 class="mt-2 text-center">
-                                    <span :class="'text-'+role_player.role.color" v-text="role_player.role.title">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+
+                            <th>
+                            </th>
+
+
+                            <th>
+                                ساید
+                            </th>
+
+                            <th>
+                                نقش
+                            </th>
+                            <th>
+                                بازیکن
+                            </th>
+                            <th>
+
+                            </th>
+                        </thead>
+                        <tbody>
+                            <tr v-for="role_player in role_players">
+                                <td>
+                                    <a :href="role_player.get_absolute_url">
+
+                                        <span>
+                                            <i class="material-icons">
+                                                ballot
+                                            </i>
+                                        </span>
+                                    </a>
+                                </td>
+
+                                <td>
+
+                                    <span :class="'text-'+role_player.role.color" v-text="role_player.role.side">
 
                                     </span>
-                                </h4>
-                            </a>
-                            <div class="text-center">
+                                </td>
 
-                                <a :href="role_player.player.get_absolute_url">
-                                    <img :src="role_player.player.profile.image" class="rounded-circle" width="48"
-                                        alt="">
-                                </a>
 
-                            </div>
-                            <a :href="role_player.player.get_absolute_url">
-                                <h5 class="mt-2 text-center">
+                                <td>
+                                    <a :href="role_player.role.get_absolute_url">
+                                        <img :src="role_player.role.thumbnail" width="64" class="rounded" alt=""><span
+                                            class="farsi mr-3">
+                                            <span :class="'text-'+role_player.role.color"
+                                                v-text="role_player.role.title">
 
-                                    <span :class="'text-'+role_player.role.color"
-                                        v-text="role_player.player.profile.name">
+                                            </span>
+                                        </span>
+                                    </a>
+                                </td>
 
-                                    </span>
+                                <td>
+                                    <a :href="role_player.player.get_absolute_url">
+                                        <img :src="role_player.player.profile.image" width="64" class="rounded-circle"
+                                            alt=""><span class="farsi mr-2">
+                                            <span :class="'text-'+role_player.role.color"
+                                                v-text="role_player.player.profile.name">
 
-                                   
-                                </h5>
-                            </a>
-                            <div class="text-center">
-                                <span  
-                                v-text="role_player.player.score">
+                                            </span>
+                                            <small v-text="role_player.player.score">
 
-                            </span>
-                            <i aria-hidden="true" class="fa fa-star " style="color: rgb(245, 193, 3);"></i>
+                                            </small>
+                                            <i aria-hidden="true" class="fa fa-star "
+                                                style="color: rgb(245, 193, 3);"></i>
 
-                                <a :href="role_player.get_edit_url" title="ویرایش">
-                                    <i class="fa fa-edit"></i>
-                                </a>
-                            </div>
-                        </div>
+                                        </span>
+                                    </a>
+                                </td>
+                                <td>
+                                    <a :href="role_player.get_edit_url" class=" text-warning" title="ویرایش">
+                                        <i class="fa fa-edit"></i>
+                                        <small>
 
-                    </div>
+                                            ویرایش
+                                        </small>
+                                    </a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>

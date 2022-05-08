@@ -1,6 +1,6 @@
 from django.db import models
 from core.models import  Page,_,reverse
-from mafia.enums import RoleSideEnum
+from mafia.enums import GameStatusEnum, RoleSideEnum
 from utility.utils import LinkHelper
 from mafia.apps import APP_NAME
 
@@ -22,7 +22,7 @@ class Leage(models.Model,LinkHelper):
  
 
 class Game(models.Model,LinkHelper):
-    
+    status=models.CharField(_("status"),choices=GameStatusEnum.choices,default=GameStatusEnum.INITIAL, max_length=50)
     date_added=models.DateTimeField(_("date_added"), auto_now=False, auto_now_add=True)
     god=models.ForeignKey("god", verbose_name=_("god"), on_delete=models.CASCADE)
     game_scenario=models.ForeignKey("gamescenario", verbose_name=_("scenario"), on_delete=models.CASCADE)
@@ -82,6 +82,22 @@ class Role(Page):
         return super(Role,self).save()
 
   
+class GameAct(models.Model,LinkHelper):
+    actor=models.ForeignKey("roleplayer",related_name="actor_acts", verbose_name=_("role_player"), on_delete=models.CASCADE)
+    acted=models.ForeignKey("roleplayer", verbose_name=_("acted_acts"), on_delete=models.CASCADE)
+    night=models.IntegerField(_("night?"))
+    act=models.CharField(_("act"), max_length=50)
+    score=models.IntegerField(_("score"),default=0)
+    class_name="gameact"
+    app_name=APP_NAME
+
+    class Meta:
+        verbose_name = _("GameAct")
+        verbose_name_plural = _("GameActs")
+
+    def __str__(self):
+        return f"{self.act} : شب {self.night} : {self.actor.game.title}"
+ 
  
 
 class Player(models.Model,LinkHelper):
@@ -126,5 +142,5 @@ class RolePlayer(models.Model,LinkHelper):
         verbose_name_plural = _("RolePlayers")
 
     def __str__(self):
-        return self.game.title
+        return f"{self.player.profile.name} : {self.role.title} : {self.game.title}"
  

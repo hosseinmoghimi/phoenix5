@@ -135,3 +135,23 @@ def init_roles(*args, **kwargs):
     role.title="ناتو"
     role.side=RoleSideEnum.MAFIA
     role.save()
+
+
+    
+    role=Role()
+    role.title="جوکر"
+    role.side=RoleSideEnum.INDEPENDENT
+    role.save()
+
+
+
+
+    role=Role()
+    role.title="ساقی"
+    role.side=RoleSideEnum.INDEPENDENT
+    role.save()
+
+    role=Role()
+    role.title="هزار چهره"
+    role.side=RoleSideEnum.INDEPENDENT
+    role.save()
