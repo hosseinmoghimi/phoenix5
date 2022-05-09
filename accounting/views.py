@@ -467,8 +467,8 @@ class InvoiceView(View):
             mv.title="چنین فاکتوری یافت نشد."
             return mv.response()
         context.update(get_invoice_context(request=request,*args, **kwargs))
-        context['no_navbar']=True
-        context['no_footer']=True
+        # context['no_navbar']=True
+        # context['no_footer']=True
         return render(request,TEMPLATE_ROOT+"invoice.html",context)
 class InvoicePrintView(View):
     def get(self,request,*args, **kwargs):

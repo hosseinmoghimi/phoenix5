@@ -260,7 +260,8 @@ class ProjectGuanttView(View):
         context['projects_s'] = json.dumps(
             ProjectSerializerForGuantt(project.all_sub_projects().all(), many=True).data)
         return render(request, TEMPLATE_ROOT+"guantt.html", context)
-        
+
+
 class ProjectChartView(View):
     def get(self, request, *args, **kwargs):
         context = getContext(request=request)
@@ -322,8 +323,8 @@ class MaterialInvoiceView(View):
             return mv.response()
         context.update(get_invoice_context(request=request,
                        invoice=material_invoice, *args, **kwargs))
-        context['no_navbar'] = True
-        context['no_footer'] = True
+        # context['no_navbar'] = True
+        # context['no_footer'] = True
         return render(request, TEMPLATE_ROOT+"material-invoice.html", context)
 
 
@@ -339,8 +340,8 @@ class ServiceInvoiceView(View):
             return mv.response()
         context.update(get_invoice_context(request=request,
                        invoice=service_invoice, *args, **kwargs))
-        context['no_navbar'] = True
-        context['no_footer'] = True
+        # context['no_navbar'] = True
+        # context['no_footer'] = True
         return render(request, TEMPLATE_ROOT+"service-invoice.html", context)
 
 
