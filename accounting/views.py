@@ -1,5 +1,5 @@
 from django.http import Http404, HttpResponse, JsonResponse
-from django.shortcuts import render,reverse
+from django.shortcuts import redirect, render,reverse
 from django.utils import timezone
 from requests import request
 from accounting.apis import EditInvoiceApi
@@ -456,6 +456,12 @@ class InvoiceExcelView(View):
         report_work_book.work_book.close()
         return response
 
+class NewInvoiceView(View):
+    def get(self,request,*args, **kwargs):
+        invoice=InvoiceRepo(request=request).create_invoice(*args, **kwargs)
+        return redirect(invoice.get_absolute_url())
+
+
  
 class InvoiceView(View):
     def get(self,request,*args, **kwargs):
@@ -664,6 +670,7 @@ class AccountsView(View):
         context=getContext(request=request)
         accounts=AccountRepo(request=request).list(*args, **kwargs)
         context['accounts']=accounts
+        context['show_accounts']=True
         return render(request,TEMPLATE_ROOT+"accounts.html",context)
 
      

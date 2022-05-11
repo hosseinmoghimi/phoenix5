@@ -3,6 +3,7 @@ from urllib import request
 from accounting.enums import FinancialDocumentTypeEnum, TransactionStatusEnum
 
 from core.enums import UnitNameEnum
+from utility.calendar import PersianCalendar
 from .apps import APP_NAME
 from .models import Account, Asset, Cheque, FinancialBalance, FinancialDocument, FinancialYear, Invoice, InvoiceLine, Payment, Price, Product,Service, Transaction
 from django.db.models import Q
@@ -628,7 +629,29 @@ class InvoiceRepo():
         
         self.objects=Invoice.objects.all()
         self.profile=ProfileRepo(*args, **kwargs).me
-       
+
+    def create_invoice(self,*args, **kwargs):
+        if not self.user.has_perm(APP_NAME+".add_invoice"):
+
+            return
+        me_account=AccountRepo(request=self.request).me
+        if me_account is None:
+            return
+        pay_from_id=me_account.id
+        if 'pay_from_id' in kwargs and kwargs['pay_from_id'] is not None and kwargs['pay_from_id']>0:
+            pay_from_id=kwargs['pay_from_id']
+        pay_to_id=me_account.id
+        if 'pay_to_id' in kwargs and kwargs['pay_to_id'] is not None and kwargs['pay_to_id']>0:
+            pay_to_id=kwargs['pay_to_id']
+        now=PersianCalendar().date
+        invoice=Invoice()
+        invoice.pay_from_id=pay_from_id
+        invoice.pay_to_id=pay_to_id
+        invoice.invoice_datetime=now
+        invoice.save()
+        invoice.title=f"فاکتور شماره {invoice.pk}"
+        invoice.save()
+        return invoice
 
     def invoice(self, *args, **kwargs):
         if 'invoice' in kwargs:

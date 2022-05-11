@@ -146,6 +146,16 @@ class ProductOrService(Page):
         return 0
     @property
     def unit_name(self):
+        
+        request=get_request()
+        if request is not None:
+             
+            account=Account.objects.filter(profile__user_id=request.user.id).first()
+            last_price=Price.objects.filter(buy_price__gt=0).filter(product_or_service=self).filter(account=account).order_by("-date_added").first()
+            print(last_price)
+            print(100*"#@")
+            if last_price is not None:
+                return last_price.unit_name
         return "عدد"
 
     class Meta:
