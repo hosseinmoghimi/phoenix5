@@ -5,6 +5,7 @@ app_name=APP_NAME
 urlpatterns = [
     path("",(views.HomeView.as_view()),name="home"),
     path("charts/",(views.ChartsView.as_view()),name="charts"),
+    path("date_converter/",(views.DateConverterView.as_view()),name="date_converter"),
     
 
 ]

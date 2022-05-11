@@ -1,0 +1,88 @@
+{% extends "utility/layout.html" %}
+
+{% block content %}
+<div class="row" id="date-converter-app">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5>
+                    تبدیل تاریخ
+                </h5>
+            </div>
+            <div class="farsi card-body">
+
+                <div class="form-group">
+                    <label for="">تاریخ شمسی</label>
+                    <input type="text" class="form-control ltr text-left" v-model="persian_datetime">
+                </div>
+                <div class="text-center my-2">
+                    <button @click="convert_to_gregorian()" class="btn btn-success">
+                        تبدیل به میلادی
+                    </button>
+                </div>
+
+
+                <div class="text-center my-2">
+                    <button @click="convert_to_shamsi()" class="btn btn-warning">
+                        تبدیل به شمسی
+                    </button>
+                </div>
+                <div class="form-group">
+                    <label for="">تاریخ میلادی</label>
+                    <input type="text" class="form-control ltr text-left" v-model="gregorian_datetime">
+                </div>
+
+
+
+            </div>
+        </div>
+    </div>
+
+
+
+</div>
+{% endblock content %}
+
+
+{% block script %}
+<script>
+    let date_converter_app = new Vue({
+        el: "#date-converter-app",
+        data: {
+            persian_datetime: "{{shamsi_datetime}}",
+            gregorian_datetime: "{{gregorian_datetime}}",
+        },
+        methods: {
+            convert_to_gregorian: function () {
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    persian_datetime: this.persian_datetime,
+                }
+                console.log(payload)
+                let url="{% url 'utility:date_converter' %}"
+                $.post(url, payload).done(data => {
+                    console.log(data)
+                    if(data.result==="SUCCEED"){
+                        date_converter_app.gregorian_datetime=data.gregorian_datetime
+                    }
+
+                })
+            },
+            convert_to_shamsi: function () {
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    gregorian_datetime: this.gregorian_datetime,
+                }
+                console.log(payload)
+                let url="{% url 'utility:date_converter' %}"
+                $.post(url, payload).done(data => {
+                    console.log(data)
+                    if(data.result==="SUCCEED"){
+                        date_converter_app.persian_datetime=data.persian_datetime
+                    }
+                })
+            },
+        }
+    })
+</script>
+{% endblock script %}

@@ -1,8 +1,3 @@
-
-// leonolan2020@gmail.com
-// 2020-09-05
-// 
-//
 let TASVIEH = 'تسویه'
 let BEDEHKAR = 'بدهکار'
 let BESTANKAR = 'بستانکار'
