@@ -177,7 +177,7 @@ class AttendanceApi(APIView):
                 session_id=cd['session_id']
                 # time=cd['time']
                 # if time=="NOW":
-                #     time=timezone.now()
+                #     time=PersianCalendar().date
                 status=cd['status']
                 attendances=AttendanceRepo(request=request).add(
                     student_id=student_id,

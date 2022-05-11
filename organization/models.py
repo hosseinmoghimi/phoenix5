@@ -52,6 +52,7 @@ class OrganizationUnit(Page):
 
     def get_chart_url(self):
         return reverse(APP_NAME+":org_chart",kwargs={'pk':self.pk})
+
 class Employee(models.Model,LinkHelper):
     account=models.ForeignKey("accounting.account", verbose_name=_("account"), on_delete=models.CASCADE)
     organization_unit = models.ForeignKey("organizationunit", null=True, blank=True, verbose_name=_(
@@ -103,7 +104,7 @@ class Employee(models.Model,LinkHelper):
 
 
 
-class letterSent(models.Model):
+class LetterSent(models.Model):
     sender = models.ForeignKey("organization.organizationunit", related_name="sent_letters", verbose_name=_(
         "فرستنده"), on_delete=models.CASCADE)
     recipient = models.ForeignKey("organization.organizationunit", related_name="inbox_letters", verbose_name=_(
@@ -114,8 +115,8 @@ class letterSent(models.Model):
         _("date sent"), auto_now=False, auto_now_add=False)
 
     class Meta:
-        verbose_name = 'letterSent'
-        verbose_name_plural = 'letterSents'
+        verbose_name = 'LetterSent'
+        verbose_name_plural = 'LetterSents'
 
     def persian_date_sent(self):
         return to_persian_datetime_tag(self.date_sent)

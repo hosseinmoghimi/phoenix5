@@ -8,10 +8,11 @@ from organization.forms import CreateEmployeeForm,AddOrganizationUnitForm
 from django.views import View
 from django.http import JsonResponse
 from core.constants import SUCCEED,FAILED
-from projectmanager.repo import ProjectRepo,RequestSignatureRepo,LetterRepo
+from projectmanager.repo import ProjectRepo,RequestSignatureRepo
 import json
-from projectmanager.serializers import ProjectSerializer,RequestSignatureForEmployeeSerializer,LetterSerializer
-from organization.repo import EmployeeRepo,OrganizationUnitRepo
+from organization.serializers import LetterSerializer,LetterSentSerializer
+from projectmanager.serializers import ProjectSerializer,RequestSignatureForEmployeeSerializer
+from organization.repo import EmployeeRepo,OrganizationUnitRepo,LetterRepo
 from organization.serializers import EmployeeSerializer,OrganizationUnitSerializer
 LAYOUT_PARENT="phoenix/layout.html"
 TEMPLATE_ROOT="organization/"
@@ -71,6 +72,7 @@ class EmployeeView(View):
 class EmployeesView(View):
     def get(self, request, *args, **kwargs):
         context = getContext(request=request)
+        context['expand_employees'] = True
         employees = EmployeeRepo(request=request).list(*args, **kwargs)
         context['employees'] = employees
         employees_s = json.dumps(EmployeeSerializer(employees, many=True).data)
@@ -198,6 +200,7 @@ class OrganizationUnitView(View):
 class OrganizationUnitsView(View):
     def get(self, request, *args, **kwargs):
         context = getContext(request=request)
+        context['expand_organization_units'] = True
         organization_units = OrganizationUnitRepo(
             request=request).list(parent_id=None, *args, **kwargs)
         context['organization_units'] = organization_units
@@ -209,3 +212,31 @@ class OrganizationUnitsView(View):
             context['show_organization_units_list'] = True
         return render(request, TEMPLATE_ROOT+"organization-units.html", context)
 
+
+class LettersView(View):
+    def get(self, request, *args, **kwargs):
+        context = getContext(request=request)
+        letters = LetterRepo(request=request).list(*args, **kwargs)
+        context['letters'] = letters
+        letters_s = json.dumps(LetterSerializer(letters, many=True).data)
+        context['letters_s'] = letters_s
+        context['expand__letters'] = True
+        return render(request, TEMPLATE_ROOT+"letters.html", context)
+
+
+class LetterView(View):
+    def get(self, request, *args, **kwargs):
+        context = getContext(request=request)
+        letter = LetterRepo(request=request).letter(*args, **kwargs)
+        context['letter'] = letter
+        context.update(PageContext(request=request, page=letter))
+
+        # letter_sents
+        if True:
+            letter_sents = letter.lettersent_set.all()
+            context['letter_sents'] = letter_sents
+            letter_sents_s = json.dumps(
+                LetterSentSerializer(letter_sents, many=True).data)
+            context['letter_sents_s'] = letter_sents_s
+
+        return render(request, TEMPLATE_ROOT+"letter.html", context)

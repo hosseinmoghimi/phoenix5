@@ -381,7 +381,7 @@ class FinancialBalanceView(View):
 
 class InvoiceExcelView(View):
     def get(self,request,*args, **kwargs):
-        now=timezone.now()
+        now=PersianCalendar().date
         invoice=InvoiceRepo(request=request).invoice(*args, **kwargs)
         date=PersianCalendar().from_gregorian(now)
         lines=[]
@@ -499,6 +499,7 @@ class InvoicesView(View):
         context=getContext(request=request)
         invoices=InvoiceRepo(request=request).list(*args, **kwargs)
         context['invoices']=invoices
+        context['expand_invoices']=True
         invoices_s=json.dumps(InvoiceSerializer(invoices,many=True).data)
         context['invoices_s']=invoices_s
         return render(request,TEMPLATE_ROOT+"invoices.html",context)
@@ -670,7 +671,7 @@ class AccountsView(View):
         context=getContext(request=request)
         accounts=AccountRepo(request=request).list(*args, **kwargs)
         context['accounts']=accounts
-        context['show_accounts']=True
+        context['expand_accounts']=True
         return render(request,TEMPLATE_ROOT+"accounts.html",context)
 
      
@@ -680,6 +681,8 @@ class PaymentsView(View):
         context=getContext(request=request)
         payments=PaymentRepo(request=request).list(*args, **kwargs)
         context['payments']=payments
+        context['expand_payments']=True
+
         context['payments_s']=json.dumps(PaymentSerializer(payments,many=True).data)
         if request.user.has_perm(APP_NAME+".add_payment"):
             context.update(get_add_payment_context(request=request))

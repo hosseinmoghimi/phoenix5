@@ -4,6 +4,9 @@
 {% block content %}
 {% include "core/includes/page-app/navbar.html" %}
 <div class="row">
+
+  
+
   <div class="col-md-3">
     {% include "core/includes/page-app/thumbnail-card.html" %}
     {% include "core/includes/page-app/brief-card.html" %}
@@ -11,6 +14,10 @@
   </div>
   <div class="col-md-9">
     <div class="row">
+      <div class="col-md-12">
+        {% include "organization/includes/letter-sents-app/template.html" %}
+    
+      </div>
       <div class="col-md-12">
         {% include "core/includes/page-description-app/short-description.html" %}
         {% include "core/includes/page-description-app/description.html" %}
@@ -35,7 +42,7 @@
         {% include "core/includes/page-comments-app/template.html" %}
 
       </div>
-     
+
 
       <div class="col-md-12">
         {% include "core/includes/page-related-app/template.html" %}
@@ -47,10 +54,6 @@
 
       </div>
 
-      <div class="col-md-12">
-        {% include "projectmanager/includes/letter-sents-app/template.html" %}
-
-      </div>
 
 
     </div>
@@ -62,6 +65,6 @@
 
 {% block script %}
 {% include "core/includes/page-app/script.html" %}
-{% include "projectmanager/includes/letter-sents-app/script.html" %}
+{% include "organization/includes/letter-sents-app/script.html" %}
 
 {% endblock script %}

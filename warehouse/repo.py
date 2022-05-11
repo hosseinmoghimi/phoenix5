@@ -9,7 +9,7 @@ from utility.calendar import PersianCalendar
 from warehouse.apps import APP_NAME
 from warehouse.models import WareHouse, WareHouseSheet, WareHouseSheetSignature
   
-now=timezone.now()
+now=PersianCalendar().date
        
 class WareHouseRepo():
     def __init__(self, *args, **kwargs):

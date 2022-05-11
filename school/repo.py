@@ -41,7 +41,7 @@ class AttendanceRepo():
     def add(self,*args, **kwargs):
         if not self.user.has_perm(APP_NAME+".add_attendance"):
             return
-        now=timezone.now()
+        now=PersianCalendar().date
         session_id=kwargs['session_id'] if 'session_id' in kwargs else 0
         student_id=kwargs['student_id'] if 'student_id' in kwargs else 0
         description=kwargs['description'] if 'description' in kwargs else 0
@@ -285,7 +285,7 @@ class ActiveCourseRepo():
         if not self.request.user.has_perm(APP_NAME+".add_activecourse"):
             return
             active_course.end_date=kwargs['start_date']
-        now=timezone.now()
+        now=PersianCalendar().date
         active_course=ActiveCourse()
         if 'title' in kwargs:
             active_course.title=kwargs['title']
@@ -435,12 +435,12 @@ class SessionRepo():
         if 'start_time' in kwargs:
             session.start_time=kwargs['start_time']
         else:
-            session.start_time=timezone.now()
+            session.start_time=PersianCalendar().date
         
         if 'end_time' in kwargs:
             session.end_time=kwargs['end_time']
         else:
-            session.end_time=timezone.now()
+            session.end_time=PersianCalendar().date
 
         session.save()
         return session

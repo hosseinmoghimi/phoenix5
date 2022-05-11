@@ -1,4 +1,4 @@
-from organization.models import OrganizationUnit,Employee
+from organization.models import Letter, OrganizationUnit,Employee,LetterSent
 from django.db.models import Q
 from core.repo import ParameterRepo
 from organization.enums import *
@@ -156,4 +156,48 @@ class EmployeeRepo():
             project=ProjectRepo(request=self.request).project(project_id=kwargs['project_id'])
             objects=project.organization_units.all()
         return objects.all()
+
+
+
+
+class LetterRepo():
+    def __init__(self, *args, **kwargs):
+        self.request = None
+        self.user = None
+        if 'request' in kwargs:
+            self.request = kwargs['request']
+            self.user = self.request.user
+        if 'user' in kwargs:
+            self.user = kwargs['user']
+        
+        self.objects=Letter.objects.all()
+        self.profile=ProfileRepo(*args, **kwargs).me
+       
+
+    def letter(self, *args, **kwargs):
+        pk=0
+        if 'material_id' in kwargs:
+            pk=kwargs['material_id']
+        elif 'pk' in kwargs:
+            pk=kwargs['pk']
+        elif 'id' in kwargs:
+            pk=kwargs['id']
+        return self.objects.filter(pk=pk).first()
+     
+    def list(self, *args, **kwargs):
+        objects = self.objects
+        if 'search_for' in kwargs:
+            search_for=kwargs['search_for']
+            objects = objects.filter(Q(title__contains=search_for)|Q(short_description__contains=search_for)|Q(description__contains=search_for))
+        if 'for_home' in kwargs:
+            objects = objects.filter(Q(for_home=kwargs['for_home']))
+        if 'organization_unit_id' in kwargs:
+            organization_unit_id=kwargs['organization_unit_id']
+            sent_letters=(Letter_sent.letter.id for Letter_sent in LetterSent.objects.filter(sender_id=organization_unit_id))
+            inbox_letters=(Letter_sent.letter.id for Letter_sent in LetterSent.objects.filter(recipient=organization_unit_id))
+            objects= Letter.objects.filter(Q(id__in=sent_letters)|Q(id__in=inbox_letters))
+        if 'parent_id' in kwargs:
+            objects=objects.filter(parent_id=kwargs['parent_id'])
+        return objects.order_by('date_added') 
+
 

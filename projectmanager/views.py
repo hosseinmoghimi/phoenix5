@@ -19,8 +19,8 @@ from .apps import APP_NAME
 # from .repo import MaterialRepo
 # from .serializers import MaterialSerializer
 import json
-from .repo import EventRepo, LetterRepo, MaterialInvoiceRepo, MaterialRepo, MaterialRequestRepo, RequestSignatureRepo, ServiceInvoiceRepo, ServiceRepo, ProjectRepo, ServiceRequestRepo
-from .serializers import EventSerializer, LetterSentSerializer, LetterSerializer, MaterialSerializer, ProjectSerializerForGuantt, RequestSignatureForEmployeeSerializer, RequestSignatureSerializer, ServiceSerializer, ProjectSerializer, ServiceRequestSerializer, MaterialRequestSerializer
+from projectmanager.repo import EventRepo, MaterialInvoiceRepo, MaterialRepo, MaterialRequestRepo, RequestSignatureRepo, ServiceInvoiceRepo, ServiceRepo, ProjectRepo, ServiceRequestRepo
+from projectmanager.serializers import EventSerializer,  MaterialSerializer, ProjectSerializerForGuantt, RequestSignatureForEmployeeSerializer, RequestSignatureSerializer, ServiceSerializer, ProjectSerializer, ServiceRequestSerializer, MaterialRequestSerializer
 from organization.repo import EmployeeRepo,OrganizationUnitRepo
 from organization.serializers import EmployeeSerializer,OrganizationUnitSerializer
 TEMPLATE_ROOT = "projectmanager/"
@@ -104,33 +104,6 @@ class ProjectsView(View):
             context['employers']=OrganizationUnitRepo(request=request).list(parent_id=None)
         return render(request, TEMPLATE_ROOT+"projects.html", context)
 
-
-class LettersView(View):
-    def get(self, request, *args, **kwargs):
-        context = getContext(request=request)
-        letters = LetterRepo(request=request).list(*args, **kwargs)
-        context['letters'] = letters
-        letters_s = json.dumps(LetterSerializer(letters, many=True).data)
-        context['letters_s'] = letters_s
-        return render(request, TEMPLATE_ROOT+"letters.html", context)
-
-
-class LetterView(View):
-    def get(self, request, *args, **kwargs):
-        context = getContext(request=request)
-        letter = LetterRepo(request=request).letter(*args, **kwargs)
-        context['letter'] = letter
-        context.update(PageContext(request=request, page=letter))
-
-        # letter_sents
-        if True:
-            letter_sents = letter.lettersent_set.all()
-            context['letter_sents'] = letter_sents
-            letter_sents_s = json.dumps(
-                LetterSentSerializer(letter_sents, many=True).data)
-            context['letter_sents_s'] = letter_sents_s
-
-        return render(request, TEMPLATE_ROOT+"letter.html", context)
 
 
 class RequestView(View):

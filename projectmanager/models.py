@@ -11,7 +11,7 @@ from utility.utils import LinkHelper
 from .apps import APP_NAME
 # Create your models here.
 from accounting.models import Account
-from organization.models import OrganizationUnit,Employee,Letter,letterSent
+from organization.models import OrganizationUnit,Employee,Letter,LetterSent
 IMAGE_FOLDER = APP_NAME+"/images/"
 
 
@@ -33,8 +33,8 @@ class ProjectInvoice(Invoice):
         if project is not None and project.employer.account is not None and project.contractor.account is not None:
             self.pay_to_id = project.employer.account.id
             self.pay_from_id = project.contractor.account.id
-            self.transaction_datetime = timezone.now()
-            self.invoice_datetime = timezone.now()
+            self.transaction_datetime = PersianCalendar().date
+            self.invoice_datetime = PersianCalendar().date
         super(ProjectInvoice, self).save(*args, **kwargs)
 
 

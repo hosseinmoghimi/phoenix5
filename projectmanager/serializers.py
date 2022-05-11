@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from accounting.serializers import AccountSerializer
-from .models import Service,Material,Event,Employee, Letter, MaterialRequest, Request,Project,OrganizationUnit, RequestSignature, ServiceRequest, letterSent
+from .models import Service,Material,Event,Employee, MaterialRequest, Request,Project,OrganizationUnit, RequestSignature, ServiceRequest
 from authentication.serializers import ProfileSerializer
 from organization.serializers import OrganizationUnitSerializer,EmployeeSerializer
 
@@ -32,20 +32,6 @@ class EventSerializer(serializers.ModelSerializer):
         fields=['id','project_related','thumbnail','likes_count','title','get_absolute_url','persian_event_datetime','persian_start_datetime','persian_end_datetime','get_edit_url']
 
 
-class LetterSerializer(serializers.ModelSerializer):
-    class Meta:
-        model=Letter
-        fields=['id','thumbnail','title','get_absolute_url','persian_date_added','get_edit_url']
-
-
-class LetterSentSerializer(serializers.ModelSerializer):
-    letter=LetterSerializer()
-    sender=OrganizationUnitSerializer()
-    recipient=OrganizationUnitSerializer()
-    class Meta:
-        model=letterSent
-        fields=['id','letter','sender','persian_date_sent','recipient']
- 
 class RequestSignatureSerializer(serializers.ModelSerializer):
     employee=EmployeeSerializer()
     class Meta:

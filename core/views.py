@@ -65,7 +65,7 @@ def CoreContext(request, *args, **kwargs):
         'logo': picture_repo.picture(name=PictureNameEnum.LOGO, default="").image,
     }
     pc = PersianCalendar()
-    now = timezone.now()
+    now =pc.date
     current_datetime = pc.from_gregorian(now)
     context['current_date'] = current_datetime[:10]
     context['current_datetime'] = current_datetime

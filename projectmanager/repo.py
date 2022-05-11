@@ -89,44 +89,6 @@ class ServiceInvoiceRepo():
         return objects.order_by('date_added') 
  
 
-class LetterRepo():
-    def __init__(self, *args, **kwargs):
-        self.request = None
-        self.user = None
-        if 'request' in kwargs:
-            self.request = kwargs['request']
-            self.user = self.request.user
-        if 'user' in kwargs:
-            self.user = kwargs['user']
-        
-        self.objects=Letter.objects.all()
-        self.profile=ProfileRepo(*args, **kwargs).me
-       
-
-    def letter(self, *args, **kwargs):
-        pk=0
-        if 'material_id' in kwargs:
-            pk=kwargs['material_id']
-        elif 'pk' in kwargs:
-            pk=kwargs['pk']
-        elif 'id' in kwargs:
-            pk=kwargs['id']
-        return self.objects.filter(pk=pk).first()
-     
-    def list(self, *args, **kwargs):
-        objects = self.objects
-        if 'search_for' in kwargs:
-            search_for=kwargs['search_for']
-            objects = objects.filter(Q(title__contains=search_for)|Q(short_description__contains=search_for)|Q(description__contains=search_for))
-        if 'for_home' in kwargs:
-            objects = objects.filter(Q(for_home=kwargs['for_home']))
-        if 'organization_unit_id' in kwargs:
-            objects = objects.filter(pk=0)
-        if 'parent_id' in kwargs:
-            objects=objects.filter(parent_id=kwargs['parent_id'])
-        return objects.order_by('date_added') 
-
-
 class ProjectRepo():
     def __init__(self, *args, **kwargs):
         self.request = None
@@ -212,13 +174,13 @@ class ProjectRepo():
                 project.employer=parent.employer
                 
                 
-        project.start_date=timezone.now()
+        project.start_date=PersianCalendar().date
         if 'start_date' in kwargs and kwargs['start_date'] is not None and not kwargs['start_date']=="":
             start_date=kwargs['start_date']
             if start_date is not None:
                 project.start_date=start_date
         
-        project.end_date=timezone.now()
+        project.end_date=PersianCalendar().date
         if 'end_date' in kwargs and kwargs['end_date'] is not None and not kwargs['end_date']=="":
             end_date=kwargs['end_date']
             if end_date is not None:
@@ -324,7 +286,7 @@ class EventRepo():
             event_datetime=kwargs['event_datetime']
         else:
             from django.utils import timezone
-            event_datetime=timezone.now()
+            event_datetime=PersianCalendar().date
         new_event=Event()
         # new_event.creator=ProfileRepo(user=self.user).me
         new_event.event_datetime=event_datetime
@@ -410,7 +372,7 @@ class ServiceRequestRepo():
         if 'date_requested' in kwargs:
             new_service_request.date_requested = kwargs['date_requested']
         else:
-            new_service_request.date_requested = timezone.now()
+            new_service_request.date_requested = PersianCalendar().date
         if 'service_title' in kwargs and not kwargs['service_title']=="":
             service=Service.objects.filter(title=kwargs['service_title']).first()
             if service is None:
@@ -559,7 +521,7 @@ class MaterialRequestRepo():
         if 'date_requested' in kwargs:
             new_material_request.date_requested = kwargs['date_requested']
         else:
-            new_material_request.date_requested = timezone.now()
+            new_material_request.date_requested = PersianCalendar().date
         if 'material_title' in kwargs and not kwargs['material_title']=="":
             material=Material.objects.filter(title=kwargs['material_title']).first()
             if material is None:

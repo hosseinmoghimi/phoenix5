@@ -776,7 +776,7 @@ class ChequeRepo():
         if 'cheque_date' in kwargs:
             cheque.cheque_date=kwargs['cheque_date']
         else:
-            cheque.cheque_date=timezone.now()
+            cheque.cheque_date=PersianCalendar().date
 
 
             
@@ -796,7 +796,7 @@ class ChequeRepo():
         if 'transaction_datetime' in kwargs:
             cheque.transaction_datetime=kwargs['transaction_datetime']
         else:
-            cheque.transaction_datetime=timezone.now()
+            cheque.transaction_datetime=PersianCalendar().date
             
         if 'amount' in kwargs:
             cheque.amount=kwargs['amount']

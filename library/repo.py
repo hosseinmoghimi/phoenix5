@@ -140,17 +140,17 @@ class MemberRepo():
         if 'membership_started' in kwargs:
             member.membership_started=kwargs['membership_started']
         else:
-            member.membership_started=timezone.now()
+            member.membership_started=PersianCalendar().date
 
         if 'membership_ended' in kwargs:
             member.membership_ended=kwargs['membership_ended']
         else:
             # from datetime import timedelta
-            # member.membership_ended=(timezone.now()+timedelta(years=1))
+            # member.membership_ended=(PersianCalendar().date+timedelta(years=1))
             
             # from datetime import timedelta
             from dateutil.relativedelta import relativedelta
-            member.membership_ended=(timezone.now()+relativedelta(years=1))
+            member.membership_ended=(PersianCalendar().date+relativedelta(years=1))
         if 'description' in kwargs:
             member.description=kwargs['description']
         member.save()
@@ -210,12 +210,12 @@ class LendRepo():
         if 'date_lended' in kwargs:
             lend.date_lended=kwargs['date_lended']
         else:
-            lend.date_lended=timezone.now()
+            lend.date_lended=PersianCalendar().date
 
         if 'date_returned' in kwargs:
             lend.date_returned=kwargs['date_returned']
         else:
-            lend.date_returned=timezone.now()
+            lend.date_returned=PersianCalendar().date
 
          
         if 'description' in kwargs:

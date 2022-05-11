@@ -48,7 +48,7 @@
                 {% include "core/includes/page-comments-app/template.html" %}
             </div>
             <div class="col-md-12">
-                {% include "projectmanager/includes/letters-app/template.html" %}
+                {% include "organization/includes/letters-app/template.html" %}
             </div>
             <div class="col-md-12">
                 {% include "map/includes/locations-app/template-with-preview.html" %}
@@ -79,12 +79,11 @@
 {% include "organization/includes/organization-units-app/script.html" %}
 {% include "organization/includes/employees-app/script.html" %}
 {% include "projectmanager/includes/all-projects-app/script.html" %}
-{% include "projectmanager/includes/letters-app/script.html" %}
+{% include "organization/includes/letters-app/script.html" %}
 {% if account %}
 {% include "accounting/includes/financial-documents-app/script.html" %}
 {% include "accounting/includes/transactions-app/script.html" %}
 {% endif %}
-{% include "map/includes/locations-app/script.html" %}
 
 
 

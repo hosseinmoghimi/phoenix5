@@ -92,7 +92,7 @@ class Transaction(Page,LinkHelper):
     def save(self,*args, **kwargs):
         if self.transaction_datetime is None:
             from django.utils import timezone
-            self.transaction_datetime=timezone.now()
+            self.transaction_datetime=PersianCalendar().date
         super(Transaction,self).save(*args, **kwargs)
         # FinancialDocument.objects.filter(transaction=self).delete()
 
@@ -152,8 +152,6 @@ class ProductOrService(Page):
              
             account=Account.objects.filter(profile__user_id=request.user.id).first()
             last_price=Price.objects.filter(buy_price__gt=0).filter(product_or_service=self).filter(account=account).order_by("-date_added").first()
-            print(last_price)
-            print(100*"#@")
             if last_price is not None:
                 return last_price.unit_name
         return "عدد"
@@ -679,7 +677,7 @@ class Payment(Transaction):
         if self.class_name is None:
             self.class_name='payment' 
         if self.transaction_datetime is None:
-            self.transaction_datetime=timezone.now()
+            self.transaction_datetime=PersianCalendar().date
         super(Payment,self).save(*args, **kwargs)
         
 

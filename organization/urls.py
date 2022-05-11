@@ -18,5 +18,7 @@ urlpatterns = [
 
 
 
+    path("letters/",login_required(views.LettersView.as_view()),name="letters"),
+    path("letter/<int:pk>/",login_required(views.LetterView.as_view()),name="letter"),
 
 ]

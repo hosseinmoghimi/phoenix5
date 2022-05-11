@@ -12,8 +12,6 @@ urlpatterns = [
     
     path("request/<int:pk>/",login_required(views.RequestView.as_view()),name="request"), 
 
-    path("letters/",login_required(views.LettersView.as_view()),name="letters"),
-    path("letter/<int:pk>/",login_required(views.LetterView.as_view()),name="letter"),
 
     path("ware_houses/",login_required(views.ProjectsView.as_view()),name="ware_houses"),
     path("ware_house/<int:pk>/",login_required(views.ProjectView.as_view()),name="ware_house"),
