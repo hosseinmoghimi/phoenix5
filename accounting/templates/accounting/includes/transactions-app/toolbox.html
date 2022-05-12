@@ -4,9 +4,12 @@
         <input type="hidden" name="title" value="عنوان">
         <input type="hidden" name="transactions" :value="toString()">
         {% csrf_token %}
-          <button title="چاپ" class="btn btn-link" type="submit">
-        <i class="fa fa-print"></i>
-    </button>
+        {% if gh %}
+        <button title="چاپ" class="btn btn-link" type="submit">
+          <i class="fa fa-print"></i>
+        </button>
+        {% endif %}
+        
     </form>
   
 </div>
