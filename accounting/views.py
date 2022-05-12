@@ -672,6 +672,8 @@ class AccountsView(View):
         accounts=AccountRepo(request=request).list(*args, **kwargs)
         context['accounts']=accounts
         context['expand_accounts']=True
+        if request.user.has_perm(APP_NAME+".add_account"):
+            context['add_account_form']=AddAccountForm()
         return render(request,TEMPLATE_ROOT+"accounts.html",context)
 
      

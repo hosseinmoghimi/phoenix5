@@ -63,6 +63,7 @@ class PaymentMethodEnum(TextChoices):
     CHEQUE="چک",_("چک")
     POS="کارتخوان",_("کارتخوان")
     CARD="کارت به کارت",_("کارت به کارت")
+    FROM_PAST="مانده حساب از قبل",_("مانده حساب از قبل")
 
 
 class TransactionStatusEnum(TextChoices):
@@ -72,6 +73,7 @@ class TransactionStatusEnum(TextChoices):
     APPROVED="تایید شده",_("تایید شده")
     CANCELED="کنسل شده",_("کنسل شده")
     PASSED="پاس شده",_("پاس شده")
+    FROM_PAST="مانده حساب از قبل",_("مانده حساب از قبل")
 
 
 class FinancialBalanceTitleEnum(TextChoices):

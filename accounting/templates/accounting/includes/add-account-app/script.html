@@ -1,0 +1,60 @@
+<script>
+    let add_account_app = new Vue({
+        el: "#add-account-app",
+        data: {
+            title: "",
+            BEDEHKAR: "بدهکار",
+            BESTANKAR: "بستانکار",
+            balance: 0,
+            waiting: false,
+            description:"",
+            address:"",
+            tel:"",
+            balance_direction: BEDEHKAR,
+            message: {
+                show: false,
+                color: "success",
+                body: "",
+            }
+        },
+        methods: {
+            to_price: function (vall) {
+                return to_price(vall, "{{CURRENCY}}")
+            },
+            add_account: function () {
+                let balance = this.balance * (this.balance_direction === this.BESTANKAR ? 1 : -1)
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    balance: parseInt(balance),
+                    title: this.title,
+                    address: this.address,
+                    tel: this.tel,
+                    description: this.description,
+                }
+                add_account_app.waiting = true
+                console.log(payload)
+                let url = "{% url 'accounting:add_account' %}"
+                $.post(url, payload).done((data) => {
+                    console.log(data)
+                    add_account_app.waiting = false
+                    if (data.result === 'SUCCEED') {
+                        if (typeof accounts_app != "undefined") {
+                            add_account_app.address = ""
+                            add_account_app.description = ""
+                            add_account_app.tel = ""
+                            add_account_app.title = ""
+                            add_account_app.balance = 0
+                            accounts_app.accounts.push(data.account)
+                        }
+                        this.message = { show: true, body: "با موفقیت اضافه گردید.", color: 'success' }
+                    }
+                    if (data.result === 'FAILED') {
+                        this.message = { show: true, body: "خطا در افزودن حساب ", color: 'danger' }
+                    }
+
+                })
+
+            }
+        }
+    })
+</script>

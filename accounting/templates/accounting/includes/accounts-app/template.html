@@ -97,7 +97,8 @@
 
                                 </td>
                                 <td>
-                                    <a :href="account.profile.get_absolute_url">
+                                    
+                                    <a v-if="account.profile" :href="account.profile.get_absolute_url">
                                         <img :src="account.profile.image" class="rounded-circle" width="32" alt="">
                                         <span v-text="account.profile.name"></span>
                                     </a>

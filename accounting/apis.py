@@ -5,10 +5,10 @@ from core.serializers import PageLinkSerializer
 from .models import Transaction
 
 from utility.calendar import PersianCalendar
-from .repo import ChequeRepo, FinancialBalanceRepo,  FinancialDocumentRepo, InvoiceRepo, PaymentRepo, PriceRepo, ProductRepo, ServiceRepo, TransactionRepo
+from .repo import AccountRepo, ChequeRepo, FinancialBalanceRepo,  FinancialDocumentRepo, InvoiceRepo, PaymentRepo, PriceRepo, ProductRepo, ServiceRepo, TransactionRepo
 from django.http import JsonResponse
 from .forms import *
-from .serializers import ChequeSerializer, FinancialBalanceSerializer, FinancialDocumentSerializer, InvoiceFullSerializer, InvoiceLineSerializer, PaymentSerializer, PriceSerializer, ProductSerializer, ServiceSerializer
+from .serializers import AccountSerializer, ChequeSerializer, FinancialBalanceSerializer, FinancialDocumentSerializer, InvoiceFullSerializer, InvoiceLineSerializer, PaymentSerializer, PriceSerializer, ProductSerializer, ServiceSerializer
 
 class AddChequeApi(APIView):
     def post(self,request,*args, **kwargs):
@@ -165,10 +165,28 @@ class AddFinancialBalancesApi(APIView):
                     context['result']=SUCCEED
         context['log']=log
         return JsonResponse(context)
+  
+     
+class AddAccountsApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        log=111
+        context['result']=FAILED
+        if request.method=='POST':
+            log=222
+            print(request.POST)
+            add_account_form=AddAccountForm(request.POST)
+            if add_account_form.is_valid():
+                log=333
+                cd=add_account_form.cleaned_data
+                account=AccountRepo(request=request).add_account(**cd)
+                if account is not None:
+                    context['account']=AccountSerializer(account).data
+                    context['result']=SUCCEED
+        context['log']=log
+        return JsonResponse(context)
 
-
-        
-        
+     
 class AddProductApi(APIView):
     def post(self,request,*args, **kwargs):
         context={}
@@ -188,8 +206,7 @@ class AddProductApi(APIView):
         context['log']=log
         return JsonResponse(context)
 
-
-        
+    
 class AddServiceApi(APIView):
     def post(self,request,*args, **kwargs):
         context={}

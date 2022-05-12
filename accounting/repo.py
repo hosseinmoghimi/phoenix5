@@ -1,6 +1,6 @@
 from datetime import timedelta
 from urllib import request
-from accounting.enums import FinancialDocumentTypeEnum, TransactionStatusEnum
+from accounting.enums import FinancialDocumentTypeEnum, PaymentMethodEnum, TransactionStatusEnum
 
 from core.enums import UnitNameEnum
 from utility.calendar import PersianCalendar
@@ -488,6 +488,50 @@ class AccountRepo():
         else:
             return self.objects.filter(profile=self.profile)
    
+    def add_account(self,*args, **kwargs):
+        print(kwargs)
+        if not self.request.user.has_perm(APP_NAME+".add_account"):
+            return
+        account=Account()
+
+        if 'title' in kwargs:
+            account.title=kwargs['title']
+        if 'profile_id' in kwargs:
+            account.profile_id=kwargs['profile_id']
+        if 'description' in kwargs:
+            account.description=kwargs['description']
+        if 'address' in kwargs:
+            account.address=kwargs['address']
+        if 'tel' in kwargs:
+            account.tel=kwargs['tel']
+       
+        
+        # if 'financial_year_id' in kwargs:
+        #     payment.financial_year_id=kwargs['financial_year_id']
+        # else:
+        #     payment.financial_year_id=FinancialYear.get_by_date(date=payment.transaction_datetime).id
+
+        account.save()
+        
+        if 'balance' in kwargs:
+            me_account=self.me
+            if me_account is not None:
+                balance=kwargs['balance']
+                payment=Payment()
+                payment.creator_id=me_account.profile.id
+                payment.status=TransactionStatusEnum.FROM_PAST
+                payment.payment_method=PaymentMethodEnum.FROM_PAST
+                payment.transaction_datetime=PersianCalendar().date
+                if balance<0:
+                    payment.pay_to_id=me_account.id
+                    payment.pay_from_id=account.id
+                if balance>0:
+                    payment.pay_from_id=me_account.id
+                    payment.pay_to_id=account.id
+                payment.save()
+
+        return account
+
 
 class InvoiceLineRepo():
     def __init__(self, *args, **kwargs):

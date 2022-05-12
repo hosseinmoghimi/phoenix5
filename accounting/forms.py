@@ -10,6 +10,14 @@ class SearchForm(forms.Form):
 class TransactionsPrintForm(forms.Form):
     title=forms.CharField(max_length=200, required=True)
     transactions=forms.CharField( max_length=5000, required=True)
+
+
+class AddAccountForm(forms.Form):
+    title=forms.CharField(max_length=200, required=False)
+    balance=forms.IntegerField(required=False)
+    address=forms.CharField(max_length=100,required=False)
+    tel=forms.CharField(max_length=50,required=False)
+    description=forms.CharField(max_length=500, required=False)
     
 class AddFinancialBalanceForm(forms.Form):
     title=forms.CharField(max_length=50, required=True)

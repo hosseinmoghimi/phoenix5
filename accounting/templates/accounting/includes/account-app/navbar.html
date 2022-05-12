@@ -17,19 +17,34 @@
     {% endif %}
 
 </div>
+{% if account.address %}
+<div class="text-center farsi my-3">
+    <i class="fa fa-trash text-danger"></i>
+    {{account.address}}
+</div>
+{% endif %}
 
+{% if account.tel %}
+<div class="text-center farsi my-3">
+    <a href="tel:{{account.tel}}">
+
+        <i class="fa fa-trash text-danger"></i>
+        {{account.tel}}
+    </a>
+</div>
+{% endif %}
 <h4 class="text-center">
     <span class="text-{{account.balance.rest|to_amount_color}}">
         مانده :
         {{account.balance.rest|to_price}}
     </span>
 </h4>
-<div class="text-center">
+<div class="text-center my-3">
     <a class=" farsi btn btn-danger" href="{% url 'accounting:new_invoice' pay_from_id=account.id pay_to_id=0 %}">
         فاکتور خرید
     </a>
 
-    
+
     <a class=" farsi btn btn-success" href="{% url 'accounting:new_invoice' pay_from_id=0 pay_to_id=account.id %}">
         فاکتور فروش
     </a>

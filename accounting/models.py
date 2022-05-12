@@ -205,12 +205,14 @@ class Service(ProductOrService):
 
 
 class Account(models.Model,LinkHelper):
-    logo_origin=models.ImageField(_("logo"), null=True,blank=True,upload_to=IMAGE_FOLDER+"account/", height_field=None, width_field=None, max_length=None)
-    title=models.CharField(_("title"), null=True,blank=True,max_length=500)
-    profile=models.ForeignKey("authentication.profile", verbose_name=_("profile"), on_delete=models.CASCADE)
+    logo_origin=models.ImageField(_("لوگو , تصویر"), null=True,blank=True,upload_to=IMAGE_FOLDER+"account/", height_field=None, width_field=None, max_length=None)
+    title=models.CharField(_("عنوان"), null=True,blank=True,max_length=500)
+    profile=models.ForeignKey("authentication.profile", verbose_name=_("profile"),null=True,blank=True, on_delete=models.CASCADE)
     
-    address=models.CharField(_("address"),null=True,blank=True, max_length=50)
-    tel=models.CharField(_("tel"),null=True,blank=True, max_length=50)
+    address=models.CharField(_("آدرس"),null=True,blank=True, max_length=50)
+    tel=models.CharField(_("تلفن"),null=True,blank=True, max_length=50)
+    description=models.CharField(_("توضیحات"),blank=True,max_length=5000)
+
     class_name=models.CharField(_("class_name"),blank=True, max_length=50)
     app_name=models.CharField(_("app_name"),blank=True,max_length=50)
     @property
@@ -235,7 +237,9 @@ class Account(models.Model,LinkHelper):
     def logo(self):
         if self.logo_origin:
             return MEDIA_URL+str(self.logo_origin)
-        return self.profile.image
+        if self.profile is not None:
+            return self.profile.image
+        return f"{STATIC_URL}{self.app_name}/img/{self.class_name}.png"
         # return f"{STATIC_URL}{APP_NAME}/img/account.png"
     @property
     def employee(self):
@@ -552,7 +556,7 @@ class Invoice(Transaction):
 
 
     def get_print_url(self):
-        return reverse(APP_NAME+":invoice_print",kwargs={'pk':self.pk})
+        return reverse(APP_NAME+":invoice_print_currency",kwargs={'pk':self.pk,'currency':'r'})
     def get_excel_url(self):
         return reverse(APP_NAME+":invoice_excel",kwargs={'pk':self.pk})
     def editable(self):
@@ -566,7 +570,7 @@ class Invoice(Transaction):
   
     def get_edit_url2(self):
         return reverse(APP_NAME+":edit_invoice",kwargs={'pk':self.pk})
-    def get_print_url(self):
+    def get_print_url_2(self):
         return reverse(APP_NAME+":invoice_print",kwargs={'pk':self.pk})
     
     
