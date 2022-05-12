@@ -17,8 +17,8 @@ from utility.excel import ReportSheet,ReportWorkBook, get_style
 from warehouse.repo import WareHouseRepo, WareHouseSheetRepo
 from warehouse.serializers import WareHouseSerializer, WareHouseSheetSerializer
 from accounting.apps import APP_NAME
-from accounting.repo import AssetRepo, InvoiceLineRepo,AccountRepo,FinancialBalanceRepo, ChequeRepo, PaymentRepo, PriceRepo, ProductRepo,ServiceRepo,FinancialDocumentRepo,InvoiceRepo, TransactionRepo
-from accounting.serializers import AccountSerializer, AssetSerializer, FinancialBalanceSerializer, InvoiceFullSerializer,InvoiceLineSerializer,ChequeSerializer, InvoiceSerializer, PaymentSerializer, PriceSerializer, ProductSerializer,ServiceSerializer,FinancialDocumentForAccountSerializer,FinancialDocumentSerializer, TransactionSerializer
+from accounting.repo import AssetRepo, CostRepo, InvoiceLineRepo,AccountRepo,FinancialBalanceRepo, ChequeRepo, PaymentRepo, PriceRepo, ProductRepo,ServiceRepo,FinancialDocumentRepo,InvoiceRepo, TransactionRepo
+from accounting.serializers import AccountSerializer, AssetSerializer, CostSerializer, FinancialBalanceSerializer, InvoiceFullSerializer,InvoiceLineSerializer,ChequeSerializer, InvoiceSerializer, PaymentSerializer, PriceSerializer, ProductSerializer,ServiceSerializer,FinancialDocumentForAccountSerializer,FinancialDocumentSerializer, TransactionSerializer
 from accounting.forms import *
 import json
 from phoenix.server_settings import phoenix_apps
@@ -43,6 +43,15 @@ def get_add_payment_context(request,*args, **kwargs):
         context['payment_methods']=(u[0] for u in PaymentMethodEnum.choices)
         context['accounts']=accounts
         context['add_payment_form']=AddPaymentForm()
+    return context
+    
+def get_add_cost_context(request,*args, **kwargs):
+    context={}
+    if request.user.has_perm(APP_NAME+".add_cost"):
+        context['payment_methods']=(u[0] for u in PaymentMethodEnum.choices)
+        accounts=AccountRepo(request=request).list(*args, **kwargs)
+        context['accounts']=accounts
+        context['add_cost_form']=AddCostForm()
     return context
     
 def add_from_accounts_context(request):
@@ -586,6 +595,7 @@ class ProductsView(View):
         context=getContext(request=request)
         products=ProductRepo(request=request).list()
         context['products']=products
+        context['expand_products']=True
         products_s=json.dumps(ProductSerializer(products,many=True).data)
         context['products_s']=products_s
         if request.user.has_perm(APP_NAME+".add_product"):
@@ -698,6 +708,27 @@ class PaymentView(View):
         context['payment']=payment
         context.update(get_transaction_context(request=request,transaction=payment))
         return render(request,TEMPLATE_ROOT+"payment.html",context)
+
+
+class CostsView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        costs=CostRepo(request=request).list(*args, **kwargs)
+        context['costs']=costs
+        context['expand_costs']=True
+
+        context['costs_s']=json.dumps(CostSerializer(costs,many=True).data)
+        if request.user.has_perm(APP_NAME+".add_cost"):
+            context.update(get_add_cost_context(request=request))
+        return render(request,TEMPLATE_ROOT+"costs.html",context)
+class CostView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        cost=CostRepo(request=request).cost(*args, **kwargs)
+        context['payment_s']=json.dumps(CostSerializer(cost).data)
+        context['cost']=cost
+        context.update(get_transaction_context(request=request,transaction=cost))
+        return render(request,TEMPLATE_ROOT+"cost.html",context)
 
 class FinancialDocumentsView(View):
     def post(self,request,*args, **kwargs):

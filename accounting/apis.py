@@ -5,10 +5,10 @@ from core.serializers import PageLinkSerializer
 from .models import Transaction
 
 from utility.calendar import PersianCalendar
-from .repo import AccountRepo, ChequeRepo, FinancialBalanceRepo,  FinancialDocumentRepo, InvoiceRepo, PaymentRepo, PriceRepo, ProductRepo, ServiceRepo, TransactionRepo
+from .repo import AccountRepo, ChequeRepo, CostRepo, FinancialBalanceRepo,  FinancialDocumentRepo, InvoiceRepo, PaymentRepo, PriceRepo, ProductRepo, ServiceRepo, TransactionRepo
 from django.http import JsonResponse
 from .forms import *
-from .serializers import AccountSerializer, ChequeSerializer, FinancialBalanceSerializer, FinancialDocumentSerializer, InvoiceFullSerializer, InvoiceLineSerializer, PaymentSerializer, PriceSerializer, ProductSerializer, ServiceSerializer
+from .serializers import AccountSerializer, ChequeSerializer, CostSerializer, FinancialBalanceSerializer, FinancialDocumentSerializer, InvoiceFullSerializer, InvoiceLineSerializer, PaymentSerializer, PriceSerializer, ProductSerializer, ServiceSerializer
 
 class AddChequeApi(APIView):
     def post(self,request,*args, **kwargs):
@@ -82,6 +82,43 @@ class EditInvoiceApi(APIView):
                     context['result']=SUCCEED
         context['log']=log
         return JsonResponse(context)
+
+
+class AddCostApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        log=1
+        context['result']=FAILED
+        if request.method=='POST':
+            log=2
+            AddCostForm_=AddCostForm(request.POST)
+            if AddCostForm_.is_valid():
+                log=3
+                fm=AddCostForm_.cleaned_data
+                pay_to_id=fm['pay_to_id']
+                pay_from_id=fm['pay_from_id']
+                
+                payment_datetime=fm['payment_datetime']
+                description=fm['description']
+                amount=fm['amount']
+                payment_method=fm['payment_method']
+                title=fm['title']
+                payment_datetime=PersianCalendar().to_gregorian(payment_datetime)
+                cost=CostRepo(request=request).add_cost(
+                    payment_method=payment_method,
+                    description=description,
+                    pay_from_id=pay_from_id,
+                    amount=amount,
+                    payment_datetime=payment_datetime,
+                    pay_to_id=pay_to_id,
+                    title=title,
+                )
+                if cost is not None:
+                    context['cost']=CostSerializer(cost).data
+                    context['result']=SUCCEED
+        context['log']=log
+        return JsonResponse(context)
+        
         
 class AddPaymentApi(APIView):
     def post(self,request,*args, **kwargs):

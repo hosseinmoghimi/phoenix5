@@ -49,6 +49,10 @@ urlpatterns = [
     path("payment/<int:pk>/",login_required(views.PaymentView.as_view()),name="payment"),
     path("payments/",login_required(views.PaymentsView.as_view()),name="payments"),
     
+    path("cost/<int:pk>/",login_required(views.CostView.as_view()),name="cost"),
+    path("costs/",login_required(views.CostsView.as_view()),name="costs"),
+    path("add_cost/",login_required(apis.AddCostApi.as_view()),name="add_cost"),
+    
 
 
 

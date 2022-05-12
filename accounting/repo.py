@@ -5,7 +5,7 @@ from accounting.enums import FinancialDocumentTypeEnum, PaymentMethodEnum, Trans
 from core.enums import UnitNameEnum
 from utility.calendar import PersianCalendar
 from .apps import APP_NAME
-from .models import Account, Asset, Cheque, FinancialBalance, FinancialDocument, FinancialYear, Invoice, InvoiceLine, Payment, Price, Product,Service, Transaction
+from .models import Account, Asset, Cheque, Cost, FinancialBalance, FinancialDocument, FinancialYear, Invoice, InvoiceLine, Payment, Price, Product,Service, Transaction
 from django.db.models import Q
 from authentication.repo import ProfileRepo
 from django.utils import timezone
@@ -513,19 +513,21 @@ class AccountRepo():
 
         account.save()
         
-        if 'balance' in kwargs:
+        if 'balance' in kwargs and kwargs['balance'] is not None and not kwargs['balance']==0:
             me_account=self.me
             if me_account is not None:
                 balance=kwargs['balance']
                 payment=Payment()
+                payment.amount=balance if balance>0 else (0-balance)
+                payment.title="مانده از قبل"
                 payment.creator_id=me_account.profile.id
                 payment.status=TransactionStatusEnum.FROM_PAST
                 payment.payment_method=PaymentMethodEnum.FROM_PAST
                 payment.transaction_datetime=PersianCalendar().date
-                if balance<0:
+                if balance>0:
                     payment.pay_to_id=me_account.id
                     payment.pay_from_id=account.id
-                if balance>0:
+                if balance<0:
                     payment.pay_from_id=me_account.id
                     payment.pay_to_id=account.id
                 payment.save()
@@ -659,6 +661,83 @@ class PaymentRepo():
 
         payment.save()
         return payment
+
+
+class CostRepo():
+    def __init__(self, *args, **kwargs):
+        self.request = None
+        self.me=None
+        self.user = None
+        if 'request' in kwargs:
+            self.request = kwargs['request']
+            self.user = self.request.user
+        if 'user' in kwargs:
+            self.user = kwargs['user']
+        
+        self.objects=Cost.objects
+        self.profile=ProfileRepo(*args, **kwargs).me
+        if self.user.has_perm(APP_NAME+".view_payment"):
+            self.objects=self.objects
+        elif self.profile is not None:
+            self.objects=self.objects.filter(Q(pay_from__profile_id=self.profile.id)|Q(pay_to__profile_id=self.profile.id))
+        
+
+    def cost(self, *args, **kwargs):
+        pk=0
+        if 'cost_id' in kwargs:
+            pk=kwargs['cost_id']
+        elif 'pk' in kwargs:
+            pk=kwargs['pk']
+        elif 'id' in kwargs:
+            pk=kwargs['id']
+        return self.objects.filter(pk=pk).first()
+     
+    def list(self, *args, **kwargs):
+        objects = self.objects
+        if 'search_for' in kwargs:
+            search_for=kwargs['search_for']
+            objects = objects.filter(Q(title__contains=search_for)|Q(short_description__contains=search_for)|Q(description__contains=search_for))
+        if 'for_home' in kwargs:
+            objects = objects.filter(Q(for_home=kwargs['for_home']))
+        if 'account_id' in kwargs:
+            objects=objects.filter(Q(pay_to_id=kwargs['account_id'])|Q(pay_from_id=kwargs['account_id']))
+        if 'profile_id' in kwargs:
+            objects=objects.filter(account__profile_id=kwargs['profile_id'])
+        return objects.order_by('transaction_datetime')
+
+    def add_cost(self,*args, **kwargs):
+        if not self.request.user.has_perm(APP_NAME+".add_cost"):
+            return
+        cost=Cost()
+        cost.creator=self.profile
+        if 'title' in kwargs:
+            cost.title=kwargs['title']
+
+        if 'pay_from_id' in kwargs:
+            cost.pay_from_id=kwargs['pay_from_id']
+        if 'description' in kwargs:
+            cost.description=kwargs['description']
+        if 'pay_to_id' in kwargs:
+            cost.pay_to_id=kwargs['pay_to_id']
+        if 'amount' in kwargs:
+            cost.amount=kwargs['amount']
+        if 'payment_method' in kwargs:
+            cost.payment_method=kwargs['payment_method']
+
+        if 'payment_datetime' in kwargs:
+            cost.transaction_datetime=kwargs['payment_datetime']
+
+        if 'transaction_datetime' in kwargs:
+            cost.transaction_datetime=kwargs['transaction_datetime']
+
+        
+        # if 'financial_year_id' in kwargs:
+        #     payment.financial_year_id=kwargs['financial_year_id']
+        # else:
+        #     payment.financial_year_id=FinancialYear.get_by_date(date=payment.transaction_datetime).id
+
+        cost.save()
+        return cost
 
 
 class InvoiceRepo():
