@@ -1,12 +1,10 @@
+<script>
+
+    account_id = 0
+</script>
 {% if account %}
 <script>
-
     let account_id = parseInt("{{account.id}}")
-</script>
-{% else %}
-<script>
-
-    let account_id = 0
 </script>
 {% endif %}
 <script>
@@ -24,7 +22,7 @@
             description: "",
             payment_method: "پیش نویس",
             waiting: false,
-            show_add_form:false,
+            show_add_form: false,
             message: {
                 show: false,
                 color: "success",

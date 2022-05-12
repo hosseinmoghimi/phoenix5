@@ -35,6 +35,27 @@ class AddChequeApi(APIView):
         context['log']=log
         return JsonResponse(context)
 
+class GetReportApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        log=1
+        context['result']=FAILED
+        if request.method=='POST':
+            log=2
+            GetReportForm_=GetReportForm(request.POST)
+
+
+
+            
+            if GetReportForm_.is_valid():
+                log=3
+                cd=GetReportForm_.cleaned_data
+                context['cheques']=ChequeSerializer(ChequeRepo(request=request).list(**cd),many=True).data
+                context['payments']=PaymentSerializer(PaymentRepo(request=request).list(**cd),many=True).data
+                context['result']=SUCCEED
+        context['log']=log
+        return JsonResponse(context)
+
 class EditInvoiceApi(APIView):
     def post(self,request,*args, **kwargs):
         context={}
@@ -87,33 +108,37 @@ class EditInvoiceApi(APIView):
 class AddCostApi(APIView):
     def post(self,request,*args, **kwargs):
         context={}
-        log=1
+        print(request.POST)
+        log=10
         context['result']=FAILED
         if request.method=='POST':
-            log=2
+            log=20
             AddCostForm_=AddCostForm(request.POST)
             if AddCostForm_.is_valid():
-                log=3
-                fm=AddCostForm_.cleaned_data
-                pay_to_id=fm['pay_to_id']
-                pay_from_id=fm['pay_from_id']
+                log=30
+                cd=AddCostForm_.cleaned_data
+                # pay_to_id=fm['pay_to_id']
+                # pay_from_id=fm['pay_from_id']
                 
-                payment_datetime=fm['payment_datetime']
-                description=fm['description']
-                amount=fm['amount']
-                payment_method=fm['payment_method']
-                title=fm['title']
-                payment_datetime=PersianCalendar().to_gregorian(payment_datetime)
-                cost=CostRepo(request=request).add_cost(
-                    payment_method=payment_method,
-                    description=description,
-                    pay_from_id=pay_from_id,
-                    amount=amount,
-                    payment_datetime=payment_datetime,
-                    pay_to_id=pay_to_id,
-                    title=title,
-                )
+                # payment_datetime=fm['payment_datetime']
+                # description=fm['description']
+                # amount=fm['amount']
+                # payment_method=fm['payment_method']
+                # title=fm['title']
+                cd['transaction_datetime']=PersianCalendar().to_gregorian(cd['transaction_datetime'])
+
+                cost=CostRepo(request=request).add_cost(**cd)
+                # cost=CostRepo(request=request).add_cost(
+                #     payment_method=payment_method,
+                #     description=description,
+                #     pay_from_id=pay_from_id,
+                #     amount=amount,
+                #     payment_datetime=payment_datetime,
+                #     pay_to_id=pay_to_id,
+                #     title=title,
+                # )
                 if cost is not None:
+                    log=40
                     context['cost']=CostSerializer(cost).data
                     context['result']=SUCCEED
         context['log']=log
@@ -155,6 +180,7 @@ class AddPaymentApi(APIView):
         context['log']=log
         return JsonResponse(context)
         
+
 class AddPriceApi(APIView):
     def post(self,request,*args, **kwargs):
         context={}
@@ -204,14 +230,13 @@ class AddFinancialBalancesApi(APIView):
         return JsonResponse(context)
   
      
-class AddAccountsApi(APIView):
+class AddAccountApi(APIView):
     def post(self,request,*args, **kwargs):
         context={}
         log=111
         context['result']=FAILED
         if request.method=='POST':
             log=222
-            print(request.POST)
             add_account_form=AddAccountForm(request.POST)
             if add_account_form.is_valid():
                 log=333

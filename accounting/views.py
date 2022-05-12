@@ -2,8 +2,9 @@ from django.http import Http404, HttpResponse, JsonResponse
 from django.shortcuts import redirect, render,reverse
 from django.utils import timezone
 from requests import request
+from accounting import apis
 from accounting.apis import EditInvoiceApi
-from accounting.enums import FinancialBalanceTitleEnum, PaymentMethodEnum, TransactionStatusEnum
+from accounting.enums import CostTypeEnum, FinancialBalanceTitleEnum, PaymentMethodEnum, TransactionStatusEnum
 from core.constants import CURRENCY, FAILED, SUCCEED
 from core.enums import UnitNameEnum
 from core.utils import app_is_installed
@@ -31,6 +32,7 @@ TEMPLATE_ROOT = "accounting/"
 def getContext(request, *args, **kwargs):
     context = CoreContext(request=request, app_name=APP_NAME)
     context['search_form'] = SearchForm()
+    context['me_account']=AccountRepo(request=request).me
     context['search_action'] = reverse(APP_NAME+":search")
     context['LAYOUT_PARENT'] = LAYOUT_PARENT
     return context
@@ -49,6 +51,7 @@ def get_add_cost_context(request,*args, **kwargs):
     context={}
     if request.user.has_perm(APP_NAME+".add_cost"):
         context['payment_methods']=(u[0] for u in PaymentMethodEnum.choices)
+        context['cost_types']=(u[0] for u in CostTypeEnum.choices)
         accounts=AccountRepo(request=request).list(*args, **kwargs)
         context['accounts']=accounts
         context['add_cost_form']=AddCostForm()
@@ -291,6 +294,7 @@ def get_search_form_context(request,*args, **kwargs):
 
     return context
 
+
 class HomeView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -300,6 +304,19 @@ class HomeView(View):
         context['products_s']=products_s
         return render(request,TEMPLATE_ROOT+"index.html",context)
 
+
+class ReportView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        accounts=AccountRepo(request=request).list(*args, **kwargs)
+        context['accounts']=accounts
+        context['accounts_s']=json.dumps(AccountSerializer(accounts,many=True).data)
+        
+        context['payment_methods']=(u[0] for u in PaymentMethodEnum.choices)
+        context['get_report_form']=GetReportForm()
+        return render(request,TEMPLATE_ROOT+"report.html",context)
+    def post(self,request,*args, **kwargs):
+        return apis.GetReportApi().post(request=request,*args, **kwargs)
 
 
 class SearchView(View):

@@ -19,7 +19,7 @@
             <div class="card-body">
                 {% load static %}
                
-                <form @submit.prevent="add_cost()" v-if="show_add_form">
+                <form @submit.prevent="add_cost()">
 
                     <div class="row">
                 
@@ -49,7 +49,23 @@
                             </div>
                         </div>
                 
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="">هزینه برای</label>
                 
+                                <select v-model="cost_type" class="form-control">
+                                    {% for cost_type in cost_types %}
+                                    <option value="{{cost_type}}">{{cost_type}}</option>
+                
+                                    {% endfor %}
+                                </select>
+                
+                            </div>
+                
+                
+                        </div>
+                
+                        
                 
                         <div class="col-md-4">
                             <div class="form-group">
@@ -113,6 +129,7 @@
                 
                 
                 
+                  
                         <div class="col-md-12">
                             <div class="form-group">
                                 <label for="">توضیحات

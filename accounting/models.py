@@ -111,7 +111,7 @@ class Transaction(Page,LinkHelper):
         fd_bestankar.save()
 
     @property
-    def persian_transaction_datetime(self,no_tag=False):
+    def persian_transaction_datetime(self,no_tag=False,*args, **kwargs):
         if no_tag:
             return PersianCalendar().from_gregorian(self.transaction_datetime)
         return to_persian_datetime_tag(self.transaction_datetime)

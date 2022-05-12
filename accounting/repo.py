@@ -489,7 +489,6 @@ class AccountRepo():
             return self.objects.filter(profile=self.profile)
    
     def add_account(self,*args, **kwargs):
-        print(kwargs)
         if not self.request.user.has_perm(APP_NAME+".add_account"):
             return
         account=Account()
@@ -681,16 +680,27 @@ class CostRepo():
         elif self.profile is not None:
             self.objects=self.objects.filter(Q(pay_from__profile_id=self.profile.id)|Q(pay_to__profile_id=self.profile.id))
         
-
+    def cost_account(self,*args, **kwargs):
+        if 'cost_type' in kwargs:
+            cost_type=kwargs['cost_type']
+            cost_account=Account.objects.filter(title=cost_type).first()
+            if cost_account is None:
+                cost_account=Account()
+                cost_account.title=cost_type
+                cost_account.save()
+            return cost_account
     def cost(self, *args, **kwargs):
         pk=0
         if 'cost_id' in kwargs:
             pk=kwargs['cost_id']
-        elif 'pk' in kwargs:
+            return self.objects.filter(pk=pk).first()
+        
+        if 'pk' in kwargs:
             pk=kwargs['pk']
-        elif 'id' in kwargs:
+            return self.objects.filter(pk=pk).first()
+        if 'id' in kwargs:
             pk=kwargs['id']
-        return self.objects.filter(pk=pk).first()
+            return self.objects.filter(pk=pk).first()
      
     def list(self, *args, **kwargs):
         objects = self.objects
@@ -712,30 +722,25 @@ class CostRepo():
         cost.creator=self.profile
         if 'title' in kwargs:
             cost.title=kwargs['title']
-
+        if 'cost_type' in kwargs:
+            cost.cost_type=kwargs['cost_type']
+            cost.pay_to_id=CostRepo(request=self.request).cost_account(cost_type=kwargs['cost_type']).id
         if 'pay_from_id' in kwargs:
             cost.pay_from_id=kwargs['pay_from_id']
         if 'description' in kwargs:
             cost.description=kwargs['description']
-        if 'pay_to_id' in kwargs:
-            cost.pay_to_id=kwargs['pay_to_id']
         if 'amount' in kwargs:
             cost.amount=kwargs['amount']
         if 'payment_method' in kwargs:
             cost.payment_method=kwargs['payment_method']
-
-        if 'payment_datetime' in kwargs:
-            cost.transaction_datetime=kwargs['payment_datetime']
-
+        if 'cost_datetime' in kwargs:
+            cost.transaction_datetime=kwargs['cost_datetime']
         if 'transaction_datetime' in kwargs:
             cost.transaction_datetime=kwargs['transaction_datetime']
-
-        
         # if 'financial_year_id' in kwargs:
         #     payment.financial_year_id=kwargs['financial_year_id']
         # else:
         #     payment.financial_year_id=FinancialYear.get_by_date(date=payment.transaction_datetime).id
-
         cost.save()
         return cost
 

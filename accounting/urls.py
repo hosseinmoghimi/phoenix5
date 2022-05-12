@@ -6,6 +6,7 @@ app_name=APP_NAME
 urlpatterns = [
     path("",login_required(views.HomeView.as_view()),name="home"),
     path("search/",login_required(views.SearchView.as_view()),name="search"),
+    path("report/",login_required(views.ReportView.as_view()),name="report"),
     path("search_json/",login_required(views.SearchJsonView.as_view()),name="search_json"),
 
     path("products/",login_required(views.ProductsView.as_view()),name="products"),
@@ -25,7 +26,7 @@ urlpatterns = [
     
     path("account/<int:pk>/",login_required(views.AccountView.as_view()),name="account"),
     path("accounts/",login_required(views.AccountsView.as_view()),name="accounts"),
-    path("add_account/",login_required(apis.AddAccountsApi.as_view()),name="add_account"),
+    path("add_account/",login_required(apis.AddAccountApi.as_view()),name="add_account"),
 
     path("invoice_line/<int:pk>/",login_required(views.InvoiceLineView.as_view()),name="invoiceline"),
     path("invoice/edit/<int:pk>/",login_required(views.InvoiceEditView.as_view()),name="edit_invoice"),

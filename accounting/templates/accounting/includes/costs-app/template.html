@@ -8,9 +8,9 @@
     <div class="card" id="costs-app">
         <div class="card-header" id="heading-costs">
             <h5 class="text-center">
-                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-costs"
-                    aria-expanded="true" aria-controls="collapse-costs">
-                هزینه ها
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-costs" aria-expanded="true"
+                    aria-controls="collapse-costs">
+                    هزینه ها
 
 
                     <span v-if="costs.length>0">
@@ -60,13 +60,19 @@
                     <table class="table table-striped">
                         <thead>
                             <th>
-                                حساب
+                                عنوان
                             </th>
                             <th>
-                                پروفایل
+                                هزینه کننده
                             </th>
                             <th>
-                                مانده
+                                هزینه
+                            </th>
+                            <th>
+                                مبلغ
+                            </th>
+                            <th>
+                                تاریخ
                             </th>
                             <th>
 
@@ -75,41 +81,56 @@
                         <tbody>
                             <tr v-for="cost in costs">
                                 <td>
-                                    <a :href="cost.get_absolute_url">
+                                    <span v-text="cost.title"></span>
+
+                                </td>
+                                <td>
+                                    <a :href="cost.pay_from.get_absolute_url">
                                         <div class="media">
-                                            <img :src="cost.logo" class="rounded-circle" width="32" alt="">
+                                            <img :src="cost.pay_from.logo" class="rounded-circle" width="32" alt="">
                                             <div class="media-body mr-3">
                                                 <div>
 
-                                                    <span v-text="cost.title"></span>
+                                                    <span v-text="cost.pay_from.title"></span>
                                                 </div>
-                                                <div>
-                                                    <small class="text-muted">
-                                                        <span v-text="cost.class_title"></span>
-                                                    </small>
-                                                </div>
+
                                             </div>
                                         </div>
                                     </a>
                                 </td>
+
                                 <td>
-                                    <a v-if="cost.profile" :href="cost.profile.get_absolute_url">
-                                        <img :src="cost.profile.image" class="rounded-circle" width="32" alt="">
-                                        <span v-text="cost.profile.name"></span>
+                                    <a :href="cost.pay_to.get_absolute_url">
+                                        <div class="media">
+                                            <img :src="cost.pay_to.logo" class="rounded-circle" width="32" alt="">
+                                            <div class="media-body mr-3">
+                                                <div>
+
+                                                    <span v-text="cost.pay_to.title"></span>
+                                                </div>
+
+                                            </div>
+                                        </div>
                                     </a>
                                 </td>
+
                                 <td>
-                                    <span v-html="to_price(cost.balance_rest)"></span>
-                                    </span>
+                                    <span v-text="to_price(cost.amount)"></span>
                                 </td>
                                 <td>
-                                    {% if perms.projectmanager.add_employee and not cost.employee %}
-                                    <form @submit.prevent="create_employee(cost.id)">
-                                        {% csrf_token %}
-                                        <button class="btn btn-warning" type="submit">
-                                            ایجاد پرسنل
-                                        </button>
-                                    </form>
+                                    <span v-html="cost.persian_transaction_datetime"></span>
+                                </td>
+                                <td>
+                                    {% if perms.projectmanager.change_cost %}
+                                    <a :href="cost.get_edit_url" title="ویرایش" class="mx-2">
+                                        <i class="fa fa-edit text-warning"></i>
+                                    </a>
+                                    {% endif %}
+
+                                    {% if perms.projectmanager.delete_cost %}
+                                    <a :href="cost.get_delete_url" title="حذف" class="mx-2">
+                                        <i class="fa fa-trash text-danger"></i>
+                                    </a>
                                     {% endif %}
                                 </td>
                             </tr>
@@ -117,13 +138,13 @@
                     </table>
                 </div>
             </div>
-            {% if add_cost_form %}
 
             <div class="card-footer">
-                {% include "accounting/includes/costs-app/form.html" %}
+                <h1>
+                    &nbsp;
+                </h1>
             </div>
-            {% endif %}
-            
+
         </div>
     </div>
 </div>

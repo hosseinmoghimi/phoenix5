@@ -1,14 +1,3 @@
-
-<script>
-
-    let account_id = 0
-</script>
-{% if account %}
-<script>
-
-    account_id = parseInt("{{account.id}}")
-</script>
-{% endif %}
 <script>
     let costs = JSON.parse(`{{costs_s|escapejs}}`)
     let costs_app = new Vue({
@@ -17,71 +6,18 @@
             costs: costs,
             
             search_for:'',
-            payment_datetime: current_date,
-            title: "",
-            pay_to_id: account_id,
-            pay_from_id: account_id,
-            amount: 0,
-            description: "",
-            payment_method: "پیش نویس",
-            waiting: false,
-            show_add_form:false,
-            message: {
-                show: false,
-                color: "success",
-                body: "",
-            }
+            waiting:false,
         },
-        components: {
-            DatePicker: VuePersianDatetimePicker,
-
-        },
+        
         methods: {
             filter:function(){
                 this.costs = costs.filter(cost => cost.title.indexOf(this.search_for) > -1)
-         
-            },
-            add_cost: function () {
-                let payload = {
-                    csrfmiddlewaretoken: csrfmiddlewaretoken,
-                    pay_to_id: parseInt(this.pay_to_id),
-                    pay_from_id: parseInt(this.pay_from_id),
-                    title: this.title,
-                    description: this.description,
-                    amount: parseInt(this.amount),
-                    payment_datetime: this.payment_datetime,
-                    payment_method: this.payment_method,
-
-                }
-                console.log(payload)
-                costs_app.waiting = true
-                let url = "{% url 'accounting:add_cost' %}"
-                $.post(url, payload).done((data) => {
-                    costs_app.waiting = false
-                    costs_app.costs.push(data.cost)
-                    if (data.result === 'SUCCEED') {
-                        this.message = { show: true, body: "با موفقیت ذخیره شد.", color: 'success' }
-                    }
-                    if (data.result === 'FAILED') {
-                        this.message = { show: true, body: "خطا در ذخیره سازی ", color: 'danger' }
-                    }
-
-                })
-
             },
             to_price: function (vall) {
-                let color='primary'
-                if (vall<0)
-                color='danger'
-                if (vall>0)
-                color='success'
+                 
                 vall=to_price(vall,"{{CURRENCY}}")
-                return `
-                    <span class="text-${color}">${vall}</span>
-                    `
+                return vall
             },
-            
-           
         }
     })
 

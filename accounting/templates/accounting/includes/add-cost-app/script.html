@@ -1,31 +1,27 @@
-
 <script>
-
-    let account_id = 0
+    let me_account_id = 0
 </script>
-{% if account %}
+{% if me_account %}
 <script>
-
-    account_id = parseInt("{{account.id}}")
+    me_account_id = parseInt("{{me_account.id}}")
 </script>
 {% endif %}
 <script>
-    let costs = JSON.parse(`{{costs_s|escapejs}}`)
-    let costs_app = new Vue({
-        el:"#costs-app",
+    let add_cost_app = new Vue({
+        el: "#add-cost-app",
         data: {
-            costs: costs,
-            
-            search_for:'',
+
+            search_for: '',
             payment_datetime: current_date,
             title: "",
-            pay_to_id: account_id,
-            pay_from_id: account_id,
+            cost_type: "",
+            pay_to_id: me_account_id,
+            pay_from_id: me_account_id,
             amount: 0,
             description: "",
             payment_method: "پیش نویس",
             waiting: false,
-            show_add_form:false,
+            show_add_form: false,
             message: {
                 show: false,
                 color: "success",
@@ -34,54 +30,64 @@
         },
         components: {
             DatePicker: VuePersianDatetimePicker,
-
         },
         methods: {
-            filter:function(){
+            filter: function () {
                 this.costs = costs.filter(cost => cost.title.indexOf(this.search_for) > -1)
-         
             },
             add_cost: function () {
+                if (!(parseInt(add_cost_app.amount) > 0)) {
+                    add_cost_app.message = { show: true, body: "خطا در ذخیره سازی  . مبلغ را وارد کنید.", color: 'warning' }
+                    setTimeout(() => {
+                        add_cost_app.message = { show: false, body: "خطا در ذخیره سازی ", color: 'danger' }
+                    }, 2000);
+                    return
+                }
                 let payload = {
                     csrfmiddlewaretoken: csrfmiddlewaretoken,
-                    pay_to_id: parseInt(this.pay_to_id),
                     pay_from_id: parseInt(this.pay_from_id),
                     title: this.title,
                     description: this.description,
                     amount: parseInt(this.amount),
-                    payment_datetime: this.payment_datetime,
+                    transaction_datetime: this.payment_datetime,
                     payment_method: this.payment_method,
-
+                    cost_type: this.cost_type,
                 }
                 console.log(payload)
-                costs_app.waiting = true
+                add_cost_app.waiting = true
                 let url = "{% url 'accounting:add_cost' %}"
                 $.post(url, payload).done((data) => {
-                    costs_app.waiting = false
-                    costs_app.costs.push(data.cost)
+                    console.log(data)
+                    add_cost_app.description = ""
+                    add_cost_app.title = ""
+                    add_cost_app.amount = 0
+                    add_cost_app.waiting = false
                     if (data.result === 'SUCCEED') {
-                        this.message = { show: true, body: "با موفقیت ذخیره شد.", color: 'success' }
+                        if (typeof costs_app != "undefined") {
+                            costs_app.costs.push(data.cost)
+                        }
+                        add_cost_app.message = { show: true, body: "با موفقیت ذخیره شد.", color: 'success' }
                     }
                     if (data.result === 'FAILED') {
-                        this.message = { show: true, body: "خطا در ذخیره سازی ", color: 'danger' }
+                        add_cost_app.message = { show: true, body: "خطا در ذخیره سازی ", color: 'danger' }
                     }
+                    setTimeout(() => {
+                        add_cost_app.message = { show: false, body: "خطا در ذخیره سازی ", color: 'danger' }
 
+                    }, 2000);
                 })
-
             },
             to_price: function (vall) {
-                let color='primary'
-                if (vall<0)
-                color='danger'
-                if (vall>0)
-                color='success'
-                vall=to_price(vall,"{{CURRENCY}}")
+                let color = 'primary'
+                if (vall < 0)
+                    color = 'danger'
+                if (vall > 0)
+                    color = 'success'
+                vall = to_price(vall, "{{CURRENCY}}")
                 return `
                     <span class="text-${color}">${vall}</span>
                     `
             },
-            
-           
         }
     })
 
