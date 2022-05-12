@@ -1,0 +1,31 @@
+{% extends "polls/layout.html" %}
+{% block content %}
+  <div class="row">
+      <div class="col-md-12">
+          <h4 class="text-center">
+          {{POLLS_SYSTEM_TITLE.value}}
+          {% if perms.core.change_parameter %}
+          <a title="تغییر بده" href="POLLS_SYSTEM_TITLE.get_edit_url">
+              <i class="fa fa-edit text-warning mx-2"></i>
+          </a>
+            
+          {% endif %}
+          </h4>
+      </div>
+      <div class="col-md-12">
+          <div class="card">
+              <div class="card-body">
+                  <h5>
+                      <a href="{% url 'polls:polls' %}">
+                          نظر سنجی ها
+                      </a>
+                  </h5>
+              </div>
+          </div>
+      </div>
+  </div>
+{% endblock content %}
+
+{% block script %}
+  
+{% endblock script %}

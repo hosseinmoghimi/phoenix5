@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'projectmanager',
     'web',
     'stock',
+    'polls',
     'transport',
     'guarantee',
     'chef',
@@ -45,6 +46,7 @@ INSTALLED_APPS = [
     'warehouse',
     'organization',
     'library',
+    'mafia',
     'school',
     'bms',
     
@@ -53,7 +55,7 @@ INSTALLED_APPS = [
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db_version_1.1.sqlite3',
+        'NAME': BASE_DIR / 'db_version_1.3.sqlite3',
     }
 }
 SECRET_KEY = 'django-insecure-bt+o^tb1w_vl6vj%tjn-&=v5^m*w3)5a8(i&uoo)6on&pi-x6('
@@ -80,6 +82,22 @@ phoenix_apps=[
         'title':'هویت',
         'color':'warning',
         'home_url':SITE_URL+"authentication"+"/",
+        'has_help':False,
+        'show_on_menu':True,
+    },
+    {
+        'name':'polls',
+        'title':'نظرسنجی',
+        'color':'success',
+        'home_url':SITE_URL+"polls"+"/",
+        'has_help':False,
+        'show_on_menu':True,
+    },
+    {
+        'name':'mafia',
+        'title':'مافیا',
+        'color':'warning',
+        'home_url':SITE_URL+"mafia"+"/",
         'has_help':False,
         'show_on_menu':True,
     },

@@ -1,0 +1,70 @@
+{% load to_json %}
+<script>
+    let add_poll_app = new Vue({
+        el: "#add-poll-app",
+        data: {
+            title: '',
+            waiting: false,
+            message: { show: false }
+        },
+        methods: {
+            filter: function () {
+                // this.add-poll = add-poll.filter(poll => poll.title.indexOf(this.search_for) > -1)
+
+            },
+            to_price: function (vall) {
+                let color = 'primary'
+                if (vall < 0)
+                    color = 'danger'
+                if (vall > 0)
+                    color = 'success'
+                vall = to_price(vall, "")
+                return `
+                    <span class="text-${color}">${vall}</span>
+                    `
+            },
+            add_poll: function () {
+                if (add_poll_app.title.length < 5) {
+                    add_poll_app.message = {
+                        show: true,
+                        color: "danger",
+                        body: "عنوان را وارد کنید حداقل 5 حرف"
+                    }
+                    setTimeout(() => {
+                        add_poll_app.message = { show: false }
+                    }, 2000)
+                    return
+                }
+                add_poll_app.waiting = true
+                let url = "{% url 'polls:add_poll' %}"
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    title: this.title,
+                }
+                $.post(url, payload).done((data) => {
+                    console.log(data)
+                    add_poll_app.waiting = false
+                    if (data.result === "SUCCEED") {
+                        add_poll_app.message = {
+                            show: true,
+                            color: "success",
+                            body: "با موفقیت افزوده شد."
+                        }
+                        setTimeout(() => {
+                            add_poll_app.message = { show: false }
+                        }, 2000)
+
+
+                        if (typeof polls_app != "undefined") {
+                            polls_app.title = ""
+                            polls_app.polls = polls
+                            polls_app.polls.push(data.poll)
+                        }
+                    }
+                })
+            },
+
+        }
+    })
+
+</script>
