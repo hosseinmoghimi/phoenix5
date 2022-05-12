@@ -565,6 +565,7 @@ class TransactionsView(View):
         context['transactions']=transactions
         transactions_s=json.dumps(TransactionSerializer(transactions,many=True).data)
         context['transactions_s']=transactions_s
+        context['expand_transactions']=True
         return render(request,TEMPLATE_ROOT+"transactions.html",context)
 class TransactionsPrintView(View):
     def post(self,request,*args, **kwargs):
