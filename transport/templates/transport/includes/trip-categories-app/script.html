@@ -1,0 +1,31 @@
+{% load to_json %}
+<script>
+    let trip_categories = JSON.parse(`{{trip_categories_s|escapejs}}`)
+    let trip_categories_app = new Vue({
+        el:"#trip-categories-app",
+        data: {
+            trip_categories: trip_categories,
+            search_for:'',
+            waiting:false,
+        },
+        methods: {
+            filter:function(){
+                this.trip_categories = trip_categories.filter(driver => driver.account.title.indexOf(this.search_for) > -1)
+         
+            },
+            to_price: function (vall) {
+                let color='primary'
+                if (vall<0)
+                color='danger'
+                if (vall>0)
+                color='success'
+                vall=to_price(vall,"{{CURRENCY}}")
+                return `
+                    <span class="text-${color}">${vall}</span>
+                    `
+            },
+          
+        }
+    })
+
+</script>

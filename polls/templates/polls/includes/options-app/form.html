@@ -1,0 +1,31 @@
+{% load static %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="form-group">
+            <input type="text" v-model="title" class="form-control" placeholder="انتخاب جدید ..." @input="filter()">
+
+        </div>
+    </div>
+    <div class="col-md-12">
+        <div class="text-right">
+            <button v-if="title.length>0" @click="add_option()" class="mx-3 my-3 btn btn-success">
+                <i class="fa fa-plus"></i>
+                افزودن
+            </button>
+
+
+
+        </div>
+
+    </div>
+
+    
+    <div class="col-md-12 text-right">
+        <img src="{% static 'leo/img/loading.gif' %}" width="32" v-if="waiting" alt="">
+        <div class="my-3 text-right" v-if="message.show">
+            <span :class="'alert alert-'+message.color">
+                <span class="farsi" v-html="message.body"></span>
+            </span>
+        </div>
+    </div>
+</div>

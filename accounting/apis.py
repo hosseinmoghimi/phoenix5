@@ -5,10 +5,10 @@ from core.serializers import PageLinkSerializer
 from .models import Transaction
 
 from utility.calendar import PersianCalendar
-from .repo import ChequeRepo,  FinancialDocumentRepo, InvoiceRepo, PaymentRepo, PriceRepo, ProductRepo, ServiceRepo, TransactionRepo
+from .repo import AccountRepo, ChequeRepo, CostRepo, FinancialBalanceRepo,  FinancialDocumentRepo, InvoiceRepo, PaymentRepo, PriceRepo, ProductRepo, ServiceRepo, TransactionRepo
 from django.http import JsonResponse
 from .forms import *
-from .serializers import ChequeSerializer, FinancialDocumentSerializer, InvoiceFullSerializer, InvoiceLineSerializer, PaymentSerializer, PriceSerializer, ProductSerializer, ServiceSerializer
+from .serializers import AccountSerializer, ChequeSerializer, CostSerializer, FinancialBalanceSerializer, FinancialDocumentSerializer, InvoiceFullSerializer, InvoiceLineSerializer, PaymentSerializer, PriceSerializer, ProductSerializer, ServiceSerializer
 
 class AddChequeApi(APIView):
     def post(self,request,*args, **kwargs):
@@ -32,6 +32,27 @@ class AddChequeApi(APIView):
                 if cheque is not None:
                     context['cheque']=ChequeSerializer(cheque).data
                     context['result']=SUCCEED
+        context['log']=log
+        return JsonResponse(context)
+
+class GetReportApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        log=1
+        context['result']=FAILED
+        if request.method=='POST':
+            log=2
+            GetReportForm_=GetReportForm(request.POST)
+
+
+
+            
+            if GetReportForm_.is_valid():
+                log=3
+                cd=GetReportForm_.cleaned_data
+                context['cheques']=ChequeSerializer(ChequeRepo(request=request).list(**cd),many=True).data
+                context['payments']=PaymentSerializer(PaymentRepo(request=request).list(**cd),many=True).data
+                context['result']=SUCCEED
         context['log']=log
         return JsonResponse(context)
 
@@ -82,6 +103,47 @@ class EditInvoiceApi(APIView):
                     context['result']=SUCCEED
         context['log']=log
         return JsonResponse(context)
+
+
+class AddCostApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        print(request.POST)
+        log=10
+        context['result']=FAILED
+        if request.method=='POST':
+            log=20
+            AddCostForm_=AddCostForm(request.POST)
+            if AddCostForm_.is_valid():
+                log=30
+                cd=AddCostForm_.cleaned_data
+                # pay_to_id=fm['pay_to_id']
+                # pay_from_id=fm['pay_from_id']
+                
+                # payment_datetime=fm['payment_datetime']
+                # description=fm['description']
+                # amount=fm['amount']
+                # payment_method=fm['payment_method']
+                # title=fm['title']
+                cd['transaction_datetime']=PersianCalendar().to_gregorian(cd['transaction_datetime'])
+
+                cost=CostRepo(request=request).add_cost(**cd)
+                # cost=CostRepo(request=request).add_cost(
+                #     payment_method=payment_method,
+                #     description=description,
+                #     pay_from_id=pay_from_id,
+                #     amount=amount,
+                #     payment_datetime=payment_datetime,
+                #     pay_to_id=pay_to_id,
+                #     title=title,
+                # )
+                if cost is not None:
+                    log=40
+                    context['cost']=CostSerializer(cost).data
+                    context['result']=SUCCEED
+        context['log']=log
+        return JsonResponse(context)
+        
         
 class AddPaymentApi(APIView):
     def post(self,request,*args, **kwargs):
@@ -118,6 +180,7 @@ class AddPaymentApi(APIView):
         context['log']=log
         return JsonResponse(context)
         
+
 class AddPriceApi(APIView):
     def post(self,request,*args, **kwargs):
         context={}
@@ -148,7 +211,44 @@ class AddPriceApi(APIView):
         return JsonResponse(context)
 
      
-        
+class AddFinancialBalancesApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        log=11
+        context['result']=FAILED
+        if request.method=='POST':
+            log=22
+            report_form=AddFinancialBalanceForm(request.POST)
+            if report_form.is_valid():
+                log=33
+                cd=report_form.cleaned_data
+                financial_balances=FinancialBalanceRepo(request=request).add_financial_balance(**cd)
+                if financial_balances is not None:
+                    context['financial_balances']=FinancialBalanceSerializer(financial_balances,many=True).data
+                    context['result']=SUCCEED
+        context['log']=log
+        return JsonResponse(context)
+  
+     
+class AddAccountApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        log=111
+        context['result']=FAILED
+        if request.method=='POST':
+            log=222
+            add_account_form=AddAccountForm(request.POST)
+            if add_account_form.is_valid():
+                log=333
+                cd=add_account_form.cleaned_data
+                account=AccountRepo(request=request).add_account(**cd)
+                if account is not None:
+                    context['account']=AccountSerializer(account).data
+                    context['result']=SUCCEED
+        context['log']=log
+        return JsonResponse(context)
+
+     
 class AddProductApi(APIView):
     def post(self,request,*args, **kwargs):
         context={}
@@ -168,8 +268,7 @@ class AddProductApi(APIView):
         context['log']=log
         return JsonResponse(context)
 
-
-        
+    
 class AddServiceApi(APIView):
     def post(self,request,*args, **kwargs):
         context={}

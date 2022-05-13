@@ -1,0 +1,122 @@
+{% extends "mafia/layout.html" %}
+{% load to_persian_date %}
+{% block content %}
+<div class="row">
+
+
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5>
+                    {{game.title}}
+                </h5>
+            </div>
+            <div class="card-body">
+                <table class="table">
+                    <tr>
+                        <td class="text-left">
+                            سناریو
+                        </td>
+                        <td class="text-right">
+                            <a href="{{game.game_scenario.get_absolute_url}}">
+                                {{game.game_scenario.title}}
+                            </a>
+
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="text-left">
+                            گاد
+                        </td>
+                        <td class="text-right">
+                            <a href="{{game.god.get_absolute_url}}">
+                                <img src="{{game.god.profile.image}}" width="64" class="rounded-circle" alt="">
+
+
+                                {{game.god.profile.name}}
+                            </a>
+                        </td>
+                    </tr>
+
+
+                    <tr>
+                        <td class="text-left">
+                            تاریخ
+                        </td>
+                        <td class="text-right">
+                            {{game.date_added|to_persian_datetime|safe}}
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="text-left">
+                            وضعیت
+                        </td>
+                        <td class="text-right">
+                            {{game.status}}
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="text-left">
+
+                        </td>
+                        <td class="text-right">
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="text-left">
+
+                        </td>
+                        <td class="text-right">
+
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="text-left">
+
+                        </td>
+                        <td class="text-right">
+
+                        </td>
+                    </tr>
+
+                </table>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-12">
+        {% include "mafia/includes/role-players-app/template.html" %}
+    </div>
+    <div class="col-md-12">
+        {% include "mafia/includes/game-acts-app/template.html" %}
+    </div>
+    <div class="col-md-12">
+        {% include "mafia/includes/add-player-to-game-app/template.html" %}
+    </div>
+    <div class="col-md-12">
+        {% include "mafia/includes/select-players-app/template.html" %}
+    </div>
+
+    <div class="col-md-12">
+        {% include "mafia/includes/select-roles-app/template.html" %}
+    </div>
+
+</div>
+{% endblock content %}
+
+
+{% block script %}
+{% include "mafia/includes/game-app/script.html" %}
+{% include "mafia/includes/role-players-app/script.html" %}
+{% include "mafia/includes/game-acts-app/script.html" %}
+{% include "mafia/includes/add-player-to-game-app/script.html" %}
+{% include "mafia/includes/select-players-app/script.html" %}
+{% include "mafia/includes/select-roles-app/script.html" %}
+
+{% endblock script %}

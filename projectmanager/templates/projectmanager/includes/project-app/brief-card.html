@@ -41,7 +41,7 @@
                         </div>
                         <div>
 
-                            <a href="{% url 'projectmanager:guantt_chart' pk=project.id %}" title="نمودار"
+                            <a href="{% url 'projectmanager:project_guantt' pk=project.id %}" title="نمودار"
                                 class="mx-2 text-info"><i class="fa fa-bar-chart"></i> نمودار گانت</a>
                         </div>
                         {% if perms.core.change_page %}

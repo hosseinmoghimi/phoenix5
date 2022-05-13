@@ -1,0 +1,99 @@
+{% load to_json %}
+<script>
+    let options = JSON.parse(`{{options_s|escapejs}}`)
+    let options_app = new Vue({
+        el: "#options-app",
+        data: {
+            options: options,
+            title: '',
+            waiting: false,
+            message: { show: false }
+        },
+        methods: {
+            filter: function () {
+                options_app.waiting = true
+
+                this.options = options.filter(option => option.title.indexOf(options_app.title) > -1)
+                options_app.waiting = false
+
+            },
+            to_price: function (vall) {
+
+                return to_price(vall, "")
+
+            },
+            option_width: function (option) {
+                let width = parseInt((parseFloat(option.votes_count) / parseFloat(option.poll.votes_count)) * 100)
+                return `width:${width}%;background-color: #f00;height:0.25em;`
+            },
+            select_option: function (option) {
+
+                options_app.waiting = true
+                let url = "{% url 'polls:select_option' %}"
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    option_id: option.id,
+                }
+                $.post(url, payload).done((data) => {
+                    options_app.waiting = false
+                    if (data.result === "SUCCEED") {
+                        options_app.options = data.options
+                        options_app.message = {
+                            show: true,
+                            color: "success",
+                            body: data.vote.option.title + " به عنوان رای شما محاسبه شد ."
+                        }
+                        setTimeout(() => {
+                            options_app.message = { show: false }
+                        }, 3000)
+                    }
+                })
+            },
+            add_option: function () {
+                if (options_app.title.length < 1) {
+                    options_app.message = {
+                        show: true,
+                        color: "danger",
+                        body: "عنوان را وارد کنید حداقل 1 کاراکتر"
+                    }
+                    setTimeout(() => {
+                        options_app.message = { show: false }
+                    }, 2000)
+                    return
+                }
+                options_app.waiting = true
+                let url = "{% url 'polls:add_option' %}"
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    title: this.title,
+                    poll_id: parseInt(`{{poll.id}}`),
+                }
+                $.post(url, payload).done((data) => {
+                    options_app.waiting = false
+                    if (data.result === "SUCCEED") {
+                        options_app.message = {
+                            show: true,
+                            color: "success",
+                            body: "با موفقیت افزوده شد."
+                        }
+                        setTimeout(() => {
+                            options_app.message = { show: false }
+                        }, 2000)
+
+
+                        if (typeof options_app != "undefined") {
+                            options_app.title = ""
+                            options_app.options = options
+                            options_app.options.push(data.option)
+                        }
+                    }
+                })
+            },
+
+
+
+
+        }
+    })
+
+</script>

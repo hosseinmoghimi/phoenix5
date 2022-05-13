@@ -4,15 +4,14 @@ from django.db import models
 from accounting.models import Invoice, InvoiceLine
 from django.utils.translation import gettext as _
 from django.shortcuts import reverse
-
 from core.models import Page
 from projectmanager.enums import *
-from accounting.models import Product as AccountingProduct, Service as AccountingService
+from accounting.models import Product as Material, Service
 from utility.utils import LinkHelper
 from .apps import APP_NAME
 # Create your models here.
 from accounting.models import Account
-
+from organization.models import OrganizationUnit,Employee,Letter,LetterSent
 IMAGE_FOLDER = APP_NAME+"/images/"
 
 
@@ -34,8 +33,8 @@ class ProjectInvoice(Invoice):
         if project is not None and project.employer.account is not None and project.contractor.account is not None:
             self.pay_to_id = project.employer.account.id
             self.pay_from_id = project.contractor.account.id
-            self.transaction_datetime = timezone.now()
-            self.invoice_datetime = timezone.now()
+            self.transaction_datetime = PersianCalendar().date
+            self.invoice_datetime = PersianCalendar().date
         super(ProjectInvoice, self).save(*args, **kwargs)
 
 
@@ -66,7 +65,7 @@ class ServiceInvoice(ProjectInvoice):
         self.class_name = "serviceinvoice"
         self.app_name = APP_NAME
         return super(ServiceInvoice, self).save(*args, **kwargs)
-
+ 
 
 class Request(InvoiceLine, LinkHelper):
     project = models.ForeignKey("project", verbose_name=_(
@@ -75,8 +74,8 @@ class Request(InvoiceLine, LinkHelper):
         _("date_delivered"), auto_now=False, null=True, blank=True, auto_now_add=False)
     date_requested = models.DateTimeField(
         _("date_requested"), auto_now=False, null=True, blank=True, auto_now_add=False)
-    employee = models.ForeignKey("employee", verbose_name=_(
-        "employee"), on_delete=models.CASCADE)
+    employee = models.ForeignKey("organization.employee", verbose_name=_(
+        "organization.employee"), on_delete=models.CASCADE)
     status = models.CharField(
         _("status"), choices=RequestStatusEnum.choices, max_length=50)
     type = models.CharField(_("type"), choices=RequestTypeEnum.choices,
@@ -96,7 +95,7 @@ class Request(InvoiceLine, LinkHelper):
     @property
     def material(self):
         return self.product
-
+ 
     @property
     def service(self):
         from accounting.models import Service
@@ -124,6 +123,7 @@ class Request(InvoiceLine, LinkHelper):
                 invoice = ServiceInvoice()
                 invoice.project_id = self.project.pk
                 invoice.save()
+        
         self.invoice = invoice
         self.row = len(invoice.lines.all())+1
         super(Request, self).save(*args, **kwargs)
@@ -176,7 +176,7 @@ class MaterialRequest(Request, LinkHelper):
         self.type = RequestTypeEnum.MATERIAL_REQUEST
         return super(MaterialRequest, self).save(*args, **kwargs)
 
-
+ 
 class ServiceRequest(Request, LinkHelper):
     class Meta:
         verbose_name = 'ServiceRequest'
@@ -192,8 +192,8 @@ class ServiceRequest(Request, LinkHelper):
 class RequestSignature(models.Model, LinkHelper):
     request = models.ForeignKey("request", verbose_name=_(
         "request"), on_delete=models.CASCADE)
-    employee = models.ForeignKey("employee", verbose_name=_(
-        "employee"), on_delete=models.PROTECT)
+    employee = models.ForeignKey("organization.employee", verbose_name=_(
+        "organization.employee"), on_delete=models.PROTECT)
     date_added = models.DateTimeField(
         _("date_added"), auto_now=False, auto_now_add=True)
     description = models.CharField(_("description"), max_length=200)
@@ -222,105 +222,6 @@ class RequestSignature(models.Model, LinkHelper):
         return f"""{self.request} : امضاءکننده" {self.employee}  " :{self.status} """
 
 
-class Employee(Account):
-    organization_unit = models.ForeignKey("organizationunit", null=True, blank=True, verbose_name=_(
-        "organization_unit"), on_delete=models.CASCADE)
-    job_title = models.CharField(
-        _("job title"), default="سرپرست", max_length=50)
-
-
-
-    def my_pages_ids(self):
-        my_pages_ids=[]
-        my_project_ids=self.my_project_ids()
-        my_pages_ids=my_pages_ids+ my_project_ids
-        return my_pages_ids
-
-    @property
-    def mobile(self):
-        return self.profile.mobile
-
-    @property
-    def name(self):
-        return self.profile.name
-
-    class Meta:
-        verbose_name = _("Employee")
-        verbose_name_plural = _("Employees")
-
-    def __str__(self):
-        return f"""{self.profile.name} : {self.job_title} {str(self.organization_unit) if self.organization_unit is not None else ""} """
-
-    def get_absolute_url(self):
-        return reverse(APP_NAME+":employee", kwargs={"pk": self.pk})
-
-    def my_project_ids(self):
-        ids = []
-        if self.organization_unit is not None:
-            # for org in self.organization_unit_set.all():
-            for proj in self.organization_unit.project_set.all():
-                ids.append(proj.id)
-            # ids=(proj for proj in self.organization_unit.project_set.all())
-        return ids
-
-    def save(self, *args, **kwargs):
-        if self.class_name is None or self.class_name == "":
-            self.class_name = 'employee'
-        if self.app_name is None or self.app_name == "":
-            self.app_name = APP_NAME
-        return super(Employee, self).save(*args, **kwargs)
-
-
-class OrganizationUnit(Page):
-    pre_title = models.CharField(
-        _("pre_title"), blank=True, null=True, max_length=50)
-    account = models.ForeignKey("accounting.account", null=True, blank=True, verbose_name=_(
-        "account"), on_delete=models.CASCADE)
-    parent = models.ForeignKey("OrganizationUnit", related_name="childs",
-                               null=True, blank=True, verbose_name=_("parent"), on_delete=models.CASCADE)
-
-    def __str__(self):
-        # return self.title
-        return self.full_title
-
-    class Meta:
-        verbose_name = _("OrganizationUnit")
-        verbose_name_plural = _("واحد های سازمانی")
-
-    def save(self, *args, **kwargs):
-        if self.class_name is None or self.class_name == "":
-            self.class_name = "organizationunit"
-        if self.app_name is None or self.app_name == "":
-            self.app_name = APP_NAME
-        return super(OrganizationUnit, self).save(*args, **kwargs)
-
-    def logo(self):
-        if self.thumbnail_origin:
-            return self.thumbnail
-        elif self.parent is not None:
-            return self.parent.thumbnail
-        else:
-            return self.thumbnail
-
-
-class letterSent(models.Model):
-    sender = models.ForeignKey("organizationunit", related_name="sent_letters", verbose_name=_(
-        "فرستنده"), on_delete=models.CASCADE)
-    recipient = models.ForeignKey("organizationunit", related_name="inbox_letters", verbose_name=_(
-        "گیرنده"), on_delete=models.CASCADE)
-    letter = models.ForeignKey("letter", verbose_name=_(
-        "letter"), on_delete=models.CASCADE)
-    date_sent = models.DateTimeField(
-        _("date sent"), auto_now=False, auto_now_add=False)
-
-    class Meta:
-        verbose_name = 'letterSent'
-        verbose_name_plural = 'letterSents'
-
-    def persian_date_sent(self):
-        return to_persian_datetime_tag(self.date_sent)
-
-
 class WareHouse(OrganizationUnit):
 
     def save(self, *args, **kwargs):
@@ -335,30 +236,15 @@ class WareHouse(OrganizationUnit):
         verbose_name_plural = 'WareHouses'
 
 
-class Letter(Page):
-    def persian_date_added(self):
-        return to_persian_datetime_tag(self.date_added)
-
-    def save(self, *args, **kwargs):
-        if self.class_name is None:
-            self.class_name = "letter"
-        if self.app_name is None:
-            self.app_name = APP_NAME
-        return super(Letter, self).save(*args, **kwargs)
-
-    class Meta:
-        verbose_name = 'Letter'
-        verbose_name_plural = 'Letters'
-
 
 class Project(Page):
     parent = models.ForeignKey("project", verbose_name=_(
-        "parent"), null=True, blank=True, on_delete=models.CASCADE)
+        "parent"),related_name="childs", null=True, blank=True, on_delete=models.CASCADE)
     status = models.CharField(_("status"), choices=ProjectStatusEnum.choices,
                               default=ProjectStatusEnum.DRAFT, max_length=50)
-    employer = models.ForeignKey("organizationunit", related_name="projects_employed", verbose_name=_(
+    employer = models.ForeignKey("organization.organizationunit", related_name="projects_employed", verbose_name=_(
         "کارفرما"), on_delete=models.CASCADE)
-    contractor = models.ForeignKey("organizationunit", related_name="projects_contracted", verbose_name=_(
+    contractor = models.ForeignKey("organization.organizationunit", related_name="projects_contracted", verbose_name=_(
         "پیمانکار"), on_delete=models.CASCADE)
     percentage_completed = models.IntegerField(
         _("درصد تکمیل پروژه"), default=0)
@@ -367,9 +253,22 @@ class Project(Page):
     end_date = models.DateTimeField(
         _("زمان پایان پروژه"), null=True, blank=True, auto_now=False, auto_now_add=False)
     organization_units = models.ManyToManyField(
-        "organizationunit", verbose_name=_("واحد های سازمانی"), blank=True)
+        "organization.organizationunit", verbose_name=_("واحد های سازمانی"), blank=True)
     weight = models.IntegerField(_("ضریب و وزن پروژه"), default=10)
+    color=models.CharField(_("color"),choices=ColorEnum.choices,default=ColorEnum.PRIMARY, max_length=50)
     # locations = models.ManyToManyField("map.location", blank=True, verbose_name=_("locations"))
+    def all_childs_ids(self):
+        pages_ids=[]
+        for page in self.childs.all():
+            chds= page.all_childs_ids()
+            pages_ids.append(page.pk)
+            for page1 in chds:
+                pages_ids.append(page1)
+        return pages_ids
+    
+    def all_sub_projects(self):
+        return Project.objects.filter(id__in=self.all_childs_ids())
+
 
     def material_requests(self):
         return Request.objects.filter(project=self).filter(type=RequestTypeEnum.MATERIAL_REQUEST)
@@ -477,6 +376,11 @@ class Project(Page):
     def invoices(self):
         return ProjectInvoice.objects.filter(project_id=self.pk)
 
+    def get_guantt_chart_url(self):
+        return reverse(APP_NAME+":project_guantt",kwargs={'pk':self.pk})
+
+    def get_sub_chart_url(self):
+        return reverse(APP_NAME+":project_chart",kwargs={'pk':self.pk})
 
 class SampleForm(Page):
 
@@ -529,36 +433,5 @@ class Event(Page):
         verbose_name = _("Event")
         verbose_name_plural = _("رویداد ها")
 
-
-class Material(AccountingProduct):
-
-    class Meta:
-        verbose_name = _("Material")
-        verbose_name_plural = _("Materials")
-
-    def save(self, *args, **kwargs):
-        if self.class_name is None or self.class_name == "":
-            self.class_name = "material"
-        if self.app_name is None or self.app_name == "":
-            self.app_name = APP_NAME
-        return super(Material, self).save(*args, **kwargs)
-
-    def material_requests(self):
-        return Request.objects.filter(product_or_service_id=self.pk)
-
-
-class PM_Service(AccountingService):
-
-    class Meta:
-        verbose_name = _("Service")
-        verbose_name_plural = _("Services")
-
-    def save(self, *args, **kwargs):
-        if self.class_name is None or self.class_name == "":
-            self.class_name = "pm_service"
-        if self.app_name is None or self.app_name == "":
-            self.app_name = APP_NAME
-        return super(PM_Service, self).save(*args, **kwargs)
-
-    def service_requests(self):
-        return Request.objects.filter(product_or_service_id=self.pk)
+ 
+ 

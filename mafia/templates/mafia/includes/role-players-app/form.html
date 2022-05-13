@@ -1,0 +1,46 @@
+<p>
+
+    <button @click="show_form=true" v-if="!show_form" class="btn btn-success">
+        <i class="fa fa-plus">
+
+        </i>
+        افزودن
+    </button>
+</p>
+
+<div v-if="show_form">
+    <div class="row my-3">
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="">عنوان نقش</label>
+                <input type="text" v-model="title" class="form-control">
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="">ساید نقش</label>
+                <select v-model="side" class="form-control">
+                    {% for side in sides %}
+
+                    <option value="{{side}}">{{side}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="col-md-12">
+            <div class="form-group">
+                <label for="">توضیحات نقش</label>
+                <input type="text" v-model="description" class="form-control">
+            </div>
+        </div>
+        <div class="col-md-12">
+
+            <button class="btn btn-success btn-block" @click="add_role()">
+                <i class="fa fa-plus"></i>
+                افزودن</button>
+            <button class="btn btn-secondary btn-block" @click="show_form=false">انصراف</button>
+
+        </div>
+
+    </div>
+</div>

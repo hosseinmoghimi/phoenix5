@@ -42,7 +42,11 @@ class ProfileRepo():
             return default_profiles.first()
         elif len(default_profiles)>0:
             return self.set_default(default_profiles.first().id)
-    
+    def authenticate_for_apk(self,username,password):
+        (request,user)=ProfileRepo(request=request).login(request=self.request,username=username,password=password)
+        token, created = Token.objects.get_or_create(user=user)
+        profile=self.objects.filter(user=user).first()
+        return request,profile,token,created
     def set_default(self,*args, **kwargs):
         profile=self.profile(*args, **kwargs)
         if profile is None:
@@ -172,6 +176,21 @@ class ProfileRepo():
                 if user.is_authenticated:
                     return (request,user)
     
+    
+    def change_password(self,request,*args, **kwargs):
+        if 'username' in kwargs and 'old_password' in kwargs  and 'new_password' in kwargs :
+            if self.user.has_perm(APP_NAME+".change_profile"):
+                user=User.objects.filter(username=kwargs['username']).first()
+            else:
+                user=authenticate(request=request,username=kwargs['username'],password=kwargs['old_password'])
+            if user is not None:
+                user.set_password(kwargs['new_password'])
+                user.save()
+                login(request,user)
+                if user.is_authenticated:
+                    return (request,user)
+
+
     def login_as_user(self,username,*args, **kwargs):
         if 'force' in kwargs and kwargs['force']:
             pass

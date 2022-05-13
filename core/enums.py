@@ -14,6 +14,7 @@ class AppNameEnum(TextChoices):
     stock='stock',_('stock')
     authentication='authentication',_('authentication')
     dashboard='dashboard',_('dashboard')
+    polls='polls',_('polls')
 
 class CurrencyEnum(TextChoices):
     TUMAN="تومان",_("تومان")
@@ -30,6 +31,8 @@ def class_title(*args, **kwargs):
         app_name=kwargs['app_name']
 
     class_title = "صفحه"
+    if class_name == "poll":
+        class_title = "پرسش"
     if class_name == "page":
         class_title = "صفحه"
     elif class_name == "appointment":
@@ -48,6 +51,8 @@ def class_title(*args, **kwargs):
         class_title = "متریال"
     elif class_name == "product":
         class_title = "کالا"
+    elif class_name == "vehicle":
+        class_title = "وسیله نقلیه"
     elif class_name == "project":
         class_title = "پروژه"
     elif class_name == "service":
@@ -68,6 +73,8 @@ def class_title(*args, **kwargs):
         class_title ="فاکتور خدمات"
     elif class_name=="workshift":
         class_title= "شیفت کاری"
+    elif class_name=="role":
+        class_title= "نقش"
     return class_title
 
 class ParameterNameEnum(TextChoices):
@@ -78,12 +85,61 @@ class ParameterNameEnum(TextChoices):
     HOME_URL="لینک به خانه",_("لینک به خانه")
     THUMBNAIL_DIMENSION="عرض تصاویر کوچک",_("عرض تصاویر کوچک")
     ONLY_HTTPS="فقط https",_("فقط https")
-
+    SHOW_ARCHIVES="نمایش فایل های آرشیو شده",_("نمایش فایل های آرشیو شده")
 
 class TextDirectionEnum(TextChoices):
     Rtl='rtl',_('rtl')
     Ltr='ltr',_('ltr')
 
+def BS_ColorCode(bs_color):
+    if bs_color=='success':
+        return "#28a745"
+    if bs_color=='danger':
+        return "#dc3545"
+    if bs_color=='warning':
+        return "#ffc107"
+    if bs_color=='muted':
+        return "#34345455"
+    if bs_color=='info':
+        return "#17a2b8"
+    if bs_color=='rose':
+        return "#34345455"
+    if bs_color=='secondary':
+        return "#6c757d"
+    if bs_color=='light':
+        return "#f8f9fa"
+    if bs_color=='dark':
+        return "#343a40"
+    if bs_color=='primary':
+        return "#007bff"
+    if bs_color=='blue':
+        return "#007bff"
+    if bs_color=='indigo':
+        return "#6610f2"
+    if bs_color=='purple':
+        return "#6f42c1"
+    if bs_color=='pink':
+        return "#e83e8c"
+    if bs_color=='red':
+        return "#dc3545"
+    if bs_color=='orange':
+        return "#fd7e14"
+    if bs_color=='yellow':
+        return "#ffc107"
+    if bs_color=='green':
+        return "#28a745"
+    if bs_color=='teal':
+        return "#20c997"
+    if bs_color=='cyan':
+        return "#17a2b8"
+    if bs_color=='white':
+        return "#fff"
+    if bs_color=='gray':
+        return "#6c757d"
+    if bs_color=='gray-dark':
+        return "#343a40"
+   
+  
 
 class UnitNameEnum(TextChoices):
     ADAD="عدد",_("عدد")
@@ -94,14 +150,17 @@ class UnitNameEnum(TextChoices):
     METER2="متر مربع",_("متر مربع")
     METER3="متر مکعب",_("متر مکعب")
     PART="قطعه",_("قطعه")
+    Roll="رول",_("رول")
     SHAKHEH="شاخه",_("شاخه")
     DASTGAH="دستگاه",_("دستگاه")
     SERVICE="سرویس",_("سرویس")
     PACK="بسته",_("بسته")
     POCKET="کیسه",_("کیسه")
     SHOT="شات",_("شات")
+    SET="ست",_("ست")
     CUP="فنجان",_("فنجان")
     JOFT="جفت",_("جفت")
+    DAST="دست",_("دست")
 
 
 class IconsEnum(TextChoices):

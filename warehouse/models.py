@@ -65,13 +65,15 @@ class WareHouseSheet(models.Model,LinkHelper):
             a=WareHouseSheetSignature()
             a.request=self
             from projectmanager.models import Employee
-            a.employee=Employee.objects.filter(profile=self.creator).first()
+            a.employee=Employee.objects.filter(account__profile=self.creator).first()
             a.save()
 
     @property
     def available(self):
-        a=0;
-        for aa in WareHouseSheet.objects.filter(status=WareHouseSheetStatusEnum.DONE).filter(ware_house=self.ware_house).filter(invoice_line__product_or_service_id=self.invoice_line.product_or_service.id):
+        a=0
+        aaa=WareHouseSheet.objects.filter(status=WareHouseSheetStatusEnum.DONE).filter(ware_house=self.ware_house).filter(invoice_line__product_or_service_id=self.invoice_line.product_or_service.id)
+
+        for aa in aaa:
             if aa.direction==WareHouseSheetDirectionEnum.IMPORT:
                 a+=aa.quantity
             if aa.direction==WareHouseSheetDirectionEnum.EXPORT:
@@ -94,8 +96,8 @@ class WareHouseSheet(models.Model,LinkHelper):
 class WareHouseSheetSignature(models.Model,LinkHelper):
     request = models.ForeignKey("warehousesheet", verbose_name=_(
         "ware_house_sheet"), on_delete=models.CASCADE)
-    employee = models.ForeignKey("projectmanager.employee", verbose_name=_(
-        "employee"), on_delete=models.PROTECT)
+    employee = models.ForeignKey("organization.employee", verbose_name=_(
+        "organization.employee"), on_delete=models.PROTECT)
     date_added = models.DateTimeField(
         _("date_added"), auto_now=False, auto_now_add=True)
     description = models.CharField(_("description"), max_length=200)

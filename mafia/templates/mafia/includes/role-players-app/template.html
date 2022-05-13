@@ -1,0 +1,134 @@
+{% load to_persian_date %}
+{% load to_price %}
+{% load to_amount_color %}
+{% load static %}
+<div id="accordion-role-players">
+    <div class="card" id="role-players-app">
+        <div class="card-header" id="heading-role-players">
+            <h5 class="text-center">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-role-players"
+                    aria-expanded="true" aria-controls="collapse-role-players">
+                    نقش های بازیکنان
+                    <span v-if="role_players.length>0">
+                        <small class="text-danger mx-2">
+                            <span v-text="role_players.length"></span>
+                        </small>
+                    </span>
+                </button>
+            </h5>
+
+        </div>
+        <div id="collapse-role-players" class="collapse" aria-labelledby="heading-role-players"
+            data-parent="#accordion-role-players">
+            <div class="card-body">
+                {% load static %}
+                <form @submit.prevent="search()">
+                    <img src="{% static 'leo/img/loading.gif' %}" width="32" v-if="waiting" alt="">
+                    <input type="text" v-model="search_for" class="form-control" placeholder="جستجو ..."
+                        @input="filter()">
+                </form>
+                <div class="mb-3"></div>
+                {% if add_role_form %}
+                {% include "mafia/includes/roles-app/form.html" %}
+                {% endif %}
+
+                <div class="mb-3"></div>
+                <img v-if="false" width="32" src="{% static 'leo/img/loading.gif' %}" alt="">
+                <h6 v-if="false">
+                    <span class="text-muted">در حال بار گذاری ... </span>
+                </h6>
+
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+
+                            <th>
+                            </th>
+
+
+                            <th>
+                                ساید
+                            </th>
+
+                            <th>
+                                نقش
+                            </th>
+                            <th>
+                                بازیکن
+                            </th>
+                            <th>
+
+                            </th>
+                        </thead>
+                        <tbody>
+                            <tr v-for="role_player in role_players">
+                                <td>
+                                    <a :href="role_player.get_absolute_url">
+
+                                        <span>
+                                            <i class="material-icons">
+                                                ballot
+                                            </i>
+                                        </span>
+                                    </a>
+                                </td>
+
+                                <td>
+
+                                    <span :class="'text-'+role_player.role.color" v-text="role_player.role.side">
+
+                                    </span>
+                                </td>
+
+
+                                <td>
+                                    <a :href="role_player.role.get_absolute_url">
+                                        <img :src="role_player.role.thumbnail" width="64" class="rounded" alt=""><span
+                                            class="farsi mr-3">
+                                            <span :class="'text-'+role_player.role.color"
+                                                v-text="role_player.role.title">
+
+                                            </span>
+                                        </span>
+                                    </a>
+                                </td>
+
+                                <td>
+                                    <div v-if="role_player.player">
+                                        <a :href="role_player.player.get_absolute_url">
+                                            <img :src="role_player.player.profile.image" width="64"
+                                                class="rounded-circle" alt=""><span class="farsi mr-2">
+                                                <span :class="'text-'+role_player.role.color"
+                                                    v-text="role_player.player.profile.name">
+
+                                                </span>
+                                                <small v-text="role_player.player.score">
+
+                                                </small>
+                                                <i aria-hidden="true" class="fa fa-star "
+                                                    style="color: rgb(245, 193, 3);"></i>
+
+                                            </span>
+                                        </a>
+                                    </div>
+
+                                </td>
+                                <td>
+                                    <a :href="role_player.get_edit_url" class=" text-warning" title="ویرایش">
+                                        <i class="fa fa-edit"></i>
+                                        <small>
+
+                                            ویرایش
+                                        </small>
+                                    </a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+</div>

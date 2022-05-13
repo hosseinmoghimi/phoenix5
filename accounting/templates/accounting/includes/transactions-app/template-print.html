@@ -1,0 +1,76 @@
+{% load to_persian_date %}
+{% load to_price %}
+<div class="card" id="transactions-app">
+    <div class="card-header">
+        <h5 class="text-center">
+            تراکنش ها
+        </h5>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <th>
+                        عنوان
+                    </th>
+                    <th>
+                        نوع
+                    </th>
+                    <th>
+                        نحوه پرداخت
+                    </th>
+                    <th>
+                        پرداخت کننده
+                    </th>
+                    <th>
+                        دریافت کننده
+                    </th>
+                    <th>
+                        تاریخ
+                    </th>
+                    <th>
+                        مبلغ
+                    </th>
+                </thead>
+                <tbody>
+                    <tr v-for="transaction in transactions">
+                        <td>
+                            <span class="h5" v-text="transaction.title">
+                            </span>
+                        </td>
+                        <td>
+                            <span v-text="transaction.class_title"></span>
+                        </td>
+                        <td>
+                            <span v-text="transaction.payment_method"></span>
+                        </td>
+                        <td>
+                            <span v-text="transaction.pay_from"></span>
+                        </td>
+                        <td>
+                            <span v-text="transaction.pay_to"></span>
+                        </td>
+                        <td>
+                            <small class="text-muted">
+                                <span v-html="transaction.persian_transaction_datetime"></span>
+                            </small>
+                        </td>
+                        <td>
+                            <span v-text="to_price(transaction.amount)"></span>
+                        </td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <th colspan="6">
+                        
+                    </th>
+                    <th>
+                        جمع : 
+                        <span v-text="sum()"></span>
+                    {{CURRENCY}}
+                    </th>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>

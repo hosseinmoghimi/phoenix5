@@ -9,28 +9,28 @@ from accounting.serializers import AccountSerializer
 class VehicleSerializer(serializers.ModelSerializer):
     class Meta:
         model =Vehicle
-        fields=['id','title','plaque','get_absolute_url']
+        fields=['id','title','plaque','thumbnail','brand','vehicle_type','color','get_absolute_url','get_edit_url','get_delete_url']
 
 
 
 
 class DriverSerializer(serializers.ModelSerializer):
-    profile=ProfileSerializer()
+    account=AccountSerializer()
     class Meta:
         model=Driver
-        fields=['id','title','logo','profile','get_absolute_url','balance_rest']
+        fields=['id','title','account','get_absolute_url']
         
 class PassengerSerializer(serializers.ModelSerializer):
-    profile=ProfileSerializer()
+    account=AccountSerializer()
     class Meta:
         model=Passenger
-        fields=['id','title','logo','profile','get_absolute_url','balance_rest']
+        fields=['id','title','account','get_absolute_url']
 
 class ClientSerializer(serializers.ModelSerializer):
-    profile=ProfileSerializer()
+    account=AccountSerializer()
     class Meta:
         model=Client
-        fields=['id','title','logo','profile','get_absolute_url','balance_rest']
+        fields=['id','title','account','get_absolute_url']
 
 class TripPathSerializer(serializers.ModelSerializer):
     source=LocationSerializer()
@@ -43,26 +43,28 @@ class TripPathSerializer(serializers.ModelSerializer):
  
 class WorkShiftSerializer(serializers.ModelSerializer):
     driver=DriverSerializer()
+    client=ClientSerializer()
     vehicle=VehicleSerializer()
     area=AreaSerializer()
     class Meta:
         model=WorkShift
-        fields=['id','vehicle','income','outcome','driver','persian_start_time','persian_end_time','area','get_absolute_url','get_edit_url']
+        fields=['id','vehicle','client','driver','persian_start_datetime','persian_end_datetime','amount','area','get_absolute_url','get_edit_url']
 
 
 
 class ServiceManSerializer(serializers.ModelSerializer):
-    profile=ProfileSerializer()
+    account=AccountSerializer()
     class Meta:
         model=ServiceMan
-        fields=['id','title','profile','get_absolute_url']
+        fields=['id','title','account','get_absolute_url']
 
 class MaintenanceSerializer(serializers.ModelSerializer):
     service_man=ServiceManSerializer()
+    client=ClientSerializer()
     vehicle=VehicleSerializer()
     class Meta:
         model=Maintenance
-        fields=['id','maintenance_type','get_edit_url','kilometer','service_man','paid','vehicle','get_absolute_url','persian_event_datetime']
+        fields=['id','maintenance_type','get_edit_url','kilometer','service_man','client','amount','vehicle','get_absolute_url','persian_event_datetime']
 
 
 
@@ -70,17 +72,17 @@ class MaintenanceSerializer(serializers.ModelSerializer):
 class TripCategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = TripCategory
-        fields=['id','title','color','get_absolute_url']
+        fields=['id','title','count_of_trips','color','get_absolute_url']
 
 class TripSerializer(serializers.ModelSerializer):
     trip_paths=TripPathSerializer(many=True)
-    pay_to=AccountSerializer()
+    client=ClientSerializer()
     driver=DriverSerializer()
     passengers=PassengerSerializer(many=True)
     trip_category=TripCategorySerializer()
     vehicle=VehicleSerializer()
     class Meta:
         model=Trip
-        fields=['id','persian_date_started','persian_date_ended','get_edit_url','get_delete_url','trip_paths','pay_to','status','vehicle','passengers','title','cost','distance','driver','get_absolute_url','duration','delay','trip_category']
+        fields=['id','persian_date_started','persian_date_ended','get_edit_url','get_delete_url','trip_paths','client','status','vehicle','passengers','title','cost','distance','driver','get_absolute_url','duration','delay','trip_category']
 
  

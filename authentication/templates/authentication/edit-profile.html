@@ -11,8 +11,8 @@
             <div class="card-body">
                 <div class="text-center">
                     <img src="{{selected_profile.image}}" width="192" class="rounded-circle" alt="">
-                    <form enctype="multipart/form-data" action="{% url 'authentication:change_profile_image'  pk=selected_profile.id %}"
-                        method="POST">
+                    <form enctype="multipart/form-data"
+                        action="{% url 'authentication:change_profile_image'  pk=selected_profile.id %}" method="POST">
                         {% csrf_token %}
                         <input type="hidden" name="profile_id" value="{{selected_profile.id}}">
                         <input type="file" name="image" id="">
@@ -87,7 +87,7 @@
                         class="mx-2 text-warning"><i class="fa fa-edit"></i> ویرایش</a>
                     {% endif %}
 
- 
+
 
 
                     {% if perms.authentication.delete_profile %}
@@ -98,6 +98,24 @@
 
             </div>
         </div>
+
+        {% if perms.authentication.change_profile %}
+        <div class="card">
+            <div class="card-body">
+                <form method="POST" action="{% url 'authentication:change_password' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="username" value="{{selected_profile.user.username}}">
+                    <input type="hidden" name="old_password" value="2345678923456">
+                    <input type="password" placeholder="کلمه عبور جدید" name="new_password" class="form-control" required>
+                    <div class="form-group">
+                        <button type="submit" class="form-control btn btn-primary rounded submit px-3">
+                            تغییر دادن کلمه عبور
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        {% endif %}
     </div>
     {% if not selected_profile.enabled %}
     <div class="col-md-8">

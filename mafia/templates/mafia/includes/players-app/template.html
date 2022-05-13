@@ -1,0 +1,73 @@
+{% load to_persian_date %}
+{% load to_price %}
+{% load to_amount_color %}
+{% load static %}
+<div id="accordion-players">
+    <div class="card" id="players-app">
+        <div class="card-header" id="heading-players">
+            <h5 class="text-center">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-players" aria-expanded="true"
+                    aria-controls="collapse-players">
+                    بازیکن ها
+                    <span>
+                        <small class="text-danger mx-2">
+                            {{players|length}}
+                        </small>
+                    </span>
+                </button>
+            </h5>
+
+        </div>
+        <div id="collapse-players" class="collapse" aria-labelledby="heading-players" data-parent="#accordion-players">
+            <div class="card-body">
+               
+              
+
+
+                <div class="table-responsive">
+
+                    <table class="table table-striped">
+                        <thead>
+                            <th>
+                                بازیکن
+                            </th>
+                            <th>
+                              امتیاز
+                            </th>
+                        </thead>
+                        <tbody>
+
+
+                            <tr v-for="player in players">
+                                <td>
+                                    <a :href="player.profile.get_absolute_url">
+                                        <div class="media">
+                                            <img :src="player.profile.image" class="rounded-circle" width="32"
+                                                alt="">
+                                            <div class="media-body mr-2">
+                                                <span v-text="player.profile.name"></span>
+                                            </div>
+                                        </div>
+
+                                    </a>
+
+                                </td>
+                                <td>
+                                  
+                                    <span v-text="player.score"></span>
+                                    <i aria-hidden="true" class="fa fa-star " style="color: rgb(245, 193, 3);"></i>
+
+
+                                </td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+
+
+    </div>
+</div>

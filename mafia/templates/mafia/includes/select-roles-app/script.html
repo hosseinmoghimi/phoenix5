@@ -1,0 +1,48 @@
+<script>
+    const MAFIA="{{MAFIA}}"
+    const CITIZEN="{{CITIZEN}}"
+    const INDEPENDENT="{{INDEPENDENT}}"
+    let roles = JSON.parse(`{{roles_s|escapejs}}`)
+    let selected_roles = JSON.parse(`{{selected_roles_s|escapejs}}`)
+    $(document).ready(() => {
+        selected_roles.forEach(selected_role => {
+            select_roles_app.select_role(selected_role)
+        });
+    })
+
+    let select_roles_app = new Vue({
+        el: "#select-roles-app",
+        data: {
+            roles: roles,
+            selected_roles: [],
+        },
+        mounted: function () {
+
+        },
+        methods: {
+            count_mafia: function () {
+                return this.selected_roles.filter(role => role.side===MAFIA).length
+
+            },
+            count_independent: function () {
+                return this.selected_roles.filter(role => role.side===INDEPENDENT).length
+
+            },
+            count_citizen: function () {
+                return this.selected_roles.filter(role => role.side===CITIZEN).length
+
+            },
+            select_role: function (selected_role) {
+                this.selected_roles.push(selected_role)
+                if(selected_role.title!="شهروند ساده")
+                this.roles = this.roles.filter(role => role.id != selected_role.id)
+            },
+
+            deselect_role: function (selected_role) {
+
+                this.roles.push(selected_role)
+                this.selected_roles = this.selected_roles.filter(role => role.id != selected_role.id)
+            },
+        }
+    })
+</script>

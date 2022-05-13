@@ -8,7 +8,7 @@ from django.http import Http404, JsonResponse
 from django.shortcuts import render, reverse
 from django.views import View
 from projectmanager.enums import SignatureStatusEnum
-from projectmanager.repo import EmployeeRepo
+from organization.repo import EmployeeRepo
 from utility.calendar import PersianCalendar
 
 from warehouse.apps import APP_NAME
@@ -71,7 +71,7 @@ class WareHouseViews(View):
                         invoice_line__unit_name=unit_name)
                     available = 0
                     for line in warehouse_sheets_:
-                        available += line.available
+                        available = line.available
                 list_item['available'] = available
                 availables_list.append(list_item)
         context['availables_list'] = json.dumps(availables_list)

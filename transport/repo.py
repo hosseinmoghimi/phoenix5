@@ -1,4 +1,5 @@
 from transport.apps import APP_NAME
+from transport.serializers import MaintenanceSerializer
 from .models import Driver, Maintenance,Passenger,ServiceMan, Trip, TripCategory, TripPath, Vehicle,Client, WorkShift
 from authentication.repo import ProfileRepo
 from django.utils import timezone
@@ -16,10 +17,24 @@ class DriverRepo():
         
         self.objects=Driver.objects.all()
         self.profile=ProfileRepo(*args, **kwargs).me
-       
+    def add_driver(self,*args, **kwargs):
+        if not self.user.has_perm(APP_NAME+".add_driver"):
+            return
+        if 'account_id' in kwargs:
+            account_id=kwargs['account_id']
+            driver=self.driver(account_id=account_id)
+
+            if driver is None:
+                driver=Driver(account_id=account_id)
+                driver.save()
+                return driver
+        
 
     def driver(self, *args, **kwargs):
         pk=0
+        if 'account_id' in kwargs:
+            account_id=kwargs['account_id']
+            return self.objects.filter(account_id=account_id).first()
         if 'driver_id' in kwargs:
             pk=kwargs['driver_id']
         elif 'pk' in kwargs:
@@ -40,8 +55,6 @@ class DriverRepo():
         return objects.all()
 
 
-
-
 class VehicleRepo():
     def __init__(self, *args, **kwargs):
         self.request = None
@@ -55,9 +68,47 @@ class VehicleRepo():
         self.objects=Vehicle.objects
         self.profile=ProfileRepo(*args, **kwargs).me
        
+    def add_vehicle(self,*args, **kwargs):
+        if not self.user.has_perm(APP_NAME+".add_vehicle"):
+            return
+        if 'title' in kwargs:
+            title=kwargs['title']
+            vehicle=self.vehicle(title=title)
+            if vehicle is not None:
+                message="عنوان تکراری برای ماشین"
+                return None,message
+            if vehicle is None and 'plaque' in kwargs:
+                vehicle=self.vehicle(plaque=kwargs['plaque'])
+                if vehicle is not None:
+                    message="پلاک تکراری برای ماشین"
+                    return None,message
+                    
+            if vehicle is None:
+                vehicle=Vehicle()
+                if 'title' in kwargs:
+                    vehicle.title=kwargs['title']
+                if 'plaque' in kwargs:
+                    vehicle.plaque=kwargs['plaque']
+                if 'color' in kwargs:
+                    vehicle.color=kwargs['color']
+                if 'description' in kwargs:
+                    vehicle.description=kwargs['description']
+                if 'vehicle_type' in kwargs:
+                    vehicle.vehicle_type=kwargs['vehicle_type']
+                if 'brand' in kwargs:
+                    vehicle.brand=kwargs['brand']
+                vehicle.save()
+                message=""
+                return vehicle,message
 
     def vehicle(self, *args, **kwargs):
         pk=0
+        if 'vehicle' in kwargs:
+            return kwargs['vehicle']
+        if 'title' in kwargs:
+            return self.objects.filter(title=kwargs['title']).first()
+        if 'plaque' in kwargs:
+            return self.objects.filter(plaque=kwargs['plaque']).first()
         if 'vehicle_id' in kwargs:
             return self.objects.filter(pk=kwargs['vehicle_id']).first()
         elif 'pk' in kwargs:
@@ -89,7 +140,28 @@ class TripPathRepo():
         
         self.objects=TripPath.objects.all()
         self.profile=ProfileRepo(*args, **kwargs).me
-       
+    def add_trip_path(self,*args, **kwargs):
+        if not self.user.has_perm(APP_NAME+".add_trippath"):
+            return
+        trip_path=TripPath()
+        if 'source_id' in kwargs:
+            trip_path.source_id=kwargs['source_id']
+        if 'destination_id' in kwargs:
+            trip_path.destination_id=kwargs['destination_id']
+        if 'cost' in kwargs:
+            trip_path.cost=kwargs['cost']
+        if 'distance' in kwargs:
+            trip_path.distance=kwargs['distance']
+        if 'title' in kwargs:
+            trip_path.title=kwargs['title']
+        if 'duration' in kwargs:
+            trip_path.duration=kwargs['duration']
+        if 'area_id' in kwargs:
+            trip_path.area_id=kwargs['area_id']
+        trip_path.save()
+        return trip_path
+    
+   
 
     def trip_path(self, *args, **kwargs):
         pk=0
@@ -129,6 +201,7 @@ class TripRepo():
         self.profile=ProfileRepo(*args, **kwargs).me
 
     def add_trip(self, *args, **kwargs):
+        print(kwargs)
         if not self.user.has_perm(APP_NAME+".add_trip"):
             return
         trip=Trip()
@@ -136,6 +209,18 @@ class TripRepo():
         key='pay_to_id'
         if key in kwargs and kwargs[key] is not None and kwargs[key]>0:
             trip.pay_to_id=kwargs[key]
+
+        key='client_id'
+        if key in kwargs and kwargs[key] is not None and kwargs[key]>0:
+            client=Client.objects.filter(pk=kwargs[key]).first()
+            if client is not None:
+                trip.pay_to_id=client.account.id
+
+        key='driver_id'
+        if key in kwargs and kwargs[key] is not None and kwargs[key]>0:
+            driver=Driver.objects.filter(pk=kwargs[key]).first()
+            if driver is not None:
+                trip.pay_from_id=driver.account.id
 
         key='pay_from_id'
         if key in kwargs and kwargs[key] is not None and kwargs[key]>0:
@@ -227,7 +312,10 @@ class TripRepo():
             objects=objects.filter(pay_to_id=kwargs['client_id'])
         if 'driver_id' in kwargs:
             objects=objects.filter(pay_from_id=kwargs['driver_id'])
+        if 'trip_category_id' in kwargs:
+            objects=objects.filter(trip_category_id=kwargs['trip_category_id'])
         return objects.all()
+
 
 class ServiceManRepo():
     def __init__(self, *args, **kwargs):
@@ -336,7 +424,6 @@ class ServiceManRepo():
         return objects.all()
 
 
-
 class MaintenanceRepo():
     def __init__(self, *args, **kwargs):
         self.request = None
@@ -443,6 +530,32 @@ class MaintenanceRepo():
             objects=objects.filter(vehicle_id=kwargs['vehicle_id'])
         return objects.all()
 
+    def add_maintenance(self,*args, **kwargs):
+        print(kwargs)
+        if not self.user.has_perm(APP_NAME+".add_maintenance"):
+            return
+        maintenance=Maintenance()
+        if 'amount' in kwargs:
+            maintenance.amount=kwargs['amount']
+        if 'title' in kwargs:
+            maintenance.title=kwargs['title']
+        if 'kilometer' in kwargs:
+            maintenance.kilometer=kwargs['kilometer']
+        if 'description' in kwargs:
+            maintenance.description=kwargs['description']
+        if 'event_datetime' in kwargs:
+            maintenance.transaction_datetime=kwargs['event_datetime']
+        if 'maintenance_type' in kwargs:
+            maintenance.maintenance_type=kwargs['maintenance_type']
+        if 'service_man_id' in kwargs:
+            maintenance.pay_from_id=kwargs['service_man_id']
+        if 'client_id' in kwargs:
+            maintenance.pay_to_id=kwargs['client_id']
+        if 'vehicle_id' in kwargs:
+            maintenance.vehicle_id=kwargs['vehicle_id']
+        maintenance.save()
+        return maintenance
+
 
 class WorkShiftRepo():
     def __init__(self, *args, **kwargs):
@@ -458,6 +571,7 @@ class WorkShiftRepo():
         self.profile=ProfileRepo(*args, **kwargs).me
 
     def add_work_shift(self, *args, **kwargs):
+        print(kwargs)
         if not self.user.has_perm(APP_NAME+".add_workshift"):
             return
         work_shift=WorkShift()
@@ -482,17 +596,26 @@ class WorkShiftRepo():
         if key in kwargs and kwargs[key] is not None and kwargs[key]>0:
             work_shift.driver_id=kwargs[key]
 
+        key='area_id'
+        if key in kwargs and kwargs[key] is not None and kwargs[key]>0:
+            work_shift.area_id=kwargs[key]
+
         key='description'
         if key in kwargs and kwargs[key] is not None:
             work_shift.description=kwargs[key]
 
+        key='start_datetime'
+        if key in kwargs and kwargs[key] is not None:
+            work_shift.start_datetime=kwargs[key]
+
+        key='end_datetime'
+        if key in kwargs and kwargs[key] is not None:
+            work_shift.end_datetime=kwargs[key]
+            work_shift.transaction_datetime=kwargs[key]
+
         key='title'
         if key in kwargs and kwargs[key] is not None:
             work_shift.title=kwargs[key]
-
-       
-
-
 
         key='trip_category_id'
         if key in kwargs and kwargs[key] is not None and kwargs[key]>0:
@@ -530,6 +653,7 @@ class WorkShiftRepo():
             objects=objects.filter(vehicle_id=kwargs['vehicle_id'])
         return objects.all()
 
+
 class PassengerRepo():
     def __init__(self, *args, **kwargs):
         self.request = None
@@ -543,6 +667,19 @@ class PassengerRepo():
         self.objects=Passenger.objects.all()
         self.profile=ProfileRepo(*args, **kwargs).me
        
+
+    def add_passenger(self,*args, **kwargs):
+        if not self.user.has_perm(APP_NAME+".add_passenger"):
+            return
+        if 'account_id' in kwargs:
+            account_id=kwargs['account_id']
+            passenger=self.passenger(account_id=account_id)
+
+            if passenger is None:
+                passenger=Passenger(account_id=account_id)
+                passenger.save()
+                return passenger
+
 
     def passenger(self, *args, **kwargs):
         pk=0
@@ -580,8 +717,25 @@ class ClientRepo():
         self.profile=ProfileRepo(*args, **kwargs).me
        
 
+    def add_client(self,*args, **kwargs):
+        if not self.user.has_perm(APP_NAME+".add_passenger"):
+            return
+        if 'account_id' in kwargs:
+            account_id=kwargs['account_id']
+            client=self.client(account_id=account_id)
+
+            if client is None:
+                client=Client(account_id=account_id)
+                if 'title' in kwargs and kwargs['title'] is not None and not kwargs['title']=="":
+                    client.title=kwargs['title']
+                client.save()
+                return client
+
     def client(self, *args, **kwargs):
         pk=0
+        if 'account_id' in kwargs:
+            account_id=kwargs['account_id']
+            return self.objects.filter(account_id=account_id).first()
         if 'client_id' in kwargs:
             pk=kwargs['client_id']
         elif 'pk' in kwargs:
@@ -612,12 +766,28 @@ class TripCategoryRepo():
         if 'user' in kwargs:
             self.user = kwargs['user']
         
-        self.objects=TripCategory.objects.all()
+        self.objects=TripCategory.objects.order_by('title')
         self.profile=ProfileRepo(*args, **kwargs).me
-       
+    def add_trip_category(self,*args, **kwargs):
+        if not self.user.has_perm(APP_NAME+".add_tripcategory"):
+            return
+        if 'title' in kwargs:
+            title=kwargs['title']
+            trip_category=self.trip_category(title=title)
+
+
+            if trip_category is None:
+                trip_category=TripCategory(title=title)
+                if 'color' in kwargs:
+                    trip_category.color=kwargs['color']
+                trip_category.save()
+                return trip_category
 
     def trip_category(self, *args, **kwargs):
         pk=0
+        if 'title' in kwargs:
+            title=kwargs['title']
+            return self.objects.filter(title=title).first()
         if 'trip_category_id' in kwargs:
             pk=kwargs['trip_category_id']
         elif 'pk' in kwargs:

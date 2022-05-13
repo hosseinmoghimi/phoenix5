@@ -1,0 +1,24 @@
+<script>
+    let costs = JSON.parse(`{{costs_s|escapejs}}`)
+    let costs_app = new Vue({
+        el:"#costs-app",
+        data: {
+            costs: costs,
+            
+            search_for:'',
+            waiting:false,
+        },
+        
+        methods: {
+            filter:function(){
+                this.costs = costs.filter(cost => cost.title.indexOf(this.search_for) > -1)
+            },
+            to_price: function (vall) {
+                 
+                vall=to_price(vall,"{{CURRENCY}}")
+                return vall
+            },
+        }
+    })
+
+</script>

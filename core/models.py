@@ -90,7 +90,7 @@ class Page(models.Model, LinkHelper, ImageMixin):
         return class_title(app_name=self.app_name,class_name=self.class_name)
 
 
-
+    
 
     def save(self,*args, **kwargs):
         if self.app_name is None:
@@ -157,6 +157,19 @@ class PageLike(models.Model):
         return f"{self.page.title} {self.profile.name}"
 
 
+class Color(models.Model):
+    code=models.CharField(_("code"), max_length=50)
+    name=models.CharField(_("name"), max_length=50)
+
+    
+
+    class Meta:
+        verbose_name = _("Color")
+        verbose_name_plural = _("Colors")
+
+    def __str__(self):
+        return self.name
+ 
 
 class PageComment(models.Model):
     profile=models.ForeignKey("authentication.profile", verbose_name=_("profile"), on_delete=models.CASCADE)
@@ -504,6 +517,10 @@ class Picture(models.Model, LinkHelper):
     def image(self):
         if self.image_origin and self.image_origin is not None:
             return f'{MEDIA_URL}{str(self.image_origin)}'
+        if self.image_origin =="":
+            return f'{STATIC_URL}logo.png'
+        if self.image_origin is None:
+            return f'{STATIC_URL}logo.png'
         return None
 
     class Meta:

@@ -1,8 +1,10 @@
 from django.http import Http404, HttpResponse, JsonResponse
-from django.shortcuts import render,reverse
+from django.shortcuts import redirect, render,reverse
 from django.utils import timezone
+from requests import request
+from accounting import apis
 from accounting.apis import EditInvoiceApi
-from accounting.enums import PaymentMethodEnum, TransactionStatusEnum
+from accounting.enums import CostTypeEnum, FinancialBalanceTitleEnum, PaymentMethodEnum, TransactionStatusEnum
 from core.constants import CURRENCY, FAILED, SUCCEED
 from core.enums import UnitNameEnum
 from core.utils import app_is_installed
@@ -16,12 +18,13 @@ from utility.excel import ReportSheet,ReportWorkBook, get_style
 from warehouse.repo import WareHouseRepo, WareHouseSheetRepo
 from warehouse.serializers import WareHouseSerializer, WareHouseSheetSerializer
 from accounting.apps import APP_NAME
-from accounting.repo import InvoiceLineRepo,AccountRepo,FinancialBalanceRepo, ChequeRepo, PaymentRepo, PriceRepo, ProductRepo,ServiceRepo,FinancialDocumentRepo,InvoiceRepo, TransactionRepo
-from accounting.serializers import AccountSerializer, FinancialBalanceSerializer, InvoiceFullSerializer,InvoiceLineSerializer,ChequeSerializer, InvoiceSerializer, PaymentSerializer, PriceSerializer, ProductSerializer,ServiceSerializer,FinancialDocumentForAccountSerializer,FinancialDocumentSerializer, TransactionSerializer
+from accounting.repo import AssetRepo, CostRepo, InvoiceLineRepo,AccountRepo,FinancialBalanceRepo, ChequeRepo, PaymentRepo, PriceRepo, ProductRepo,ServiceRepo,FinancialDocumentRepo,InvoiceRepo, TransactionRepo
+from accounting.serializers import AccountSerializer, AssetSerializer, CostSerializer, FinancialBalanceSerializer, InvoiceFullSerializer,InvoiceLineSerializer,ChequeSerializer, InvoiceSerializer, PaymentSerializer, PriceSerializer, ProductSerializer,ServiceSerializer,FinancialDocumentForAccountSerializer,FinancialDocumentSerializer, TransactionSerializer
 from accounting.forms import *
 import json
 from phoenix.server_settings import phoenix_apps
-
+from core.repo import ParameterRepo
+from accounting.enums import ParameterAccountingEnum
 LAYOUT_PARENT = "phoenix/layout.html"
 TEMPLATE_ROOT = "accounting/"
 
@@ -29,6 +32,7 @@ TEMPLATE_ROOT = "accounting/"
 def getContext(request, *args, **kwargs):
     context = CoreContext(request=request, app_name=APP_NAME)
     context['search_form'] = SearchForm()
+    context['me_account']=AccountRepo(request=request).me
     context['search_action'] = reverse(APP_NAME+":search")
     context['LAYOUT_PARENT'] = LAYOUT_PARENT
     return context
@@ -43,7 +47,24 @@ def get_add_payment_context(request,*args, **kwargs):
         context['add_payment_form']=AddPaymentForm()
     return context
     
+def get_add_cost_context(request,*args, **kwargs):
+    context={}
+    if request.user.has_perm(APP_NAME+".add_cost"):
+        context['payment_methods']=(u[0] for u in PaymentMethodEnum.choices)
+        context['cost_types']=(u[0] for u in CostTypeEnum.choices)
+        accounts=AccountRepo(request=request).list(*args, **kwargs)
+        context['accounts']=accounts
+        context['add_cost_form']=AddCostForm()
+    return context
     
+def add_from_accounts_context(request):
+    context={}
+    accounts=AccountRepo(request=request).list()
+    accounts_s=json.dumps(AccountSerializer(accounts,many=True).data)
+    context['accounts']=accounts
+    context['accounts_s']=accounts_s
+    return context
+
 
 def get_edit_invoice_context(request,*args, **kwargs):
     context={}
@@ -135,8 +156,9 @@ def get_account_context(request,*args, **kwargs):
     invoices=account.invoices()
     context['invoices']=invoices
     context['invoices_s']=json.dumps(InvoiceSerializer(invoices,many=True).data)
-
-    financial_documents=FinancialDocumentRepo(request=request).list(account_id=account.id)
+    count=int(ParameterRepo(request=request,app_name=APP_NAME).parameter(name=ParameterAccountingEnum.COUNT_OF_ITEM_PER_PAGE,default=10).value)
+    count=kwargs['count'] if 'count' in kwargs else count
+    financial_documents=FinancialDocumentRepo(request=request).list(account_id=account.id)[:count]
     context['financial_documents']=financial_documents
     context['financial_documents_s']=json.dumps(FinancialDocumentForAccountSerializer(financial_documents,many=True).data)
 
@@ -151,11 +173,11 @@ def get_account_context(request,*args, **kwargs):
 
 
 
-    transactions=TransactionRepo(request=request).list(account_id=account.id)
+    transactions=TransactionRepo(request=request).list(account_id=account.id)[:count]
     context['transactions']=transactions
     context['transactions_s']=json.dumps(TransactionSerializer(transactions,many=True).data)
 
-    payments=PaymentRepo(request=request).list(account_id=account.id)
+    payments=PaymentRepo(request=request).list(account_id=account.id)[:count]
     context['payments']=payments
     context['payments_s']=json.dumps(PaymentSerializer(payments,many=True).data)
     
@@ -272,6 +294,7 @@ def get_search_form_context(request,*args, **kwargs):
 
     return context
 
+
 class HomeView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -280,6 +303,20 @@ class HomeView(View):
         products_s=json.dumps(ProductSerializer(products,many=True).data)
         context['products_s']=products_s
         return render(request,TEMPLATE_ROOT+"index.html",context)
+
+
+class ReportView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        accounts=AccountRepo(request=request).list(*args, **kwargs)
+        context['accounts']=accounts
+        context['accounts_s']=json.dumps(AccountSerializer(accounts,many=True).data)
+        
+        context['payment_methods']=(u[0] for u in PaymentMethodEnum.choices)
+        context['get_report_form']=GetReportForm()
+        return render(request,TEMPLATE_ROOT+"report.html",context)
+    def post(self,request,*args, **kwargs):
+        return apis.GetReportApi().post(request=request,*args, **kwargs)
 
 
 class SearchView(View):
@@ -370,7 +407,7 @@ class FinancialBalanceView(View):
 
 class InvoiceExcelView(View):
     def get(self,request,*args, **kwargs):
-        now=timezone.now()
+        now=PersianCalendar().date
         invoice=InvoiceRepo(request=request).invoice(*args, **kwargs)
         date=PersianCalendar().from_gregorian(now)
         lines=[]
@@ -445,6 +482,12 @@ class InvoiceExcelView(View):
         report_work_book.work_book.close()
         return response
 
+class NewInvoiceView(View):
+    def get(self,request,*args, **kwargs):
+        invoice=InvoiceRepo(request=request).create_invoice(*args, **kwargs)
+        return redirect(invoice.get_absolute_url())
+
+
  
 class InvoiceView(View):
     def get(self,request,*args, **kwargs):
@@ -456,8 +499,8 @@ class InvoiceView(View):
             mv.title="چنین فاکتوری یافت نشد."
             return mv.response()
         context.update(get_invoice_context(request=request,*args, **kwargs))
-        context['no_navbar']=True
-        context['no_footer']=True
+        # context['no_navbar']=True
+        # context['no_footer']=True
         return render(request,TEMPLATE_ROOT+"invoice.html",context)
 class InvoicePrintView(View):
     def get(self,request,*args, **kwargs):
@@ -482,6 +525,7 @@ class InvoicesView(View):
         context=getContext(request=request)
         invoices=InvoiceRepo(request=request).list(*args, **kwargs)
         context['invoices']=invoices
+        context['expand_invoices']=True
         invoices_s=json.dumps(InvoiceSerializer(invoices,many=True).data)
         context['invoices_s']=invoices_s
         return render(request,TEMPLATE_ROOT+"invoices.html",context)
@@ -547,13 +591,28 @@ class TransactionsView(View):
         context['transactions']=transactions
         transactions_s=json.dumps(TransactionSerializer(transactions,many=True).data)
         context['transactions_s']=transactions_s
+        context['expand_transactions']=True
         return render(request,TEMPLATE_ROOT+"transactions.html",context)
+class TransactionsPrintView(View):
+    def post(self,request,*args, **kwargs):
+        transactions_print_form=TransactionsPrintForm(request.POST)
+        if transactions_print_form.is_valid():
+            context=getContext(request=request)
+            cd=transactions_print_form.cleaned_data
+            transactions=cd['transactions']
+            context['transactions']=transactions
+            context['title']=cd['title']
+            context['no_footer']=True
+            context['no_navbar']=True
+            return render(request,TEMPLATE_ROOT+"transactions-print.html",context)
+
 
 class ProductsView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
         products=ProductRepo(request=request).list()
         context['products']=products
+        context['expand_products']=True
         products_s=json.dumps(ProductSerializer(products,many=True).data)
         context['products_s']=products_s
         if request.user.has_perm(APP_NAME+".add_product"):
@@ -640,6 +699,9 @@ class AccountsView(View):
         context=getContext(request=request)
         accounts=AccountRepo(request=request).list(*args, **kwargs)
         context['accounts']=accounts
+        context['expand_accounts']=True
+        if request.user.has_perm(APP_NAME+".add_account"):
+            context['add_account_form']=AddAccountForm()
         return render(request,TEMPLATE_ROOT+"accounts.html",context)
 
      
@@ -649,6 +711,8 @@ class PaymentsView(View):
         context=getContext(request=request)
         payments=PaymentRepo(request=request).list(*args, **kwargs)
         context['payments']=payments
+        context['expand_payments']=True
+
         context['payments_s']=json.dumps(PaymentSerializer(payments,many=True).data)
         if request.user.has_perm(APP_NAME+".add_payment"):
             context.update(get_add_payment_context(request=request))
@@ -661,6 +725,27 @@ class PaymentView(View):
         context['payment']=payment
         context.update(get_transaction_context(request=request,transaction=payment))
         return render(request,TEMPLATE_ROOT+"payment.html",context)
+
+
+class CostsView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        costs=CostRepo(request=request).list(*args, **kwargs)
+        context['costs']=costs
+        context['expand_costs']=True
+
+        context['costs_s']=json.dumps(CostSerializer(costs,many=True).data)
+        if request.user.has_perm(APP_NAME+".add_cost"):
+            context.update(get_add_cost_context(request=request))
+        return render(request,TEMPLATE_ROOT+"costs.html",context)
+class CostView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        cost=CostRepo(request=request).cost(*args, **kwargs)
+        context['payment_s']=json.dumps(CostSerializer(cost).data)
+        context['cost']=cost
+        context.update(get_transaction_context(request=request,transaction=cost))
+        return render(request,TEMPLATE_ROOT+"cost.html",context)
 
 class FinancialDocumentsView(View):
     def post(self,request,*args, **kwargs):
@@ -707,4 +792,24 @@ class FinancialDocumentView(View):
         context['financial_document']=financial_document
         financial_balances=FinancialBalanceRepo(request=request).list(financial_document_id=financial_document.id)
         context['financial_balances']=financial_balances
+        if request.user.has_perm(APP_NAME+".add_financialdocument"):
+            context['add_financial_balance_form']=AddFinancialBalanceForm()
+            context['financial_balance_title_enum']=(cc[0] for cc in FinancialBalanceTitleEnum.choices)
         return render(request,TEMPLATE_ROOT+"financial-document.html",context)
+
+class AssetsView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        assets=AssetRepo(request=request).list(*args, **kwargs)
+        context['assets']=assets
+        assets_s=json.dumps(AssetSerializer(assets,many=True).data)
+        context['assets_s']=assets_s
+        return render(request,TEMPLATE_ROOT+"assets.html",context)
+
+class AssetView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        asset=AssetRepo(request=request).asset(*args, **kwargs)
+        context['asset']=asset
+        context.update(PageContext(request=request,page=asset))
+        return render(request,TEMPLATE_ROOT+"asset.html",context)

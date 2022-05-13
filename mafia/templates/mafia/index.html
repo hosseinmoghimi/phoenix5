@@ -1,0 +1,47 @@
+{% extends "mafia/layout.html" %}
+
+
+{% block content %}
+<div class="row">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5>
+                    لینک ها
+                </h5>
+            </div>
+
+            <div class="card-body">
+                <p>
+                    <a href="{% url 'mafia:initialize' %}">مقدار دهی اولیه</a>
+                </p>
+
+                <p>
+                    <a href="{% url 'mafia:roles' %}">نقش ها</a>
+                </p>
+
+                <p>
+                    <a href="{% url 'mafia:players' %}">بازیکن ها</a>
+                </p>
+
+
+                <p>
+                    <a href="{% url 'mafia:game_scenarioes' %}">سناریو های بازی</a>
+                </p>
+
+
+                <p>
+                    <a href="{% url 'mafia:games' %}">بازی ها</a>
+                </p>
+
+
+                <p>
+                    <a href="{% url 'mafia:role_players' %}">نقش های بازیکنان</a>
+                </p>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

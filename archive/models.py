@@ -10,8 +10,13 @@ from phoenix.server_settings import STATIC_URL
 class Folder(models.Model,LinkHelper):
     name=models.CharField(_("name"), max_length=100)
     parent=models.ForeignKey("folder",related_name="childs",null=True,blank=True, verbose_name=_("parent"), on_delete=models.CASCADE)
+    date_added=models.DateTimeField(_("date_added"), auto_now=False, auto_now_add=True)
+    date_updated=models.DateTimeField(_("date_updated"), auto_now=True, auto_now_add=False)
     class_name='folder'
     app_name=APP_NAME
+    @property
+    def title(self):
+        return self.name
     class Meta:
         verbose_name = _("Folder")
         verbose_name_plural = _("Folders")
@@ -51,6 +56,9 @@ class File(Page):
 
 
 
+    @property
+    def name(self):
+        return self.title
     
 
     class Meta:

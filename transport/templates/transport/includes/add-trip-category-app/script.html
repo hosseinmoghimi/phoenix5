@@ -1,0 +1,63 @@
+{% load to_json %}
+<script>
+    let add_trip_category_app = new Vue({
+        el: "#add-trip-category-app",
+        data: {
+            title: "",
+            color: "primary",
+            search_for: '',
+            waiting: false,
+            message: {
+                show: false
+            }
+        },
+        methods: {
+             
+            add_trip_category: function () {
+                let url = "{% url 'transport:add_trip_category' %}"
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    color: this.color,
+                    title: this.title,
+                }
+                add_trip_category_app.waiting = true
+
+                $.post(url, payload).done((data) => {
+                    add_trip_category_app.waiting = false
+
+                    if (data.result === 'FAILED') {
+                        add_trip_category_app.message = {
+                            color: "danger",
+                            body: "خطا در ایجاد دسته بندی سفر جدید.",
+                            show: true,
+                        }
+                        setTimeout(() => {
+                            add_trip_category_app.message = {
+                                show: false,
+                            }
+                        }, 3000);
+                    }
+                    if (data.result === 'SUCCEED') {
+                        if (typeof trip_categories_app != "undefined") {
+                            trip_categories_app.trip_categories.push(data.trip_category)
+                        }
+
+                        add_trip_category_app.message = {
+                            color: "success",
+                            body: "با موفقیت افزوده شد.",
+                            show: true,
+                        }
+                        setTimeout(() => {
+                            add_trip_category_app.message = {
+                                show: false,
+                            }
+                        }, 3000);
+                    }
+                })
+
+            }
+
+        }
+    })
+
+</script>

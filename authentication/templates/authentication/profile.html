@@ -132,7 +132,7 @@
     {% if employees %}
 
     <div class="col-md-4">
-        {% include "projectmanager/includes/employees-app/template.html" %}
+        {% include "organization/includes/employees-app/template.html" %}
 
     </div>
     {% endif %}
@@ -197,7 +197,7 @@
 
 {% block script %}
 {% include "accounting/includes/accounts-app/script.html" %}
-{% include "projectmanager/includes/employees-app/script.html" %}
+{% include "organization/includes/employees-app/script.html" %}
 {% if profiles %}
 {% include "authentication/includes/profiles-app/script.html" %}
 {% endif %}

@@ -5,13 +5,9 @@
         <span class="navbar-toggler-icon"></span>
     </button>
     <a class="navbar-brand" title="{{app.title}}" href="{{app.home_url}}">
-        {% if app.logo.image %}
-        <img width="64" src="{{app.logo.image}}" alt="">
+        <img width="64" src="{{app.logo}}" alt="">
 
-        {% else %}
-        <img width="64" src="{% static 'logo.png' %}" alt="">
-
-        {% endif %}
+       
     </a>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
@@ -104,7 +100,7 @@
                         دشبورد
                     </a>
 
-                    <a class="dropdown-item text-center" href="{{profile.get_reset_password_url}}">
+                    <a class="dropdown-item text-center" href="{% url 'authentication:change_password' %}">
                         تغییر دادن کلمه عبور
                     </a>
                     <a class="dropdown-item text-center" href="{{profile.get_dashboard_url}}">دشبورد</a>

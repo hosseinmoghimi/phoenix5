@@ -1,0 +1,99 @@
+{% load to_persian_date %}
+{% load to_price %}
+{% load to_amount_color %}
+{% load static %}
+<div id="accordion-games">
+    <div class="card" id="games-app">
+        <div class="card-header" id="heading-games">
+            <h5 class="text-center">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-games" aria-expanded="true"
+                    aria-controls="collapse-games">
+                    بازی ها
+                    <span>
+                        <small class="text-danger mx-2">
+                            {{games|length}}
+                        </small>
+                    </span>
+                </button>
+            </h5>
+
+        </div>
+        <div id="collapse-games" class="collapse" aria-labelledby="heading-games" data-parent="#accordion-games">
+            <div class="card-body">
+               
+              
+
+
+                <div class="table-responsive">
+
+                    <table class="table table-striped">
+                        <thead>
+                            <th>
+                                بازی
+                            </th>
+                            <th>
+                                سناریو
+                            </th>
+                            <th>
+                                گاد
+                            </th>
+                            <th>
+                                وضعیت
+                            </th>
+                            <th>
+                                تاریخ بازی
+                            </th>
+                        </thead>
+                        <tbody>
+
+                            {% for game in games %}
+
+                            <tr>
+                                <td>
+                                    <a href="{{game.get_absolute_url}}">
+                                        {{game.title}}
+
+                                    </a>
+
+
+                                </td>
+                                <td>
+                                    <img src="{{game.thumbnail}}" class="rounded-circle" width="32" alt="">
+                                    {{game.scenario}}
+                                </td>
+                                <td>
+                                    <a href="{{game.god.get_absolute_url}}">
+                                        <div class="media">
+                                            <img src="{{game.god.profile.image}}" class="rounded-circle" width="32"
+                                                alt="">
+                                            <div class="media-body mr-2">
+                                                {{game.god.profile.name}}
+                                            </div>
+                                        </div>
+
+                                    </a>
+
+                                </td>
+                                <td>
+                                    {{game.status}}
+                                </td>
+                                <td>
+
+                                    {{game.date_added|to_persian_datetime|safe}}
+
+
+
+                                </td>
+                            </tr>
+                            {% endfor %}
+
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+
+
+    </div>
+</div>

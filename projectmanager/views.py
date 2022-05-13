@@ -2,7 +2,7 @@
 from django.http import JsonResponse
 from accounting.repo import InvoiceRepo, PriceRepo
 from accounting.serializers import PriceBriefSerializer
-from accounting.views import InvoiceView, get_invoice_context, get_service_context, get_product_context
+from accounting.views import InvoiceView, get_invoice_context, get_service_context, get_product_context,get_account_context
 from django.shortcuts import redirect, render
 # Create your views here.
 from django.shortcuts import render, reverse
@@ -19,9 +19,10 @@ from .apps import APP_NAME
 # from .repo import MaterialRepo
 # from .serializers import MaterialSerializer
 import json
-from .repo import EmployeeRepo, EventRepo, LetterRepo, MaterialInvoiceRepo, MaterialRepo, MaterialRequestRepo, OrganizationUnitRepo, RequestSignatureRepo, ServiceInvoiceRepo, ServiceRepo, ProjectRepo, ServiceRequestRepo
-from .serializers import EmployeeSerializer, EventSerializer, LetterSentSerializer, LetterSerializer, MaterialSerializer, OrganizationUnitSerializer, RequestSignatureForEmployeeSerializer, RequestSignatureSerializer, ServiceSerializer, ProjectSerializer, ServiceRequestSerializer, MaterialRequestSerializer
-
+from projectmanager.repo import EventRepo, MaterialInvoiceRepo, MaterialRepo, MaterialRequestRepo, RequestSignatureRepo, ServiceInvoiceRepo, ServiceRepo, ProjectRepo, ServiceRequestRepo
+from projectmanager.serializers import EventSerializer,  MaterialSerializer, ProjectSerializerForGuantt, RequestSignatureForEmployeeSerializer, RequestSignatureSerializer, ServiceSerializer, ProjectSerializer, ServiceRequestSerializer, MaterialRequestSerializer
+from organization.repo import EmployeeRepo,OrganizationUnitRepo
+from organization.serializers import EmployeeSerializer,OrganizationUnitSerializer
 TEMPLATE_ROOT = "projectmanager/"
 LAYOUT_PARENT = "phoenix/layout.html"
 
@@ -52,6 +53,7 @@ class SearchView(View):
         if search_form.is_valid():
             cd = search_form.cleaned_data
             search_for = cd['search_for']
+            context['search_for'] = search_for
 
             materials = MaterialRepo(request=request).list(
                 search_for=search_for)
@@ -71,133 +73,21 @@ class SearchView(View):
             events_s = json.dumps(EventSerializer(events, many=True).data)
             context['events_s'] = events_s
 
-        return render(request, TEMPLATE_ROOT+"search.html", context)
-
-
-class EmployeeView(View):
-    def post(self, request, *args, **kwargs):
-        context = {
-            'result': FAILED
-        }
-        create_employee_form = CreateEmployeeForm(request.POST)
-        if create_employee_form.is_valid():
-            cd = create_employee_form.cleaned_data
-            profile_id = cd['profile_id']
-            account_id = cd['account_id']
-            employee = EmployeeRepo(request=request).employee(
-                profile_id=profile_id, account_id=account_id)
-            if employee is not None:
-                context['employee'] = EmployeeSerializer(employee).data
-                context['result'] = SUCCEED
-
-        return JsonResponse(context)
-
-    def get(self, request, *args, **kwargs):
-        context = getContext(request=request)
-        employee = EmployeeRepo(request=request).employee(*args, **kwargs)
-        context['employee'] = employee
-
-        projects = ProjectRepo(request=request).list(employee_id=employee.id)
-        context['projects'] = projects
-        context['show_all_projects'] = True
-        projects_s = json.dumps(ProjectSerializer(projects, many=True).data)
-        context['projects_s'] = projects_s
-
-        request_signatures = RequestSignatureRepo(
-            request=request).list(employee_id=employee.id)
-
-        context['request_signatures'] = request_signatures
-        request_signatures_s = json.dumps(
-            RequestSignatureForEmployeeSerializer(request_signatures, many=True).data)
-        context['request_signatures_s'] = request_signatures_s
-
-        return render(request, TEMPLATE_ROOT+"employee.html", context)
-
-
-class EmployeesView(View):
-    def get(self, request, *args, **kwargs):
-        context = getContext(request=request)
-        employees = EmployeeRepo(request=request).list(*args, **kwargs)
-        context['employees'] = employees
-        employees_s = json.dumps(EmployeeSerializer(employees, many=True).data)
-        context['employees_s'] = employees_s
-        return render(request, TEMPLATE_ROOT+"employees.html", context)
-
-
-class OrganizationUnitView(View):
-    def get(self, request, *args, **kwargs):
-        context = getContext(request=request)
-        organization_unit = OrganizationUnitRepo(
-            request=request).organization_unit(*args, **kwargs)
-        if organization_unit is None:
-            mv=MessageView(request=request)
-            mv.title="واحد سازمانی موردنظر یافت نشد."
-            mv.body="واحد سازمانی موردنظر یافت نشد."
-            return mv.response()
-        context.update(PageContext(request=request, page=organization_unit))
-        context['organization_unit'] = organization_unit
-
-        # employees
-        if True:
-            employees = EmployeeRepo(request=request).list(
-                organization_unit_id=organization_unit.id)
-            context['employees_s'] = json.dumps(
-                EmployeeSerializer(employees, many=True).data)
-
-        #   letters
-        if True:
-            letters = LetterRepo(request=request).list(
-                organization_unit_id=organization_unit.id)
-            # letters=organization_unit.letters.order_by('date_added')
-            context['letters'] = letters
-            letters_s = json.dumps(LetterSerializer(letters, many=True).data)
-            context['letters_s'] = letters_s
-
-        # projects
-        if True:
-            projects = []
-            (projects_employed, projects_contracted, org_projects) = ProjectRepo(
-                request=request).list(organization_unit_id=organization_unit.id)
-            for project_employed in projects_employed:
-                projects.append(project_employed)
-            for project_contracted in projects_contracted:
-                projects.append(project_contracted)
-            for org_project in org_projects:
-                projects.append(org_project)
-            context['projects'] = projects
-            projects_s = json.dumps(
-                ProjectSerializer(projects, many=True).data)
-            context['projects_s'] = projects_s
-
-        # childs
-        if True:
-            organization_units = OrganizationUnitRepo(request=request).list(
-                parent_id=organization_unit.id, *args, **kwargs)
+            
+            organization_units = OrganizationUnitRepo(request=request).list(search_for=search_for)
             context['organization_units'] = organization_units
-            organization_units_s = json.dumps(
-                OrganizationUnitSerializer(organization_units, many=True).data)
+            organization_units_s = json.dumps(OrganizationUnitSerializer(organization_units, many=True).data)
             context['organization_units_s'] = organization_units_s
 
-        if request.user.has_perm(APP_NAME+".add_organizationunit"):
-            context['add_organization_unit_form'] = AddOrganizationUnitForm()
-            context['show_organization_units_list'] = True
+            
+            projects = ProjectRepo(request=request).list(search_for=search_for)
+            context['projects'] = projects
+            projects_s = json.dumps(ProjectSerializer(projects, many=True).data)
+            context['projects_s'] = projects_s
 
-        return render(request, TEMPLATE_ROOT+"organization-unit.html", context)
 
 
-class OrganizationUnitsView(View):
-    def get(self, request, *args, **kwargs):
-        context = getContext(request=request)
-        organization_units = OrganizationUnitRepo(
-            request=request).list(parent_id=None, *args, **kwargs)
-        context['organization_units'] = organization_units
-        organization_units_s = json.dumps(
-            OrganizationUnitSerializer(organization_units, many=True).data)
-        context['organization_units_s'] = organization_units_s
-        if request.user.has_perm(APP_NAME+".add_organizationunit"):
-            context['add_organization_unit_form'] = AddOrganizationUnitForm()
-            context['show_organization_units_list'] = True
-        return render(request, TEMPLATE_ROOT+"organization-units.html", context)
+        return render(request, TEMPLATE_ROOT+"search.html", context)
 
 
 class ProjectsView(View):
@@ -214,33 +104,6 @@ class ProjectsView(View):
             context['employers']=OrganizationUnitRepo(request=request).list(parent_id=None)
         return render(request, TEMPLATE_ROOT+"projects.html", context)
 
-
-class LettersView(View):
-    def get(self, request, *args, **kwargs):
-        context = getContext(request=request)
-        letters = LetterRepo(request=request).list(*args, **kwargs)
-        context['letters'] = letters
-        letters_s = json.dumps(LetterSerializer(letters, many=True).data)
-        context['letters_s'] = letters_s
-        return render(request, TEMPLATE_ROOT+"letters.html", context)
-
-
-class LetterView(View):
-    def get(self, request, *args, **kwargs):
-        context = getContext(request=request)
-        letter = LetterRepo(request=request).letter(*args, **kwargs)
-        context['letter'] = letter
-        context.update(PageContext(request=request, page=letter))
-
-        # letter_sents
-        if True:
-            letter_sents = letter.lettersent_set.all()
-            context['letter_sents'] = letter_sents
-            letter_sents_s = json.dumps(
-                LetterSentSerializer(letter_sents, many=True).data)
-            context['letter_sents_s'] = letter_sents_s
-
-        return render(request, TEMPLATE_ROOT+"letter.html", context)
 
 
 class RequestView(View):
@@ -310,7 +173,7 @@ class ProjectView(View):
             MaterialRequestSerializer(material_requests, many=True).data)
         context['material_requests_s'] = material_requests_s
 
-        projects = project.project_set.order_by('priority')
+        projects = project.childs.order_by('priority')
         projects_s = json.dumps(ProjectSerializer(projects, many=True).data)
         context['project_s'] = json.dumps(ProjectSerializer(project).data)
         context['projects_s'] = projects_s
@@ -362,63 +225,14 @@ class ProjectView(View):
         return render(request, TEMPLATE_ROOT+"project.html", context)
 
 
-class GuanttChartView(View):
+class ProjectGuanttView(View):
     def get(self, request, *args, **kwargs):
         context = getContext(request=request)
         project = ProjectRepo(request=request).project(*args, **kwargs)
-        context.update(PageContext(request=request, page=project))
-
         context['project'] = project
-        organization_units = OrganizationUnitRepo(request=request).list(
-            project_id=project.id, *args, **kwargs)
-        context['organization_units'] = organization_units
-        organization_units_s = json.dumps(
-            OrganizationUnitSerializer(organization_units, many=True).data)
-        context['organization_units_s'] = organization_units_s
-
-        service_requests = project.service_requests()
-        context['service_requests'] = service_requests
-        service_requests_s = json.dumps(
-            ServiceRequestSerializer(service_requests, many=True).data)
-        context['service_requests_s'] = service_requests_s
-
-        material_requests = project.material_requests()
-        context['material_requests'] = material_requests
-        material_requests_s = json.dumps(
-            MaterialRequestSerializer(material_requests, many=True).data)
-        context['material_requests_s'] = material_requests_s
-
-        projects = project.project_set.order_by('priority')
-        projects_s = json.dumps(ProjectSerializer(projects, many=True).data)
-        context['projects_s'] = projects_s
-
-        if request.user.has_perm(APP_NAME+".add_project"):
-            context['add_project_form'] = AddProjectForm()
-
-        if request.user.has_perm(APP_NAME+".change_project"):
-            all_organization_units = OrganizationUnitRepo(
-                request=request).list()
-            context['all_organization_units'] = all_organization_units
-            all_organization_units_s = json.dumps(
-                OrganizationUnitSerializer(all_organization_units, many=True).data)
-            context['all_organization_units_s'] = all_organization_units_s
-            context['select_organization_unit_form'] = True
-            context['add_service_request_form'] = True
-            context['add_material_request_form'] = True
-            context['employees_s'] = json.dumps(
-                EmployeeSerializer(project.employees(), many=True).data)
-            all_service = ServiceRepo(request=request).list()
-            context['all_services_s'] = json.dumps(
-                ServiceSerializer(all_service, many=True).data)
-
-            context['unit_names'] = (i[0] for i in UnitNameEnum.choices)
-            context['unit_names2'] = (i[0] for i in UnitNameEnum.choices)
-
-            all_materials = MaterialRepo(request=request).list()
-            context['all_materials_s'] = json.dumps(
-                MaterialSerializer(all_materials, many=True).data)
-
-        return render(request, TEMPLATE_ROOT+"project.html", context)
+        context['projects_s'] = json.dumps(
+            ProjectSerializerForGuantt(project.all_sub_projects().all(), many=True).data)
+        return render(request, TEMPLATE_ROOT+"guantt.html", context)
 
 
 class ProjectChartView(View):
@@ -428,56 +242,45 @@ class ProjectChartView(View):
         context.update(PageContext(request=request, page=project))
 
         context['project'] = project
-        organization_units = OrganizationUnitRepo(request=request).list(
-            project_id=project.id, *args, **kwargs)
-        context['organization_units'] = organization_units
-        organization_units_s = json.dumps(
-            OrganizationUnitSerializer(organization_units, many=True).data)
-        context['organization_units_s'] = organization_units_s
+           
 
-        service_requests = project.service_requests()
-        context['service_requests'] = service_requests
-        service_requests_s = json.dumps(
-            ServiceRequestSerializer(service_requests, many=True).data)
-        context['service_requests_s'] = service_requests_s
+        # childs
+        if True:
+            projects = OrganizationUnitRepo(request=request).list(
+                parent_id=project.id, *args, **kwargs)
+            context['projects'] = projects 
+            
+        pages = project.all_sub_projects()
 
-        material_requests = project.material_requests()
-        context['material_requests'] = material_requests
-        material_requests_s = json.dumps(
-            MaterialRequestSerializer(material_requests, many=True).data)
-        context['material_requests_s'] = material_requests_s
+        pages_s=[]
+        for page in pages:
+            names=""
+            pages_s.append({
+                'title': f"""{page.title}""",
+                'parent_id': page.parent_id,
+                'parent': page.parent_id,
+                'get_absolute_url': page.get_absolute_url(),
+                'id': page.id,
+                'sub_title': names,
 
-        projects = project.project_set.order_by('priority')
-        projects_s = json.dumps(ProjectSerializer(projects, many=True).data)
-        context['projects_s'] = projects_s
+            })
+        for page in [project]:
+            names=""
+            pages_s.append({
+                'title': f"""{page.title}""",
+                'parent_id': page.parent_id,
+                'parent': page.parent_id,
+                'get_absolute_url': page.get_absolute_url(),
+                'id': page.id,
+                'sub_title': names,
 
-        if request.user.has_perm(APP_NAME+".add_project"):
-            context['add_project_form'] = AddProjectForm()
+            })
+        context['pages_s'] = json.dumps(pages_s)
+     
 
-        if request.user.has_perm(APP_NAME+".change_project"):
-            all_organization_units = OrganizationUnitRepo(
-                request=request).list()
-            context['all_organization_units'] = all_organization_units
-            all_organization_units_s = json.dumps(
-                OrganizationUnitSerializer(all_organization_units, many=True).data)
-            context['all_organization_units_s'] = all_organization_units_s
-            context['select_organization_unit_form'] = True
-            context['add_service_request_form'] = True
-            context['add_material_request_form'] = True
-            context['employees_s'] = json.dumps(
-                EmployeeSerializer(project.employees(), many=True).data)
-            all_service = ServiceRepo(request=request).list()
-            context['all_services_s'] = json.dumps(
-                ServiceSerializer(all_service, many=True).data)
 
-            context['unit_names'] = (i[0] for i in UnitNameEnum.choices)
-            context['unit_names2'] = (i[0] for i in UnitNameEnum.choices)
 
-            all_materials = MaterialRepo(request=request).list()
-            context['all_materials_s'] = json.dumps(
-                MaterialSerializer(all_materials, many=True).data)
-
-        return render(request, TEMPLATE_ROOT+"project.html", context)
+        return render(request, TEMPLATE_ROOT+"project-chart.html", context)
 
 
 class MaterialInvoiceView(View):
@@ -493,8 +296,8 @@ class MaterialInvoiceView(View):
             return mv.response()
         context.update(get_invoice_context(request=request,
                        invoice=material_invoice, *args, **kwargs))
-        context['no_navbar'] = True
-        context['no_footer'] = True
+        # context['no_navbar'] = True
+        # context['no_footer'] = True
         return render(request, TEMPLATE_ROOT+"material-invoice.html", context)
 
 
@@ -510,8 +313,8 @@ class ServiceInvoiceView(View):
             return mv.response()
         context.update(get_invoice_context(request=request,
                        invoice=service_invoice, *args, **kwargs))
-        context['no_navbar'] = True
-        context['no_footer'] = True
+        # context['no_navbar'] = True
+        # context['no_footer'] = True
         return render(request, TEMPLATE_ROOT+"service-invoice.html", context)
 
 
@@ -531,11 +334,11 @@ class MaterialsView(View):
 class MaterialView(View):
     def get(self, request, *args, **kwargs):
         context = getContext(request=request)
-        material = MaterialRepo(request=request).material(*args, **kwargs)
+        material = MaterialRepo(request=request).product(*args, **kwargs)
         context.update(get_product_context(request=request, product=material))
         context['material'] = material
 
-        material_requests = material.material_requests()
+        material_requests = MaterialRequestRepo(request=request).list(material_id=material.id)
         context['material_requests'] = material_requests
         material_requests_s = json.dumps(
             MaterialRequestSerializer(material_requests, many=True).data)
@@ -564,7 +367,7 @@ class ServiceView(View):
         service = ServiceRepo(request=request).service(*args, **kwargs)
         context.update(get_service_context(request=request, service=service))
 
-        service_requests = service.service_requests()
+        service_requests = ServiceRequestRepo(request=request).list(service_id=service.id)
         context['service_requests'] = service_requests
         service_requests_s = json.dumps(
             ServiceRequestSerializer(service_requests, many=True).data)

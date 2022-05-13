@@ -1,0 +1,22 @@
+<script>
+    let players = JSON.parse(`{{players_s|escapejs}}`)
+    let select_players_app = new Vue({
+        el: "#select-players-app",
+        data: {
+            players: players,
+            selected_players: [],
+        },
+        methods: {
+            select_player: function (selected_player) {
+                this.selected_players.push(selected_player)
+                this.players=this.players.filter(player=>player.id!=selected_player.id)
+            },
+
+            deselect_player: function (selected_player) {
+                
+                this.players.push(selected_player)
+                this.selected_players=this.selected_players.filter(player=>player.id!=selected_player.id)
+            },
+        }
+    })
+</script>

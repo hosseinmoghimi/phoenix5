@@ -1,0 +1,15 @@
+{% extends "accounting/layout.html" %}
+
+{% block content %}
+<div class="row">
+  <div class="col-md-12"> 
+      {% include "accounting/includes/transactions-app/template-print.html" %}
+      </div>
+</div>
+{% endblock content %}
+
+
+{% block script %}
+{% include "accounting/includes/transactions-app/script-print.html" %}
+
+{% endblock script %}

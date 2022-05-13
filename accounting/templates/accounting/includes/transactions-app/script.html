@@ -1,14 +1,37 @@
 <script>
+    let transactions = JSON.parse(`{{transactions_s|escapejs}}`)
     let transactions_app_data = {
-        transactions: JSON.parse(`{{transactions_s|escapejs}}`)
+        transactions: transactions,
+        search_for: "",
     }
     let transactions_app_methods = {
+        toString: function () {
+            let transactions_print = []
+            this.transactions.forEach(transaction => {
+                transactions_print.push({
+                    pay_from: transaction.pay_from.title,
+                    pay_to: transaction.pay_to.title,
+                    title: transaction.title,
+                    amount: transaction.amount,
+                    class_title: transaction.class_title,
+                    category: transaction.category,
+                    payment_method: transaction.payment_method,
+                    persian_transaction_datetime: transaction.persian_transaction_datetime,
+                })
+            });
+            return JSON.stringify(transactions_print)
+        },
+        filter: function () {
+            this.transactions = transactions.filter(function (transaction) {
+                return transaction.title.indexOf(transactions_app.search_for) > -1
+            })
+        },
         to_price: function (vall) {
             return to_price(vall, "")
         },
-        
+
     }
-</script> 
+</script>
 <script>
     let transactions_app = new Vue({
         el: "#transactions-app",

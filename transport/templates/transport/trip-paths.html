@@ -6,6 +6,14 @@
 
 
   <div class="row">
+    {% if add_trip_path_form %}
+      
+    <div class="col-md-12">
+      {% include "transport/includes/add-trippath-app/template.html" %}
+    </div>
+    {% endif %}
+
+
       <div class="col-md-12">
           {% include "transport/includes/trip-paths-app/template.html" %}
       </div>
@@ -15,5 +23,8 @@
 
 {% block script %}
 {% include "transport/includes/trip-paths-app/script.html" %}
-  
+{% if add_trip_path_form %}
+      
+  {% include "transport/includes/add-trippath-app/script.html" %}
+{% endif %}
 {% endblock script %}

@@ -7,12 +7,14 @@
 <script>
     let rest_ = parseInt("{{rest}}")
     let financial_documents = JSON.parse(`{{financial_documents_s|escapejs}}`)
+    let financial_documents_app_methods={}
+    let financial_documents_app_data={}
 </script>
 {% if add_payment_form1 %}
 
 <script>
 
-    let financial_documents_app_data = {
+    financial_documents_app_data = {
         financial_documents: financial_documents,
         title: '',
         bestankar: 0,
@@ -25,7 +27,13 @@
     }
 
 
-    let financial_documents_app_methods = {
+    financial_documents_app_methods = {
+        get_print_url: () => {
+            return "sdasdas"
+        },
+        get_excel_url: () => {
+            return "sdasdas"
+        },
         to_price: function (vall, curr) {
             return to_price(vall, curr)
         },
@@ -53,14 +61,12 @@
         },
         add_financial_document: function () {
             financial_documents_app.waiting = true
-            let document_datetime = this.document_date + " " + (parseInt(this.document_time.hour) > 9 ? this.document_time.hour : ("0" + this.document_time.hour)) + ":" + (parseInt(this.document_time.minute) > 9 ? this.document_time.minute : ("0" + this.document_time.minute)) + ":00"
             let payload = {
                 csrfmiddlewaretoken: csrfmiddlewaretoken,
                 title: this.title,
                 account_id: financial_account_id,
                 bestankar: this.bestankar,
                 bedehkar: this.bedehkar,
-                document_datetime: document_datetime,
                 category_id: this.category_id,
             }
             console.log(payload)
@@ -84,11 +90,17 @@
 
 <script>
 
-    let financial_documents_app_data = {
+    financial_documents_app_data = {
         financial_documents: financial_documents,
 
     }
-    let financial_documents_app_methods = {
+    financial_documents_app_methods = {
+        get_print_url: () => {
+            return "sdasdas"
+        },
+        get_excel_url: () => {
+            return "sdasdas"
+        },
         to_price: function (vall, curr) {
             return to_price(vall, curr)
         },

@@ -61,11 +61,11 @@ def CoreContext(request, *args, **kwargs):
     context['app'] = {
         'title': parameter_repo.parameter(name=ParameterNameEnum.TITLE, default=app_name).value,
         'home_url': parameter_repo.parameter(name=ParameterNameEnum.HOME_URL, default="/"+app_name+"/").value,
-        'icon': picture_repo.picture(name=PictureNameEnum.FAVICON, default=STATIC_URL+"").image,
-        'logo': picture_repo.picture(name=PictureNameEnum.LOGO, default=STATIC_URL+"").image,
+        'icon': picture_repo.picture(name=PictureNameEnum.FAVICON, default="").image,
+        'logo': picture_repo.picture(name=PictureNameEnum.LOGO, default="").image,
     }
     pc = PersianCalendar()
-    now = timezone.now()
+    now =pc.date
     current_datetime = pc.from_gregorian(now)
     context['current_date'] = current_datetime[:10]
     context['current_datetime'] = current_datetime
@@ -151,7 +151,7 @@ def PageContext(request, *args, **kwargs):
         page_tags_s = json.dumps(PageTagSerializer(page_tags, many=True).data)
         context['page_tags_s'] = page_tags_s
         context['page_tags'] = page_tags
-        if  can_add_tag:
+        if can_add_tag:
             context['add_page_tag_form'] = AddPageTagForm()
 
 
@@ -216,6 +216,8 @@ def PageContext(request, *args, **kwargs):
         if profile is not None:
             my_like = page.my_like(profile_id=profile.id)
             context['my_like'] = my_like
+            context['toggle_page_like_form']=TogglePageLikeForm()
+
 
     return context
 

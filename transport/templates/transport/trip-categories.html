@@ -1,0 +1,29 @@
+
+{% extends "transport/layout.html" %}
+
+
+{% block content %}
+
+
+  <div class="row">
+    {% if add_trip_category_form %}
+      
+    <div class="col-md-12">
+      {% include "transport/includes/add-trip-category-app/template.html" %}
+    </div>
+    {% endif %}
+    <div class="col-md-12">
+        {% include "transport/includes/trip-categories-app/template.html" %}
+    </div>
+  </div>
+{% endblock content %}
+
+
+{% block script %}
+{% include "transport/includes/trip-categories-app/script.html" %}
+
+{% if add_trip_category_form %}
+
+{% include "transport/includes/add-trip-category-app/script.html" %}
+{% endif %}
+{% endblock script %}

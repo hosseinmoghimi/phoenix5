@@ -12,21 +12,31 @@ from tinymce.models import HTMLField
 from core.enums import ColorEnum,UnitNameEnum
 from accounting.models import Account
 
-class Driver(Account):
+
+class Driver(models.Model,LinkHelper):
+    title=models.CharField(_("title"),null=True,blank=True, max_length=100)
+    account=models.ForeignKey("accounting.account", verbose_name=_("account"), on_delete=models.CASCADE)
+    class_name='driver'
+    app_name=APP_NAME
     color=models.CharField(_("color"),max_length=50,choices=ColorEnum.choices,default=ColorEnum.PRIMARY)
+
     class Meta:
         verbose_name = 'Driver'
         verbose_name_plural = 'Drivers' 
 
     def save(self,*args, **kwargs):
-        if self.class_name is None or self.class_name=="":
-            self.class_name='driver'
-        if self.app_name is None or self.app_name=="":
-            self.app_name=APP_NAME
+        if self.title is None or self.title=="":
+            self.title=self.account.title
         return super(Driver,self).save(*args, **kwargs)
+    def __str__(self):
+        return str(self.title)
 
 
-class Passenger(Account):
+class Passenger(models.Model,LinkHelper):
+    title=models.CharField(_("title"),null=True,blank=True, max_length=100)
+    account=models.ForeignKey("accounting.account", verbose_name=_("account"), on_delete=models.CASCADE)
+    class_name='passenger'
+    app_name=APP_NAME
 
     def get_trips_url(self):
         return reverse(APP_NAME+":trips",kwargs={'category_id':0,'driver_id':0,'vehicle_id':0,'passenger_id':self.pk,'trip_path_id':0})
@@ -35,16 +45,21 @@ class Passenger(Account):
         verbose_name = _("Passenger")
         verbose_name_plural = _("Passengers")
  
-    def save(self,*args, **kwargs):
-        if self.class_name is None or self.class_name=="":
-            self.class_name='passenger'
-        if self.app_name is None or self.app_name=="":
-            self.app_name=APP_NAME
+    def save(self,*args, **kwargs): 
+        if self.title is None or self.title=="":
+            self.title=self.account.title
         return super(Passenger,self).save(*args, **kwargs)
 
 
-class Client(Account):
+    def __str__(self):
+        return str(self.title)
 
+
+class Client(models.Model,LinkHelper):
+    title=models.CharField(_("title"),null=True,blank=True, max_length=100)
+    account=models.ForeignKey("accounting.account", verbose_name=_("account"), on_delete=models.CASCADE)
+    class_name='client'
+    app_name=APP_NAME
     def get_trips_url(self):
         return reverse(APP_NAME+":trips",kwargs={'category_id':0,'driver_id':0,'vehicle_id':0,'passenger_id':self.pk,'trip_path_id':0})
     
@@ -53,32 +68,37 @@ class Client(Account):
         verbose_name_plural = _("Client")
  
     def save(self,*args, **kwargs):
-        if self.class_name is None or self.class_name=="":
-            self.class_name='client'
-        if self.app_name is None or self.app_name=="":
-            self.app_name=APP_NAME
+       
+        if self.title is None or self.title=="":
+            self.title=self.account.title
         return super(Client,self).save(*args, **kwargs)
 
+    def __str__(self):
+        return str(self.title)
 
-class ServiceMan(Account):
+
+class ServiceMan(models.Model,LinkHelper):
+    title=models.CharField(_("title"),null=True,blank=True, max_length=100)
+    account=models.ForeignKey("accounting.account", verbose_name=_("account"), on_delete=models.CASCADE)
+    class_name='serviceman'
+    app_name=APP_NAME
+
     class Meta:
         verbose_name = _("ServiceMan")
         verbose_name_plural = _("ServiceMans")
 
     def __str__(self):
-        return self.title if self.title is not None else self.profile.name
- 
+        return str(self.title)
     def save(self,*args, **kwargs):
-        if self.class_name is None or self.class_name=="":
-            self.class_name='serviceman'
-        if self.app_name is None or self.app_name=="":
-            self.app_name=APP_NAME
+       
+        if self.title is None or self.title=="":
+            self.title=self.account.title
         return super(ServiceMan,self).save(*args, **kwargs)
 
 
 class Vehicle(Asset):
     vehicle_type=models.CharField(_("نوع وسیله "),choices=VehicleTypeEnum.choices,default=VehicleTypeEnum.SEDAN, max_length=50)
-    brand=models.CharField(_("برند"),choices=VehicleBrandEnum.choices,default=VehicleBrandEnum.TOYOTA, max_length=50)
+    brand=models.CharField(_("برند"),choices=VehicleBrandEnum.choices,default=VehicleBrandEnum.IRAN_KHODRO, max_length=50)
     model_name=models.CharField(_("مدل"),null=True,blank=True, max_length=50)
     plaque=models.CharField(_("پلاک"),null=True,blank=True, max_length=50)
     driver=models.CharField(_("راننده"), max_length=50,null=True,blank=True)
@@ -119,23 +139,21 @@ class Vehicle(Asset):
 class WorkShift(Transaction):
     area=models.ForeignKey("map.area", verbose_name=_("area"), on_delete=models.CASCADE)
     vehicle=models.ForeignKey("vehicle", verbose_name=_("vehicle"), on_delete=models.CASCADE)
-    driver=models.ForeignKey("driver", verbose_name=_("driver"), on_delete=models.CASCADE)
-    start_time=models.DateTimeField(_("start_time"), auto_now=False, auto_now_add=False)
-    end_time=models.DateTimeField(_("end_date"), auto_now=False, auto_now_add=False)
-    wage=models.IntegerField(_("اجرت راننده"),default=0)
+    start_datetime=models.DateTimeField(_("start_datetime"), auto_now=False, auto_now_add=False)
+    end_datetime=models.DateTimeField(_("end_datetime"), auto_now=False, auto_now_add=False)
      
-    
     @property
-    def income(self):
-        return self.amount
+    def driver(self):
+        return Driver.objects.filter(account_id=self.pay_from_id).first()
     @property
-    def outcome(self):
-        return self.wage
+    def client(self):
+        return Client.objects.filter(account_id=self.pay_to_id).first()
+  
 
-    def persian_start_time(self):
-        return to_persian_datetime_tag(self.start_time)
-    def persian_end_time(self):
-        return to_persian_datetime_tag(self.end_time)
+    def persian_start_datetime(self):
+        return to_persian_datetime_tag(self.start_datetime)
+    def persian_end_datetime(self):
+        return to_persian_datetime_tag(self.end_datetime)
     class Meta:
         verbose_name = _("WorkShift")
         verbose_name_plural = _("WorkShifts")
@@ -148,6 +166,7 @@ class WorkShift(Transaction):
         if self.app_name is None or self.app_name=="":
             self.app_name=APP_NAME
         return super(WorkShift,self).save(*args, **kwargs)
+
 
 class TripPath(models.Model,LinkHelper):
     area=models.ForeignKey("map.area", null=True,blank=True, verbose_name=_("area"), on_delete=models.CASCADE)
@@ -172,9 +191,11 @@ class TripPath(models.Model,LinkHelper):
 
 class TripCategory(models.Model,LinkHelper):
     title=models.CharField(_("عنوان"), max_length=50)
-    color=models.CharField(_("color"),choices=ColorEnum.choices,default=ColorEnum.PRIMARY, max_length=50)
+    color=models.CharField(_("رنگ"),choices=ColorEnum.choices,default=ColorEnum.PRIMARY, max_length=50)
     class_name="tripcategory"
     app_name=APP_NAME
+    def count_of_trips(self):
+        return len(self.trip_set.all())
     def get_badge(self):
         return f"""
             <span class="badge badge-{self.color}">{self.title}</span>
@@ -208,7 +229,10 @@ class Trip(Transaction):
 
     @property
     def driver(self):
-        return self.pay_from
+        return Driver.objects.filter(account_id=self.pay_from.id).first()
+    @property
+    def client(self):
+        return Client.objects.filter(account_id=self.pay_to.id).first()
     @property
     def cost(self):
         return self.amount
@@ -293,6 +317,9 @@ class Maintenance(VehicleEvent):
     @property
     def service_man(self):
         return ServiceMan.objects.filter(pk=self.pay_from.pk).first()
+    @property
+    def client(self):
+        return Client.objects.filter(pk=self.pay_to.pk).first()
     def get_icon(self):
         icon="settings"
         color="primary"

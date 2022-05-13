@@ -1,0 +1,123 @@
+{% load static %}
+<div id="accordion-add-vehicle">
+    <div class="card" id="add-vehicle-app">
+        <div class="card-header" id="heading-add-vehicle">
+            <h5 class="text-center">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-add-vehicle"
+                    aria-expanded="true" aria-controls="collapse-add-vehicle">
+                    افزودن ماشین
+                </button>
+            </h5>
+
+
+        </div>
+        <div id="collapse-add-vehicle" class="collapse" aria-labelledby="heading-add-vehicle"
+            data-parent="#accordion-add-vehicle">
+
+
+            <div class="card-body">
+
+                {% load static %}
+
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="">
+                                عنوان
+                            </label>
+                            <input v-model="title" class="form-control" type="text">
+                        </div>
+                    </div>
+
+
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="">
+                                پلاک
+                            </label>
+                            <input v-model="plaque" class="form-control" type="text">
+                        </div>
+                    </div>
+
+
+
+
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="">
+                                رنگ
+                            </label>
+                            <select v-model="color" class="form-control">
+                                {% for color in colors %}
+
+                                <option value="{{color}}">{{color}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="">
+                                نوع
+                            </label>
+                            <select v-model="vehicle_type" class="form-control">
+                                {% for vehicle_type in vehicle_types %}
+
+                                <option value="{{vehicle_type}}">{{vehicle_type}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="">
+                                برند
+                            </label>
+                            <select v-model="brand" class="form-control">
+                                {% for brand in brands %}
+
+                                <option value="{{brand}}">{{brand}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+
+                    <div class="col-md-12">
+
+
+                        <div class="text-right">
+
+                            <button @click="add_vehicle()" class="btn btn-success">
+                                <i class="fa fa-plus"></i>
+                                افزودن
+                            </button>
+                            <img src="{% static 'leo/img/loading.gif' %}" width="32" v-if="waiting" alt="">
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="col-md-12">
+                        <div class="text-right farsi mx-3 my-3">
+
+
+                            <div v-html="message.body" v-if="message.show" :class="'alert alert-'+message.color"></div>
+                        </div>
+                    </div>
+
+
+
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+
+
+</div>

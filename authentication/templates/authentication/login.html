@@ -17,8 +17,8 @@
     <link rel="stylesheet" href="{% static 'vendor/css/font-awesome.min.css' %}">
     <link rel="stylesheet"
         href="https://preview.colorlib.com/theme/bootstrap/login-form-15/css/A.style.css.pagespeed.cf.AxmTFBrhes.css">
-        
-{% include "phoenix/includes/head-farsi-font.html" %}
+
+    {% include "phoenix/includes/head-farsi-font.html" %}
 
 
 
@@ -60,7 +60,8 @@
                             <div class="my-3">
 
                                 {% for message in messages %}
-                                <div class="alert alert-danger farsi text-right"  style="direction: rtl;" >{{message}}</div>
+                                <div class="alert alert-danger farsi text-right" style="direction: rtl;">{{message}}
+                                </div>
                                 {% endfor %}
                             </div>
                             {% endif %}
@@ -73,7 +74,7 @@
                                 <div class="form-group">
                                     <input id="password-field" type="password" name="password" class="form-control"
                                         required>
-                                    <label class="form-control-placeholder" for="password">Password</label>
+                                    <label class="form-control-placeholder" for="password-field">Password</label>
                                     <span toggle="#password-field"
                                         class="fa fa-fw fa-eye field-icon toggle-password"></span>
                                 </div>
@@ -89,12 +90,15 @@
                                         </label>
                                     </div>
                                     <div class="w-50 text-md-right">
-                                        <a href="#">Forgot Password</a>
+                                        <a href="{% url 'authentication:reset_password' %}">Forgot Password</a>
                                     </div>
                                 </div>
                             </form>
                             <p class="text-center">Not a member? <a href="{% url 'authentication:register' %}">Sign
                                     Up</a></p>
+
+                            <p class="text-center">change password? <a
+                                    href="{% url 'authentication:change_password' %}">Change Password</a></p>
                         </div>
                     </div>
                 </div>

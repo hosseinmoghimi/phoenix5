@@ -5,6 +5,22 @@ from django.http import JsonResponse
 from authentication.forms import *
 from core.constants import FAILED, SUCCEED
 
+class LoginApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={
+            'result':FAILED
+        }
+        login_form=LoginForm(request.POST)
+        if login_form.is_valid():
+            username=login_form.cleaned_data['username']
+            password=login_form.cleaned_data['password']
+            (request,profile,token,created)=ProfileRepo(request=request).authenticate_for_apk(username=username,password=password)
+            if profile is not None:
+                context['profile']=ProfileSerializer(profile).data
+                context['token']=token
+                context['result']=SUCCEED
+                context['created']=created
+        return JsonResponse(context)
 
 
 class SetDefaultProfileApi(APIView):

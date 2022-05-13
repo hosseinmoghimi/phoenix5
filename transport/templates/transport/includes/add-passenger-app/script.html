@@ -1,0 +1,68 @@
+{% load to_json %}
+<script>
+    let accounts = JSON.parse(`{{accounts_s|escapejs}}`)
+    let add_passenger_app = new Vue({
+        el: "#add-passenger-app",
+        data: {
+            account_id: 0,
+            accounts: accounts,
+            name: "",
+            search_for: '',
+            waiting: false,
+            message: {
+                show: false
+            }
+        },
+        methods: {
+            filter: function () {
+                this.accounts = accounts.filter(account => account.title.indexOf(this.search_for) > -1)
+                if (this.accounts.length > 0)
+                    this.account_id = this.accounts[0].id
+            },
+            add_passenger: function () {
+                let url = "{% url 'transport:add_passenger' %}"
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    account_id: this.account_id
+                }
+                add_passenger_app.waiting = true
+
+                $.post(url, payload).done((data) => {
+                    add_passenger_app.waiting = false
+
+                    if (data.result === 'FAILED') {
+                        add_passenger_app.message = {
+                            color: "danger",
+                            body: "خطا در ایجاد مسافر جدید.",
+                            show: true,
+                        }
+                        setTimeout(() => {
+                            add_passenger_app.message = {
+                                show: false,
+                            }
+                        }, 3000);
+                    }
+                    if (data.result === 'SUCCEED') {
+                        if (typeof passengers_app != "undefined") {
+                            passengers_app.passengers.push(data.passenger)
+                        }
+
+                        add_passenger_app.message = {
+                            color: "success",
+                            body: "با موفقیت افزوده شد.",
+                            show: true,
+                        }
+                        setTimeout(() => {
+                            add_passenger_app.message = {
+                                show: false,
+                            }
+                        }, 3000);
+                    }
+                })
+
+            }
+
+        }
+    })
+
+</script>

@@ -18,6 +18,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_cleanup.apps.CleanupConfig',
     'django_social_share',
+    
+    'rest_framework',
+    # 'rest_framework.authtoken'
     # 'web3auth.apps.Web3AuthConfig',
     'market',
     'scheduler',
@@ -32,6 +35,7 @@ INSTALLED_APPS = [
     'projectmanager',
     'web',
     'stock',
+    'polls',
     'transport',
     'guarantee',
     'chef',
@@ -40,13 +44,18 @@ INSTALLED_APPS = [
     'archive',
     'messenger',
     'warehouse',
+    'organization',
+    'library',
+    'mafia',
     'school',
+    'bms',
+    
 
 ]
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db8.sqlite3',
+        'NAME': BASE_DIR / 'db_version_1.3.sqlite3',
     }
 }
 SECRET_KEY = 'django-insecure-bt+o^tb1w_vl6vj%tjn-&=v5^m*w3)5a8(i&uoo)6on&pi-x6('
@@ -76,11 +85,55 @@ phoenix_apps=[
         'has_help':False,
         'show_on_menu':True,
     },
+    {
+        'name':'polls',
+        'title':'نظرسنجی',
+        'color':'success',
+        'home_url':SITE_URL+"polls"+"/",
+        'has_help':False,
+        'show_on_menu':True,
+    },
+    {
+        'name':'mafia',
+        'title':'مافیا',
+        'color':'warning',
+        'home_url':SITE_URL+"mafia"+"/",
+        'has_help':False,
+        'show_on_menu':True,
+    },
+
+    {
+        'name':'organization',
+        'title':'سازمان',
+        'color':'danger',
+        'home_url':SITE_URL+"organization"+"/",
+        'has_help':False,
+        'show_on_menu':True,
+    },
+    {
+        'name':'library',
+        'title':'کتابخانه',
+        'color':'success',
+        'home_url':SITE_URL+"library"+"/",
+        'has_help':False,
+        'show_on_menu':True,
+    },
+
+    
+    {
+        'name':'bms',
+        'title':'هوشمند سازی',
+        'color':'info',
+        'home_url':SITE_URL+"bms"+"/",
+        'has_help':False,
+        'show_on_menu':True,
+    },
+
 
     {
         'name':'scheduler',
         'title':'برنامه ریز',
-        'color':'warning',
+        'color':'primary',
         'home_url':SITE_URL+"scheduler"+"/",
         'has_help':False,
         'show_on_menu':True,

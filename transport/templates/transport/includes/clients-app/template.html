@@ -3,42 +3,28 @@
     <div class="card" id="clients-app">
         <div class="card-header" id="heading-clients">
             <h5 class="text-center">
-                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-clients"
-                    aria-expanded="true" aria-controls="collapse-clients">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-clients" aria-expanded="true"
+                    aria-controls="collapse-clients">
                     سرویس گیرنده ها
-
-
                     <span v-if="clients.length>0">
                         <small class="text-danger mx-2">
                             <span v-text="clients.length"></span>
                         </small>
                     </span>
-
-
                 </button>
             </h5>
-
-
         </div>
-        <div id="collapse-clients" class="collapse" aria-labelledby="heading-clients"
-            data-parent="#accordion-clients">
-
-
+        <div id="collapse-clients" class="collapse" aria-labelledby="heading-clients" data-parent="#accordion-clients">
             <div class="card-body">
-
                 {% load static %}
                 <form @submit.prevent="search()">
                     <img src="{% static 'leo/img/loading.gif' %}" width="32" v-if="waiting" alt="">
-
                     <input type="text" v-model="search_for" class="form-control" placeholder="جستجو ..."
                         @input="filter()">
                 </form>
-
-
                 <div class="table-responsive">
                     <img v-if="false" width="32" src="{% static 'leo/img/loading.gif' %}" alt="">
                     <h6 v-if="false">
-
                         <span class="text-muted">در حال بار گذاری ... </span>
                     </h6>
                     <table class="table table-striped">
@@ -57,41 +43,26 @@
                             </th>
                         </thead>
                         <tbody>
-
-
                             <tr v-for="client in clients">
                                 <td>
                                     <a :href="client.get_absolute_url">
-                                        <img :src="client.logo" class="rounded1" width="32" alt="">
-
+                                        <img :src="client.account.logo" class="rounded1" width="32" alt="">
                                         <span v-text="client.title"></span>
                                     </a>
-
-
                                 </td>
                                 <td>
-                                    <a :href="client.profile.get_absolute_url">
-                                        <img :src="client.profile.image" class="rounded-circle" width="32" alt="">
-                                        <span v-text="client.profile.name"></span>
+                                    <a :href="client.account.profile.get_absolute_url">
+                                        <img :src="client.account.profile.image" class="rounded-circle" width="32"
+                                            alt="">
+                                        <span v-text="client.account.profile.name"></span>
                                     </a>
-
                                 </td>
                                 <td>
-                                    <span v-html="to_price(client.balance_rest)"></span>
+                                    <span v-html="to_price(client.account.balance_rest)"></span>
                                     </span>
 
                                 </td>
                                 <td>
-
-                                    {% if perms.projectmanager.add_employee and not client.employee %}
-                                    <form @submit.prevent="create_employee(client.id)">
-                                        {% csrf_token %}
-                                        <button class="btn btn-warning" type="submit">
-                                            ایجاد پرسنل
-                                        </button>
-                                    </form>
-                                    {% endif %}
-
 
                                 </td>
                             </tr>

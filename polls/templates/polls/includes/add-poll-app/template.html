@@ -1,0 +1,39 @@
+{% load to_persian_date %}
+{% load to_price %}
+{% load to_amount_color %}
+{% load static %}
+<div id="accordion-add-poll">
+
+
+    <div class="card" id="add-poll-app">
+        <div class="card-header" id="heading-add-poll">
+            <h5 class="text-center">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-add-poll" aria-expanded="true"
+                    aria-controls="collapse-add-poll">
+                    نظرسنجی جدید
+
+                   
+
+                </button>
+            </h5>
+
+             
+        </div>
+        <div id="collapse-add-poll" class="collapse {% if expand_add_poll %} show {% endif %}" aria-labelledby="heading-add-poll"
+            data-parent="#accordion-add-poll">
+
+
+            <div class="card-body">
+
+                {% load static %}
+              
+                {% include "polls/includes/add-poll-app/form.html" %}
+
+
+               
+            </div>
+        </div>
+
+
+    </div>
+</div>

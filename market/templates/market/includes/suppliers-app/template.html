@@ -1,0 +1,82 @@
+{% load to_persian_date %}
+{% load to_price %}
+{% load to_amount_color %}
+{% load static %}
+<div id="accordion-suppliers">
+
+
+    <div class="card" id="suppliers-app">
+        <div class="card-header" id="heading-suppliers">
+            <h5 class="text-center">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-suppliers"
+                    aria-expanded="true" aria-controls="collapse-suppliers">
+فروشنده ها
+
+
+                    <span v-if="suppliers.length>0">
+                        <small class="text-danger mx-2">
+                            <span v-text="suppliers.length"></span>
+                        </small>
+                    </span>
+
+
+                </button>
+            </h5>
+
+            {% if page_pre_description %}
+
+            <h5 class="text-center">
+                {{page_pre_description}}
+            </h5>
+            {% endif %}
+            {% if page_description %}
+
+            <h4 class="text-center">
+                {{page_description}}
+            </h4>
+            {% endif %}
+        </div>
+        <div id="collapse-suppliers" class="collapse" aria-labelledby="heading-suppliers"
+            data-parent="#accordion-suppliers">
+
+
+            <div class="card-body">
+
+                {% load static %}
+                <form @submit.prevent="search()">
+                    <img src="{% static 'leo/img/loading.gif' %}" width="32" v-if="waiting" alt="">
+
+                    <input type="text" v-model="search_for" class="form-control" placeholder="جستجو ..."
+                        @input="filter()">
+                </form>
+
+
+                <div class="mt-3">
+                   
+
+
+                            <div v-for="supplier in suppliers">
+                             
+                                    <a :href="supplier.get_absolute_url">
+                                        <div class="media">
+                                            <img :src="supplier.thumbnail" class="rounded-circle" width="32" alt="">
+                                            <div class="media-body mr-3">
+                                                <div>
+
+                                                    <span v-text="supplier.title"></span>
+                                                </div>
+                                                
+                                            </div>
+                                        </div>
+                                    </a>
+
+</div>
+                               
+                       
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+</div>

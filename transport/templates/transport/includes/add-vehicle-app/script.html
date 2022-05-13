@@ -1,0 +1,116 @@
+{% load to_json %}
+<script>
+    let add_vehicle_app = new Vue({
+        el: "#add-vehicle-app",
+        data: {
+            title: "",
+            search_for: '',
+            plaque: "",
+            brand: "",
+            model: "",
+            vehicle_type: "",
+            color: "primary",
+            waiting: false,
+            message: {
+                show: false
+            }
+        },
+        methods: {
+            filter: function () {
+                this.accounts = accounts.filter(account => account.title.indexOf(this.search_for) > -1)
+                if (this.accounts.length > 0)
+                    this.account_id = this.accounts[0].id
+            },
+            add_vehicle: function () {
+                this.message.body = ""
+                let sw = true
+                if (this.plaque.length == 0) {
+                    this.message.body += "<span>پلاک ماشین را وارد کنید .</span><br>"
+                    sw = false
+                }
+                if (this.title.length == 0) {
+                    this.message.body += "<span>عنوان ماشین را وارد کنید .</span><br>"
+                    sw = false
+                }
+                if (this.color.length == 0) {
+                    this.message.body += "<span>رنگ ماشین را وارد کنید .</span><br>"
+                    sw = false
+                }
+                if (this.vehicle_type.length == 0) {
+                    this.message.body += "<span>نوع ماشین را وارد کنید .</span><br>"
+                    sw = false
+                }
+                if (this.brand.length == 0) {
+                    this.message.body += "<span>برند ماشین را وارد کنید .</span><br>"
+                    sw = false
+                }
+                if (!sw) {
+                    this.message.color="danger"
+                    this.message.show=true
+                }
+                else {
+
+                    let url = "{% url 'transport:add_vehicle' %}"
+                    let payload = {
+                        csrfmiddlewaretoken: csrfmiddlewaretoken,
+                        title: this.title,
+                        plaque: this.plaque,
+                        color: this.color,
+                        vehicle_type: this.vehicle_type,
+                        brand: this.brand,
+                    }
+                    add_vehicle_app.waiting = true
+                    console.log(payload)
+                    $.post(url, payload).done((data) => {
+                        add_vehicle_app.waiting = false
+
+                        if (data.result === 'FAILED') {
+                            add_vehicle_app.message = {
+                                color: "danger",
+                                body: data.message,
+                                show: true,
+                            }
+                            setTimeout(() => {
+                                add_vehicle_app.message = {
+                                    show: false,
+                                }
+                            }, 3000);
+                        }
+                        else if (data.result === 'SUCCEED') {
+                            if (typeof vehicles_app != "undefined") {
+                                vehicles_app.vehicles.push(data.vehicle)
+                            }
+
+                            add_vehicle_app.message = {
+                                color: "success",
+                                body: "با موفقیت افزوده شد.",
+                                show: true,
+                            }
+                            setTimeout(() => {
+                                add_vehicle_app.message = {
+                                    show: false,
+                                }
+                            }, 3000);
+                        }
+                        else{
+                            add_vehicle_app.message = {
+                                color: "danger",
+                                body: "خطا در ایجاد ماشین جدید",
+                                show: true,
+                            }
+                            setTimeout(() => {
+                                add_vehicle_app.message = {
+                                    show: false,
+                                }
+                            }, 3000);
+                        }
+                         
+                    })
+                }
+
+            }
+
+        }
+    })
+
+</script>

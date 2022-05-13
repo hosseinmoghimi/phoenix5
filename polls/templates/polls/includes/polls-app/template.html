@@ -1,0 +1,122 @@
+{% load to_persian_date %}
+{% load to_price %}
+{% load to_amount_color %}
+{% load static %}
+<div id="accordion-polls">
+
+
+    <div class="card" id="polls-app">
+        <div class="card-header" id="heading-polls">
+            <h5 class="text-center">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-polls" aria-expanded="true"
+                    aria-controls="collapse-polls">
+                    نظرسنجی ها
+
+                    <span v-if="polls.length>0">
+                        <small class="text-danger mx-2">
+                            <span v-text="polls.length"></span>
+                        </small>
+                    </span>
+
+
+                </button>
+            </h5>
+
+            {% if page_pre_description %}
+
+            <h5 class="text-center">
+                {{page_pre_description}}
+            </h5>
+            {% endif %}
+            {% if page_description %}
+
+            <h4 class="text-center">
+                {{page_description}}
+            </h4>
+            {% endif %}
+        </div>
+        <div id="collapse-polls" class="collapse {% if expand_polls %} show {% endif %}" aria-labelledby="heading-polls"
+            data-parent="#accordion-polls">
+
+
+            <div class="card-body">
+
+                {% load static %}
+
+                {% if add_poll_form %}
+                {% include "polls/includes/polls-app/form.html" %}
+
+
+                {% endif %}
+
+                <div class="table-responsive">
+                    <img v-if="false" width="32" src="{% static 'leo/img/loading.gif' %}" alt="">
+                    <h6 v-if="false">
+
+                        <span class="text-muted">در حال بار گذاری ... </span>
+                    </h6>
+                    <table class="table table-striped">
+                        <thead>
+                            <th>
+                                پرسش
+                            </th>
+                            <th>
+                                ایجاد کننده
+                            </th>
+                            <th>
+                                پاسخ ها
+                            </th>
+                            <th>
+
+                            </th>
+                        </thead>
+                        <tbody>
+
+
+                            <tr v-for="poll in polls">
+                                <td>
+                                    <a :href="poll.get_absolute_url">
+                                        <div class="media">
+                                            <img :src="poll.thumbnail" class="rounded" width="32" alt="">
+                                            <div class="media-body mr-3">
+                                                <div>
+
+                                                    <span v-text="poll.title"></span>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </a>
+
+
+                                </td>
+                                <td>
+
+                                    <a v-if="poll.creator" :href="poll.creator.get_absolute_url">
+                                        <img :src="poll.creator.image" class="rounded-circle" width="32" alt="">
+                                        <span v-text="poll.creator.name"></span>
+                                    </a>
+
+                                </td>
+                                <td>
+                                    <span v-html="to_price(poll.options_count)"></span>
+                                    انتخاب و
+                                    <span v-html="to_price(poll.votes_count)"></span>
+                                    رای
+                                </td>
+                                <td>
+
+
+
+
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+</div>

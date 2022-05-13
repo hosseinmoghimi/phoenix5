@@ -95,7 +95,7 @@ class FileRepo:
         if 'folder_id' in kwargs:
             objects = objects.filter(folder_id=kwargs['folder_id'])
         if 'search_for' in kwargs:
-            objects = objects.filter(name__contains=kwargs['search_for'])
+            objects = objects.filter(title__contains=kwargs['search_for'])
         return objects
     def file(self,*args, **kwargs):
         if 'file' in kwargs and kwargs['file'] is not None:

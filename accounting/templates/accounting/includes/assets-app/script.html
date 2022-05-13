@@ -1,0 +1,40 @@
+<script>
+    let assets = JSON.parse(`{{assets_s|escapejs}}`)
+    let assets_app = new Vue({
+        el:"#assets-app",
+        data: {
+            assets: assets,
+            search_for:'',
+            waiting:false,
+        },
+        methods: {
+            filter:function(){
+                this.assets = assets.filter(asset => asset.title.indexOf(this.search_for) > -1)
+         
+            },
+            to_price: function (vall) {
+                let color='primary'
+                if (vall<0)
+                color='danger'
+                if (vall>0)
+                color='success'
+                vall=to_price(vall,"{{CURRENCY}}")
+                return `
+                    <span class="text-${color}">${vall}</span>
+                    `
+            },
+            create_employee: function (asset_id) {
+                let url = "{% url 'organization:employee' pk=0 %}"
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    asset_id: asset_id
+                }
+                $.post(url, payload).done((data) => {
+                    console.log(data)
+                })
+            },
+           
+        }
+    })
+
+</script>

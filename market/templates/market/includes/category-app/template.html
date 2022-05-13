@@ -1,0 +1,41 @@
+{% load to_persian_date %}
+{% load to_price %}
+{% load to_amount_color %}
+{% load static %}
+
+<div class="card" id="category-app">
+    <div class="card-header">
+        <h5 class="text-center">
+            {{category.title}}
+        </h5>
+    </div>
+
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-3" v-for="category in categories">
+                <div class="mb-3">
+                    <a :href="category.get_absolute_url" class="btn btn-block btn-link">
+                        <div class="text-center">
+                            <img :src="category.thumbnail" width="80%" alt="">
+                        </div>
+                        <h5 class="mt-2 text-center">
+                            <span v-text="category.title"></span>
+                        </h5>
+                    </a>
+                </div>
+            </div>
+            <div class="col-md-3" v-for="product in products">
+                <div class="mb-3">
+                    <a :href="product.get_absolute_url" class="btn btn-block btn-link">
+                        <div class="text-center">
+                            <img :src="product.thumbnail" width="80%" alt="">
+                        </div>
+                        <h5 class="mt-2 text-center">
+                            <span v-text="product.title"></span>
+                        </h5>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

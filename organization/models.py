@@ -1,0 +1,139 @@
+from django.db import models
+from requests import request
+from organization.apps import APP_NAME
+from core.models import _,reverse,Page,LinkHelper
+from utility.calendar import to_persian_datetime_tag
+
+class OrganizationUnit(Page):
+    pre_title = models.CharField(
+        _("pre_title"), blank=True, null=True, max_length=50)
+    account = models.ForeignKey("accounting.account", null=True, blank=True, verbose_name=_(
+        "account"), on_delete=models.CASCADE)
+    parent = models.ForeignKey("organizationunit", related_name="childs",
+                               null=True, blank=True, verbose_name=_("parent"), on_delete=models.CASCADE)
+    def all_childs_ids(self):
+        pages_ids=[]
+        for page in self.childs.all():
+            chds= page.all_childs_ids()
+            pages_ids.append(page.pk)
+            for page1 in chds:
+                pages_ids.append(page1)
+        print(pages_ids)
+        return pages_ids
+
+                               
+    def all_sub_orgs(self):
+        ids=self.all_childs_ids()
+        ids.append(self.pk)
+        return OrganizationUnit.objects.filter(id__in=ids)
+
+    
+    def __str__(self):
+        # return self.title
+        return self.full_title
+
+    class Meta:
+        verbose_name = _("OrganizationUnit")
+        verbose_name_plural = _("واحد های سازمانی")
+
+    def save(self, *args, **kwargs):
+        if self.class_name is None or self.class_name == "":
+            self.class_name = "organizationunit"
+        if self.app_name is None or self.app_name == "":
+            self.app_name = APP_NAME
+        return super(OrganizationUnit, self).save(*args, **kwargs)
+    def logo(self):
+        if self.thumbnail_origin:
+            return self.thumbnail
+        elif self.parent is not None:
+            return self.parent.thumbnail
+        else:
+            return self.thumbnail
+
+    def get_chart_url(self):
+        return reverse(APP_NAME+":org_chart",kwargs={'pk':self.pk})
+
+class Employee(models.Model,LinkHelper):
+    account=models.ForeignKey("accounting.account", verbose_name=_("account"), on_delete=models.CASCADE)
+    organization_unit = models.ForeignKey("organizationunit", null=True, blank=True, verbose_name=_(
+        "organization_unit"), on_delete=models.CASCADE)
+    job_title = models.CharField(
+        _("job title"), default="سرپرست", max_length=50)
+    class_name = 'employee'
+    app_name = APP_NAME
+    @property
+    def title(self):
+        return self.account.title
+
+
+    def my_pages_ids(self):
+        my_pages_ids=[]
+        my_project_ids=self.my_project_ids()
+        my_pages_ids=my_pages_ids+ my_project_ids
+        return my_pages_ids
+
+    @property
+    def mobile(self):
+        return self.account.profile.mobile
+
+    @property
+    def name(self):
+        return self.account.profile.name
+
+    class Meta:
+        verbose_name = _("Employee")
+        verbose_name_plural = _("Employees")
+
+    def __str__(self):
+        return f"""{self.account.profile.name} : {self.job_title} {str(self.organization_unit) if self.organization_unit is not None else ""} """
+
+    def get_absolute_url(self):
+        return reverse(APP_NAME+":employee", kwargs={"pk": self.pk})
+
+    def my_project_ids(self):
+        ids = []
+        if self.organization_unit is not None:
+            # for org in self.organization_unit_set.all():
+            for proj in self.organization_unit.project_set.all():
+                ids.append(proj.id)
+            # ids=(proj for proj in self.organization_unit.project_set.all())
+        return ids
+
+    def save(self, *args, **kwargs):
+        return super(Employee, self).save(*args, **kwargs)
+
+
+
+class LetterSent(models.Model):
+    sender = models.ForeignKey("organization.organizationunit", related_name="sent_letters", verbose_name=_(
+        "فرستنده"), on_delete=models.CASCADE)
+    recipient = models.ForeignKey("organization.organizationunit", related_name="inbox_letters", verbose_name=_(
+        "گیرنده"), on_delete=models.CASCADE)
+    letter = models.ForeignKey("letter", verbose_name=_(
+        "letter"), on_delete=models.CASCADE)
+    date_sent = models.DateTimeField(
+        _("date sent"), auto_now=False, auto_now_add=False)
+
+    class Meta:
+        verbose_name = 'LetterSent'
+        verbose_name_plural = 'LetterSents'
+
+    def persian_date_sent(self):
+        return to_persian_datetime_tag(self.date_sent)
+
+
+class Letter(Page):
+    def persian_date_added(self):
+        return to_persian_datetime_tag(self.date_added)
+
+    def save(self, *args, **kwargs):
+        if self.class_name is None:
+            self.class_name = "letter"
+        if self.app_name is None:
+            self.app_name = APP_NAME
+        return super(Letter, self).save(*args, **kwargs)
+
+    class Meta:
+        verbose_name = 'Letter'
+        verbose_name_plural = 'Letters'
+

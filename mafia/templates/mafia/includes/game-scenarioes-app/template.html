@@ -1,0 +1,78 @@
+{% load to_persian_date %}
+{% load to_price %}
+{% load to_amount_color %}
+{% load static %}
+<div id="accordion-game-scenarioes">
+    <div class="card" id="game-scenarioes-app">
+        <div class="card-header" id="heading-game-scenarioes">
+            <h5 class="text-center">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-game-scenarioes" aria-expanded="true"
+                    aria-controls="collapse-game-scenarioes">
+                  سناریو های بازی
+                    <span>
+                        <small class="text-danger mx-2">
+                            {{game_scenarioes|length}}
+                        </small>
+                    </span>
+                </button>
+            </h5>
+
+        </div>
+        <div id="collapse-game-scenarioes" class="collapse" aria-labelledby="heading-game-scenarioes" data-parent="#accordion-game-scenarioes">
+            <div class="card-body">
+               
+              
+
+
+                <div class="table-responsive">
+
+                    <table class="table table-striped">
+                        <thead>
+                            <th>
+                                عنوان سناریو
+                            </th>
+                            <th>
+                               نقش ها
+                            </th>
+                        </thead>
+                        <tbody>
+
+                            {% for game_scenario in game_scenarioes %}
+
+                            <tr>
+                                <td>
+                                    <a href="{{game_scenario.get_absolute_url}}">
+                                        {{game_scenario.title}}
+                                       
+                                    </a>
+
+
+                                </td>
+                                  
+                                <td>
+
+                                    {% for role in game_scenario.roles.all %}
+                                    <a class="mx-3 my-3" href="{{role.get_absolute_url}}">
+                                        <span class="text-{{role.color}}">
+                                        {{role.title}}
+
+                                        </span>
+                                    </a>
+                                    {% endfor %}
+
+
+
+                                </td>
+                            </tr>
+                            {% endfor %}
+
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+
+
+    </div>
+</div>

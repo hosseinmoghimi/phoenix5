@@ -1,0 +1,34 @@
+<script>
+    let transactions = JSON.parse(`{{transactions|escapejs}}`)
+    
+    let transactions_app_data = {
+        transactions: transactions,
+        search_for: "",
+    }
+    
+    let transactions_app_methods = {
+        sum: function () {
+            let s = 0
+            this.transactions.forEach(transaction => {
+                s += transaction.amount
+            })
+            return to_price(s,"")
+        },
+        filter: function () {
+            this.transactions = transactions.filter(function (transaction) {
+                return transaction.title.indexOf(transactions_app.search_for) > -1
+            })
+        },
+        to_price: function (vall) {
+            return to_price(vall, "")
+        },
+
+    }
+</script>
+<script>
+    let transactions_app = new Vue({
+        el: "#transactions-app",
+        data: transactions_app_data,
+        methods: transactions_app_methods,
+    })
+</script>

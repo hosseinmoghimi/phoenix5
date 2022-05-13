@@ -6,7 +6,27 @@ class SearchForm(forms.Form):
     end_date=forms.CharField(max_length=20, required=False)
     account_id=forms.IntegerField(required=False)
     profile_id=forms.IntegerField(required=False)
+
+class TransactionsPrintForm(forms.Form):
+    title=forms.CharField(max_length=200, required=True)
+    transactions=forms.CharField( max_length=5000, required=True)
+
+
+class AddAccountForm(forms.Form):
+    title=forms.CharField(max_length=200, required=False)
+    balance=forms.IntegerField(required=False)
+    address=forms.CharField(max_length=100,required=False)
+    tel=forms.CharField(max_length=50,required=False)
+    description=forms.CharField(max_length=500, required=False)
     
+class AddFinancialBalanceForm(forms.Form):
+    title=forms.CharField(max_length=50, required=True)
+    financial_document_id=forms.IntegerField(required=True)
+    bedehkar=forms.IntegerField(required=False)
+    bestanker=forms.IntegerField(required=False)
+    amount=forms.IntegerField(required=False)
+
+
 class AddStorePriceForm(forms.Form):
     product_or_service_id=forms.IntegerField(required=True)
     store_id=forms.IntegerField(required=True)
@@ -17,6 +37,7 @@ class CreateAccountForm(forms.Form):
     profile_id=forms.IntegerField(required=False)
 
 class AddProductForm(forms.Form):
+    category_id=forms.IntegerField(required=False)
     title=forms.CharField(max_length=500,required=True)
 
     
@@ -25,20 +46,20 @@ class AddServiceForm(forms.Form):
 
     
 class GetReportForm(forms.Form):
-    financial_account_id=forms.IntegerField(required=True)
-    start_date=forms.CharField(max_length=50, required=True)
-    end_date=forms.CharField(max_length=50, required=True)
+    account_id=forms.IntegerField(required=False)
+    amount=forms.IntegerField(required=False)
+    search_for=forms.CharField(max_length=50, required=False)
+    payment_method=forms.CharField(max_length=50, required=False)
+    start_date=forms.CharField(max_length=50, required=False)
+    end_date=forms.CharField(max_length=50, required=False)
 
 class AddFinancialDocumentForm(forms.Form):
     title=forms.CharField( max_length=200, required=True)
-    document_datetime=forms.CharField(max_length=20, required=True)
     bestankar=forms.IntegerField(required=True)
     account_id=forms.IntegerField(required=True)
     bedehkar=forms.IntegerField(required=True)
     category_id=forms.IntegerField(required=True)
-class SearchForm(forms.Form):
-    search_for=forms.CharField( max_length=500, required=True)
-
+ 
 class AddChequeForm(forms.Form):
     title=forms.CharField( max_length=500, required=True)
     
@@ -50,13 +71,25 @@ class AddPriceForm(forms.Form):
     account_id=forms.IntegerField(required=False)
     
 class AddPaymentForm(forms.Form):
-    title=forms.CharField( max_length=500, required=True)
+    title=forms.CharField(max_length=500, required=True)
     pay_to_id=forms.IntegerField(required=True)
     pay_from_id=forms.IntegerField(required=True)
     amount=forms.IntegerField(required=True)
-    payment_datetime=forms.CharField( max_length=50, required=True)
-    payment_method=forms.CharField( max_length=50, required=True)
-    description=forms.CharField( max_length=50, required=False)
+    payment_datetime=forms.CharField(max_length=50, required=True)
+    payment_method=forms.CharField(max_length=50, required=True)
+    description=forms.CharField(max_length=50, required=False)
+
+    
+class AddCostForm(forms.Form):
+    title=forms.CharField(max_length=500, required=True)
+    cost_type=forms.CharField(max_length=50,required=True)
+    pay_to_id=forms.IntegerField(required=False)
+    pay_from_id=forms.IntegerField(required=True)
+    amount=forms.IntegerField(required=True)
+    payment_datetime=forms.CharField(max_length=50, required=True)
+    payment_method=forms.CharField(max_length=50, required=True)
+    description=forms.CharField(max_length=50, required=False)
+
 class EditInvoiceForm(forms.Form):
     invoice_id=forms.IntegerField(required=True)
     discount=forms.IntegerField(required=True)
@@ -74,17 +107,12 @@ class ChangeWarehouseSheetStateForm(forms.Form):
     status=forms.CharField(max_length=50, required=True)
     
 class AddCostForm(forms.Form):
-    # cost_type=forms.IntegerField(required=True)
-    # amount=forms.IntegerField(required=True)
-    # cost_date=forms.CharField(max_length=50, required=True)
-    # status=forms.CharField(max_length=50, required=False)
     amount=forms.IntegerField(required=True)
     cost_type=forms.CharField( max_length=100, required=True)
-    description=forms.CharField( max_length=50, required=False)
+    description=forms.CharField( max_length=500, required=False)
     pay_from_id=forms.IntegerField(required=True)
-    pay_to_id=forms.IntegerField(required=True)
     payment_method=forms.CharField( max_length=50, required=True)
-    title=forms.CharField( max_length=500, required=True)
+    title=forms.CharField( max_length=500, required=False)
     transaction_datetime=forms.CharField( max_length=50, required=True)
 
 class AddWageForm(forms.Form):

@@ -13,6 +13,8 @@ class WareHouseSheetDirectionEnum(TextChoices):
     EXPORT="خروج از انبار",_("خروج از انبار")
  
 
+class ParameterAccountingEnum(TextChoices):
+    COUNT_OF_ITEM_PER_PAGE="تعداد آیتم در صفحه",_("تعداد آیتم در صفحه")
 
 class ChequeStatusEnum(TextChoices):
     DRAFT="پیش نویس",_("پیش نویس")
@@ -61,6 +63,7 @@ class PaymentMethodEnum(TextChoices):
     CHEQUE="چک",_("چک")
     POS="کارتخوان",_("کارتخوان")
     CARD="کارت به کارت",_("کارت به کارت")
+    FROM_PAST="مانده حساب از قبل",_("مانده حساب از قبل")
 
 
 class TransactionStatusEnum(TextChoices):
@@ -70,6 +73,7 @@ class TransactionStatusEnum(TextChoices):
     APPROVED="تایید شده",_("تایید شده")
     CANCELED="کنسل شده",_("کنسل شده")
     PASSED="پاس شده",_("پاس شده")
+    FROM_PAST="مانده حساب از قبل",_("مانده حساب از قبل")
 
 
 class FinancialBalanceTitleEnum(TextChoices):

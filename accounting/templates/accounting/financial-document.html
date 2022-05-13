@@ -3,20 +3,15 @@
 {% load to_price %}
 {% load to_transaction_side %}
 {% block content %}
-<h4 class="text-center">
-    {{financial_document.title}}
-
-</h4>
 
 
-<div class="row">
+
+<div class="row pt-5">
     <div class="col-md-12">
         {% include "accounting/includes/financial-document-app/brief.html" %}
-
     </div>
 
     <div class="col-md-12">
-
         {% include "accounting/includes/financial-balances-app/template.html" %}
     </div>
   
@@ -24,6 +19,7 @@
 {% endblock content %}
 
 {% block script %}
+{% include "accounting/includes/financial-balances-app/script.html" %}
 
 
 {% endblock script %}

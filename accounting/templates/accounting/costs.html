@@ -1,0 +1,24 @@
+{% extends "accounting/layout.html" %}
+
+{% block content %}
+  <div class="row">
+    {% if add_cost_form %}
+    <div class="col-md-12">
+        {% include "accounting/includes/add-cost-app/template.html" %}
+    </div>
+    {% endif %}
+
+      <div class="col-md-12">
+          {% include "accounting/includes/costs-app/template.html" %}
+      </div>
+  </div>
+{% endblock content %}
+
+
+{% block script %}
+{% include "accounting/includes/costs-app/script.html" %}
+  {% if add_cost_form %}
+{% include "accounting/includes/add-cost-app/script.html" %}
+    
+  {% endif %}
+{% endblock script %}

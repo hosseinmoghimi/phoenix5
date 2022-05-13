@@ -43,7 +43,9 @@ class SearchView(View):
             context['search_for']=search_for
             folders=FolderRepo(request=request).list(search_for=search_for)
             context['folders']=folders
-        return render(request,TEMPLATE_ROOT+"folder.html",context)
+            files=FileRepo(request=request).list(search_for=search_for)
+            context['files']=files
+        return render(request,TEMPLATE_ROOT+"search.html",context)
 
 
 

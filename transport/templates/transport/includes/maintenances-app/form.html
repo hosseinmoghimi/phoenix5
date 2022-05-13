@@ -2,11 +2,11 @@
 
 <p>
 
-    <button @click="show_form=!show_form" class="btn btn-success">
-        <span class="material-icons">
+    <button @click="show_form=true" v-if="!show_form" class="btn btn-success">
+        <i class="fa fa-plus">
 
-            add
-        </span>
+        </i>
+        افزودن
     </button>
 </p>
 <form v-show="show_form" @submit.prevent="add_maintenance()">
@@ -49,10 +49,15 @@
         <div class="col-md-4">
             <div class="form-group">
                 <label for="paid">هزینه سرویس</label>
-                <input required min="0" type="number" v-model="paid" class="form-control" id="paid">
+                <input required min="0" type="number" v-model="amount" class="form-control" id="paid">
 
-                <small id="emailHele324p" class="form-text farsi text-muted">
+                <small id="emailHele324p" v-if="!amount" class="form-text farsi text-danger">
                     هزینه سرویس را وارد کنید.
+                </small>
+                <small v-if="amount>0" id="emailHele324p" class="form-text farsi text-muted">
+                    هزینه سرویس :
+                    <span v-text="to_price(amount)"></span>
+                {{CURRENCY}}
                 </small>
             </div>
 
@@ -89,8 +94,8 @@
                     <template v-for="service_man in service_mans">
 
                         <option :value="service_man.id">
-                            <span v-text="service_man.name"></span>
-                            (<small class="mx-2 px-2" v-text="service_man.profile.name"></small>)
+                            <span v-text="service_man.title"></span>
+                            (<small class="mx-2 px-2" v-text="service_man.account.profile.name"></small>)
                         </option>
                     </template>
                 </select>
@@ -101,6 +106,27 @@
             </div>
 
         </div>
+
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="service_man_id">مشتری</label>
+                <select required v-model="client_id" id="client_id" class="form-control">
+                    <template v-for="client in clients">
+
+                        <option :value="client.id">
+                            <span v-text="client.title"></span>
+                            (<small class="mx-2 px-2" v-text="client.account.profile.name"></small>)
+                        </option>
+                    </template>
+                </select>
+
+                <small id="emailHele324p" class="form-text farsi text-muted">
+                    مشتری مرتبط را انتخاب کنید.
+                </small>
+            </div>
+
+        </div>
+
 
 
 
@@ -118,7 +144,11 @@
         </div>
 
         <div class="col-md-4">
-            <button class="btn btn-success btn-block" type="submit">افزودن</button>
+            <button class="btn btn-success btn-block" type="submit">
+                <i class="fa fa-plus"></i>
+                افزودن</button>
+            <button class="btn btn-secondary btn-block" @click="show_form=false" >انصراف</button>
+            
         </div>
 
 

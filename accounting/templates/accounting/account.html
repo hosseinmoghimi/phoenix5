@@ -13,29 +13,8 @@
 
      
 </h4>
+{% include "accounting/includes/account-app/navbar.html" %}
 
-<h4 class="text-center">
-
-    <a href="{{account.profile.get_absolute_url}}" target="_blank" title="پروفایل" class="mx-2"><i
-            class="fa fa-user text-info"></i></a>
-
-    {% if perms.accounting.change_account %}
-    <a href="{{account.get_edit_url}}" target="_blank" title="ویرایش" class="mx-2"><i
-            class="fa fa-edit text-info"></i></a>
-    {% endif %}
-
-    {% if perms.accounting.delete_account %}
-    <a href="{{account.get_delete_url}}" target="_blank" title="حذف" class="mx-2"><i
-            class="fa fa-trash text-danger"></i></a>
-    {% endif %}
-
-</h4>
-<h4 class="text-center">
-    <span class="text-{{account.balance.rest|to_amount_color}}">
-        مانده :
-        {{account.balance.rest|to_price}}
-    </span>
-</h4>
 <div class="row">
 
     <div class="col-md-12">
@@ -66,5 +45,5 @@
 {% include "accounting/includes/financial-documents-app/script.html" %}
 {% include "accounting/includes/payments-app/script.html" %}
 {% include "accounting/includes/transactions-app/script.html" %}
-
+{% include "accounting/includes/financial-balances-app/script.html"  %}
 {% endblock script %}

@@ -19,3 +19,5 @@ django-allauth
 python-dateutil
 python-resize-image
 Pillow
+django-filter 
+markdown

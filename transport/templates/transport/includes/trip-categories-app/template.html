@@ -1,0 +1,93 @@
+{% load static %}
+<div id="accordion-trip-categories">
+
+
+    <div class="card" id="trip-categories-app">
+        <div class="card-header" id="heading-trip-categories">
+            <h5 class="text-center">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-trip-categories" aria-expanded="true"
+                    aria-controls="collapse-trip-categories">
+                    دسته بندی سفر ها
+                    <span v-if="trip_categories.length>0">
+                        <small class="text-danger mx-2">
+                            <span v-text="trip_categories.length"></span>
+                        </small>
+                    </span>
+
+
+                </button>
+            </h5>
+
+
+        </div>
+        <div id="collapse-trip-categories" class="collapse" aria-labelledby="heading-trip-categories" data-parent="#accordion-trip-categories">
+
+
+            <div class="card-body">
+
+                {% load static %}
+                <form @submit.prevent="search()">
+                    <img src="{% static 'leo/img/loading.gif' %}" width="32" v-if="waiting" alt="">
+
+                    <input type="text" v-model="search_for" class="form-control" placeholder="جستجو ..."
+                        @input="filter()">
+                </form>
+
+
+                <div class="table-responsive">
+                    <img v-if="false" width="32" src="{% static 'leo/img/loading.gif' %}" alt="">
+                    <h6 v-if="false">
+
+                        <span class="text-muted">در حال بار گذاری ... </span>
+                    </h6>
+                    <table class="table table-striped">
+                        <thead>
+                            <th>
+                                دسته بندی
+                            </th>
+                             
+                            <th>
+رنگ
+                            </th>
+                            <th>
+تعداد سفر ها
+                            </th>
+                        </thead>
+                        <tbody>
+
+
+                            <tr v-for="trip_category in trip_categories">
+                                <td>
+                                    <a :href="trip_category.get_absolute_url">
+                                        <span v-text="trip_category.title"></span>
+                                    </a>
+                                </td>
+                                <td>
+                                    <span :class="'badge badge-'+trip_category.color">
+
+                                        
+                                        <span v-text="trip_category.color"></span>
+                                    </span>
+
+                                </td>
+                                <td>
+                                    <span>
+
+                                        <span v-text="trip_category.count_of_trips"></span>
+
+                                        سفر
+                                    </span>
+
+                                    
+                                </td>
+                               
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+</div>

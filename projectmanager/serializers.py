@@ -1,7 +1,9 @@
 from rest_framework import serializers
-from .models import Event,Employee, Letter, Material, MaterialRequest, PM_Service, Request,Project,OrganizationUnit, RequestSignature, ServiceRequest, letterSent
-from authentication.serializers import ProfileSerializer
 
+from accounting.serializers import AccountSerializer
+from .models import Service,Material,Event,Employee, MaterialRequest, Request,Project,OrganizationUnit, RequestSignature, ServiceRequest
+from authentication.serializers import ProfileSerializer
+from organization.serializers import OrganizationUnitSerializer,EmployeeSerializer
 
 class ProjectBriefSerializer(serializers.ModelSerializer):
     class Meta:
@@ -9,11 +11,12 @@ class ProjectBriefSerializer(serializers.ModelSerializer):
         fields=['id', 'title', 'get_absolute_url']
 
 
-class OrganizationUnitSerializer(serializers.ModelSerializer):
 
+class ProjectSerializerForGuantt(serializers.ModelSerializer):
     class Meta:
-        model=OrganizationUnit
-        fields=['id','title','image','logo','full_title','pre_title','get_edit_url','get_absolute_url']
+        model=Project
+        fields=['id','title','get_status_color','color','start_date','end_date','status','sum_total','get_absolute_url','short_description','thumbnail','percentage_completed']
+
 
 
 class EventSerializerForChart(serializers.ModelSerializer):
@@ -27,29 +30,6 @@ class EventSerializer(serializers.ModelSerializer):
     class Meta:
         model=Event
         fields=['id','project_related','thumbnail','likes_count','title','get_absolute_url','persian_event_datetime','persian_start_datetime','persian_end_datetime','get_edit_url']
-
-
-class LetterSerializer(serializers.ModelSerializer):
-    class Meta:
-        model=Letter
-        fields=['id','thumbnail','title','get_absolute_url','persian_date_added','get_edit_url']
-
-
-class LetterSentSerializer(serializers.ModelSerializer):
-    letter=LetterSerializer()
-    sender=OrganizationUnitSerializer()
-    recipient=OrganizationUnitSerializer()
-    class Meta:
-        model=letterSent
-        fields=['id','letter','sender','persian_date_sent','recipient']
- 
-
-class EmployeeSerializer(serializers.ModelSerializer):
-    profile=ProfileSerializer()
-    organization_unit=OrganizationUnitSerializer()
-    class Meta:
-        model=Employee
-        fields=['id','organization_unit','mobile','job_title','get_absolute_url','get_delete_url','get_edit_url','profile','title']
 
 
 class RequestSignatureSerializer(serializers.ModelSerializer):
@@ -76,13 +56,13 @@ class RequestSignatureForEmployeeSerializer(serializers.ModelSerializer):
 class MaterialSerializer(serializers.ModelSerializer):
     class Meta:
         model = Material
-        fields = ['id', 'title', 'get_absolute_url','full_title','buy_price','available','unit_price','unit_name','thumbnail']
+        fields = ['id', 'title', 'get_pm_absolute_url','full_title','buy_price','available','unit_price','unit_name','thumbnail']
 
 
 class ServiceSerializer(serializers.ModelSerializer):
     class Meta:
-        model = PM_Service
-        fields = ['id', 'title', 'get_absolute_url','full_title','buy_price','unit_price','unit_name','thumbnail']
+        model = Service
+        fields = ['id', 'title', 'get_pm_absolute_url','get_absolute_url','full_title','buy_price','unit_price','unit_name','thumbnail']
 
 
 class ProjectSerializer(serializers.ModelSerializer):

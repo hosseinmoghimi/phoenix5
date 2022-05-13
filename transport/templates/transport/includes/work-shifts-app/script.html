@@ -1,7 +1,7 @@
 <script>
-    let work_shifts =[]
-    let drivers =[]
-    let areas =[]
+    let work_shifts = []
+    let drivers = []
+    let areas = []
     let work_shifts_app_data = {}
 </script>
 {% if add_work_shift_form %}
@@ -9,6 +9,7 @@
     work_shifts = JSON.parse(`{{work_shifts_s|escapejs}}`)
     drivers = JSON.parse(`{{drivers_s|escapejs}}`)
     areas = JSON.parse(`{{areas_s|escapejs}}`)
+    
     work_shifts_app_data = {
         work_shifts: work_shifts,
         drivers: drivers,
@@ -16,11 +17,17 @@
         end_datetime: current_datetime,
         driver_id: "",
         areas: areas,
-        area_id: "",
+        client_id:0,
+        clients:JSON.parse(`{{clients_s|escapejs}}`),
+        title:"",
+        area_id: 0,
         description: "",
-        income: "",
+        amount: 0,
         outcome: "",
         show_form: false,
+        waiting: false,
+        message: { show: false },
+        search_for: "",
     }
 </script>
 {% else %}
@@ -29,6 +36,10 @@
 
     work_shifts_app_data = {
         work_shifts: work_shifts,
+        waiting: false,
+        message: { show: false },
+        search_for: "",
+        areas:areas,
 
     }
 </script>
@@ -48,7 +59,7 @@
             total: function () {
                 let tt = 0
                 this.work_shifts.forEach(work_shift => {
-                    tt += (work_shift.income - work_shift.outcome)
+                    tt += (work_shift.amount)
                 });
                 return tt
             },
@@ -60,13 +71,16 @@
                     start_datetime: this.start_datetime,
                     end_datetime: this.end_datetime,
                     area_id: this.area_id,
-                    outcome: this.outcome,
-                    income: this.income,
+                    pay_from_id:this.driver_id,
+                    pay_to_id:this.client_id,
+                    amount: this.amount,
                     description: this.description,
                     csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    message: { show: false },
+                    search_for: "",
+                    title:this.title,
 
                 }
-                console.log(payload)
                 let posting = $.post(url_add_work_shift, payload)
                 posting.done((data) => {
                     if (data.result === "SUCCEED") {

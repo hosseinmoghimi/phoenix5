@@ -1,22 +1,24 @@
 from authentication.models import IMAGE_FOLDER
+from core.enums import ColorEnum, UnitNameEnum,BS_ColorCode
+from core.middleware import get_request
+from core.models import Color, Page
+from django.db import models
+from django.shortcuts import reverse
+from django.utils import timezone
+from django.utils.translation import gettext as _
 from phoenix.server_settings import STATIC_URL
 from phoenix.settings import MEDIA_URL
-from utility.currency import to_price
-from utility.calendar import PERSIAN_MONTH_NAMES, PersianCalendar,to_persian_datetime_tag
-from core.middleware import get_request
-from django.db import models
-from core.models import Page
-from django.shortcuts import reverse
-from django.utils.translation import gettext as _
-
-from utility.excel import get_excel_report
-from .apps import APP_NAME
-from utility.utils import LinkHelper
-from .enums import *
 from tinymce.models import HTMLField
-from core.enums import ColorEnum,UnitNameEnum
-from django.utils import timezone
- 
+from utility.calendar import (PERSIAN_MONTH_NAMES, PersianCalendar,
+                              to_persian_datetime_tag)
+from utility.currency import to_price
+from utility.excel import get_excel_report
+from utility.utils import LinkHelper
+
+from accounting.apps import APP_NAME
+from accounting.enums import *
+
+
 class Asset(Page,LinkHelper):
     
     class Meta:
@@ -90,7 +92,7 @@ class Transaction(Page,LinkHelper):
     def save(self,*args, **kwargs):
         if self.transaction_datetime is None:
             from django.utils import timezone
-            self.transaction_datetime=timezone.now()
+            self.transaction_datetime=PersianCalendar().date
         super(Transaction,self).save(*args, **kwargs)
         # FinancialDocument.objects.filter(transaction=self).delete()
 
@@ -109,7 +111,7 @@ class Transaction(Page,LinkHelper):
         fd_bestankar.save()
 
     @property
-    def persian_transaction_datetime(self,no_tag=False):
+    def persian_transaction_datetime(self,no_tag=False,*args, **kwargs):
         if no_tag:
             return PersianCalendar().from_gregorian(self.transaction_datetime)
         return to_persian_datetime_tag(self.transaction_datetime)
@@ -144,6 +146,14 @@ class ProductOrService(Page):
         return 0
     @property
     def unit_name(self):
+        
+        request=get_request()
+        if request is not None:
+             
+            account=Account.objects.filter(profile__user_id=request.user.id).first()
+            last_price=Price.objects.filter(buy_price__gt=0).filter(product_or_service=self).filter(account=account).order_by("-date_added").first()
+            if last_price is not None:
+                return last_price.unit_name
         return "عدد"
 
     class Meta:
@@ -158,6 +168,8 @@ class Product(ProductOrService):
         verbose_name_plural = _("Products")
 
 
+    def get_pm_absolute_url(self):
+        return reverse('projectmanager:material',kwargs={'pk':self.pk})
 
 
 
@@ -181,7 +193,8 @@ class Service(ProductOrService):
         verbose_name = _("Service")
         verbose_name_plural = _("Services")
  
- 
+    def get_pm_absolute_url(self):
+        return reverse('projectmanager:service',kwargs={'pk':self.pk})
 
     def save(self,*args, **kwargs):
         if self.class_name is None or self.class_name=="":
@@ -192,12 +205,14 @@ class Service(ProductOrService):
 
 
 class Account(models.Model,LinkHelper):
-    logo_origin=models.ImageField(_("logo"), null=True,blank=True,upload_to=IMAGE_FOLDER+"account/", height_field=None, width_field=None, max_length=None)
-    title=models.CharField(_("title"), null=True,blank=True,max_length=500)
-    profile=models.ForeignKey("authentication.profile", verbose_name=_("profile"), on_delete=models.CASCADE)
+    logo_origin=models.ImageField(_("لوگو , تصویر"), null=True,blank=True,upload_to=IMAGE_FOLDER+"account/", height_field=None, width_field=None, max_length=None)
+    title=models.CharField(_("عنوان"), null=True,blank=True,max_length=500)
+    profile=models.ForeignKey("authentication.profile", verbose_name=_("profile"),null=True,blank=True, on_delete=models.CASCADE)
     
-    address=models.CharField(_("address"),null=True,blank=True, max_length=50)
-    tel=models.CharField(_("tel"),null=True,blank=True, max_length=50)
+    address=models.CharField(_("آدرس"),null=True,blank=True, max_length=50)
+    tel=models.CharField(_("تلفن"),null=True,blank=True, max_length=50)
+    description=models.CharField(_("توضیحات"),blank=True,max_length=5000)
+
     class_name=models.CharField(_("class_name"),blank=True, max_length=50)
     app_name=models.CharField(_("app_name"),blank=True,max_length=50)
     @property
@@ -222,7 +237,9 @@ class Account(models.Model,LinkHelper):
     def logo(self):
         if self.logo_origin:
             return MEDIA_URL+str(self.logo_origin)
-        return self.profile.image
+        if self.profile is not None:
+            return self.profile.image
+        return f"{STATIC_URL}{self.app_name}/img/{self.class_name}.png"
         # return f"{STATIC_URL}{APP_NAME}/img/account.png"
     @property
     def employee(self):
@@ -330,7 +347,6 @@ class FinancialDocument(models.Model,LinkHelper):
     account=models.ForeignKey("account", verbose_name=_("account"), on_delete=models.CASCADE)
     bedehkar=models.IntegerField(_("bedehkar"),default=0)
     bestankar=models.IntegerField(_("bestankar"),default=0)
-    document_datetime=models.DateTimeField(_("document_datetime"), auto_now=False, auto_now_add=True)
     transaction=models.ForeignKey("transaction",verbose_name=_("transaction"), on_delete=models.CASCADE)
     tags=models.ManyToManyField("FinancialDocumentTag", blank=True,verbose_name=_("tags"))
     color=models.CharField(_("color"),max_length=50,choices=ColorEnum.choices,default=ColorEnum.PRIMARY)
@@ -341,14 +357,16 @@ class FinancialDocument(models.Model,LinkHelper):
     @property
     def rest(self):
         rest=0
-        for fd in FinancialDocument.objects.filter(account=self.account).filter(document_datetime__lte=self.transaction.transaction_datetime):
+        fds=FinancialDocument.objects.filter(account=self.account)
+        fds=fds.filter(transaction__transaction_datetime__lte=self.transaction.transaction_datetime)
+        for fd in fds :
             rest+=fd.bestankar
             rest-=fd.bedehkar
         return rest
 
     def get_state_badge(self):
         color="muted"
-        state="خنثی"
+        state="تسویه"
         if self.bedehkar>0:
             color="danger"
             state="بدهکار"
@@ -362,13 +380,32 @@ class FinancialDocument(models.Model,LinkHelper):
     @property
     def persian_document_datetime(self,no_tag=False):
         if no_tag:
-            return PersianCalendar().from_gregorian(self.document_datetime)
-        return to_persian_datetime_tag(self.document_datetime)
+            return PersianCalendar().from_gregorian(self.transaction.transaction_datetime)
+        return to_persian_datetime_tag(self.transaction.transaction_datetime)
     @property
     def title(self):
         return self.transaction.title 
      
-    
+    def normalize_sub_accounts(self):
+        sum_bestankar=0
+        sum_bedehkar=0
+        financial_balances=FinancialBalance.objects.filter(financial_document_id=self.pk)
+        for financialbalance in financial_balances.exclude(title=FinancialBalanceTitleEnum.MISC):
+            sum_bedehkar+=financialbalance.bedehkar
+            sum_bestankar+=financialbalance.bestankar
+
+        misc=financial_balances.filter(title=FinancialBalanceTitleEnum.MISC).first()
+        if misc is None:
+            misc=FinancialBalance()
+            misc.financial_document_id=self.pk
+            misc.title=FinancialBalanceTitleEnum.MISC
+            misc.save()
+
+        misc.bestankar=self.bestankar-sum_bestankar
+        misc.bedehkar=self.bedehkar-sum_bedehkar
+        misc.save()
+        if misc.bestankar==0 and misc.bedehkar==0:
+            misc.delete()
     
 
     class Meta:
@@ -378,7 +415,7 @@ class FinancialDocument(models.Model,LinkHelper):
     def __str__(self):
         return f"""{self.account.title} : {self.transaction.title} : {self.transaction.amount}"""
     def normalize_balances(self,*args, **kwargs):
-        balances=FinancialBalance.objects.filter(financial_document=self)
+        balances=FinancialBalance.objects.filter(financial_document_id=self.pk)
         sum_bestankar=0
         sum_bedehkar=0
         for balance in balances:
@@ -412,6 +449,17 @@ class FinancialBalance(models.Model,LinkHelper):
     financial_document=models.ForeignKey("FinancialDocument", verbose_name=_("FinancialDocument"), on_delete=models.CASCADE)
     bestankar=models.IntegerField(_("بستانکار"),default=0)
     bedehkar=models.IntegerField(_("بدهکار"),default=0)
+    color_origin=models.ForeignKey("core.color", verbose_name=_("color"),null=True,blank=True, on_delete=models.SET_NULL)
+
+    
+    @property
+    def color(self):
+        if self.color_origin is None:
+            # return Color(name="blue",code="#0000ff")
+            color= getColor(self.title)
+            return BS_ColorCode(color)
+        else:
+            return self.color_origin.code
      
     def amount(self):
         return self.bedehkar+self.bestankar
@@ -427,7 +475,7 @@ class FinancialBalance(models.Model,LinkHelper):
     def save(self,*args, **kwargs):
         super(FinancialBalance,self).save(*args, **kwargs)
         # self.financial_document.normalize_sub_accounts()
-    def color(self):
+    def bs_color(self):
         return getColor(self.title)
 
 
@@ -508,7 +556,7 @@ class Invoice(Transaction):
 
 
     def get_print_url(self):
-        return reverse(APP_NAME+":invoice_print",kwargs={'pk':self.pk})
+        return reverse(APP_NAME+":invoice_print_currency",kwargs={'pk':self.pk,'currency':'r'})
     def get_excel_url(self):
         return reverse(APP_NAME+":invoice_excel",kwargs={'pk':self.pk})
     def editable(self):
@@ -522,7 +570,7 @@ class Invoice(Transaction):
   
     def get_edit_url2(self):
         return reverse(APP_NAME+":edit_invoice",kwargs={'pk':self.pk})
-    def get_print_url(self):
+    def get_print_url_2(self):
         return reverse(APP_NAME+":invoice_print",kwargs={'pk':self.pk})
     
     
@@ -633,7 +681,7 @@ class Payment(Transaction):
         if self.class_name is None:
             self.class_name='payment' 
         if self.transaction_datetime is None:
-            self.transaction_datetime=timezone.now()
+            self.transaction_datetime=PersianCalendar().date
         super(Payment,self).save(*args, **kwargs)
         
 

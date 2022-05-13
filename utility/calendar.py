@@ -38,14 +38,6 @@ def days_in_month(year,month,day=1):
 
 
 class PersianCalendar:
-    def tag(self,value):
-        a=self.from_gregorian(value)
-        return f'<span title="{value.strftime("%Y/%m/%d %H:%M:%S") }">{str(a)}</span>'
-    def to_gregorian(self,persian_date_input):
-        if persian_date_input is None or persian_date_input=="" :
-            return None
-        return self.parse(persian_date_input).date
-        
     def __init__(self,date=None):
         if date is None:
             from django.utils import timezone as timezone1
@@ -55,6 +47,16 @@ class PersianCalendar:
             self.date=date
             self.persian_date=self.from_gregorian(greg_date_time=self.date)
     
+    def tag(self,value):
+        a=self.from_gregorian(value)
+        return f'<span title="{value.strftime("%Y/%m/%d %H:%M:%S") }">{str(a)}</span>'
+    
+    def to_gregorian(self,persian_date_input):
+            
+        if persian_date_input is None or persian_date_input=="" :
+            return None
+        return self.parse(persian_date_input).date
+        
     def parse(self,value,add_time_zone=False):
         if value=="":
             return None
@@ -78,11 +80,11 @@ class PersianCalendar:
             min_=0
             sec_=0
         self.persian_date = JalaliDatetime(year_, month_, day_, hour_, min_, sec_, 0)
-        delta=datetime.timedelta(hours=-3,minutes=-30)
         delta=datetime.timedelta(hours=0,minutes=0)
         self.date=self.persian_date.todatetime()+delta
         
         return self
+    
     def from_gregorian(self,greg_date_time,add_time_zone=True):
         if greg_date_time is None:
             return None
@@ -103,8 +105,15 @@ class PersianCalendar:
             sec_=0
             
         sss=TehranTimezone()
-        delta=datetime.timedelta(hours=3,minutes=30)
+        delta=datetime.timedelta(hours=0,minutes=0)
+        # delta=datetime.timedelta(hours=4,minutes=30)
         a=JalaliDatetime(datetime.datetime(year_, month_, day_, hour_, min_, sec_, 0, TehranTimezone())+delta)
         return a.strftime("%Y/%m/%d %H:%M:%S")
+    
     def from_gregorian_date(self,greg_date):
-        return JalaliDate.to_jalali(greg_date).strftime("%Y/%m/%d") 
+        year_=greg_date.year
+        month_=greg_date.month
+        day_=greg_date.day
+
+        a=JalaliDatetime(datetime.datetime(year_, month_, day_, 4, 30, 0, 0, TehranTimezone()))
+        return a.strftime("%Y/%m/%d") 

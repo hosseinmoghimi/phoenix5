@@ -1,0 +1,22 @@
+{% extends "mafia/layout.html" %}
+
+{% block content %}
+  <div class="row">
+    {% if add_game_form %}
+    <div class="col-md-12">
+
+        {% include "mafia/includes/games-app/add-game-form.html" %}
+    </div>
+    {% endif %}
+
+      <div class="col-md-12">
+        {% include "mafia/includes/games-app/template.html" %}
+    </div>
+  </div>
+{% endblock content %}
+
+
+{% block script %}
+{% include "mafia/includes/games-app/script.html" %}
+  
+{% endblock script %}

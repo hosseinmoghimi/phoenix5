@@ -1,10 +1,13 @@
 {% load to_price %}
+{% if draw_chart %}
+  
+<div class="farsi">
+    <canvas id="PieChart"></canvas>
+</div>
+
+{% endif %}
 <div id="accordion-financial-balances">
-
-
-
-
-    <div class="card">
+    <div class="card" id="financial-balances-app">
         <div class="card-header" id="heading-financial-balances">
             <h5 class="text-center">
                 <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-financial-balances"
@@ -25,6 +28,10 @@
 
 
             <div class="card-body farsi text-right">
+                <div>
+                    
+
+                </div>
                 <div class="table-responsive">
                     <table class="table table-striped">
                         <thead>
@@ -56,63 +63,115 @@
                         </thead>
                         <tbody>
 
-                            {% for financial_balance in financial_balances %}
-                            <tr>
+
+
+
+
+                            <tr v-for="financial_balance in financial_balances">
                                 {% if not account %}
                                 <td>
-                                    <a href="{{financial_balance.financial_document.account.get_absolute_url}}">
-
-                                        {{financial_balance.financial_document.account.title}}
+                                    <a :href="financial_balance.financial_document.account.get_absolute_url">
+                                        <span v-text="financial_balance.financial_document.account.title"></span>
                                     </a>
 
                                 </td>
                                 {% endif %}
                                 <td>
-                                    <a href="{{financial_balance.get_absolute_url}}">
+                                    <a :href="financial_balance.get_absolute_url">
 
-                                        <span class="badge badge-{{financial_balance.color}}">
-                                            
-                                            
-                                            
-                                            {{financial_balance.title}}
+                                        <span :class="'badge badge-'+financial_balance.bs_color">
+
+
+                                            <span v-text="financial_balance.title"></span>
+
                                         </span>
+
+                                        <span v-text="financial_balance.title"></span>
+
                                     </a>
                                 </td>
 
                                 {% if not financial_document %}
                                 <td>
-                                    <a href="{{financial_balance.financial_document.get_absolute_url}}">
-                                        {{financial_balance.financial_document.title}}
+                                    <a :href="financial_balance.financial_document.get_absolute_url">
+
+                                        <span v-text="financial_balance.financial_document.title"></span>
+
                                     </a>
                                 </td>
                                 {% endif %}
                                 <td>
+                                    <span v-text="to_price(financial_balance.bedehkar)"></span>
 
-                                    {{financial_balance.bedehkar|to_price}}
                                 </td>
 
                                 <td>
+                                    <span v-text="to_price(financial_balance.bestankar)"></span>
 
 
-                                    {{financial_balance.bestankar|to_price}}
                                 </td>
                                 <td>
                                     {% if perms.accounting.change_financialbalance %}
-                                    <a href="{{financial_balance.get_edit_url}}" target="_blank" title="ویرایش"
+                                    <a :href="financial_balance.get_edit_url" target="_blank" title="ویرایش"
                                         class="mx-2"><i class="fa fa-edit text-info"></i></a>
                                     {% endif %}
 
                                     {% if perms.accounting.delete_financialbalance %}
-                                    <a href="{{financial_balance.get_delete_url}}" target="_blank" title="حذف"
+                                    <a :href="financial_balance.get_delete_url" target="_blank" title="حذف"
                                         class="mx-2"><i class="fa fa-trash text-danger"></i></a>
                                     {% endif %}
                                 </td>
                             </tr>
-                            {% endfor %}
+
                         </tbody>
                     </table>
                 </div>
             </div>
+            {% if add_financial_balance_form and financial_document %}
+            <div class="card-footer">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h5>
+                            افزودن ریزسند جدید
+                        </h5>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="">عنوان</label>
+                            <select class="form-control" v-model="title" id="">
+                                {% for financial_balance_title in financial_balance_title_enum %}
+                                <option value="{{financial_balance_title}}">{{financial_balance_title}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+
+                        <div class="form-group">
+                            <label for="">مبلغ</label>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <input type="number" class="form-control" v-model="amount">
+
+                                </div>
+                                <div class="col-md-6 text-right">
+                                    <span class="farsi">
+
+                                        <span v-text="to_price(amount)"></span> {{CURRENCY}}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12 text-right">
+                        <button @click="add_financial_balance()" class="btn btn-success">
+                            <i class="fa fa-plus"></i>
+                            افزودن
+                        </button>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
         </div>
     </div>
 

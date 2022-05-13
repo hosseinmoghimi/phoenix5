@@ -1,33 +1,38 @@
 <script>
     let materials = JSON.parse(`{{materials_s|escapejs}}`)
     let materials_app_data = {
-        materials:materials,
+        materials: materials,
         show_sell_prices: false,
         search_for: "",
-        waiting:false,
+        waiting: false,
+        show_add_btn: false,
     }
     let materials_app_methods = {
-        add:function(){
+        add: function () {
             let url = "{% url 'projectmanager:add_material' %}"
-                let payload = {
-                    csrfmiddlewaretoken: csrfmiddlewaretoken,
-                    title: this.search_for,
-                }
+            let payload = {
+                csrfmiddlewaretoken: csrfmiddlewaretoken,
+                title: this.search_for,
+            }
 
-                $.post(url, payload).done(data => {
-                    console.log(data)
-                    if (data.result === 'SUCCEED') {
-                        if (typeof materials_app != 'undefined') {
-                            materials_app.materials.push(data.material)
-                            materials.push(data.material)
-                        }
+            $.post(url, payload).done(data => {
+                console.log(data)
+                if (data.result === 'SUCCEED') {
+                    if (typeof materials_app != 'undefined') {
+                        materials_app.materials.push(data.product)
+                        materials_app.search_for = ""
+                        materials_app.show_add_btn =false
+                        materials.push(data.product)
+
                     }
-                })
+                }
+            })
         },
         filter: function (search_for) {
             this.materials = materials.filter((material) => {
                 return (material.title.indexOf(search_for) > -1)
             })
+            this.show_add_btn =(this.search_for.length > 0) 
         },
         to_price: function (vall) {
             return to_price(vall, "{{CURRENCY}}")

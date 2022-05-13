@@ -7,14 +7,7 @@
         <h5>
             {{financial_document.title}}
             {{financial_document|to_transaction_side|safe}}
-        </h5>
-    </div>
-    <div class="farsi card-body text-right">
-
-        <h5>
-            {{financial_document.title}}
-            {{financial_document|to_transaction_side|safe}}
-
+            
             {% if perms.accounting.change_financialdocument %}
             <a href="{{financial_document.get_edit_url}}" target="_blank" title="ویرایش" class="mx-2"><i
                     class="fa fa-edit text-info"></i></a>
@@ -24,8 +17,12 @@
             <a href="{{financial_document.get_delete_url}}" target="_blank" title="حذف" class="mx-2"><i
                     class="fa fa-trash text-danger"></i></a>
             {% endif %}
-
         </h5>
+    </div>
+    <div class="farsi card-body text-right">
+
+       
+        
         <table class="table">
             <tr>
                 <td>

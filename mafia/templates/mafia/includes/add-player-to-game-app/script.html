@@ -1,0 +1,55 @@
+<script>
+    // let game_acts = JSON.parse(`{{game_acts_s|escapejs}}`)
+    let add_player_to_game_app = new Vue({
+        el: "#add-player-to-game-app",
+        data: {
+            game_acts: game_acts,
+            description: "",
+            title: "",
+            side: "",
+            search_for: '',
+            waiting: false,
+            show_form: false,
+        },
+        methods: {
+            filter: function () {
+                this.game_acts = game_acts.filter(function (game_act) {
+                    let search_for=game_acts_app.search_for
+                    if (game_act.role.title.indexOf(search_for) > -1)
+                        return true
+
+
+                    if (game_act.player.profile.name.indexOf(search_for) > -1)
+                        return true
+
+
+                    return false
+
+
+                })
+
+            },
+
+            add_player_to_game: function (game_act_id) {
+                let url = "{% url 'mafia:add_player_to_game' %}"
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    title: this.title,
+                    side: this.side,
+                    description: this.description,
+                }
+                console.log(payload)
+                $.post(url, payload).done((data) => {
+                    console.log(data)
+                    if (data.result === 'SUCCEED') {
+                        game_acts_app.game_acts.push(data.game_act)
+                        game_acts_app.title = ""
+                        game_acts_app.description = ""
+                    }
+                })
+            },
+
+        }
+    })
+
+</script>

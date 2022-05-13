@@ -39,14 +39,12 @@
         },
         add_invoice: function () {
             invoices_app.waiting = true
-            let document_datetime = this.document_date + " " + (parseInt(this.document_time.hour) > 9 ? this.document_time.hour : ("0" + this.document_time.hour)) + ":" + (parseInt(this.document_time.minute) > 9 ? this.document_time.minute : ("0" + this.document_time.minute)) + ":00"
             let payload = {
                 csrfmiddlewaretoken: csrfmiddlewaretoken,
                 title: this.title,
                 account_id: financial_account_id,
                 bestankar: this.bestankar,
                 bedehkar: this.bedehkar,
-                document_datetime: document_datetime,
                 category_id: this.category_id,
             }
             console.log(payload)

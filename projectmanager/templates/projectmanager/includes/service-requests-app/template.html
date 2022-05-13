@@ -64,8 +64,7 @@
 
                             تعداد کل درخواست شده :
                         </span>
-                        <span>
-                            {{service.count_requested|to_price_pure}}
+                        <span v-text="to_price(count_service_requests)">
                         </span>
                     </span>
 
@@ -76,17 +75,12 @@
 
                             مبلغ کل درخواست شده :
                         </span>
-                        <span>
-
-                            {{service.sum_price_requested|to_price}}
-                        </span>
+                        <span v-text="to_price(sum_service_requests,'{{CURRENCY}}')"></span>
                     </span>
 
                 </p>
                 {% endif %}
-                <p>
-                    جمع : <span v-text="to_price(sum_service_requests,'{{CURRENCY}}')"></span>
-                </p>
+              
             </div>
         </div>
     </div>

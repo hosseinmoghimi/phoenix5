@@ -15,7 +15,7 @@ class WareHouseSheetSerializer(serializers.ModelSerializer):
     ware_house=WareHouseSerializer()
     class Meta:
         model = WareHouseSheet
-        fields = ['id','quantity','invoice_line','persian_date_registered','unit_name','color', 'ware_house','direction','status', 'get_absolute_url','quantity','get_edit_url']
+        fields = ['id','quantity','invoice_line','persian_date_registered','unit_name','color', 'ware_house','direction','status', 'get_absolute_url','quantity','get_edit_url','available']
 
 
 
