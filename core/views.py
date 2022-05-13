@@ -216,6 +216,8 @@ def PageContext(request, *args, **kwargs):
         if profile is not None:
             my_like = page.my_like(profile_id=profile.id)
             context['my_like'] = my_like
+            context['toggle_page_like_form']=TogglePageLikeForm()
+
 
     return context
 

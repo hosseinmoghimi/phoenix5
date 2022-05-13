@@ -1,7 +1,7 @@
 from requests import request
 from core.repo import ProfileRepo
 from polls.apps import APP_NAME
-from polls.models import Option, Poll
+from polls.models import Vote, Option, Poll
 
 class PollRepo():  
     def __init__(self, *args, **kwargs):
@@ -102,5 +102,22 @@ class OptionRepo():
         
         option.creator=self.profile
         option.save()
+        self.select_option(option_id=option.id)
         return option
+
+
+    def select_option(self,*args, **kwargs):
+        if not self.user.has_perm(APP_NAME+".add_vote"):
+            return None
+        option=self.option(*args, **kwargs)
+        if option is None:
+            return
+
+        Vote.objects.filter(profile_id=self.profile.pk).filter(option__poll_id=option.poll.id).delete()
+
+        vote=Vote()
+        vote.option=option
+        vote.profile=self.profile
+        vote.save()
+        return vote
 

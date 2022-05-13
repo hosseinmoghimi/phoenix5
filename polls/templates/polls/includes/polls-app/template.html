@@ -42,7 +42,7 @@
             <div class="card-body">
 
                 {% load static %}
-               
+
                 {% if add_poll_form %}
                 {% include "polls/includes/polls-app/form.html" %}
 
@@ -99,13 +99,14 @@
 
                                 </td>
                                 <td>
-                                    <span v-html="to_price(poll.answers_length)"></span>
-                                    </span>
-
+                                    <span v-html="to_price(poll.options_count)"></span>
+                                    انتخاب و
+                                    <span v-html="to_price(poll.votes_count)"></span>
+                                    رای
                                 </td>
                                 <td>
 
-                                  
+
 
 
                                 </td>

@@ -14,6 +14,7 @@ class AppNameEnum(TextChoices):
     stock='stock',_('stock')
     authentication='authentication',_('authentication')
     dashboard='dashboard',_('dashboard')
+    polls='polls',_('polls')
 
 class CurrencyEnum(TextChoices):
     TUMAN="تومان",_("تومان")
@@ -30,6 +31,8 @@ def class_title(*args, **kwargs):
         app_name=kwargs['app_name']
 
     class_title = "صفحه"
+    if class_name == "poll":
+        class_title = "پرسش"
     if class_name == "page":
         class_title = "صفحه"
     elif class_name == "appointment":

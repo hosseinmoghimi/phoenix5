@@ -9,5 +9,6 @@ urlpatterns = [
     path('poll/<int:pk>/',login_required(views.PollView.as_view()),name="poll"),
     path('add_poll/',login_required(apis.AddPollApi.as_view()),name="add_poll"),
     path('add_option/',login_required(apis.AddOptionApi.as_view()),name="add_option"),
+    path('select_option/',login_required(apis.SelectOptionApi.as_view()),name="select_option"),
     path('option/<int:pk>/',login_required(views.OptionView.as_view()),name="option"),
 ]

@@ -39,21 +39,58 @@
 
 
             <div class="card-body">
+                <div class="text-right farsi">
+                    <h4 v-if="options.length>0">
 
-                {% load static %}
+                        <small>
+
+                            تعداد کل رای ها :
+                        </small>
+                        <span class="mx-2" v-text="to_price(options[0].poll.votes_count)"></span>
+                    </h4>
+                </div>
 
                 {% if add_option_form %}
-                {% include "polls/includes/options-app/form.html" %}
-
-
+    
+                    {% include "polls/includes/options-app/form.html" %}
+    
+    
                 {% endif %}
 
-                <div class="table-responsive">
-                    <img v-if="false" width="32" src="{% static 'leo/img/loading.gif' %}" alt="">
-                    <h6 v-if="false">
+                {% load static %}
+                <div class="row mb-5" v-for="option in options">
+                    <div class="col-md-12">
+                        <div style="cursor:pointer" @click="select_option(option)">
+                            <div class="text-right farsi">
 
-                        <span class="text-muted">در حال بار گذاری ... </span>
-                    </h6>
+                                <span  v-text="option.title"></span>
+                                <div class="pull-left">
+
+
+                                    <span class=" " v-text="to_price(option.votes_count)"></span>
+                                    <small class="text-muted">
+                                        رای
+                                    </small>
+                                </div>
+                                
+                            </div>
+
+
+
+                        </div>
+
+                        <div style="width: 100%;background-color: rgb(240, 214, 214);">
+                            <div :style="option_width(option)">
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <div v-if="false" class="table-responsive">
+
                     <table class="table table-striped">
                         <thead>
                             <th>
@@ -75,16 +112,16 @@
                             <tr v-for="option in options">
                                 <td>
 
-                                        <div @click="select_option(option.id)" style="cursor: pointer;" class="media">
-                                            <img :src="option.thumbnail" class="rounded" width="32" alt="">
-                                            <div class="media-body mr-3">
-                                                <div>
+                                    <div @click="select_option(option)" style="cursor: pointer;" class="media">
+                                        <img :src="option.thumbnail" class="rounded" width="32" alt="">
+                                        <div class="media-body mr-3">
+                                            <div>
 
-                                                    <span v-text="option.title"></span>
-                                                </div>
-
+                                                <span v-text="option.title"></span>
                                             </div>
+
                                         </div>
+                                    </div>
 
 
                                 </td>
@@ -97,9 +134,16 @@
 
                                 </td>
                                 <td>
-                                    <span v-html="to_price(option.answers_length)"></span>
-                                    </span>
+                                    <div>
+                                        <span class="mx-2" v-text="to_price(option.votes_count)"></span>
 
+
+                                    </div>
+                                    <div style="width: 100%;background-color: rgb(240, 214, 214);">
+                                        <div :style="option_width(option)">
+
+                                        </div>
+                                    </div>
                                 </td>
                                 <td>
 
@@ -110,8 +154,18 @@
                             </tr>
                         </tbody>
                     </table>
+
                 </div>
+
             </div>
+            {% if add_option_form %}
+            <div class="card-footer">
+
+                {% include "polls/includes/options-app/form.html" %}
+
+
+            </div>
+            {% endif %}
         </div>
 
 

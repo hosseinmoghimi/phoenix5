@@ -39,20 +39,23 @@ class PollsView(View):
 class PollView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request,*args, **kwargs)
+        context['expand_options']=True
         param_repo=ParameterRepo(request=request,app_name=APP_NAME)
         context['POLLS_SYSTEM_TITLE']=param_repo.parameter(name=POLLS_PARAMETER_NAMES.POLLS_SYSTEM_TITLE)
         poll=PollRepo(request=request).poll(*args, **kwargs)
+        context.update(PageContext(request=request,page=poll))
+        context['toggle_page_like_form']=False
+        context['dont_show_page_likes']=True
         poll_s=json.dumps(PollSerializer(poll).data)
         options=poll.option_set.all()
         options_s=json.dumps(OptionSerializer(options,many=True).data)
-        context.update(PageContext(request=request,page=poll))
         context['poll']=poll
         context['poll_s']=poll_s
         context['options_s']=options_s
         if request.user.has_perm(APP_NAME+".add_option"):
             context['add_option_form']=AddOptionForm()
         return render(request,TEMPLATE_ROOT+"poll.html",context)
-        
+
 class OptionView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request,*args, **kwargs)

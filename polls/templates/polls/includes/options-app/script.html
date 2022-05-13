@@ -18,22 +18,43 @@
 
             },
             to_price: function (vall) {
-                let color = 'primary'
-                if (vall < 0)
-                    color = 'danger'
-                if (vall > 0)
-                    color = 'success'
-                vall = to_price(vall, "")
-                return `
-                    <span class="text-${color}">${vall}</span>
-                    `
+
+                return to_price(vall, "")
+
+            },
+            option_width: function (option) {
+                let width = parseInt((parseFloat(option.votes_count) / parseFloat(option.poll.votes_count)) * 100)
+                return `width:${width}%;background-color: #f00;height:0.25em;`
+            },
+            select_option: function (option) {
+
+                options_app.waiting = true
+                let url = "{% url 'polls:select_option' %}"
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    option_id: option.id,
+                }
+                $.post(url, payload).done((data) => {
+                    options_app.waiting = false
+                    if (data.result === "SUCCEED") {
+                        options_app.options = data.options
+                        options_app.message = {
+                            show: true,
+                            color: "success",
+                            body: data.vote.option.title + " به عنوان رای شما محاسبه شد ."
+                        }
+                        setTimeout(() => {
+                            options_app.message = { show: false }
+                        }, 3000)
+                    }
+                })
             },
             add_option: function () {
-                if (options_app.title.length < 5) {
+                if (options_app.title.length < 1) {
                     options_app.message = {
                         show: true,
                         color: "danger",
-                        body: "عنوان را وارد کنید حداقل 5 حرف"
+                        body: "عنوان را وارد کنید حداقل 1 کاراکتر"
                     }
                     setTimeout(() => {
                         options_app.message = { show: false }
@@ -48,7 +69,6 @@
                     poll_id: parseInt(`{{poll.id}}`),
                 }
                 $.post(url, payload).done((data) => {
-                    console.log(data)
                     options_app.waiting = false
                     if (data.result === "SUCCEED") {
                         options_app.message = {

@@ -2,16 +2,16 @@
 
 {% block content %}
 {% include "core/includes/page-app/navbar.html" %}
-<div class="row">
-    <div class="col-md-3">
-        {% include "core/includes/page-app/thumbnail-card.html" %}
-        {% include "core/includes/page-app/brief-card.html" %}
+ 
 
-    </div>
-    <div class="col-md-9">
         <div class="row">
 
-
+            <div class="col-md-3">
+                {% include "core/includes/page-app/thumbnail-card.html" %}
+            </div>
+            <div class="col-md-9">
+                {% include "core/includes/page-app/brief-card.html" %}
+            </div>
             <div class="col-md-12">
                 {% include "polls/includes/options-app/template.html" %}
             </div>
@@ -54,10 +54,7 @@
 
 
         </div>
-    </div>
-
-
-</div>
+ 
 
 {% endblock content %}
 
