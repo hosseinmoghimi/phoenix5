@@ -5,30 +5,43 @@
         show_sell_prices: false,
         search_for: "",
         waiting: false,
+        message: { show: false }
     }
     let products_app_methods = {
         add: function () {
 
             let url = "{% url 'accounting:add_product' %}"
-                let payload = {
-                    csrfmiddlewaretoken: csrfmiddlewaretoken,
-                    title: this.search_for,
-                }
+            let payload = {
+                csrfmiddlewaretoken: csrfmiddlewaretoken,
+                title: this.search_for,
 
-                $.post(url, payload).done(data => {
-                    console.log(data)
-                    if (data.result === 'SUCCEED') {
-                        if (typeof products_app != 'undefined') {
-                            products_app.products.push(data.product)
-                            products.push(data.product)
-                            products.search_for=""
-                        }
-                    }
-                })
+            }
+            console.log(payload)
+            $.post(url, payload).done(data => {
+                console.log(data)
+                if (data.result === 'FAILED') {
+
+                    products_app.message = { show: true, body: data.message, color: 'danger' }
+                    setTimeout(() => {
+                        products_app.message = { show: false }
+                    }, 3000);
+                }
+                if (data.result === 'SUCCEED') {
+                    products_app.products.push(data.product)
+                    products.push(data.product)
+                    products_app.search_for = ""
+                    products_app.message = { show: true, body: data.message, color: 'success' }
+                    setTimeout(() => {
+                        products_app.message = { show: false }
+                    }, 3000);
+
+                }
+            })
         },
-        filter: function (search_for) {
+        filter: function () {
+            add_product_app.title = products_app.search_for
             this.products = products.filter((product) => {
-                return (product.title.indexOf(search_for) > -1)
+                return (product.title.indexOf(products_app.search_for) > -1)
             })
         },
         to_price: function (vall) {

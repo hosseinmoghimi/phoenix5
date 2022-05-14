@@ -27,8 +27,8 @@ class WareHouse(Page):
         return reverse(APP_NAME+":ware_house_print",kwargs={'pk':self.pk})
 
     class Meta:
-        verbose_name = _("WareHouse")
-        verbose_name_plural = _("WareHouses")
+        verbose_name = _("انبار")
+        verbose_name_plural = _("انبار ها")
 
     def save(self,*args, **kwargs):
         self.class_name="warehouse"
@@ -41,7 +41,7 @@ class WareHouseSheet(models.Model,LinkHelper):
     date_added=models.DateTimeField(_("date_added"), auto_now=False, auto_now_add=True)
     date_registered=models.DateTimeField(_("date_registered"), auto_now=False, auto_now_add=False)
     creator=models.ForeignKey("authentication.profile", verbose_name=_("creator"), on_delete=models.CASCADE)    
-    invoice_line=models.ForeignKey("accounting.invoiceline", verbose_name=_("invoice_line"), on_delete=models.CASCADE)    
+    invoice_line=models.ForeignKey("accounting.invoiceline",null=True,blank=True, verbose_name=_("invoice_line"), on_delete=models.CASCADE)    
     quantity=models.IntegerField(_("quantity"))
     unit_name=models.CharField(_("unit_name"),choices=UnitNameEnum.choices,default=UnitNameEnum.ADAD, max_length=50)
     direction=models.CharField(_("direction"),choices=WareHouseSheetDirectionEnum.choices, max_length=50)
@@ -51,8 +51,8 @@ class WareHouseSheet(models.Model,LinkHelper):
     class_name="warehousesheet"
     app_name=APP_NAME
     class Meta:
-        verbose_name = _("WareHouseSheet")
-        verbose_name_plural = _("WareHouseSheets")
+        verbose_name = _("برگه انبار")
+        verbose_name_plural = _("برگه های انبار")
     def persian_date_registered(self):
         return PersianCalendar().from_gregorian(self.date_registered)
     @property

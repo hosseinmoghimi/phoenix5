@@ -141,6 +141,8 @@
 
                 </tr>
                 {% endif %}
+                {% if invoice.tax_percent > 0 %}
+                  
                 <tr>
                     <td colspan="4">
                         <div class="text-left">
@@ -160,6 +162,7 @@
                     </td>
 
                 </tr>
+                {% endif %}
                 {% if invoice.discount %}
 
                 <tr>

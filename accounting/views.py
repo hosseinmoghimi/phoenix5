@@ -38,6 +38,13 @@ def getContext(request, *args, **kwargs):
     return context
 
 
+def add_product_context(request,*args, **kwargs):
+    context={}
+    if request.user.has_perm(APP_NAME+".add_product"):
+        context['add_product_form']=AddProductForm()
+        context['unit_names']=(unit_name[0] for unit_name in UnitNameEnum.choices)
+    return context
+
 def get_add_payment_context(request,*args, **kwargs):
     context={}
     if request.user.has_perm(APP_NAME+".add_payment"):
@@ -485,7 +492,8 @@ class InvoiceExcelView(View):
 class NewInvoiceView(View):
     def get(self,request,*args, **kwargs):
         invoice=InvoiceRepo(request=request).create_invoice(*args, **kwargs)
-        return redirect(invoice.get_absolute_url())
+        url=reverse(APP_NAME+":edit_invoice",kwargs={'pk':invoice.pk})
+        return redirect(url)
 
 
  
@@ -615,9 +623,9 @@ class ProductsView(View):
         context['expand_products']=True
         products_s=json.dumps(ProductSerializer(products,many=True).data)
         context['products_s']=products_s
-        if request.user.has_perm(APP_NAME+".add_product"):
-            context['add_product_form']=AddProductForm()
+        context.update(add_product_context(request=request))
         return render(request,TEMPLATE_ROOT+"products.html",context)
+
 class ProductView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)

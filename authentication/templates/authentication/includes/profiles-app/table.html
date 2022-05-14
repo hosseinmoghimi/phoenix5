@@ -16,7 +16,7 @@
                 </td>
                 <td>
                     {% if perms.projectmanager.add_employee %}
-                    <form @submit.prevent="create_employee(profile.id)">
+                    <form @submit.prevent="create_employee(profile.id)" class="d-inline mx-2 my-2">
                         {% csrf_token %}
                         <button class="btn btn-warning" type="submit">
                             ایجاد پرسنل
@@ -25,10 +25,10 @@
                     {% endif %}
 
                     {% if perms.accounting.add_account %}
-                    <form @submit.prevent="create_account(profile.id)">
+                    <form @submit.prevent="create_account(profile.id)" class="d-inline mx-2 my-2">
                         {% csrf_token %}
                         <button class="btn btn-warning" type="submit">
-                            ایجاد حساب مالی
+                             ایجاد حساب مالی جدید
                         </button>
                     </form>
                     {% endif %}

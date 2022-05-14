@@ -4,12 +4,12 @@ from authentication.serializers import ProfileSerializer
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
-        fields = ['id', 'title', 'get_absolute_url','buy_price','available','unit_price','unit_name','thumbnail']
+        fields = ['id', 'title', 'get_absolute_url','buy_price','get_edit_url','get_delete_url','available','unit_price','unit_name','thumbnail']
 
 class ProductBriefSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
-        fields = ['id', 'title', 'get_absolute_url', 'thumbnail']
+        fields = ['id', 'title', 'get_absolute_url', 'thumbnail','get_edit_url','get_delete_url']
 
 
 class ServiceSerializer(serializers.ModelSerializer):
@@ -44,8 +44,7 @@ class ChequeSerializer(serializers.ModelSerializer):
 class ProductOrServiceSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductOrService
-        fields = ['id', 'title', 'get_absolute_url',
-                  'thumbnail']
+        fields = ['id', 'title', 'get_absolute_url','thumbnail']
 
 
 

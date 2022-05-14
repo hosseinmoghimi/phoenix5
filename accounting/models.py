@@ -548,7 +548,7 @@ class TransactionCategory(models.Model):
 
 
 class Invoice(Transaction):
-    tax_percent=models.IntegerField(_("درصد مالیات"),default=9)
+    tax_percent=models.IntegerField(_("درصد مالیات"),default=0)
     invoice_datetime=models.DateTimeField(_("تاریخ فاکتور"), auto_now=False, auto_now_add=False)
     ship_fee=models.IntegerField(_("هزینه حمل"),default=0)
     discount=models.IntegerField(_("تخفیف"),default=0)

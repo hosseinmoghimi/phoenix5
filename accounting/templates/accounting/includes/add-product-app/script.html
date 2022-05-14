@@ -1,0 +1,72 @@
+<script>
+    let add_product_app_data = {
+        products: products,
+        show_sell_prices: false,
+        title: "",
+        waiting: false,
+        unit_name: "عدد",
+        ware_house_id: 0,
+        available: 0,
+        buy_price: 0,
+        sell_price: 0,
+        message: { show: false }
+    }
+    let add_product_app_methods = {
+        filter: function () {
+            products_app.search_for=add_product_app.title
+            products_app.products = products.filter((product) => {
+                return (product.title.indexOf(add_product_app.title) > -1)
+            })
+        },
+        add_product: function () {
+
+            let url = "{% url 'accounting:add_product' %}"
+            let payload = {
+                csrfmiddlewaretoken: csrfmiddlewaretoken,
+                title: this.title,
+                unit_name: this.unit_name,
+                ware_house_id: this.ware_house_id,
+                available: this.available,
+                buy_price: this.buy_price,
+                sell_price: this.sell_price,
+            }
+            console.log(payload)
+            $.post(url, payload).done(data => {
+                console.log(data)
+                if (data.result === 'FAILED') {
+
+                    add_product_app.message = { show: true, body: data.message, color: 'danger' }
+                    setTimeout(() => {
+                        add_product_app.message = { show: false }
+                    }, 3000);
+                }
+                if (data.result === 'SUCCEED') {
+                    if (typeof add_product_app != 'undefined') {
+                        products_app.products.push(data.product)
+                        products.push(data.product)
+                        products_app.search_for = ""
+                        add_product_app.title = ""
+                        
+                        add_product_app.message = { show: true, body: data.message, color: 'success' }
+                        setTimeout(() => {
+                            add_product_app.message = { show: false }
+                        }, 3000);
+
+                    }
+                }
+            })
+        },
+
+        to_price: function (vall) {
+            return to_price(vall, "{{CURRENCY}}")
+        },
+
+    }
+</script>
+<script>
+    let add_product_app = new Vue({
+        el: "#add-product-app",
+        data: add_product_app_data,
+        methods: add_product_app_methods,
+    })
+</script>

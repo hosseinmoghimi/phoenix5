@@ -55,7 +55,7 @@ INSTALLED_APPS = [
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db_version_1.3.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 SECRET_KEY = 'django-insecure-bt+o^tb1w_vl6vj%tjn-&=v5^m*w3)5a8(i&uoo)6on&pi-x6('
@@ -72,9 +72,6 @@ MEDIA_URL =  SITE_URL+'media/'
 ADMIN_URL=SITE_URL+"admin/"
 
 STATICFILES_DIRS=[os.path.join(BASE_DIR,'static')]
-
-
-
 
 phoenix_apps=[
     {

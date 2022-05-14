@@ -111,7 +111,7 @@
                                 </td>
                                 <td>
 
-                                    {% if perms.projectmanager.add_employee and not account.employee %}
+                                    {% if aaa and perms.projectmanager.add_employee and not account.employee %}
                                     <form @submit.prevent="create_employee(account.id)">
                                         {% csrf_token %}
                                         <button class="btn btn-warning" type="submit">

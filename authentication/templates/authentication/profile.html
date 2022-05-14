@@ -1,10 +1,7 @@
 {% extends "authentication/layout.html" %}
 
 {% block content %}
-<h4 class="text-center">
-
-    {{selected_profile.name}}
-</h4>
+ 
 <div class="row">
     <div class="col-md-4">
         <div class="card">
@@ -137,7 +134,7 @@
     </div>
     {% endif %}
 
-    {% if transport_app_is_installed and perms.authentication.change_profile%}
+    {% if aaa and transport_app_is_installed and perms.authentication.change_profile%}
 
 
     <div class="col-md-4">

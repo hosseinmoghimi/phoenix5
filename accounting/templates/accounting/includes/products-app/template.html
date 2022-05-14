@@ -36,8 +36,8 @@
             </h4>
             {% endif %}
         </div>
-        <div id="collapse-products" class="collapse {% if expand_products %} show {% endif %}" aria-labelledby="heading-products"
-            data-parent="#accordion-products">
+        <div id="collapse-products" class="collapse {% if expand_products %} show {% endif %}"
+            aria-labelledby="heading-products" data-parent="#accordion-products">
 
 
             <div class="card-body">
@@ -46,22 +46,28 @@
 
                     <span class="text-muted">در حال بار گذاری ... </span>
                 </h6>
-
-                <input type="text" v-model="search_for" class="form-control" placeholder="جستجو ..."
-                    @input="filter(search_for)">
-                    {% if add_product_form %}
-                      <div class="text-right my-2">
-                           <button @click="add()" class="btn btn-success">
-                    <i class="fa fa-plus"></i>
-                    افزودن
-                </button>
-                      </div>
-                    {% endif %}
-               
-
+                <div class="form-group">
+                    <label for="">نام کالا</label>
+                    <input type="text" v-model="search_for" class="form-control" placeholder=""
+                        @input="filter(search_for)">
+                </div>
                 <div class="text-right my-2">
+                    {% if add_product_form %}
+                    <button @click="add()" class="btn btn-success">
+                        <i class="fa fa-plus"></i>
+                        افزودن
+                    </button>
+                    {% endif %}
+
+
 
                     <button @click="show_sell_prices=!show_sell_prices" class="btn btn-danger">نمایش جزئیات</button>
+                </div>
+
+                <div class="my-4 text-right" v-if="message.show">
+                    <span :class="'alert alert-'+message.color">
+                        <span class="farsi" v-html="message.body"></span>
+                    </span>
                 </div>
                 <div class="table-responsive">
 
@@ -84,6 +90,9 @@
 
                             <th>
                                 موجودی در انبار ها
+                            </th>
+                            <th>
+
                             </th>
                         </thead>
                         <tbody>
@@ -131,6 +140,19 @@
                                 <td>
                                     <span v-text="product.available"></span>
 
+                                </td>
+                                <td>
+                                    {% if perms.accounting.change_product %}
+                                    <a :href="product.get_edit_url" class="mx-2" title="ویرایش" target="_blank">
+                                        <i class="fa fa-edit text-warning"></i>
+                                    </a>
+                                    {% endif %}
+
+                                    {% if perms.accounting.change_product %}
+                                    <a :href="product.get_delete_url" class="mx-2" title="حذف" target="_blank">
+                                        <i class="fa fa-trash text-danger"></i>
+                                    </a>
+                                    {% endif %}
                                 </td>
                             </tr>
                         </tbody>

@@ -1,0 +1,98 @@
+{% load static %}
+{% load to_price %}
+
+
+<div id="accordion-add-product">
+
+
+    <div class="card" id="add-product-app">
+        <div class="card-header" id="heading-add-product">
+            <h5 class="text-center">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-add-product"
+                    aria-expanded="true" aria-controls="collapse-add-product">
+                    افزودن کالای جدید
+                </button>
+            </h5>
+        </div>
+        <div id="collapse-add-product" class="collapse {% if expand_add_product %} show {% endif %}"
+            aria-labelledby="heading-add-product" data-parent="#accordion-add-product">
+            <div class="card-body">
+                <img v-if="waiting" width="32" src="{% static 'leo/img/loading.gif' %}" alt="">
+                <div class="text-right my-2">
+                    <form @submit.prevent="add_product()">
+
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="">نام کالا</label>
+                                    <input type="text" required v-model="title" class="form-control" placeholder=""
+                                        @input="filter()">
+                                </div>
+
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="">قیمت خرید</label>
+                                    <input class="form-control" v-model="buy_price" type="number">
+                                </div>
+
+                            </div>
+                            <div class="col-md-4">
+
+                                <div class="form-group">
+                                    <label for="">قیمت فروش</label>
+                                    <input class="form-control" v-model="sell_price" type="number">
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="">انبار</label>
+                                    <select class="form-control" v-model="ware_house_id">
+                                        {% for ware_house in me_account.warehouse_set.all %}
+                                        <option value="{{ware_house.id}}">{{ware_house.title}}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+
+                                <div class="form-group">
+                                    <label for="">موجودی اولیه</label>
+                                    <input class="form-control" v-model="available" type="number">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="">واحد</label>
+                                    <select class="form-control" v-model="unit_name">
+                                        {% for unit_name in unit_names %}
+                                        <option value="{{unit_name}}">{{unit_name}}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+
+                                <button type="submit" class="btn btn-success">
+                                    <i class="fa fa-plus"></i>
+                                    افزودن
+                                </button>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="my-3 text-right" v-if="message.show">
+                                    <span :class="'alert alert-'+message.color">
+                                        <span class="farsi" v-html="message.body"></span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+
+
+    </div>
+</div>

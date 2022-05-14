@@ -1,6 +1,6 @@
 from datetime import timedelta
-from urllib import request
 from accounting.enums import FinancialDocumentTypeEnum, PaymentMethodEnum, TransactionStatusEnum
+from core.constants import FAILED, SUCCEED
 
 from core.enums import UnitNameEnum
 from utility.calendar import PersianCalendar
@@ -105,11 +105,15 @@ class ProductRepo():
  
         if 'title' in kwargs:
             title = kwargs['title']
+        if len(Product.objects.filter(title=title))>0:
+            message="کالای وارد شده تکراری می باشد."
+            return FAILED,None,message
 
         product=Product()
         product.title=title
         product.save()
-        return product
+        message=title +" با موفقیت افزوده شد."
+        return SUCCEED,product,message
 
 
 class ServiceRepo():

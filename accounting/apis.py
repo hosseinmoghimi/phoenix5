@@ -1,8 +1,6 @@
 import json
 from core.constants import FAILED,SUCCEED
 from rest_framework.views import APIView
-from core.serializers import PageLinkSerializer
-from .models import Transaction
 
 from utility.calendar import PersianCalendar
 from .repo import AccountRepo, ChequeRepo, CostRepo, FinancialBalanceRepo,  FinancialDocumentRepo, InvoiceRepo, PaymentRepo, PriceRepo, ProductRepo, ServiceRepo, TransactionRepo
@@ -254,6 +252,7 @@ class AddProductApi(APIView):
         context={}
         log=11
         context['result']=FAILED
+        context['message']=""
         if request.method=='POST':
             log=22
             report_form=AddProductForm(request.POST)
@@ -261,10 +260,11 @@ class AddProductApi(APIView):
                 log=33
                 cd=report_form.cleaned_data
             
-                product=ProductRepo(request=request).add_product(**cd)
-                if product is not None:
+                result,product,message=ProductRepo(request=request).add_product(**cd)
+                context['message']=message
+                context['result']=result
+                if result ==SUCCEED:
                     context['product']=ProductSerializer(product).data
-                    context['result']=SUCCEED
         context['log']=log
         return JsonResponse(context)
 
