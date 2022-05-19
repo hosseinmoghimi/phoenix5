@@ -1,6 +1,5 @@
-{% load to_json %}
 <script>
-    let profiles = JSON.parse(`{{profiles|to_json_profiles|escapejs}}`)
+    let profiles = JSON.parse(`{{profiles_s|escapejs}}`)
     let profiles_app = new Vue({
         el: "#profiles-app",
         data: {

@@ -14,7 +14,8 @@ urlpatterns = [
     path('change_warehouse_sheet_state/',login_required(apis.WareHouseSheetApi.as_view()),name="change_warehouse_sheet_state"),
     path('report/',login_required(apis.ReportApi.as_view()),name="report"),
     path('add_signature/',login_required(apis.AddSignatureApi.as_view()),name="add_signature"),
-    path('add_warehouse_sheet_state/',login_required(apis.AddWareHouseSheetApi.as_view()),name="add_warehouse_sheet_state"),
+    path('add_warehouse_sheet/',login_required(apis.AddWareHouseSheetApi.as_view()),name="add_warehouse_sheet"),
+    path('add_warehouse_sheets_for_invoice/',login_required(apis.AddWareHouseSheetsForInvoiceApi.as_view()),name="add_warehouse_sheets_for_invoice"),
     
 
 ]

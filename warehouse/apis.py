@@ -123,3 +123,26 @@ class AddWareHouseSheetApi(APIView):
                     context['result']=SUCCEED
         context['log']=log
         return JsonResponse(context)
+
+
+
+class AddWareHouseSheetsForInvoiceApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        log=11
+        context['result']=FAILED
+        if request.method=='POST':
+            log=22
+            report_form=AddWarehouseSheetsForInvoiceForm(request.POST)
+            availables_list=[]
+            if report_form.is_valid():
+                log=33
+                cd=report_form.cleaned_data
+                warehouse_sheets=WareHouseSheetRepo(request=request).add_ware_house_sheets_for_invoice(**cd)
+                if warehouse_sheets is not None:
+                    context['warehouse_sheets']=WareHouseSheetSerializer(warehouse_sheets,many=True).data
+                    context['result']=SUCCEED
+        context['log']=log
+        return JsonResponse(context)
+
+

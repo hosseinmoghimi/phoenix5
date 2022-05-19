@@ -1,0 +1,118 @@
+{% load static %}
+<form @submit.prevent="add_profile()">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="">نام</label>
+                <input type="text" v-model="first_name" required class="form-control" id="first_name">
+            </div>
+        </div>
+        <div class="col-md-4">
+
+
+
+            <div class="form-group">
+                <label for="">نام خانوادگی</label>
+                <input type="text" v-model="last_name" required class="form-control" id="last_name">
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+    <div class="row">
+
+        <div class="col-md-4">
+
+
+            <div class="form-group">
+                <label for="">نام کاربری</label>
+                <input type="text" v-model="username" required class="form-control" id="username">
+            </div>
+
+        </div>
+        <div class="col-md-4">
+
+
+            <div class="form-group">
+                <label for="">کلمه عبور</label>
+                <input type="password" v-model="password" required class="form-control" id="password">
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+    <div class="row">
+
+        <div class="col-md-4">
+
+
+            <div class="form-group">
+                <label for="">ایمیل</label>
+                <input type="email" v-model="email" class="form-control" id="email">
+            </div>
+
+        </div>
+        <div class="col-md-4">
+
+
+            <div class="form-group">
+                <label for="">موبایل</label>
+                <input type="tel" v-model="mobile" class="form-control" id="">
+            </div>
+
+        </div>
+        <div class="col-md-12">
+
+
+            <div class="form-group">
+                <label for="">بیو</label>
+                <input type="text" v-model="bio" class="form-control" id="">
+            </div>
+
+        </div>
+        <div class="col-md-12">
+
+            <div class="form-group">
+                <label for="">آدرس</label>
+                <input type="text" v-model="address" class="form-control" id="">
+            </div>
+
+        </div>
+    </div>
+    <div class="row">
+
+        <div class="col-md-12">
+            <div class="text-right">
+
+                <button class="btn btn-success" type="submit">
+                    <i class="fa fa-plus">
+
+                    </i>
+                    افزودن
+
+                </button>
+                
+                <img src="{% static 'leo/img/loading.gif' %}" width="32" v-if="waiting" alt="">
+            </div>
+
+        </div>
+
+
+        <div class="col-md-12">
+            <div class="text-right farsi mx-3 my-3">
+
+
+                <div v-html="message.body" v-if="message.show" :class="'alert alert-'+message.color"></div>
+            </div>
+        </div>
+
+
+
+    </div>
+</form>

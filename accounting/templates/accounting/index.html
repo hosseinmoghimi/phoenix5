@@ -1,7 +1,184 @@
 {% extends "accounting/layout.html" %}
-
+{% load static %}
 {% block content %}
-<div class="row">
+<style>
+  .mbb>.col-md-3{
+    margin-bottom: 1.5em;
+  }
+</style>
+<div class="row mbb">
+  <div class="col-md-3">
+    <div class="text-center">
+
+      <a href="{% url 'accounting:products' %}">
+        <img src="{% static 'accounting/img/pages/thumbnail/product.png' %}" class="rounded" width="80%" alt="">
+        <h6 class="text-center">
+          لیست کالا ها
+        </h6>
+      </a>
+    </div>
+  </div>
+
+  <div class="col-md-3">
+    <div class="text-center">
+      <a href="{% url 'accounting:services' %}">
+        <img src="{% static 'accounting/img/pages/thumbnail/service.png' %}" class="rounded" width="80%" alt="">
+        <h6 class="text-center">
+          لیست سرویس ها
+        </h6>
+      </a>
+
+    </div>
+  </div>
+
+  <div class="col-md-3">
+    <div class="text-center">
+
+      <a href="{% url 'accounting:accounts' %}">
+        <img src="{% static 'accounting/img/account.png' %}" class="rounded" width="80%" alt="">
+        <h6 class="text-center">
+          لیست طرف حساب ها
+        </h6>
+      </a>
+
+
+    </div>
+  </div>
+
+  <div class="col-md-3">
+    <div class="text-center">
+
+      <a href="{% url 'accounting:financial_documents' %}">
+        <img src="{% static 'accounting/img/icons/invoices.png' %}" class="rounded" width="80%" alt="">
+        <h6 class="text-center">
+          اسناد مالی
+        </h6>
+      </a>
+
+
+
+
+
+    </div>
+  </div>
+
+  <div class="col-md-3">
+    <div class="text-center">
+
+      <a href="{% url 'accounting:invoices' %}">
+        <img src="{% static 'accounting/img/icons/invoices.png' %}" class="rounded" width="80%" alt="">
+        <h6 class="text-center">
+          فاکتور ها
+        </h6>
+      </a>
+
+
+    </div>
+  </div>
+
+  <div class="col-md-3">
+    <div class="text-center">
+
+      <a href="{% url 'accounting:costs' %}">
+
+        <img src="{% static 'accounting/img/icons/invoices.png' %}" class="rounded" width="80%" alt="">
+        <h6 class="text-center">
+          هزینه ها
+        </h6>
+      </a>
+    </div>
+  </div>
+
+  <div class="col-md-3">
+    <div class="text-center">
+      <a href="{% url 'accounting:transactions' %}">
+        <img src="{% static 'accounting/img/icons/invoices.png' %}" class="rounded" width="80%" alt="">
+        <h6 class="text-center">
+          تراکنش ها
+        </h6>
+      </a>
+    </div>
+  </div>
+
+  <div class="col-md-3">
+    <div class="text-center">
+
+
+
+
+      <a href="{% url 'accounting:cheques' %}">
+        <img src="{% static 'accounting/img/icons/invoices.png' %}" class="rounded" width="80%" alt="">
+        <h6 class="text-center">
+          چک ها
+        </h6>
+      </a>
+    </div>
+  </div>
+
+  <div class="col-md-3">
+    <div class="text-center">
+
+      <a href="{% url 'accounting:payments' %}">
+        <img src="{% static 'accounting/img/icons/invoices.png' %}" class="rounded" width="80%" alt="">
+        <h6 class="text-center">
+          پرداخت ها
+        </h6>
+      </a>
+    </div>
+  </div>
+
+  <div class="col-md-3">
+    <div class="text-center">
+      <a href="{% url 'accounting:financial_balances' %}">
+        <img src="{% static 'accounting/img/icons/invoices.png' %}" class="rounded" width="80%" alt="">
+        <h6 class="text-center">
+          ریز حساب های مالی
+        </h6>
+      </a>
+    </div>
+
+  </div>
+
+
+
+
+
+  <div class="col-md-3">
+    <div class="text-center">
+      <a href="{% url 'accounting:assets' %}">
+
+
+        <img src="{% static 'accounting/img/icons/invoices.png' %}" class="rounded" width="80%" alt="">
+        <h6 class="text-center">
+          اموال و دارایی ها
+        </h6>
+      </a>
+    </div>
+
+  </div>
+
+
+
+
+
+  <div class="col-md-3">
+    <div class="text-center">
+      <a href="{% url 'accounting:report' %}">
+        <img src="{% static 'accounting/img/icons/invoices.png' %}" class="rounded" width="80%" alt="">
+        <h6 class="text-center">
+          گزارش گیری
+        </h6>
+      </a>
+
+
+
+    </div>
+
+  </div>
+
+
+
+
   <div class="col-md-4">
     <div class="card">
       <div class="farsi card-body">
@@ -31,18 +208,17 @@
         </a>
 
 
-
-        <a href="{% url 'accounting:assets' %}">
+        <a href="{% url 'accounting:invoices' %}">
           <h6>
-            اموال و داریی ها
+            فاکتور ها
           </h6>
         </a>
 
-
-        
-
-
-
+        <a href="{% url 'accounting:costs' %}">
+          <h6>
+            هزینه ها
+          </h6>
+        </a>
         <a href="{% url 'accounting:transactions' %}">
           <h6>
             تراکنش ها
@@ -50,12 +226,38 @@
         </a>
 
 
-
-        <a href="{% url 'accounting:costs' %}">
+        <a href="{% url 'accounting:cheques' %}">
           <h6>
-            هزینه ها
+            چک ها
           </h6>
         </a>
+
+
+        <a href="{% url 'accounting:payments' %}">
+          <h6>
+            پرداخت ها
+          </h6>
+        </a>
+
+
+        <a href="{% url 'accounting:financial_balances' %}">
+          <h6>
+            ریز حساب های مالی
+          </h6>
+        </a>
+
+
+
+        <a href="{% url 'accounting:assets' %}">
+          <h6>
+            اموال و دارایی ها
+          </h6>
+        </a>
+
+
+
+
+
         <a href="{% url 'accounting:report' %}">
           <h6>
             گزارش گیری
@@ -66,35 +268,8 @@
 
 
 
-        <a href="{% url 'accounting:cheques' %}">
-          <h6>
-            چک ها
-          </h6>
-        </a>
 
 
-        <a href="{% url 'accounting:invoices' %}">
-          <h6>
-            فاکتور ها
-          </h6>
-        </a>
-
-
-
-
-        <a href="{% url 'accounting:payments' %}">
-          <h6>
-            پرداخت ها
-          </h6>
-        </a>
-
-
-
-        <a href="{% url 'accounting:financial_balances' %}">
-          <h6>
-            ریز حساب های مالی
-          </h6>
-        </a>
 
 
 

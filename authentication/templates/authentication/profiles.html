@@ -1,37 +1,20 @@
 {% extends "authentication/layout.html" %}
-
 {% block content %}
-<h4 class="text-center">
-
-</h4>
-<div class="row">
+  <div class="row">
+    {% if add_profile_form %}
     <div class="col-md-12">
-        <div class="card">
-            <div class="card-body">
-                <div class="row">
-                    {% for selected_profile in profiles %}
-                    <div class="col-md-4">
-                        <div class="media mb-2">
-                            <a href="{{selected_profile.get_absolute_url}}">
-
-                                <img src="{{selected_profile.image}}" width="64" class="rounded-circle" alt="">
-                            </a>
-                            <div class="media-body">
-                                <a href="{{selected_profile.get_absolute_url}}">
-
-                                    <h5 class="">
-
-                                        {{selected_profile.name}}
-                                    </h5>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                    {% endfor %}
-                </div>
-
-            </div>
-        </div>
+        {% include "authentication/includes/add-profile-app/template.html" %}
     </div>
-</div>
+  {% endif %}
+
+      <div class="col-md-12">
+          {% include "authentication/includes/profiles-app/template.html" %}
+      </div>
+  </div>
 {% endblock content %}
+{% block script %}
+{% include "authentication/includes/profiles-app/script.html" %}
+  {% if add_profile_form %}
+    {% include "authentication/includes/add-profile-app/script.html" %}
+{% endif %}
+{% endblock script %}

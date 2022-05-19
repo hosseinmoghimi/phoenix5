@@ -1,0 +1,34 @@
+{% load static %}
+
+{% load to_persian_date %}
+{% load to_price %}
+{% load to_amount_color %}
+<div id="accordion-add-profile">
+
+
+    <div class="card" id="add-profile-app">
+        <div class="card-header" id="heading-add-profile">
+            <h5 class="text-center">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-add-profile"
+                    aria-expanded="true" aria-controls="collapse-add-profile">
+                    افزودن پروفایل جدید
+
+
+                </button>
+            </h5>
+
+        </div>
+        <div id="collapse-add-profile" class="collapse" aria-labelledby="heading-add-profile"
+            data-parent="#accordion-add-profile">
+            <div class="card-body">
+
+                {% include "authentication/includes/add-profile-app/form.html" %}
+
+
+
+            </div>
+
+
+        </div>
+    </div>
+</div>

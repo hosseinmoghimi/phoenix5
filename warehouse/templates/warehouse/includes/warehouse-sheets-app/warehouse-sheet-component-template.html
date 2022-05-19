@@ -1,6 +1,30 @@
-<tr >
+<tr>
     <td>
         <span v-text="warehouse_sheet.persian_date_registered"></span>
+        <div>
+
+            <span class="badge badge-success" v-if="warehouse_sheet.status===WareHouseSheetStatusEnumDone">
+
+                <span v-text="warehouse_sheet.status"></span>
+            </span>
+
+
+            <span class="badge badge-warning" v-if="warehouse_sheet.status===WareHouseSheetStatusEnumInProgress">
+
+                <span v-text="warehouse_sheet.status"></span>
+            </span>
+
+
+
+            <span class="badge badge-danger" v-if="warehouse_sheet.status===WareHouseSheetStatusEnumInitial">
+
+                <span v-text="warehouse_sheet.status"></span>
+            </span>
+        </div>
+
+
+
+
     </td>
     {% if not product %}
 
@@ -38,7 +62,7 @@
                 موجودی کل :
                 <span v-text="warehouse_sheet.available"></span>
             </small>
-                
+
         </div>
     </td>
 
@@ -50,7 +74,7 @@
             </span>
         </div>
         <div>
-            
+
         </div>
     </td>
     <td>
@@ -58,15 +82,23 @@
 
             <small v-text="warehouse_sheet.status"></small>
         </h4>
-        
+
         <div>
-            <button class="btn btn-sm mb-1 btn-success" @click="change_state('DONE')">تمام شده</button>
-        </div>   
-        <div>
-            <button class="btn btn-sm mb-1 btn-warning" @click="change_state('IN_PROGRESS')">در جریان</button>
+            <button class="btn btn-sm mb-1 btn-success" @click="change_state('DONE')">
+                <span v-text="WareHouseSheetStatusEnumDone"></span>
+
+            </button>
         </div>
         <div>
-            <button class="btn btn-sm mb-1 btn-danger" @click="change_state('INITIAL')">تعریف اولیه</button>
+            <button class="btn btn-sm mb-1 btn-warning" @click="change_state('IN_PROGRESS')">
+                <span v-text="WareHouseSheetStatusEnumInProgress"></span>
+            </button>
+        </div>
+        <div>
+            <button class="btn btn-sm mb-1 btn-danger" @click="change_state('INITIAL')">
+                <span v-text="WareHouseSheetStatusEnumInitial"></span>
+
+            </button>
         </div>
     </td>
 

@@ -10,12 +10,12 @@
             return to_price(vall, "")
         },
         add_ware_house_sheet:function(){
-                let url = "{% url 'warehouse:add_warehouse_sheet_state' %}"
+                let url = "{% url 'warehouse:add_warehouse_sheet' %}"
                 let payload = {
                     csrfmiddlewaretoken: csrfmiddlewaretoken,
                     invoice_line_id: parseInt("{{invoice_line.id}}"),
                     direction: this.direction,
-                    ware_house_id: this.ware_house_id,
+                    ware_house_id: parseInt(this.ware_house_id),
                 }
                 console.log(payload)
                 $.post(url, payload).done(data => {
@@ -35,6 +35,9 @@
     let warehouse_sheet_component = Vue.component('warehouse-sheet-component', {
         data: function () {
             return {
+                WareHouseSheetStatusEnumDone:"تایید شده",
+                WareHouseSheetStatusEnumInitial:"پیش نویس",
+                WareHouseSheetStatusEnumInProgress:"در جریان",
                 message: { color: '', show: false, body: "" }
             }
         },
@@ -46,17 +49,15 @@
                 let url = "{% url 'warehouse:change_warehouse_sheet_state' %}"
                 let payload = {
                     csrfmiddlewaretoken: csrfmiddlewaretoken,
-                    warehouse_sheet_id: this.warehouse_sheet.id,
+                    warehouse_sheet_id: parseInt(this.warehouse_sheet.id),
                     status: status,
                 }
                 $.post(url, payload).done(data => {
-                    console.log(data)
                     if (data.result === 'SUCCEED') {
 
                         warehouse_sheets_app.warehouse_sheets.forEach(warehouse_sheet => {
                             if (warehouse_sheet.id == data.warehouse_sheet.id) {
                                 warehouse_sheet.status = data.warehouse_sheet.status
-                                console.log(warehouse_sheet.status)
                             }
                             if (typeof availables_list_app != 'undefined') {
                                 availables_list_app.refresh(warehouse_sheet.ware_house.id)

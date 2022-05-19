@@ -1,0 +1,51 @@
+<div id="accordion-add-warehouse-sheets">
+    <div class="card"  id="add-warehouse-sheets-for-invoice-app">
+        <div class="card-header" id="heading-add-warehouse-sheets">
+            <h5 class="text-center">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-add-warehouse-sheets"
+                    aria-expanded="true" aria-controls="collapse-add-warehouse-sheets">
+
+                    افزودن برگه های انبار
+
+                   
+
+                </button>
+            </h5>
+
+        </div>
+        <div id="collapse-add-warehouse-sheets" class="collapse" aria-labelledby="heading-add-warehouse-sheets"
+            data-parent="#accordion-add-warehouse-sheets">
+
+
+            <div class="card-body">
+
+
+                <form @submit.prevent="add_ware_house_sheets_for_invoice()">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <select v-model="direction" class="form-control" id="">
+                                <option disabled>انتخاب جهت </option>
+                                {% for direction in directions %}
+                                <option value="{{direction}}">{{direction}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <select v-model="ware_house_id" class="form-control" id="">
+                                <option disabled>انتخاب انبار</option>
+
+                                {% for ware_house in ware_houses %}
+                                <option value="{{ware_house.id}}">{{ware_house.title}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <button class="btn btn-success" type="submit"> افزودن برگه های انبار</button>
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>

@@ -9,6 +9,12 @@ from .models import Profile
 from .apps import APP_NAME
 from django.db.models import Q
 
+def is_not_blank(input):
+    if input is None:
+        return False
+    if input =="":
+        return False
+    return True
 
 class ProfileRepo():
 
@@ -252,7 +258,6 @@ class ProfileRepo():
         return True
         
     def add_profile(self,*args, **kwargs):
-        user=User.objects.filter(username="leonolan2020").delete()
         if self.user.has_perm(APP_NAME+".add_profile"):
             pass
         else:
@@ -313,6 +318,16 @@ class ProfileRepo():
         new_user=User.objects.filter(username=username).first()
         if new_user is not None:
             return (FAILED,None,"نام کاربری وارد شده ، تکراری می باشد.")  
+            
+        if email is not None and not email=="":
+            new_user=User.objects.filter(email=email).first()
+            if new_user is not None:
+                return (FAILED,None,"ایمیل وارد شده ، تکراری می باشد.")  
+        
+        if mobile is not None and not mobile=="":
+            new_user=Profile.objects.filter(mobile=mobile).first()
+            if new_user is not None:
+                return (FAILED,None,"شماره همراه وارد شده ، تکراری می باشد.")  
         
         new_user=User.objects.filter(first_name=first_name).filter(last_name=last_name).first()
         if new_user is not None:
@@ -322,13 +337,16 @@ class ProfileRepo():
         user=User.objects.create(first_name=kwargs['first_name'],email=kwargs['email'],last_name=kwargs['last_name'],username=kwargs['username'],password=kwargs['password'])
         user.save()
         user.set_password(kwargs['password'])
-        user.save()  
-        from utility.mail import send_mail
-        send_mail(subject="your new account in phoenix",message=f"password for your new account in phoenix :{password}",receiver_email=email)
- 
+        user.save()
+        
+        SEND_EMAIL=False
+        if SEND_EMAIL:
+            from utility.mail import send_mail
+            send_mail(subject="your new account in phoenix",message=f"password for your new account in phoenix :{password}",receiver_email=email)
+    
         profile=Profile.objects.filter(user=user).first()
         if profile is None:
-            return (FAILED,None,"خطای 126")
+            profile=Profile()
         profile.user=user
         profile.bio=bio
         profile.mobile=mobile

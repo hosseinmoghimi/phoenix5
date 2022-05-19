@@ -1,6 +1,12 @@
 {% extends "authentication/layout.html" %}
 {% block content %}
   <div class="row">
+    {% if add_profile_form %}
+    <div class="col-md-12">
+        {% include "authentication/includes/add-profile-app/template.html" %}
+    </div>
+  {% endif %}
+
       <div class="col-md-12">
           {% include "authentication/includes/profiles-app/template.html" %}
       </div>
@@ -8,5 +14,7 @@
 {% endblock content %}
 {% block script %}
 {% include "authentication/includes/profiles-app/script.html" %}
-  
+  {% if add_profile_form %}
+    {% include "authentication/includes/add-profile-app/script.html" %}
+{% endif %}
 {% endblock script %}

@@ -26,6 +26,17 @@ class AddMembershipRequestForm(forms.Form):
     profile_id=forms.IntegerField(required=True)
     image=forms.ImageField(required=True)
 
+class AddProfileForm(forms.Form):
+    username=forms.CharField(max_length=50, required=True)
+    password=forms.CharField(max_length=50, required=True)
+    email=forms.CharField(max_length=100, required=False)
+    first_name=forms.CharField(max_length=50, required=True)
+    last_name=forms.CharField(max_length=50, required=True)
+    bio=forms.CharField(max_length=200, required=False)
+    address=forms.CharField(max_length=200, required=False)
+    mobile=forms.CharField(max_length=50, required=False)
+     
+
 
 
 class RegisterForm(UserCreationForm):

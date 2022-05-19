@@ -48,15 +48,15 @@ if CREATE_PROFILE_ON_USER_ADD:
 class Profile(models.Model,LinkHelper):
     user=models.OneToOneField(settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,null=True,blank=True)
-    mobile=models.CharField(_("mobile"),null=True,blank=True, max_length=50)
-    bio=models.CharField(_("bio"),null=True,blank=True, max_length=50)
-    address=models.CharField(_("address"),null=True,blank=True, max_length=50)
-    image_origin=models.ImageField(_("image"),null=True,blank=True, upload_to=IMAGE_FOLDER+"profile/", height_field=None, width_field=None, max_length=None)
-    header_origin=models.ImageField(_("header_origin"),null=True,blank=True, upload_to=IMAGE_FOLDER+"profile/header/", height_field=None, width_field=None, max_length=None)
-    enabled=models.BooleanField(_("enabled"),default=False)
-    default=models.BooleanField(_("default"),default=False)
-    can_login=models.BooleanField(_("can login ?"),default=False)
-    status=models.CharField(_("status"),choices=ProfileStatusEnum.choices,default=ProfileStatusEnum.AAA, max_length=50)
+    mobile=models.CharField(_("شماره همراه"),null=True,blank=True, max_length=50)
+    bio=models.CharField(_("بیو"),null=True,blank=True, max_length=50)
+    address=models.CharField(_("آدرس"),null=True,blank=True, max_length=50)
+    image_origin=models.ImageField(_("تصویر"),null=True,blank=True, upload_to=IMAGE_FOLDER+"profile/", height_field=None, width_field=None, max_length=None)
+    header_origin=models.ImageField(_("سربرگ"),null=True,blank=True, upload_to=IMAGE_FOLDER+"profile/header/", height_field=None, width_field=None, max_length=None)
+    enabled=models.BooleanField(_("فعال"),default=False)
+    can_login=models.BooleanField(_("لاگین می کند ?"),default=False)
+    status=models.CharField(_("وضعیت"),choices=ProfileStatusEnum.choices,default=ProfileStatusEnum.AAA, max_length=50)
+    default=models.BooleanField(_("پیش فرض"),default=False)
     class_name='profile' 
     app_name=APP_NAME
     def get_dashboard_url(self):

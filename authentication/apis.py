@@ -22,6 +22,28 @@ class LoginApi(APIView):
                 context['created']=created
         return JsonResponse(context)
 
+class AddProfileApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        message=None
+        message=" sfh sdjfh sldjk skdlfh ksdjlhf lks"
+        profile=None
+        log=2
+        result=FAILED
+        add_profile_form=AddProfileForm(request.POST)
+        if add_profile_form.is_valid():
+            log=3
+            cd=add_profile_form.cleaned_data
+            (result,profile,message)=ProfileRepo(request=request).add_profile(**cd)
+            if profile is not None:
+                log=4
+                profile=ProfileSerializer(profile).data
+        context['profile']=profile
+        context['result']=result
+        context['message']=message
+        context['log']=log
+        return JsonResponse(context)
+
 
 class SetDefaultProfileApi(APIView):
     def post(self,request,*args, **kwargs):

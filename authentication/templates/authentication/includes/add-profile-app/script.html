@@ -1,0 +1,60 @@
+<script>
+    let add_profile_app_data = {}
+    add_profile_app_data = {
+        first_name: "",
+        last_name: "",
+        username: "",
+        password: "",
+        email: "",
+        mobile: "",
+        bio: "11",
+        address: "",
+        waiting: false,
+        message: { show: false }
+    }
+  
+</script>
+<script>
+    let add_profile_app = new Vue({
+        el: "#add-profile-app",
+        data: add_profile_app_data,
+        methods: {
+            add_profile: function () {
+                add_profile_app.waiting = true
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    first_name: this.first_name,
+                    last_name: this.last_name,
+                    username: this.username,
+                    password: this.password,
+                    email: this.email,
+                    mobile: this.mobile,
+                    bio: this.bio,
+                    address: this.address,
+                }
+                let url = "{% url 'authentication:add_profile' %}"
+                console.log(payload)
+                $.post(url, payload).done(data => {
+                    add_profile_app.waiting = false
+                    console.log(data)
+
+                    if (data.result === 'SUCCEED') {
+                        if (typeof profiles_app != "undefined") {
+                            profiles_app.profiles.push(data.profile)
+                        }
+                        add_profile_app.message = { show: true, body: data.message, color: "success" }
+                    }
+                    else {
+                        console.log(data)
+
+                        add_profile_app.message = { show: true, body: data.message, color: "danger" }
+                    }
+                    setTimeout(() => {
+                        add_profile_app.message = { show: false }
+
+                    }, 2000);
+                })
+            }
+        }
+    })
+</script>

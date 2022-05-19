@@ -11,12 +11,9 @@ from core.utils import app_is_installed
 from core.views import CoreContext, MessageView, PageContext,SearchForm
 # Create your views here.
 from django.views import View
-from guarantee.serializers import GuaranteeSerializer
 
 from utility.calendar import PersianCalendar
 from utility.excel import ReportSheet,ReportWorkBook, get_style
-from warehouse.repo import WareHouseRepo, WareHouseSheetRepo
-from warehouse.serializers import WareHouseSerializer, WareHouseSheetSerializer
 from accounting.apps import APP_NAME
 from accounting.repo import AssetRepo, CostRepo, InvoiceLineRepo,AccountRepo,FinancialBalanceRepo, ChequeRepo, PaymentRepo, PriceRepo, ProductRepo,ServiceRepo,FinancialDocumentRepo,InvoiceRepo, TransactionRepo
 from accounting.serializers import AccountSerializer, AssetSerializer, CostSerializer, FinancialBalanceSerializer, InvoiceFullSerializer,InvoiceLineSerializer,ChequeSerializer, InvoiceSerializer, PaymentSerializer, PriceSerializer, ProductSerializer,ServiceSerializer,FinancialDocumentForAccountSerializer,FinancialDocumentSerializer, TransactionSerializer
@@ -118,6 +115,7 @@ def get_invoice_context(request,*args, **kwargs):
     
     if app_is_installed('guarantee'):
         from guarantee.repo import GuaranteeRepo
+        from guarantee.serializers import GuaranteeSerializer
         guarantees=GuaranteeRepo(request=request).list(invoice_id=invoice.id)
         context['guarantees']=guarantees
         guarantees_s=json.dumps(GuaranteeSerializer(guarantees,many=True).data)
@@ -127,11 +125,10 @@ def get_invoice_context(request,*args, **kwargs):
     # warehouse_sheets=[]
     if app_is_installed('warehouse'):
         from warehouse.repo import WareHouseSheetRepo
+        from warehouse.serializers import WareHouseSheetSerializer
         warehouse_sheets=WareHouseSheetRepo(request=request).list(invoice_id=invoice.id)
         warehouse_sheets_s=json.dumps(WareHouseSheetSerializer(warehouse_sheets,many=True).data)
         context['warehouse_sheets_s']=warehouse_sheets_s
-
-
 
     return context
 
@@ -253,6 +250,7 @@ def get_product_context(request,*args, **kwargs):
 
     if app_is_installed('guarantee'):
         from guarantee.repo import GuaranteeRepo
+        from guarantee.serializers import GuaranteeSerializer
         guarantees=GuaranteeRepo(request=request).list(product_id=product.id)
         context['guarantees']=guarantees
         guarantees_s=json.dumps(GuaranteeSerializer(guarantees,many=True).data)
@@ -262,7 +260,8 @@ def get_product_context(request,*args, **kwargs):
     #warehouse availables , warehouse sheets
     warehouse_app_is_installed= app_is_installed('warehouse')
     if warehouse_app_is_installed:
-        from warehouse.repo import WareHouseSheetRepo
+        from warehouse.repo import WareHouseSheetRepo,WareHouseRepo
+        from warehouse.serializers import WareHouseSerializer,WareHouseSheetSerializer
         from warehouse.enums import WareHouseSheetStatusEnum
         ware_house_sheet_repo=WareHouseSheetRepo(request=request)
         products=[product]
@@ -509,6 +508,17 @@ class InvoiceView(View):
         context.update(get_invoice_context(request=request,*args, **kwargs))
         # context['no_navbar']=True
         # context['no_footer']=True
+
+    
+        if request.user.has_perm('warehouse.add_warehousesheet'):
+            from warehouse.enums import WareHouseSheetDirectionEnum
+            from warehouse.repo import WareHouseSheetRepo,WareHouseRepo
+            from warehouse.forms import AddWarehouseSheetForm,AddWarehouseSheetsForInvoiceForm
+            context['add_ware_house_sheet_form']=AddWarehouseSheetsForInvoiceForm()
+            ware_houses=WareHouseRepo(request=request).list()
+            context['directions']=(direction[0] for direction in WareHouseSheetDirectionEnum.choices)
+            context['ware_houses']=ware_houses
+            
         return render(request,TEMPLATE_ROOT+"invoice.html",context)
 class InvoicePrintView(View):
     def get(self,request,*args, **kwargs):
@@ -559,6 +569,7 @@ class InvoiceLineView(View):
         
         if app_is_installed('guarantee'):
             from guarantee.repo import GuaranteeRepo
+            from guarantee.serializers import GuaranteeSerializer
             guarantees=GuaranteeRepo(request=request).list(invoice_line_id=invoice_line.id)
             context['guarantees']=guarantees
             guarantees_s=json.dumps(GuaranteeSerializer(guarantees,many=True).data)

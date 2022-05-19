@@ -1,0 +1,39 @@
+<script>
+    let add_warehouse_sheets_for_invoice_app_data = {
+        warehouse_sheets: warehouse_sheets,
+        direction: "",
+        ware_house_id: 0,
+    }
+    let add_warehouse_sheets_for_invoice_app_methods = {
+        to_price: function (vall) {
+            return to_price(vall, "")
+        },
+        add_ware_house_sheets_for_invoice: function () {
+            let url = "{% url 'warehouse:add_warehouse_sheets_for_invoice' %}"
+            let payload = {
+                csrfmiddlewaretoken: csrfmiddlewaretoken,
+                invoice_id: parseInt("{{invoice.id}}"),
+                direction: add_warehouse_sheets_for_invoice_app.direction,
+                ware_house_id: parseInt(add_warehouse_sheets_for_invoice_app.ware_house_id),
+            }
+            $.post(url, payload).done(data => {
+                if (data.result === 'SUCCEED') {
+                    data.warehouse_sheets.forEach(warehouse_sheet => {
+                        warehouse_sheets_app.warehouse_sheets.push(warehouse_sheet)
+
+                    });
+
+                }
+            })
+        },
+
+    }
+</script>
+<script>
+ 
+    let add_warehouse_sheets_for_invoice_app = new Vue({
+        el: "#add-warehouse-sheets-for-invoice-app",
+        data: add_warehouse_sheets_for_invoice_app_data,
+        methods: add_warehouse_sheets_for_invoice_app_methods,
+    })
+</script>

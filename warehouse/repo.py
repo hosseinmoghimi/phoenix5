@@ -1,5 +1,7 @@
 from inspect import signature
 from django.db.models import Q
+from requests import request
+from accounting.repo import InvoiceRepo
 from authentication.repo import ProfileRepo
 from django.utils import timezone
 
@@ -138,6 +140,40 @@ class WareHouseSheetRepo:
             search_for=kwargs['search_for']
             objects = objects.filter(title__contains=search_for) 
         return objects
+    def add_ware_house_sheets_for_invoice(self,*args, **kwargs):
+        if not self.user.has_perm(APP_NAME+".add_warehousesheet"):
+            return 
+        from projectmanager.repo import EmployeeRepo
+        employee=EmployeeRepo(request=self.request).me
+        if employee is None:
+            return
+            
+        if 'invoice_id' in kwargs:
+            invoice=InvoiceRepo(request=self.request).invoice(*args, **kwargs)
+            if invoice is None:
+                return
+        warehouse_sheets=[]
+        for invoice_line in invoice.invoice_lines():
+            warehouse_sheet=WareHouseSheet()
+            warehouse_sheet.invoice_line_id=invoice_line.id
+            if 'status' in kwargs:
+                warehouse_sheet.status=kwargs['status']
+            if 'ware_house_id' in kwargs:
+                warehouse_sheet.ware_house_id=kwargs['ware_house_id']
+            if 'direction' in kwargs:
+                warehouse_sheet.direction=kwargs['direction']
+            employee=EmployeeRepo(request=self.request).me
+            warehouse_sheet.creator=employee.account.profile
+            warehouse_sheet.date_registered=now
+            warehouse_sheet.quantity=0
+            warehouse_sheet.save()
+            warehouse_sheet.quantity=warehouse_sheet.invoice_line.quantity
+            warehouse_sheet.save()
+            warehouse_sheets.append(warehouse_sheet)
+        
+        return warehouse_sheets
+    
+        
     def add_ware_house_sheet(self,*args, **kwargs):
         if not self.user.has_perm(APP_NAME+".add_warehousesheet"):
             return 
@@ -163,6 +199,8 @@ class WareHouseSheetRepo:
         warehouse_sheet.save()
         
         return warehouse_sheet
+    
+    
     def warehouse_sheet(self, *args, **kwargs):
         if 'ware_house_sheet_id' in kwargs:
             return self.objects.filter(pk= kwargs['ware_house_sheet_id']).first()

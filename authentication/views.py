@@ -21,13 +21,19 @@ def getContext(request,*args, **kwargs):
     context['title']="auth"
     return context
 
-class BasicViews(View):
+class HomeViews(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
         profiles=ProfileRepo(request=request).list(*args, **kwargs)
         context['profiles']=profiles
         context['profiles_s']=json.dumps(ProfileSerializer(profiles,many=True).data)
+        if request.user.has_perm(APP_NAME+".add_profile"):
+            context['add_profile_form']=AddProfileForm()
         return render(request,TEMPLATE_ROOT+"index.html",context)
+
+class AddMembershipRequestViews(View):
+    def post(self,request,*args, **kwargs):
+        pass
 
 
 class SearchViews(View):
