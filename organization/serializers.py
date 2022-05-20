@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from authentication.serializers import ProfileSerializer
 from organization.models import Employee,OrganizationUnit,Letter,LetterSent
 from accounting.serializers import AccountSerializer
 
@@ -29,7 +30,8 @@ class LetterSentSerializer(serializers.ModelSerializer):
     letter=LetterSerializer()
     sender=OrganizationUnitSerializer()
     recipient=OrganizationUnitSerializer()
+    profile=ProfileSerializer()
     class Meta:
         model=LetterSent
-        fields=['id','letter','sender','persian_date_sent','recipient']
+        fields=['id','letter','sender','paraf','profile','persian_date_sent','recipient','get_edit_url','get_delete_url']
  

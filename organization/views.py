@@ -258,7 +258,14 @@ class LetterView(View):
         letter = LetterRepo(request=request).letter(*args, **kwargs)
         context['letter'] = letter
         context.update(PageContext(request=request, page=letter))
-
+        if True:
+            context['send_letter_form']=SendLetterForm()
+            
+            organization_units=OrganizationUnitRepo(request=request).list()
+            organization_units_s=json.dumps(OrganizationUnitSerializer(organization_units,many=True).data)
+            context['organization_units']=organization_units
+            context['organization_units_s']=organization_units_s
+            
         # letter_sents
         if True:
             letter_sents = letter.lettersent_set.all()
@@ -297,3 +304,4 @@ class AddLetterView(View):
         context.update(add_letter_context(request=request))
  
         return render(request, TEMPLATE_ROOT+"add-letter.html", context)
+

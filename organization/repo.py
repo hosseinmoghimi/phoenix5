@@ -1,3 +1,5 @@
+from django.utils import timezone
+from requests import request
 from organization.models import Letter, OrganizationUnit,Employee,LetterSent
 from django.db.models import Q
 from core.repo import ParameterRepo
@@ -192,8 +194,8 @@ class LetterRepo():
 
     def letter(self, *args, **kwargs):
         pk=0
-        if 'material_id' in kwargs:
-            pk=kwargs['material_id']
+        if 'letter_id' in kwargs:
+            pk=kwargs['letter_id']
         elif 'pk' in kwargs:
             pk=kwargs['pk']
         elif 'id' in kwargs:
@@ -235,3 +237,41 @@ class LetterRepo():
 
         letter.save()
         return letter
+        
+
+    def send_letter(self,*args, **kwargs):
+        # if not self.request.user.has_perm(APP_NAME+".add_letter"):
+        #     return
+        print(kwargs)
+        print(100*"#")
+        letter=LetterRepo(request=self.request).letter(*args, **kwargs)
+        print(letter)
+        print(100*"@")
+        # if 'letter_id' in kwargs:
+        #     letter=Letter.objects.filter(pk=kwargs['letter_id']).first()
+        if letter is None:
+            return
+        current_organization_unit=letter.current_organization_unit()
+
+        sw=False
+        for emp in current_organization_unit.employee_set.all():
+            if emp.account.profile.id==self.profile.id:
+                sw=True
+        if not sw:
+            return
+            
+
+        letter_sent=LetterSent()
+        letter_sent.letter=letter
+        letter_sent.sender_id=current_organization_unit.id
+        letter_sent.profile=self.profile
+        if 'paraf' in kwargs:
+            letter_sent.paraf=kwargs['paraf']
+        if 'recipient_id' in kwargs:
+            letter_sent.recipient_id=kwargs['recipient_id']
+            
+        letter_sent.profile=self.profile
+        letter_sent.date_sent=timezone.now()
+        letter_sent.save()
+        return letter_sent
+        

@@ -1,8 +1,8 @@
 from core.constants import SUCCEED,FAILED
 from .forms import *
 from django.http import JsonResponse
-from organization.repo import EmployeeRepo, OrganizationUnitRepo
-from organization.serializers import EmployeeSerializer, OrganizationUnitSerializer
+from organization.repo import EmployeeRepo, LetterRepo, OrganizationUnitRepo
+from organization.serializers import EmployeeSerializer, LetterSentSerializer, OrganizationUnitSerializer
 from rest_framework.views import APIView
 
 class AddOrganizationUnitApi(APIView):
@@ -49,6 +49,26 @@ class AddEmployeeApi(APIView):
                 employee=EmployeeRepo(request=request).add_employee(**cd)
                 if employee is not None:
                     context['employee']=EmployeeSerializer(employee).data
+                    context['result']=SUCCEED
+        context['log']=log
+        return JsonResponse(context)
+        
+
+class SendLetterApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        log=1
+        context['result']=FAILED
+        if request.method=='POST':
+            log=2
+            SendLetterForm_=SendLetterForm(request.POST)
+            if SendLetterForm_.is_valid():
+                log=3
+                cd=SendLetterForm_.cleaned_data 
+                
+                letter_sent=LetterRepo(request=request).send_letter(**cd)
+                if letter_sent is not None:
+                    context['letter_sent']=LetterSentSerializer(letter_sent).data
                     context['result']=SUCCEED
         context['log']=log
         return JsonResponse(context)

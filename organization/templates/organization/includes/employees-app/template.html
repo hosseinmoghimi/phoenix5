@@ -29,35 +29,36 @@
                     <div class="media">
                         <img class="rounded-circle mr-3 " width="64" :src="employee.account.logo" alt="">
                         <div class="media-body mr-2 farsi">
-                            
+
                             <a :href="employee.get_absolute_url">
-                            <h5 v-text="employee.account.title">
-                                
-                            </h5>
-                        </a>
-                                <div>
-                                    <h6 class="text-success" v-text="employee.job_title">
+                                <h5 v-text="employee.account.title">
 
-                                    </h6>
-                                    <a v-if="employee.organization_unit" :href="employee.organization_unit.get_absolute_url">
-                                        <small v-text=employee.organization_unit.title></small>
-                                    </a>
-                                    <span v-else>
-                                        <div class="text-muted">
+                                </h5>
+                            </a>
+                            <div>
+                                <h6 class="text-success" v-text="employee.job_title">
 
-                                            مشخص نشده
-                                        </div>
-                                    </span>
-                                </div>
+                                </h6>
+                                <a v-if="employee.organization_unit"
+                                    :href="employee.organization_unit.get_absolute_url">
+                                    <small v-text=employee.organization_unit.title></small>
+                                </a>
+                                <span v-else>
+                                    <div class="text-muted">
 
+                                        مشخص نشده
+                                    </div>
+                                </span>
                             </div>
+
                         </div>
+                    </div>
                 </div>
 
 
-            
+
             </div>
-           
+
         </div>
     </div>
 </div>

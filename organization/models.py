@@ -106,16 +106,20 @@ class Employee(models.Model,LinkHelper):
 
 
 
-class LetterSent(models.Model):
+class LetterSent(models.Model,LinkHelper):
     sender = models.ForeignKey("organization.organizationunit", related_name="sent_letters", verbose_name=_(
         "فرستنده"), on_delete=models.CASCADE)
     recipient = models.ForeignKey("organization.organizationunit", related_name="inbox_letters", verbose_name=_(
         "گیرنده"), on_delete=models.CASCADE)
     letter = models.ForeignKey("letter", verbose_name=_(
         "letter"), on_delete=models.CASCADE)
+    profile=models.ForeignKey("authentication.profile", verbose_name=_("profile"), on_delete=models.CASCADE)
+    paraf=models.CharField(_("paraf"), max_length=500)
     date_sent = models.DateTimeField(
         _("date sent"), auto_now=False, auto_now_add=False)
-
+    class_name="lettersent"
+    app_name=APP_NAME
+    
     class Meta:
         verbose_name = 'LetterSent'
         verbose_name_plural = 'سیر ارسال نامه ها'

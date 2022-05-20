@@ -1,0 +1,72 @@
+{% load to_json %}
+<script>
+    let organization_units=JSON.parse(`{{organization_units_s|escapejs}}`)
+    let send_letter_app = new Vue({
+        el: "#send-letter-app",
+        data: {
+            recipient_id: organization_units[0].id,
+            organization_units: organization_units,
+            paraf: "ملاحظه گردید.",
+            search_for_org: '',
+            waiting: false,
+            message: {
+                show: false
+            }
+        },
+        methods: {
+     
+            filter_organization_units: function () {
+                this.organization_units = organization_units.filter(organization_unit => organization_unit.title.indexOf(this.search_for_org) > -1 )
+                if (this.organization_units.length > 0)
+                    this.organization_unit_id = this.organization_units[0].id
+            },
+            send_letter: function () {
+                let url = "{% url 'organization:send_letter' %}"
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    recipient_id: this.recipient_id,
+                    paraf: this.paraf,
+                    letter_id: parseInt(`{{letter.id}}`),
+                }
+                send_letter_app.waiting = true
+                console.log(payload)
+                $.post(url, payload).done((data) => {
+                    send_letter_app.waiting = false
+                    console.log(data)
+
+                    if (data.result === 'FAILED') {
+                        send_letter_app.message = {
+                            color: "danger",
+                            body: "خطا در ارجاع نامه.",
+                            show: true,
+                        }
+                        setTimeout(() => {
+                            send_letter_app.message = {
+                                show: false,
+                            }
+                        }, 3000);
+                    }
+                    if (data.result === 'SUCCEED') {
+                        if (typeof letter_sents_app != "undefined") {
+                            letter_sents_app.letter_sents.push(data.letter_sent)
+                        }
+
+                        send_letter_app.message = {
+                            color: "success",
+                            body: "با موفقیت ارجاع داده شد.",
+                            show: true,
+                        }
+                        setTimeout(() => {
+                            send_letter_app.message = {
+                                show: false,
+                            }
+                        }, 3000);
+                    }
+                })
+
+            }
+
+        }
+    })
+
+</script>

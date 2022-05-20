@@ -21,6 +21,7 @@ urlpatterns = [
 
     path("letters/",login_required(views.LettersView.as_view()),name="letters"),
     path("add_letter/",login_required(views.AddLetterView.as_view()),name="add_letter"),
+    path("send_letter/",login_required(apis.SendLetterApi.as_view()),name="send_letter"),
     path("letter/<int:pk>/",login_required(views.LetterView.as_view()),name="letter"),
 
 ]

@@ -5,6 +5,11 @@ class AddEmployeeForm(forms.Form):
     organization_unit_id=forms.IntegerField(required=True)
     account_id=forms.IntegerField(required=True)
 
+class SendLetterForm(forms.Form):
+    paraf=forms.CharField(max_length=500, required=True)
+    letter_id=forms.IntegerField(required=True)
+    recipient_id=forms.IntegerField(required=True)
+    
 class AddLetterForm(forms.Form):
     title=forms.CharField(max_length=500, required=True)
     employee_id=forms.IntegerField(required=False)

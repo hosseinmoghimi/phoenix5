@@ -8,7 +8,7 @@
             <h5 class="card-title text-center farsi">
                 <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-letter-sents"
                     aria-expanded="true" aria-controls="collapse-letter-sents">
-                    روند نامه های اداری
+                    روند ارجاع های نامه اداری
                     <span v-if="letter_sents.length>0">
                         <small class="text-danger mx-2">
                             <span v-text="letter_sents.length"></span>
@@ -28,17 +28,21 @@
                 <div class="table-responsive">
                     <table class="table table-striped">
                         <thead>
+                            <th>
+                                امضا و پاراف
+                            </th>
                             {% if not letter %}
                             <th>
                                 نامه
                             </th>
-                            {% endif %}
                             <th>
                                 فرستنده
-                             </th>
+                            </th>
+                            {% endif %}
                             <th>
                                 گیرنده
                             </th>
+
                             <th>
                                 تاریخ
                             </th>
@@ -48,6 +52,29 @@
                         </thead>
                         <tbody>
                             <tr v-for="letter_sent in letter_sents">
+
+                                <td>
+                                    <div class="media">
+                                        <a :href="letter_sent.profile.get_absolute_url">
+
+                                            <img width="48" :src="letter_sent.profile.image" class="rounded-circle"
+                                                alt="">
+                                        </a>
+                                        <div class="media-body mr-2">
+                                            <div>
+
+                                                <a :href="letter_sent.profile.get_absolute_url">
+
+                                                    <span v-text="letter_sent.profile.name"></span>
+                                                </a>
+                                            </div>
+                                            <div>
+                                                <small v-text="letter_sent.paraf"></small>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
                                 {% if not letter %}
                                 <td>
                                     <a :href="letter_sent.letter.get_absolute_url">
@@ -59,7 +86,6 @@
                                         </div>
                                     </a>
                                 </td>
-                                {% endif %}
                                 <td>
                                     <a :href="letter_sent.sender.get_absolute_url">
                                         <div class="media">
@@ -92,6 +118,7 @@
                                         </div>
                                     </a>
                                 </td>
+                                {% endif %}
                                 <td>
                                     <a :href="letter_sent.recipient.get_absolute_url">
                                         <div class="media">
@@ -124,12 +151,28 @@
                                         </div>
                                     </a>
                                 </td>
+
                                 <td>
                                     <div>
                                         <span v-html="letter_sent.persian_date_sent"></span>
                                     </div>
                                 </td>
                                 <td>
+                                    {% if perms.organization.change_lettersent %}
+                                    <a class="mx-2" :href="letter_sent.get_edit_url" title="ویرایش" target="_blank">
+                                        <i class="fa fa-edit text-warning">
+
+                                        </i>
+                                    </a>
+                                    {% endif %}
+
+                                    {% if perms.organization.change_lettersent %}
+                                    <a class="mx-2" :href="letter_sent.get_delete_url" title="حذف" target="_blank">
+                                        <i class="fa fa-trash text-danger">
+
+                                        </i>
+                                    </a>
+                                    {% endif %}
 
                                 </td>
                             </tr>

@@ -1,0 +1,90 @@
+{% load static %}
+<div id="accordion-send-letter">
+    <div class="card" id="send-letter-app">
+        <div class="card-header" id="heading-send-letter">
+            <h5 class="text-center">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-send-letter"
+                    aria-expanded="true" aria-controls="collapse-send-letter">
+                  ارجاع نامه
+                </button>
+            </h5>
+
+
+        </div>
+        <div id="collapse-send-letter" class="collapse" aria-labelledby="heading-send-letter"
+            data-parent="#accordion-send-letter">
+
+
+            <div class="card-body">
+
+                {% load static %}
+ 
+                <div class="row">
+               
+                    
+
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="">
+                                ارجاع نامه به واحد سازمانی
+                            </label>
+                            <input placeholder="جستجو ..." v-model="search_for_org" class="form-control" type="text"
+                                @input="filter_organization_units()">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="">
+                                انتخاب واحد سازمانی
+                            </label>
+                            <select v-model="recipient_id" class="form-control" id="">
+                                <option :value="organization_unit.id" v-for="organization_unit in organization_units"
+                                    v-text="organization_unit.title"></option>
+                            </select>
+                        </div>
+                        
+
+                    </div>
+
+                    <div class="col-md-6">
+                     
+                        <div class="form-group">
+                            <label for="">
+                             پاراف
+                            </label>
+                            <input v-model="paraf" class="form-control" type="text" required> 
+                        </div>
+                        
+
+                    </div>
+
+                    <div class="col-md-12">
+                        <div class="text-right">
+
+                            <button @click="send_letter()" class="btn btn-success">
+                                <i class="fa fa-plus"></i>
+                                ارجاع نامه
+                            </button>
+                            <img src="{% static 'leo/img/loading.gif' %}" width="32" v-if="waiting" alt="">
+
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <div class="text-right farsi mx-3 my-3">
+
+
+                            <div v-html="message.body" v-if="message.show" :class="'alert alert-'+message.color"></div>
+                        </div>
+                    </div>
+
+
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+</div>
