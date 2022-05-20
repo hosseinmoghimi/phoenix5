@@ -1,0 +1,55 @@
+<form @submit.prevent="add_letter()">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="">title</label>
+                <input type="text" v-model="title" class="form-control">
+            </div>
+        </div> 
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="">sender</label>
+                <select v-model="sender_id" class="form-control">
+                    {% for organization_unit in organization_units %}
+                    <option value="{{organization_unit.id}}">{{organization_unit.title}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="">receipt_id</label>
+                <select v-model="receipt_id" class="form-control">
+                    {% for organization_unit in organization_units %}
+                    <option value="{{organization_unit.id}}">{{organization_unit.title}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="">title</label>
+                <input type="text" v-model="title" class="form-control">
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="">title</label>
+                <input type="text" v-model="title" class="form-control">
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="">title</label>
+                <input type="text" v-model="title" class="form-control">
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="">title</label>
+                <input type="text" v-model="title" class="form-control">
+            </div>
+        </div>
+
+    </div>
+</form>

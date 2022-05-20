@@ -70,7 +70,7 @@ class ImageMixin():
             output, 'ImageField', image_name, image_path, sys.getsizeof(output), None)
         return MEDIA_URL+str(self.thumbnail_origin)
 
-
+    
 class Page(models.Model, LinkHelper, ImageMixin):
     title = models.CharField(_("عنوان"), max_length=5000)
     thumbnail_origin = models.ImageField(_("تصویر کوچک"), upload_to=IMAGE_FOLDER+'ImageBase/Thumbnail/',null=True, blank=True, height_field=None, width_field=None, max_length=None)

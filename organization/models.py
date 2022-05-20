@@ -1,9 +1,10 @@
 from django.db import models
+from django.forms import CharField
 from requests import request
 from organization.apps import APP_NAME
 from core.models import _,reverse,Page,LinkHelper
 from utility.calendar import to_persian_datetime_tag
-
+from organization.enums import *
 class OrganizationUnit(Page):
     pre_title = models.CharField(
         _("pre_title"), blank=True, null=True, max_length=50)
@@ -65,6 +66,10 @@ class Employee(models.Model,LinkHelper):
     def title(self):
         return self.account.title
 
+    @property
+    def image(self):
+        return self.account.logo
+
 
     def my_pages_ids(self):
         my_pages_ids=[]
@@ -72,20 +77,17 @@ class Employee(models.Model,LinkHelper):
         my_pages_ids=my_pages_ids+ my_project_ids
         return my_pages_ids
 
-    @property
-    def mobile(self):
-        return self.account.profile.mobile
-
+ 
     @property
     def name(self):
-        return self.account.profile.name
+        return self.account.title
 
     class Meta:
         verbose_name = _("Employee")
-        verbose_name_plural = _("Employees")
+        verbose_name_plural = _("پرسنل و کارکنان")
 
     def __str__(self):
-        return f"""{self.account.profile.name} : {self.job_title} {str(self.organization_unit) if self.organization_unit is not None else ""} """
+        return f"""{self.account.title} : {self.job_title} {str(self.organization_unit) if self.organization_unit is not None else ""} """
 
     def get_absolute_url(self):
         return reverse(APP_NAME+":employee", kwargs={"pk": self.pk})
@@ -116,13 +118,16 @@ class LetterSent(models.Model):
 
     class Meta:
         verbose_name = 'LetterSent'
-        verbose_name_plural = 'LetterSents'
+        verbose_name_plural = 'سیر ارسال نامه ها'
 
     def persian_date_sent(self):
         return to_persian_datetime_tag(self.date_sent)
 
 
 class Letter(Page):
+    creator_organization_unit=models.ForeignKey("organizationunit", verbose_name=_("واحد ایجاد کننده"), on_delete=models.CASCADE)
+    creator=models.ForeignKey("authentication.profile", verbose_name=_("ایجاد کننده"), on_delete=models.CASCADE)
+    status=models.CharField(_("status"),choices=LetterStatusEnum.choices,default=LetterStatusEnum.DRAFT, max_length=50)
     def persian_date_added(self):
         return to_persian_datetime_tag(self.date_added)
 
@@ -135,5 +140,10 @@ class Letter(Page):
 
     class Meta:
         verbose_name = 'Letter'
-        verbose_name_plural = 'Letters'
+        verbose_name_plural = 'نامه های اداری'
 
+    def current_organization_unit(self):
+        sents=LetterSent.objects.filter(letter_id=self.pk).order_by('date_sent')
+        if len(sents)>0:
+            return sents.last().recipient
+        return self.creator_organization_unit

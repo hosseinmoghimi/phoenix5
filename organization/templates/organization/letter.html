@@ -5,29 +5,60 @@
 {% include "core/includes/page-app/navbar.html" %}
 <div class="row">
 
-  
+  <div class="col-md-12">
+    <div class="card">
+      <div class="card-body">
+        <div class="text-right farsi">
+
+          موقعیت فعلی نامه :
+          <a href="{{letter.current_organization_unit.get_absolute_url}}">
+            <div class="media">
+              <img src="{{letter.current_organization_unit.logo}}" class="rounded" width="48" alt="">
+              <div class="media-body mr-2">
+
+
+                <h6>
+                  <span>
+                    {{letter.current_organization_unit.title}}
+                  </span>
+                </h6>
+
+              </div>
+
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+
+
+  </div>
 
   <div class="col-md-3">
     {% include "core/includes/page-app/thumbnail-card.html" %}
-    {% include "core/includes/page-app/brief-card.html" %}
+    {% include "organization/includes/letter-app/brief-card.html" %}
 
   </div>
   <div class="col-md-9">
     <div class="row">
       <div class="col-md-12">
         {% include "organization/includes/letter-sents-app/template.html" %}
-    
+
       </div>
       <div class="col-md-12">
         {% include "core/includes/page-description-app/short-description.html" %}
         {% include "core/includes/page-description-app/description.html" %}
       </div>
 
-      <div class="col-md-6">
+      <div class="col-md-4">
         {% include "core/includes/page-downloads-app/template.html" %}
       </div>
-      <div class="col-md-6">
+      <div class="col-md-4">
         {% include "core/includes/page-links-app/template.html" %}
+
+      </div>
+      <div class="col-md-4">
+        {% include "core/includes/page-tags-app/template.html" %}
 
       </div>
 

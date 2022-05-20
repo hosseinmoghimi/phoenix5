@@ -1,0 +1,79 @@
+{% load to_json %}
+<script>
+    let new_employee_accounts = JSON.parse(`{{new_employee_accounts_s|escapejs}}`)
+    let new_employee_organization_units=JSON.parse(`{{new_employee_organization_units_s|escapejs}}`)
+    let add_employee_app = new Vue({
+        el: "#add-employee-app",
+        data: {
+            account_id: 0,
+            organization_unit_id: new_employee_organization_units[0].id,
+            accounts: new_employee_accounts,
+            organization_units: new_employee_organization_units,
+            job_title: "سرپرست",
+            search_for: '',
+            search_for_org: '',
+            waiting: false,
+            message: {
+                show: false
+            }
+        },
+        methods: {
+            filter_accounts: function () {
+                this.accounts = accounts.filter(account => account.title.indexOf(this.search_for) > -1 )
+                if (this.accounts.length > 0)
+                    this.account_id = this.accounts[0].id
+            },
+            filter_organization_units: function () {
+                this.organization_units = organization_units.filter(organization_unit => organization_unit.title.indexOf(this.search_for_org) > -1 )
+                if (this.organization_units.length > 0)
+                    this.organization_unit_id = this.organization_units[0].id
+            },
+            add_employee: function () {
+                let url = "{% url 'organization:add_employee' %}"
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    account_id: this.account_id,
+                    organization_unit_id: this.organization_unit_id,
+                    job_title: this.job_title,
+                }
+                add_employee_app.waiting = true
+
+                $.post(url, payload).done((data) => {
+                    add_employee_app.waiting = false
+
+                    if (data.result === 'FAILED') {
+                        add_employee_app.message = {
+                            color: "danger",
+                            body: "خطا در ایجاد مسافر جدید.",
+                            show: true,
+                        }
+                        setTimeout(() => {
+                            add_employee_app.message = {
+                                show: false,
+                            }
+                        }, 3000);
+                    }
+                    if (data.result === 'SUCCEED') {
+                        if (typeof employees_app != "undefined") {
+                            employees_app.employees.push(data.employee)
+                        }
+
+                        add_employee_app.message = {
+                            color: "success",
+                            body: "با موفقیت افزوده شد.",
+                            show: true,
+                        }
+                        setTimeout(() => {
+                            add_employee_app.message = {
+                                show: false,
+                            }
+                        }, 3000);
+                    }
+                })
+
+            }
+
+        }
+    })
+
+</script>

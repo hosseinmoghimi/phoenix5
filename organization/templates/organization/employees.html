@@ -3,10 +3,20 @@
 {% block content %}
 
 <div class="row">
+  {% if add_employee_form %}
+
+  <div class="col-md-12">
+    {% include "organization/includes/add-employee-app/template.html" %}
+
+  </div>
+  {% endif %}
+
+
   <div class="col-md-12">
     {% include "organization/includes/employees-app/list.html" %}
 
   </div>
+
 </div>
 {% endblock content %}
 
@@ -14,4 +24,7 @@
 {% block script %}
 {% include "organization/includes/employees-app/script.html" %}
 
+{% if add_employee_form %}
+{% include "organization/includes/add-employee-app/script.html" %}
+{% endif %}
 {% endblock script %}

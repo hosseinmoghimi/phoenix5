@@ -27,8 +27,8 @@
 
                 <div v-for="employee in employees" class="mb-3">
                     <div class="media">
-                        <img class="rounded-circle mr-3 " width="64" :src="employee.account.profile.image" alt="">
-                        <div class="media-body farsi">
+                        <img class="rounded-circle mr-3 " width="64" :src="employee.account.logo" alt="">
+                        <div class="media-body mr-2 farsi">
                             
                             <a :href="employee.get_absolute_url">
                             <h5 v-text="employee.account.title">
@@ -57,40 +57,7 @@
 
             
             </div>
-            {% if add_employee_form %}
-            <div class="card-footer ">
-
-                <button class="btn btn-primary" v-if="!show_add_form" @click="show_add_form=true">
-                    <i class="material-icons">
-                        add
-                    </i>
-                </button>
-                <form v-if="show_add_form" @submit.prevent="add_employee(0)">
-                    <div class="row">
-                        <div class="col-8">
-                            <input @input="filter" required type="text" v-model="add_employee_form_first_name"
-                                class="farsi form-control" placeholder="نام پرسنل جدید">
-                            <input @input="filter" required type="text" v-model="add_employee_form_last_name"
-                                class="farsi form-control" placeholder="نام خانوادگی پرسنل جدید">
-                            <input required type="text" v-model="add_employee_form_username" class="farsi form-control"
-                                placeholder="نام کاربری پرسنل جدید">
-                            <input required type="text" v-model="add_employee_form_password" class="farsi form-control"
-                                placeholder="کلمه عبور پرسنل جدید">
-
-                        </div>
-                        <div class="col-4">
-                            <img v-if="waiting" width="32" src="{% static 'leo/img/loading.gif' %}" alt="">
-
-                            <button v-if="!waiting" class="btn btn-primary btn-block" type="submit">تایید</button>
-
-                        </div>
-                    </div>
-
-                </form>
-
-
-            </div>
-            {% endif %}
+           
         </div>
     </div>
 </div>

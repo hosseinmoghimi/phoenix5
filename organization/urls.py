@@ -9,6 +9,7 @@ urlpatterns = [
     
     path("employee/<int:pk>/",login_required(views.EmployeeView.as_view()),name="employee"),
     path("employees/",login_required(views.EmployeesView.as_view()),name="employees"),
+    path("add_employee/",login_required(apis.AddEmployeeApi.as_view()),name="add_employee"),
     
     
     path("organization_units/",login_required(views.OrganizationUnitsView.as_view()),name="organization_units"),
@@ -19,6 +20,7 @@ urlpatterns = [
 
 
     path("letters/",login_required(views.LettersView.as_view()),name="letters"),
+    path("add_letter/",login_required(views.AddLetterView.as_view()),name="add_letter"),
     path("letter/<int:pk>/",login_required(views.LetterView.as_view()),name="letter"),
 
 ]

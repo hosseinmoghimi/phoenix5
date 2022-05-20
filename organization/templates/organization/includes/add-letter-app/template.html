@@ -1,0 +1,27 @@
+{% load to_price %}
+<div id="accordion-add-letter">
+    <div class="card mb-3" id="add-letter-app">
+        <div class="card-header" id="heading-add-letter">
+
+            <h5 class="card-title text-center farsi">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-add-letter"
+                    aria-expanded="true" aria-controls="collapse-add-letter">
+                    ایجاد نامه اداری جدید
+
+
+
+
+                </button>
+
+            </h5>
+
+
+        </div>
+        <div id="collapse-add-letter" class="collapse {% if expand_add_letter %}show{% endif %}"
+            aria-labelledby="heading-add-letter" data-parent="#accordion-add-letter">
+            <div class="card-body">
+                {% include "organization/includes/add-letter-app/form.html" %}
+            </div>
+        </div>
+    </div>
+</div>

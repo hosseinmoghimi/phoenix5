@@ -1,10 +1,11 @@
-from core.views import PageContext
-from core.views import MessageView
-from django.shortcuts import render
+from django.shortcuts import redirect
+from accounting.repo import AccountRepo
+from accounting.serializers import AccountSerializer
+from core.views import MessageView,PageContext,render,reverse
 from accounting.views import get_account_context
 from core.views import TEMPLATE_ROOT, CoreContext
 from organization.apps import APP_NAME
-from organization.forms import CreateEmployeeForm,AddOrganizationUnitForm
+from organization.forms import *
 from django.views import View
 from django.http import JsonResponse
 from core.constants import SUCCEED,FAILED
@@ -68,6 +69,26 @@ class EmployeeView(View):
 
         return render(request, TEMPLATE_ROOT+"employee.html", context)
 
+def get_add_employee_context(request,*args, **kwargs):
+    context={}
+    context['add_employee_form']=AddEmployeeForm()
+    if 'organization_unit' in kwargs:
+        organization_units=[kwargs['organization_unit']]
+        organization_units_s=json.dumps(OrganizationUnitSerializer(organization_units,many=True).data)
+        context['new_employee_organization_units']=organization_units
+        context['new_employee_organization_units_s']=organization_units_s
+    else:
+        organization_units=OrganizationUnitRepo(request=request).list()
+        organization_units_s=json.dumps(OrganizationUnitSerializer(organization_units,many=True).data)
+        context['new_employee_organization_units']=organization_units
+        context['new_employee_organization_units_s']=organization_units_s
+
+
+    accounts=AccountRepo(request=request).list()
+    accounts_s=json.dumps(AccountSerializer(accounts,many=True).data)
+    context['new_employee_accounts']=accounts
+    context['new_employee_accounts_s']=accounts_s
+    return context
 
 class EmployeesView(View):
     def get(self, request, *args, **kwargs):
@@ -77,6 +98,10 @@ class EmployeesView(View):
         context['employees'] = employees
         employees_s = json.dumps(EmployeeSerializer(employees, many=True).data)
         context['employees_s'] = employees_s
+        if request.user.has_perm(APP_NAME+".add_employee"):
+            context.update(get_add_employee_context(request=request))
+
+
         return render(request, TEMPLATE_ROOT+"employees.html", context)
 
 class OrganizationUnitChartView(View):
@@ -116,7 +141,7 @@ class OrganizationUnitChartView(View):
             names=""
             employees=page.employee_set.all()
             for employee in employees:
-                names+=(f"""<div style="direction:rtl;"><a href="{employee.get_absolute_url()}"><img src="{employee.account.profile.image}" class="rounded-circle" width="32"><small class="text-muted" >{employee.account.title}</small></a></div>""")
+                names+=(f"""<div style="direction:rtl;"><a href="{employee.get_absolute_url()}"><img src="{employee.account.logo()}" class="rounded-circle" width="32"><small class="text-muted" >{employee.account.title}</small></a></div>""")
             pages_s.append({
                 'title': f"""{page.title}""",
                 'parent_id': page.parent_id,
@@ -148,8 +173,11 @@ class OrganizationUnitView(View):
         if True:
             employees = EmployeeRepo(request=request).list(
                 organization_unit_id=organization_unit.id)
-            context['employees_s'] = json.dumps(
-                EmployeeSerializer(employees, many=True).data)
+            context['employees_s'] = json.dumps(EmployeeSerializer(employees, many=True).data)
+        # add employee
+        if True:            
+            if request.user.has_perm(APP_NAME+".add_employee"):
+                context.update(get_add_employee_context(request=request,organization_unit=organization_unit))
 
         #   letters
         if True:
@@ -240,3 +268,32 @@ class LetterView(View):
             context['letter_sents_s'] = letter_sents_s
 
         return render(request, TEMPLATE_ROOT+"letter.html", context)
+
+def add_letter_context(request,*args, **kwargs):
+    context={}
+    # organization_units=OrganizationUnitRepo(request=request).list()
+    # organization_units_s=json.dumps(OrganizationUnitSerializer(organization_units,many=True).data)
+    # context['organization_units']=organization_units
+    # context['organization_units_s']=organization_units_s
+    return context
+class AddLetterView(View):
+    def post(self, request, *args, **kwargs):
+        add_letter_form=AddLetterForm(request.POST)
+        if add_letter_form.is_valid():
+            cd=add_letter_form.cleaned_data
+            letter=LetterRepo(request=request).add_letter(**cd)
+            if letter is not None:
+                return redirect(letter.get_absolute_url())
+
+    def get(self, request, *args, **kwargs):
+        context = getContext(request=request)
+        employee=EmployeeRepo(request=request).me
+        if employee is None:
+            mv=MessageView(request=request)
+            mv.title="خطا در مجوز دسترسی"
+            mv.body="شما مجوز لازم برای ایجاد نامه اداری جدید ندارید."
+            return mv.response()
+        context['expand_add_letter']=True
+        context.update(add_letter_context(request=request))
+ 
+        return render(request, TEMPLATE_ROOT+"add-letter.html", context)

@@ -157,6 +157,22 @@ class EmployeeRepo():
             objects=project.organization_units.all()
         return objects.all()
 
+    def add_employee(self,*args, **kwargs):
+        if not self.request.user.has_perm(APP_NAME+".add_employee"):
+            return
+        employee=Employee()
+        
+        if 'job_title' in kwargs:
+            employee.job_title=kwargs['job_title']
+        
+        if 'account_id' in kwargs:
+            employee.account_id=kwargs['account_id']
+        
+        if 'organization_unit_id' in kwargs:
+            employee.organization_unit_id=kwargs['organization_unit_id']
+
+        employee.save()
+        return employee
 
 
 
@@ -201,3 +217,21 @@ class LetterRepo():
         return objects.order_by('date_added') 
 
 
+    def add_letter(self,*args, **kwargs):
+        # if not self.request.user.has_perm(APP_NAME+".add_letter"):
+        #     return
+
+        employee=Employee.objects.filter(account__profile=self.profile).first()
+        if employee is None:
+            return
+
+
+        letter=Letter()
+        if 'title' in kwargs:
+            letter.title=kwargs['title']
+            
+        letter.creator_organization_unit_id=employee.organization_unit.pk
+        letter.creator_id=self.profile.pk
+
+        letter.save()
+        return letter

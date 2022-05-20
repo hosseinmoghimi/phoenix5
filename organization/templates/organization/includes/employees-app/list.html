@@ -44,7 +44,7 @@
                             <tr v-for="employee in employees">
                                 <td>
                                     <div class="media">
-                                        <img class="rounded-circle mr-3 " width="64" :src="employee.account.profile.image"
+                                        <img class="rounded-circle mr-3 " width="64" :src="employee.account.logo"
                                             alt="">
                                         <div class="media-body farsi">
                                             <a :href="employee.get_absolute_url">
@@ -63,21 +63,34 @@
                                 <td>
                                     <div v-if="employee.organization_unit">
 
+
+
                                         <a :href="employee.organization_unit.get_absolute_url">
-                                            <span v-text=employee.organization_unit.title></span>
+                                            <div class="media">
+                                                <img class="rounded mr-3 " width="64"
+                                                    :src="employee.organization_unit.logo" alt="">
+                                                <div class="media-body mr-2 farsi">
+                                                    <h5>
+                                                        <span v-text="employee.organization_unit.title">
+
+                                                        </span>
+                                                    </h5>
+
+                                                </div>
+                                            </div>
                                         </a>
                                     </div>
                                 </td>
                                 <td>
                                     {% if perms.projectmanager.change_employee %}
-                                      <a class="mx-2"   :href="employee.get_edit_url" target="_blank" title="ویرایش">
-                                          <i class="fa fa-edit text-warning"></i>
-                                      </a>
+                                    <a class="mx-2" :href="employee.get_edit_url" target="_blank" title="ویرایش">
+                                        <i class="fa fa-edit text-warning"></i>
+                                    </a>
                                     {% endif %}
                                     {% if perms.projectmanager.delete_employee %}
-                                      <a class="mx-2"   :href="employee.get_delete_url" target="_blank" title="ویرایش">
-                                          <i class="fa fa-trash text-danger"></i>
-                                      </a>
+                                    <a class="mx-2" :href="employee.get_delete_url" target="_blank" title="حذف">
+                                        <i class="fa fa-trash text-danger"></i>
+                                    </a>
                                     {% endif %}
                                 </td>
                             </tr>

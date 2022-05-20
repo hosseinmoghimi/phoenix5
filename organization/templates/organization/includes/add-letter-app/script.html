@@ -1,0 +1,24 @@
+<script>
+    let organization_units=JSON.parse(`{{organization_units_s|escapejs}}`)
+    let add_letter_app = new Vue({
+        el: "#add-letter-app",
+        data: {
+            title:"aa",
+            description:"bb",
+            sender_id:0,
+            receipt_id:0,
+            organization_units:organization_units
+        },
+        methods: {
+            add_letter: function () {
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    title:add_letter_app.title,    
+                    description:add_letter_app.description,    
+                    sender_id:add_letter_app.sender_id,   
+                    receipt_id:add_letter_app.receipt_id,   
+                }
+            },
+        }
+    })
+</script>

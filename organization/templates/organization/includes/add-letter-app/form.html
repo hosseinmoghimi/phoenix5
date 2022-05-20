@@ -1,0 +1,23 @@
+<form action="{% url 'organization:add_letter' %}" method="POST">
+  {% csrf_token %}
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="">عنوان نامه</label>
+                <input type="text" v-model="title" name="title" class="form-control">
+            </div>
+        </div>
+
+        <div class="col-md-12">
+            <div class="text-right">
+                <button class="btn btn-success" type="submit">
+                    <i class="fa fa-plus">
+                    </i>
+                    ایجاد نامه
+                </button>
+            </div>
+        </div>
+
+
+    </div>
+</form>

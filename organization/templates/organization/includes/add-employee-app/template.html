@@ -1,0 +1,110 @@
+{% load static %}
+<div id="accordion-add-employee">
+    <div class="card" id="add-employee-app">
+        <div class="card-header" id="heading-add-employee">
+            <h5 class="text-center">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-add-employee"
+                    aria-expanded="true" aria-controls="collapse-add-employee">
+                    افزودن پرسنل
+                </button>
+            </h5>
+
+
+        </div>
+        <div id="collapse-add-employee" class="collapse" aria-labelledby="heading-add-employee"
+            data-parent="#accordion-add-employee">
+
+
+            <div class="card-body">
+
+                {% load static %}
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="">
+                                نام
+                            </label>
+                            <input placeholder="جستجو ..." v-model="search_for" class="form-control" type="text"
+                                @input="filter_accounts()">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="">
+                                انتخاب حساب
+                            </label>
+                            <select v-model="account_id" class="form-control" id="">
+                                <option :value="account.id" v-for="account in accounts" v-text="account.title"></option>
+                            </select>
+                        </div>
+
+
+                    </div>
+
+
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="">
+                                واحد سازمانی
+                            </label>
+                            <input placeholder="جستجو ..." v-model="search_for_org" class="form-control" type="text"
+                                @input="filter_organization_units()">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="">
+                                انتخاب واحد سازمانی
+                            </label>
+                            <select v-model="organization_unit_id" class="form-control" id="">
+                                <option :value="organization_unit.id" v-for="organization_unit in organization_units"
+                                    v-text="organization_unit.title"></option>
+                            </select>
+                        </div>
+                        
+
+                    </div>
+
+                    <div class="col-md-6">
+                     
+                        <div class="form-group">
+                            <label for="">
+                                عنوان سمت
+                            </label>
+                            <input v-model="job_title" class="form-control" type="text" required> 
+                        </div>
+                        
+
+                    </div>
+
+                    <div class="col-md-12">
+                        <div class="text-right">
+
+                            <button @click="add_employee()" class="btn btn-success">
+                                <i class="fa fa-plus"></i>
+                                افزودن
+                            </button>
+                            <img src="{% static 'leo/img/loading.gif' %}" width="32" v-if="waiting" alt="">
+
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <div class="text-right farsi mx-3 my-3">
+
+
+                            <div v-html="message.body" v-if="message.show" :class="'alert alert-'+message.color"></div>
+                        </div>
+                    </div>
+
+
+
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+
+
+</div>
