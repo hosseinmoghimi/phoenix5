@@ -23,7 +23,14 @@
         },
         filter: function () {
             this.transactions = transactions.filter(function (transaction) {
-                return transaction.title.indexOf(transactions_app.search_for) > -1
+                if (transaction.title.indexOf(transactions_app.search_for) > -1)
+                    return true
+                if (transaction.pay_from.title.indexOf(transactions_app.search_for) > -1)
+                    return true
+                if (transaction.pay_to.title.indexOf(transactions_app.search_for) > -1)
+                    return true
+                return false
+
             })
         },
         to_price: function (vall) {

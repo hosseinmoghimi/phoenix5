@@ -611,12 +611,63 @@ class TransactionView(View):
 class TransactionsView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
+        if 'account_id_1' in kwargs:
+            context['account_id_1']=kwargs['account_id_1']
+        if 'account_id_2' in kwargs:
+            context['account_id_2']=kwargs['account_id_2']
+        if 'account_id' in kwargs:
+            context['account_id']=kwargs['account_id']
         transactions=TransactionRepo(request=request).list(*args, **kwargs)
         context['transactions']=transactions
         transactions_s=json.dumps(TransactionSerializer(transactions,many=True).data)
         context['transactions_s']=transactions_s
         context['expand_transactions']=True
         return render(request,TEMPLATE_ROOT+"transactions.html",context)
+class TransactionsExcelView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        transactions=TransactionRepo(request=request).list(*args, **kwargs)
+        context['transactions']=transactions
+        transactions_s=json.dumps(TransactionSerializer(transactions,many=True).data)
+        context['transactions_s']=transactions_s
+
+
+        now=PersianCalendar().date
+        date=PersianCalendar().from_gregorian(now)
+        lines=[]
+        for i,transaction in enumerate(transactions,1):
+            line={
+                'ردیف':i,
+                'عنوان':transaction.title,
+                'پرداخت کننده':transaction.pay_from.title,      
+                'دریافت کننده':transaction.pay_to.title,      
+                'مبلغ':transaction.amount,      
+                'تاریخ':PersianCalendar().from_gregorian(transaction.transaction_datetime),      
+            }
+            lines.append(line) 
+        report_work_book=ReportWorkBook()
+        report_work_book=ReportWorkBook(origin_file_name=f'Page.xlsx')
+        style=get_style(font_name='B Koodak',size=12,bold=False,color='FF000000',start_color='FFFFFF',end_color='FF000000')
+ 
+        report_work_book.add_sheet(
+             data=lines,
+            start_row=3,
+            start_col=1,
+            table_has_header=False,
+            table_headers=None,
+            style=style,
+            sheet_name='links',
+        )
+      
+        file_name=f"""{date.replace('/','').replace(':','')}   Page {1}.xlsx"""
+        
+        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        # response.AppendHeader("Content-Type", "application/vnd.ms-excel");
+        response["Content-disposition"]=f"attachment; filename={file_name}"
+        report_work_book.work_book.save(response)
+        report_work_book.work_book.close()
+        return response
+        
 class TransactionsPrintView(View):
     def post(self,request,*args, **kwargs):
         transactions_print_form=TransactionsPrintForm(request.POST)
