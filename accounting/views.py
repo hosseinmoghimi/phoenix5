@@ -160,7 +160,7 @@ def get_account_context(request,*args, **kwargs):
     invoices=account.invoices()
     context['invoices']=invoices
     context['invoices_s']=json.dumps(InvoiceSerializer(invoices,many=True).data)
-    count=int(ParameterRepo(request=request,app_name=APP_NAME).parameter(name=ParameterAccountingEnum.COUNT_OF_ITEM_PER_PAGE,default=10).value)
+    count=int(ParameterRepo(request=request,app_name=APP_NAME).parameter(name=ParameterAccountingEnum.COUNT_OF_ITEM_PER_PAGE,default=100).value)
     count=kwargs['count'] if 'count' in kwargs else count
     financial_documents=FinancialDocumentRepo(request=request).list(account_id=account.id)[:count]
     context['financial_documents']=financial_documents
@@ -169,6 +169,11 @@ def get_account_context(request,*args, **kwargs):
     financial_balances=FinancialBalanceRepo(request=request).list(account_id=account.id)
     context['financial_balances']=financial_balances
     context['financial_balances_s']=json.dumps(FinancialBalanceSerializer(financial_balances,many=True).data)
+
+
+    costs=CostRepo(request=request).list(account_id=account.id)
+    context['costs']=costs
+    context['costs_s']=json.dumps(CostSerializer(costs,many=True).data)
 
 
 
@@ -689,7 +694,7 @@ class ChequeView(View):
         return render(request,TEMPLATE_ROOT+"cheque.html",context)
     
 
-class AccountView(View):  
+class AccountView(View):
     def post(self,request,*args, **kwargs):
         context={
             'result':FAILED
@@ -704,7 +709,6 @@ class AccountView(View):
                 context['result']=SUCCEED
 
         return JsonResponse(context)
-
         
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)

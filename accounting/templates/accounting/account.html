@@ -37,6 +37,10 @@
         {% include "accounting/includes/transactions-app/template.html" %}
     </div>
 
+    <div class="col-md-12">
+        {% include "accounting/includes/costs-app/template.html" %}
+    </div>
+
 </div>
 {% endblock content %}
 
@@ -46,4 +50,5 @@
 {% include "accounting/includes/payments-app/script.html" %}
 {% include "accounting/includes/transactions-app/script.html" %}
 {% include "accounting/includes/financial-balances-app/script.html"  %}
+{% include "accounting/includes/costs-app/script.html"  %}
 {% endblock script %}
