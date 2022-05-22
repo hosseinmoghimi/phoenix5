@@ -242,11 +242,7 @@ class LetterRepo():
     def send_letter(self,*args, **kwargs):
         # if not self.request.user.has_perm(APP_NAME+".add_letter"):
         #     return
-        print(kwargs)
-        print(100*"#")
         letter=LetterRepo(request=self.request).letter(*args, **kwargs)
-        print(letter)
-        print(100*"@")
         # if 'letter_id' in kwargs:
         #     letter=Letter.objects.filter(pk=kwargs['letter_id']).first()
         if letter is None:
@@ -267,6 +263,8 @@ class LetterRepo():
         letter_sent.profile=self.profile
         if 'paraf' in kwargs:
             letter_sent.paraf=kwargs['paraf']
+        if 'description' in kwargs:
+            letter_sent.description=kwargs['description']
         if 'recipient_id' in kwargs:
             letter_sent.recipient_id=kwargs['recipient_id']
             

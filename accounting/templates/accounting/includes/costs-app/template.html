@@ -81,7 +81,9 @@
                         <tbody>
                             <tr v-for="cost in costs">
                                 <td>
-                                    <span v-text="cost.title"></span>
+                                    <a :href="cost.get_absolute_url">
+                                        <span v-text="cost.title"></span>
+                                    </a>
 
                                 </td>
                                 <td>

@@ -47,6 +47,7 @@ class SpendTypeEnum(TextChoices):
 
 class CostTypeEnum(TextChoices):
     WATER="هزینه آب",_("هزینه آب")
+    FOOD="هزینه خوراک",_("هزینه خوراک")
     TELEPHONE="هزینه تلفن",_("هزینه تلفن")
     ELECTRICITY="هزینه برق",_("هزینه برق")
     INTERNET="هزینه اینترنت",_("هزینه اینترنت")

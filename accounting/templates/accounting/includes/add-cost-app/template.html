@@ -18,26 +18,15 @@
             data-parent="#accordion-add-cost">
             <div class="card-body">
                 {% load static %}
-               
                 <form @submit.prevent="add_cost()">
-
                     <div class="row">
-                
                         <div class="col-md-12">
                             <div class="form-group">
                                 <label for="">عنوان
-                
                                 </label>
-                
-                
                                 <input required type="text" class="form-control" v-model="title">
-                
                             </div>
-                
-                
                         </div>
-                
-                
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label for="">پرداخت کننده</label>
@@ -48,112 +37,59 @@
                                 </select>
                             </div>
                         </div>
-                
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label for="">هزینه برای</label>
-                
                                 <select v-model="cost_type" class="form-control">
                                     {% for cost_type in cost_types %}
                                     <option value="{{cost_type}}">{{cost_type}}</option>
-                
-                                    {% endfor %}
-                                </select>
-                
-                            </div>
-                
-                
-                        </div>
-                
-                        
-                
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label for="">دریافت کننده</label>
-                                <select class="form-control" v-model="pay_to_id" name="" id="">
-                                    {% for account in accounts %}
-                                    <option value="{{account.id}}">{{account.title}}</option>
                                     {% endfor %}
                                 </select>
                             </div>
                         </div>
+                         
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label for="">تاریخ</label>
-                
                                 <div class="row">
-                
                                     <div class="col-8">
-                
                                         <date-picker v-model="payment_datetime"></date-picker>
-                
                                     </div>
                                 </div>
                             </div>
-                
-                
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
-                                <label for="">مبلغ
-                                    :
+                                <label for="">مبلغ :
                                     <span v-html="to_price(amount)"></span>
-                
                                 </label>
-                
-                
-                                <input required type="number" class="form-control" min="0" v-model="amount">
-                
+                                <input min="0" required type="number" class="form-control" v-model="amount">
                             </div>
-                
-                
                         </div>
-                
-                
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label for="">نحوه پرداخت</label>
-                
-                
                                 <select v-model="payment_method" class="form-control">
                                     {% for payment_method in payment_methods %}
                                     <option value="{{payment_method}}">{{payment_method}}</option>
-                
                                     {% endfor %}
                                 </select>
-                
                             </div>
-                
-                
                         </div>
-                
-                
-                
-                  
                         <div class="col-md-12">
                             <div class="form-group">
                                 <label for="">توضیحات
-                
                                 </label>
-                
-                
                                 <input type="text" class="form-control" v-model="description">
-                
                             </div>
-                
-                
                         </div>
-                
-                
                         <div class="col-md-12 pt-4">
                             <div class="form-group">
                                 <img src="{% static 'leo/img/loading.gif' %}" width="32" v-if="waiting" alt="">
-                
                                 <button class="btn px-3 btn-success" type="submit">
                                     <i class="fa fa-plus"></i>
                                     افزودن</button>
                             </div>
-                
                         </div>
                         <div class="col-md-12 text-right">
                             <div class="my-3 text-right" v-if="message.show">

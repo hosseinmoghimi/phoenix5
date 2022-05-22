@@ -115,6 +115,7 @@ class LetterSent(models.Model,LinkHelper):
         "letter"), on_delete=models.CASCADE)
     profile=models.ForeignKey("authentication.profile", verbose_name=_("profile"), on_delete=models.CASCADE)
     paraf=models.CharField(_("paraf"), max_length=500)
+    description=models.CharField(_("paraf"), max_length=5000)
     date_sent = models.DateTimeField(
         _("date sent"), auto_now=False, auto_now_add=False)
     class_name="lettersent"
