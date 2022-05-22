@@ -161,6 +161,8 @@ class OrganizationUnitView(View):
         context = getContext(request=request)
         organization_unit = OrganizationUnitRepo(
             request=request).organization_unit(*args, **kwargs)
+        if request.user.has_perm("organization.add_letter"):
+            context['add_letter_form']=AddLetterForm()
         if organization_unit is None:
             mv=MessageView(request=request)
             mv.title="واحد سازمانی موردنظر یافت نشد."

@@ -25,6 +25,10 @@
         <div id="collapse-letters" class="collapse {% if expand_letters %}show{% endif %}" aria-labelledby="heading-letters"
             data-parent="#accordion-letters">
             <div class="card-body">
+                {% if add_letter_form %}
+                {% include "organization/includes/add-letter-app/form.html" %}
+                  
+                {% endif %}
                 <div class="table-responsive">
                     <table class="table table-striped">
                         <thead>

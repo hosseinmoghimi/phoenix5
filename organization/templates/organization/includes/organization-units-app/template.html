@@ -8,8 +8,8 @@
         <div class="card-header" id="heading-organization-units">
 
             <h5 class="card-title text-center farsi">
-                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-organization-units" aria-expanded="true"
-                    aria-controls="collapse-organization-units">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-organization-units"
+                    aria-expanded="true" aria-controls="collapse-organization-units">
                     لیست واحد های سازمانی ها
                     <span v-if="organization_units.length>0">
                         <small class="text-danger mx-2">
@@ -37,13 +37,13 @@
                     <a :href="organization_unit.get_absolute_url">
                         <div class="media">
 
-                             <img class="rounded" width="48" :src="organization_unit.logo" alt="">
+                            <img class="rounded" width="48" :src="organization_unit.logo" alt="">
 
-                            <div class="media-body farsi mr-2">
+                            <div class="media-body farsi mr-3">
 
-                                
+
                                 <h5>
-                                    
+
                                     <span v-html="organization_unit.title">
                                     </span>
 
@@ -53,9 +53,17 @@
                                     <span v-text="organization_unit.pre_title">
 
                                     </span>
-                                    <span v-html="organization_unit.title">
+                                    <span  class="text-muted" v-html="organization_unit.title">
                                     </span>
 
+                                </h6>
+
+                                <h6 class="text-muted" v-if="organization_unit.account">
+                                    <a :href="organization_unit.account.get_absolute_url">
+
+                                        <span class="text-muted" v-html="organization_unit.account.title">
+                                        </span>
+                                    </a>
                                 </h6>
 
 
