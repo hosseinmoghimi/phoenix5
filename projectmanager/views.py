@@ -139,6 +139,11 @@ class ProjectView(View):
     def get(self, request, *args, **kwargs):
         context = getContext(request=request)
         project = ProjectRepo(request=request).project(*args, **kwargs)
+        if project is None:
+            mv=MessageView(request=request)
+            mv.title="پروژه مورد نظر پیدا نشد."
+            mv.body="پروژه مورد نظر پیدا نشد."
+            return mv.response()
         context.update(PageContext(request=request, page=project))
 
         my_project_ids = []

@@ -10,7 +10,9 @@ from tinymce.models import HTMLField
 IMAGE_FOLDER=APP_NAME+"/images/"
 
 
+
 class Blog(Page):
+    header_image=""
     for_home=models.BooleanField(_("for_home"),default=False)
  
     def save(self,*args, **kwargs):
@@ -25,7 +27,7 @@ class Blog(Page):
         verbose_name_plural = _("Blogs")
  
  
-class Carousel(models.Model):
+class Carousel(models.Model,LinkHelper):
     image_banner = models.ImageField(_("تصویر اسلایدر  1333*2000 "), upload_to=IMAGE_FOLDER +
                                      'Banner/', height_field=None, width_field=None, max_length=None)
     title = models.CharField(_("عنوان"), null=True, blank=True, max_length=500)
@@ -39,6 +41,7 @@ class Carousel(models.Model):
     tag_text = models.CharField(
         _("متن برچسب"), max_length=100, blank=True, null=True)
     class_name="carousel"
+    app_name=APP_NAME
     class Meta:
         verbose_name = _("Carousel")
         verbose_name_plural = _("اسلایدر های صفحه اصلی")

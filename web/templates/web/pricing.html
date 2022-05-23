@@ -1,0 +1,131 @@
+{% extends "web/layout.html" %}
+{% load static %}
+{% load social_share %}
+
+{% block page_header %}
+<div class="page-header header-filter" data-parallax="true"
+    style="background-image: url('{% static 'web/img/pricing.jpg' %}');">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8 ml-auto mr-auto text-center">
+                <h2 class="title text-center">{{page.title}}</h2>
+                {% if page.panel %}
+                {{page.panel|safe}}
+                {% endif %}
+
+
+
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-8 ml-auto mr-auto text-center">
+                <h1 class="title text-center">Let's get started</h1>
+                <h4 class=" text-center">To get started, you will need to choose a plan for your needs. You can opt in for the monthly of
+                    annual options and go with one fo the three listed below.</h4>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+
+{% block content %}
+<div class="main main-raised">
+
+    <div class="container">
+
+
+        <div class="pricing-2">
+            <div class="row">
+                <div class="col-md-6 ml-auto mr-auto text-center">
+                    <ul class="nav nav-pills nav-pills-rose">
+                        <li class="nav-item">
+                            <a class="nav-link active docs-creator" href="#pill1" data-toggle="tab">Monthly</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link docs-creator" href="#pill2" data-toggle="tab">Yearly</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="card card-pricing card-plain">
+                        <div class="card-body">
+                            <h4 class="card-category text-info text-center">رایگان</h4>
+                            <h1 class="card-title text-center"><small>$</small>0<small> ماهیانه</small></h1>
+                            <ul>
+                                <li><b>30</b> Project</li>
+                                <li><b>5</b> Team Members</li>
+                                <li><b>55</b> Personal Contacts</li>
+                                <li><b>5.000</b> Messages</li>
+                            </ul>
+                            <a href="#pablo" class="btn btn-rose btn-raised btn-round docs-creator farsi">
+
+                                شروع کنید
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card card-pricing card-raised bg-rose">
+                        <div class="card-body">
+                            <h4 class="card-category text-info text-center">طلایی</h4>
+                            <h1 class="card-title text-center"><small>$</small>100<small> ماهیانه</small></h1>
+                            <ul>
+                                <li><b>500</b> Projects</li>
+                                <li><b>50</b> Team Members</li>
+                                <li><b>125</b> Personal Contacts</li>
+                                <li><b>15.000</b> Messages</li>
+                            </ul>
+                            <a href="#pablo" class="btn btn-white btn-raised btn-round docs-creator farsi">
+                                شروع کنید
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card card-pricing card-plain">
+                        <div class="card-body">
+                            <h4 class="card-category text-info text-center">پلاتینیوم</h4>
+                            <h1 class="card-title text-center"><small>$</small>300<small> ماهیانه</small></h1>
+                            <ul>
+                                <li><b>2000</b> Projects</li>
+                                <li><b>100</b> Team Members</li>
+                                <li><b>550</b> Personal Contacts</li>
+                                <li><b>50.000</b> Messages</li>
+                            </ul>
+                            <a href="#pablo" class="btn btn-rose btn-raised btn-round docs-creator farsi">
+                                شروع کنید
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+{% endblock %}
+
+{% block script %}
+{% include "core/includes/page-app/script.html" %}
+<script>
+    page_comment_component_template = `{% include "web/includes/page-comments-app/component.html" %}`
+</script>
+
+{% endblock %}
+
+
+{% block vertical_nav %}
+
+{% endblock %}
+
+{% block nav_bar %}
+
+{% endblock %}

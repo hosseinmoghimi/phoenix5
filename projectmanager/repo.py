@@ -1,3 +1,4 @@
+from organization.models import Employee
 from core.enums import ParameterNameEnum
 from core.repo import PagePermissionRepo, PageRepo, ParameterRepo
 from map.repo import LocationRepo
@@ -111,6 +112,7 @@ class ProjectRepo():
         else:
             me_emp=Employee.objects.filter(account__profile_id=self.profile.id).first()
             if me_emp is not None:
+
                 self.objects=self.objects.filter(id__in=me_emp.my_project_ids())
             else:
                 self.objects=self.objects.filter(id__in=[0])
@@ -264,8 +266,7 @@ class EventRepo():
     def add_event(self,*args, **kwargs):
         if 'project_id' in kwargs:
             project_id= kwargs['project_id']
-        # my_project_ids=PageRepo(request=self.request).my_pages_ids()
-
+   
         can_write=False
         if self.profile is not None:
             page_permission=PagePermissionRepo(request=self.request).list(page_id=project_id,profile_id=self.profile.id).first()
@@ -325,6 +326,7 @@ class EventRepo():
         event.locations.add(location)
         event.save()
         return location
+
 
 class ServiceRequestRepo():
     def __init__(self, *args, **kwargs):
@@ -438,8 +440,9 @@ class RequestSignatureRepo():
             self.objects = WareHouse.objects.filter(pk__lte=0).order_by('title')
 
     def add_signature(self,*args, **kwargs):
-        if not self.user.has_perm(APP_NAME+".add_requestsignature"):
-            return 
+        if self.user.has_perm(APP_NAME+".add_requestsignature"):
+            pass
+        
         from projectmanager.repo import EmployeeRepo
         employee=EmployeeRepo(request=self.request).me
         if employee is None:
@@ -454,6 +457,9 @@ class RequestSignatureRepo():
         
         signature.employee_id=employee.id
         signature.save()
+        if employee.organization_unit.id==signature.request.project.employer.id:
+            signature.request.status=signature.status
+            signature.request.save()
         return signature
     
     def list(self,*args, **kwargs):

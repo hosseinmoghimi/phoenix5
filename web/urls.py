@@ -10,5 +10,6 @@ urlpatterns = [
     path("blog/<int:pk>/",views.BlogView.as_view(),name="blog"),
     path("feature/<int:pk>/",views.FeatureView.as_view(),name="feature"),
     path("our_work/<int:pk>/",views.OurWorkView.as_view(),name="ourwork"),
+    path("pricing/<int:pk>/",views.PricingView.as_view(),name="pricing"),
     path("our_team/<int:pk>/",views.HomeView.as_view(),name="ourteam"),
 ]

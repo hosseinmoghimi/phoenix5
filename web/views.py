@@ -117,6 +117,13 @@ class SearchView(View):
         return render(request,TEMPLATE_ROOT+"search.html",context) 
 
 
+class PricingView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        # blog=BlogRepo(request=request).blog(*args, **kwargs)
+        # context.update(PageContext(request=request,page=blog))
+        context['body_class']="pricing sidebar-collapse"
+        return render(request,TEMPLATE_ROOT+"pricing.html",context)
 
 class BlogView(View):
     def get(self,request,*args, **kwargs):

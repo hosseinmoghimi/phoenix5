@@ -1,10 +1,11 @@
 <script>
-    let request_app=new Vue({
-        el:"request-app",
-        data:{
-
+    let status_tag = `{{my_request.get_status_tag|safe}}`
+    let request_app = new Vue({
+        el: "#request-app",
+        data: {
+            status_tag: status_tag,
         },
-        methods:{
+        methods: {
 
         }
     })

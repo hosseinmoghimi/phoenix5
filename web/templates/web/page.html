@@ -3,11 +3,11 @@
 {% load social_share %}
 
 {% block page_header %}
-<div class="page-header header-filter1" data-parallax="true" style="background-image: url('{{page.image_header}}');">
+<div class="page-header header-filter" data-parallax="true" style="background-image: url('{{page.header}}');">
     <div class="container">
         <div class="row">
             <div class="col-md-8 ml-auto mr-auto text-center">
-                <!-- <h2 class="title text-center">{{page.title}}</h2> -->
+                <h2 class="title text-center">{{page.title}}</h2>
                 {% if page.panel %}
                 {{page.panel|safe}}
                 {% endif %}
@@ -29,24 +29,42 @@
     <div class="container">
         <div class="section section-text" style="padding-top: 10px !important;">
             <div class="row">
-                <div class="col-md-8 ml-auto mr-auto pt-4">
+                <div class="col-md-9 ml-auto mr-auto pt-4">
                     {% if page.sub_title %}
 
-                    <h4 class="mb-0 mt-4 text-center">{{page.sub_title}}</h4>
+                    <h4 class="mb-0 mt-4 text-right">{{page.sub_title}}</h4>
                     {% endif %}
-                    <h3 class="mt-0 title text-center">{{page.title}}
-                        
-                    {% include "core/includes/page-like-app/template.html" %}
-                 </h3>
+                    <h3 class="mt-0 title text-right">
+                        {{page.title}}
+                        {% if perms.web.change_page %}
+
+                        <a href="{{page.get_edit_url}}" target="_blank" title="ویرایش">
+                            <i class="fa fa-edit text-warning"></i>
+                        </a>
+                        {% endif %}
+
+                        {% if perms.web.delete_page %}
+
+                        <a href="{{page.get_delete_url}}" target="_blank" title="حذف">
+                            <i class="fa fa-trash text-danger"></i>
+                        </a>
+                        {% endif %}
+
+
+                    </h3>
+<div class="text-right farsi">
+    
+    {% include "core/includes/page-like-app/template.html" %}
+</div>
                     <div class=" text-center mb-3">
                         {% if perms.web.change_webpage %}
 
-                        <a href="{{page.get_edit_url}}" target="_blank" class="btn btn-rose btn-round btn-lg">
+                        <!-- <a href="{{page.get_edit_url}}" target="_blank" class="btn btn-rose btn-round btn-lg">
                             <i class="material-icons">edit</i>
                             <span class="farsi">
                                 ویرایش
                             </span>
-                        </a>
+                        </a> -->
                         {% endif %}
 
                         <span class="my-2">
@@ -67,7 +85,7 @@
 
 
                 {% if page.short_description %}
-                <div class="col-md-8 ml-auto mr-auto farsi">
+                <div class="col-md-9 ml-auto mr-auto farsi">
 
                     {{page.short_description|safe}}
 
@@ -78,7 +96,7 @@
 
 
                 {% if page.description %}
-                <div class="col-md-8 ml-auto mr-auto farsi">
+                <div class="col-md-9 ml-auto mr-auto farsi">
 
                     {{page.description|safe}}
 
@@ -88,7 +106,7 @@
         </div>
         <div class="section section-blog-info">
             <div class="row">
-                <div class="col-md-8 ml-auto mr-auto">
+                <div class="col-md-9 ml-auto mr-auto">
                     {% if page_tags %}
 
                     <div class="blog-tags farsi text-right">

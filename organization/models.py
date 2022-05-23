@@ -98,6 +98,10 @@ class Employee(models.Model,LinkHelper):
             # for org in self.organization_unit_set.all():
             for proj in self.organization_unit.project_set.all():
                 ids.append(proj.id)
+            for proj in self.organization_unit.projects_employed.all():
+                ids.append(proj.id)
+            for proj in self.organization_unit.projects_contracted.all():
+                ids.append(proj.id)
             # ids=(proj for proj in self.organization_unit.project_set.all())
         return ids
 

@@ -9,7 +9,7 @@ from projectmanager.repo import  EventRepo, MaterialRepo, MaterialRequestRepo, P
 from django.http import JsonResponse
 from organization.repo import OrganizationUnitRepo,EmployeeRepo
 from projectmanager.forms import *
-from projectmanager.serializers import EventSerializer, MaterialRequestSerializer, MaterialSerializer, OrganizationUnitSerializer, ProjectSerializer, RequestSignatureSerializer, ServiceRequestSerializer, ServiceSerializer
+from projectmanager.serializers import EventSerializer, MaterialRequestSerializer, MaterialSerializer, OrganizationUnitSerializer, ProjectSerializer, RequestSerializer, RequestSignatureSerializer, ServiceRequestSerializer, ServiceSerializer
 
 
 class AddProjectApi(APIView):
@@ -56,6 +56,7 @@ class AddSignatureApi(APIView):
                 signature=RequestSignatureRepo(request=request).add_signature(**cd)
                 if signature is not None:
                     context['request_signature']=RequestSignatureSerializer(signature).data
+                    context['request']=RequestSerializer(signature.request).data
                     context['result']=SUCCEED
         context['log']=log
         return JsonResponse(context)

@@ -18,6 +18,12 @@ upload_storage = FileSystemStorage(location=UPLOAD_ROOT, base_url='/uploads')
 class ImageMixin():
 
     @property
+    def header(self):
+        if self.header_origin:
+            return MEDIA_URL+str(self.header_origin)
+        return f'{STATIC_URL}{self.app_name}/img/pages/header/{self.class_name}.png'
+
+    @property
     def image(self):
         if self.image_main_origin:
             return MEDIA_URL+str(self.image_main_origin)
@@ -70,10 +76,11 @@ class ImageMixin():
             output, 'ImageField', image_name, image_path, sys.getsizeof(output), None)
         return MEDIA_URL+str(self.thumbnail_origin)
 
-    
+
 class Page(models.Model, LinkHelper, ImageMixin):
     title = models.CharField(_("عنوان"), max_length=5000)
     thumbnail_origin = models.ImageField(_("تصویر کوچک"), upload_to=IMAGE_FOLDER+'ImageBase/Thumbnail/',null=True, blank=True, height_field=None, width_field=None, max_length=None)
+    header_origin = models.ImageField(_("تصویر سربرگ"), upload_to=IMAGE_FOLDER+'ImageBase/Header/',null=True, blank=True, height_field=None, width_field=None, max_length=None)
     short_description = HTMLField(_("توضیحات کوتاه"), null=True, blank=True, max_length=50000)
     description = HTMLField(_("توضیحات"), null=True,blank=True, max_length=50000)
     app_name = models.CharField(_("app_name"), null=True, blank=True, max_length=50)

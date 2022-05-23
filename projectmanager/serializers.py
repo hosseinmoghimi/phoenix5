@@ -42,7 +42,7 @@ class RequestSignatureSerializer(serializers.ModelSerializer):
 class RequestSerializer(serializers.ModelSerializer):
     class Meta:
         model = Request
-        fields = ['id','title', 'get_absolute_url']
+        fields = ['id','title','get_status_tag', 'get_absolute_url']
 
 
 class RequestSignatureForEmployeeSerializer(serializers.ModelSerializer):
