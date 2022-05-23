@@ -10,6 +10,14 @@
                  
                {% endif %}
                 </h2>
+                {% if perms.web.add_testimonial %}
+                <div class="text-center">
+                    <a target="_blank" href="{{ADMIN_URL}}{{APP_NAME}}/testimonial/add/?for_home=1" title="افزودن">
+                        <i class="fa fa-plus text-success"></i>
+                    </a>
+                </div>
+                {% endif %}
+
             <div class="row">
                 
                 <div class="col-md-12">

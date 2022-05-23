@@ -1,5 +1,4 @@
-{% if our_works %}
-  
+
 <div class="cd-section" id="projects">
 
     <!--     *********    PROJECTS 3     *********      -->
@@ -11,17 +10,25 @@
                         {{ourwork_pretitle_param.value}}
                         {% if perms.core.change_parameter %}
                         {{ourwork_pretitle_param.get_edit_btn|safe}}
-                          
+
                         {% endif %}
                     </h6>
                     <h2 class="title text-center">
-                   {{ourwork_title_param.value}}
-                   
-                   {% if perms.core.change_parameter %}
-                   {{ourwork_title_param.get_edit_btn|safe}}
-                     
-                   {% endif %}
+                        {{ourwork_title_param.value}}
+
+                        {% if perms.core.change_parameter %}
+                        {{ourwork_title_param.get_edit_btn|safe}}
+
+                        {% endif %}
                     </h2>
+                    {% if perms.web.add_ourwork %}
+                    <div class="text-center">
+                        <a target="_blank" href="{{ADMIN_URL}}{{APP_NAME}}/ourwork/add/?for_home=1" title="افزودن">
+                            <i class="fa fa-plus text-success"></i>
+                        </a>
+                    </div>
+                    {% endif %}
+
                 </div>
             </div>
             <div class="row">
@@ -35,7 +42,7 @@
                         </a>
                         <div class="card-body ">
                             <h6 class="card-category">
-                                
+
                                 {% if our_work.sub_title %}
 
                                 {{our_work.sub_title}}
@@ -57,7 +64,4 @@
         </div>
     </div>
     <!--     *********    END PROJECTS 3      *********      -->
-
 </div>
-
-{% endif %}

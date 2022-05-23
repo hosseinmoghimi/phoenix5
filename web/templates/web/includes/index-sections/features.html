@@ -19,6 +19,14 @@
 
                         {% endif %}
                     </h5>
+                    {% if perms.web.add_feature %}
+                    <div class="text-center">
+                        <a target="_blank" href="{{ADMIN_URL}}{{APP_NAME}}/feature/add/?for_home=1" title="افزودن">
+                            <i class="fa fa-plus text-success"></i>
+                        </a>
+                    </div>
+                    {% endif %}
+
                 </div>
             </div>
             <div class="row">

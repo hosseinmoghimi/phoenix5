@@ -10,7 +10,7 @@ from .apps import APP_NAME
 # from .repo import ProductRepo
 # from .serializers import ProductSerializer
 import json
-from .repo import BlogRepo,FeatureRepo, OurTeamRepo,OurWorkRepo,CarouselRepo, TestimonialRepo
+from .repo import BlogRepo,FeatureRepo, OurTeamRepo,OurWorkRepo,CarouselRepo, PricingItemRepo, PricingPageRepo, TestimonialRepo
 
 TEMPLATE_ROOT = "web/"
 LAYOUT_PARENT = "material-kit-pro/layout.html"
@@ -70,6 +70,9 @@ class HomeView(View):
         testimonials=TestimonialRepo(request=request).list(*args, **kwargs)
         context['testimonials']=testimonials
 
+        pricing_pages=PricingPageRepo(request=request).list()
+        context['pricing_pages']=pricing_pages
+
 
 
         parameter_repo=ParameterRepo(request=request,app_name=APP_NAME)
@@ -84,10 +87,13 @@ class HomeView(View):
         context['ourwork_title_param']=parameter_repo.parameter(name=ParameterEnum.OUR_WORKS_TITLE)
         context['ourwork_description_param']=parameter_repo.parameter(name=ParameterEnum.OUR_WORKS_DESCRIPTION)
 
-        context['ourteam_title_param']=parameter_repo.parameter(name=ParameterEnum.OUR_WORKS_TITLE)
+        context['ourteam_title_param']=parameter_repo.parameter(name=ParameterEnum.OUR_TEAMS_TITLE)
         context['ourteam_description_param']=parameter_repo.parameter(name=ParameterEnum.OUR_TEAMS_DESCRIPTION)
 
         context['testimonial_title_param']=parameter_repo.parameter(name=ParameterEnum.TESTIMONIAL_TITLE)
+
+        
+        context['pricing_title_param']=parameter_repo.parameter(name=ParameterEnum.PRICING_TITLE)
 
         
         return render(request,TEMPLATE_ROOT+"index.html",context)
@@ -117,13 +123,20 @@ class SearchView(View):
         return render(request,TEMPLATE_ROOT+"search.html",context) 
 
 
-class PricingView(View):
+class PricingPageView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
-        # blog=BlogRepo(request=request).blog(*args, **kwargs)
-        # context.update(PageContext(request=request,page=blog))
+        pricing_page=PricingPageRepo(request=request).pricing_page(*args, **kwargs)
+        context['pricing_page']=pricing_page
+        context.update(PageContext(request=request,page=pricing_page))
         context['body_class']="pricing sidebar-collapse"
-        return render(request,TEMPLATE_ROOT+"pricing.html",context)
+        return render(request,TEMPLATE_ROOT+"pricing-page.html",context)
+class PricingItemView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        pricing_item=PricingItemRepo(request=request).pricing_item(*args, **kwargs)
+        context['body_class']="pricing sidebar-collapse"
+        return render(request,TEMPLATE_ROOT+"pricing-item.html",context)
 
 class BlogView(View):
     def get(self,request,*args, **kwargs):

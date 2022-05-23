@@ -25,7 +25,8 @@ class ParameterEnum(TextChoices):
     OUR_WORKS_PRE_TITLE="پیش عنوان پروژه های ما",_("پیش عنوان پروژه های ما")
     OUR_WORKS_TITLE="عنوان پروژه های ما",_("عنوان پروژه های ما")
     OUR_WORKS_DESCRIPTION="توضیح پروژه های ما",_("توضیح پروژه های ما")
-    OURWORKS_TITLE="عنوان تیم ما",_("عنوان تیم ما")
+    OUR_TEAMS_TITLE="عنوان تیم ما",_("عنوان تیم ما")
     OUR_TEAMS_DESCRIPTION="توضیح تیم ما",_("توضیح تیم ما")
-    TESTIMONIAL_TITLE="عنوان گفته هایی مورد ما",_("عنوان گفته هایی مورد ما")
+    TESTIMONIAL_TITLE="عنوان گفته هایی در مورد ما",_("عنوان گفته هایی در مورد ما")
+    PRICING_TITLE="عنوان لیست قیمت",_("عنوان لیست قیمت")
 

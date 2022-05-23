@@ -10,7 +10,75 @@ from tinymce.models import HTMLField
 IMAGE_FOLDER=APP_NAME+"/images/"
 
 
+class PricingPage(Page):
+    # priority=models.IntegerField(_("priority"), default=100)
+ 
+    def get_add_item_url(self):
+        return f"{ADMIN_URL}{APP_NAME}/pricingitem/add/?pricing_page={self.pk}"
+ 
+    def pricingitems(self):
+        return self.pricingitem_set.order_by('priority')
+    def save(self,*args, **kwargs):
+        if self.class_name is None or self.class_name=="":
+            self.class_name="pricingpage"
+        if self.app_name is None or self.app_name=="":
+            self.app_name=APP_NAME
+        return super(PricingPage,self).save(*args, **kwargs)
 
+    class Meta:
+        verbose_name = _("PricingPage")
+        verbose_name_plural = _("PricingPages")
+        
+class PricingItem(models.Model,LinkHelper):
+    pricing_page=models.ForeignKey("pricingpage", verbose_name=_("pricing page"), on_delete=models.CASCADE)
+    title=models.CharField(_("title"), max_length=200)
+    price=models.CharField(_("price"), max_length=200)
+    color=models.CharField(_("color"),choices=ColorEnum.choices,default=ColorEnum.LIGHT, max_length=50)
+    priority=models.IntegerField(_("priority"), default=100)
+    raised=models.BooleanField(_("raised"),default=False)
+    class_name="pricingitem"
+    app_name=APP_NAME
+    
+    def pricingitemspecifications(self):
+        return self.pricingitemspecification_set.order_by('priority')
+
+    def get_add_specicification_url(self):
+        return f"{ADMIN_URL}{APP_NAME}/pricingitemspecification/add/?pricing_item={self.pk}"
+    def get_class(self):
+        class_=""
+        if self.color!=ColorEnum.LIGHT:
+            class_+=" bg-"+self.color
+        else:
+            class_+= " card-plain"
+
+        if self.raised:
+            class_+="  card-raised"
+        return class_
+
+    class Meta:
+        verbose_name = _("PricingItem")
+        verbose_name_plural = _("PricingItems")
+
+    def __str__(self):
+        return f"{self.pricing_page} - {self.title}"
+
+class PricingItemSpecification(models.Model,LinkHelper):
+    pricing_item=models.ForeignKey("pricingitem", verbose_name=_("آیتم"), on_delete=models.CASCADE)
+    name=models.CharField(_("نام"), max_length=200)
+    value=models.CharField(_("مقدار"), max_length=200)
+    priority=models.IntegerField(_("ترتیب"), default=100)
+
+    class_name="pricingitemspecification"
+    app_name=APP_NAME
+    
+
+    class Meta:
+        verbose_name = _("PricingItemSpecification")
+        verbose_name_plural = _("PricingItemsSpecification")
+
+    def __str__(self):
+        return f"{self.priority} - {self.pricing_item} - {self.name} - {self.value}"
+ 
 class Blog(Page):
     header_image=""
     for_home=models.BooleanField(_("for_home"),default=False)

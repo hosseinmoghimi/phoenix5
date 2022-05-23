@@ -1,18 +1,18 @@
-<div class="cd-section" id="blogs">
-    <!--     *********     BLOGS 2      *********      -->
-    <div class="blogs-2" id="blogs-2" >
+<div class="cd-section" id="pricing">
+    <!--     *********     PRICING 2      *********      -->
+    <div class="blogs-2" id="pricing-2" >
         <div class="container">
             <div class="row">
                 <div class="col-md-10 ml-auto mr-auto">
                     <h2 class="title text-center">
-                        {{blog_title_param.value}}
+                        {{pricing_title_param.value}}
                         {% if perms.core.change_parameter %}
-                        {{blog_title_param.get_edit_btn|safe}}
+                        {{pricing_title_param.get_edit_btn|safe}}
                         {% endif %}
                     </h2>
-                    {% if perms.web.add_blog %}
+                    {% if perms.web.add_pricingpage %}
                     <div class="text-center">
-                        <a target="_blank" href="{{ADMIN_URL}}{{APP_NAME}}/blog/add/?for_home=1" title="افزودن">
+                        <a target="_blank" href="{{ADMIN_URL}}{{APP_NAME}}/pricingpage/add/" title="افزودن">
                             <i class="fa fa-plus text-success"></i>
                         </a>
                     </div>
@@ -20,30 +20,30 @@
                     <br>
                     <div class="row" >
 
-                        {% for blog in blogs %}
+                        {% for pricing_page in pricing_pages %}
 
                         <div class="col-md-4">
                             <div class="card card-plain card-blog">
                                 <div class="card-header card-header-image">
-                                    <a href="{{blog.get_absolute_url}}">
-                                        <img class="img img-raised" src="{{blog.thumbnail}}">
+                                    <a href="{{pricing_page.get_absolute_url}}">
+                                        <img class="img img-raised" src="{{pricing_page.thumbnail}}">
                                     </a>
                                 </div>
                                 <div class="card-body">
                                     <h6 class="card-category text-info">
-                                        {% if blog.sub_title %}
+                                        {% if pricing_page.sub_title %}
 
-                                        {{blog.sub_title}}
+                                        {{pricing_page.sub_title}}
                                         {% endif %}
                                     </h6>
                                     <h4 class="card-title">
-                                        <a href="{{blog.get_absolute_url}}">
-                                            {{blog.title}}
+                                        <a href="{{pricing_page.get_absolute_url}}">
+                                            {{pricing_page.title}}
                                         </a>
                                     </h4>
                                    
                                     <p>
-                                        <a href="{{blog.get_absolute_url}}">
+                                        <a href="{{pricing_page.get_absolute_url}}">
                                             ادامه مطلب
                                             <i class="material-icons">reply</i>
                                         </a>

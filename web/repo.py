@@ -1,4 +1,5 @@
-from .models import Blog,Feature, OurTeam,OurWork,Carousel, Testimonial
+from web.apps import APP_NAME
+from .models import Blog,Feature, OurTeam,OurWork,Carousel, PricingItem, PricingPage, Testimonial
 from django.db.models import Q
 from authentication.repo import ProfileRepo
 
@@ -98,6 +99,105 @@ class BlogRepo:
         
         blog.save()
         return blog
+
+
+
+   
+class PricingPageRepo:
+    def __init__(self,*args, **kwargs):
+        self.request = None
+        self.user = None
+        if 'request' in kwargs:
+            self.request = kwargs['request']
+            self.user = self.request.user
+        if 'user' in kwargs:
+            self.user = kwargs['user']
+        self.objects = PricingPage.objects.order_by('priority')
+        self.me=ProfileRepo(user=self.user).me
+
+    def list(self,*args, **kwargs):
+        objects= self.objects.all()
+        if 'for_home' in kwargs:
+            objects=objects.filter(for_home=kwargs['for_home'])
+        if 'author_id' in kwargs:
+            objects=objects.filter(author_id=kwargs['author_id'])
+        if 'our_team_id' in kwargs:
+            objects=objects.filter(author_id=kwargs['our_team_id'])
+        if 'search_for' in kwargs:
+            search_for=kwargs['search_for']
+            objects=objects.filter(Q(title__contains=search_for) | Q(meta_data__contains=search_for)|Q(description__contains=search_for))
+        return objects
+
+    def pricing_page(self,*args, **kwargs):
+        pk=0
+        if 'pricing_page_id' in kwargs:
+            pk=kwargs['pricing_page_id']
+        elif 'pk' in kwargs:
+            pk=kwargs['pk']
+        elif 'id' in kwargs:
+            pk=kwargs['id']
+        return self.objects.filter(pk=pk).first()
+    def add_pricing_page(self,*args, **kwargs):
+        if not self.user.has_perm(APP_NAME+".add_pricingpage"):
+            return
+        
+        pricing_page=PricingPage()
+        if 'title' in kwargs:
+            pricing_page.title=kwargs['title']
+        if 'for_home' in kwargs:
+            pricing_page.for_home=kwargs['for_home']
+        
+        pricing_page.save()
+        return pricing_page
+
+
+   
+class PricingItemRepo:
+    def __init__(self,*args, **kwargs):
+        self.request = None
+        self.user = None
+        if 'request' in kwargs:
+            self.request = kwargs['request']
+            self.user = self.request.user
+        if 'user' in kwargs:
+            self.user = kwargs['user']
+        self.objects = PricingItem.objects.order_by('priority')
+        self.me=ProfileRepo(user=self.user).me
+
+    def list(self,*args, **kwargs):
+        objects= self.objects.all()
+        if 'for_home' in kwargs:
+            objects=objects.filter(for_home=kwargs['for_home'])
+        if 'author_id' in kwargs:
+            objects=objects.filter(author_id=kwargs['author_id'])
+        if 'our_team_id' in kwargs:
+            objects=objects.filter(author_id=kwargs['our_team_id'])
+        if 'search_for' in kwargs:
+            search_for=kwargs['search_for']
+            objects=objects.filter(Q(title__contains=search_for) | Q(meta_data__contains=search_for)|Q(description__contains=search_for))
+        return objects
+
+    def pricing_item(self,*args, **kwargs):
+        pk=0
+        if 'pricing_item_id' in kwargs:
+            pk=kwargs['pricing_item_id']
+        elif 'pk' in kwargs:
+            pk=kwargs['pk']
+        elif 'id' in kwargs:
+            pk=kwargs['id']
+        return self.objects.filter(pk=pk).first()
+    def add_pricing_item(self,*args, **kwargs):
+        if not self.user.has_perm(APP_NAME+".add_pricingitem"):
+            return
+        
+        pricing_item=PricingItem()
+        if 'title' in kwargs:
+            pricing_item.title=kwargs['title']
+        if 'for_home' in kwargs:
+            pricing_item.for_home=kwargs['for_home']
+        
+        pricing_item.save()
+        return pricing_item
 
 
 

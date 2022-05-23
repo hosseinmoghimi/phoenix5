@@ -1,0 +1,143 @@
+{% extends "web/layout.html" %}
+{% load static %}
+{% load social_share %}
+
+{% block page_header %}
+<div class="page-header header-filter" data-parallax="true"
+    style="background-image: url('{{pricing_page.header}}');">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8 ml-auto mr-auto text-center">
+                <h1 class="title text-center">{{pricing_page.title}}
+
+                    {% if perms.web.change_pricingpage %}
+                    <a href="{{pricing_page.get_edit_url}}" target="_blank" title="ویرایش">
+                        <i class="fa fa-edit text-warning"></i>
+                    </a>
+                  {% endif %}
+
+                </h1>
+                <h4 class=" text-center">{{pricing_page.short_description|safe}}</h4>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+
+{% block content %}
+<div class="main main-raised">
+    <div class="container">
+        <div class="pricing-2">
+            <!-- <div class="row">
+                <div class="col-md-6 ml-auto mr-auto text-center">
+                    <ul class="nav nav-pills nav-pills-rose">
+                        <li class="nav-item">
+                            <a class="nav-link active docs-creator" href="#pill1" data-toggle="tab">Monthly</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link docs-creator" href="#pill2" data-toggle="tab">Yearly</a>
+                        </li>
+                    </ul>
+                </div>
+            </div> -->
+
+            
+            <div class="row">
+                <div class="col-md-6 ml-auto mr-auto text-center">
+                    
+<h4 class="text-center">
+    یکی از بسته های زیر را انتخاب کنید
+    {% if perms.web.add_pricingitemspecification %}
+    <a href="{{pricing_page.get_add_item_url}}" target="_blank" title="افزودن آیتم">
+        <i class="fa fa-plus text-success"></i>
+    </a>
+  {% endif %}
+
+</h4>
+                </div>
+            </div>
+            
+            <div class="row">
+                {% for pricing_item in pricing_page.pricingitems %}
+                <div class="col-md-4">
+                    <div class="card card-pricing {{pricing_item.get_class}}">
+                        <div class="card-body">
+                            <h4 class="card-category text-info text-center">{{pricing_item.title}}
+
+                                {% if perms.web.change_pricingitem %}
+                                  <a href="{{pricing_item.get_edit_url}}" target="_blank" title="ویرایش">
+                                      <i class="fa fa-edit text-warning"></i>
+                                  </a>
+                                {% endif %}
+
+                                {% if perms.web.delete_pricingitem %}
+                                  <a href="{{pricing_item.get_delete_url}}" target="_blank" title="حذف">
+                                      <i class="fa fa-trash text-danger"></i>
+                                  </a>
+                                {% endif %}
+                                {% if perms.web.add_pricingitemspecification %}
+                                <a href="{{pricing_item.get_add_specicification_url}}" target="_blank" title="افزودن آیتم">
+                                    <i class="fa fa-plus text-success"></i>
+                                </a>
+                              {% endif %}
+
+                            </h4>
+                            <h1 class="card-title text-center"><small>$</small>{{pricing_item.price}}<small>
+                                    ماهیانه</small></h1>
+                            <ul class="farsi">
+                                {% for pricing_item_specification in pricing_item.pricingitemspecifications %}
+                                <li><b>{{pricing_item_specification.value}}</b> {{pricing_item_specification.name}}
+                                    {% if perms.web.change_pricingitemspecification %}
+                                    <a href="{{pricing_item_specification.get_edit_url}}" target="_blank" title="ویرایش">
+                                        <i class="fa fa-edit text-warning"></i>
+                                    </a>
+                                  {% endif %}
+                                </li>
+                                {% endfor %}
+
+                                {% if perms.web.add_pricingitemspecification %}
+                                <li>
+                                    <a href="{{pricing_item.get_add_specicification_url}}" target="_blank" title="افزودن آیتم">
+                                        <i class="fa fa-plus text-success"></i>
+                                    </a>
+                                </li>
+                              {% endif %}
+
+                            </ul>
+                            <a href="{{pricing_item.get_absolute_url}}"
+                                class="btn btn-rose btn-raised btn-round docs-creator farsi">
+                                شروع کنید
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+{% endblock %}
+
+{% block script %}
+{% include "core/includes/page-app/script.html" %}
+<script>
+    page_comment_component_template = `{% include "web/includes/page-comments-app/component.html" %}`
+</script>
+
+{% endblock %}
+
+
+{% block vertical_nav %}
+
+{% endblock %}
+
+{% block nav_bar %}
+
+{% endblock %}
