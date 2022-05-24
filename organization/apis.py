@@ -19,6 +19,7 @@ class AddOrganizationUnitApi(APIView):
                 title=fm['title']
                 parent_id=fm['parent_id']
                 page_id=fm['page_id']
+                account_id=fm['account_id']
                 organization_unit_id=fm['organization_unit_id']
                 
                 organization_unit=OrganizationUnitRepo(request=request).add_organization_unit(
@@ -26,6 +27,7 @@ class AddOrganizationUnitApi(APIView):
                     parent_id=parent_id,
                     organization_unit_id=organization_unit_id,
                     page_id=page_id,
+                    account_id=account_id,
                 )
                 if organization_unit is not None:
                     context['organization_unit']=OrganizationUnitSerializer(organization_unit).data

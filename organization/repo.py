@@ -35,6 +35,12 @@ class OrganizationUnitRepo():
         else:
             new_organization_unit = OrganizationUnit()
 
+
+        if 'account_id' in kwargs and kwargs['account_id'] is not None and kwargs['account_id']>0:
+            new_organization_unit.account_id = kwargs['account_id']
+
+         
+
         if 'title' in kwargs:
             new_organization_unit.title = kwargs['title']
 

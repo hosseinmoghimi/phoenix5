@@ -9,35 +9,48 @@
 <form @submit.prevent="add_organization_unit()" v-if="show_form">
     <div class="row">
         <div class="col-md-4">
-            <input @input="filter_list()" required type="text" v-model="new_organization_unit_title" class="farsi form-control"
-                placeholder="واحد سازمانی جدید">
+            <div class="form-group">
+                <label for="">حساب مرتبط</label>
+                <select v-model="new_organization_unit_account_id" class="form-control">
+                    {% for account in accounts %}
+                    <option value="{{account.id}}">{{account.title}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
 
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="">نام واحد سازمانی جدید</label>
+
+                <input @input="filter_list()" required type="text" v-model="new_organization_unit_title"
+                    class="farsi form-control" placeholder="واحد سازمانی جدید">
+
+            </div>
         </div>
         <div class="col-md-4 text-right">
             <img v-if="waiting" width="32" src="{% static 'leo/img/loading.gif' %}" alt="">
 
 
-            <button style="max-width: 80px!important;" v-if="!waiting" class="btn btn-primary"
-                type="submit">
-        <i class="fa fa-plus"></i>
-        
-        تایید</button>
+            <button style="max-width: 80px!important;" v-if="!waiting" class="btn btn-primary" type="submit">
+                <i class="fa fa-plus"></i>
+
+                تایید</button>
 
 
-                <button style="max-width: 80px!important;" v-if="!waiting" class="btn btn-secondary"
+            <button style="max-width: 80px!important;" v-if="!waiting" class="btn btn-secondary"
                 @click="show_form=false">انصراف</button>
 
-              
+
         </div>
         <div class="col-md-4 text-right">
-              <span v-if="message.show" :class="'alert alert-'+message.color">
+            <span v-if="message.show" :class="'alert alert-'+message.color">
 
-                    <span class="farsi text-right">
-                        <span v-text="message.text"></span>
-                    </span>
+                <span class="farsi text-right">
+                    <span v-text="message.text"></span>
                 </span>
+            </span>
         </div>
     </div>
 
 </form>
-
