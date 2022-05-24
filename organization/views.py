@@ -239,6 +239,8 @@ class OrganizationUnitsView(View):
             OrganizationUnitSerializer(organization_units, many=True).data)
         context['organization_units_s'] = organization_units_s
         if request.user.has_perm(APP_NAME+".add_organizationunit"):
+            
+            context['accounts']=AccountRepo(request=request).list()
             context['add_organization_unit_form'] = AddOrganizationUnitForm()
             context['show_organization_units_list'] = True
         return render(request, TEMPLATE_ROOT+"organization-units.html", context)
