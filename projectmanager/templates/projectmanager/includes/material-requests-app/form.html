@@ -23,7 +23,7 @@
                 <label for="">نام پرسنل</label>
                 <select v-model="add_material_request_form_employee_id" class="form-control farsi" id="" required>
                     <option disabled selected>نام پرسنل مرتبط را انتخاب کنید</option>
-                    <option v-for="employee in employees" :value="employee.id" v-text="employee.account.profile.name"></option>
+                    <option v-for="employee in employees" :value="employee.id" v-text="employee.account.title"></option>
                 </select>
             </div>
 
