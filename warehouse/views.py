@@ -32,9 +32,8 @@ def getContext(request, *args, **kwargs):
 
 class HomeView(View):
     def get(self, request, *args, **kwargs):
-        # context=getContext(request=request)
-        # return render(request,TEMPLATE_ROOT+"index.html",context)
-        return WareHousesViews().get(request=request, *args, **kwargs)
+        context=getContext(request=request)
+        return render(request,TEMPLATE_ROOT+"index.html",context)
 
 
 class WareHouseViews(View):

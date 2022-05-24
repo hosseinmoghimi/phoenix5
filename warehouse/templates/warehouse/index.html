@@ -1,17 +1,20 @@
 {% extends "warehouse/layout.html" %}
-
 {% block content %}
 <div class="row">
-    <div class="col-md-12">
-        {% include "warehouse/includes/ware-houses-app/template.html" %}
+  <div class="col-md-4">
+    <div class="card">
+      <div class="farsi card-body">
+        <a href="{% url 'warehouse:ware_houses' %}">
+            <h6>
+              لیست انبار ها
+            </h6>
+          </a>
+      </div>
     </div>
+  </div>
 </div>
 {% endblock content %}
 
 {% block script %}
-<script>
-
-</script>
-{% include "warehouse/includes/ware-houses-app/script.html" %}
 
 {% endblock script %}

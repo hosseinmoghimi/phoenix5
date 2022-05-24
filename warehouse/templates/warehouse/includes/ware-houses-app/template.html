@@ -83,9 +83,9 @@
 
                                 </td>
                                 <td>
-                                    <a :href="warehouse.account.profile.get_absolute_url">
-                                        <img :src="warehouse.account.profile.image" class="rounded-circle" width="32" alt="">
-                                        <span v-text="warehouse.account.profile.name"></span>
+                                    <a :href="warehouse.account.get_absolute_url">
+                                        <img :src="warehouse.account.logo" class="rounded-circle" width="32" alt="">
+                                        <span v-text="warehouse.account.title"></span>
                                     </a>
 
                                 </td>
