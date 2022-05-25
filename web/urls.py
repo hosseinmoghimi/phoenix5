@@ -11,7 +11,7 @@ urlpatterns = [
     path("feature/<int:pk>/",views.FeatureView.as_view(),name="feature"),
     path("our_work/<int:pk>/",views.OurWorkView.as_view(),name="ourwork"),
     path("pricing/<int:pk>/",views.PricingPageView.as_view(),name="pricing"),
-    path("our_team/<int:pk>/",views.HomeView.as_view(),name="ourteam"),
+    path("our_team/<int:pk>/",views.OurTeamView.as_view(),name="ourteam"),
 
     path("pricing_page/<int:pk>/",views.PricingPageView.as_view(),name="pricingpage"),
     path("pricing_item/<int:pk>/",views.HomeView.as_view(),name="pricingitem"),

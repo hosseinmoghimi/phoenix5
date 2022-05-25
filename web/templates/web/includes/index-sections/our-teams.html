@@ -30,26 +30,26 @@
                 </div>
             </div>
             <div class="row">
-                {% for team in teams %}
+                {% for our_team in our_teams %}
 
 
                 <div class="col-md-3 mr-auto ml-auto">
                     <div class="card card-profile card-plain">
                         <div class="card-header card-avatar">
-                            <a href="{{team.get_absolute_url}}">
-                                <img class="img" src="{{team.profile.image}}" />
+                            <a href="{{our_team.get_absolute_url}}">
+                                <img class="img" src="{{our_team.profile.image}}" />
                             </a>
                         </div>
                         <div class="card-body ">
-                            <a href="{{team.get_absolute_url}}">
-                                <h4 class="card-title text-center">{{team.profile.name}}</h4>
+                            <a href="{{our_team.get_absolute_url}}">
+                                <h4 class="card-title text-center">{{our_team.profile.name}}</h4>
                             </a>
                             
-                            <h6 class="card-category text-muted text-center">{{team.job}}</h6>
+                            <h6 class="card-category text-muted text-center">{{our_team.job}}</h6>
                             <p class="card-description text-center">
-                                {% if team.short_description %}
+                                {% if our_team.short_description %}
 
-                                {{team.short_description}}
+                                {{our_team.short_description}}
                                 {% endif %}
                             </p>
                         </div>

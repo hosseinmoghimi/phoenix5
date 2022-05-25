@@ -148,7 +148,7 @@ class BasicViews(View):
         language = LanguageEnum.ENGLISH
         # language=LanguageEnum.ENGLISH
         if 'language_index' in kwargs:
-                language = languageToIndex(index=kwargs['language_index'])
+                language = LanguageFromCode(code=kwargs['language_index'])
         context = getContext(request=request,language=language)
         profile_id = kwargs['profile_id']
         resume_index = ResumeIndexRepo(

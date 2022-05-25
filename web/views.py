@@ -64,8 +64,8 @@ class HomeView(View):
         our_works=OurWorkRepo(request=request).list(for_home=True,*args, **kwargs)
         context['our_works']=our_works
 
-        teams=OurTeamRepo(request=request).list(for_home=True,*args, **kwargs)
-        context['teams']=teams
+        our_teams=OurTeamRepo(request=request).list(for_home=True,*args, **kwargs)
+        context['our_teams']=our_teams
 
         testimonials=TestimonialRepo(request=request).list(*args, **kwargs)
         context['testimonials']=testimonials
@@ -153,9 +153,10 @@ class FeatureView(View):
 class OurTeamView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
-        feature=OurTeamRepo(request=request).our_team(*args, **kwargs)
-        context.update(PageContext(request=request,page=feature))
-        return render(request,TEMPLATE_ROOT+"feature.html",context)
+        context['body_class']="profile-page"
+        our_team=OurTeamRepo(request=request).our_team(*args, **kwargs)
+        context['our_team']=our_team
+        return render(request,TEMPLATE_ROOT+"our-team.html",context)
 class OurWorkView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
