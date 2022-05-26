@@ -92,6 +92,8 @@ class SearchView(View):
 
 class ProjectsView(View):
     def get(self, request, *args, **kwargs):
+        print(kwargs)
+        print(100*"#")
         context = getContext(request=request)
         projects = ProjectRepo(request=request).list(*args, **kwargs)
         context['projects'] = projects
@@ -133,6 +135,11 @@ class RequestView(View):
                 context['add_signature_form'] = AddSignatureForm()
 
         return render(request, TEMPLATE_ROOT+"request.html", context)
+
+class ProjectsListView(View):
+    def get(self, request, *args, **kwargs):
+        return ProjectsView().get(request=request,parent_id=0,*args, **kwargs)
+        # return ProjectsView().get(request=request,*args, **kwargs)
 
 
 class ProjectView(View):

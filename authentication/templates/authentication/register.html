@@ -12,8 +12,8 @@
     <link rel="stylesheet"
         href="https://preview.colorlib.com/theme/bootstrap/login-form-15/css/A.style.css.pagespeed.cf.AxmTFBrhes.css">
 
-    
-{% include "phoenix/includes/head-farsi-font.html" %}
+
+    {% include "phoenix/includes/head-farsi-font.html" %}
 
 
 </head>
@@ -29,10 +29,18 @@
             <div class="row justify-content-center">
                 <div class="col-md-7 col-lg-5">
                     <div class="wrap">
-                        <div class="img"
-                            style="background-image:url('https://preview.colorlib.com/theme/bootstrap/login-form-15/images/xbg-1.jpg.pagespeed.ic.EtoN2PmO7Y.webp')">
+                        <div class="img" style="background-image:url('{{register_header_image.image}}')">
                         </div>
+                      
                         <div class="login-wrap p-4 p-md-5">
+                            {% if perms.core.change_image %}
+                            <div class="text-center">
+                                <a title="ویرایش" href="{{register_header_image.get_edit_url}}">
+    
+                                    <i class="fa fa-edit text-warning"></i>
+                                </a>
+                            </div>
+                            {% endif %}
                             <div class="d-flex">
                                 <div class="w-100">
                                     <h3 class="mb-4">Sign Up</h3>
@@ -52,7 +60,8 @@
                             <div class="my-3">
 
                                 {% for message in messages %}
-                                <div class="alert alert-danger farsi text-right" style="direction: rtl;" >{{message}}</div>
+                                <div class="alert alert-danger farsi text-right" style="direction: rtl;">{{message}}
+                                </div>
                                 {% endfor %}
                             </div>
                             {% endif %}
@@ -72,7 +81,7 @@
 
 
                                 <div class="form-group mt-3">
-                                    <input type="tel" class="form-control" name="mobile" >
+                                    <input type="tel" class="form-control" name="mobile">
                                     <label class="form-control-placeholder" for="mobile">Mobile</label>
                                 </div>
 
@@ -116,8 +125,8 @@
                                     </div>
                                 </div>
                             </form>
-                            <p class="text-center">Not a member? <a  
-                                    href="{% url 'authentication:login' %}">Sign In</a></p>
+                            <p class="text-center">Not a member? <a href="{% url 'authentication:login' %}">Sign In</a>
+                            </p>
                         </div>
                     </div>
                 </div>

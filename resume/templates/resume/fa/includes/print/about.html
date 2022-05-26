@@ -3,18 +3,23 @@
     <div class="col-md-9">
 
         <h5 class="text-right">
-           <small>
-               نام کامل : 
-           </small>
+            <small>
+                نام کامل :
+            </small>
             {{resume_index.profile.name}}
         </h5>
-        {{resume_index.about_top|safe}}
+        <div>
+            {% if resume_index.about_top %}
+            {{resume_index.about_top|safe}}
+
+            {% endif %}
+        </div>
 
     </div>
     <div class="col-md-3">
         {% if resume_index.image %}
 
-        <img src="{{resume_index.image}}" class="rounded-circle" width="100%"  alt="">
+        <img src="{{resume_index.image}}" class="rounded-circle" width="100%" alt="">
 
         {% endif %}
     </div>

@@ -16,7 +16,7 @@ urlpatterns = [
     path("ware_houses/",login_required(views.ProjectsView.as_view()),name="ware_houses"),
     path("ware_house/<int:pk>/",login_required(views.ProjectView.as_view()),name="ware_house"),
 
-    path("projects/",login_required(views.ProjectsView.as_view()),name="projects"),
+    path("projects/",login_required(views.ProjectsListView.as_view()),name="projects"),
     path("project/<int:pk>/",login_required(views.ProjectView.as_view()),name="project"),
     path("project_guantt/<int:pk>/",login_required(views.ProjectGuanttView.as_view()),name="project_guantt"),
     path("project_chart/<int:pk>/",login_required(views.ProjectChartView.as_view()),name="project_chart"),

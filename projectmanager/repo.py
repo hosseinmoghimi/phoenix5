@@ -138,7 +138,11 @@ class ProjectRepo():
         if 'for_home' in kwargs:
             objects = objects.filter(Q(for_home=kwargs['for_home']))
         if 'parent_id' in kwargs:
-            objects=objects.filter(parent_id=kwargs['parent_id'])
+            parent_id=kwargs['parent_id']
+            if parent_id==0 or parent_id is None:
+                objects=objects.filter(parent_id=None)
+            else:
+                objects=objects.filter(parent_id=kwargs['parent_id'])
         if 'employee_id' in kwargs:
             employee=EmployeeRepo(request=self.request).employee(*args, **kwargs)
             if employee is not None and employee.organization_unit is not None:
