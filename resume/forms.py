@@ -2,6 +2,9 @@ from resume.enums import ResumeItemEnum
 from django import forms
 from django.forms.fields import IntegerField
 
+class EditResumeForm(forms.Form):
+    resume_index_id=forms.IntegerField(required=True)
+
 class AddContactMessageForm(forms.Form):
     resume_index_id=forms.IntegerField(required=True)
     subject=forms.CharField(max_length=200, required=True)

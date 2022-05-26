@@ -1,5 +1,5 @@
 from .apps import APP_NAME
-from .enums import IconEnum, ResumeLanguageEnum
+from .enums import *
 from .models import Resume, ResumeCategory, ResumeFact, ResumeIndex, ResumePortfolio, ResumeService, ResumeSkill, ResumeTestimonial,ContactMessage
 from authentication.repo import ProfileRepo
 
@@ -7,7 +7,7 @@ class ResumeIndexRepo:
     def __init__(self,*args, **kwargs):
         self.request=None
         self.user=None
-        self.language=ResumeLanguageEnum.ENGLISH
+        self.language=LanguageEnum.FARSI
         if 'request' in kwargs:
             self.request=kwargs['request']
             self.user=self.request.user
@@ -15,18 +15,22 @@ class ResumeIndexRepo:
             self.user=kwargs['user']
         if 'language' in kwargs:
             self.language=kwargs['language']
+        if 'language_code' in kwargs:
+            self.language=LanguageFromCode(kwargs['language_code'])
         self.profile=ProfileRepo(user=self.user).me
-        self.objects=ResumeIndex.objects.filter(pk__gte=0)
+        self.objects=ResumeIndex.objects.filter(language=self.language,pk__gte=0)
     def list(self,*args, **kwargs):
         objects=self.objects
         if 'language' in kwargs:
-            objects=objects.filter(language=kwargs['language'])
-
+            objects=objects.filter(language=self.language)
         return objects.all()
+
     def resume_index(self,*args, **kwargs):
-        pk=0
+        objects=ResumeIndex.objects
+
         if 'profile_id' in kwargs:
             profile_id=kwargs['profile_id']
+            objects=objects.filter(profile_id=profile_id)
             resume_index= self.objects.filter(profile_id=profile_id).first()
             if resume_index is None:
                 profile=ProfileRepo(forced=True).profile(profile_id=profile_id)
@@ -36,11 +40,17 @@ class ResumeIndexRepo:
                 # t1=ResumeTestimonial(resume_index=resume_index,teller="aa",body="sdsd",teller_description="aa1",title="aa2",footer="saa2",date_added=PersianCalendar().date)
                 # t1.save()
             return resume_index
-        elif 'pk' in kwargs:
+        if 'pk' in kwargs:
             pk=kwargs['pk']
-        elif 'id' in kwargs:
+            objects=objects.filter(pk=pk)
+        if 'id' in kwargs:
             pk=kwargs['id']
-        resume_index= ResumeIndex.objects.filter(pk=pk).first()
+            objects=objects.filter(pk=pk)
+        if 'language_code' in kwargs:
+            language_code=kwargs['language_code']
+            language=LanguageFromCode(language_code)
+            objects=objects.filter(language=language)
+        resume_index= objects.first()
         return resume_index
 class PortfolioRepo:
     def __init__(self,*args, **kwargs):
@@ -107,6 +117,29 @@ class ResumeServiceRepo:
             pk=kwargs['id']
         resume_service= self.objects.filter(pk=pk).first()
         return resume_service
+class ResumeCategoryRepo:
+    def __init__(self,*args, **kwargs):
+        self.request=None
+        self.user=None
+        if 'request' in kwargs:
+            self.request=kwargs['request']
+            self.user=self.request.user
+        if 'user' in kwargs:
+            self.user=kwargs['user']
+        self.profile=ProfileRepo(user=self.user).me
+        self.objects=ResumeCategory.objects.all()
+    
+    def resume_category(self,*args, **kwargs):
+        pk=0
+        if 'resume_category_id' in kwargs:
+            pk=kwargs['resume_category_id']
+            return self.objects.filter(pk=pk).first()
+        if 'pk' in kwargs:
+            pk=kwargs['pk']
+            return self.objects.filter(pk=pk).first()
+        if 'id' in kwargs:
+            pk=kwargs['id']
+            return self.objects.filter(pk=pk).first()
 class ResumeRepo:
     def __init__(self,*args, **kwargs):
         self.request=None

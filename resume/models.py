@@ -1,9 +1,11 @@
-from resume.enums import FilterEnum, IconEnum, LinkClassEnum, ResumeLanguageEnum
+from resume.enums import *
 from tinymce.models import HTMLField
 from phoenix.server_settings import ADMIN_URL, MEDIA_URL, STATIC_URL
 from django.db import models
 from resume.apps import APP_NAME
 from django.utils.translation import gettext as _
+
+from utility.utils import LinkHelper
 IMAGE_FOLDER=APP_NAME+"/img/"
 from core.models import Page
 from django.shortcuts import reverse
@@ -18,10 +20,11 @@ class ResumePage(Page):
 
 
 
-class ResumeCategory(models.Model):
+class ResumeCategory(models.Model,LinkHelper):
     resume_index=models.ForeignKey("resumeindex", verbose_name=_("resume"), on_delete=models.CASCADE)
     title=models.CharField(_("title"), max_length=50)
-
+    class_name="resumecategory"
+    app_name=APP_NAME
     def __str__(self):
         return f"""{self.resume_index}  {self.title} """
 
@@ -33,15 +36,14 @@ class ResumeCategory(models.Model):
         self.class_name="resumecategory"
         return super(ResumeCategory,self).save(*args, **kwargs)
 
-    def get_absolute_url(self):
-        return reverse("ResumeCategory_detail", kwargs={"pk": self.pk})
-
-class Resume(ResumePage):
+ 
+class Resume(ResumePage,LinkHelper):
     category=models.ForeignKey("resumecategory", verbose_name=_("category"), on_delete=models.CASCADE)
     start_date=models.DateField(_("start_date"),null=True,blank=True, auto_now=False, auto_now_add=False)
     end_date=models.DateField(_("end_date"),null=True,blank=True, auto_now=False, auto_now_add=False)
     location=models.CharField(_("location"),null=True,blank=True, max_length=50)
-
+    class_name="resume"
+    app_name=APP_NAME
     class Meta:
         verbose_name = _("Resume")
         verbose_name_plural = _("Resumes")
@@ -51,9 +53,10 @@ class Resume(ResumePage):
         self.class_name="resume"
         return super(Resume,self).save(*args, **kwargs)
 
-class ResumeIndex(models.Model):
+class ResumeIndex(models.Model,LinkHelper):
     class_name="resumeindex"
-    language=models.CharField(_("language"),choices=ResumeLanguageEnum.choices,default=ResumeLanguageEnum.ENGLISH, max_length=50)
+    app_name=APP_NAME
+    language=models.CharField(_("language"),choices=LanguageEnum.choices,default=LanguageEnum.ENGLISH, max_length=50)
     image_header_origin =models.ImageField(_("تصویر سربرگ"),null=True, blank=True, upload_to=IMAGE_FOLDER +
                                      'Resume/Header/', height_field=None, width_field=None, max_length=None)                              
   
@@ -99,8 +102,7 @@ class ResumeIndex(models.Model):
         file_name=APP_NAME+"_"+self.class_name+str(self.pk)+".svg"
         # file_address=os.path.join(file_path,file_name)
         file_address=os.path.join(QRCODE_ROOT,file_name)
-   
-        content=SITE_FULL_BASE_ADDRESS+self.get_absolute_url()
+        content=SITE_FULL_BASE_ADDRESS[0:len(SITE_FULL_BASE_ADDRESS)-1]+self.get_absolute_url()
         generate_qrcode(content=content,file_name=file_name,file_address=file_address,file_path=file_path)
 
         file_name=APP_NAME+"_"+self.class_name+str(self.pk)+".svg"   
@@ -112,23 +114,27 @@ class ResumeIndex(models.Model):
         verbose_name_plural = _("ResumeIndexs")
 
     def __str__(self):
-        return (self.profile.name if self.title is None else self.title)
+        return self.language+" : "+(self.profile.name if self.title is None else self.title)
+
     def image(self):
         if self.image_main_origin:
             return MEDIA_URL+str(self.image_main_origin)
         else:
-            from .views import TEMPLATE_ROOT
+
+            from .views import TEMPLATE_ROOT,LanguageCode
+            TEMPLATE_ROOT=TEMPLATE_ROOT+LanguageCode(self.language)+"/"
             return f'{STATIC_URL}{TEMPLATE_ROOT}/img/profile-img.jpg'
     def image_header(self):
         if self.image_header_origin:
             return MEDIA_URL+str(self.image_header_origin)
         else:
-            from .views import TEMPLATE_ROOT
+            from .views import TEMPLATE_ROOT,LanguageCode
+            TEMPLATE_ROOT=TEMPLATE_ROOT+LanguageCode(self.language)+"/"
             return f'{STATIC_URL}{TEMPLATE_ROOT}/img/hero-bg.jpg'
     
-    def get_absolute_url(self):
+    # def get_absolute_url(self):
         
-        return reverse(APP_NAME+":resume_index", kwargs={"pk": self.pk})
+    #     return reverse(APP_NAME+":resume_index", kwargs={"pk": self.pk})
     def get_edit_btn(self):
         return f"""
           <a target="_blank" title="edit" href="{self.get_edit_url()}">
@@ -138,8 +144,8 @@ class ResumeIndex(models.Model):
         </a>
         """
 
-    def get_edit_url(self):
-        return f'{ADMIN_URL}{APP_NAME}/{self.class_name}/{self.pk}/change/'
+    # def get_edit_url(self):
+    #     return f'{ADMIN_URL}{APP_NAME}/{self.class_name}/{self.pk}/change/'
 
 class ResumeService(ResumePage):
     resume_index=models.ForeignKey("resumeindex", verbose_name=_("resume"), on_delete=models.CASCADE)

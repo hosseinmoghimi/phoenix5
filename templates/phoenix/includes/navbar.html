@@ -66,23 +66,8 @@
                 </a>
             </li>
             {% endif %}
-            <li class="nav-item dropdown  my-auto farsi mx-2">
-                <a class="nav-link dropdown-toggle " href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
-                    aria-haspopup="true" aria-expanded="false">
-                    <i class="material-icons" aria-hidden="true">apps</i>
-                    برنامه ها
-                </a>
-                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    {% for app in apps %}
-                    {% if app.show_on_menu %}
-
-                    <a class="dropdown-item" href="{{app.home_url}}">{{app.title}}</a>
-                    {% endif %}
-                    {% endfor %}
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="#">Something else here</a>
-                </div>
-            </li>
+            
+            {% include "phoenix/includes/navbar-menu.html" %}
             {% if profile %}
             <li class="nav-item dropdown farsi mx-2">
                 <a title="{{profile.name}}" class="nav-link dropdown-toggle " href="#" id="navbarDropdown" role="button"

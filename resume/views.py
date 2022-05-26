@@ -3,16 +3,17 @@ from django.shortcuts import render
 from authentication.repo import ProfileRepo
 
 from core.enums import  LanguageEnum
-from .enums import LanguageFromCode,LanguageCode,ResumeLanguageEnum
+from .enums import *
 from core.repo import ParameterRepo
-from resume.repo import PortfolioRepo, ResumeIndexRepo
+from resume.repo import PortfolioRepo, ResumeCategoryRepo, ResumeIndexRepo
 from resume.serializers import ResumeFactSerializer, ResumeSkillSerializer
 # Create your views here.
 from django.shortcuts import render,reverse
-from core.views import CoreContext, MessageView,SearchForm
+from core.views import CoreContext, MessageView, PageContext,SearchForm
 # Create your views here.
 from django.views import View
 from resume.forms import *
+from resume.utils import AdminUtility
 from resume.apps import APP_NAME
 # from .repo import ProductRepo
 # from .serializers import ProductSerializer
@@ -25,7 +26,7 @@ LAYOUT_PARENT = "material-kit-pro/layout.html"
 
 def getContext(request, *args, **kwargs):
     context = CoreContext(request=request, app_name=APP_NAME)
-     
+    context['admin_utility']=AdminUtility
     context['search_form'] = SearchForm()
     context['search_action'] = reverse(APP_NAME+":search")
     context['LAYOUT_PARENT'] = LAYOUT_PARENT
@@ -55,31 +56,51 @@ class SearchView(View):
         context['products_s']=products_s
         return render(request,context['TEMPLATE_ROOT']+"index.html",context)
 
+class ResumeCategoryView(View):
+    def get(self, request, *args, **kwargs):
+        context=getContext(request=request)
+        resume_category=ResumeCategoryRepo(request=request).resume_category(*args, **kwargs)
+        context['resume_category']=resume_category
+        return render(request,context['TEMPLATE_ROOT']+"resume-category.html",context)
+  
 
 class ResumeIndexView(View):
     def get(self, request, *args, **kwargs):
-        if 'pk' not in kwargs:
+        # resume_index=None
+        # language=LanguageEnum.FARSI
+        # if 'profile_id' not in kwargs and 'language_code' not in kwargs:
+        #     profile_id = kwargs['profile_id']
+        #     language_code = kwargs['language_code']
+        #     language=LanguageFromCode(language_code)
+
+
+        #     resume_index=ResumeIndexRepo(request=request).resume_index(language=language,profile_id=profile_id)
+        # # language=LanguageEnum.ENGLISH
+        # if 'pk' not in kwargs:
+         
+        #     resume_index=ResumeIndexRepo(request=request).resume_index(language=language,profile_id=profile_id)
+        resume_index = ResumeIndexRepo(request=request,*args, **kwargs).resume_index(*args, **kwargs)
+        if resume_index is None:
             from log.repo import LogRepo
             LogRepo(request=request).add_log(title="Http404 resume views 1",app_name=APP_NAME) 
             mv=MessageView(request=request)
             mv.title="رزومه مورد نظر یافت نشد."
             return mv.response()
-        # language=LanguageEnum.ENGLISH
-         
-        profile_id = kwargs['pk']
-        resume_index = ResumeIndexRepo(
-            request=request).resume_index(*args, **kwargs)
+        profile_id = resume_index.profile_id
         language = resume_index.language
         context = getContext(request=request,language=language)
+
         context['resume_index'] = resume_index
         parameter_repo = ParameterRepo(request=request, app_name=APP_NAME)
-        context['location'] = parameter_repo.parameter(name='location')
-        context['email'] = parameter_repo.parameter(name='email')
-        context['call'] = parameter_repo.parameter(name='call')
+        context['location'] = parameter_repo.parameter(name=language+'-location')
+        context['email'] = parameter_repo.parameter(name=language+'-email')
+        context['call'] = parameter_repo.parameter(name=language+'-call')
         context['resume_index'] = resume_index
         context['title'] = resume_index.title
         context['resume_skills'] = resume_index.resumeskill_set.all()
-
+        me=context['profile']
+        if request.user.has_perm(APP_NAME+".change_resumeindex") or me.id==resume_index.profile_id:
+            context['edit_resume_form']=EditResumeForm()
 
         services=resume_index.resumeservice_set.all().order_by('priority')
         context['services']=services
@@ -106,7 +127,9 @@ class ResumeIndexView(View):
             context['add_resume_fact_form'] = AddResumeFactForm()
             context['add_resume_skill_form'] = AddResumeSkillForm()
             # context['resume_item_enums']=(i[0] for i in ResumeItemEnum.choices)
-        tml=LanguageCode(resume_index.language)+"/"
+        language_code=LanguageCode(resume_index.language)
+        print(language_code)
+        tml=language_code+"/"
         TEMPLATE_ROOT = APP_NAME+"/"+tml
         return render(request, TEMPLATE_ROOT+"resume-index.html", context)
 
@@ -139,7 +162,7 @@ class ServiceViews(View):
 
 class BasicViews(View):
 
-    def home(self, request, *args, **kwargs):
+    def get(self, request, *args, **kwargs):
         if 'profile_id' not in kwargs:
             
             from log.repo import LogRepo
@@ -207,22 +230,23 @@ class BasicViews(View):
     #         context['resume_service'] = resume_service
     #         return render(request, TEMPLATE_ROOT+"resume-service.html", context)
 
-
-    def resume_print(self, request, *args, **kwargs):
+class ResumePrint(View):
+    def get(self, request, *args, **kwargs):
         
         language = LanguageEnum.ENGLISH
         # language=LanguageEnum.ENGLISH
         if 'language_index' in kwargs:
                 language = languageToIndex(index=kwargs['language_index'])
         context = getContext(request=request,language=language)
-        
+        if 'full' in kwargs:
+            context['full_print']=True
         resume_index = ResumeIndexRepo(
             request=request).resume_index(*args, **kwargs)
         context['resume_index'] = resume_index
         parameter_repo = ParameterRepo(request=request, app_name=APP_NAME)
-        context['location'] = parameter_repo.get(name='location')
-        context['email'] = parameter_repo.get(name='email')
-        context['call'] = parameter_repo.get(name='call')
+        context['location'] = parameter_repo.parameter(name='location')
+        context['email'] = parameter_repo.parameter(name='email')
+        context['call'] = parameter_repo.parameter(name='call',default="09155323633-05154230266")
         context['resume_index'] = resume_index
         context['title'] = resume_index.title
         context['portfolios'] = resume_index.resumeportfolio_set.all()
@@ -246,9 +270,9 @@ class BasicViews(View):
         context['portfolio_filters'] = portfolio_filters
         profile = ProfileRepo(request=request).me
         if resume_index.language==LanguageEnum.ENGLISH:
-            TEMPLATE_ROOT = "my_resume_en/"
+            TEMPLATE_ROOT = "resume/en/"
         if resume_index.language==LanguageEnum.FARSI:
-            TEMPLATE_ROOT = "my_resume_fa/"
+            TEMPLATE_ROOT = "resume/fa/"
         return render(request, TEMPLATE_ROOT+"resume-print.html", context)
 
 

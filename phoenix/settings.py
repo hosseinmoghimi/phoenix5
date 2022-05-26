@@ -27,7 +27,8 @@ SECRET_KEY=server_settings.SECRET_KEY
 DEBUG = server_settings.DEBUG
 QRCODE_ROOT=server_settings.QRCODE_ROOT
 INSTALLED_APPS =server_settings.INSTALLED_APPS
-
+SITE_FULL_BASE_ADDRESS =server_settings.SITE_FULL_BASE_ADDRESS
+QRCODE_URL =server_settings.QRCODE_URL
 
 
 # Quick-start development settings - unsuitable for production

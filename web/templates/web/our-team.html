@@ -80,7 +80,7 @@
                         {% endif %}
 
                         <a target="_blank" class="btn btn-fab btn-success btn-round" rel="tooltip" title="رزومه"
-                            href="{% url 'resume:resume_index_language' profile_id=our_team.profile.id language_index=2 %}">
+                            href="{% url 'resume:resume_index_language' profile_id=our_team.profile.id language_code='fa' %}">
                             <i class="material-icons">
                                 ballot
                             </i>
@@ -99,7 +99,7 @@
 
             <div class="text-center mb-5 rtl">
                 <a target="_blank" class="btn btn-success btn-round"
-                    href="{% url 'resume:resume_index_language' profile_id=our_team.profile.id language_index=2 %}">
+                    href="{% url 'resume:resume_index_language' profile_id=our_team.profile.id language_code='fa' %}">
                     <span class="farsi">
                         رزومه فارسی
 
@@ -108,7 +108,7 @@
 
 
                 <a target="_blank" class="btn btn-rose btn-round"
-                    href="{% url 'resume:profile_resume_index' profile_id=our_team.profile.id %}">
+                    href="{% url 'resume:resume_index_language' profile_id=our_team.profile.id language_code='en' %}">
                     <i class="fa fa-edit"></i>
                     Resume
                 </a>
