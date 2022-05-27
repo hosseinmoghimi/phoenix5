@@ -215,6 +215,9 @@ class Account(models.Model,LinkHelper):
 
     class_name=models.CharField(_("class_name"),blank=True, max_length=50)
     app_name=models.CharField(_("app_name"),blank=True,max_length=50)
+    def default_bank_account(self):
+        return BankAccount.default_bank_account(profile_id=self.profile.id)
+       
     @property
     def class_title(self):
         class_title="حساب مالی"
@@ -292,7 +295,10 @@ class Bank(models.Model):
     
     
     def __str__(self):
-        return f"""بانک {self.name}  {(("شعبه "+self.branch) or "")}"""
+        a=f"""بانک {self.name} """
+        if self.branch is not None:
+            a+="شعبه "+self.branch 
+        return a
 
 
     class Meta:
@@ -305,7 +311,18 @@ class BankAccount(Account):
     account_no=models.CharField(_("shomareh"),null=True,blank=True, max_length=50)
     card_no=models.CharField(_("card"),null=True,blank=True, max_length=50)
     shaba_no=models.CharField(_("shaba"),null=True,blank=True, max_length=50)
+    default_account=models.BooleanField(_("default"),default=False)
     class_name='bankaccount'
+
+    def default_bank_account(profile_id):
+        if profile_id is None or profile_id<1:
+            return
+        all_bank_account=BankAccount.objects.filter(profile_id=profile_id)
+        bank_account=all_bank_account.filter(default_account=True).first()
+        if bank_account is not None:
+            return bank_account
+        return all_bank_account.first()
+
     class Meta:
         verbose_name = _("BankAccount")
         verbose_name_plural = _("BankAccounts")

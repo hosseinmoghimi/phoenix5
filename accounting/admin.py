@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from accounting.models import (Account, Asset, Cheque, FinancialBalance, FinancialDocument, FinancialDocumentTag, 
+from accounting.models import (Account, Asset, Bank, BankAccount, Cheque, FinancialBalance, FinancialDocument, FinancialDocumentTag, 
                                Invoice, InvoiceLine, Payment, Price, Product, Salary, Service,
                                Transaction, TransactionCategory)
 
@@ -19,4 +19,6 @@ admin.site.register(Product)
 admin.site.register(Service)
 admin.site.register(Salary)
 admin.site.register(TransactionCategory)
+admin.site.register(BankAccount)
+admin.site.register(Bank)
 admin.site.register(Transaction)
