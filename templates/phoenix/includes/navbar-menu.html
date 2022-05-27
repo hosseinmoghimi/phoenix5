@@ -5,10 +5,12 @@
         برنامه ها
     </a>
     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-            {% for app in apps %}
+            {% for app in installed_apps %}
                 {% if app.show_on_menu %}
 
-                <a class="dropdown-item" href="{{app.home_url}}">{{app.title}}</a>
+                <a class="dropdown-item" href="{{app.home_url}}">
+                    <img src="{{app.icon}}" width="32" alt="">
+                    {{app.title}}</a>
                 {% endif %}
             {% endfor %}
 

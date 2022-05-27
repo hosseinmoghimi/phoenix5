@@ -5,6 +5,7 @@ from django.urls import path
 
 app_name=APP_NAME
 urlpatterns = [
+    path('',views.HomeView.as_view(),name="home"),
     path('pages_permissions/<int:pk>/',views.PagePermissionsView.as_view(),name="pages_permissions"),
     path('change_parameter/',apis.ChangeParameterApi.as_view(),name="change_parameter"),
     path('add_page_link/',apis.AddPageLinkApi.as_view(),name="add_page_link"),

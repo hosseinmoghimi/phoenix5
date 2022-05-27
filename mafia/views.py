@@ -16,10 +16,11 @@ def getContext(request,*args, **kwargs):
     context['LAYOUT_PARENT']=LAYOUT_PARENT
     context['LAYOUT_WIDE_PARENT']=LAYOUT_WIDE_PARENT
     return context
+
+
 class HomeView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
-        context['go']="go go go !"
         return render(request,TEMPLATE_ROOT+"index.html",context)
 
 

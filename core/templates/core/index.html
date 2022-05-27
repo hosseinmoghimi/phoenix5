@@ -1,0 +1,24 @@
+{% extends "core/layout.html" %}
+
+
+{% block content %}
+<div class="row">
+    {% for installed_app in installed_apps %}
+
+    <div class="col-lg-2 col-md-3 col-4 mb-3">
+        <div class="text-center">
+            <a href="{{installed_app.home_url}}">
+                <img src="{{installed_app.logo}}" class="rounded" width="80%" style="max-width:128px ;" alt="">
+                <h6 class="text-center my-3">
+                    {{installed_app.title}}
+                </h6>
+            </a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock content %}
+
+{% block script %}
+
+{% endblock script %}

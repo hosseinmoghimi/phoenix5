@@ -11,6 +11,13 @@
     </a>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
+           
+            <li class="nav-item my-auto mx-2">
+                <a class="nav-link farsi " href="{% url 'home' %}">
+                    <i class="material-icons" aria-hidden="true">home</i>
+                    خانه
+                </a>
+            </li>
 
             {% if PUSHER_IS_ENABLE %}
             <li class="nav-item my-auto mx-2" id="notifications-app">
@@ -62,9 +69,11 @@
                     <span class="material-icons">
                         construction
                     </span>
+
                     پارامتر ها
                 </a>
             </li>
+          
             {% endif %}
             
             {% include "phoenix/includes/navbar-menu.html" %}
