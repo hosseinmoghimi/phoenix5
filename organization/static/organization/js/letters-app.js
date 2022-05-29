@@ -1,0 +1,1 @@
+pointer="letters-app"

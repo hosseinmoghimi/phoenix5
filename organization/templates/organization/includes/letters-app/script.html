@@ -1,11 +1,22 @@
+{% load static %}
+<!-- letters-app -->
+<!-- 3######################################################################### -->
+
 <script>
+    let letters = JSON.parse(`{{letters_s|escapejs}}`)
+    pointer = "letters-app"
+</script>
+
+<script src="{% static 'organization/js/letters-app.js' %}"></script>
+<script>
+
     let letters_app_data = {
-        letters: JSON.parse(`{{letters_s|escapejs}}`),
-        show_sell_prices:false,
+        letters: letters,
+        title:"",
     }
     let letters_app_methods = {
         to_price: function (vall) {
-            return to_price(vall, "{{CURRENCY}}")
+            return to_price(vall, CURRENCY)
         },
         percent: function (service) {
             let aaa = 100
@@ -15,10 +26,9 @@
             }
             return parseInt(aaa)
         },
-        
+
     }
-</script> 
-<script>
+
     let letters_app = new Vue({
         el: "#letters-app",
         data: letters_app_data,

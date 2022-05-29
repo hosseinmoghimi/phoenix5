@@ -1,5 +1,8 @@
 {% load to_json %}
+
+<!-- ################################################################ -->
 <script>
+    pointer="add-employee-app"
     let new_employee_accounts = JSON.parse(`{{new_employee_accounts_s|escapejs}}`)
     let new_employee_organization_units=JSON.parse(`{{new_employee_organization_units_s|escapejs}}`)
     let add_employee_app = new Vue({

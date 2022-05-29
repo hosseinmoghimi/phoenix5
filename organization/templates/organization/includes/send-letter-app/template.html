@@ -39,7 +39,7 @@
                             </label>
                             <select v-model="recipient_id" class="form-control" id="">
                                 <option :value="organization_unit.id" v-for="organization_unit in organization_units"
-                                    v-text="organization_unit.title"></option>
+                                    v-text="organization_unit.full_title"></option>
                             </select>
                         </div>
                         

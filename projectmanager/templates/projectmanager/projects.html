@@ -8,14 +8,14 @@
       </div>
     {% endif %}
       <div class="col-md-12">
-          {% include "projectmanager/includes/all-projects-app/template.html" %}
+          {% include "projectmanager/includes/projects-list-app/template.html" %}
       </div>
   </div>
 {% endblock content %}
 
 
 {% block script %}
-{% include "projectmanager/includes/all-projects-app/script.html" %}
+{% include "projectmanager/includes/projects-list-app/script.html" %}
   {% if add_root_project_form %}
   {% include "projectmanager/includes/add-project-app/script.html" %}
     

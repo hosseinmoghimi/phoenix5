@@ -22,7 +22,17 @@ class OrganizationUnit(Page):
         print(pages_ids)
         return pages_ids
 
-                               
+    @property
+    def employees(self,*args, **kwargs):
+        return Employee.objects.filter(organization_unit_id=self.pk)
+            
+    @property
+    def full_title(self,*args, **kwargs):
+        a=""
+        if self.parent is not None:
+            a+=self.parent.full_title +" "
+        return a+self.title
+                                
     def all_sub_orgs(self):
         ids=self.all_childs_ids()
         ids.append(self.pk)

@@ -35,10 +35,10 @@
                             <th>
                                 نامه
                             </th>
+                            {% endif %}
                             <th>
                                 فرستنده
                             </th>
-                            {% endif %}
                             <th>
                                 گیرنده
                             </th>
@@ -86,6 +86,7 @@
                                         </div>
                                     </a>
                                 </td>
+                                {% endif %}
                                 <td>
                                     <a :href="letter_sent.sender.get_absolute_url">
                                         <div class="media">
@@ -118,7 +119,6 @@
                                         </div>
                                     </a>
                                 </td>
-                                {% endif %}
                                 <td>
                                     <a :href="letter_sent.recipient.get_absolute_url">
                                         <div class="media">

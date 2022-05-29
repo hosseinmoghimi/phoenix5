@@ -8,7 +8,7 @@ class OrganizationUnitSerializer(serializers.ModelSerializer):
     account=AccountSerializer()
     class Meta:
         model=OrganizationUnit
-        fields=['id','title','account','image','logo','full_title','pre_title','get_edit_url','get_absolute_url']
+        fields=['id','title','full_title','account','image','logo','full_title','pre_title','get_edit_url','get_absolute_url']
 
 
 

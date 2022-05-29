@@ -15,7 +15,7 @@
         class="fa fa-user text-info"></i></a>
 
 
-    <a href="{{employee.profile.get_absolute_url}}" title="پروفایل" class="mx-2"><i
+    <a href="{{employee.account.profile.get_absolute_url}}" title="پروفایل" class="mx-2"><i
             class="fa fa-user text-info"></i></a>
 
     {% if perms.projectmanager.change_employee %}
@@ -43,7 +43,7 @@
 
 <div class="row">
         <div class="col-md-12">
-            {% include "projectmanager/includes/all-projects-app/template.html" %}
+            {% include "projectmanager/includes/projects-list-app/template.html" %}
         </div>
         
     <div class="col-md-12">
@@ -56,7 +56,7 @@
 
 
 {% block script %}
-            {% include "projectmanager/includes/all-projects-app/script.html" %}
+            {% include "projectmanager/includes/projects-list-app/script.html" %}
         {% include "projectmanager/includes/request-signatures-app/script.html" %}
   
 {% endblock script %}

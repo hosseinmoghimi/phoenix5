@@ -20,12 +20,12 @@
     <div class="container" style="margin-bottom: 75px;">
 
         {% if not no_navbar%}
-          
+
         {% include "phoenix/includes/navbar.html" %}
-     
-             
+
+
         {% endif %}
-         <div class="{% if not no_navbar%}pt-5{% endif %}" style="margin-top:50px;">
+        <div class="{% if not no_navbar%}pt-5{% endif %}" style="margin-top:50px;">
             {% block content %}
 
             {% endblock content %}
@@ -35,20 +35,23 @@
 
     </div>
     {% if not no_footer %}
-      
+
     {% include "phoenix/includes/footer.html" %}
     {% endif %}
-   
+
     <!-- Optional JavaScript; choose one of the two! -->
 
     {% csrf_token %}
+
+    <script>
+        let pointer = "START"
+    </script>
     {% include "phoenix/includes/layout-scripts.html" %}
 
 
     {% block script %}
 
     {% endblock %}
-
 
 
 </body>

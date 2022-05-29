@@ -171,6 +171,10 @@ class OrganizationUnitView(View):
         context.update(PageContext(request=request, page=organization_unit))
         context['organization_unit'] = organization_unit
 
+        for employee in organization_unit.employees:
+            if employee.account.profile.id==context['profile'].id:
+                context['selected_profile']=context['profile']
+
         # employees
         if True:
             employees = EmployeeRepo(request=request).list(

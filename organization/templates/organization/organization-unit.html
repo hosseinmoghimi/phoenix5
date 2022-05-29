@@ -40,9 +40,12 @@
             <div class="col-md-12">
                 {% include "organization/includes/organization-units-app/template.html" %}
             </div>
+            {% if projects_s %}
+
             <div class="col-md-12">
-                {% include "projectmanager/includes/all-projects-app/template.html" %}
+                {% include "projectmanager/includes/projects-list-app/template.html" %}
             </div>
+            {% endif %}
             <div class="col-md-12">
                 {% include "core/includes/page-images-app/template.html" %}
             </div>
@@ -56,20 +59,13 @@
                 {% include "core/includes/page-comments-app/template.html" %}
             </div>
             <div class="col-md-12">
-                {% include "organization/includes/letters-app/template.html" %}
-            </div>
-            <div class="col-md-12">
                 {% include "map/includes/locations-app/template-with-preview.html" %}
             </div>
-            {% if account %}
-            <div class="col-md-12">
-                {% include "accounting/includes/financial-documents-app/template.html" %}
-            </div>
-            <div class="col-md-12">
-                {% include "accounting/includes/transactions-app/template.html" %}
-            </div>
-            {% endif %}
 
+
+            <div class="col-md-12">
+                {% include "organization/includes/letters-app/template.html" %}
+            </div>
 
         </div>
     </div>
@@ -83,20 +79,35 @@
 {% block script %}
 
 {% include "core/includes/page-app/script.html" %}
+{% if selected_profile %}
 
+<script>
+    let html = `
+    {% include "authentication/includes/profile-app/card.html" %}
+
+    <div class="text-center">
+    <h5 class="text-center">
+        خوش آمدید
+    </h5>
+</div>
+    `
+    var a = showNotification("top", "center", "icon", "success", html,)
+
+</script>
+{% endif %}
 {% include "organization/includes/organization-units-app/script.html" %}
 {% include "organization/includes/employees-app/script.html" %}
-{% include "projectmanager/includes/all-projects-app/script.html" %}
+{% include "projectmanager/includes/projects-list-app/script.html" %}
 {% include "organization/includes/letters-app/script.html" %}
-{% if account %}
-{% include "accounting/includes/financial-documents-app/script.html" %}
-{% include "accounting/includes/transactions-app/script.html" %}
-{% endif %}
+
 
 {% if add_employee_form %}
 {% include "organization/includes/add-employee-app/script.html" %}
 {% endif %}
 
+{% if add_letter_form %}
+{% include "organization/includes/add-letter-app/script.html" %}
 
+{% endif %}
 
 {% endblock script %}

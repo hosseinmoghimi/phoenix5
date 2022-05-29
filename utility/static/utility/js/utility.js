@@ -14,8 +14,9 @@ let to_price = function (x, currency) {
 
 
 
-var showNotification = function (from, align, icon, bgcolor, html, rtl = true) {
-    if (rtl) html = '<div class="text-right">' + html + '</div>'
+var showNotification = function (from, align, icon, bgcolor, html, rtl = true,farsi=false) {
+    
+    if (rtl) html = `<div class="text-right`+(farsi?' farsi ':'')+`">` + html + `</div>`
 
     type = ['', 'info', 'danger', 'success', 'warning', 'rose', 'primary'];
 
@@ -27,7 +28,7 @@ var showNotification = function (from, align, icon, bgcolor, html, rtl = true) {
 
     }, {
         type: bgcolor,
-        timer: 3000,
+        timer: 20000,
         placement: {
             from: from,
             align: align
