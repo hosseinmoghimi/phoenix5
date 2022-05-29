@@ -2,15 +2,16 @@ from django.http import JsonResponse
 from django.shortcuts import redirect, render,reverse
 import json
 from authentication.serializers import ProfileSerializer
+from authentication.enums import *
 from core.constants import FAILED, SUCCEED
-from core.enums import ParameterNameEnum
+from core.enums import *
 from core.utils import app_is_installed
 from .forms import *
-from core.repo import PageLikeRepo, ParameterRepo
+from core.repo import ImageRepo, PageLikeRepo, ParameterRepo, PictureRepo
 from .repo import ProfileRepo
 from core.views import CoreContext, MessageView
 from django.views import View
-from .apps import APP_NAME
+from authentication.apps import APP_NAME
 TEMPLATE_ROOT="authentication/"
 LAYOUT_PARENT="phoenix/layout.html"
 
@@ -192,8 +193,8 @@ class LoginViews(View):
         messages=[]
         if 'messages' in kwargs:
             messages=kwargs['messages']
-
         context=getContext(request=request)
+        context['login_form_header_image']=PictureRepo(request=request,app_name=APP_NAME).picture(name=AUTH_PictureNameEnum.LOGIN_FORM_HEADER)
         context['messages']=messages
         ProfileRepo(request=request).logout(request)
         context['login_form']=LoginForm()
@@ -236,6 +237,7 @@ class RegisterViews(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
         context['register_form']=RegisterForm()
+        context['register_form_header_image']=PictureRepo(request=request,app_name=APP_NAME).picture(name=AUTH_PictureNameEnum.REGISTER_FORM_HEADER)
         return render(request,TEMPLATE_ROOT+"register.html",context)  
     def post(self,request):
         register_form=RegisterForm(request.POST)
@@ -248,6 +250,8 @@ class ChangePasswordViews(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
         context['change_password_form']=ChangePasswordForm()
+        context['change_password_form_header_image']=PictureRepo(request=request,app_name=APP_NAME).picture(name=AUTH_PictureNameEnum.CHANGE_PASSWORD_FORM_HEADER)
+
         return render(request,TEMPLATE_ROOT+"change-password.html",context)  
     def post(self,request):
         change_password_form=ChangePasswordForm(request.POST)

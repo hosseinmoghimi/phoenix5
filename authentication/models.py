@@ -5,7 +5,7 @@ from django.db import models
 
 from utility.utils import LinkHelper
 
-from .enums import ProfileStatusEnum
+from authentication.enums import *
 from django.shortcuts import reverse
 from django.utils.translation import gettext as _
 from django.conf import settings
@@ -97,7 +97,7 @@ class Profile(models.Model,LinkHelper):
     def image(self):
         if self.image_origin:
             return MEDIA_URL+str(self.image_origin)
-        return STATIC_URL+APP_NAME+"/images/default-avatar.png"
+        return STATIC_URL+APP_NAME+"/img/default-avatar.png"
     @property
     def header_image(self):
         if self.header_origin:

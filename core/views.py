@@ -1,7 +1,7 @@
 import json
 from django.http import Http404
 from django.shortcuts import render,reverse
-from django.utils import timezone
+from django.utils import timezone 
 
 from utility.calendar import PersianCalendar
 from core.apps import APP_NAME
@@ -25,16 +25,43 @@ LAYOUT_PARENT='phoenix/layout.html'
 
 def CoreContext(request, *args, **kwargs):
     context = {}
-    context['apps'] = phoenix_apps
     context['LAYOUT_PARENT'] = LAYOUT_PARENT
 
-    installed_apps=[]
-    for phoenix_app in phoenix_apps:
-        installed_apps.append(phoenix_app['name'])
-        context[phoenix_app['name']+'_app_is_installed']=True
-    context["installed_apps"]=installed_apps
-
+    from phoenix.server_settings import phoenix_apps
+    PictureRepo_=PictureRepo(request=request,app_name=APP_NAME)
+    ParameterRepo_=ParameterRepo(request=request,app_name=APP_NAME)
     app_name = kwargs['app_name'] if 'app_name' in kwargs else 'core'
+
+    installed_apps=[]
+    for app in phoenix_apps:
+        icon=PictureRepo_.picture(app_name=app['name'],name=PictureNameEnum.FAVICON)
+        logo=PictureRepo_.picture(app_name=app['name'],name=PictureNameEnum.LOGO)
+      
+        if not logo.image_origin:
+            logo=f"{STATIC_URL}{app['name']}/img/logo.png"
+        else:
+            logo=logo.image
+
+        if not icon.image_origin:
+            icon=f"{STATIC_URL}{app['name']}/img/icon.png"
+        else:
+            icon=icon.image
+        installed_app={
+            'name':app['name'],
+            'icon':icon,
+            'logo':logo,
+            'color':app['color'],
+            'home_url':ParameterRepo_.parameter(app_name=app['name'],name=ParameterNameEnum.HOME_URL,default=app['home_url']).value,
+            'title':ParameterRepo_.parameter(app_name=app['name'],name=ParameterNameEnum.TITLE,default=app['title']).value,
+            'show_on_menu':app['show_on_menu']
+        }
+        if app['name']==app_name:
+            context['app']=installed_app
+        context[app['name']+'_app_is_installed']=True
+        installed_apps.append(installed_app)
+    context['installed_apps']=installed_apps
+
+   
     context['APP_NAME'] = app_name
     context['ADMIN_URL'] = ADMIN_URL
     context['STATIC_URL'] = STATIC_URL
@@ -57,12 +84,8 @@ def CoreContext(request, *args, **kwargs):
     if not farsi_font_name == ParameterNameEnum.FARSI_FONT_NAME and not farsi_font_name == "Default":
         context['farsi_font_name'] = farsi_font_name
     picture_repo = PictureRepo(request=request, app_name=app_name)
-    context['app'] = {
-        'title': parameter_repo.parameter(name=ParameterNameEnum.TITLE, default=app_name).value,
-        'home_url': parameter_repo.parameter(name=ParameterNameEnum.HOME_URL, default="/"+app_name+"/").value,
-        'icon': picture_repo.picture(name=PictureNameEnum.FAVICON, default="").image,
-        'logo': picture_repo.picture(name=PictureNameEnum.LOGO, default="").image,
-    }
+    logo=picture_repo.picture(name=PictureNameEnum.LOGO, default="")
+     
     pc = PersianCalendar()
     now =pc.date
     current_datetime = pc.from_gregorian(now)
@@ -220,6 +243,15 @@ def PageContext(request, *args, **kwargs):
 
     return context
 
+def getContext(request,*args, **kwargs):
+    context=CoreContext(app_name=APP_NAME,request=request)
+    return context
+
+class HomeView(View):
+    def get(self, request, *args, **kwargs):
+        context=getContext(request=request)
+        return render(request,TEMPLATE_ROOT+"index.html",context) 
+
 
 class DownloadView(View):
     def get(self, request, *args, **kwargs): 
@@ -283,8 +315,6 @@ class ImageDownloadView(View):
         if image is None:
             raise Http404
         return image.download_response()
- 
-
 
 
 class TagView(View):

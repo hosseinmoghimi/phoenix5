@@ -1,0 +1,70 @@
+{% load to_price %}
+{% load static %}
+<div class="card">
+    <div class="card-header">
+        <h6>
+            <small class="text-muted">
+
+                {{page.class_title}}
+            </small>
+        </h6>
+        <h5>
+
+
+            {{page.title}}
+
+
+        </h5>
+    </div>
+    <div class="farsi card-body text-right">
+        <div class="my-2">
+            {% include "core/includes/page-like-app/template.html" %}
+
+        </div>
+
+        {% if perms.core.change_page %}
+        <div class="my-2">
+
+            <a href="{{page.get_edit_url}}" target="_blank" title="ویرایش" class="mx-2 text-warning"><i
+                    class="fa fa-edit"></i> ویرایش</a>
+        </div>
+        {% endif %}
+
+
+
+        {% if perms.core.delete_page %}
+        <div class="my-2">
+
+            <a href="{{page.get_delete_url}}" target="_blank" title="حذف" class="mx-2 text-danger"><i
+                    class="fa fa-trash"></i> حذف</a>
+        </div>
+        {% endif %}
+        {% if page.parent %}
+        <div class="mb-3"></div>
+        {{page.recursive_full_link|safe}}
+        {% endif %}
+
+
+        {% if page.meta_data %}
+        <p>
+            <small>
+
+                <small class="text-muted">
+                    کلید واژه ها :
+                </small>
+                {{keywords}}
+            </small>
+        </p>
+        {% endif %}
+        <h6>
+            قیمت : 
+            {{book.price|to_price|safe}}
+        </h6>
+        <h6 title="کمد {{book.shelf}} - طبقه {{book.row}} - ردیف {{book.col}}"> 
+            موقعیت در کتابخانه : 
+            <span>{{book.shelf}}</span>/
+            <span >{{book.row}}</span>/
+            <span >{{book.col}}</span>
+        </h6>
+    </div>
+</div>

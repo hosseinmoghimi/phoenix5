@@ -323,6 +323,11 @@ class PictureRepo:
     def list(self,*args, **kwargs):
         return self.objects.filter(app_name=self.app_name)
     def picture(self,*args, **kwargs):
+        if 'app_name' in kwargs:
+            app_name=kwargs['app_name']
+            self.app_name=app_name
+            self.objects=Picture.objects.filter(app_name=app_name)
+
         pk=0
         name=""
         picture=None
@@ -412,6 +417,11 @@ class ParameterRepo:
     
     
     def parameter(self,*args, **kwargs):
+        
+        if 'app_name' in kwargs:
+            self.app_name=kwargs['app_name']
+            self.objects=Parameter.objects.filter(app_name=self.app_name)
+
         parameter=None
         parameter_name=""
         if 'parameter_name' in kwargs:
@@ -423,8 +433,7 @@ class ParameterRepo:
             default=parameter_name
             if 'default' in kwargs:
                 default=kwargs['default']
-
-
+            
             parameter=Parameter(name=parameter_name,app_name=self.app_name,origin_value=default)
             parameter.save()
 
@@ -440,6 +449,10 @@ class ParameterRepo:
         
 
     def list(self,*args, **kwargs):
+        
+        if 'app_name' in kwargs:
+            self.app_name=kwargs['app_name']
+            self.objects=Parameter.objects.filter(app_name=self.app_name)
         objects= self.objects.all()
         return objects
 

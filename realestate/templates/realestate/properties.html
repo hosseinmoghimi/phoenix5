@@ -1,0 +1,14 @@
+{% extends "realestate/layout.html" %}
+
+{% block content %}
+  <div class="row">
+    <div class="col-md-12">
+       {% include "realestate/includes/properties-app/template.html" %}
+    </div>
+  </div>
+{% endblock content %}
+
+{% block script %}
+{% include "realestate/includes/properties-app/script.html" %}
+  
+{% endblock script %}

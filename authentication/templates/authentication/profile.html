@@ -71,10 +71,14 @@
                     {% if perms.authentication.change_profile %}
 
 
-                    <a href="{% url 'authentication:login_as' pk=selected_profile.id %}" title="login_as"
-                        class="mx-2 text-info"><i class="fa fa-edit"></i> ورود</a>
+                    <a href="{% url 'authentication:login_as' pk=selected_profile.id %}" title="ورود"
+                        class="mx-2 text-success"><i class="fa fa-sign-in" aria-hidden="true"></i></a>
 
                     {% endif %}
+
+                    <a href="{% url 'authentication:change_password' %}" title="تغییر دادن پسورد"
+                    class="mx-2 text-info"><i class="fa fa-key" aria-hidden="true"></i></a>
+
 
                     {% if can_edit_profile %}
 
@@ -82,14 +86,18 @@
 
 
                     <a href="{{selected_profile.get_edit_page_url}}" title="ویرایش" class="mx-2 text-warning"><i
-                            class="fa fa-edit"></i> ویرایش</a>
+                            class="fa fa-edit"></i></a>
                     {% endif %}
 
 
 
                     {% if perms.authentication.delete_profile %}
                     <a href="{{selected_profile.get_delete_url}}" target="_blank" title="حذف"
-                        class="mx-2 text-danger"><i class="fa fa-trash"></i> حذف</a>
+                        class="mx-2 text-danger"><i class="fa fa-trash"></i></a>
+                    {% endif %}
+                    {% if profile %}
+                    <a href="{% url 'authentication:logout' %}" target="_blank" title="خروج"
+                        class="mx-2 text-danger"><i class="fa fa-sign-out" aria-hidden="true"></i></a>
                     {% endif %}
                 </div>
 

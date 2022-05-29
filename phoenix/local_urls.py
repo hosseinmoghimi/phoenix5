@@ -41,7 +41,7 @@ urlpatterns = [
     # path('favicon.ico', FaviconView.as_view(),name="favicon"),
     # re_path(r'^', include(web3auth_urls)),
 # web3auth_urls
-    re_path(r'^qrcode/(?P<path>.*)$', serve, {'document_root': QRCODE_ROOT}),
+    
     re_path(r'^qrcode/(?P<path>.*)$', serve, {'document_root': QRCODE_ROOT}),
     re_path(r'^static/(?P<path>.*)$', serve, {'document_root': STATIC_ROOT}),
     re_path(r'^media/(?P<path>.*)$', serve, {'document_root': MEDIA_ROOT}),

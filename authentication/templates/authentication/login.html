@@ -35,10 +35,18 @@
             <div class="row justify-content-center">
                 <div class="col-md-7 col-lg-5">
                     <div class="wrap">
-                        <div class="img"
-                            style="background-image:url('{% static 'authentication/images/login-back-2.jpg' %}')">
+                        <div class="img" style="background-image:url('{{login_form_header_image.image}}')">
                         </div>
+                       
                         <div class="login-wrap p-4 p-md-5">
+                            {% if perms.core.change_image %}
+                            <div class="text-center">
+                                <a title="ویرایش" href="{{login_form_header_image.get_edit_url}}">
+    
+                                    <i class="fa fa-edit text-warning"></i>
+                                </a>
+                            </div>
+                            {% endif %}
                             <div class="d-flex">
                                 <div class="w-100">
                                     <h3 class="mb-4">Sign In</h3>

@@ -1,0 +1,34 @@
+{% load to_variz_text %}
+{% load to_price %}
+<div class="card">
+    <div class="card-body px-5 farsi text-right">
+        <h5>
+             توضیحات 
+        </h5>
+        <div>
+            واحد مبلغ ها
+            {{CURRENCY}}
+            می باشد.
+        </div>
+        {% if invoice.tax_amount > 0 %}
+        <div>
+            میزان مالیات : {{invoice.tax_amount|to_price}}
+        </div>
+        {% endif %}
+        {% if invoice.pay_from and invoice.pay_from.default_bank_account %}
+        <div>
+            {{invoice.pay_from.default_bank_account|to_variz_text}}
+        </div>
+        {% endif %}
+        <div class="text-right farsi">
+            {{invoice.status}}
+            /
+            {{invoice.payment_method}}
+        </div>
+        {% if invoice.description %}
+        <div class=" ">
+            {{invoice.description|safe}}
+        </div>
+        {% endif %}
+    </div>
+</div>

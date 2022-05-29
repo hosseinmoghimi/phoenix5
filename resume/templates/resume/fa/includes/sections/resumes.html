@@ -5,7 +5,7 @@
     <div class="container" data-aos="fade-up">
 
         <div class="section-title">
-            <h2>رزومه ها</h2>
+            <h2>تحصیلات و آموخته های آکادمیک</h2>
 
             <div>
                 {% if resume_index.resume_top %}
@@ -26,10 +26,15 @@
 
             <div class="col-lg-6">
                 <h3 class="resume-title">
-                    {{resume_category.title}}
+                    <a href="{{resume_category.get_absolute_url}}">
+
+                        {{resume_category.title}}
+                    </a>
 
                     {% if perms.resume.change_resumecategory %}
+               
                     {{resume_category.get_edit_btn|safe}}
+                      
                     {% endif %}
                 </h3>
                 {% for resume in resume_category.resume_set.all %}
@@ -43,8 +48,14 @@
                         <a href="{{resume.get_absolute_url}}">
                             {{resume.title}}
 
+                        </a>  
+                        <a class="mx-2" title="ویرایش" href="{{resume.get_edit_url}}">
+                            <i class="fa fa-edit text-warning"></i>
                         </a>
                         {% if perms.resume.change_resume %}
+                      
+                        {% endif %}
+                        {% if sdsdsd %}
                         {{resume.get_edit_btn|safe}}
                         {% endif %}
                     </h4>

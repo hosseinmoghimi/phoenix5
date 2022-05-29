@@ -1,5 +1,6 @@
 from django.db.models import TextChoices
 from django.utils.translation import gettext as _
+from core.enums import LanguageCode,LanguageEnum,LanguageFromCode
 class ResumeItemEnum(TextChoices):
     FACT='FACT'
     SKILL='SKILL'
@@ -19,24 +20,34 @@ class ServiceColorEnum(TextChoices):
     yellow='yellow',_('yellow')
     red='red',_('red')
     teal='teal',_('teal')
-class ResumeLanguageEnum(TextChoices):
-    ENGLISH='english',_('english')
-    DUTCH='dutch',_('dutch')
-    FARSI='farsi',_('farsi')
-    RUSSIAN='russian',_('russian')
-    ARABIC='arabic',_('arabic')
+
+# class ResumeLanguageEnum(TextChoices):
+#     ENGLISH='english',_('english')
+#     DUTCH='dutch',_('dutch')
+#     FARSI='farsi',_('farsi')
+#     RUSSIAN='russian',_('russian')
+#     ARABIC='arabic',_('arabic')
 
         
-def LanguageCode(language):
-    if language==ResumeLanguageEnum.FARSI:
-        return 'fa'
-    if language==ResumeLanguageEnum.ENGLISH:
-        return 'en'
-def LanguageFromCode(code):
-    if code=='fa':
-        return ResumeLanguageEnum.FARSI
-    if code=='en':
-        return ResumeLanguageEnum.ENGLISH
+# class ResumeLanguageEnum2(TextChoices):
+#     ENGLISH_='انگلیسی',_('انگلیسی')
+#     DUTCH='dutch',_('dutch')
+#     FARSI='farsi',_('farsi')
+#     FARSI_='فارسی',_('فارسی')
+#     RUSSIAN='russian',_('russian')
+#     ARABIC='arabic',_('arabic')
+
+        
+# def LanguageCode(language):
+#     if language==ResumeLanguageEnum.FARSI or language==ResumeLanguageEnum2.FARSI_:
+#         return 'fa'
+#     if language==ResumeLanguageEnum.ENGLISH or language==ResumeLanguageEnum2.ENGLISH_:
+#         return 'en'
+# def LanguageFromCode(code):
+#     if code=='fa':
+#         return ResumeLanguageEnum.FARSI
+#     if code=='en':
+#         return ResumeLanguageEnum.ENGLISH
 
 class LinkClassEnum(TextChoices):
     twitter="""twitter"""

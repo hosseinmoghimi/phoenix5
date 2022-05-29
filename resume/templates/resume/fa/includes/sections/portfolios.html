@@ -35,12 +35,12 @@
 
             <div class="col-lg-4 col-md-6 portfolio-item filter-{{portfolio.category}}">
                 <div class="portfolio-wrap">
-                    <img src="{{portfolio.image}}" class="img-fluid w-100" alt="">
+                    <img src="{{portfolio.thumbnail}}" class="img-fluid w-100" alt="">
                     <div class="portfolio-info">
                         <h4>{{portfolio.title}}</h4>
                         <p>{{portfolio.category}}</p>
                         <div class="portfolio-links">
-                            <a href="{{portfolio.image}}" data-gallery="portfolioGallery" class="portfolio-lightbox"
+                            <a href="{{portfolio.thumbnail}}" data-gallery="portfolioGallery" class="portfolio-lightbox"
                                 title="{{portfolio.title}}"><i class="bx bx-plus"></i></a>
                             {% if perms.resume.change_resumeportfolio %}
                             <a href="{{portfolio.get_edit_url}}" target="_blank" title="{{portfolio.title}}"><i

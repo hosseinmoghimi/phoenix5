@@ -1,0 +1,99 @@
+{% load to_persian_date %}
+{% load to_price %}
+{% load to_amount_color %}
+{% load static %}
+<div id="accordion-drugs">
+    <div class="card" id="drugs-app">
+        <div class="card-header" id="heading-drugs">
+            <h5 class="text-center">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-drugs" aria-expanded="true"
+                    aria-controls="collapse-drugs">
+                    دارو ها
+                    <span v-if="drugs.length>0">
+                        <small class="text-danger mx-2">
+                            <span v-text="drugs.length"></span>
+                        </small>
+                    </span>
+                </button>
+            </h5>
+            {% if page_pre_description %}
+            <h5 class="text-center">
+                {{page_pre_description}}
+            </h5>
+            {% endif %}
+            {% if page_description %}
+
+            <h4 class="text-center">
+                {{page_description}}
+            </h4>
+            {% endif %}
+        </div>
+        <div id="collapse-drugs" class="collapse {% if expand_drugs %} show {% endif %}" aria-labelledby="heading-drugs"
+            data-parent="#accordion-drugs">
+            <div class="card-body">
+                {% load static %}
+                <form @submit.prevent="search()">
+                    <img src="{% static 'leo/img/loading.gif' %}" width="32" v-if="waiting" alt="">
+
+                    <input type="text" v-model="search_for" class="form-control" placeholder="جستجو ..."
+                        @input="filter()">
+                </form>
+                <div class="table-responsive">
+                    <img v-if="false" width="32" src="{% static 'leo/img/loading.gif' %}" alt="">
+                    <h6 v-if="false">
+
+                        <span class="text-muted">در حال بار گذاری ... </span>
+                    </h6>
+                    <table class="table table-striped">
+                        <thead>
+                            <th>
+                                دارو
+                            </th>
+
+
+                            <th>
+
+                            </th>
+                        </thead>
+                        <tbody>
+                            <tr v-for="drug in drugs">
+                                <td>
+                                    <a :href="drug.get_absolute_url">
+                                        <div class="media">
+                                            <img :src="drug.thumbnail" class="rounded" width="48" alt="">
+                                            <div class="media-body mr-3">
+                                                <div>
+
+                                                    <span v-text="drug.title"></span>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </a>
+
+
+                                </td>
+
+                                <td>
+
+                                    {% if aaa and perms.projectmanager.add_employee and not drug.employee %}
+                                    <form @submit.prevent="create_employee(drug.id)">
+                                        {% csrf_token %}
+                                        <button class="btn btn-warning" type="submit">
+                                            ایجاد پرسنل
+                                        </button>
+                                    </form>
+                                    {% endif %}
+
+
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+</div>

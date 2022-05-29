@@ -73,53 +73,7 @@
 
 
     <div class="col-md-12">
-        <div class="card">
-            <div class="card-body px-5 farsi text-right">
-                <div>
-
-                    واحد مبلغ ها
-                    {{CURRENCY}}
-                    می باشد.
-                </div>
-                {% if invoice.tax_amount %}
-
-                {% endif %}
-                <div>
-                    میزان مالیات : {{invoice.tax_amount|to_price}}
-                </div>
-
-                {% if invoice.pay_from.bank_account %}
-                <div>
-
-                    {{invoice.pay_from.bank_account|to_variz_text}}
-                </div>
-                {% endif %}
-
-                <div class="text-right farsi">
-
-                    {{invoice.status}}
-                    /
-
-                    {{invoice.payment_method}}
-
-
-                </div>
-                {% if invoice.description %}
-                <div class=" ">
-
-                    {{invoice.description|safe}}
-                </div>
-
-                {% endif %}
-
-
-
-
-            </div>
-        </div>
-
-
-
+        {% include "accounting/includes/invoice-app/description.html" %}
     </div>
     <div class="col-md-12">
         <div class="card">
@@ -170,7 +124,7 @@
         {% include "core/includes/page-comments-app/template.html" %}
 
     </div>
-    <div class="col-md-12"> 
+    <div class="col-md-12">
         {% include "accounting/includes/financial-balances-app/template.html" %}
 
     </div>
@@ -178,7 +132,7 @@
         {% include "accounting/includes/financial-documents-app/template.html" %}
 
     </div>
- 
+
     <div class="col-md-12">
 
         {% include "guarantee/includes/guarantees-app/template.html" %}
