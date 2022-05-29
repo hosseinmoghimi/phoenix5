@@ -16,7 +16,7 @@
             </ol>
             <div class="carousel-inner">
                 {% for carousel in carousels %}
-                <div class="carousel-item">
+                <div class="carousel-item" id="my-carousel-item{{forloop.counter0}}">
                     <div class="page-header header-filter1" style="background-image: url('{{carousel.image}}');">
                         <div class="container">
                             {% if carousel.title %}

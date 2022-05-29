@@ -51,7 +51,7 @@ def CoreContext(request, *args, **kwargs):
             'icon':icon,
             'logo':logo,
             'color':app['color'],
-            'home_url':ParameterRepo_.parameter(app_name=app['name'],name=ParameterNameEnum.HOME_URL).value,
+            'home_url':ParameterRepo_.parameter(app_name=app['name'],name=ParameterNameEnum.HOME_URL,default=app['home_url']).value,
             'title':ParameterRepo_.parameter(app_name=app['name'],name=ParameterNameEnum.TITLE,default=app['title']).value,
             'show_on_menu':app['show_on_menu']
         }

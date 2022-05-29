@@ -82,6 +82,7 @@ class PricingItemSpecification(models.Model,LinkHelper):
 class Blog(Page):
     header_image=""
     for_home=models.BooleanField(_("for_home"),default=False)
+    author=models.ForeignKey("ourteam",null=True,blank=True, verbose_name=_("author"), on_delete=models.CASCADE)
  
     def save(self,*args, **kwargs):
         if self.class_name is None or self.class_name=="":
@@ -132,6 +133,7 @@ class Carousel(models.Model,LinkHelper):
 
 class OurWork(Page):
     for_home=models.BooleanField(_("for_home"),default=False)
+    author=models.ForeignKey("ourteam",null=True,blank=True, verbose_name=_("author"), on_delete=models.CASCADE)
  
     def save(self,*args, **kwargs):
         if self.class_name is None or self.class_name=="":
@@ -147,6 +149,7 @@ class OurWork(Page):
 
 class Feature(Page):
     for_home=models.BooleanField(_("for_home"),default=False)
+    author=models.ForeignKey("ourteam",null=True,blank=True, verbose_name=_("author"), on_delete=models.CASCADE)
  
     def save(self,*args, **kwargs):
         if self.class_name is None or self.class_name=="":

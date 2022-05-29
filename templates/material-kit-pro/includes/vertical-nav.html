@@ -1,8 +1,11 @@
+{% if dddddd %}
+
 <nav id="cd-vertical-nav">
+
 
   <ul class="mr-4">
 
-  
+
     {% for link in vertical_navs %}
     <li>
       <a href="{{link.url}}" data-number="{{link.pk}}">
@@ -12,7 +15,7 @@
     </li>
     {% empty %}
     {% if not no_vertical_navbar %}
-      
+
     <li>
       <a href="#headers" data-number="1">
         <span class="cd-dot"></span>
@@ -61,3 +64,4 @@
     {% endfor %}
   </ul>
 </nav>
+{% endif %}

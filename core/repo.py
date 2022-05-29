@@ -433,8 +433,7 @@ class ParameterRepo:
             default=parameter_name
             if 'default' in kwargs:
                 default=kwargs['default']
-
-
+            
             parameter=Parameter(name=parameter_name,app_name=self.app_name,origin_value=default)
             parameter.save()
 
