@@ -20,7 +20,7 @@ from accounting.enums import *
 
 
 class Asset(Page,LinkHelper):
-    
+    price=models.IntegerField(_("price"),default=0)
     class Meta:
         verbose_name = _("Asset")
         verbose_name_plural = _("Assets")

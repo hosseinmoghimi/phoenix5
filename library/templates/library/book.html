@@ -7,31 +7,19 @@
 
 <div class="row">
     <div class="col-md-4">
-        <div class="card">
-            <div class="card-body">
-
-                <h4>
-                    {{book.title}}
-                    {% if perms.library.change_book %}
-                    <a href="{{book.get_edit_url}}" title="ویرایش" target="_blank">
-                        <i class="fa fa-edit text-info"></i>
-                    </a>
-                    {% endif %}
-                </h4>
-                <h6>
-                    {{book.price|to_price|safe}}
-                </h6>
-
-            </div>
-        </div>
+        {% include "core/includes/page-app/thumbnail-card.html" %}
     </div>
-    <div class="col-md-4">
+    <div class="col-md-8">
+        {% include "library/includes/book-app/brief-card.html" %}
+    </div>
+    
+    <div class="col-md-6">
 
         {% include "core/includes/page-links-app/template.html" %}
     </div>
-    <div class="col-md-4">
+    <div class="col-md-6">
 
-        {% include "core/includes/page-documents-app/template.html" %}
+        {% include "core/includes/page-downloads-app/template.html" %}
     </div>
     <div class="col-md-12">
 
@@ -52,17 +40,12 @@
     </div>
 
 </div>
- 
+
 
 {% endblock content %}
 
 
 {% block script %}
-<script src="{% static 'vendor/js/vue.min.js' %}"></script>
-<script>
-    let page_id = parseInt("{{book.id}}")
-</script>
-{% include "core/includes/page-images-app/script.html" %}
-{% include "core/includes/page-documents-app/script.html" %}
-{% include "core/includes/page-links-app/script.html" %}
+
+{% include "core/includes/page-app/script.html" %}
 {% endblock script %}

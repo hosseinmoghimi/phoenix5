@@ -23,11 +23,17 @@
 
             <li class="nav-item">
                 {{fact.title}}
-
+<!-- 
                 <span class="badge badge-primary">
 
                     {{fact.count|to_price_pure}}
+                </span> -->
+
+                <span class=" ">
+
+                    {{fact.count|to_price_pure}}
                 </span>
+
             </li>
             {% endfor %}
         </ul>
