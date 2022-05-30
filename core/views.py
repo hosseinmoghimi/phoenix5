@@ -343,6 +343,15 @@ class PageImageView(View):
         return render(request,TEMPLATE_ROOT+"image.html",context)
         
 
+class PagePrintView(View):
+    def get(self, request, *args, **kwargs):
+        context=getContext(request=request)
+        page=PageRepo(request=request).page(*args, **kwargs)
+        context.update(PageContext(request=request,page=page))
+        context['no_footer']=True
+        context['no_navbar']=True
+        return render(request,TEMPLATE_ROOT+"includes/page-app/print.html",context)
+
 
 class ImageView(View):
     def get(self, request, *args, **kwargs):

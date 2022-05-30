@@ -93,6 +93,8 @@ class Page(models.Model, LinkHelper, ImageMixin):
     def likes_count(self):
         return len(PageLike.objects.filter(page_id=self.id))
 
+    def get_print_url(self):
+        return reverse(APP_NAME+":page_print",kwargs={'pk':self.pk})
     def class_title(self):
         return class_title(app_name=self.app_name,class_name=self.class_name)
 

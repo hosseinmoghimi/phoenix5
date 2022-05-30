@@ -12,6 +12,7 @@ urlpatterns = [
     path("download/<int:pk>/",views.DownloadView.as_view(),name='download'),
     path("tag/<int:pk>/",views.TagView.as_view(),name='tag'),
     path("image/<int:pk>/",views.ImageView.as_view(),name='image'),
+    path("page_print/<int:pk>/",views.PagePrintView.as_view(),name='page_print'),
     path("image_download/<int:pk>/",views.ImageDownloadView.as_view(),name='image_download'),
     path("pageimage/<int:pk>/",views.PageImageView.as_view(),name='pageimage'),
     path('add_page_download/',apis.AddPageDownloadApi.as_view(),name="add_page_download"),

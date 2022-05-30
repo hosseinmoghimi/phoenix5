@@ -1,0 +1,22 @@
+{% extends "core/layout.html" %}
+{% load static %}
+
+{% block content %}
+<h3 class="text-center mb-5">
+    {{page.title}}
+</h3>
+<div class="row">
+    {% if page.short_description %}
+
+    <div class="col-md-12 farsi">
+        {{page.short_description|safe}}
+    </div>
+    {% endif %}
+    {% if page.description %}
+
+    <div class="col-md-12 farsi">
+        {{page.description|safe}}
+    </div>
+    {% endif %}
+</div>
+{% endblock content %}
