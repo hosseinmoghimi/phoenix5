@@ -1,4 +1,5 @@
 from archive.models import Folder,File
+from django.db.models import Q
 from authentication.repo import ProfileRepo
 from .apps import APP_NAME
     
@@ -34,7 +35,7 @@ class FolderRepo:
         if 'for_home' in kwargs:
             objects = objects.filter(for_home=kwargs['for_home'])
         if 'search_for' in kwargs:
-            objects = objects.filter(name__contains=kwargs['search_for'])
+            objects = objects.filter(Q(name__contains=kwargs['search_for']))
         return objects
     def get_root(self,*args, **kwargs):
         folder=Folder.objects.filter(pk=1).first()
@@ -95,7 +96,7 @@ class FileRepo:
         if 'folder_id' in kwargs:
             objects = objects.filter(folder_id=kwargs['folder_id'])
         if 'search_for' in kwargs:
-            objects = objects.filter(title__contains=kwargs['search_for'])
+            objects = objects.filter(Q(title__contains=kwargs['search_for'])|Q(description__contains=kwargs['search_for']))
         return objects
     def file(self,*args, **kwargs):
         if 'file' in kwargs and kwargs['file'] is not None:
