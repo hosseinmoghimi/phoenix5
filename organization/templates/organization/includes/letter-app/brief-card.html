@@ -80,6 +80,12 @@
         <!-- <div class="my-2">
             تاریخ ایجاد نامه : {{letter.date_added|to_persian_datetime|safe}}
         </div> -->
+        <div class="my-2">
+
+            <a href="{{letter.get_print_url}}" title="چاپ" class="mx-2 text-success"><i
+                    class="fa fa-print"></i> چاپ</a>
+        </div>
+
         {% if perms.core.change_page %}
         <div class="my-2">
 

@@ -260,6 +260,24 @@ class LettersView(View):
         context['expand__letters'] = True
         return render(request, TEMPLATE_ROOT+"letters.html", context)
 
+class LetterPrintView(View):
+    def get(self, request, *args, **kwargs):
+        context = getContext(request=request)
+        letter = LetterRepo(request=request).letter(*args, **kwargs)
+        context['letter'] = letter
+        context.update(PageContext(request=request, page=letter))
+        
+        # letter_sents
+        if True:
+            letter_sents = letter.lettersent_set.all()
+            context['letter_sents'] = letter_sents
+            letter_sents_s = json.dumps(
+                LetterSentSerializer(letter_sents, many=True).data)
+            context['letter_sents_s'] = letter_sents_s
+        context['no_navbar']=True
+        context['no_footer']=True
+        return render(request, TEMPLATE_ROOT+"letter-print.html", context)
+
 
 class LetterView(View):
     def get(self, request, *args, **kwargs):

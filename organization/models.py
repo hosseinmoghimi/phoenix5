@@ -156,7 +156,8 @@ class Letter(Page):
         if self.app_name is None:
             self.app_name = APP_NAME
         return super(Letter, self).save(*args, **kwargs)
-
+    def get_print_url(self):
+        return reverse(APP_NAME+":letter_print",kwargs={'pk':self.pk})
     class Meta:
         verbose_name = 'Letter'
         verbose_name_plural = 'نامه های اداری'
