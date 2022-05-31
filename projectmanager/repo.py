@@ -356,6 +356,14 @@ class ServiceRequestRepo():
 
 
         new_service_request = ServiceRequest(status=RequestStatusEnum.DRAFT)
+        now=timezone.now()
+        if 'date_requested' in kwargs:
+            new_service_request.date_requested = kwargs['date_requested']
+        else:
+            new_service_request.date_requested = now
+
+        if 'date_delivered' in kwargs:
+            new_service_request.date_delivered = kwargs['date_delivered']
         if 'project_id' in kwargs:
             new_service_request.project_id = kwargs['project_id']
         if 'employee_id' in kwargs:
@@ -509,6 +517,14 @@ class MaterialRequestRepo():
 
 
         new_material_request = MaterialRequest(status=RequestStatusEnum.DRAFT)
+        now=timezone.now()
+        if 'date_requested' in kwargs:
+            new_material_request.date_requested = kwargs['date_requested']
+        else:
+            new_material_request.date_requested = now
+
+        if 'date_delivered' in kwargs:
+            new_material_request.date_delivered = kwargs['date_delivered']
         if 'project_id' in kwargs:
             new_material_request.project_id = kwargs['project_id']
         if 'employee_id' in kwargs:

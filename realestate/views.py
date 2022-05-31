@@ -48,12 +48,13 @@ class PropertyView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
  
-        books=BookRepo(request=request).list(*args, **kwargs)
-        context['books']=books
-        context['books_s']=json.dumps(BookSerializer(books,many=True).data)
+        property=PropertyRepo(request=request).property(*args, **kwargs)
+        context.update(PageContext(request=request,page=property))
+        context['property']=property
+        context['property_s']=json.dumps(PropertySerializer(property).data)
 
 
-        return render(request,TEMPLATE_ROOT+"index.html",context)
+        return render(request,TEMPLATE_ROOT+"property.html",context)
 
 
 
