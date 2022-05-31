@@ -17,16 +17,19 @@
 
 <h4 class="text-center">
 
-    <a href="{{account.profile.get_absolute_url}}" target="_blank" title="پروفایل" class="mx-2"><i
+    <a href="{{service_man.account.profile.get_absolute_url}}" target="_blank" title="پروفایل" class="mx-2"><i
             class="fa fa-user text-info"></i></a>
 
+    <a href="{{service_man.account.get_absolute_url}}" target="_blank" title="حساب" class="mx-2"><i
+            class="fa fa-user text-success"></i></a>
+
     {% if perms.transport.change_driver %}
-    <a href="{{account.get_edit_url}}" target="_blank" title="ویرایش" class="mx-2"><i
+    <a href="{{service_man.get_edit_url}}" target="_blank" title="ویرایش" class="mx-2"><i
             class="fa fa-edit text-info"></i></a>
     {% endif %}
 
     {% if perms.transport.delete_driver %}
-    <a href="{{account.get_delete_url}}" target="_blank" title="حذف" class="mx-2"><i
+    <a href="{{service_man.get_delete_url}}" target="_blank" title="حذف" class="mx-2"><i
             class="fa fa-trash text-danger"></i></a>
     {% endif %}
 
