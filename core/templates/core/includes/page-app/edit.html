@@ -1,0 +1,31 @@
+{% extends "core/layout.html" %}
+{% load static %}
+{% block head %}
+<link rel="stylesheet" href="{% static 'vendor/css/ckeditor/sample.css' %}">
+{% endblock head %}
+{% block content %}
+<h3 class="text-center mb-5">
+    {{page.title}}
+</h3>
+<div id="editor">
+    {{page.description|safe}}
+</div>
+
+{% endblock content %}
+
+{% block script %}
+<script src="{% static 'vendor/js/ckeditor/ckeditor.js' %}"></script>
+
+<script>
+    ClassicEditor
+        .create(document.querySelector('#editor'), {
+            // toolbar: [ 'heading', '|', 'bold', 'italic', 'link' ]
+        })
+        .then(editor => {
+            window.editor = editor;
+        })
+        .catch(err => {
+            console.error(err.stack);
+        });
+</script>
+{% endblock script %}

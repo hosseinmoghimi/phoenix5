@@ -373,8 +373,12 @@ class ServiceMansView(View):
         context=getContext(request=request)
         service_mans=ServiceManRepo(request=request).list(*args, **kwargs)
         context['service_mans']=service_mans
-        work_shifts_s=json.dumps(ServiceManSerializer(service_mans,many=True).data)
-        context['work_shifts_s']=work_shifts_s
+        service_mans_s=json.dumps(ServiceManSerializer(service_mans,many=True).data)
+        context['service_mans_s']=service_mans_s
+        context['expand_service_mans']=True
+        if request.user.has_perm(APP_NAME+".add_serviceman"):
+            context['add_service_man_form']=AddServiceManForm()
+            context.update(add_from_accounts_context(request=request))
         return render(request,TEMPLATE_ROOT+"service-mans.html",context)
 
 

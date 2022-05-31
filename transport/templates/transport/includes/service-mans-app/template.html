@@ -1,50 +1,102 @@
-<div class="card h-100" id="service-mans-app">
-
-    <div class="card-header">
-        <h4 class="title text-center">
-            <a href="{% url 'vehicles:service_mans' %}">
-
-                سرویس کار ها
-            </a>
-        </h4>
-    </div>
-    <div class="card-body">
-        <ul class="nav flex-column" style="padding-right:10px">
+{% load static %}
+<div id="accordion-service-mans">
 
 
-            <li class="nav-item" v-for="service_man in service_mans">
+    <div class="card" id="service-mans-app">
+        <div class="card-header" id="heading-service-mans">
+            <h5 class="text-center">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-service-mans" aria-expanded="true"
+                    aria-controls="collapse-service-mans">
+                    سرویس کار ها
+                    <span v-if="service_mans.length>0">
+                        <small class="text-danger mx-2">
+                            <span v-text="service_mans.length"></span>
+                        </small>
+                    </span>
 
-                <div class="media">
-                    <a class="nav-link farsi docs-creator" :href="service_man.get_absolute_url">
-                        <img :src="service_man.profile.image" class="rounded-circle" width="48" alt="">
-                    </a>
-                    <div class="media-body">
-                        <div>
-                            <a :href="service_man.get_absolute_url">
-                                <span v-text="service_man.title"></span>
-                            </a>
-                        </div>
 
-                        <div>
-                            <a :href="service_man.profile.get_absolute_url">
-                               <small>
-                                <span v-text="service_man.profile.name"></span>
+                </button>
+            </h5>
 
-                                </small>
-                            </a>
-                        </div>
 
-                    </div>
+        </div>
+        <div id="collapse-service-mans" class="collapse  {% if expand_service_mans %} show {% endif %}" aria-labelledby="heading-service-mans" data-parent="#accordion-service-mans">
+
+
+            <div class="card-body">
+
+                {% load static %}
+                <form @submit.prevent="search()">
+                    <img src="{% static 'leo/img/loading.gif' %}" width="32" v-if="waiting" alt="">
+
+                    <input type="text" v-model="search_for" class="form-control" placeholder="جستجو ..."
+                        @input="filter()">
+                </form>
+
+
+                <div class="table-responsive">
+                    <img v-if="false" width="32" src="{% static 'leo/img/loading.gif' %}" alt="">
+                    <h6 v-if="false">
+
+                        <span class="text-muted">در حال بار گذاری ... </span>
+                    </h6>
+                    <table class="table table-striped">
+                        <thead>
+                            <th>
+                                تعمیرکار 
+                            </th>
+                            <th>
+                                پروفایل
+                            </th>
+                            <th>
+                                مانده
+                            </th>
+                            <th>
+
+                            </th>
+                        </thead>
+                        <tbody>
+
+
+                            <tr v-for="service_man in service_mans">
+                                <td>
+                                    <a :href="service_man.get_absolute_url">
+                                        <img :src="service_man.logo" class="rounded1" width="32" alt="">
+
+
+                                        <span v-text="service_man.title"></span>
+                                    </a>
+
+
+                                </td>
+                                <td>
+                                    <a v-if="service_man.account.profile" :href="service_man.account.profile.get_absolute_url">
+                                        <img :src="service_man.account.profile.image" class="rounded-circle" width="32" alt="">
+                                        <span v-text="service_man.account.profile.name"></span>
+                                    </a>
+
+                                </td>
+                                <td>
+                                    <span v-html="to_price(service_man.account.balance_rest)"></span>
+                                    </span>
+
+                                </td>
+                                <td>
+
+                                   
+
+
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
-            </li>
-        </ul>
-    </div>
-    {% if add_serviceman_form %}
-    <div class="card-footer">
-        {% include "transport/includes/service-mans-app/add-service-man-form.html" %}
-       
-    </div>
-      
-    {% endif %}
+            </div>
+        </div>
 
+
+    </div>
 </div>
+
+
+ 

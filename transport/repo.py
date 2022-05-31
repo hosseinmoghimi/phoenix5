@@ -26,6 +26,8 @@ class DriverRepo():
 
             if driver is None:
                 driver=Driver(account_id=account_id)
+                if 'title' in kwargs:
+                    driver.title=kwargs['title']
                 driver.save()
                 return driver
         
@@ -329,7 +331,19 @@ class ServiceManRepo():
         
         self.objects=ServiceMan.objects.all()
         self.profile=ProfileRepo(*args, **kwargs).me
+    def add_service_man(self,*args, **kwargs):
+        if not self.user.has_perm(APP_NAME+".add_serviceman"):
+            return
+        if 'account_id' in kwargs:
+            account_id=kwargs['account_id']
+            service_man=self.service_man(account_id=account_id)
 
+            if service_man is None:
+                service_man=ServiceMan(account_id=account_id)
+                if 'title' in kwargs:
+                    service_man.title=kwargs['title']
+                service_man.save()
+                return service_man
     def add_work_shift(self, *args, **kwargs):
         if not self.user.has_perm(APP_NAME+".add_trip"):
             return
@@ -677,6 +691,8 @@ class PassengerRepo():
 
             if passenger is None:
                 passenger=Passenger(account_id=account_id)
+                if 'title' in kwargs:
+                    passenger.title=kwargs['title']
                 passenger.save()
                 return passenger
 

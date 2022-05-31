@@ -33,6 +33,11 @@
             <a href="{{page.get_edit_url}}" target="_blank" title="ویرایش" class="mx-2 text-warning"><i
                     class="fa fa-edit"></i> ویرایش</a>
         </div>
+        <div class="my-2">
+
+            <a href="{% url 'core:page_edit' pk=page.pk %}" target="_blank" title="ویرایش" class="mx-2 text-info"><i
+                    class="fa fa-edit"></i> ویرایش</a>
+        </div>
         {% endif %}
 
 

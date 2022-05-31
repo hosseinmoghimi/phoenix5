@@ -70,7 +70,7 @@
 
                                 </td>
                                 <td>
-                                    <a :href="driver.account.profile.get_absolute_url">
+                                    <a v-if="driver.account.profile"  :href="driver.account.profile.get_absolute_url">
                                         <img :src="driver.account.profile.image" class="rounded-circle" width="32" alt="">
                                         <span v-text="driver.account.profile.name"></span>
                                     </a>

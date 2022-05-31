@@ -1,8 +1,8 @@
 from core.constants import SUCCEED,FAILED
 from rest_framework.views import APIView
 from transport.forms import *
-from transport.repo import ClientRepo, DriverRepo, MaintenanceRepo, PassengerRepo, TripCategoryRepo, TripPathRepo, VehicleRepo, WorkShiftRepo
-from transport.serializers import ClientSerializer, DriverSerializer, MaintenanceSerializer, PassengerSerializer, TripCategorySerializer, TripPathSerializer, VehicleSerializer, WorkShiftSerializer
+from transport.repo import ClientRepo, DriverRepo, MaintenanceRepo, PassengerRepo, ServiceManRepo, TripCategoryRepo, TripPathRepo, VehicleRepo, WorkShiftRepo
+from transport.serializers import ClientSerializer, DriverSerializer, MaintenanceSerializer, PassengerSerializer, ServiceManSerializer, TripCategorySerializer, TripPathSerializer, VehicleSerializer, WorkShiftSerializer
 from django.http import JsonResponse
 
 from utility.calendar import PersianCalendar
@@ -61,6 +61,25 @@ class AddTripCategoryApi(APIView):
 
     
 
+class AddServiceManApi(APIView):
+    def post(self,request,*args, **kwargs):
+        
+        context={
+            'result':FAILED
+        }
+        fm=AddServiceManForm(request.POST)
+        if fm.is_valid():
+            cd=fm.cleaned_data
+            service_man=ServiceManRepo(request=request).add_service_man(**cd)
+            if service_man is not None:
+                context={
+                    'result':SUCCEED,
+                    'service_man':ServiceManSerializer(service_man).data
+                }
+        return JsonResponse(context)
+
+    
+
 class AddDriverApi(APIView):
     def post(self,request,*args, **kwargs):
         
@@ -79,7 +98,6 @@ class AddDriverApi(APIView):
         return JsonResponse(context)
 
     
-
 class AddVehicleApi(APIView):
     def post(self,request,*args, **kwargs):
         

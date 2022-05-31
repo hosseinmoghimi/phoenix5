@@ -111,7 +111,7 @@
                                                 </a>
                                             </div>
                                             <div>
-                                                <a :href="maintenance.service_man.account.profile.get_absolute_url">
+                                                <a v-if="maintenance.service_man.account.profile" :href="maintenance.service_man.account.profile.get_absolute_url">
 
                                                     <small
                                                         v-text="maintenance.service_man.account.profile.name"></small>
@@ -163,10 +163,10 @@
                                                 </a>
                                             </div>
                                             <div>
-                                                <a :href="maintenance.client.account.profile.get_absolute_url">
+                                                <a :href="maintenance.client.account.get_absolute_url">
 
                                                     <small
-                                                        v-text="maintenance.client.account.profile.name"></small>
+                                                        v-text="maintenance.client.account.title"></small>
                                                 </a>
                                             </div>
                                         </div>
