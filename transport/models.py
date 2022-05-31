@@ -362,7 +362,8 @@ class Maintenance(VehicleEvent):
         verbose_name = _("Maintenance")
         verbose_name_plural = _("Maintenances")
     def save(self,*args, **kwargs):
-        self.title=self.maintenance_type
+        if self.title is None or self.title=="":
+            self.title=self.maintenance_type
         if self.class_name is None or self.class_name=="":
             self.class_name='maintenance'
         if self.app_name is None or self.app_name=="":
