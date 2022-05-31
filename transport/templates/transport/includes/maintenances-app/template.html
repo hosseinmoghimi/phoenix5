@@ -51,9 +51,12 @@
                             <th>
 
                             </th>
+                            {% if not service_man %}
+
                             <th>
                                 سرویس کار
                             </th>
+                            {% endif %}
 
                             {% if not vehicle %}
                             <th>
@@ -96,10 +99,12 @@
                                         </i>
                                     </a>
                                 </td>
+                                {% if not service_man %}
+                                  
                                 <td>
                                     <div class="media">
                                         <a :href="maintenance.service_man.get_absolute_url">
-                                            <img :src="maintenance.service_man.account.profile.image"
+                                            <img :src="maintenance.service_man.account.logo"
                                                 class="rounded-circle" width="48">
 
                                         </a>
@@ -122,6 +127,7 @@
 
 
                                 </td>
+                                {% endif %}
                                 {% if not vehicle %}
 
                                 <td>

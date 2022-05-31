@@ -127,6 +127,27 @@
 
         </div>
 
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="service_man_id">وسیله نقلیه</label>
+                <select required v-model="vehicle_id" id="vehicle_id" class="form-control">
+                    <template v-for="vehicle in vehicles">
+
+                        <option :value="vehicle.id">
+                            <span v-text="vehicle.title"></span>
+                            (<small class="mx-2 px-2" v-text="vehicle.plaque"></small>)
+                        </option>
+                    </template>
+                </select>
+
+                <small id="emailHele324p" class="form-text farsi text-muted">
+                    وسیله نقلیه مرتبط را انتخاب کنید.
+                </small>
+            </div>
+
+        </div>
+
+
 
 
 

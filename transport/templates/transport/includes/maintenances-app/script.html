@@ -1,40 +1,43 @@
 <script>
-    let vehicle_id_=0
-    if(typeof vehicle_id !="undefined"){
-        vehicle_id_=vehicle_id
+    let vehicle_id_ = 0
+    if (typeof vehicle_id != "undefined") {
+        vehicle_id_ = vehicle_id
     }
-    let maintenances = JSON.parse(`{{maintenances_s|escapejs}}`)
-    let maintenances_app_data = {
-        maintenances: maintenances,
-        waiting:false,
-        message:{show:false},
-        search_for:"",
-    }
+    let maintenances_app_data = {}
 </script>
 {% if add_maintenance_form %}
 <script>
-    let service_mans = JSON.parse(`{{service_mans_s|escapejs}}`)
-    let clients = JSON.parse(`{{clients_s|escapejs}}`)
     maintenances_app_data = {
-        maintenances: maintenances,
-        service_mans: service_mans,
+        maintenances: JSON.parse(`{{maintenances_s|escapejs}}`),
+        service_mans: JSON.parse(`{{service_mans_s|escapejs}}`),
+        vehicles: JSON.parse(`{{vehicles_s|escapejs}}`),
         event_datetime: current_datetime,
-        clients:clients,
+        clients: JSON.parse(`{{clients_s|escapejs}}`),
         service_man_id: "",
-        client_id:"",
+        client_id: "",
         maintenance_type: "",
         show_form: false,
         // maintenance_types: maintenance_types,
         amount: "",
         description: "",
         title: "",
-        vehicle_id:vehicle_id_,
+        vehicle_id: vehicle_id_,
         kilometer: "",
-        waiting:false,
-        message:{show:false},
-        search_for:"",
+        waiting: false,
+        message: { show: false },
+        search_for: "",
     }
 
+</script>
+{% else %}
+<script>
+
+    maintenances_app_data = {
+        maintenances: JSON.parse(`{{maintenances_s|escapejs}}`),
+        waiting: false,
+        message: { show: false },
+        search_for: "",
+    }
 </script>
 {% endif %}
 
@@ -72,8 +75,10 @@
                     csrfmiddlewaretoken: csrfmiddlewaretoken,
 
                 }
+                console.log(payload)
                 let posting = $.post(url_add_maintenance, payload)
                 posting.done((data) => {
+                    console.log(data)
                     if (data.result === "SUCCEED") {
                         maintenances_app.maintenances.push(data.maintenance)
                     }

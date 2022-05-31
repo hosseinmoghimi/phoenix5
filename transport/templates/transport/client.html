@@ -58,6 +58,9 @@
     <div class="col-md-12">
         {% include "accounting/includes/transactions-app/template.html" %}
     </div>
+    <div class="col-md-12">
+        {% include "transport/includes/maintenances-app/template.html" %}
+    </div>
 
     <div class="col-md-12">
         {% include "transport/includes/trips-app/template.html" %}
@@ -83,4 +86,6 @@
 
 {% include "transport/includes/add-trip-app/script.html" %}
 {% endif %}
+{% include "transport/includes/maintenances-app/script.html" %}
+
 {% endblock script %}

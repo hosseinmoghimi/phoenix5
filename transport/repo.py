@@ -537,11 +537,13 @@ class MaintenanceRepo():
         if 'for_home' in kwargs:
             objects = objects.filter(Q(for_home=kwargs['for_home']))
         if 'client_id' in kwargs:
-            objects=objects.filter(pay_to_id=kwargs['client_id'])
+            objects=objects.filter(pay_to_id=Client.objects.filter(pk=kwargs['client_id']).first().account_id)
         if 'driver_id' in kwargs:
             objects=objects.filter(pay_from_id=kwargs['driver_id'])
         if 'vehicle_id' in kwargs:
             objects=objects.filter(vehicle_id=kwargs['vehicle_id'])
+        if 'service_man_id' in kwargs:
+            objects=objects.filter(pay_from_id=ServiceMan.objects.filter(pk=kwargs['service_man_id']).first().account_id)
         return objects.all()
 
     def add_maintenance(self,*args, **kwargs):
@@ -562,9 +564,9 @@ class MaintenanceRepo():
         if 'maintenance_type' in kwargs:
             maintenance.maintenance_type=kwargs['maintenance_type']
         if 'service_man_id' in kwargs:
-            maintenance.pay_from_id=kwargs['service_man_id']
+            maintenance.pay_from_id=ServiceMan.objects.filter(pk=kwargs['service_man_id']).first().account_id
         if 'client_id' in kwargs:
-            maintenance.pay_to_id=kwargs['client_id']
+            maintenance.pay_to_id=Client.objects.filter(pk=kwargs['client_id']).first().account_id
         if 'vehicle_id' in kwargs:
             maintenance.vehicle_id=kwargs['vehicle_id']
         maintenance.save()

@@ -60,6 +60,9 @@
     </div>
 
     <div class="col-md-12">
+        {% include "transport/includes/maintenances-app/template.html" %}
+    </div>
+    <div class="col-md-12">
         {% include "transport/includes/trips-app/template.html" %}
     </div>
     {% if add_maintenance_form %}
@@ -82,5 +85,6 @@
 {% if add_maintenance_form %}
 {% include "transport/includes/add-maintenance-app/script.html" %}
 {% endif %}
+{% include "transport/includes/maintenances-app/script.html" %}
 
 {% endblock script %}
