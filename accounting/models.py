@@ -18,6 +18,22 @@ from utility.utils import LinkHelper
 from accounting.apps import APP_NAME
 from accounting.enums import *
 
+class Brand(Page):
+
+    
+
+    class Meta:
+        verbose_name = _("Brand")
+        verbose_name_plural = _("Brands")
+
+
+    def save(self,*args, **kwargs):
+        if self.class_name is None or self.class_name=="":
+            self.class_name='brand'
+        if self.app_name is None or self.app_name=="":
+            self.app_name=APP_NAME
+        return super(Asset,self).save(*args, **kwargs)
+
 
 class Asset(Page,LinkHelper):
     price=models.IntegerField(_("price"),default=0)

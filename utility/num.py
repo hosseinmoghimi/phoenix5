@@ -69,7 +69,11 @@ def to_horuf_3(value):
 
     return "error"
 
-def to_horuf(value,hezar_power=0):
+def to_horuf(value,hezar_power=0): 
+    if value is None or value=="" :
+        return "نامعتبر"
+    if value==0 :
+        return "صفر"
     if value<0:
         return 'منفی '+to_horuf(0-value) 
     value=int(value)

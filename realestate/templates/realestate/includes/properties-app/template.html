@@ -88,7 +88,7 @@
                                     <span v-text="to_price(property.price)"></span>
                                 </td>
                                 <td>
-                                    <a :href="property.agent.get_absolute_url">
+                                    <a v-if="property.agent" :href="property.agent.get_absolute_url">
 
                                         <span v-text="property.agent.title"></span>
                                     </a>
