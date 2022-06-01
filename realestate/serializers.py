@@ -11,4 +11,4 @@ class PropertySerializer(serializers.ModelSerializer):
     agent=AccountSerializer()
     class Meta:
         model = Property
-        fields=['id','title','agent','price','get_absolute_url','get_edit_url']
+        fields=['id','floor','get_agent_url','price_horuf','garage','bed_rooms','title','agent','area','price','address','get_absolute_url','get_edit_url','get_delete_url']

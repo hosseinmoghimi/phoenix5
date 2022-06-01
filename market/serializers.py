@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from market.models import Category,Product, Supplier
+from market.models import Brand, Category,Product, Supplier
 from accounting.serializers import ProductSerializer as ProductSerializer_origin
 
  
@@ -13,6 +13,11 @@ class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model=Category
         fields=['id','title','thumbnail','get_absolute_url']
+ 
+class BrandSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Brand
+        fields=['id','title','get_absolute_url','logo']
 class CategorySerializerForApi(serializers.ModelSerializer):
     class Meta:
         model=Category

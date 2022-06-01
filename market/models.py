@@ -5,6 +5,24 @@ from accounting.models import Product
 # Create your models here.
 IMAGE_FOLDER = APP_NAME+"/images/"
 
+class Brand(Page):
+
+
+    @property
+    def logo(self):
+        return self.thumbnail
+        
+    class Meta:
+        verbose_name = _("Brand")
+        verbose_name_plural = _("Brands")
+
+    def save(self,*args, **kwargs):
+        if self.class_name is None or self.class_name=="":
+            self.class_name='brand'
+        if self.app_name is None or self.app_name=="":
+            self.app_name=APP_NAME
+        return super(Brand,self).save(*args, **kwargs)
+
 
 class Order(Invoice):
     
