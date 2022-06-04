@@ -1,8 +1,8 @@
 {% load static %}
 <div class="card" id="chat-app">
     <div class="card-body">
-{% include "messenger/includes/chat-app/send-message.html" %}
-     
+        {% include "messenger/includes/chat-app/send-message.html" %}
+
         <div class="mb-5"></div>
         <div v-for="message in messages" class="mb-5">
 

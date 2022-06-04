@@ -4,8 +4,9 @@
 
 
 
-{% block messenger_content %}
+{% block content %}
 <div class="row">
+
     <div class="col-md-12">
 
 
@@ -40,7 +41,7 @@
                                 </p>
 
                                 <h5>
-                                    اعضای کانال 
+                                    اعضای کانال
                                     <i class="material-icons">
                                         person
                                     </i>
@@ -77,6 +78,7 @@
         {% include "messenger/includes/chat-app/template.html" %}
 
     </div>
+
     <div class="col-12">
         {% include "messenger/includes/notification-app/template.html" %}
 
@@ -85,7 +87,7 @@
 {% endblock %}
 
 
-{% block messenger_script %}
+{% block script %}
 {% include "messenger/includes/chat-app/script.html" %}
 {% include "messenger/includes/notification-app/script.html" %}
-{% endblock %}
+{% endblock script %}

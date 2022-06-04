@@ -22,6 +22,7 @@ def getPusherContext(request,*args, **kwargs):
         context.update(get_member_context(request=request))
         notifications=NotificationRepo(request=request).list(member_id=context['member'].id,read=False)
         notifications_s=json.dumps(NotificationSerializer(notifications,many=True).data)
+        context['PUSHER_IS_ENABLE'] = True
         context['notifications_s']=notifications_s
     else:
         context['PUSHER_IS_ENABLE'] = False
