@@ -1,3 +1,4 @@
+from requests import request
 from .models import ContactMessage, Download, Image, Page, PageComment, PageDownload, PageImage, PageLike, PageLink, PagePermission, PageTag, Parameter,Picture, Tag
 from .constants import *
 from django.db.models import Q
@@ -52,6 +53,34 @@ class PageRepo:
         new_page.class_name=new_page.parent.class_name
         new_page.save()
         return new_page
+    def set_thumbnail_header(self,*args, **kwargs):
+        if not self.request.user.has_perm("core.change_page"):
+            return
+        page=PageRepo(request=self.request).page(*args, **kwargs)
+        if page is None:
+            return
+
+        if 'clear_thumbnail' in kwargs and kwargs['clear_thumbnail']:
+            page.thumbnail_origin=None
+        else:
+            if 'thumbnail' in kwargs:
+                thumbnail=kwargs['thumbnail']
+                if thumbnail is not None:
+                    page.thumbnail_origin=thumbnail
+                    page.save()
+
+
+
+        if 'clear_header' in kwargs and kwargs['clear_header']:
+            page.header_origin=None
+        else:
+            if 'header' in kwargs:
+                header=kwargs['header']
+                if header is not None:
+                    page.header_origin=header
+                    page.save()
+        return page
+
     def add_related_page(self,*args, **kwargs):
         can_write=False
         page=PageRepo(request=self.request).page(*args, **kwargs)

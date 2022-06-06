@@ -18,7 +18,6 @@ from rest_framework.response import Response
 class CustomAuthToken(ObtainAuthToken):
     @csrf_exempt
     def post(self, request, *args, **kwargs):
-        print(100*"#$")
         result=FAILED
         serializer = self.serializer_class(data=request.data,
                                            context={'request': request})

@@ -148,8 +148,6 @@ class Profile(models.Model,LinkHelper):
             for employee in Employee.objects.filter(profile_id=self.id):
                 ss=employee.my_pages_ids()
                 my_pages_ids=my_pages_ids+ss
-        print(my_pages_ids)
-        print(100*"#")
         return my_pages_ids
 
 

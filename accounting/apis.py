@@ -106,7 +106,6 @@ class EditInvoiceApi(APIView):
 class AddCostApi(APIView):
     def post(self,request,*args, **kwargs):
         context={}
-        print(request.POST)
         log=10
         context['result']=FAILED
         if request.method=='POST':

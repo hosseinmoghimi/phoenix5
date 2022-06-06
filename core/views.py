@@ -118,7 +118,8 @@ def PageContext(request, *args, **kwargs):
             can_write=page_permission.can_write
         # my_pages_ids=( page_permissions)
         
-
+    if True:
+        context['set_thumbnail_header_form']=SetThumbnailHeaderForm()
 
     can_add_link=False
     can_add_image=False

@@ -698,8 +698,6 @@ class ProductView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
         product=ProductRepo(request=request).product(*args, **kwargs)
-        print('warehouse_app_is_installed')
-        print(context['warehouse_app_is_installed'])
         if product is None:
             mv=MessageView(request=request)
             mv.title="چنین کالایی یافت نشد."

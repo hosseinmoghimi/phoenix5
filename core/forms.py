@@ -3,9 +3,17 @@ class SearchForm(forms.Form):
     # app_name=forms.CharField(max_length=50,required=False)
     search_for=forms.CharField(max_length=500,required=True)
 
+
+class SetThumbnailHeaderForm(forms.Form):
+    page_id=forms.IntegerField(required=True)
+    clear_thumbnail=forms.BooleanField(required=False)
+    clear_header=forms.BooleanField(required=False)
+
+
 class AddPageTagForm(forms.Form):
     page_id=forms.IntegerField(required=True)
     tag_title=forms.CharField(max_length=50, required=True)
+
 
 class AddRelatedPageForm(forms.Form):
     page_id=forms.IntegerField(required=True)
@@ -13,11 +21,11 @@ class AddRelatedPageForm(forms.Form):
     bidirectional=forms.BooleanField(required=False)
     add_or_remove=forms.BooleanField(required=False)
 
+
 class AddPagePermissionForm(forms.Form):
     page_id=forms.IntegerField(required=True)
     profile_id=forms.IntegerField(required=True)
     can_write=forms.BooleanField(required=False)
-
 
 
 class ChangeParameterForm(forms.Form):
@@ -26,10 +34,12 @@ class ChangeParameterForm(forms.Form):
     parameter_name=forms.CharField(max_length=100,required=False)
     parameter_value=forms.CharField(max_length=10000,required=True)
 
+
 class AddPageDownloadForm(forms.Form):
     page_id=forms.IntegerField(required=False)
     title=forms.CharField(max_length=50,required=False)
-    
+
+
 class AddPageLinkForm(forms.Form):
     page_id=forms.IntegerField(required=False)
     title=forms.CharField(max_length=50,required=False)
@@ -39,21 +49,19 @@ class AddPageLinkForm(forms.Form):
 class TogglePageLikeForm(forms.Form):
     page_id=forms.IntegerField(required=False)
 
-    
+
 class AddPageImageForm(forms.Form):
     page_id=forms.IntegerField(required=True)
     title=forms.CharField(max_length=100, required=True)
-    
+
 
 class AddPageCommentForm(forms.Form):
     page_id=forms.IntegerField(required=True)
     comment=forms.CharField(max_length=500, required=True)
-    
+
 
 class DeletePageCommentForm(forms.Form):
     page_comment_id=forms.IntegerField(required=True)
-
-
 
 
 class AddContactMessageForm(forms.Form):

@@ -23,8 +23,6 @@ def get_excel_report():
     for row in range(10, 20):
         for col in range(27, 54):
             _ = ws3.cell(column=col, row=row, value="{0}".format(get_column_letter(col)))
-    print(ws3['AA10'].value)
-
     return wb
 
 

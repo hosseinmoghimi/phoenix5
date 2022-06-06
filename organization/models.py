@@ -19,7 +19,6 @@ class OrganizationUnit(Page):
             pages_ids.append(page.pk)
             for page1 in chds:
                 pages_ids.append(page1)
-        print(pages_ids)
         return pages_ids
 
     @property

@@ -203,7 +203,6 @@ class TripRepo():
         self.profile=ProfileRepo(*args, **kwargs).me
 
     def add_trip(self, *args, **kwargs):
-        print(kwargs)
         if not self.user.has_perm(APP_NAME+".add_trip"):
             return
         trip=Trip()
@@ -547,7 +546,6 @@ class MaintenanceRepo():
         return objects.all()
 
     def add_maintenance(self,*args, **kwargs):
-        print(kwargs)
         if not self.user.has_perm(APP_NAME+".add_maintenance"):
             return
         maintenance=Maintenance()
@@ -587,7 +585,6 @@ class WorkShiftRepo():
         self.profile=ProfileRepo(*args, **kwargs).me
 
     def add_work_shift(self, *args, **kwargs):
-        print(kwargs)
         if not self.user.has_perm(APP_NAME+".add_workshift"):
             return
         work_shift=WorkShift()

@@ -92,8 +92,6 @@ class SearchView(View):
 
 class ProjectsView(View):
     def get(self, request, *args, **kwargs):
-        print(kwargs)
-        print(100*"#")
         context = getContext(request=request)
         projects = ProjectRepo(request=request).list(*args, **kwargs)
         context['projects'] = projects

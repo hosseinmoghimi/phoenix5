@@ -26,5 +26,6 @@ urlpatterns = [
     path('toggle_like/',apis.TogglePageLikeApi.as_view(),name="toggle_like"),
     path('add_page_tag/',apis.AddPageTagApi.as_view(),name="add_page_tag"),
     path('add_page_permission/',apis.AddPagePermissionApi.as_view(),name="add_page_permission"),
+    path('set_thumbnail_header/',apis.SetThumbnailHeaderApi.as_view(),name="set_thumbnail_header"),
 
 ]

@@ -168,7 +168,6 @@ class AreaRepo():
             area.color=kwargs['color']
         if 'area' in kwargs:
             area.area=kwargs['area']
-        print(area.area)
         area.save()
          
         return area
