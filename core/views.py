@@ -252,7 +252,16 @@ class HomeView(View):
     def get(self, request, *args, **kwargs):
         context=getContext(request=request)
         return render(request,TEMPLATE_ROOT+"index.html",context) 
-
+class PageView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        page=PageRepo(request=request).page(*args, **kwargs)
+        if page is None:
+            mv=MessageView(request=request)
+            mv.title="صفحه مورد نظر پیدا نشد."
+            return mv.response()
+        context.update(PageContext(request=request,page=page))
+        return render(request,TEMPLATE_ROOT+"page.html",context)
 
 class DownloadView(View):
     def get(self, request, *args, **kwargs): 
