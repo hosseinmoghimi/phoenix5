@@ -45,7 +45,7 @@ class NotificationRepo():
 
 
 class MessageRepo:
-    def __init__(self,*args, **kwargs):        
+    def __init__(self,*args, **kwargs):
         self.request = None
         self.user = None
         if 'request' in kwargs:
