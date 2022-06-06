@@ -1,9 +1,45 @@
 from unicodedata import category
 from django.http import JsonResponse
 from rest_framework.views import APIView
+from accounting.repo import ProductRepo
 from core.constants import FAILED,SUCCEED
-from market.serializers import CategorySerializerForApi,ProductSerializerForApi
+from market.forms import *
+from market.serializers import CategorySerializer, CategorySerializerForApi, ProductSerializer,ProductSerializerForApi
 from market.repo import CategoryRepo
+
+class AddCategoryApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        context['result']=FAILED
+        add_category_form=AddCategoryForm(request.POST)
+        if add_category_form.is_valid():
+            category=CategoryRepo(request=request).add_category(**add_category_form.cleaned_data)
+            if category is not None:
+                context['category']=CategorySerializer(category).data
+                context['result']=SUCCEED
+        return JsonResponse(context)
+
+
+
+
+class AddProductApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        context['result']=FAILED
+        add_product_form=AddProductForm(request.POST)
+        if add_product_form.is_valid():
+            (result,product,message)=ProductRepo(request=request).add_product(**add_product_form.cleaned_data)
+            if product is not None:
+                category=CategoryRepo(request=request).category(pk=add_product_form.cleaned_data['category_id'])
+                if category is not None:
+                    category.products.add(product)
+                context['product']=ProductSerializer(product).data
+                context['result']=SUCCEED
+            else:
+                context['message']=message
+        return JsonResponse(context)
+
+
 
 class CategoryApi(APIView):
     def get(self,request,*args, **kwargs):
@@ -19,6 +55,7 @@ class CategoryApi(APIView):
         context['products']=products
         context['result']=SUCCEED
         return JsonResponse(context)
+
 class CategoriesApi(APIView):
     def get(self,request,*args, **kwargs):
         context={}

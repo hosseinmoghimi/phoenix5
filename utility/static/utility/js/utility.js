@@ -4,6 +4,7 @@ let BESTANKAR = 'بستانکار'
 let TUMAN = 'تومان'
 let RIAL = 'ریال'
 let SUCCEED = "SUCCEED"
+let FAILED = "FAILED"
 let to_price = function (x, currency) {
     if (x == null)
         return ""

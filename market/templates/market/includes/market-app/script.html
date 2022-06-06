@@ -1,0 +1,92 @@
+{% load to_json %}
+<script>
+    let add_category_url = "{% url 'market:add_category' %}"
+    let add_product_url = "{% url 'market:add_product' %}"
+</script>
+<script>
+    let categories = JSON.parse(`{{categories_s|escapejs}}`)
+    let products = JSON.parse(`{{products_s|escapejs}}`)
+    let market_app = new Vue({
+        el: "#market-app",
+        data: {
+            category: JSON.parse(`{{category_s|escapejs}}`),
+            categories: categories,
+            products: products,
+            category_title:"",
+            product_title:"",
+            search_for: '',
+            waiting: false,
+        },
+        methods: {
+            filter: function () {
+                this.accounts = accounts.filter(account => account.title.indexOf(this.search_for) > -1)
+            },
+            to_price: function (vall) {
+                let color = 'primary'
+                if (vall < 0)
+                    color = 'danger'
+                if (vall > 0)
+                    color = 'success'
+                vall = to_price(vall, "{{CURRENCY}}")
+                return `
+                    <span class="text-${color}">${vall}</span>
+                    `
+            },
+            select_category: function (category_id) {
+                market_app.waiting = true
+                let api_category_url = "{% url 'market:api_category' category_id=1234 %}"
+                api_category_url = api_category_url.replace('1234', category_id)
+                $.get(api_category_url).done((data) => {
+                    market_app.waiting = false
+                    console.log(data)
+                    market_app.category = data.category
+                    market_app.categories = data.categories
+                    market_app.products = data.products
+                })
+            },
+            add_category: function () {
+                let parent_id=0
+                if(typeof this.category.id!="undefined")
+                    parent_id=this.category.id
+                market_app.waiting = true
+                let payload={
+                    csrfmiddlewaretoken:csrfmiddlewaretoken,
+                    parent_id:parent_id,
+                    title:this.category_title,
+                }
+                console.log(payload)
+                $.post(add_category_url,payload).done((data) => {
+                    market_app.waiting = false
+                    console.log(data)
+                    if(data.result===SUCCEED){
+                        market_app.category_title=""
+                        market_app.categories.push(data.category)
+                    }
+                })
+            },
+
+            
+            add_product: function () {
+                let parent_id=0
+                if(typeof this.category.id!="undefined")
+                    parent_id=this.category.id
+                market_app.waiting = true
+                let payload={
+                    csrfmiddlewaretoken:csrfmiddlewaretoken,
+                    category_id:parent_id,
+                    title:this.product_title,
+                }
+                console.log(payload)
+                $.post(add_product_url,payload).done((data) => {
+                    market_app.waiting = false
+                    console.log(data)
+                    if(data.result===SUCCEED){
+                        market_app.product_title=""
+                        market_app.products.push(data.product)
+                    }
+                })
+            },
+
+        }
+    })
+</script>

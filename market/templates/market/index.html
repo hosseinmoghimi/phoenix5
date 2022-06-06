@@ -1,4 +1,4 @@
-{% extends "market/layout.html" %}
+{% extends "market/wide-layout.html" %}
 
 {% block content %}
   <div class="row">
@@ -7,7 +7,7 @@
   </div>
 
   <div class="col-md-8">
-    {% include "market/includes/index-app/template.html" %}
+    {% include "market/includes/market-app/template.html" %}
 </div>
 
   </div>
@@ -15,7 +15,7 @@
 
 
 {% block script %}
-{% include "market/includes/index-app/script.html" %}
+{% include "market/includes/market-app/script.html" %}
 {% include "market/includes/suppliers-app/script.html" %}
   
 {% endblock script %}

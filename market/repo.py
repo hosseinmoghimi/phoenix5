@@ -64,14 +64,15 @@ class CategoryRepo():
         if not self.user.has_perm(APP_NAME+".add_category"):
             return None
         parent_id=None
+        category=Category()
         if 'title' in kwargs:
-            title = kwargs['title']
+            category.title = kwargs['title']
+            
         if 'parent_id' in kwargs:
             parent_id = kwargs['parent_id']
+            if parent_id is not None and parent_id!=0:
+                category.parent_id=parent_id
 
-        category=Category()
-        category.title=title
-        category.parent_id=parent_id
         category.save()
         return category
 

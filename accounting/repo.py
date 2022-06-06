@@ -102,17 +102,16 @@ class ProductRepo():
     def add_product(self,*args, **kwargs):
         if not self.user.has_perm(APP_NAME+".add_product"):
             return None
- 
+        product=Product()
+  
         if 'title' in kwargs:
-            title = kwargs['title']
-        if len(Product.objects.filter(title=title))>0:
+            product.title = kwargs['title']
+        if len(Product.objects.filter(title=product.title))>0:
             message="کالای وارد شده تکراری می باشد."
             return FAILED,None,message
 
-        product=Product()
-        product.title=title
         product.save()
-        message=title +" با موفقیت افزوده شد."
+        message=product.title +" با موفقیت افزوده شد."
         return SUCCEED,product,message
 
 
