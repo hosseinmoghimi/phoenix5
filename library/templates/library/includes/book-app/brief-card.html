@@ -1,3 +1,4 @@
+{% load to_absolute_link %}
 {% load to_price %}
 {% load static %}
 <div class="card">
@@ -66,5 +67,14 @@
             <span >{{book.row}}</span>/
             <span >{{book.col}}</span>
         </h6>
+
+        <div>
+            <a href="whatsapp://send?text={{page.title}}   {{book.get_absolute_url|to_absolute_link}}"
+                data-action="share/whatsapp/share" target="_blank">
+                <img src="{% static 'icons/whatsapp.png' %}" width="32" alt="">
+                واتسپ
+            </a>
+        </div>
+
     </div>
 </div>
