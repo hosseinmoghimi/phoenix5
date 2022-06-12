@@ -10,7 +10,7 @@ app_name=APP_NAME
 urlpatterns = [
     path('',login_required(views.BasicViews().home),name="home"),
     
-    path('books/',login_required(views.BookViews().books),name="books"),
+    path('books/',(views.BookViews().books),name="books"),
     path('book/<int:pk>/',login_required(views.BookViews().book),name="book"),
     
     path('members/',login_required(views.MemberViews().members),name="members"),
