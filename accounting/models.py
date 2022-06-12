@@ -216,7 +216,10 @@ class Account(models.Model,LinkHelper):
     app_name=models.CharField(_("app_name"),blank=True,max_length=50)
     def default_bank_account(self):
         return BankAccount.default_bank_account(profile_id=self.profile.id)
-       
+    def get_whatsapp_link(self):
+        if self.tel is not None:
+            from utility.share import whatsapp_link
+            return whatsapp_link(self.tel)  
     @property
     def class_title(self):
         class_title="حساب مالی"

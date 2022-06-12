@@ -17,7 +17,7 @@ from utility.calendar import PersianCalendar
 from utility.excel import ReportSheet,ReportWorkBook, get_style
 from accounting.apps import APP_NAME
 from accounting.repo import AssetRepo, CostRepo, InvoiceLineRepo,AccountRepo,FinancialBalanceRepo, ChequeRepo, PaymentRepo, PriceRepo, ProductRepo,ServiceRepo,FinancialDocumentRepo,InvoiceRepo, TransactionRepo
-from accounting.serializers import AccountSerializer, AssetSerializer, CostSerializer, FinancialBalanceSerializer, InvoiceFullSerializer,InvoiceLineSerializer,ChequeSerializer, InvoiceSerializer, PaymentSerializer, PriceSerializer, ProductSerializer,ServiceSerializer,FinancialDocumentForAccountSerializer,FinancialDocumentSerializer, TransactionSerializer
+from accounting.serializers import AccountSerializer, AccountSerializerFull, AssetSerializer, CostSerializer, FinancialBalanceSerializer, InvoiceFullSerializer,InvoiceLineSerializer,ChequeSerializer, InvoiceSerializer, PaymentSerializer, PriceSerializer, ProductSerializer,ServiceSerializer,FinancialDocumentForAccountSerializer,FinancialDocumentSerializer, TransactionSerializer
 from accounting.forms import *
 import json
 from phoenix.server_settings import phoenix_apps
@@ -772,6 +772,8 @@ class AccountsView(View):
         context=getContext(request=request)
         accounts=AccountRepo(request=request).list(*args, **kwargs)
         context['accounts']=accounts
+        accounts_s=json.dumps(AccountSerializerFull(accounts,many=True).data)
+        context['accounts_s']=accounts_s
         context['expand_accounts']=True
         if request.user.has_perm(APP_NAME+".add_account"):
             context['add_account_form']=AddAccountForm()

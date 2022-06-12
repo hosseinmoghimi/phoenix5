@@ -17,12 +17,18 @@ class ServiceSerializer(serializers.ModelSerializer):
         model = Service
         fields = ['id', 'title', 'get_absolute_url','buy_price','unit_price','unit_name','thumbnail']
 
+class AccountSerializerFull(serializers.ModelSerializer):
+    profile=ProfileSerializer()
+    class Meta:
+        model = Account
+        fields = ['id','logo','class_title','get_whatsapp_link','tel','balance_rest', 'title','profile', 'get_absolute_url']
+
+
 class AccountSerializer(serializers.ModelSerializer):
     profile=ProfileSerializer()
     class Meta:
         model = Account
         fields = ['id','logo','class_title','balance_rest', 'title','profile', 'get_absolute_url']
-
 
 class InvoiceSerializer(serializers.ModelSerializer):
     pay_to = AccountSerializer()

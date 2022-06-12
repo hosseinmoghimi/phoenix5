@@ -1,6 +1,5 @@
-{% load to_json %}
 <script>
-    let accounts = JSON.parse(`{{accounts|to_json_accounts|escapejs}}`)
+    let accounts = JSON.parse(`{{accounts_s|escapejs}}`)
     let accounts_app = new Vue({
         el:"#accounts-app",
         data: {
