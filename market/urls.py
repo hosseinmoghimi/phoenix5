@@ -17,7 +17,7 @@ urlpatterns = [
     path("ware_houses/",login_required(views.HomeView.as_view()),name="ware_houses"),
     
     path("suppliers/",login_required(views.HomeView.as_view()),name="suppliers"),
-    path("supplier/<int:pk>/",login_required(views.HomeView.as_view()),name="supplier"),
+    path("supplier/<int:pk>/",login_required(views.SupplierView.as_view()),name="supplier"),
 
 
     path("api/categories/",(apis.CategoriesApi.as_view()),name="api_categories"),

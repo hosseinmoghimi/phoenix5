@@ -1,0 +1,57 @@
+<tr>
+    <td>
+        <div class="img-container">
+            <a :href="cart_line.shop.product_url">
+
+                <img :src="cart_line.shop.product_image" alt="...">
+
+            </a>
+
+        </div>
+    </td>
+    <td class="td-name">
+        <a :href="cart_line.shop.product_url" v-text="cart_line.shop.product_title"></a>
+        <br>
+        <a :href="cart_line.shop.supplier.get_absolute_url">
+
+            <small v-text="cart_line.shop.supplier.name"></small>
+        </a>
+    </td>
+    <!-- <td>
+        Red
+    </td>
+    <td>
+        M
+    </td> -->
+    <td class="td-number text-right">
+
+        <span v-text="to_price(cart_line.shop.unit_price)"></span>
+        <small v-text="'{{CURRENCY}}'"></small>
+    </td>
+    <td class="td-number ltr">
+
+        <div class="btn-group btn-group-sm" v-if="!checkout_done">
+            <button @click="cart_line.quantity=cart_line.quantity>0?cart_line.quantity-1:cart_line.quantity" class="btn btn-round btn-danger"> <i class="material-icons"   aria-hidden="true" >remove</i> </button>
+            <button class="btn btn-round btn-info">
+                <span  v-text="cart_line.shop.unit_name" class="pull-left"></span>
+                <span v-text="cart_line.quantity" class="mx-1"></span>
+            </button>
+            <button @click="cart_line.quantity++"  class="btn btn-round btn-success"> <i class="material-icons"   aria-hidden="true" >add</i> </button>
+        </div>
+        <div v-if="checkout_done" class="text-center rtl">
+            <span v-text="cart_line.quantity" class="mx-1"></span>
+            <span  v-text="cart_line.shop.unit_name" class="text-secondary"></span>
+        </div>
+    </td>
+
+    <td class="td-number">
+       <span v-text="to_price(cart_line.shop.unit_price*cart_line.quantity,'')"></span>
+       <small v-text="'{{CURRENCY}}'"></small>
+    </td>
+    <td class="td-actions">
+        <button type="button" rel="tooltip" data-placement="left" title="" class="btn btn-link"
+            data-original-title="حذف کالا" @click="cart_line.quantity=0">
+            <i class="material-icons"   aria-hidden="true" >close</i>
+        </button>
+    </td>
+</tr>

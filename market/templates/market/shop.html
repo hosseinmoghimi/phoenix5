@@ -1,0 +1,336 @@
+{% extends "market/layout.html" %}
+
+{% load static %}
+{% block content %}
+<div class="page-header header-filter header-small" data-parallax="true"
+  style="background-image: url(&quot;{% if shop_header_image %}{{shop_header_image.image}}{% else %}{{parent.image_header}}{% endif %}&quot;); transform: translate3d(0px, 0px, 0px);">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-8 ml-auto mr-auto text-center">
+        <div class="brand">
+          {% if perms.market.change_mainpic %}
+          {{parent.get_edit_btn|safe}}
+          {% endif %}
+
+          
+
+          <h1 class="title farsi text-center">{{parent.title}}</h1>
+
+          {% if parent.description %}
+
+          <h4 class="farsi text-center">
+            {{parent.description}}
+          </h4>
+          {% endif %}
+
+          {% if shop_header %}
+
+          <h1 class="title farsi text-center">{{shop_header.value}}
+
+
+            {% if perms.market.change_parameter %}
+            {{shop_header.get_edit_btn|safe}}
+            {% endif %}
+          </h1>
+
+          {% endif %}
+          {% if shop_description %}
+
+          <h4 class="farsi text-center">
+            {{shop_description.value}}
+            {% if perms.market.change_parameter %}
+            {{shop_description.get_edit_btn|safe}}
+            {% endif %}
+
+          </h4>
+          {% endif %}
+
+          {% if perms.market.change_mainpic %}
+          {{shop_header_image.get_edit_btn|safe}}
+          {% endif %}
+
+
+
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="main main-raised" id="shop-app">
+  {% if parent.suggestions.all %}
+
+  <div class="section">
+    <div class="container">
+      <h2 class="section-title farsi text-center">
+        پیشنهاد ما برای شما
+      </h2>
+      <div class="row rtl">
+
+        {% for product in parent.suggestions.all %}
+        <div class="col-md-4">
+          <div class="card card-product card-plain">
+            <div class="card-header card-header-image">
+              <a href="{{product.get_absolute_url}}">
+                <img src="{{product.thumbnail}}" alt="">
+              </a>
+              <div class="colored-shadow" style="background-image: url(&quot;{{product.thumbnail}}&quot;); opacity: 1;">
+              </div>
+            </div>
+            <div class="card-body text-center">
+              <h4 class="card-title">
+                <a href="{{product.get_absolute_url}}">{{product.title}}</a>
+              </h4>
+              <p class="card-description">
+                {{product.short_description}}
+
+              </p>
+            </div>
+            <div class="card-footer">
+              <div class="price-container">
+                <span class="price price-old"> €1,430</span>
+                <span class="price price-new"> €743</span>
+              </div>
+              <div class="stats ml-auto">
+                <button type="button" rel="tooltip" title="" class="btn btn-just-icon btn-link btn-rose"
+                  data-original-title="Saved to Wishlist">
+                  <i class="material-icons" aria-hidden="true">favorite</i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {% endfor %}
+
+
+
+
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- section -->
+  <div class="section">
+    <div class="container">
+      <h2 class="section-title text-center farsi">دسته بندی را انتخاب کنید</h2>
+      <div class="row">
+        <div class="col-lg-3"></div>
+        <div class="col-lg-6">
+          <div class="rtl text-center">
+            {{parent.get_breadcrumb_tag|safe}}
+          </div>
+        </div>
+        <div class="col-lg-3"></div>
+      </div>
+      <div class="row">
+        <div class="col-md-9">
+          <div class="row rtl">
+            <div v-for="category in categories" class="col-md-4 col-6">
+              {% include "market/includes/category-thumbnail.html" %}
+            </div>
+
+
+
+
+            <div class="col-md-4 col-6" v-for="product in products">
+              {% include "market/includes/product-thumbnail.html" %}
+            </div>
+            <div class="col-12">
+              <div class="row">
+              </div>
+              {% if add_product_form %}
+
+              <div class="col-md-4">
+
+                <form v-if="categories.length==0" @submit.prevent="add_product">
+
+                  <input type="text" v-model="new_product_title" class="form-control farsi" placeholder="محصول جدید">
+                </form>
+              </div>
+              {% endif %}
+
+              {% if add_category_form %}
+
+              <div class="col-md-4">
+
+                <form v-if="products.length==0" @submit.prevent="add_category">
+
+                  <input type="text" v-model="new_category_title" class="form-control farsi"
+                    placeholder="دسته بندی جدید">
+                </form>
+              </div>
+              {% endif %}
+
+            </div>
+
+
+
+          </div>
+          <div class="row">
+            <div class="col-md-3 ml-auto mr-auto">
+              <button rel="tooltip" class="btn btn-rose btn-round" data-original-title="" title="">Load more...</button>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+
+          {% include "market/includes/shop-sidebar.html" %}
+
+        </div>
+
+      </div>
+      <br>
+
+    </div>
+  </div><!-- section -->
+</div>
+
+
+{% if page.related_pages %}
+
+<div class="section">
+  <div class="container">
+    <div class="row rtl">
+      <div class="col-md-12">
+        <h2 class="title text-center farsi">صفحه های مرتبط</h2>
+        <br>
+        <div class="row">
+          {% for related_page in page.related_pages.all %}
+          <div class="col-md-4">
+            <div class="card card-blog">
+              {% if related_page.thumbnail %}
+              <div class="card-header card-header-image">
+                <a href="{{related_page.get_absolute_url}}">
+                  <img class="img img-raised" src="{{related_page.thumbnail}}">
+
+
+                </a>
+                <div class="colored-shadow"
+                  style="background-image: url(&quot;{{related_page.thumbnail}}&quot;); opacity: 1;">
+                </div>
+              </div>
+              {% endif %}
+              <div class="card-body">
+                <h6 class="category farsi text-info">{{related_page.category}}</h6>
+                <h4 class="card-title text-right farsi ">
+                  <a href="{{related_page.get_absolute_url}}">{{related_page.title}}</a>
+                </h4>
+                <div class="card-description">
+                  {{related_page.short_description|safe}}
+
+                  <a class="badge badge-secondary" href="{{related_page.get_absolute_url}}">ادامه
+                    مطلب</a>
+                </div>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% else %}
+<div class="my-3"></div>
+{% endif %}
+{% endblock %}
+{% block head %}
+<style>
+  .form-check-label {
+    direction: ltr;
+  }
+</style>
+{% endblock %}
+{% block script %}
+<script>
+  let suppliers = JSON.parse(`{{suppliers_s|escapejs}}`)
+  let cart_lines = JSON.parse(`{{cart_lines_s|escapejs}}`)
+  let parent = JSON.parse(`{{parent_s|escapejs}}`)
+  let add_product_url = "{% url 'market:add_product' %}"
+  let add_category_url = "{% url 'market:add_category' %}"
+  let parent_id = parseInt('{{parent.id}}')
+  let products = JSON.parse(`{{products_s|escapejs}}`)
+  let categories = JSON.parse(`{{categories_s|escapejs}}`)
+</script>
+{% if DEBUG %}
+<script src="{% static 'vendor/js/vue.js' %}"></script>
+{% else %}
+<script src="{% static 'vendor/js/vue.min.js' %}"></script>
+{% endif %}
+<script>
+  let shop_app = new Vue({
+    el: "#shop-app",
+    data: {
+      new_product_title: '',
+      new_category_title: '',
+      parent: parent,
+      parent_id: parent_id,
+      products: products,
+      categories: categories,
+      suppliers: suppliers,
+
+
+    },
+    methods: {
+      to_price: function (value) {
+        return toPrice(value, TUMAN)
+      },
+      add_product: function () {
+        let url = add_product_url
+
+
+        let posting = $.post(url, {
+          title: shop_app.new_product_title,
+          category_id: shop_app.parent_id,
+          csrfmiddlewaretoken: csrfmiddlewaretoken
+        })
+
+        posting.done(function (data) {
+          if (data.result === 'SUCCEED') {
+
+            shop_app.new_product_title = ''
+            shop_app.products.push(data.product)
+          }
+          else {
+            console.log(data)
+
+          }
+        })
+      },
+
+
+
+      add_category: function () {
+        let url = add_category_url
+
+
+        let posting = $.post(url, {
+          title: shop_app.new_category_title,
+          parent_id: shop_app.parent.id,
+          csrfmiddlewaretoken: csrfmiddlewaretoken
+        })
+
+        posting.done(function (data) {
+          console.log(data)
+          if (data.result === 'SUCCEED') {
+
+            shop_app.new_category_title = ''
+            shop_app.categories.push(data.category)
+          }
+          else {
+            console.log(data)
+
+          }
+        })
+      },
+
+    },
+  })
+</script>
+{% endblock script %}

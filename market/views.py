@@ -2,8 +2,8 @@ from wsgiref.util import request_uri
 from django.shortcuts import render
 from core.enums import ParameterNameEnum
 from market.enums import ParameterMarketEnum
-from market.repo import SupplierRepo
-from market.serializers import SupplierSerializer
+from market.repo import SupplierRepo,CartLineRepo
+from market.serializers import SupplierSerializer,CartLineSerializer
 from market.forms import *
 from authentication.forms import AddMembershipRequestForm
 from core.repo import ParameterRepo, PictureRepo
@@ -21,11 +21,11 @@ import json
  
 
 TEMPLATE_ROOT = "market/"
-LAYOUT_PARENT = "material-kit-pro/layout.html"
-WIDE_LAYOUT_PARENT = "material-kit-pro/layout.html"
 
 LAYOUT_PARENT = "phoenix/layout.html"
+LAYOUT_PARENT = "material-kit-pro/layout.html"
 WIDE_LAYOUT_PARENT = "phoenix/wide-layout.html"
+WIDE_LAYOUT_PARENT = "material-kit-pro/layout.html"
 
 
 def getContext(request, *args, **kwargs):
@@ -36,6 +36,38 @@ def getContext(request, *args, **kwargs):
     context['WIDE_LAYOUT_PARENT'] = WIDE_LAYOUT_PARENT
     return context
 
+def get_customer_context(request,*args, **kwargs):
+    context={}
+    cart_lines=CartLineRepo(request=request).my_lines()
+    context['cart_lines']=cart_lines
+    context['cart_lines_s']=json.dumps(CartLineSerializer(cart_lines).data)
+    return context
+
+
+def get_suppliers_context(request,*args, **kwargs):
+    context={}
+    suppliers=SupplierRepo(request=request).list()
+    sidebar_suppliers=SupplierRepo(request=request).list().order_by('priority')[:5]
+    context['sidebar_suppliers']=sidebar_suppliers
+    context['suppliers']=suppliers
+    context['suppliers_s']=json.dumps(SupplierSerializer(suppliers,many=True).data)
+    return context
+class SupplierView(View):
+    def get(self, request, *args, **kwargs):
+        context = getContext(request)
+        context['body_class'] = "ecommerce-page"
+
+        context.update(get_customer_context(request=request,*args, **kwargs))
+        context.update(get_suppliers_context(request=request,*args, **kwargs))
+        supplier=SupplierRepo(request=request).supplier(*args, **kwargs)
+        context['supplier']=supplier
+        shop_header_image={
+            'image':supplier.header
+        }
+        context['shop_header_image']=shop_header_image
+
+
+        return render(request, TEMPLATE_ROOT+"supplier.html", context)
 
 class HomeView(View):
     def get(self, request, *args, **kwargs):
@@ -50,6 +82,9 @@ class HomeView(View):
             request=request, app_name=APP_NAME).picture(name=ParameterMarketEnum.SHOP_HEADER_IMAGE)
         categories = CategoryRepo(request=request).list().exclude(parent_id__gte=1)
         context['categories'] = categories
+        print("categories")
+        print(categories)
+        print(100*"#")
         context['categories_s'] = json.dumps(CategorySerializer(categories,many=True).data)
         category=None
         context['category_s'] = json.dumps(CategorySerializer(category).data)
@@ -68,14 +103,16 @@ class HomeView(View):
 
         context['add_membership_request_form'] = AddMembershipRequestForm()
 
+ 
 
-        #suppliers
         if True:
-            suppliers = SupplierRepo(request=request).list()
-            context['suppliers'] = suppliers
-            context['suppliers_s'] = json.dumps(SupplierSerializer(suppliers,many=True).data)
+            context['parent_s']=json.dumps(CategorySerializer(None).data)
 
-        return render(request, TEMPLATE_ROOT+"index.html", context)
+
+        context.update(get_customer_context(request=request,*args, **kwargs))
+        context.update(get_suppliers_context(request=request,*args, **kwargs))
+
+        return render(request, TEMPLATE_ROOT+"shop.html", context)
 
 class CategoryView(View):
     def get(self, request, *args, **kwargs):
@@ -85,8 +122,15 @@ class CategoryView(View):
         if category is None:
             mv=MessageView(request=request)
             return mv.response()
+        context.update(get_customer_context(request=request,*args, **kwargs))
+        context.update(get_suppliers_context(request=request,*args, **kwargs))
+        
+
         context['category'] = category
-        context['category_s'] = json.dumps(CategorySerializer(category).data)
+        category_s = json.dumps(CategorySerializer(category).data)
+        context['category_s'] = category_s
+        context['parent_s']=category_s
+        context['parent']=category
         context['body_class'] = "ecommerce-page"
         parameter_repo = ParameterRepo(request=request, app_name=APP_NAME)
         context['shop_header_title'] = parameter_repo.parameter(
@@ -114,13 +158,10 @@ class CategoryView(View):
         context['add_membership_request_form'] = AddMembershipRequestForm()
 
 
-        #suppliers
-        if True:
-            suppliers = SupplierRepo(request=request).list()
-            context['suppliers'] = suppliers
-            context['suppliers_s'] = json.dumps(SupplierSerializer(suppliers,many=True).data)
+       
 
-        return render(request, TEMPLATE_ROOT+"category.html", context)
+        return render(request, TEMPLATE_ROOT+"shop.html", context)
+
 
 class SearchView(View):
     def get(self,request,*args, **kwargs):

@@ -1,0 +1,62 @@
+{% extends "market/layout.html" %}
+
+{% load static %}
+{% block content %}
+<div class="page-header header-filter header-small" data-parallax="true"
+  style="background-image: url(&quot;{% if shop_header_image %}{{shop_header_image.image}}{% else %}{{supplier.image_header}}{% endif %}&quot;); transform: translate3d(0px, 0px, 0px);">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-8 ml-auto mr-auto text-center">
+        <div class="brand">
+          {% if perms.market.change_mainpic %}
+          {{supplier.get_edit_btn|safe}}
+          {% endif %}
+
+          
+
+          <h1 class="title farsi text-center">{{supplier.title}}</h1>
+
+          {% if supplier.description %}
+
+          <h4 class="farsi text-center">
+            {{supplier.description}}
+          </h4>
+          {% endif %}
+
+          {% if shop_header %}
+
+          <h1 class="title farsi text-center">{{shop_header.value}}
+
+
+            {% if perms.market.change_parameter %}
+            {{shop_header.get_edit_btn|safe}}
+            {% endif %}
+          </h1>
+
+          {% endif %}
+          {% if shop_description %}
+
+          <h4 class="farsi text-center">
+            {{shop_description.value}}
+            {% if perms.market.change_parameter %}
+            {{shop_description.get_edit_btn|safe}}
+            {% endif %}
+
+          </h4>
+          {% endif %}
+
+          {% if perms.market.change_mainpic %}
+          {{shop_header_image.get_edit_btn|safe}}
+          {% endif %}
+
+
+
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}
+{% block script %}
+{% endblock script %}
