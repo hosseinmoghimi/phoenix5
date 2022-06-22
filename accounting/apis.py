@@ -6,7 +6,7 @@ from utility.calendar import PersianCalendar
 from .repo import AccountRepo, ChequeRepo, CostRepo, FinancialBalanceRepo,  FinancialDocumentRepo, InvoiceRepo, PaymentRepo, PriceRepo, ProductRepo, ServiceRepo, TransactionRepo
 from django.http import JsonResponse
 from .forms import *
-from .serializers import AccountSerializer, ChequeSerializer, CostSerializer, FinancialBalanceSerializer, FinancialDocumentSerializer, InvoiceFullSerializer, InvoiceLineSerializer, PaymentSerializer, PriceSerializer, ProductSerializer, ServiceSerializer
+from .serializers import AccountSerializer, ChequeSerializer, CostSerializer, FinancialBalanceSerializer, FinancialDocumentSerializer, InvoiceFullSerializer, InvoiceLineSerializer, PaymentSerializer, PriceSerializer, ProductSerializer, ServiceSerializer, TransactionSerializer
 
 class AddChequeApi(APIView):
     def post(self,request,*args, **kwargs):
@@ -41,15 +41,16 @@ class GetReportApi(APIView):
         if request.method=='POST':
             log=2
             GetReportForm_=GetReportForm(request.POST)
-
-
-
-            
             if GetReportForm_.is_valid():
                 log=3
                 cd=GetReportForm_.cleaned_data
-                context['cheques']=ChequeSerializer(ChequeRepo(request=request).list(**cd),many=True).data
-                context['payments']=PaymentSerializer(PaymentRepo(request=request).list(**cd),many=True).data
+
+                cd['start_date']=PersianCalendar().to_gregorian(cd['start_date'])
+                cd['end_date']=PersianCalendar().to_gregorian(cd['end_date'])
+                
+                # context['cheques']=ChequeSerializer(ChequeRepo(request=request).list(**cd),many=True).data
+                # context['payments']=PaymentSerializer(PaymentRepo(request=request).list(**cd),many=True).data
+                context['transactions']=TransactionSerializer(TransactionRepo(request=request).list(**cd),many=True).data
                 context['result']=SUCCEED
         context['log']=log
         return JsonResponse(context)

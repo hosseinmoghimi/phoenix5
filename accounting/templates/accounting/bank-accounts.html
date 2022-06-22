@@ -1,0 +1,16 @@
+{% extends "accounting/layout.html" %}
+
+{% block content %}
+<h4 class="text-center">
+    حساب های بانکی
+</h4>
+<div class="row">
+    <div class="col-md-12">
+        {% include "accounting/includes/bank-accounts-app/template.html" %}
+    </div>
+</div>
+{% endblock content %}
+{% block script %}
+
+{% include "accounting/includes/bank-accounts-app/script.html" %}
+{% endblock script %}

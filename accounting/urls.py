@@ -9,6 +9,9 @@ urlpatterns = [
     path("report/",login_required(views.ReportView.as_view()),name="report"),
     path("search_json/",login_required(views.SearchJsonView.as_view()),name="search_json"),
 
+    path("bank_accounts/",login_required(views.BankAccountsView.as_view()),name="bank_accounts"),
+    path("bank_account/<int:pk>/",login_required(views.BankAccountView.as_view()),name="bankaccount"),
+
     path("products/",login_required(views.ProductsView.as_view()),name="products"),
     path("product/<int:pk>/",login_required(views.ProductView.as_view()),name="product"),
 

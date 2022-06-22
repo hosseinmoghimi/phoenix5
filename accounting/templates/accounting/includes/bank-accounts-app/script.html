@@ -1,0 +1,44 @@
+<script>
+    let bank_accounts = JSON.parse(`{{bank_accounts_s|escapejs}}`)
+    let bank_accounts_app = new Vue({
+        el: "#bank-accounts-app",
+        data: {
+            bank_accounts: bank_accounts,
+            search_for: '',
+            waiting: false,
+        },
+        methods: {
+            to_card_no: function (card_no) {
+                return card_no.slice(12, 16) + " _ " + card_no.slice(8, 12) + " _ " + card_no.slice(4, 8) + " _ " + card_no.slice(0, 4)
+                return card_no.slice(0, 4) + "-" + card_no.slice(4, 8) + "-" + card_no.slice(8, 12) + "-" + card_no.slice(12, 16)
+            },
+            filter: function () {
+                this.bank_accounts = bank_accounts.filter(asset => asset.title.indexOf(this.search_for) > -1)
+
+            },
+            to_price: function (vall) {
+                let color = 'primary'
+                if (vall < 0)
+                    color = 'danger'
+                if (vall > 0)
+                    color = 'success'
+                vall = to_price(vall, "{{CURRENCY}}")
+                return `
+                    <span class="text-${color}">${vall}</span>
+                    `
+            },
+            create_employee: function (asset_id) {
+                let url = "{% url 'organization:employee' pk=0 %}"
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    asset_id: asset_id
+                }
+                $.post(url, payload).done((data) => {
+                    console.log(data)
+                })
+            },
+
+        }
+    })
+
+</script>

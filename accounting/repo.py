@@ -5,7 +5,7 @@ from core.constants import FAILED, SUCCEED
 from core.enums import UnitNameEnum
 from utility.calendar import PersianCalendar
 from .apps import APP_NAME
-from .models import Account, Asset, Cheque, Cost, FinancialBalance, FinancialDocument, FinancialYear, Invoice, InvoiceLine, Payment, Price, Product,Service, Transaction
+from .models import Account, Asset, BankAccount, Cheque, Cost, FinancialBalance, FinancialDocument, FinancialYear, Invoice, InvoiceLine, Payment, Price, Product,Service, Transaction
 from django.db.models import Q
 from authentication.repo import ProfileRepo
 from django.utils import timezone
@@ -59,6 +59,57 @@ class AssetRepo():
         product.title=title
         product.save()
         return product
+
+
+
+class BankAccountRepo():
+    def __init__(self, *args, **kwargs):
+        self.request = None
+        self.user = None
+        if 'request' in kwargs:
+            self.request = kwargs['request']
+            self.user = self.request.user
+        if 'user' in kwargs:
+            self.user = kwargs['user']
+        
+        self.objects=BankAccount.objects.all()
+        self.profile=ProfileRepo(*args, **kwargs).me
+       
+
+    def bank_account(self, *args, **kwargs):
+        pk=0
+        if 'bank_account' in kwargs:
+            return kwargs['bank_account']
+        if 'bank_account_id' in kwargs:
+            pk=kwargs['bank_account_id']
+        elif 'pk' in kwargs:
+            pk=kwargs['pk']
+        elif 'id' in kwargs:
+            pk=kwargs['id']
+        return self.objects.filter(pk=pk).first()
+     
+    def list(self, *args, **kwargs):
+        objects = self.objects
+        if 'search_for' in kwargs:
+            search_for=kwargs['search_for']
+            objects = objects.filter(Q(title__contains=search_for)|Q(short_description__contains=search_for)|Q(description__contains=search_for))
+        if 'for_home' in kwargs:
+            objects = objects.filter(Q(for_home=kwargs['for_home']))
+        if 'parent_id' in kwargs:
+            objects=objects.filter(parent_id=kwargs['parent_id'])
+        return objects.all()
+
+    def add_bank_account(self,*args, **kwargs):
+        if not self.user.has_perm(APP_NAME+".add_bankaccount"):
+            return None
+ 
+        if 'title' in kwargs:
+            title = kwargs['title']
+
+        bank_account=BankAccount()
+        bank_account.title=title
+        bank_account.save()
+        return bank_account
 
 
 
@@ -619,6 +670,14 @@ class PaymentRepo():
      
     def list(self, *args, **kwargs):
         objects = self.objects
+        
+        if 'payment_method' in kwargs and not kwargs['payment_method']=="" and not kwargs['payment_method']is None:
+            objects=objects.filter(Q(payment_method=kwargs['payment_method']))
+        if 'start_date' in kwargs:
+            objects=objects.filter(Q(transaction_datetime__gte=kwargs['start_date']))
+        if 'end_date' in kwargs:
+            objects=objects.filter(Q(transaction_datetime__lte=kwargs['end_date']))
+
         if 'search_for' in kwargs:
             search_for=kwargs['search_for']
             objects = objects.filter(Q(title__contains=search_for)|Q(short_description__contains=search_for)|Q(description__contains=search_for))
@@ -952,6 +1011,16 @@ class ChequeRepo():
      
     def list(self, *args, **kwargs):
         objects = self.objects
+
+        
+        if 'payment_method' in kwargs and not kwargs['payment_method']=="" and not kwargs['payment_method']is None:
+            objects=objects.filter(Q(payment_method=kwargs['payment_method']))
+        if 'start_date' in kwargs:
+            objects=objects.filter(Q(transaction_datetime__gte=kwargs['start_date']))
+        if 'end_date' in kwargs:
+            objects=objects.filter(Q(transaction_datetime__lte=kwargs['end_date']))
+
+
         if 'search_for' in kwargs:
             search_for=kwargs['search_for']
             objects = objects.filter(Q(title__contains=search_for)|Q(short_description__contains=search_for)|Q(description__contains=search_for))
@@ -995,7 +1064,15 @@ class TransactionRepo():
         return self.objects.filter(pk=pk).first()
      
     def list(self, *args, **kwargs):
+        
+
         objects = self.objects
+        if 'payment_method' in kwargs and not kwargs['payment_method']=="" and not kwargs['payment_method']is None:
+            objects=objects.filter(Q(payment_method=kwargs['payment_method']))
+        if 'start_date' in kwargs:
+            objects=objects.filter(Q(transaction_datetime__gte=kwargs['start_date']))
+        if 'end_date' in kwargs:
+            objects=objects.filter(Q(transaction_datetime__lte=kwargs['end_date']))
         if 'search_for' in kwargs:
             search_for=kwargs['search_for']
             objects = objects.filter(Q(title__contains=search_for)|Q(short_description__contains=search_for)|Q(description__contains=search_for))

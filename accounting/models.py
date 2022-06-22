@@ -235,7 +235,17 @@ class Account(models.Model,LinkHelper):
             class_title="سرویس کار"
         return class_title
     def balance_rest(self):
-        return self.balance['rest']
+        bestankar=0
+        bedehkar=0
+        for doc in self.financialdocument_set.all():
+            bestankar+=doc.bestankar
+            bedehkar+=doc.bedehkar
+        balance_rest=bestankar-bedehkar
+        print('balance')
+        print(balance_rest)
+        print(100*"#")
+        return balance_rest
+
     def invoices(self):
         return Invoice.objects.filter(models.Q(pay_from=self)|models.Q(pay_to=self))
 
@@ -329,21 +339,28 @@ class BankAccount(Account):
         verbose_name = _("BankAccount")
         verbose_name_plural = _("BankAccounts")
 
-    def balance(self):
-        return 0-self.rest()
-
-    def get_absolute_url(self):
-        return reverse(APP_NAME+":bank_account", kwargs={"pk": self.pk})
-
+    # def balance(self):
+    #     return 0-self.rest()
+ 
 
     def __str__(self):
         return self.title
 
-
     def save(self,*args, **kwargs):
-        self.title=f"""حساب {self.bank} {self.profile.name}"""
-        return super(BankAccount,self).save(*args, **kwargs)
-
+        if self.class_name is None or self.class_name=="":
+            self.class_name='bankaccount'
+        if self.app_name is None or self.app_name=="":
+            self.app_name=APP_NAME
+            
+        # from projectmanager.models import Employee
+        # a=Account.objects.filter(fff="")
+        if self.title is None or self.title=="":
+            profile_name=""
+            if self.profile is not None:
+                profile_name=self.profile.name 
+            self.title=f"""حساب {self.bank} {profile_name}"""
+        super(BankAccount,self).save(*args, **kwargs)
+  
 
 class FinancialYear(models.Model):
     title=models.CharField(_("عنوان"), max_length=50)

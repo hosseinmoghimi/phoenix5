@@ -2,7 +2,7 @@
 {% load static %}
 {% block content %}
 <style>
-  .mbb>.col-md-3{
+  .mbb>.col-md-3 {
     margin-bottom: 1.5em;
   }
 </style>
@@ -44,6 +44,22 @@
 
     </div>
   </div>
+
+
+  <div class="col-lg-2 col-md-3 col-4">
+    <div class="text-center">
+
+      <a href="{% url 'accounting:bank_accounts' %}">
+        <img src="{% static 'accounting/img/bank-account.png' %}" class="rounded" width="80%" alt="">
+        <h6 class="text-center my-3">
+          لیست حساب های بانکی
+        </h6>
+      </a>
+
+
+    </div>
+  </div>
+
 
   <div class="col-lg-2 col-md-3 col-4">
     <div class="text-center">
@@ -177,8 +193,8 @@
   </div>
 
 
-{% if asdasfrewrerew %}
-  
+  {% if asdasfrewrerew %}
+
   <div class="col-md-4">
     <div class="card">
       <div class="farsi card-body">
@@ -276,7 +292,7 @@
       </div>
     </div>
   </div>
-{% endif %}
+  {% endif %}
 
 </div>
 {% endblock content %}

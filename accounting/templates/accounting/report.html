@@ -33,7 +33,7 @@
                 </label>
 
 
-                <input required type="text" class="form-control" v-model="search_for">
+                <input type="text" class="form-control" v-model="search_for">
 
             </div>
 
@@ -143,6 +143,9 @@
                 </span>
             </div>
         </div>
+        <div class="col-md-12">
+            {% include "accounting/includes/transactions-app/template.html" %}
+        </div>
     </div>
 </form>
 
@@ -160,6 +163,8 @@
     let account_id = parseInt("{{account.id}}")
 </script>
 {% endif %}
+
+{% include "accounting/includes/transactions-app/script.html" %}
 
 <script>
     let report_app = new Vue({
@@ -199,15 +204,21 @@
                         if (typeof costs_app != "undefined") {
                             costs_app.costs.push(data.cost)
                         }
-                        add_cost_app.message = { show: true, body: "با موفقیت ذخیره شد.", color: 'success' }
+                        if (typeof transactions_app != "undefined") {
+                            console.log("dfsdfsdf")
+                            transactions_app.transactions=data.transactions
+                            transactions_app.search_for="asdsfgdhfffffffffff"
+                            console.log(transactions_app.transactions)
+                        }
+                        report_app.message = { show: true, body: "با موفقیت گزارش گیری شد.", color: 'success' }
                     }
                     if (data.result === 'FAILED') {
-                        add_cost_app.message = { show: true, body: "خطا در ذخیره سازی ", color: 'danger' }
+                        report_app.message = { show: true, body: "خطا در گزارش گیری ", color: 'danger' }
                     }
                     setTimeout(() => {
-                        add_cost_app.message = { show: false, body: "خطا در ذخیره سازی ", color: 'danger' }
+                        report_app.message = { show: false}
 
-                    }, 2000);
+                    }, 3000);
                 })
             },
             to_price: function (vall) {
