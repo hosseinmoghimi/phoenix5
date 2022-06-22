@@ -14,6 +14,42 @@
 
      
 </h4>
+<hr>
+<div class="text-center farsi my-3">
+    {% if bank_account.account_no %}
+    <div class="text-center farsi my-3">
+
+        <i class="fa fa-phone text-success"></i>
+        شماره حساب : 
+        {{bank_account.account_no}}
+    </div>
+    {% endif %}
+
+    
+    {% if bank_account.shaba_no %}
+    <div class="text-center farsi my-3">
+
+        <i class="fa fa-phone text-success"></i>
+        شماره شبا : 
+        {{bank_account.shaba_no}}
+    </div>
+    {% endif %}
+
+    
+    {% if bank_account.card_no %}
+    <div class="text-center farsi my-3">
+
+        <i class="fa fa-phone text-success"></i>
+        شماره کارت : 
+        {{bank_account.card_no}}
+    </div>
+    {% endif %}
+
+
+</div>
+<hr>
+
+
 {% include "accounting/includes/account-app/navbar.html" %}
 
 <div class="row">

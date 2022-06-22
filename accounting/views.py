@@ -722,6 +722,7 @@ class BankAccountView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
         bank_account=BankAccountRepo(request=request).bank_account(*args, **kwargs)
+        context['bank_account']=bank_account
         if bank_account is None:
             mv=MessageView(request=request)
             mv.title="چنین حسابی یافت نشد."
