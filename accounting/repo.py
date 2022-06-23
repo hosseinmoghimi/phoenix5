@@ -489,9 +489,6 @@ class FinancialDocumentRepo:
             self.objects = self.objects.filter(pk__lte=0)
 
     def list(self, *args, **kwargs):
-        print("kwargs in list in fd repo")
-        print(kwargs)
-        print(100*"$")
         objects = self.objects.all()
         if 'category_id' in kwargs:
             objects = objects.filter(category_id=kwargs['category_id'])
