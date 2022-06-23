@@ -34,17 +34,24 @@
                     <span class="text-muted">در حال بار گذاری ... </span>
                 </h6>
                 <div class="row">
-                    <div class="col-md-3 farsi my-4" v-for="role in roles">
+                    <div class="col-md-3 col-4 farsi my-4" v-for="role in roles">
                         <div>
                             <a :href="role.get_absolute_url">
                                 <div class="text-center">
 
                                     <img :src="role.thumbnail" width="80%" class="rounded" alt="">
                                 </div>
-                                <h4 class="mt-2 text-center">
+                                <h5 class="mt-2 text-center">
                                     <span :class="'text-'+role.color">
 
                                         <span v-text="role.title"></span>
+                                        
+                                    </span>
+                                </h5>
+
+                                <h6 class="mt-2 text-center">
+                                    <span :class="'text-'+role.color">
+
                                         <small>
                                             (
 
@@ -52,7 +59,8 @@
                                             )
                                         </small>
                                     </span>
-                                </h4>
+                                </h6>
+
                             </a>
                         </div>
 

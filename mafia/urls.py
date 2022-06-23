@@ -9,6 +9,7 @@ urlpatterns = [
     path("roles/",views.RolesView.as_view(),name="roles"),
     path("role/<int:pk>/",views.RoleView.as_view(),name="role"),
     path("add_role/",apis.AddRoleApi.as_view(),name="add_role"),
+    path("add_role_to_game/",apis.AddRoleToGameApi.as_view(),name="add_role_to_game"),
     
     path("role_players/",views.RolePlayersView.as_view(),name="role_players"),
     path("role_player/<int:pk>/",views.RolePlayerView.as_view(),name="roleplayer"),

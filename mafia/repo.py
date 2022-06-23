@@ -190,6 +190,15 @@ class GameRepo():
         return game
 
 
+
+    def add_role_to_game(self,*args, **kwargs):
+        if not self.user.has_perm(APP_NAME+".add_roleplayer"):
+            return None
+        role_player=RolePlayer(*args, **kwargs)
+        role_player.save()
+        return role_player
+
+
 class PlayerRepo():  
     def __init__(self, *args, **kwargs):
         self.request = None

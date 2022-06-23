@@ -13,8 +13,30 @@
                 </h5>
             </div>
             <div class="card-body">
-            
-                
+                <div class="text-right farsi">
+
+                    {% if perms.mafia.change_gamescenario %}
+                    <div>
+
+                        <a class=" text-warning" href="{{game_scenario.get_edit_url}}" title="" target="_blank">
+                            <i class="fa fa-edit"></i>
+                            ویرایش
+                        </a>
+                    </div>
+                    {% endif %}
+
+
+                    {% if perms.mafia.delete_gamescenario %}
+                    <div class="farsi">
+
+                        <a class=" text-danger" href="{{game_scenario.get_delete_url}}" title="" target="_blank">
+                            <i class="fa fa-trash"></i>
+                            حذف
+                        </a>
+                    </div>
+                    {% endif %}
+
+                </div>
 
             </div>
         </div>
