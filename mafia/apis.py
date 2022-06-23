@@ -17,10 +17,7 @@ class AddRoleToGameApi(APIView):
             frm=AddRoleToGameForm(request.POST)
             if frm.is_valid():
                 log=3
-                cleaned_data=frm.cleaned_data
-                # title=cleaned_data['title']
-                # description=cleaned_data['description']
-                role_player=GameRepo(request=request).add_role_to_game(**cleaned_data)
+                role_player=GameRepo(request=request).add_role_to_game(**frm.cleaned_data)
                 
                 if role_player is not None:
                     log=4
