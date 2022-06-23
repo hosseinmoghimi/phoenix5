@@ -43,6 +43,9 @@
             },
             filter_profiles: function () {
                 this.profiles = all_profiles_.filter(profile => profile.name.indexOf(this.profile_name) > -1)
+                if(this.profiles.length>0){
+                    this.profile_id=this.profiles[0].id
+                }
 
             },
             filter: function () {
