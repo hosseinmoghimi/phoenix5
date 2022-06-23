@@ -8,10 +8,10 @@ class SearchForm(forms.Form):
     profile_id=forms.IntegerField(required=False)
 
 class AddBankAccountForm(forms.Form):
-    title=forms.CharField( max_length=200, required=True)
-    shaba_no=forms.CharField(max_length=20, required=False)
+    title=forms.CharField( max_length=100, required=True)
+    shaba_no=forms.CharField(max_length=50, required=False)
     account_no=forms.CharField(max_length=20, required=False)
-    card_no=forms.CharField(max_length=20, required=False)
+    card_no=forms.CharField(max_length=16, required=False)
     profile_id=forms.IntegerField(required=False)
     bank_id=forms.IntegerField(required=False)
 

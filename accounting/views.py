@@ -888,23 +888,13 @@ class FinancialDocumentsView(View):
         context={
             'result':FAILED
         }
-        search_accounting_form=SearchAccountingForm(request.POST)
-        if search_accounting_form.is_valid():
-            cd=search_accounting_form.cleaned_data
-            start_date=cd['start_date']
-            end_date=cd['end_date']
-            search_for=cd['search_for']
-            account_id=cd['account_id']
-            profile_id=cd['profile_id']
-            financial_documents=FinancialDocumentRepo(request=request).list(
-                start_date=start_date,
-                end_date=end_date,
-                search_for=search_for,
-                account_id=account_id,
-                profile_id=profile_id
-                )
-            financial_documents_s=json.dumps(FinancialDocumentSerializer(financial_documents,many=True).data)
-            context['financial_documents']=financial_documents_s
+        SearchForm_=SearchForm(request.POST)
+        if SearchForm_.is_valid():
+            cd=SearchForm_.cleaned_data
+            cd['start_date']=PersianCalendar().to_gregorian(cd['start_date'])
+            cd['end_date']=PersianCalendar().to_gregorian(cd['end_date'])
+            financial_documents=FinancialDocumentRepo(request=request).list(**cd)
+            context['financial_documents']=FinancialDocumentSerializer(financial_documents,many=True).data
             context['result']=SUCCEED
         return JsonResponse(context)
 
