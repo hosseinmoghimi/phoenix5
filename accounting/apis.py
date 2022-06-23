@@ -3,10 +3,53 @@ from core.constants import FAILED,SUCCEED
 from rest_framework.views import APIView
 
 from utility.calendar import PersianCalendar
-from .repo import AccountRepo, ChequeRepo, CostRepo, FinancialBalanceRepo,  FinancialDocumentRepo, InvoiceRepo, PaymentRepo, PriceRepo, ProductRepo, ServiceRepo, TransactionRepo
+from .repo import AccountRepo, BankAccountRepo, BankRepo, ChequeRepo, CostRepo, FinancialBalanceRepo,  FinancialDocumentRepo, InvoiceRepo, PaymentRepo, PriceRepo, ProductRepo, ServiceRepo, TransactionRepo
 from django.http import JsonResponse
 from .forms import *
-from .serializers import AccountSerializer, ChequeSerializer, CostSerializer, FinancialBalanceSerializer, FinancialDocumentSerializer, InvoiceFullSerializer, InvoiceLineSerializer, PaymentSerializer, PriceSerializer, ProductSerializer, ServiceSerializer, TransactionSerializer
+from .serializers import AccountSerializer, BankAccountSerializer, BankSerializer, ChequeSerializer, CostSerializer, FinancialBalanceSerializer, FinancialDocumentSerializer, InvoiceFullSerializer, InvoiceLineSerializer, PaymentSerializer, PriceSerializer, ProductSerializer, ServiceSerializer, TransactionSerializer
+
+class AddBankAccountApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        log=1
+        context['result']=FAILED
+        if request.method=='POST':
+            log=2
+            AddBankAccountForm_=AddBankAccountForm(request.POST)
+
+
+
+            
+            if AddBankAccountForm_.is_valid():
+                log=3
+                fm=AddBankAccountForm_.cleaned_data
+                bank_account=BankAccountRepo(request=request).add_bank_account(**AddBankAccountForm_.cleaned_data)
+                if bank_account is not None:
+                    context['bank_account']=BankAccountSerializer(bank_account).data
+                    context['result']=SUCCEED
+        context['log']=log
+        return JsonResponse(context)
+
+class AddBankApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        log=1
+        context['result']=FAILED
+        if request.method=='POST':
+            log=2
+            AddBankForm_=AddBankForm(request.POST)
+
+
+
+            
+            if AddBankForm_.is_valid():
+                log=3
+                bank=BankRepo(request=request).add_bank(**AddBankForm_.cleaned_data)
+                if bank is not None:
+                    context['bank']=BankSerializer(bank).data
+                    context['result']=SUCCEED
+        context['log']=log
+        return JsonResponse(context)
 
 class AddChequeApi(APIView):
     def post(self,request,*args, **kwargs):
@@ -51,6 +94,7 @@ class GetReportApi(APIView):
                 # context['cheques']=ChequeSerializer(ChequeRepo(request=request).list(**cd),many=True).data
                 # context['payments']=PaymentSerializer(PaymentRepo(request=request).list(**cd),many=True).data
                 context['transactions']=TransactionSerializer(TransactionRepo(request=request).list(**cd),many=True).data
+                context['financial_documents']=FinancialDocumentSerializer(FinancialDocumentRepo(request=request).list(**cd),many=True).data
                 context['result']=SUCCEED
         context['log']=log
         return JsonResponse(context)

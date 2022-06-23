@@ -5,7 +5,7 @@ from core.constants import FAILED, SUCCEED
 from core.enums import UnitNameEnum
 from utility.calendar import PersianCalendar
 from .apps import APP_NAME
-from .models import Account, Asset, BankAccount, Cheque, Cost, FinancialBalance, FinancialDocument, FinancialYear, Invoice, InvoiceLine, Payment, Price, Product,Service, Transaction
+from .models import Account, Asset, Bank, BankAccount, Cheque, Cost, FinancialBalance, FinancialDocument, FinancialYear, Invoice, InvoiceLine, Payment, Price, Product,Service, Transaction
 from django.db.models import Q
 from authentication.repo import ProfileRepo
 from django.utils import timezone
@@ -102,14 +102,74 @@ class BankAccountRepo():
     def add_bank_account(self,*args, **kwargs):
         if not self.user.has_perm(APP_NAME+".add_bankaccount"):
             return None
+        bank_account=BankAccount(*args, **kwargs)
  
-        if 'title' in kwargs:
-            title = kwargs['title']
+        # if 'title' in kwargs:
+        #     bank_account.title = kwargs['title']
+        # if 'shaba_no' in kwargs:
+        #     bank_account.shaba_no = kwargs['shaba_no']
+        # if 'card_no' in kwargs:
+        #     bank_account.card_no = kwargs['card_no']
+        # if 'account_no' in kwargs:
+        #     bank_account.account_no = kwargs['account_no']
 
-        bank_account=BankAccount()
-        bank_account.title=title
         bank_account.save()
         return bank_account
+
+
+class BankRepo():
+    def __init__(self, *args, **kwargs):
+        self.request = None
+        self.user = None
+        if 'request' in kwargs:
+            self.request = kwargs['request']
+            self.user = self.request.user
+        if 'user' in kwargs:
+            self.user = kwargs['user']
+        
+        self.objects=Bank.objects.all()
+        self.profile=ProfileRepo(*args, **kwargs).me
+       
+
+    def bank(self, *args, **kwargs):
+        pk=0
+        if 'bank' in kwargs:
+            return kwargs['bank']
+        if 'bank_id' in kwargs:
+            pk=kwargs['bank_id']
+        elif 'pk' in kwargs:
+            pk=kwargs['pk']
+        elif 'id' in kwargs:
+            pk=kwargs['id']
+        return self.objects.filter(pk=pk).first()
+     
+    def list(self, *args, **kwargs):
+        objects = self.objects
+        if 'search_for' in kwargs:
+            search_for=kwargs['search_for']
+            objects = objects.filter(Q(title__contains=search_for)|Q(short_description__contains=search_for)|Q(description__contains=search_for))
+        if 'for_home' in kwargs:
+            objects = objects.filter(Q(for_home=kwargs['for_home']))
+        if 'parent_id' in kwargs:
+            objects=objects.filter(parent_id=kwargs['parent_id'])
+        return objects.all()
+
+    def add_bank(self,*args, **kwargs):
+        if not self.user.has_perm(APP_NAME+".add_bank"):
+            return None
+        bank=Bank(*args, **kwargs)
+ 
+        # if 'title' in kwargs:
+        #     bank_account.title = kwargs['title']
+        # if 'shaba_no' in kwargs:
+        #     bank_account.shaba_no = kwargs['shaba_no']
+        # if 'card_no' in kwargs:
+        #     bank_account.card_no = kwargs['card_no']
+        # if 'account_no' in kwargs:
+        #     bank_account.account_no = kwargs['account_no']
+
+        bank.save()
+        return bank
 
 
 

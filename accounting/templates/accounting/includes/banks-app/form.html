@@ -1,0 +1,54 @@
+<form @submit.prevent="add_bank()">
+    <div class="row">
+
+        <div class="col-md-3">
+            <div class="form-group">
+                <label for="">
+                    نام بانک
+                </label>
+                <input placeholder="" required v-model="name" class="form-control" type="text" @input="filter()">
+            </div>
+        </div>
+       
+         
+        <div class="col-md-3">
+            <div class="form-group">
+                <label for="">شعبه</label>
+                <input type="text" class="form-control" v-model="branch" id="">
+            </div>
+        </div>
+
+
+        <div class="col-md-3">
+            <div class="form-group">
+                <label for="">آدرس</label>
+                <input type="text" class="form-control" v-model="address" id="">
+            </div>
+        </div>
+
+
+        <div class="col-md-3">
+            <div class="form-group">
+                <label for="">تلفن</label>
+                <input type="text" class="form-control" v-model="tel" id="">
+            </div>
+        </div>
+
+        <div class="col-md-12">
+
+            <button type="submit" class="btn btn-success">
+                <i class="fa fa-plus"></i>
+                افزودن
+            </button>
+        </div>
+        <div class="col-md-12">
+            <div class="my-3 text-right" v-if="message.show">
+                <span :class="'alert alert-'+message.color">
+                    <span class="farsi" v-html="message.body"></span>
+                </span>
+            </div>
+        </div>
+        
+
+    </div>
+</form>

@@ -43,6 +43,7 @@
             <div class="card-body">
 
                 {% load static %}
+                {% include "accounting/includes/bank-accounts-app/form.html" %}
                 <form @submit.prevent="search()">
                     <img src="{% static 'leo/img/loading.gif' %}" width="32" v-if="waiting" alt="">
 
@@ -62,7 +63,9 @@
                             <th>
                                 حساب
                             </th>
-
+                            <th>
+                                بانک
+                            </th>
                             <th>
                                 پروفایل
                             </th>
@@ -82,26 +85,40 @@
 
                             <tr v-for="bank_account in bank_accounts">
                                 <td>
-                                    <a :href="bank_account.get_absolute_url">
-                                        <div class="media">
-                                            <img :src="bank_account.thumbnail" class="rounded-circle" width="32" alt="">
-                                            <div class="media-body mr-3">
-                                                <div>
+                                    <div>
+                                        <a :href="bank_account.get_absolute_url">
+                                            <div class="media">
+                                                <img :src="bank_account.thumbnail" class="rounded-circle" width="32"
+                                                    alt="">
+                                                <div class="media-body mr-3">
+                                                    <div>
 
-                                                    <span v-text="bank_account.title"></span>
-                                                </div>
-                                                <div>
-                                                    <small class="text-muted">
-                                                        <span v-text="bank_account.class_title"></span>
-                                                    </small>
+                                                        <span v-text="bank_account.title"></span>
+                                                    </div>
+                                                    <div>
+                                                        <small class="text-muted">
+                                                            <span v-text="bank_account.class_title"></span>
+                                                        </small>
+                                                    </div>
+
+
                                                 </div>
                                             </div>
-                                        </div>
-                                    </a>
+                                        </a>
+
+                                    </div>
+                                    <div>
+
+                                    </div>
 
 
                                 </td>
+                                <td>
+                                    <a :href="bank_account.bank.get_absolute_url">
 
+                                        <span v-text="bank_account.bank.name"></span>
+                                    </a>
+                                </td>
                                 <td>
                                     <a v-if="bank_account.profile.id" :href="bank_account.profile.get_absolute_url">
                                         <div class="media">

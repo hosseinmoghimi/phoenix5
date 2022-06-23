@@ -241,9 +241,6 @@ class Account(models.Model,LinkHelper):
             bestankar+=doc.bestankar
             bedehkar+=doc.bedehkar
         balance_rest=bestankar-bedehkar
-        print('balance')
-        print(balance_rest)
-        print(100*"#")
         return balance_rest
 
     def invoices(self):
@@ -299,12 +296,16 @@ class Account(models.Model,LinkHelper):
         return balance
 
 
-class Bank(models.Model):
+class Bank(models.Model,LinkHelper):
     name=models.CharField(_("بانک"), max_length=50)
     branch=models.CharField(_("شعبه"),null=True,blank=True, max_length=50)
     address=models.CharField(_("آدرس"),null=True,blank=True, max_length=50)
     tel=models.CharField(_("تلفن"),null=True,blank=True, max_length=50)
-    
+    class_name="bank"
+    app_name=APP_NAME
+    @property
+    def logo(self):
+        return ""
     
     def __str__(self):
         a=f"""بانک {self.name} """

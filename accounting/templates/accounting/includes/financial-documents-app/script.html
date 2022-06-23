@@ -10,83 +10,7 @@
     let financial_documents_app_methods={}
     let financial_documents_app_data={}
 </script>
-{% if add_payment_form1 %}
-
-<script>
-
-    financial_documents_app_data = {
-        financial_documents: financial_documents,
-        title: '',
-        bestankar: 0,
-        bedehkar: 0,
-        document_date: current_date,
-        document_time: { hour: "0", minute: "0" },
-        category_id: "",
-        show_form: false,
-        waiting: false,
-    }
-
-
-    financial_documents_app_methods = {
-        get_print_url: () => {
-            return "sdasdas"
-        },
-        get_excel_url: () => {
-            return "sdasdas"
-        },
-        to_price: function (vall, curr) {
-            return to_price(vall, curr)
-        },
-        sum_bestankar: function () {
-            let sum = 0
-            this.financial_documents.forEach(financial_document => {
-                sum += financial_document.bestankar
-            })
-            return this.to_price(sum)
-        },
-        sum_bedehkar: function () {
-            let sum = 0
-            this.financial_documents.forEach(financial_document => {
-                sum += financial_document.bedehkar
-            })
-            return this.to_price(sum)
-        },
-        rest: function () {
-            let rest = 0
-            this.financial_documents.forEach(financial_document => {
-                rest -= financial_document.bedehkar
-                rest += financial_document.bestankar
-            })
-            return rest
-        },
-        add_financial_document: function () {
-            financial_documents_app.waiting = true
-            let payload = {
-                csrfmiddlewaretoken: csrfmiddlewaretoken,
-                title: this.title,
-                account_id: financial_account_id,
-                bestankar: this.bestankar,
-                bedehkar: this.bedehkar,
-                category_id: this.category_id,
-            }
-            console.log(payload)
-            let url = "{% url 'accounting:add_financial_document' %}"
-            $.post(url, payload).done((data) => {
-                financial_documents_app.waiting = false
-                console.log(data)
-                if (data.result === 'SUCCEED') {
-                    financial_documents_app.financial_documents.push(data.financial_document)
-                    financial_documents_app.rest = data.rest
-                    financial_documents_app.bestankar = 0
-                    financial_documents_app.bedehkar = 0
-                }
-            })
-        }
-    }
-
-
-</script>
-{% else %}
+ 
 
 <script>
 
@@ -128,7 +52,7 @@
         },
     }
 </script>
-{% endif %}
+ 
 <script>
     let financial_documents_app = new Vue({
         el: "#financial-documents-app",

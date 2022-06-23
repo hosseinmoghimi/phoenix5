@@ -7,6 +7,20 @@ class SearchForm(forms.Form):
     account_id=forms.IntegerField(required=False)
     profile_id=forms.IntegerField(required=False)
 
+class AddBankAccountForm(forms.Form):
+    title=forms.CharField( max_length=200, required=True)
+    shaba_no=forms.CharField(max_length=20, required=False)
+    account_no=forms.CharField(max_length=20, required=False)
+    card_no=forms.CharField(max_length=20, required=False)
+    profile_id=forms.IntegerField(required=False)
+    bank_id=forms.IntegerField(required=False)
+
+class AddBankForm(forms.Form):
+    name=forms.CharField( max_length=200, required=True)
+    branch=forms.CharField( max_length=200, required=False)
+    tel=forms.CharField(max_length=20, required=False)
+    address=forms.CharField(max_length=20, required=False)
+
 class TransactionsPrintForm(forms.Form):
     title=forms.CharField(max_length=200, required=True)
     transactions=forms.CharField( max_length=5000, required=True)
