@@ -918,6 +918,13 @@ class FinancialDocumentView(View):
         context['financial_document']=financial_document
         financial_balances=FinancialBalanceRepo(request=request).list(financial_document_id=financial_document.id)
         context['financial_balances']=financial_balances
+
+        transactions=[financial_document.transaction]
+        context['transactions']=transactions
+        transactions_s=json.dumps(TransactionSerializer(transactions,many=True).data)
+        context['transactions_s']=transactions_s
+
+
         if request.user.has_perm(APP_NAME+".add_financialdocument"):
             context['add_financial_balance_form']=AddFinancialBalanceForm()
             context['financial_balance_title_enum']=(cc[0] for cc in FinancialBalanceTitleEnum.choices)
