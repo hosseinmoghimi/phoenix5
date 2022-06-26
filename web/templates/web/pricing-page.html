@@ -1,4 +1,5 @@
 {% extends "web/layout.html" %}
+{% load to_price %}
 {% load static %}
 {% load social_share %}
 
@@ -84,8 +85,19 @@
                               {% endif %}
 
                             </h4>
-                            <h1 class="card-title text-center"><small>$</small>{{pricing_item.price}}<small>
-                                    ماهیانه</small></h1>
+                            <h1 class="card-title text-center">{{pricing_item.price|separate}}
+                                
+                                 
+                                
+                                </h1>
+
+                                <h4 class="mt-0 card-title text-center"> 
+                                    ماهیانه
+                                        {{pricing_item.price|to_horuf}}
+                                    {{CURRENCY}} 
+                                     
+                                    </h4>
+
                             <ul class="farsi">
                                 {% for pricing_item_specification in pricing_item.pricingitemspecifications %}
                                 <li><b>{{pricing_item_specification.value}}</b> {{pricing_item_specification.name}}

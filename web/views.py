@@ -21,6 +21,18 @@ def getContext(request, *args, **kwargs):
     context['search_form'] = SearchForm()
     context['search_action'] = reverse(APP_NAME+":search")
     context['LAYOUT_PARENT'] = LAYOUT_PARENT
+
+    if 'profile' in context and False:
+        profile=context['profile']
+        context['profile_button']={}
+        context['profile_button']['url']=profile.get_absolute_url()
+        context['profile_button']['color']="rose"
+        context['profile_button']['title']=profile.name
+        context['profile_button']['image']=profile.image
+        context['profile_button']['icon']=""
+
+ 
+
     return context
 
 

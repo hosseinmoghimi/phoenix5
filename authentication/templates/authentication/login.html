@@ -75,6 +75,10 @@
                             {% endif %}
                             <form method="POST" action="{% url 'authentication:login' %}" class="signin-form">
                                 {% csrf_token %}
+                                {% if next %}
+                                  
+                                <input type="hidden" name="next" value="{{next}}">
+                                {% endif %}
                                 <div class="form-group mt-3">
                                     <input type="text" class="form-control" name="username" required>
                                     <label class="form-control-placeholder" for="username">Username</label>

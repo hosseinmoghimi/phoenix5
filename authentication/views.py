@@ -1,4 +1,4 @@
-from django.http import JsonResponse
+from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import redirect, render,reverse
 import json
 from authentication.serializers import ProfileSerializer
@@ -199,6 +199,8 @@ class LoginViews(View):
         context=getContext(request=request)
         context['login_form_header_image']=PictureRepo(request=request,app_name=APP_NAME).picture(name=AUTH_PictureNameEnum.LOGIN_FORM_HEADER)
         context['messages']=messages
+        if 'next' in request.GET:
+            context['next']=request.GET['next']
         ProfileRepo(request=request).logout(request)
         context['login_form']=LoginForm()
         context['build_absolute_uri']=request.build_absolute_uri()
@@ -208,16 +210,20 @@ class LoginViews(View):
             build_absolute_uri=build_absolute_uri.replace("http:","https:")
             return redirect(build_absolute_uri)
         return render(request,TEMPLATE_ROOT+"login.html",context)
-    def post(self,request):
+    def post(self,request,*args, **kwargs):
         messages=[]
         login_form=LoginForm(request.POST)
         if login_form.is_valid():
             username=login_form.cleaned_data['username']
             password=login_form.cleaned_data['password']
+            if 'next' in login_form.cleaned_data:
+                next=login_form.cleaned_data['next']
+            else:
+                next="/"
             a=ProfileRepo(request=request).login(request=request,username=username,password=password)
             if a is not None:
                 (request,user)=a
-                return redirect(APP_NAME+":me")
+                return HttpResponseRedirect(next)
             messages.append("نام کاربری و کلمه عبور صحیح نمی باشد.")
         return self.get(request=request,messages=messages)
             

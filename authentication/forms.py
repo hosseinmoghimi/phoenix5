@@ -61,6 +61,7 @@ class ChangePasswordForm(forms.Form):
 class LoginForm(forms.Form):
     username=forms.CharField(max_length=50, required=True)
     password=forms.CharField(max_length=50, required=True)
+    next=forms.CharField(max_length=200, required=False)
     
 class SearchForm(forms.Form):
     search_for=forms.CharField(max_length=50, required=True)
