@@ -128,6 +128,11 @@
                         <a href="./examples/about-us.html" class="dropdown-item">
                             <i class="material-icons">account_balance</i> About Us
                         </a>
+                        <a href="{{profile.get_absolute_url}}" class="dropdown-item">
+                            <i class="material-icons">account_balance</i>
+                            {{profile.name}
+                        </a>
+
                         <a href="https://demos.creative-tim.com/material-kit-pro/examples/blog-post.html"
                             class="dropdown-item">
                             <i class="material-icons">art_track</i> Blog Post
@@ -176,16 +181,68 @@
                 </li>
 
                 {% endif %}
+                {% if profile %}
+                <li class="dropdown nav-item">
+                    <a title="{{profile.name}}" href="#" class="dropdown-toggle nav-link" data-toggle="dropdown">
+                        <img src="{{profile.image}}" width="48" class="rounded-circle" alt="{{profile.name}}">
+                    </a>
+                    <div class="dropdown-menu dropdown-with-icons farsi">
+                        <a title="{{profile.name}}" href="{{profile.get_absolute_url}}" class="dropdown-item">
+                            <div class="text-center">
+
+                                <img src="{{profile.image}}" width="128" class="rounded-circle" alt="{{profile.name}}">
+                            </div>
+
+                        </a>
+                        <a href="{{profile.get_absolute_url}}" class="dropdown-item  text-primary text-right">
+                            <i class="material-icons ml-2">person</i>
+                            {{profile.name}}
+                        </a>
+                        <a href="{% url 'authentication:change_password' %}" class="dropdown-item text-info  text-right">
+                            <i class="material-icons ml-2">vpn_key</i>
+                            کلمه عبور
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a href="{% url 'authentication:logout' %}" class="dropdown-item text-danger  text-right">
+                            <i class="material-icons ml-2">logout</i> خروج
+                        </a>
+
+
+
+                    </div>
+                </li>
+
+                {% else %}
+                <li class="button-container nav-item iframe-extern">
+                    <a href="{% url 'authentication:login' %}?next={{app.home_url}}" target="_blank" class="btn btn-success mx-2 btn-round btn-block">
+                        <span class="farsi">
+                            ورود
+                        </span>
+                        <i class="material-icons">vpn_key</i>
+                    </a>
+                </li>
+                {% endif %}
                 {% if profile_button %}
 
-                <li class="button-container nav-item iframe-extern">
-                    <a href="{{profile_button.url}}"
-                        class="btn mx-2 btn-{{profile_button.color}} btn-round btn-block farsi">
-                        <span class="farsi">
-                            {{profile_button.title}}
-                        </span>
+                <li class=" nav-item iframe-extern">
+                    <a title="{{profile_button.title}}" href="#" data-toggle="dropdown"
+                        class="mx-2 dropdown-toggle nav-link farsi">
+
+                        <img src="{{profile_button.image}}" width="48" class="rounded-circle" alt="">
                         <i class="material-icons">{{profile_button.icon}}</i>
                     </a>
+                    <div class="dropdown-menu dropdown-with-icons">
+                        <a href="{{profile_button.url}}" class="dropdown-item">
+                            <i class="material-icons">account_balance</i>
+                            {{profile_button.title}
+                        </a>
+                        <a href="https://demos.creative-tim.com/material-kit-pro/examples/blog-post.html"
+                            class="dropdown-item">
+                            <i class="material-icons">art_track</i> Blog Post
+                        </a>
+
+                    </div>
+
                 </li>
                 {% endif %}
                 {% if perms.core.change_basicpage %}
@@ -207,7 +264,8 @@
                         {% csrf_token %}
                         <input type="hidden" value="{{APP_NAME}}" name="app_name">
                         <input type="text" style="padding: 20px 30px;background-color: #eeeeee66;border-radius:100px"
-                            required class="mx-2 form-control farsi search-for" placeholder="جستجو ..." value="{{search_for}}" name="search_for">
+                            required class="mx-2 form-control farsi search-for" placeholder="جستجو ..."
+                            value="{{search_for}}" name="search_for">
                     </form>
                 </li>
                 {% endif %}

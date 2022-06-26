@@ -2,7 +2,7 @@ from core.enums import CurrencyEnum
 from core.errors import LEO_ERRORS
 from django import template
 register = template.Library()
-from utility.currency import to_price as to_price_origin
+from utility.currency import to_price as to_price_origin,separate as separate_origin
 from utility.num import to_horuf as to_horuf_num,to_tartib as to_tartib_
 
 
@@ -33,21 +33,13 @@ def to_horuf_rial(value):
 
 
 @register.filter
-def to_price_pure(value):
-    """converts int to string"""  
-    try:
-        sign=''
-        if value<0:
-            value=0-value
-            sign='- '
-        a=separate(value)
-        return sign+a
-    except:
-        # return LEO_ERRORS.error_to_price_template_tag
-        return ""
+def to_price_pure(value,*args, **kwargs):
+    return separate_origin(value,*args, **kwargs)
 
-
-
+@register.filter
+def separate(value,*args, **kwargs):
+    return separate_origin(value,*args, **kwargs) 
+    
 @register.filter
 def to_price_pure_rial(value):
     value=value*10
