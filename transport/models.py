@@ -98,13 +98,16 @@ class ServiceMan(models.Model,LinkHelper):
 
 class Vehicle(Asset):
     vehicle_type=models.CharField(_("نوع وسیله "),choices=VehicleTypeEnum.choices,default=VehicleTypeEnum.SEDAN, max_length=50)
-    brand=models.CharField(_("برند"),choices=VehicleBrandEnum.choices,default=VehicleBrandEnum.IRAN_KHODRO, max_length=50)
+    brand_name=models.CharField(_("برند"),choices=VehicleBrandEnum.choices,default=VehicleBrandEnum.IRAN_KHODRO, max_length=50)
     model_name=models.CharField(_("مدل"),null=True,blank=True, max_length=50)
     plaque=models.CharField(_("پلاک"),null=True,blank=True, max_length=50)
     driver=models.CharField(_("راننده"), max_length=50,null=True,blank=True)
     color=models.CharField(_("رنگ"),choices=VehicleColorEnum.choices,default=VehicleColorEnum.SEFID, max_length=50)
 
     kilometer=models.IntegerField(_("کیلومتر"),default=0)
+    @property
+    def brand(self):
+        return self.brand_name
     def save(self,*args, **kwargs):
         self.class_name="vehicle"
         self.app_name=APP_NAME
@@ -316,10 +319,10 @@ class Maintenance(VehicleEvent):
         return self.amount
     @property
     def service_man(self):
-        return ServiceMan.objects.filter(pk=self.pay_from.pk).first()
+        return ServiceMan.objects.filter(account_id=self.pay_from.pk).first()
     @property
     def client(self):
-        return Client.objects.filter(pk=self.pay_to.pk).first()
+        return Client.objects.filter(account_id=self.pay_to.pk).first()
     def get_icon(self):
         icon="settings"
         color="primary"
@@ -362,7 +365,8 @@ class Maintenance(VehicleEvent):
         verbose_name = _("Maintenance")
         verbose_name_plural = _("Maintenances")
     def save(self,*args, **kwargs):
-        self.title=self.maintenance_type
+        if self.title is None or self.title=="":
+            self.title=self.maintenance_type
         if self.class_name is None or self.class_name=="":
             self.class_name='maintenance'
         if self.app_name is None or self.app_name=="":

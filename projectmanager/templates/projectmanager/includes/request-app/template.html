@@ -1,4 +1,5 @@
 {% load to_price %}
+{% load to_persian_date %}
 <div id="request-app">
 
     <div class="card">
@@ -16,64 +17,136 @@
             </h5>
         </div>
         <div class="card-body text-right farsi">
+            <div class="table-responsive">
+
+                <table class="table">
+                    <tr>
+                        <td class="text-left">
+                            <small class="text-muted">
+                                پروژه
+                            </small>
+                        </td>
+                        <td class="text-right">
+
+                            <a href="{{my_request.project.get_absolute_url}}">
+
+                                {{my_request.project.title}}
+                            </a>
+                        </td>
+                    </tr>
+
+                    
+                    <tr>
+                        <td class="text-left">
+                            <small class="text-muted">
+                                پیمانکار :
+                            </small>
+                        </td>
+                        <td class="text-right">
+
+                            <a href="{{my_request.project.contractor.get_absolute_url}}">
+
+                                {{my_request.project.contractor.title}}
+                            </a>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="text-left">
+                            <small class="text-muted">
+                                کارفرما :
+                            </small>
+                        </td>
+                        <td class="text-right">
+
+                            <a href="{{my_request.project.employer.get_absolute_url}}">
+
+                                {{my_request.project.employer.title}}
+                            </a>
+                        </td>
+                    </tr>
+
+                  
+                    <tr>
+                        <td class="text-left">
+
+                            <small class="text-muted">
+                                مورد درخواست شده :
+                            </small>
+                        </td>
+                        <td class="text-right">
+
+                            <a href="{{my_request.product_or_service.get_absolute_url}}">
+
+                                {{my_request.product_or_service.title}}
+                            </a>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="text-left">
+                            <small class="text-muted">
+                                مقدار / تعداد درخواست شده
+                            </small>
+                        </td>
+                        <td class="text-right">
+                            {{my_request.quantity}} {{my_request.unit_name}}
+                        </td>
+                    </tr>
+
+
+                    <tr>
+                        <td class="text-left">
+                            <small class="text-muted">
+                                وضعیت درخواست
+                            </small>
+                        </td>
+                        <td class="text-right">
+                            <span v-html="status_tag"></span>
+                        </td>
+                    </tr>
+                    {% if my_request.date_requested %}
+
+                    <tr>
+                        <td class="text-left">
+                            <small class="text-muted">
+                                تاریخ درخواست
+                            </small>
+                        </td>
+                        <td class="text-right">
+                            <span>
+                                {{my_request.date_requested|to_persian_datetime|safe}}
+                            </span>
+                        </td>
+                    </tr>
+                    {% endif %}
+
+                    
+                    {% if my_request.date_delivered %}
+
+                    <tr>
+                        <td class="text-left">
+                            <small class="text-muted">
+                                تاریخ تحویل
+                            </small>
+                        </td>
+                        <td class="text-right">
+                            <span>
+                                {{my_request.date_delivered|to_persian_datetime|safe}}
+                            </span>
+                        </td>
+                    </tr>
+                    {% endif %}
 
 
 
-            <h5>
-                <small class="text-muted">
-                    پیمانکار :
-                </small>
-                <a href="{{my_request.project.contractor.get_absolute_url}}">
 
-                    {{my_request.project.contractor.title}}
-                </a>
-            </h5>
-
-            <h5>
-                <small class="text-muted">
-                    کارفرما :
-                </small>
-                <a href="{{my_request.project.employer.get_absolute_url}}">
-
-                    {{my_request.project.employer.title}}
-                </a>
-            </h5>
-
-
-            <h5>
-                <small class="text-muted">
-                    پروژه
-                </small>
-                <a href="{{my_request.project.get_absolute_url}}">
-
-                    {{my_request.project.title}}
-                </a>
-            </h5>
-
-            <h5>
-
-                <small class="text-muted">
-                    مورد درخواست شده :
-                </small>
-                <a href="{{my_request.product_or_service.get_absolute_url}}">
-
-                    {{my_request.product_or_service.title}}
-                </a>
-            </h5>
-
-
-            <h5>
-                <small class="text-muted">
-                    درخواست
-                </small>
-
-                {{my_request.quantity}} {{my_request.unit_name}}
-            </h5>
-
-            <div class="my-3">
-                وضعیت درخواست :
-                <span v-html="status_tag"></span>
+                </table>
             </div>
+
+ 
+
+
             <div class="alert alert-info">
 
                 <p>

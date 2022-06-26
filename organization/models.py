@@ -19,10 +19,19 @@ class OrganizationUnit(Page):
             pages_ids.append(page.pk)
             for page1 in chds:
                 pages_ids.append(page1)
-        print(pages_ids)
         return pages_ids
 
-                               
+    @property
+    def employees(self,*args, **kwargs):
+        return Employee.objects.filter(organization_unit_id=self.pk)
+            
+    @property
+    def full_title(self,*args, **kwargs):
+        a=""
+        if self.parent is not None:
+            a+=self.parent.full_title +" "
+        return a+self.title
+                                
     def all_sub_orgs(self):
         ids=self.all_childs_ids()
         ids.append(self.pk)
@@ -146,7 +155,8 @@ class Letter(Page):
         if self.app_name is None:
             self.app_name = APP_NAME
         return super(Letter, self).save(*args, **kwargs)
-
+    def get_print_url(self):
+        return reverse(APP_NAME+":letter_print",kwargs={'pk':self.pk})
     class Meta:
         verbose_name = 'Letter'
         verbose_name_plural = 'نامه های اداری'

@@ -1,0 +1,90 @@
+{% load to_json %}
+<script>
+    let accounts = JSON.parse(`{{accounts_s|escapejs}}`)
+    let add_property_app = new Vue({
+        el: "#add-property-app",
+        data: {
+            account_id: 0,
+            accounts: accounts,
+            title: "",
+            price: 0,
+            unit_price: 0,
+            agent_id: 0,
+            area: 0,
+            search_for: '',
+            address: "",
+            waiting: false,
+            message: {
+                show: false
+            }
+        },
+        methods: {
+            set_price: function () {
+                this.price = this.unit_price * this.area
+            },
+            set_unit_price: function () {
+                if (this.area == 0) {
+                    this.unit_price = 0
+                }
+                else {
+                    this.unit_price = this.price / this.area
+                }
+
+            },
+            filter: function () {
+                this.accounts = accounts.filter(account => account.title.indexOf(this.search_for) > -1)
+                if (this.accounts.length > 0)
+                    this.account_id = this.accounts[0].id
+            },
+            add_property: function () {
+                let url = "{% url 'realestate:add_property' %}"
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    title: this.title,
+                    area: this.area,
+                    address: this.address,
+                    price: parseInt(this.price),
+                    agent_id: this.agent_id,
+                }
+                console.log(payload)
+                add_property_app.waiting = true
+
+                $.post(url, payload).done((data) => {
+                    add_property_app.waiting = false
+
+                    if (data.result === 'FAILED') {
+                        add_property_app.message = {
+                            color: "danger",
+                            body: "خطا در ایجاد ملک جدید.",
+                            show: true,
+                        }
+                        setTimeout(() => {
+                            add_property_app.message = {
+                                show: false,
+                            }
+                        }, 3000);
+                    }
+                    if (data.result === 'SUCCEED') {
+                        if (typeof properties_app != "undefined") {
+                            properties_app.properties.push(data.property)
+                        }
+
+                        add_property_app.message = {
+                            color: "success",
+                            body: "با موفقیت افزوده شد.",
+                            show: true,
+                        }
+                        setTimeout(() => {
+                            add_property_app.message = {
+                                show: false,
+                            }
+                        }, 3000);
+                    }
+                })
+
+            }
+
+        }
+    })
+
+</script>

@@ -8,7 +8,7 @@
 
 <h4 class="text-center my-3">
     {{asset.title}}
-  
+
     <span class="badge badge-{{asset.color}}">
         {{asset.status}}
     </span>
@@ -20,10 +20,10 @@
 
     </div>
     <div class="col-md-8">
-        {% include "accounting/includes/transaction-app/brief.html" %}
-
-    </div>
-
+        {% include "core/includes/page-description-app/short-description.html" %}
+        
+        {% include "core/includes/page-description-app/description.html" %}
+    </div> 
     <div class="col-md-12">
         <div class="card">
             <div class="card-body farsi text-right">
@@ -37,30 +37,13 @@
 
 
                 <div>
-                    مبلغ چک :
-                    {{asset.amount|to_price}}
-                </div>
-                <div>
-                    تاریخ چک :
-                    {{asset.asset_date|to_persian_date|safe}}
-                </div>
-
-
-                <div>
-                    <a href="{{asset.pay_from.get_absolute_url}}">
-                        <img src="{{asset.pay_from.profile.image}}" class="rounded-circle" width="64" alt="">
-                        {{asset.pay_from.title}}
-                    </a>
+                    قیمت :
+                    {{asset.price|to_price}}
                 </div>
 
 
 
-                <div>
-                    <a href="{{asset.pay_to.get_absolute_url}}">
-                        <img src="{{asset.pay_to.profile.image}}" class="rounded-circle" width="64" alt="">
-                        {{asset.pay_to.title}}
-                    </a>
-                </div>
+
 
             </div>
         </div>
@@ -81,5 +64,4 @@
 
 {% block script %}
 {% include "accounting/includes/transaction-app/script.html" %}
-
 {% endblock script %}

@@ -33,6 +33,10 @@ def class_title(*args, **kwargs):
     class_title = "صفحه"
     if class_name == "poll":
         class_title = "پرسش"
+    if class_name == "payment":
+        class_title = "پرداخت"
+    if class_name == "property":
+        class_title = "ملک"
     if class_name == "book":
         class_title = "کتاب"
     if class_name == "page":

@@ -12,7 +12,7 @@ class MessageSerializer(serializers.ModelSerializer):
     sender=SenderSerializer()
     class Meta:
         model = Message
-        fields=['id','title','body','sender','perisan_date_send']
+        fields=['id','title','body','sender','perisan_date_send','get_absolute_url']
         
 class ChannelSerializer(serializers.ModelSerializer):
     class Meta:

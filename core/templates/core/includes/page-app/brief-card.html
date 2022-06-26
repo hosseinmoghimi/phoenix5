@@ -1,4 +1,5 @@
 {% load static %}
+{% load to_absolute_link %}
 <div class="card">
     <div class="card-header">
         <h6>
@@ -21,10 +22,22 @@
 
         </div>
 
+        <div class="my-2">
+
+            <a href="{{page.get_print_url}}" target="_blank" title="چاپ" class="mx-2 text-success"><i
+                    class="fa fa-print"></i> چاپ</a>
+        </div>
+
+
         {% if perms.core.change_page %}
         <div class="my-2">
 
             <a href="{{page.get_edit_url}}" target="_blank" title="ویرایش" class="mx-2 text-warning"><i
+                    class="fa fa-edit"></i> ویرایش</a>
+        </div>
+        <div class="my-2">
+
+            <a href="{% url 'core:page_edit' pk=page.pk %}" target="_blank" title="ویرایش" class="mx-2 text-info"><i
                     class="fa fa-edit"></i> ویرایش</a>
         </div>
         {% endif %}
@@ -55,6 +68,31 @@
             </small>
         </p>
         {% endif %}
-
+        <div>
+            <a href="whatsapp://send?text={{page.title}}   {{page.get_absolute_url|to_absolute_link}}"
+                data-action="share/whatsapp/share" target="_blank">
+                <img src="{% static 'icons/whatsapp.png' %}" width="32" alt="">
+                واتسپ
+            </a>
+        </div>
+        <div>
+            
+            <a href="https://telegram.me/share/url?url={{page.get_absolute_url|to_absolute_link}}&text={{page.title}}"
+                data-action="share/whatsapp/share" target="_blank">
+                <img src="{% static 'icons/telegram.png' %}" width="32" alt="">
+                تلگرام
+            </a>
+        </div>
+        
+        <div class="my-0">
+            <form action="https://www.google.com/search" method="get" target="_blank" id="search-form">
+                <input name="q" type="hidden" value="{{page.title}}">
+                <button type="submit" class=" btn btn-link "><i class="fa fa-search"></i> جستجوی گوگل
+                </button>
+            </form>
+        </div>
+        {% if set_thumbnail_header_form %}
+        {% include "core/includes/page-thumbnail-header-app/template.html" %}
+        {% endif %}
     </div>
 </div>

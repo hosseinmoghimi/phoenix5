@@ -17,8 +17,8 @@ class PropertyRepo():
     
     def list(self,*args, **kwargs):
         objects=self.objects.all()
-        if 'school_id' in kwargs:
-            objects=objects.filter(school_id=kwargs['school_id'])
+        if 'agent_id' in kwargs:
+            objects=objects.filter(agent_id=kwargs['agent_id'])
         if 'search_for' in kwargs:
             objects=objects.filter(title__contains=kwargs['search_for'])
         return objects
@@ -32,11 +32,19 @@ class PropertyRepo():
             pk=kwargs['id']
         return self.objects.filter(pk=pk).first()
 
-    def add(self,*args, **kwargs):
+    def add_property(self,*args, **kwargs):
         if not self.request.user.has_perm(APP_NAME+".add_property"):
             return
         property=Property()
         if 'title' in kwargs:
             property.title=kwargs['title']
+        if 'area' in kwargs:
+            property.area=kwargs['area']
+        if 'agent_id' in kwargs:
+            property.agent_id=kwargs['agent_id']
+        if 'price' in kwargs:
+            property.price=kwargs['price']
+        if 'address' in kwargs:
+            property.address=kwargs['address']
         property.save()
         return property

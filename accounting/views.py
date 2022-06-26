@@ -1,8 +1,8 @@
 from django.http import Http404, HttpResponse, JsonResponse
 from django.shortcuts import redirect, render,reverse
-from django.utils import timezone
-from requests import request
-from warehouse.serializers import WareHouseSerializer,WareHouseSheetSerializer
+from authentication.repo import ProfileRepo
+from authentication.serializers import ProfileSerializer
+from warehouse.serializers import WareHouseSheetSerializer
 from accounting import apis
 from accounting.apis import EditInvoiceApi
 from accounting.enums import CostTypeEnum, FinancialBalanceTitleEnum, PaymentMethodEnum, TransactionStatusEnum
@@ -16,8 +16,8 @@ from django.views import View
 from utility.calendar import PersianCalendar
 from utility.excel import ReportSheet,ReportWorkBook, get_style
 from accounting.apps import APP_NAME
-from accounting.repo import AssetRepo, CostRepo, InvoiceLineRepo,AccountRepo,FinancialBalanceRepo, ChequeRepo, PaymentRepo, PriceRepo, ProductRepo,ServiceRepo,FinancialDocumentRepo,InvoiceRepo, TransactionRepo
-from accounting.serializers import AccountSerializer, AssetSerializer, CostSerializer, FinancialBalanceSerializer, InvoiceFullSerializer,InvoiceLineSerializer,ChequeSerializer, InvoiceSerializer, PaymentSerializer, PriceSerializer, ProductSerializer,ServiceSerializer,FinancialDocumentForAccountSerializer,FinancialDocumentSerializer, TransactionSerializer
+from accounting.repo import BankRepo,AssetRepo, CostRepo,BankAccountRepo, InvoiceLineRepo,AccountRepo,FinancialBalanceRepo, ChequeRepo, PaymentRepo, PriceRepo, ProductRepo,ServiceRepo,FinancialDocumentRepo,InvoiceRepo, TransactionRepo
+from accounting.serializers import AccountSerializer, AccountSerializerFull, AssetSerializer, BankAccountSerializer, BankSerializer, CostSerializer, FinancialBalanceSerializer, InvoiceFullSerializer,InvoiceLineSerializer,ChequeSerializer, InvoiceSerializer, PaymentSerializer, PriceSerializer, ProductSerializer,ServiceSerializer,FinancialDocumentForAccountSerializer,FinancialDocumentSerializer, TransactionSerializer
 from accounting.forms import *
 import json
 from phoenix.server_settings import phoenix_apps
@@ -307,6 +307,17 @@ def get_search_form_context(request,*args, **kwargs):
     return context
 
 
+def get_add_bank_account_context(request,*args, **kwargs):
+    context={}
+    profiles=ProfileRepo(request=request).list()
+    context['profiles']=profiles
+    profiles_s=json.dumps(ProfileSerializer(profiles,many=True).data)
+    context['profiles_s']=profiles_s
+    banks=BankRepo(request=request).list()
+    context['banks']=banks
+    return context
+
+
 class HomeView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -325,6 +336,10 @@ class ReportView(View):
         context['accounts_s']=json.dumps(AccountSerializer(accounts,many=True).data)
         
         context['payment_methods']=(u[0] for u in PaymentMethodEnum.choices)
+
+        context['financial_documents_s']='[]'
+        context['transactions_s']='[]'
+        context['transactions_s']='[]'
         context['get_report_form']=GetReportForm()
         return render(request,TEMPLATE_ROOT+"report.html",context)
     def post(self,request,*args, **kwargs):
@@ -698,13 +713,57 @@ class ProductView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
         product=ProductRepo(request=request).product(*args, **kwargs)
-        print('warehouse_app_is_installed')
-        print(context['warehouse_app_is_installed'])
         if product is None:
             mv=MessageView(request=request)
             mv.title="چنین کالایی یافت نشد."
         context.update(get_product_context(request=request,product=product))
         return render(request,TEMPLATE_ROOT+"product.html",context)
+
+class BankAccountsView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        bank_accounts=BankAccountRepo(request=request).list()
+        context['bank_accounts']=bank_accounts
+        context['expand_bank_accounts']=True
+        bank_accounts_s=json.dumps(BankAccountSerializer(bank_accounts,many=True).data)
+        context['bank_accounts_s']=bank_accounts_s
+        context.update(get_add_bank_account_context(request=request))
+        return render(request,TEMPLATE_ROOT+"bank-accounts.html",context)
+
+class BankAccountView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        bank_account=BankAccountRepo(request=request).bank_account(*args, **kwargs)
+        context['bank_account']=bank_account
+        if bank_account is None:
+            mv=MessageView(request=request)
+            mv.title="چنین حسابی یافت نشد."
+        context.update(get_account_context(request=request,account=bank_account))
+        return render(request,TEMPLATE_ROOT+"bank-account.html",context)
+
+
+
+
+class BanksView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        banks=BankRepo(request=request).list()
+        context['banks']=banks
+        context['expand_banks']=True
+        banks_s=json.dumps(BankSerializer(banks,many=True).data)
+        context['banks_s']=banks_s
+        return render(request,TEMPLATE_ROOT+"banks.html",context)
+
+class BankView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        bank=BankRepo(request=request).bank(*args, **kwargs)
+        context['bank']=bank
+        if bank is None:
+            mv=MessageView(request=request)
+            mv.title="چنین بانکی یافت نشد."
+        return render(request,TEMPLATE_ROOT+"bank.html",context)
+
 
 
 class ServicesView(View):
@@ -774,6 +833,8 @@ class AccountsView(View):
         context=getContext(request=request)
         accounts=AccountRepo(request=request).list(*args, **kwargs)
         context['accounts']=accounts
+        accounts_s=json.dumps(AccountSerializerFull(accounts,many=True).data)
+        context['accounts_s']=accounts_s
         context['expand_accounts']=True
         if request.user.has_perm(APP_NAME+".add_account"):
             context['add_account_form']=AddAccountForm()
@@ -827,23 +888,13 @@ class FinancialDocumentsView(View):
         context={
             'result':FAILED
         }
-        search_accounting_form=SearchAccountingForm(request.POST)
-        if search_accounting_form.is_valid():
-            cd=search_accounting_form.cleaned_data
-            start_date=cd['start_date']
-            end_date=cd['end_date']
-            search_for=cd['search_for']
-            account_id=cd['account_id']
-            profile_id=cd['profile_id']
-            financial_documents=FinancialDocumentRepo(request=request).list(
-                start_date=start_date,
-                end_date=end_date,
-                search_for=search_for,
-                account_id=account_id,
-                profile_id=profile_id
-                )
-            financial_documents_s=json.dumps(FinancialDocumentSerializer(financial_documents,many=True).data)
-            context['financial_documents']=financial_documents_s
+        SearchForm_=SearchForm(request.POST)
+        if SearchForm_.is_valid():
+            cd=SearchForm_.cleaned_data
+            cd['start_date']=PersianCalendar().to_gregorian(cd['start_date'])
+            cd['end_date']=PersianCalendar().to_gregorian(cd['end_date'])
+            financial_documents=FinancialDocumentRepo(request=request).list(**cd)
+            context['financial_documents']=FinancialDocumentSerializer(financial_documents,many=True).data
             context['result']=SUCCEED
         return JsonResponse(context)
 

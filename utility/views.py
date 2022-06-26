@@ -35,7 +35,6 @@ class DateConverterView(View):
         datetime_form=DateTimeForm(request.POST)
         if datetime_form.is_valid():
             cd=datetime_form.cleaned_data
-            print(cd)
             gregorian_datetime_i=cd['gregorian_datetime']
             persian_datetime_i=cd['persian_datetime']
 

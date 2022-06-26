@@ -5,6 +5,10 @@ class AddRoleForm(forms.Form):
     side=forms.CharField(max_length=50, required=True)
     description=forms.CharField(max_length=5000, required=False)
 
+class AddRoleToGameForm(forms.Form):
+    game_id=forms.IntegerField(required=True)
+    role_id=forms.IntegerField(required=True)
+    
 class InitializeForm(forms.Form):
     title=forms.CharField(max_length=50, required=False)
 

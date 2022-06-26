@@ -1,0 +1,51 @@
+   <!-- market -->
+   <li class="nav-item ">
+    <a class="nav-link" data-toggle="collapse" href="#marketPages">
+      <i class="material-icons" aria-hidden="true">place</i>
+      <p>فروشگاه
+        <b class="caret"></b>
+      </p>
+    </a>
+    <div class="collapse {{market_sidebar_class}}" id="marketPages">
+      <ul class="nav">
+        <li class="nav-item " id="nav-item-market-index">
+          <a class="nav-link" href="{% url 'market:dashboard' %}">
+            <span class="sidebar-mini">
+              <i class="material-icons" aria-hidden="true">table_view</i>
+            </span>
+            <span class="sidebar-normal">پنل فروشگاه</span>
+          </a>
+        </li>
+        <li class="nav-item " id="nav-item-market-suppliers">
+          <a class="nav-link" href="{% url 'market:dashboard_suppliers' %}">
+            <span class="sidebar-mini">
+              <i class="material-icons" aria-hidden="true">table_view</i>
+            </span>
+            <span class="sidebar-normal">لیست فروشنده ها</span>
+          </a>
+        </li>
+        <li class="nav-item" id="nav-item-market-customers">
+          <a class="nav-link" href="{% url 'market:dashboard_customers' %}">
+            <span class="sidebar-mini">
+
+              <i class="material-icons" aria-hidden="true">apartment</i>
+            </span>
+            <span class="sidebar-normal">لیست مشتریان</span>
+          </a>
+        </li>
+
+       
+        
+
+        <li class="nav-item " id="nav-item-market-tutorial">
+          <a class="nav-link" href="{% url 'projectmanager:tutorial' %}">
+            <i class="material-icons" aria-hidden="true">help</i>
+            <span class="sidebar-normal">راهنما</span>
+          </a>
+        </li>
+
+
+
+      </ul>
+    </div>
+  </li>

@@ -4,7 +4,7 @@
 
 
 
-{% block messenger_content %}
+{% block content %}
 <div class="row">
     <div class="col-md-6">
         {% include "messenger/includes/channels-app/template.html" %}
@@ -78,8 +78,7 @@
 {% endblock %}
 
 
-{% block messenger_script %}
-<script src="{% static 'vendor/js/vue.min.s' %}"></script>
+{% block script %} 
 
 {% include "messenger/includes/channels-app/script.html" %}
 

@@ -6,12 +6,16 @@ from django.urls import path
 app_name=APP_NAME
 urlpatterns = [
     path('',views.HomeView.as_view(),name="home"),
+    path('page/<int:pk>/',views.PageView.as_view(),name="page"),
     path('pages_permissions/<int:pk>/',views.PagePermissionsView.as_view(),name="pages_permissions"),
     path('change_parameter/',apis.ChangeParameterApi.as_view(),name="change_parameter"),
     path('add_page_link/',apis.AddPageLinkApi.as_view(),name="add_page_link"),
     path("download/<int:pk>/",views.DownloadView.as_view(),name='download'),
     path("tag/<int:pk>/",views.TagView.as_view(),name='tag'),
+    path("pagetag/<int:pk>/",views.PageTagView.as_view(),name='pagetag'),
     path("image/<int:pk>/",views.ImageView.as_view(),name='image'),
+    path("page_print/<int:pk>/",views.PagePrintView.as_view(),name='page_print'),
+    path("page_edit/<int:pk>/",views.PageEditView.as_view(),name='page_edit'),
     path("image_download/<int:pk>/",views.ImageDownloadView.as_view(),name='image_download'),
     path("pageimage/<int:pk>/",views.PageImageView.as_view(),name='pageimage'),
     path('add_page_download/',apis.AddPageDownloadApi.as_view(),name="add_page_download"),
@@ -24,5 +28,6 @@ urlpatterns = [
     path('toggle_like/',apis.TogglePageLikeApi.as_view(),name="toggle_like"),
     path('add_page_tag/',apis.AddPageTagApi.as_view(),name="add_page_tag"),
     path('add_page_permission/',apis.AddPagePermissionApi.as_view(),name="add_page_permission"),
+    path('set_thumbnail_header/',apis.SetThumbnailHeaderApi.as_view(),name="set_thumbnail_header"),
 
 ]

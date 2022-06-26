@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Account, Asset, Cheque, Cost, FinancialBalance, FinancialDocument, Invoice, InvoiceLine, Payment, Price, Product, ProductOrService,Service,  Transaction
+from .models import Account, Asset, Bank, BankAccount, Cheque, Cost, FinancialBalance, FinancialDocument, Invoice, InvoiceLine, Payment, Price, Product, ProductOrService,Service,  Transaction
 from authentication.serializers import ProfileSerializer
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
@@ -17,12 +17,31 @@ class ServiceSerializer(serializers.ModelSerializer):
         model = Service
         fields = ['id', 'title', 'get_absolute_url','buy_price','unit_price','unit_name','thumbnail']
 
+class AccountSerializerFull(serializers.ModelSerializer):
+    profile=ProfileSerializer()
+    class Meta:
+        model = Account
+        fields = ['id','logo','class_title','get_whatsapp_link','tel','balance_rest', 'title','profile', 'get_absolute_url']
+
+
+class BankSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Bank
+        fields = ['id','logo','name','tel', 'address','branch','get_absolute_url']
+
+
+class BankAccountSerializer(serializers.ModelSerializer):
+    profile=ProfileSerializer()
+    bank=BankSerializer()
+    class Meta:
+        model = BankAccount
+        fields = ['id','logo','bank','class_title','card_no','shaba_no','account_no','balance_rest', 'title','profile', 'get_absolute_url']
+
 class AccountSerializer(serializers.ModelSerializer):
     profile=ProfileSerializer()
     class Meta:
         model = Account
         fields = ['id','logo','class_title','balance_rest', 'title','profile', 'get_absolute_url']
-
 
 class InvoiceSerializer(serializers.ModelSerializer):
     pay_to = AccountSerializer()

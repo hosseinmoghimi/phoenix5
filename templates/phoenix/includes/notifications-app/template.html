@@ -1,0 +1,28 @@
+ 
+
+
+<li class="nav-item dropdown  my-auto farsi mx-2">
+    <a class="nav-link dropdown-toggle " href="#" id="navbarDropdown4" role="button" data-toggle="dropdown"
+        aria-haspopup="true" aria-expanded="false">
+        <i class="material-icons" aria-hidden="true">notifications</i>
+        اعلان ها
+    </a>
+    <div class="dropdown-menu" aria-labelledby="navbarDropdown4" >
+      
+        <div id="notifications-app">
+            <div v-for="notification in notifications">
+
+                <a class="dropdown-item" :href="notification.get_absolute_url">
+
+                    <span v-text="notification.title">
+
+                    </span>
+                </a>
+
+                <div class="dropdown-divider notification-divider"></div>
+            </div>
+
+        </div>
+
+    </div>
+</li>

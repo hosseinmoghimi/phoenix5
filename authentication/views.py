@@ -22,6 +22,7 @@ def getContext(request,*args, **kwargs):
     context['title']="auth"
     return context
 
+
 class HomeViews(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -31,6 +32,7 @@ class HomeViews(View):
         if request.user.has_perm(APP_NAME+".add_profile"):
             context['add_profile_form']=AddProfileForm()
         return render(request,TEMPLATE_ROOT+"index.html",context)
+
 
 class AddMembershipRequestViews(View):
     def post(self,request,*args, **kwargs):
@@ -58,6 +60,8 @@ class SearchViews(View):
             context['result']=SUCCEED
 
         return JsonResponse(context)
+
+
 class ProfileViews(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -106,7 +110,6 @@ class ProfileViews(View):
         if 'resume_app_is_installed' in context and context['resume_app_is_installed']:
             context['resumes']=selected_profile.resumeindex_set.all()
         return render(request,TEMPLATE_ROOT+"profile.html",context)
-
 
 
 class ChangeProfileImageViews(View):
@@ -200,7 +203,6 @@ class LoginViews(View):
         context['login_form']=LoginForm()
         context['build_absolute_uri']=request.build_absolute_uri()
         build_absolute_uri=request.build_absolute_uri()
-        print(build_absolute_uri)
         ONLY_HTTPS=ParameterRepo(request=request,app_name=APP_NAME).parameter(name=ParameterNameEnum.ONLY_HTTPS,default=False).boolean_value
         if ONLY_HTTPS and "http://" in build_absolute_uri :
             build_absolute_uri=build_absolute_uri.replace("http:","https:")
@@ -220,8 +222,6 @@ class LoginViews(View):
         return self.get(request=request,messages=messages)
             
         
-
-
 class LoginAsViews(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -245,6 +245,7 @@ class RegisterViews(View):
             a=register_form.save()
             a=ProfileRepo(request=request).login(request=request,user=a)
             return redirect(APP_NAME+":me")
+
 
 class ChangePasswordViews(View):
     def get(self,request,*args, **kwargs):

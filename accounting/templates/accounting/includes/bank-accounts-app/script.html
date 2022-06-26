@@ -1,0 +1,80 @@
+<script>
+    let bank_accounts = JSON.parse(`{{bank_accounts_s|escapejs}}`)
+    let all_profiles_=JSON.parse(`{{profiles_s|escapejs}}`)
+    let bank_accounts_app = new Vue({
+        el: "#bank-accounts-app",
+        data: {
+            bank_accounts: bank_accounts,
+            search_for: '',
+            waiting: false,
+            shaba_no: "",
+            card_no: "",
+            account_no: "",
+            message:{show:false},
+            profile_id:0,
+            profiles:all_profiles_,
+            bank_id:0,
+            title:"",
+            show_form:false,
+            profile_name:"",
+        },
+        methods: {
+            to_card_no: function (card_no) {
+                return card_no.slice(12, 16) + " _ " + card_no.slice(8, 12) + " _ " + card_no.slice(4, 8) + " _ " + card_no.slice(0, 4)
+                return card_no.slice(0, 4) + "-" + card_no.slice(4, 8) + "-" + card_no.slice(8, 12) + "-" + card_no.slice(12, 16)
+            },
+            add_bank_account: function () {
+                let url = "{% url 'accounting:add_bank_account' %}"
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    title: this.title,
+                    bank_id: this.bank_id,
+                    profile_id: this.profile_id,
+                    shaba_no: this.shaba_no,
+                    card_no: this.card_no,
+                    account_no: this.account_no,
+                    profile_name:"",
+                }
+                $.post(url, payload).done((data) => {
+                    if (data.result === 'SUCCEED') {
+                        bank_accounts_app.bank_accounts.push(data.bank_account)
+                    }
+                })
+            },
+            filter_profiles: function () {
+                this.profiles = all_profiles_.filter(profile => profile.name.indexOf(this.profile_name) > -1)
+                if(this.profiles.length>0){
+                    this.profile_id=this.profiles[0].id
+                }
+
+            },
+            filter: function () {
+                this.bank_accounts = bank_accounts.filter(asset => asset.title.indexOf(this.search_for) > -1)
+
+            },
+            to_price: function (vall) {
+                let color = 'primary'
+                if (vall < 0)
+                    color = 'danger'
+                if (vall > 0)
+                    color = 'success'
+                vall = to_price(vall, "{{CURRENCY}}")
+                return `
+                    <span class="text-${color}">${vall}</span>
+                    `
+            },
+            create_employee: function (asset_id) {
+                let url = "{% url 'organization:employee' pk=0 %}"
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    asset_id: asset_id
+                }
+                $.post(url, payload).done((data) => {
+                    console.log(data)
+                })
+            },
+
+        }
+    })
+
+</script>

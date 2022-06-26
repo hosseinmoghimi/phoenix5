@@ -5,6 +5,14 @@
 
 {% block content %}
 <div class="row">
+        
+    {% if add_service_man_form %}
+      
+    <div class="col-md-12">
+      {% include "transport/includes/add-service-man-app/template.html" %}
+    </div>
+    {% endif %}
+
     <div class="col-md-12">
 
         {% include "transport/includes/service-mans-app/template.html" %}
@@ -14,5 +22,11 @@
 {% endblock content %}
 {% block script %}
 {% include "transport/includes/service-mans-app/script.html" %}
-  
+{% if add_service_man_form %}
+      
+<div class="col-md-12">
+  {% include "transport/includes/add-service-man-app/script.html" %}
+</div>
+{% endif %}
+
 {% endblock script %}

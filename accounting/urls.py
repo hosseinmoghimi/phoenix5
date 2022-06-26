@@ -9,6 +9,14 @@ urlpatterns = [
     path("report/",login_required(views.ReportView.as_view()),name="report"),
     path("search_json/",login_required(views.SearchJsonView.as_view()),name="search_json"),
 
+    path("bank_accounts/",login_required(views.BankAccountsView.as_view()),name="bank_accounts"),
+    path("bank_account/<int:pk>/",login_required(views.BankAccountView.as_view()),name="bankaccount"),
+    path("add_bank_account/",login_required(apis.AddBankAccountApi.as_view()),name="add_bank_account"),
+
+    path("bank/",login_required(views.BanksView.as_view()),name="banks"),
+    path("bank/<int:pk>/",login_required(views.BankView.as_view()),name="bank"),
+    path("add_bank/",login_required(apis.AddBankApi.as_view()),name="add_bank"),
+
     path("products/",login_required(views.ProductsView.as_view()),name="products"),
     path("product/<int:pk>/",login_required(views.ProductView.as_view()),name="product"),
 

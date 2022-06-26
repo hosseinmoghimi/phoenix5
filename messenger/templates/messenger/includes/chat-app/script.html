@@ -1,6 +1,6 @@
 <script src="https://js.pusher.com/7.0/pusher.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-<script>
+<script> 
     let channel_id = parseInt("{{channel.id}}")
     // let member = JSON.parse("{{member_s|escapejs}}")
     // Enable pusher logging - don't include this in production
@@ -20,7 +20,7 @@
     });
 
     // Vue application
-    const chat_app = new Vue({
+    let chat_app = new Vue({
         el: '#chat-app',
         data: {
             messages: [],

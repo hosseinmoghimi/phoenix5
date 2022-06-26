@@ -8,6 +8,7 @@ urlpatterns = [
     path("search/",(views.SearchView.as_view()),name="search"),
 
     path("product/<int:pk>/",login_required(views.HomeView.as_view()),name="product"),
+    path("category/<int:pk>/",login_required(views.CategoryView.as_view()),name="category"),
 
     path("brands/",login_required(views.HomeView.as_view()),name="brands"),
 
@@ -16,11 +17,13 @@ urlpatterns = [
     path("ware_houses/",login_required(views.HomeView.as_view()),name="ware_houses"),
     
     path("suppliers/",login_required(views.HomeView.as_view()),name="suppliers"),
-    path("supplier/<int:pk>/",login_required(views.HomeView.as_view()),name="supplier"),
+    path("supplier/<int:pk>/",login_required(views.SupplierView.as_view()),name="supplier"),
 
 
     path("api/categories/",(apis.CategoriesApi.as_view()),name="api_categories"),
     path("api/category/<int:category_id>/",(apis.CategoryApi.as_view()),name="api_category"),
     path("api/products/<int:category_id>/",(apis.ProductsApi.as_view()),name="api_category_products"),
+    path("api/add_category/",(apis.AddCategoryApi.as_view()),name="add_category"),
+    path("api/add_product/",(apis.AddProductApi.as_view()),name="add_product"),
     
 ]

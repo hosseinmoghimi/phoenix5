@@ -55,6 +55,8 @@ class FolderView(View):
         context=getContext(request=request)
         folder=FolderRepo(request=request).folder(*args, **kwargs)
         context['folder']=folder
+        folder_s=json.dumps(FolderSerializer(folder).data)
+        context['folder_s']=folder_s
         folders=FolderRepo(request=request).list(parent_id=folder.pk)
         files=folder.files.all()
         
@@ -68,24 +70,7 @@ class FolderView(View):
         if request.user.has_perm(APP_NAME+".add_file"):
             context['create_file_form']=CreateFileForm()
         return render(request,TEMPLATE_ROOT+"folder.html",context)
-    def post(self,request,*args, **kwargs):
-        context={
-            'result':FAILED,
-        }
-        open_folder_form=OpenFolderForm(request.POST)
-        if open_folder_form.is_valid():
-            folder_id=open_folder_form.cleaned_data['folder_id']
-            folder_repo=FolderRepo(request=request)
-            folder=folder_repo.folder(folder_id=folder_id)
-            folders=folder.childs.all()
-            context['folder']=FolderSerializer(folder).data
-            context['folders']=FolderSerializer(folders,many=True).data
-            files=FileSerializer(folder.files.all(),many=True).data
-            context['files']=files
-            context['result']=SUCCEED
-        return JsonResponse(context)
-
-
+    
 
 class FileView(View):
     def get(self,request,*args, **kwargs):

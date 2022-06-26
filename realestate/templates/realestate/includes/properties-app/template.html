@@ -51,11 +51,18 @@
                             </th>
 
                             <th>
+                                مساحت
+                            </th>
+
+                            <th>
                                 قیمت
                             </th>
 
                             <th>
                                 مسئول فروش
+                            </th>
+                            <th>
+
                             </th>
                             <th>
 
@@ -74,7 +81,7 @@
                                                 </div>
                                                 <div>
                                                     <small class="text-muted">
-                                                        <span v-text="property.class_title"></span>
+                                                        <span v-text="property.address"></span>
                                                     </small>
                                                 </div>
                                             </div>
@@ -85,23 +92,63 @@
                                 </td>
                                 <td>
 
-                                    <span v-text="to_price(property.price)"></span>
+                                    <span v-text="property.area"></span> متر مربع
+                                    <div v-if="property.area>0">
+
+                                        <small class="text-muted" >هر متر مربع</small>
+                                        <small class="text-muted" v-text="to_price(property.price/property.area)"></small>
+                                    </div>
+
                                 </td>
                                 <td>
-                                    <a :href="property.agent.get_absolute_url">
 
-                                        <span v-text="property.agent.title"></span>
+                                    <span v-text="to_price(property.price)"></span>
+                                    <div>
+                                        <small class="text-muted" v-text="(property.price_horuf)"></small>
+                                        <small class="text-muted" >{{CURRENCY}}</small>
+                                    </div>
+                                   
+                                </td>
+                                <td>
+                                    <a v-if="property.agent" :href="property.get_agent_url">
+                                        <div class="media">
+                                            <img :src="property.agent.logo" width="48" class="rounded" alt="">
+                                            <div class="media-body mr-2">
+                                                <span v-text="property.agent.title"></span>
+
+                                            </div>
+                                        </div>
                                     </a>
                                 </td>
                                 <td>
+                                    <div class="small text-muted">
 
-                                    {% if aaa and perms.projectmanager.add_employee and not property.employee %}
-                                    <form @submit.prevent="create_employee(property.id)">
-                                        {% csrf_token %}
-                                        <button class="btn btn-warning" type="submit">
-                                            ایجاد پرسنل
-                                        </button>
-                                    </form>
+                                        طبقه <span v-text="property.floor"></span>
+                                    </div>
+
+
+                                    <div class="small text-muted">
+
+                                        خواب <span v-text="property.bed_rooms"></span>
+                                    </div>
+
+
+                                    <div class="small text-muted">
+
+                                        پارکینگ <span v-text="property.garage"></span>
+                                    </div>
+                                </td>
+                                <td>
+
+                                    {% if perms.realestate.change_property %}
+                                    <a class="mx-2" :href="property.get_edit_url" title="ویرایش" target="_blank">
+                                        <i class="fa fa-edit text-warning"></i>
+                                    </a>
+                                    {% endif %}
+                                    {% if perms.realestate.delete_property %}
+                                    <a class="mx-2" :href="property.get_delete_url" title="حذف" target="_blank">
+                                        <i class="fa fa-trash text-danger"></i>
+                                    </a>
                                     {% endif %}
 
 

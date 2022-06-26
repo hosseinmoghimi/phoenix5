@@ -1,14 +1,24 @@
 {% extends "realestate/layout.html" %}
 
 {% block content %}
-  <div class="row">
-    <div class="col-md-12">
-       {% include "realestate/includes/properties-app/template.html" %}
-    </div>
+<div class="row">
+  {% if add_property_form %}
+
+  <div class="col-md-12">
+    {% include "realestate/includes/add-property-app/template.html" %}
   </div>
+  {% endif %}
+
+  <div class="col-md-12">
+    {% include "realestate/includes/properties-app/template.html" %}
+  </div>
+</div>
 {% endblock content %}
 
 {% block script %}
 {% include "realestate/includes/properties-app/script.html" %}
-  
+{% if add_property_form %}
+{% include "realestate/includes/add-property-app/script.html" %}
+
+{% endif %}
 {% endblock script %}

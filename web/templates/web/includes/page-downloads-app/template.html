@@ -82,34 +82,8 @@
     </div>
 </div>
 {% elif downloads %}
-<div class="col-md-6">
-
-    <div id="page-documents-app" class="card mb-3">
-        <div class="card-header" id="headingdocuments">
-            <h5 class="text-center">
-                دانلود ها
-
-            </h5>
-        </div>
-
-
-        <div class="card-body">
-            {% for download in downloads %}
-            <div>
-
-                <h6>
-                    <a class="mr-2" target="_blank" href="{{download.get_download_url}}">
-                        {{download.get_icon_tag|safe}}
-                        {{download.title}}
-                    </a>
-
-                </h6>
-            </div>
-            {% endfor %}
-
-        </div>
-
-    </div>
+<div class="col-md-4">
+    {% include "web/includes/page-downloads-app/template-simple.html" %}
 
 </div>
 

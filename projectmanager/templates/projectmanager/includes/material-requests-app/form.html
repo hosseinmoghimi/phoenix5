@@ -54,12 +54,13 @@
         <div class="col-md-3">
             <div class="form-group">
                 <label for="">قیمت واحد
+
                     <small>
                         (
+                            <span v-if="add_material_request_form_unit_price>0" class="text-primary" v-text="to_price(add_material_request_form_unit_price)"></span>
                         {{CURRENCY}}
                         )
                     </small>
-
                 </label>
                 <input required type="number" v-model="add_material_request_form_unit_price" class="farsi form-control"
                     placeholder="قیمت واحد">

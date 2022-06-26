@@ -1,0 +1,91 @@
+
+{% extends "accounting/layout.html" %}
+{% load to_price %}
+{% load to_amount_color %}
+
+{% block content %}
+<div class="text-center mt-3 mb-3">
+
+    <img src="{{account.logo}}" width="128" class="rounded" alt="">
+</div>
+
+<h4 class="text-center">
+    {{account.title}}
+
+     
+</h4>
+<hr>
+<div class="text-center farsi my-3">
+    {% if bank_account.account_no %}
+    <div class="text-center farsi my-3">
+
+        <i class="fa fa-phone text-success"></i>
+        شماره حساب : 
+        {{bank_account.account_no}}
+    </div>
+    {% endif %}
+
+    
+    {% if bank_account.shaba_no %}
+    <div class="text-center farsi my-3">
+
+        <i class="fa fa-phone text-success"></i>
+        شماره شبا : 
+        {{bank_account.shaba_no}}
+    </div>
+    {% endif %}
+
+    
+    {% if bank_account.card_no %}
+    <div class="text-center farsi my-3">
+
+        <i class="fa fa-phone text-success"></i>
+        شماره کارت : 
+        {{bank_account.card_no}}
+    </div>
+    {% endif %}
+
+
+</div>
+<hr>
+
+
+{% include "accounting/includes/account-app/navbar.html" %}
+
+<div class="row">
+
+    <div class="col-md-12">
+        {% include "accounting/includes/financial-documents-app/template.html" %}
+
+    </div>
+    <div class="col-md-12">
+
+        {% include "accounting/includes/financial-balances-app/template.html" %}
+    </div>
+    <div class="col-md-12">
+
+        {% include "accounting/includes/invoices-app/template.html" %}
+    </div>
+    <div class="col-md-12">
+        {% include "accounting/includes/payments-app/template.html" %}
+    </div>
+
+    <div class="col-md-12">
+        {% include "accounting/includes/transactions-app/template.html" %}
+    </div>
+
+    <div class="col-md-12">
+        {% include "accounting/includes/costs-app/template.html" %}
+    </div>
+
+</div>
+{% endblock content %}
+
+
+{% block script %}
+{% include "accounting/includes/financial-documents-app/script.html" %}
+{% include "accounting/includes/payments-app/script.html" %}
+{% include "accounting/includes/transactions-app/script.html" %}
+{% include "accounting/includes/financial-balances-app/script.html"  %}
+{% include "accounting/includes/costs-app/script.html"  %}
+{% endblock script %}

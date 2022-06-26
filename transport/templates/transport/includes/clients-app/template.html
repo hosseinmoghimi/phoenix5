@@ -51,7 +51,7 @@
                                     </a>
                                 </td>
                                 <td>
-                                    <a :href="client.account.profile.get_absolute_url">
+                                    <a  v-if="client.account.profile"   :href="client.account.profile.get_absolute_url">
                                         <img :src="client.account.profile.image" class="rounded-circle" width="32"
                                             alt="">
                                         <span v-text="client.account.profile.name"></span>

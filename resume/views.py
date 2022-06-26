@@ -128,7 +128,6 @@ class ResumeIndexView(View):
             context['add_resume_skill_form'] = AddResumeSkillForm()
             # context['resume_item_enums']=(i[0] for i in ResumeItemEnum.choices)
         language_code=LanguageCode(resume_index.language)
-        print(language_code)
         tml=language_code+"/"
         TEMPLATE_ROOT = APP_NAME+"/"+tml
         return render(request, TEMPLATE_ROOT+"resume-index.html", context)

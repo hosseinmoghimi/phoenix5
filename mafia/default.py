@@ -51,6 +51,68 @@ def init_roles(*args, **kwargs):
     Role.objects.all().delete()
 
 
+
+    role=Role(title="نانوا")
+    role.side=RoleSideEnum.CITIZEN
+    role.save()
+    
+
+    role=Role(title="کشیش")
+    role.side=RoleSideEnum.CITIZEN
+    role.save()
+    
+
+    role=Role(title="گورکن")
+    role.side=RoleSideEnum.CITIZEN
+    role.save()
+    
+
+    role=Role(title="مسیح")
+    role.side=RoleSideEnum.CITIZEN
+    role.save()
+    
+
+    role=Role(title="فروشنده")
+    role.side=RoleSideEnum.CITIZEN
+    role.save()
+    
+    role=Role(title="فدایی")
+    role.side=RoleSideEnum.CITIZEN
+    role.save()
+
+    role=Role(title="ماسون")
+    role.side=RoleSideEnum.CITIZEN
+    role.save()
+
+    role=Role(title="شهردار")
+    role.side=RoleSideEnum.CITIZEN
+    role.save()
+
+    role=Role(title="جان سخت")
+    role.side=RoleSideEnum.CITIZEN
+    role.save()
+
+
+    role=Role(title="مافیای ساده")
+    role.side=RoleSideEnum.MAFIA
+    role.save()
+
+    role=Role(title="دکتر لکتر")
+    role.side=RoleSideEnum.MAFIA
+    role.save()
+
+    role=Role(title="جاسوس")
+    role.side=RoleSideEnum.MAFIA
+    role.save()
+
+    role=Role(title="ناتاشا")
+    role.side=RoleSideEnum.MAFIA
+    role.save()
+
+    role=Role(title="معشوقه")
+    role.side=RoleSideEnum.MAFIA
+    role.save()
+
     role=Role(title="تفنگ دار")
     role.side=RoleSideEnum.CITIZEN
     role.save()
@@ -140,7 +202,7 @@ def init_roles(*args, **kwargs):
     
     role=Role()
     role.title="جوکر"
-    role.side=RoleSideEnum.INDEPENDENT
+    role.side=RoleSideEnum.MAFIA
     role.save()
 
 

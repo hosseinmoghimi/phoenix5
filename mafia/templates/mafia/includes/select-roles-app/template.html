@@ -51,7 +51,7 @@
     <div class="col-6">
         <div v-for="role in roles" class="my-2">
 
-            <button @click="select_role(role)" class="btn btn-block btn-secondary">
+            <button @click="select_role(role,true)" class="btn btn-block btn-secondary">
                 <img :src="role.thumbnail" class="rounded" width="48" alt="">
                 
                 <span v-text="role.title"></span>
@@ -61,7 +61,7 @@
     <div class="col-6">
         <div v-for="role in selected_roles" class="my-2">
 
-            <button @click="deselect_role(role)" :class="'btn btn-block btn-'+role.color">
+            <button @click="deselect_role(role,true)" :class="'btn btn-block btn-'+role.color">
                 <img :src="role.thumbnail" class="rounded" width="48" alt="">
 
                 <span v-text="role.title"></span>

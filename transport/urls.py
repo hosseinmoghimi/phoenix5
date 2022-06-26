@@ -30,6 +30,7 @@ urlpatterns = [
     
     path("service_man/<int:pk>/",views.ServiceManView.as_view(),name="serviceman"),
     path("service_mans/",views.ServiceMansView.as_view(),name="servicemans"),
+    path("add_service_man/",apis.AddServiceManApi.as_view(),name="add_service_man"),
     
     path("maintenance/<int:pk>/",views.MaintenanceView.as_view(),name="maintenance"),
     path("maintenances/",views.MaintenancesView.as_view(),name="maintenances"),

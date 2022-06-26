@@ -26,6 +26,8 @@ class DriverRepo():
 
             if driver is None:
                 driver=Driver(account_id=account_id)
+                if 'title' in kwargs:
+                    driver.title=kwargs['title']
                 driver.save()
                 return driver
         
@@ -201,7 +203,6 @@ class TripRepo():
         self.profile=ProfileRepo(*args, **kwargs).me
 
     def add_trip(self, *args, **kwargs):
-        print(kwargs)
         if not self.user.has_perm(APP_NAME+".add_trip"):
             return
         trip=Trip()
@@ -329,7 +330,19 @@ class ServiceManRepo():
         
         self.objects=ServiceMan.objects.all()
         self.profile=ProfileRepo(*args, **kwargs).me
+    def add_service_man(self,*args, **kwargs):
+        if not self.user.has_perm(APP_NAME+".add_serviceman"):
+            return
+        if 'account_id' in kwargs:
+            account_id=kwargs['account_id']
+            service_man=self.service_man(account_id=account_id)
 
+            if service_man is None:
+                service_man=ServiceMan(account_id=account_id)
+                if 'title' in kwargs:
+                    service_man.title=kwargs['title']
+                service_man.save()
+                return service_man
     def add_work_shift(self, *args, **kwargs):
         if not self.user.has_perm(APP_NAME+".add_trip"):
             return
@@ -523,15 +536,16 @@ class MaintenanceRepo():
         if 'for_home' in kwargs:
             objects = objects.filter(Q(for_home=kwargs['for_home']))
         if 'client_id' in kwargs:
-            objects=objects.filter(pay_to_id=kwargs['client_id'])
+            objects=objects.filter(pay_to_id=Client.objects.filter(pk=kwargs['client_id']).first().account_id)
         if 'driver_id' in kwargs:
             objects=objects.filter(pay_from_id=kwargs['driver_id'])
         if 'vehicle_id' in kwargs:
             objects=objects.filter(vehicle_id=kwargs['vehicle_id'])
+        if 'service_man_id' in kwargs:
+            objects=objects.filter(pay_from_id=ServiceMan.objects.filter(pk=kwargs['service_man_id']).first().account_id)
         return objects.all()
 
     def add_maintenance(self,*args, **kwargs):
-        print(kwargs)
         if not self.user.has_perm(APP_NAME+".add_maintenance"):
             return
         maintenance=Maintenance()
@@ -548,9 +562,9 @@ class MaintenanceRepo():
         if 'maintenance_type' in kwargs:
             maintenance.maintenance_type=kwargs['maintenance_type']
         if 'service_man_id' in kwargs:
-            maintenance.pay_from_id=kwargs['service_man_id']
+            maintenance.pay_from_id=ServiceMan.objects.filter(pk=kwargs['service_man_id']).first().account_id
         if 'client_id' in kwargs:
-            maintenance.pay_to_id=kwargs['client_id']
+            maintenance.pay_to_id=Client.objects.filter(pk=kwargs['client_id']).first().account_id
         if 'vehicle_id' in kwargs:
             maintenance.vehicle_id=kwargs['vehicle_id']
         maintenance.save()
@@ -571,7 +585,6 @@ class WorkShiftRepo():
         self.profile=ProfileRepo(*args, **kwargs).me
 
     def add_work_shift(self, *args, **kwargs):
-        print(kwargs)
         if not self.user.has_perm(APP_NAME+".add_workshift"):
             return
         work_shift=WorkShift()
@@ -677,6 +690,8 @@ class PassengerRepo():
 
             if passenger is None:
                 passenger=Passenger(account_id=account_id)
+                if 'title' in kwargs:
+                    passenger.title=kwargs['title']
                 passenger.save()
                 return passenger
 

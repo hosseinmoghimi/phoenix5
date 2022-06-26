@@ -8,7 +8,7 @@ from core.apps import APP_NAME
 from log.repo import LogRepo
 from core.enums import ColorEnum, IconsEnum, ParameterNameEnum, PictureNameEnum
 from core.models import Download, Link
-from core.repo import DownloadRepo, ImageRepo, PageDownloadRepo, PageImageRepo, PageLikeRepo, PagePermissionRepo, PageRepo, ParameterRepo, PictureRepo, TagRepo
+from core.repo import DownloadRepo, ImageRepo, PageDownloadRepo, PageImageRepo, PageLikeRepo, PagePermissionRepo, PageRepo, PageTagRepo, ParameterRepo, PictureRepo, TagRepo
 from core.serializers import PagePermissionSerializer,PageBriefSerializer, PageCommentSerializer, PageImageSerializer, PageDownloadSerializer, PageLinkSerializer, PageTagSerializer
 from phoenix.settings import ADMIN_URL, MEDIA_URL, STATIC_URL, SITE_URL
 from django.shortcuts import render
@@ -118,7 +118,8 @@ def PageContext(request, *args, **kwargs):
             can_write=page_permission.can_write
         # my_pages_ids=( page_permissions)
         
-
+    if True:
+        context['set_thumbnail_header_form']=SetThumbnailHeaderForm()
 
     can_add_link=False
     can_add_image=False
@@ -251,7 +252,16 @@ class HomeView(View):
     def get(self, request, *args, **kwargs):
         context=getContext(request=request)
         return render(request,TEMPLATE_ROOT+"index.html",context) 
-
+class PageView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        page=PageRepo(request=request).page(*args, **kwargs)
+        if page is None:
+            mv=MessageView(request=request)
+            mv.title="صفحه مورد نظر پیدا نشد."
+            return mv.response()
+        context.update(PageContext(request=request,page=page))
+        return render(request,TEMPLATE_ROOT+"page.html",context)
 
 class DownloadView(View):
     def get(self, request, *args, **kwargs): 
@@ -329,6 +339,23 @@ class TagView(View):
         context['page_tags']=page_tags
         return render(request,TEMPLATE_ROOT+"tag.html",context)
         
+class PageTagView(View):
+    def get(self, request, *args, **kwargs):
+        me = ProfileRepo(request=request).me
+        page_tag = PageTagRepo(request=request).page_tag(*args, **kwargs)
+        tag=page_tag.tag
+        # tag = TagRepo(request=request).tag(*args, **kwargs)
+        if tag is None:
+            mv=MessageView(request=request)
+            mv.title="چنین برچسبی وجود ندارد."
+            mv.body="چنین برچسبی وجود ندارد."
+            return mv.response()
+        context=CoreContext(request=request,app_name=APP_NAME)
+        context['tag']=tag
+        page_tags=tag.pagetag_set.all()
+        context['page_tags']=page_tags
+        return render(request,TEMPLATE_ROOT+"tag.html",context)
+        
  
 class PageImageView(View):
     def get(self, request, *args, **kwargs):
@@ -343,6 +370,24 @@ class PageImageView(View):
         return render(request,TEMPLATE_ROOT+"image.html",context)
         
 
+class PagePrintView(View):
+    def get(self, request, *args, **kwargs):
+        context=getContext(request=request)
+        page=PageRepo(request=request).page(*args, **kwargs)
+        context.update(PageContext(request=request,page=page))
+        context['no_footer']=True
+        context['no_navbar']=True
+        return render(request,TEMPLATE_ROOT+"includes/page-app/print.html",context)
+
+
+class PageEditView(View):
+    def get(self, request, *args, **kwargs):
+        context=getContext(request=request)
+        page=PageRepo(request=request).page(*args, **kwargs)
+        context.update(PageContext(request=request,page=page))
+        context['no_footer']=True
+        context['no_navbar']=True
+        return render(request,TEMPLATE_ROOT+"includes/page-app/edit.html",context)
 
 class ImageView(View):
     def get(self, request, *args, **kwargs):

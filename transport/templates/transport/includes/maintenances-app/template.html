@@ -51,9 +51,12 @@
                             <th>
 
                             </th>
+                            {% if not service_man %}
+
                             <th>
                                 سرویس کار
                             </th>
+                            {% endif %}
 
                             {% if not vehicle %}
                             <th>
@@ -96,10 +99,12 @@
                                         </i>
                                     </a>
                                 </td>
+                                {% if not service_man %}
+                                  
                                 <td>
                                     <div class="media">
                                         <a :href="maintenance.service_man.get_absolute_url">
-                                            <img :src="maintenance.service_man.account.profile.image"
+                                            <img :src="maintenance.service_man.account.logo"
                                                 class="rounded-circle" width="48">
 
                                         </a>
@@ -111,7 +116,7 @@
                                                 </a>
                                             </div>
                                             <div>
-                                                <a :href="maintenance.service_man.account.profile.get_absolute_url">
+                                                <a v-if="maintenance.service_man.account.profile" :href="maintenance.service_man.account.profile.get_absolute_url">
 
                                                     <small
                                                         v-text="maintenance.service_man.account.profile.name"></small>
@@ -122,6 +127,7 @@
 
 
                                 </td>
+                                {% endif %}
                                 {% if not vehicle %}
 
                                 <td>
@@ -163,10 +169,10 @@
                                                 </a>
                                             </div>
                                             <div>
-                                                <a :href="maintenance.client.account.profile.get_absolute_url">
+                                                <a :href="maintenance.client.account.get_absolute_url">
 
                                                     <small
-                                                        v-text="maintenance.client.account.profile.name"></small>
+                                                        v-text="maintenance.client.account.title"></small>
                                                 </a>
                                             </div>
                                         </div>

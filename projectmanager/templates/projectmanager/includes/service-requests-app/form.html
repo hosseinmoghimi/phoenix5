@@ -56,6 +56,8 @@
                 <label for="">قیمت واحد
                     <small>
                         (
+                            <span v-if="add_service_request_form_unit_price>0" class="text-primary" v-text="to_price(add_service_request_form_unit_price)"></span>
+                    
                         {{CURRENCY}}
                         )
                     </small>

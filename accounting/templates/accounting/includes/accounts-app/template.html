@@ -63,6 +63,9 @@
                                 حساب
                             </th>
                             <th>
+                                تماس
+                            </th>
+                            <th>
                                 پروفایل
                             </th>
                             <th>
@@ -95,6 +98,16 @@
                                     </a>
 
 
+                                </td>
+                                <td>
+                                     
+                                    <a v-if="account.get_whatsapp_link" :href="account.get_whatsapp_link">
+                                        <img src="{% static 'icons/whatsapp.png' %}" width="32" alt="">
+                                    <span :href="account.tel">
+
+                                    </span>
+
+                                    </a>
                                 </td>
                                 <td>
                                     

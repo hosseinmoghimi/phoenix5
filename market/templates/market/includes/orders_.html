@@ -1,0 +1,53 @@
+<table class="table">
+    <thead>
+        <tr>
+            <th class="text-right farsi"></th>
+            <th class="text-right farsi">خریدار</th>
+            <th class="text-right farsi">فروشنده</th>
+            <th class="text-right farsi">مبلغ</th>
+            <th class="text-right farsi">تاریخ سفارش</th>
+            <th class="text-right farsi">وضعیت</th>
+
+        </tr>
+    </thead>
+    <tbody>
+        {% for order in orders %}
+        <tr>
+            <td>
+                <a href="{{order.get_absolute_url}}">
+
+                    جزئیات سفارش &nbsp;&nbsp;
+                    <span v-text="order.id"></span>
+                </a>
+            </td>
+
+            <td>
+                <a href="{{order.customer.get_absolute_url}}">
+                    <img src="{{order.customer.profile.image}}" width="32" class="rounded-circle" alt="">
+                    <span>{{order.customer.profile.name}}</span>
+
+                </a>
+            </td>
+
+            <td>
+                <a href="{{order.supplier.get_absolute_url}}">
+                    <img src="{{order.supplier.image}}" width="32" class="rounded-circle" alt="">
+                    <span>{{order.supplier.title}}</span>
+                </a>
+            </td>
+            <td>
+                <span>{{order.total_to_price}}</span>
+            </td>
+            <td>
+                <span class="small" v-text="{{order.persian_order_date}}"></span>
+            </td>
+
+            <td>
+                <span class="badge badge-{{order.get_status_color}}">{{order.status}}</span>
+            </td>
+        </tr>
+        {% endfor %}
+
+    </tbody>
+
+</table>

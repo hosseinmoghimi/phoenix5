@@ -1,8 +1,10 @@
 from django.db import models
+from utility.num import to_horuf
 from core.models import _,reverse,Page
 from accounting.models import Asset
 from realestate.apps import APP_NAME
 from realestate.enums import *
+from utility.utils import LinkHelper
 
 class Property(Asset):
     agent=models.ForeignKey("accounting.account", verbose_name=_("مسئول فروش"),null=True,blank=True, on_delete=models.SET_NULL)
@@ -14,7 +16,13 @@ class Property(Asset):
     kitchen_type=models.CharField(_("نوع آشپزخانه"),choices=KitchenTypeEnum.choices,default=KitchenTypeEnum.REGULAR, max_length=50)
     area=models.IntegerField(_("مساحت"))
     address=models.CharField(_("آدرس"),null=True,blank=True, max_length=500)
-
+    def get_agent_url(self):
+        if self.agent is not None:
+            return reverse(APP_NAME+":agent",kwargs={'pk':self.agent.pk})
+    @property
+    def price_horuf(self):
+        a=to_horuf(self.price)
+        return a
     def save(self,*args, **kwargs):
         if self.class_name is None or self.class_name == "":
             self.class_name = "property"
@@ -26,4 +34,18 @@ class Property(Asset):
     class Meta:
         verbose_name = _("Property")
         verbose_name_plural = _("Propertys")
+ 
+
+
+# class Agent(models.Model,LinkHelper):
+#     account=models.ForeignKey("accounting.account", verbose_name=_("account"), on_delete=models.CASCADE)
+#     class_name="agent"
+#     app_name=APP_NAME
+
+#     class Meta:
+#         verbose_name = _("Agent")
+#         verbose_name_plural = _("Agents")
+
+#     def __str__(self):
+#         return self.account
  

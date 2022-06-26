@@ -1,0 +1,73 @@
+<script>
+    let all_banks = JSON.parse(`{{banks_s|escapejs}}`)
+
+    let banks_app = new Vue({
+        el: "#banks-app",
+        data: {
+            banks: all_banks,
+            search_for: '',
+            waiting: false,
+            name: "",
+            tel: "",
+            address: "",
+            branch: "",
+            message: { show: false },
+        },
+        methods: {
+            add_bank: function () {
+                let url = "{% url 'accounting:add_bank' %}"
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    name: this.name,
+                    tel: this.tel,
+                    address: this.address,
+                    branch: this.branch,
+                }
+                $.post(url, payload).done((data) => {
+                    if (data.result != 'SUCCEED') {
+                        let message="خطا در افزودن بانک"
+                        banks_app.message = { show: true, body: message, color: 'danger' }
+                    setTimeout(() => {
+                        banks_app.message = { show: false }
+                    }, 3000);
+
+                    }
+                    if (data.result === 'SUCCEED') {
+                        banks_app.banks.push(data.bank)
+                        all_banks.push(data.bank)
+                        banks_app.name = ""
+                        banks_app.branch = ""
+                        banks_app.address = ""
+                        banks_app.tel = ""
+
+
+                        let message="بانک با موفقیت افزوده شد."
+                        banks_app.message = { show: true, body: message, color: 'success' }
+                    setTimeout(() => {
+                        banks_app.message = { show: false }
+                    }, 3000);
+
+                    }
+                })
+            },
+            filter: function () {
+                this.banks = all_banks.filter(bank => bank.name.indexOf(this.name) > -1)
+
+            },
+            to_price: function (vall) {
+                let color = 'primary'
+                if (vall < 0)
+                    color = 'danger'
+                if (vall > 0)
+                    color = 'success'
+                vall = to_price(vall, "{{CURRENCY}}")
+                return `
+                    <span class="text-${color}">${vall}</span>
+                    `
+            },
+
+
+        }
+    })
+
+</script>
