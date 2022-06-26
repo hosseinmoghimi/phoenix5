@@ -586,10 +586,7 @@ class Tag(models.Model,LinkHelper):
 
     def __str__(self):
         return self.title
-
-    def get_absolute_url(self):
-        return reverse(APP_NAME+":tag", kwargs={"pk": self.pk})
-
+ 
 
 class PageTag(models.Model,LinkHelper):
     page=models.ForeignKey("page", verbose_name=_("page"), on_delete=models.CASCADE)
@@ -611,22 +608,6 @@ class PageTag(models.Model,LinkHelper):
     def __str__(self):
         return self.tag.title
  
-
-# class SocialLink(Link):
-#     # app_name=models.CharField(_('اپلیکیشن'),choices=AppNameEnum.choices, max_length=50,null=True,blank=True)
-#     profile = models.ForeignKey("authentication.Profile", null=True,
-#                                 blank=True, verbose_name=_("profile"), on_delete=models.PROTECT)
-
-#     def get_link(self):
-#         return f"""
-#                 <a href="{self.url}" class="btn btn-just-icon btn-link {self.icon_class}">
-#                 {self.get_icon_tag()}
-#                 </a>
-#         """
-
-#     class Meta:
-#         verbose_name = _("SocialLink")
-#         verbose_name_plural = _("شبکه اجتماعی")
  
 
 class NavLink(Link):

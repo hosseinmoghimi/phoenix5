@@ -8,7 +8,7 @@ from core.apps import APP_NAME
 from log.repo import LogRepo
 from core.enums import ColorEnum, IconsEnum, ParameterNameEnum, PictureNameEnum
 from core.models import Download, Link
-from core.repo import DownloadRepo, ImageRepo, PageDownloadRepo, PageImageRepo, PageLikeRepo, PagePermissionRepo, PageRepo, ParameterRepo, PictureRepo, TagRepo
+from core.repo import DownloadRepo, ImageRepo, PageDownloadRepo, PageImageRepo, PageLikeRepo, PagePermissionRepo, PageRepo, PageTagRepo, ParameterRepo, PictureRepo, TagRepo
 from core.serializers import PagePermissionSerializer,PageBriefSerializer, PageCommentSerializer, PageImageSerializer, PageDownloadSerializer, PageLinkSerializer, PageTagSerializer
 from phoenix.settings import ADMIN_URL, MEDIA_URL, STATIC_URL, SITE_URL
 from django.shortcuts import render
@@ -333,6 +333,23 @@ class TagView(View):
         tag = TagRepo(request=request).tag(*args, **kwargs)
         if tag is None:
             raise Http404
+        context=CoreContext(request=request,app_name=APP_NAME)
+        context['tag']=tag
+        page_tags=tag.pagetag_set.all()
+        context['page_tags']=page_tags
+        return render(request,TEMPLATE_ROOT+"tag.html",context)
+        
+class PageTagView(View):
+    def get(self, request, *args, **kwargs):
+        me = ProfileRepo(request=request).me
+        page_tag = PageTagRepo(request=request).page_tag(*args, **kwargs)
+        tag=page_tag.tag
+        # tag = TagRepo(request=request).tag(*args, **kwargs)
+        if tag is None:
+            mv=MessageView(request=request)
+            mv.title="چنین برچسبی وجود ندارد."
+            mv.body="چنین برچسبی وجود ندارد."
+            return mv.response()
         context=CoreContext(request=request,app_name=APP_NAME)
         context['tag']=tag
         page_tags=tag.pagetag_set.all()

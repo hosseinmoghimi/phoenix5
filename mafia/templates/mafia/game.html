@@ -2,8 +2,6 @@
 {% load to_persian_date %}
 {% block content %}
 <div class="row">
-
-
     <div class="col-md-12">
         <div class="card">
             <div class="card-header">
@@ -21,10 +19,8 @@
                             <a href="{{game.game_scenario.get_absolute_url}}">
                                 {{game.game_scenario.title}}
                             </a>
-
                         </td>
                     </tr>
-
                     <tr>
                         <td class="text-left">
                             گاد
@@ -38,8 +34,6 @@
                             </a>
                         </td>
                     </tr>
-
-
                     <tr>
                         <td class="text-left">
                             تاریخ
@@ -55,7 +49,6 @@
                         </td>
                         <td class="text-right">
                             {{game.status}}
-
                         </td>
                     </tr>
                     <tr>
@@ -68,28 +61,36 @@
                     </tr>
                     <tr>
                         <td class="text-left">
-
                         </td>
                         <td class="text-right">
-
+                            {% if perms.mafia.change_game %}
+                            <div>
+                                <a class=" text-warning" href="{{game.get_edit_url}}" title="" target="_blank">
+                                    <i class="fa fa-edit"></i>
+                                    ویرایش
+                                </a>
+                            </div>
+                            {% endif %}
+                            {% if perms.mafia.delete_game %}
+                            <div class="farsi">
+                                <a class=" text-danger" href="{{game.get_delete_url}}" title="" target="_blank">
+                                    <i class="fa fa-trash"></i>
+                                    حذف
+                                </a>
+                            </div>
+                            {% endif %}
                         </td>
                     </tr>
-
                     <tr>
                         <td class="text-left">
-
                         </td>
                         <td class="text-right">
-
                         </td>
                     </tr>
-
                 </table>
-
             </div>
         </div>
     </div>
-
     <div class="col-md-12">
         {% include "mafia/includes/role-players-app/template.html" %}
     </div>
@@ -102,15 +103,11 @@
     <div class="col-md-12">
         {% include "mafia/includes/select-players-app/template.html" %}
     </div>
-
     <div class="col-md-12">
         {% include "mafia/includes/select-roles-app/template.html" %}
     </div>
-
 </div>
 {% endblock content %}
-
-
 {% block script %}
 {% include "mafia/includes/game-app/script.html" %}
 {% include "mafia/includes/role-players-app/script.html" %}
@@ -118,5 +115,4 @@
 {% include "mafia/includes/add-player-to-game-app/script.html" %}
 {% include "mafia/includes/select-players-app/script.html" %}
 {% include "mafia/includes/select-roles-app/script.html" %}
-
 {% endblock script %}

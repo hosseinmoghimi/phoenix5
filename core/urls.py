@@ -12,6 +12,7 @@ urlpatterns = [
     path('add_page_link/',apis.AddPageLinkApi.as_view(),name="add_page_link"),
     path("download/<int:pk>/",views.DownloadView.as_view(),name='download'),
     path("tag/<int:pk>/",views.TagView.as_view(),name='tag'),
+    path("pagetag/<int:pk>/",views.PageTagView.as_view(),name='pagetag'),
     path("image/<int:pk>/",views.ImageView.as_view(),name='image'),
     path("page_print/<int:pk>/",views.PagePrintView.as_view(),name='page_print'),
     path("page_edit/<int:pk>/",views.PageEditView.as_view(),name='page_edit'),

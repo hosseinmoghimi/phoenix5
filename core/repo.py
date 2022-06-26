@@ -238,6 +238,16 @@ class PageTagRepo():
             page_tag.save()
         return PageTag.objects.filter(page_id=page.id)
 
+    def page_tag(self,*args, **kwargs):
+        if 'pk' in kwargs:
+            return self.objects.filter(pk=kwargs['pk']).first()
+        if 'id' in kwargs:
+            return self.objects.filter(pk=kwargs['id']).first()
+        if 'page_tag_id' in kwargs:
+            return self.objects.filter(pk=kwargs['page_tag_id']).first()
+        if 'title' in kwargs:
+            return self.objects.filter(pk=kwargs['title']).first()
+
 
 class PageLikeRepo():
     def __init__(self,*args, **kwargs):
