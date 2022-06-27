@@ -6,16 +6,22 @@ from phoenix.server_settings import PUBLIC_ROOT
 
 from .settings import MEDIA_URL, MEDIA_ROOT, STATIC_URL, STATIC_ROOT, DEBUG,QRCODE_ROOT
 from django.views.static import serve
+from authentication.views import LoginViews,LogoutViews
 # from core.icon import FavIconView
 # from web3auth import urls as web3auth_urls
-
+from core.views import HomeView
 urlpatterns = [
-    path('', include('accounting.urls')),
+    path('', HomeView.as_view(),name="home"),
+    path('login/', LoginViews.as_view(),name="login"),
+    path('logout/', LogoutViews.as_view(),name="logout"),
+    path('accounting/', include('accounting.urls')),
     path('admin/', admin.site.urls),
     path('accounting/', include('accounting.urls')),
     path('authentication/', include('authentication.urls')),
     path('library/', include('library.urls')),
     path('core/', include('core.urls')),
+    path('realestate/', include('realestate.urls')),
+    path('health/', include('health.urls')),
     path('dashboard/', include('dashboard.urls')),
     path('market/', include('market.urls')),
     path('pm/', include('projectmanager.urls')),
