@@ -25,18 +25,38 @@
 
             </h4>
             <h5>
+                سطح:
+
+                        
+                        {{course.level}}
+                    
+            </h5>
+
+
+            
+            <h5>
+                تعداد واحد :
+
+                        
+                        {{course.course_count}}
+                    
+            </h5>
+
+
+            <h5>
                 رشته:
 
+                {% for major in course.major_set.all %}
+                <a class="mx-2" href="{{major.get_absolute_url}}">
+                        
+                        {{major.title}}
+                    
+                </a>
+                {% endfor %}
             </h5>
-            {% for major in course.major_set.all %}
-            <a href="{{major.get_absolute_url}}">
-                <h5>
 
-                    {{major.title}}
-                </h5>
+            
 
-            </a>
-            {% endfor %}
         </div>
 
 

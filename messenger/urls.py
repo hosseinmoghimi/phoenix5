@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 app_name=APP_NAME
 urlpatterns = [
     path("",login_required(views.HomeViews.as_view()),name="home"),
+    path("notification/<int:pk>/",login_required(views.MessageViews.as_view()),name="notification"),
     path("message/<int:pk>/",login_required(views.MessageViews.as_view()),name="message"),
     path("channel/<int:pk>/",login_required(views.ChannelViews.as_view()),name="channel"),
     # path("event/<int:pk>/",views.EventViews().event,name="event"),

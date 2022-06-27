@@ -31,14 +31,14 @@ urlpatterns = [
     path("major/<int:pk>/",login_required(views.MajorViews().major),name="major"),
     path("api/add_major/",login_required(apis.MajorApi().add_major),name="add_major"),
     
-    path("books/",login_required(views.BookViews().books),name="books"),
+    path("books/",login_required(views.BooksViews.as_view()),name="books"),
     path("add_document/",login_required(apis.BookApi().add_document),name="add_document"),
     path("api/add_book/",login_required(apis.BookApi().add_book),name="add_book"),
-    path("book/<int:pk>/",login_required(views.BookViews().book),name="book"),
+    path("book/<int:pk>/",login_required(views.BookViews.as_view()),name="book"),
     
     path("educationalyear/<int:pk>/",login_required(views.EducationalYearViews().educational_year),name="educationalyear"),
     
-    path("session/<int:pk>/",login_required(views.SessionViews().session),name="session"),
+    path("session/<int:pk>/",login_required(views.SessionViews.as_view()),name="session"),
     path("api/add_session/",login_required(apis.SessionApi().add_session),name="add_session"),
     path("api/add_attendance/",login_required(apis.AttendanceApi().add_attendance),name="add_attendance"),
     

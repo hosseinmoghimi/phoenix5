@@ -3,6 +3,7 @@
 
 
 <div class="row">
+
     <div class="col-md-12">
         <h4 class="title text-center my-3">
             {{book.title}}
@@ -13,6 +14,13 @@
             {% endif %}
         </h4>
     </div>
+
+    <div class="col-md-4">
+        {% for course in book.course_set.all %}
+        {% include "school/includes/course-app/course-card.html" %}
+        {% endfor %}
+    </div>
+    <!--     
     <div class="col-md-12">
         <div class="card">
             <div class="card-body">
@@ -33,13 +41,17 @@
                 {% endfor %}
             </div>
         </div>
-    </div>
-    <div class="col-md-6">
+    </div> -->
+    <div class="col-md-4">
         {% include "core/includes/page-downloads-app/template.html" %}
 
     </div>
-    <div class="col-md-6">
+    <div class="col-md-4">
         {% include "core/includes/page-links-app/template.html" %}
+
+    </div>
+    <div class="col-md-12">
+        {% include "core/includes/page-images-app/template.html" %}
 
     </div>
     <div class="col-md-12">
@@ -69,14 +81,8 @@
 {% endblock content %}
 
 {% block script %}
-<script>
-    let page_id = parseInt("{{book.id}}")
 
-    let page_comment_component_template=`{% include "core/includes/page-comments-app/component.html" %}`
-</script>
 
-{% include "core/includes/page-downloads-app/script.html" %}
-{% include "core/includes/page-links-app/script.html" %}
-{% include "core/includes/page-comments-app/script.html" %}
+{% include "core/includes/page-app/script.html" %}
 
 {% endblock script %}

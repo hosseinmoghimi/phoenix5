@@ -5,6 +5,7 @@ from .models import ActiveCourse, Attendance, ClassRoom, Course, EducationalYear
 from .apps import APP_NAME
 from django.db.models import Q
 from django.utils import timezone
+from utility.calendar import PersianCalendar
 
 
 class AttendanceRepo():
