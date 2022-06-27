@@ -201,6 +201,9 @@ class LoginViews(View):
         context['messages']=messages
         if 'next' in request.GET:
             context['next']=request.GET['next']
+        else:
+            context['next']=SITE_URL
+
         ProfileRepo(request=request).logout(request)
         context['login_form']=LoginForm()
         context['build_absolute_uri']=request.build_absolute_uri()
@@ -219,7 +222,7 @@ class LoginViews(View):
             if 'next' in login_form.cleaned_data:
                 next=login_form.cleaned_data['next']
             else:
-                next="/"
+                next=SITE_URL
             a=ProfileRepo(request=request).login(request=request,username=username,password=password)
             if a is not None:
                 (request,user)=a
