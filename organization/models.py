@@ -8,7 +8,7 @@ from organization.enums import *
 class OrganizationUnit(Page):
     pre_title = models.CharField(
         _("pre_title"), blank=True, null=True, max_length=50)
-    account = models.ForeignKey("accounting.account", null=True, blank=True, verbose_name=_(
+    account = models.ForeignKey("accounting.account",verbose_name=_(
         "account"), on_delete=models.CASCADE)
     parent = models.ForeignKey("organizationunit", related_name="childs",
                                null=True, blank=True, verbose_name=_("parent"), on_delete=models.CASCADE)
