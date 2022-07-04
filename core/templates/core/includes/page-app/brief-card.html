@@ -94,5 +94,14 @@
         {% if set_thumbnail_header_form %}
         {% include "core/includes/page-thumbnail-header-app/template.html" %}
         {% endif %}
+        {% if page.barcode %}
+          
+        {% endif %}
+        <div>
+            <a href="{{page.get_absolute_url}}">
+
+                <img src="{{page.get_qrcode_url}}" width="100" class="" alt="">
+            </a>
+        </div>
     </div>
 </div>

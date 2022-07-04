@@ -82,9 +82,6 @@ class HomeView(View):
             request=request, app_name=APP_NAME).picture(name=ParameterMarketEnum.SHOP_HEADER_IMAGE)
         categories = CategoryRepo(request=request).list().exclude(parent_id__gte=1)
         context['categories'] = categories
-        print("categories")
-        print(categories)
-        print(100*"#")
         context['categories_s'] = json.dumps(CategorySerializer(categories,many=True).data)
         category=None
         context['category_s'] = json.dumps(CategorySerializer(category).data)

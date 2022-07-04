@@ -117,6 +117,7 @@ class Transaction(Page,LinkHelper):
 
 
 class ProductOrService(Page):
+    barcode=models.CharField(_("بارکد"),null=True,blank=True, max_length=100)
 
     
     @property

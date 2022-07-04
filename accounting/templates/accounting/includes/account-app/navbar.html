@@ -50,3 +50,86 @@
     </a>
 </div>
 {% endif %}
+
+{% for acc in account.employee_set.all %}
+<div class="my-2 text-center farsi">
+    <a href="{{acc.get_absolute_url}}">
+        <small class="text-muted">
+            پرسنل
+        </small>
+        <span>
+            {{acc.title}}
+        </span>
+
+
+    </a>
+    <span>
+        {{acc.job_title}}
+    </span>
+
+
+    <a href="{{acc.organization_unit.get_absolute_url}}">
+        <small class="text-muted">
+            واحد سازمانی
+        </small>
+        <span>
+            {{acc.organization_unit.full_title}}
+        </span>
+    </a>
+
+</div>
+{% endfor %}
+{% for acc in account.organizationunit_set.all %}
+<div class="my-2 text-center farsi">
+    <a href="{{acc.get_absolute_url}}">
+        <small class="text-muted">
+            واحد سازمانی
+        </small>
+        <span>
+            {{acc.title}}
+        </span>
+    </a>
+</div>
+{% endfor %}
+
+
+{% for acc in account.driver_set.all %}
+<div class="my-2 text-center farsi">
+    <a href="{{acc.get_absolute_url}}">
+        <small class="text-muted">
+            راننده
+        </small>
+        <span>
+            {{acc.title}}
+        </span>
+    </a>
+</div>
+{% endfor %}
+
+
+{% for acc in account.passenger_set.all %}
+<div class="my-2 text-center farsi">
+    <a href="{{acc.get_absolute_url}}">
+        <small class="text-muted">
+            مسافر
+        </small>
+        <span>
+            {{acc.title}}
+        </span>
+    </a>
+</div>
+{% endfor %}
+
+{% for acc in account.client_set.all %}
+<div class="my-2 text-center farsi">
+    <a href="{{acc.get_absolute_url}}">
+        <small class="text-muted">
+            مشتری سرویس حمل و نقل
+        </small>
+        <span>
+            {{acc.title}}
+        </span>
+    </a>
+</div>
+{% endfor %}
+    

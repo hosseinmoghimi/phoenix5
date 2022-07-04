@@ -29,8 +29,8 @@ class OrganizationUnit(Page):
     def full_title(self,*args, **kwargs):
         a=""
         if self.parent is not None:
-            a+=self.parent.full_title +" "
-        return a+self.title
+            a+=" "+self.parent.full_title
+        return self.title+a
                                 
     def all_sub_orgs(self):
         ids=self.all_childs_ids()

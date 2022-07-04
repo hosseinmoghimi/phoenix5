@@ -4,18 +4,18 @@ from authentication.serializers import ProfileSerializer
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
-        fields = ['id', 'title', 'get_absolute_url','buy_price','get_edit_url','get_delete_url','available','unit_price','unit_name','thumbnail']
+        fields = ['id', 'title', 'get_absolute_url','buy_price', 'get_pm_absolute_url','get_edit_url','get_delete_url','available','unit_price','unit_name','thumbnail']
 
 class ProductBriefSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
-        fields = ['id', 'title', 'get_absolute_url', 'thumbnail','get_edit_url','get_delete_url']
+        fields = ['id', 'title', 'get_absolute_url', 'get_pm_absolute_url', 'thumbnail','get_edit_url','get_delete_url']
 
 
 class ServiceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Service
-        fields = ['id', 'title', 'get_absolute_url','buy_price','unit_price','unit_name','thumbnail']
+        fields = ['id', 'title', 'get_absolute_url','buy_price', 'get_pm_absolute_url','unit_price','unit_name','thumbnail']
 
 class AccountSerializerFull(serializers.ModelSerializer):
     profile=ProfileSerializer()
