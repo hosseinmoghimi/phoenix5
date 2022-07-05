@@ -52,7 +52,7 @@ class Folder(models.Model,LinkHelper):
         return STATIC_URL+'archive/img/pages/thumbnail/folder.png'
 
 class File(Page):
-    folder=models.ForeignKey("folder",related_name="files", verbose_name=_("folder"), on_delete=models.PROTECT)
+    folder=models.ForeignKey("folder",related_name="files", verbose_name=_("folder"), on_delete=models.CASCADE)
 
 
 
