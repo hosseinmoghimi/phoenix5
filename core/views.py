@@ -377,7 +377,7 @@ class PagePrintView(View):
         context.update(PageContext(request=request,page=page))
         context['no_footer']=True
         context['no_navbar']=True
-        return render(request,TEMPLATE_ROOT+"includes/page-app/print.html",context)
+        return render(request,TEMPLATE_ROOT+"page-print.html",context)
 
 
 class PageEditView(View):
