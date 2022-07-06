@@ -80,6 +80,9 @@ class ProfileViews(View):
             from accounting.views import AccountRepo
             accounts=AccountRepo(request=request).list(profile_id=selected_profile.id)
             context['accounts']=accounts
+            from accounting.serializers import AccountSerializer
+            accounts_s=json.dumps(AccountSerializer(accounts,many=True).data)
+            context['accounts_s']=accounts_s
         if selected_profile.enabled:
             if app_is_installed('projectmanager'):
                 from projectmanager.views import EmployeeRepo,EmployeeSerializer
