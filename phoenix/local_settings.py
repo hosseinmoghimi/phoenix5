@@ -3,12 +3,20 @@
 from pathlib import Path
 import os
 BASE_DIR = Path(__file__).resolve().parent.parent
-HOME_APP_URLS='projectmanager.urls'
-ALLOW_REGISTER_ONLINE=False
+ALLOWED_HOSTS = ['*']
+
+SITE_FULL_BASE_ADDRESS="https://cryptalx.com/"
 UPLOAD_ROOT="d:\\phoenix5\\uploads"
-PUBLIC_ROOT=os.path.join(BASE_DIR,'public_html')
+ALLOW_REGISTER_ONLINE=False
 DEBUG=True
-QRCODE_ROOT="d:\\phoenix5\\qrcode"
+SITE_URL='/'
+
+
+HOME_APP_URLS='projectmanager.urls'
+PUBLIC_ROOT=os.path.join(BASE_DIR,'public_html')
+QRCODE_ROOT=os.path.join(PUBLIC_ROOT,'qrcode')
+
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -22,7 +30,9 @@ INSTALLED_APPS = [
     'rest_framework',
     # 'rest_framework.authtoken'
     # 'web3auth.apps.Web3AuthConfig',
+    'realestate',
     'market',
+    'health',
     'scheduler',
     'resume',
     'core',
@@ -49,29 +59,29 @@ INSTALLED_APPS = [
     'mafia',
     'school',
     'bms',
-    
-
 ]
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': BASE_DIR / 'db20220706.sqlite3',
     }
 }
 SECRET_KEY = 'django-insecure-bt+o^tb1w_vl6vj%tjn-&=v5^m*w3)5a8(i&uoo)6on&pi-x6('
 
-ALLOWED_HOSTS = ['*']
 TIME_ZONE = 'Asia/Tehran'
 
-SITE_URL='/'
 
 STATIC_ROOT=os.path.join(PUBLIC_ROOT,'static')
 MEDIA_ROOT=os.path.join(PUBLIC_ROOT,'media')
 STATIC_URL = SITE_URL+'static/'
 MEDIA_URL =  SITE_URL+'media/'
 ADMIN_URL=SITE_URL+"admin/"
+QRCODE_URL=SITE_URL+"qrcode/"
 
 STATICFILES_DIRS=[os.path.join(BASE_DIR,'static')]
+
+
+
 
 phoenix_apps=[
     {
@@ -79,6 +89,14 @@ phoenix_apps=[
         'title':'هویت',
         'color':'warning',
         'home_url':SITE_URL+"authentication"+"/",
+        'has_help':False,
+        'show_on_menu':True,
+    },
+    {
+        'name':'health',
+        'title':'بهداشت',
+        'color':'success',
+        'home_url':SITE_URL+"health"+"/",
         'has_help':False,
         'show_on_menu':True,
     },
@@ -157,7 +175,7 @@ phoenix_apps=[
         'color':'success',
         'home_url':SITE_URL+"resume"+"/",
         'has_help':False,
-        'show_on_menu':True,
+        'show_on_menu':False,
     },
     {
         'name':'guarantee',
@@ -220,6 +238,14 @@ phoenix_apps=[
         'color':'success',
         'title':'مدیریت پروژه',
         'home_url':SITE_URL+"pm"+"/",
+        'has_help':False,
+        'show_on_menu':True,
+    },
+    {
+        'name':'realestate',
+        'color':'success',
+        'title':'املاک',
+        'home_url':SITE_URL+"realestate"+"/",
         'has_help':False,
         'show_on_menu':True,
     },
