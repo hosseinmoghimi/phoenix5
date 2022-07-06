@@ -3,7 +3,7 @@ from django.db import models
 from django.http import Http404
 from django.shortcuts import reverse
 from django.utils.translation import gettext as _
-from phoenix.server_settings import QRCODE_ROOT, QRCODE_URL, SITE_FULL_BASE_ADDRESS
+from phoenix.server_settings import QRCODE_ROOT, QRCODE_URL, FULL_SITE_URL
 from phoenix.settings import ADMIN_URL, MEDIA_URL, STATIC_URL, UPLOAD_ROOT
 from tinymce.models import HTMLField
 from utility.calendar import PersianCalendar
@@ -123,7 +123,7 @@ class Page(models.Model, LinkHelper, ImageMixin):
         # print(file_path)
         # print(100*"$")
         if not os.path.exists(file_address):
-            content=SITE_FULL_BASE_ADDRESS[0:-1]+self.get_absolute_url()
+            content=FULL_SITE_URL[0:-1]+self.get_absolute_url()
             generate_qrcode(content=content,file_name=file_name,file_address=file_address,file_path=file_path,)
         return f"{QRCODE_URL}{file_name}"
  

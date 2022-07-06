@@ -3,18 +3,43 @@
 from pathlib import Path
 import os
 BASE_DIR = Path(__file__).resolve().parent.parent
-ALLOWED_HOSTS = ['*']
 
-SITE_FULL_BASE_ADDRESS="https://cryptalx.com/"
+
+
+ALLOWED_HOSTS = ['*']
+FULL_SITE_URL="https://cryptalx.com/"
+SITE_URL='/'
 UPLOAD_ROOT="d:\\phoenix5\\uploads"
 ALLOW_REGISTER_ONLINE=False
+DEBUG=False
 DEBUG=True
-SITE_URL='/'
+SECRET_KEY = 'django-insecure-bt+o^tb1w_vl6vj%tjn-&=v5^m*w3)5a8(i&uoo)6on&pi-x6('
 
+TIME_ZONE = 'Asia/Tehran'
 
 HOME_APP_URLS='projectmanager.urls'
 PUBLIC_ROOT=os.path.join(BASE_DIR,'public_html')
+# PUBLIC_ROOT="/home/leo/public_html/phoenix5/"
 QRCODE_ROOT=os.path.join(PUBLIC_ROOT,'qrcode')
+
+
+
+STATIC_ROOT=os.path.join(PUBLIC_ROOT,'static')
+MEDIA_ROOT=os.path.join(PUBLIC_ROOT,'media')
+STATIC_URL = SITE_URL+'static/'
+MEDIA_URL =  SITE_URL+'media/'
+ADMIN_URL=SITE_URL+"admin/"
+QRCODE_URL=SITE_URL+"qrcode/"
+STATICFILES_DIRS=[os.path.join(BASE_DIR,'static')]
+
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
+
 
 
 INSTALLED_APPS = [
@@ -60,26 +85,6 @@ INSTALLED_APPS = [
     'school',
     'bms',
 ]
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db20220706.sqlite3',
-    }
-}
-SECRET_KEY = 'django-insecure-bt+o^tb1w_vl6vj%tjn-&=v5^m*w3)5a8(i&uoo)6on&pi-x6('
-
-TIME_ZONE = 'Asia/Tehran'
-
-
-STATIC_ROOT=os.path.join(PUBLIC_ROOT,'static')
-MEDIA_ROOT=os.path.join(PUBLIC_ROOT,'media')
-STATIC_URL = SITE_URL+'static/'
-MEDIA_URL =  SITE_URL+'media/'
-ADMIN_URL=SITE_URL+"admin/"
-QRCODE_URL=SITE_URL+"qrcode/"
-
-STATICFILES_DIRS=[os.path.join(BASE_DIR,'static')]
-
 
 
 
