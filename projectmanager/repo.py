@@ -1,3 +1,4 @@
+from requests import request
 from organization.models import Employee
 from core.enums import ParameterNameEnum
 from core.repo import PagePermissionRepo, PageRepo, ParameterRepo
@@ -134,7 +135,12 @@ class ProjectRepo():
         objects = self.objects
         if 'search_for' in kwargs:
             search_for=kwargs['search_for']
-            objects = objects.filter(Q(title__contains=search_for)|Q(short_description__contains=search_for)|Q(description__contains=search_for))
+            objects=PageRepo(request=self.request).list(*args, **kwargs).filter(app_name=APP_NAME).filter(class_name='project')
+            ids=[]
+            for obje in objects:
+                ids.append(obje.id)
+            objects=Project.objects.filter(id__in=ids)
+            # objects = objects.filter(Q(title__contains=search_for)|Q(short_description__contains=search_for)|Q(description__contains=search_for))
         if 'for_home' in kwargs:
             objects = objects.filter(Q(for_home=kwargs['for_home']))
         if 'parent_id' in kwargs:

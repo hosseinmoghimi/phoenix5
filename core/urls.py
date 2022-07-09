@@ -6,6 +6,7 @@ from django.urls import path
 app_name=APP_NAME
 urlpatterns = [
     path('',views.HomeView.as_view(),name="home"),
+    path('search/',views.SearchView.as_view(),name="search"),
     path('page/<int:pk>/',views.PageView.as_view(),name="page"),
     path('pages_permissions/<int:pk>/',views.PagePermissionsView.as_view(),name="pages_permissions"),
     path('change_parameter/',apis.ChangeParameterApi.as_view(),name="change_parameter"),
@@ -15,6 +16,7 @@ urlpatterns = [
     path("pagetag/<int:pk>/",views.PageTagView.as_view(),name='pagetag'),
     path("image/<int:pk>/",views.ImageView.as_view(),name='image'),
     path("page_print/<int:pk>/",views.PagePrintView.as_view(),name='page_print'),
+    path("page_show/<int:pk>/",views.PageShowView.as_view(),name='page_show'),
     path("page_edit/<int:pk>/",views.PageEditView.as_view(),name='page_edit'),
     path("image_download/<int:pk>/",views.ImageDownloadView.as_view(),name='image_download'),
     path("pageimage/<int:pk>/",views.PageImageView.as_view(),name='pageimage'),

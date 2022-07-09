@@ -15,6 +15,12 @@ class PageSerializer(serializers.ModelSerializer):
         fields=['id','title','get_absolute_url']
 
 
+class PageFullSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Page
+        fields=['id','title','class_title','app_name','get_absolute_url','get_delete_url','get_edit_url','get_print_url','get_show_url']
+
+
 class PagePermissionSerializer(serializers.ModelSerializer):
     profile=ProfileSerializer()
     page=PageSerializer()

@@ -1,4 +1,3 @@
-{% extends "core/layout.html" %}
 {% load static %}
 
 {% block content %}
@@ -9,14 +8,195 @@
     {% if page.short_description %}
 
     <div class="col-md-12 farsi">
-        {{page.short_description|safe}}
+        <div class="card">
+            <div class="card-header">
+                <h4>
+                    شرح کوتاه
+                </h4>
+            </div>
+            <div class="card-body">
+
+                {{page.short_description|safe}}
+            </div>
+        </div>
     </div>
     {% endif %}
     {% if page.description %}
 
     <div class="col-md-12 farsi">
-        {{page.description|safe}}
+        <div class="card">
+            <div class="card-header">
+                <h4>
+                    شرح کامل
+                </h4>
+            </div>
+            <div class="card-body">
+
+                {{page.description|safe}}
+            </div>
+        </div>
     </div>
+
+
     {% endif %}
+
+
+
+    {% if page.pagelink_set.all %}
+
+    <div class="col-md-12 farsi">
+        <div class="card">
+            <div class="card-header">
+                <h4>
+                    لینک ها
+                </h4>
+            </div>
+            <div class="card-body">
+                {% for page_link in page.pagelink_set.all %}
+
+                {% if is_printed %}
+                <h5>
+
+                    {{page_link.title}}
+                </h5>
+                {% endif %}
+
+                {% if not is_printed %}
+                <a href="{{page_link.url}}">
+                    <h5>
+
+                        {{page_link.title}}
+                    </h5>
+                </a>
+                {% endif %}
+
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    {% endif %}
+
+    {% if page.pagedownload_set.all %}
+
+    <div class="col-md-12 farsi">
+        <div class="card">
+            <div class="card-header">
+                <h4>
+                    دانلود ها
+                </h4>
+            </div>
+            <div class="card-body">
+                {% for page_download in page.pagedownload_set.all %}
+
+                {% if is_printed %}
+                <h5>
+
+                    {{page_download.title}}
+                </h5>
+                {% endif %}
+
+                {% if not is_printed %}
+                <a href="{{page_download.get_download_url}}">
+                    <h5>
+
+                        {{page_download.title}}
+                    </h5>
+                </a>
+                {% endif %}
+
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    {% endif %}
+
+
+    
+    {% if page.pagetag_set.all %}
+
+    <div class="col-md-12 farsi">
+        <div class="card">
+            <div class="card-header">
+                <h4>
+                    تگ ها
+                </h4>
+            </div>
+            <div class="card-body">
+                {% for page_tag in page.pagetag_set.all %}
+
+                {% if is_printed %}
+                <h5>
+
+                    {{page_tag.tag}}
+                </h5>
+                {% endif %}
+
+                {% if not is_printed %}
+                <a href="{{page_tag.get_absolute_url}}">
+                    <h5>
+
+                        {{page_tag.tag}}
+                    </h5>
+                </a>
+                {% endif %}
+
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    {% endif %}
+
+
+
+    {% if page.pageimage_set.all %}
+
+    <div class="col-md-12 farsi">
+        <div class="card">
+            <div class="card-header">
+                <h4>
+                    تصاویر
+                </h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    {% for page_image in page.pageimage_set.all %}
+                    <div class="col-md-4">
+
+                        {% if is_printed %}
+                        <h5>
+
+                            {{page_image.title}}
+                        </h5>
+                        <div class="text-center">
+
+                            <img src="{{page_image.image}}" width="80%" alt="">
+                        </div>
+                        {% endif %}
+
+                        {% if not is_printed %}
+                        <a href="{{page_image.get_absolute_url}}">
+                            <h5>
+                                {{page_image.title}}
+                            </h5>
+                            <div class="text-center">
+
+                                <img src="{{page_image.image}}" width="80%" alt="">
+                            </div>
+                        </a>
+                        {% endif %}
+
+                    </div>
+                    {% endfor %}
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    {% endif %}
+
 </div>
 {% endblock content %}

@@ -1,4 +1,4 @@
-{% extends "projectmanager/layout.html" %}
+{% extends "projectmanager/wide-layout.html" %}
 
 {% block content %}
 <div class="text-center mt-3 mb-3">
@@ -56,6 +56,15 @@
     </div>
     {% endif %}
 
+
+    {% if pages %}
+
+    <div class="col-md-12">
+        {% include "core/includes/pages-app/template.html" %}
+
+    </div>
+    {% endif %}
+
     
 
     {% if organization_units %}
@@ -80,5 +89,6 @@
 {% include "projectmanager/includes/events-app/script.html" %}
 {% include "organization/includes/organization-units-app/script.html" %}
 {% include "projectmanager/includes/projects-app/script.html" %}
+{% include "core/includes/pages-app/script.html" %}
 
 {% endblock script %}

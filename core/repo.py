@@ -181,11 +181,35 @@ class PageRepo:
             return self.objects.filter(pk=kwargs['title']).first()
 
     def list(self,*args, **kwargs):
-        objects=self.objects
-        if 'search_for' in kwargs:
-            objects=objects.filter(title__contains=kwargs['search_for'])        
+        objects1=self.objects
+        
+        if 'app_name' in kwargs:
+            objects1 = objects1.filter(Q(app_name=kwargs['app_name']))
+
+
         if 'for_home' in kwargs:
-            objects=objects.filter(for_home=kwargs['for_home'])
+            objects1=objects1.filter(for_home=kwargs['for_home'])
+
+            
+        if 'search_for' in kwargs:
+            ids=[]
+            
+
+            objects=objects1.filter(title__contains=kwargs['search_for'])
+            for obj in objects:
+                ids.append(obj.id)
+
+
+
+            page_tags=PageTag.objects.filter(tag__title=kwargs['search_for'])
+            for page_tag in page_tags:
+                ids.append(page_tag.page.pk)
+
+
+            objects=objects1.filter(id__in=ids)
+
+
+
         return objects.all()
 
     

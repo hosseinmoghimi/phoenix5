@@ -8,6 +8,8 @@ from django.shortcuts import redirect, render
 from django.shortcuts import render, reverse
 from core.constants import FAILED, SUCCEED
 from core.enums import UnitNameEnum
+from core.repo import PageRepo
+from core.serializers import PageSerializer
 from core.views import CoreContext, MessageView, SearchForm, PageContext
 # Create your views here.
 from django.views import View
@@ -84,6 +86,11 @@ class SearchView(View):
             context['projects'] = projects
             projects_s = json.dumps(ProjectSerializer(projects, many=True).data)
             context['projects_s'] = projects_s
+
+            pages = PageRepo(request=request).list(search_for=search_for).filter(app_name=APP_NAME)
+            context['pages'] = pages
+            pages_s = json.dumps(PageSerializer(pages, many=True).data)
+            context['pages_s'] = pages_s
 
 
 

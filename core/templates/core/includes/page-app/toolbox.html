@@ -1,0 +1,25 @@
+{% if page.archive %}
+<span class="badge badge-secondary">
+    آرشیو شده
+</span>
+{% endif %}
+
+
+{% if perms.core.change_page %}
+<a href="{{page.get_edit_url}}" target="_blank" title="ویرایش" class="mx-2"><i class="fa fa-edit text-warning"></i></a>
+{% endif %}
+
+
+{% if perms.core.change_page %}
+<a href="{{page.get_absolute_url}}" target="_blank" title="ویرایش" class="mx-2"><i class="fa fa-edit text-info"></i></a>
+{% endif %}
+
+
+
+{% if perms.core.delete_page %}
+<a href="{{page.get_delete_url}}" target="_blank" title="حذف" class="mx-2"><i class="fa fa-trash text-danger"></i></a>
+{% endif %}
+
+
+
+<a href="{{page.get_show_url}}" target="_blank" title="نمایش" class="mx-2"><i class="fa fa-trash text-success"></i></a>

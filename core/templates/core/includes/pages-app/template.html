@@ -1,0 +1,179 @@
+{% load to_persian_date %}
+{% load to_price %}
+{% load to_amount_color %}
+{% load static %}
+<div id="accordion-pages">
+
+
+    <div class="card" id="pages-app">
+        <div class="card-header" id="heading-pages">
+            <h5 class="text-center">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-pages" aria-expanded="true"
+                    aria-controls="collapse-pages">
+                    صفحه ها
+
+
+                    <span v-if="pages.length>0">
+                        <small class="text-danger mx-2">
+                            <span v-text="pages.length"></span>
+                        </small>
+                    </span>
+
+
+                </button>
+            </h5>
+
+            {% if page_pre_description %}
+
+            <h5 class="text-center">
+                {{page_pre_description}}
+            </h5>
+            {% endif %}
+            {% if page_description %}
+
+            <h4 class="text-center">
+                {{page_description}}
+            </h4>
+            {% endif %}
+        </div>
+        <div id="collapse-pages" class="collapse {% if expand_pages %} show {% endif %}" aria-labelledby="heading-pages"
+            data-parent="#accordion-pages">
+
+
+            <div class="card-body">
+
+                {% load static %}
+                <form @submit.prevent="search()">
+                    <img src="{% static 'leo/img/loading.gif' %}" width="32" v-if="waiting" alt="">
+
+                    <input type="text" v-model="search_for" class="form-control" placeholder="جستجو ..."
+                        @input="filter()">
+                </form>
+
+
+                <div class="table-responsive">
+                    <img v-if="false" width="32" src="{% static 'leo/img/loading.gif' %}" alt="">
+                    <h6 v-if="false">
+
+                        <span class="text-muted">در حال بار گذاری ... </span>
+                    </h6>
+                    <table class="table table-striped">
+                        <thead>
+                            <th>
+                                عنوان
+                            </th>
+                            <th>
+                                نوع
+                            </th>
+                            <th>
+                                اپ
+                            </th>
+
+                            <th>
+                            </th>
+                        </thead>
+                        <tbody>
+
+
+                            <tr v-for="page in pages2">
+                                <td>
+                                    <a :href="page.get_absolute_url">
+                                        <div class="media">
+                                            <img :src="page.thumbnail" class="rounded" width="32" alt="">
+                                            <div class="media-body mr-3">
+                                                <div>
+
+                                                    <span v-text="page.title"></span>
+                                                </div>
+                                                <div>
+                                                    <small class="text-muted">
+                                                        <span v-text="page.class_title"></span>
+                                                    </small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </a>
+
+
+                                </td>
+                                <td>
+                                    <small class="text-muted">
+                                        <span v-text="page.class_title"></span>
+                                    </small>
+                                </td>
+                                <td>
+
+                                    <small class="text-muted">
+                                        <a href="/page.app_name/">
+
+                                            <span v-text="page.app_name"></span>
+                                        </a>
+                                    </small>
+
+                                </td>
+
+                                <td>
+
+                                    {% include "core/includes/page-app/toolbox.html" %}
+
+
+
+                                </td>
+                            </tr>
+                            {% for page in pages %}
+                            <tr>
+                                <td>
+                                    <a href="{{page.get_absolute_url}}">
+                                        <div class="media">
+                                            <img src="{{page.thumbnail}}" class="rounded" width="32" alt="">
+                                            <div class="media-body mr-3">
+                                                <div>
+                                                    {{page.title}}
+                                                </div>
+                                                <div>
+                                                    <small class="text-muted">
+                                                        {{page.class_title}}
+                                                    </small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </a>
+
+
+                                </td>
+                                <td>
+                                    <small class="text-muted">
+                                        {{page.class_title}}
+
+                                    </small>
+                                </td>
+                                <td>
+
+                                    <small class="text-muted">
+                                        <a href="{{page.app_name}}">
+                                            {{page.app_name}}
+                                        </a>
+                                    </small>
+
+                                </td>
+
+                                <td>
+
+                                    {% include "core/includes/page-app/toolbox.html" %}
+
+
+
+                                </td>
+                            </tr>
+                            {% endfor %}
+
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+</div>

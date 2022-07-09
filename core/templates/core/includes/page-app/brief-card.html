@@ -24,20 +24,29 @@
 
         <div class="my-2">
 
+            <a href="{% url 'core:page_show' pk=page.pk %}" target="_blank" title="نمایش" class="mx-2 text-success"><i
+                    class="fa fa-print"></i> نمایش</a>
+        </div>
+
+
+        
+        <div class="my-2">
+
             <a href="{{page.get_print_url}}" target="_blank" title="چاپ" class="mx-2 text-success"><i
                     class="fa fa-print"></i> چاپ</a>
         </div>
+
 
 
         {% if perms.core.change_page %}
         <div class="my-2">
 
             <a href="{{page.get_edit_url}}" target="_blank" title="ویرایش" class="mx-2 text-warning"><i
-                    class="fa fa-edit"></i> ویرایش</a>
+                    class="fa fa-edit"></i> ویرایش در ادمین</a>
         </div>
         <div class="my-2">
 
-            <a href="{% url 'core:page_edit' pk=page.pk %}" target="_blank" title="ویرایش" class="mx-2 text-info"><i
+            <a href="{{page.get_absolute_url}}" target="_blank" title="ویرایش" class="mx-2 text-info"><i
                     class="fa fa-edit"></i> ویرایش</a>
         </div>
         {% endif %}

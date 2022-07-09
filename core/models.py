@@ -99,7 +99,8 @@ class Page(models.Model, LinkHelper, ImageMixin):
     def class_title(self):
         return class_title(app_name=self.app_name,class_name=self.class_name)
 
-
+    def get_show_url(self):
+        return reverse(APP_NAME+":page_show",kwargs={'pk':self.pk})
     
 
     def save(self,*args, **kwargs):
