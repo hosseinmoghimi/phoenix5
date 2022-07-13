@@ -371,6 +371,8 @@ class Project(Page):
         sum = 0
         for ii in self.invoices():
             sum += ii.sum_total()
+        for child in self.childs.all():
+            sum+=child.sum_total()
         return sum
 
     def invoices(self):
