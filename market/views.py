@@ -1,4 +1,3 @@
-from wsgiref.util import request_uri
 from django.shortcuts import render
 from core.enums import ParameterNameEnum
 from market.enums import ParameterMarketEnum
@@ -34,6 +33,8 @@ def getContext(request, *args, **kwargs):
     context['search_action'] = reverse(APP_NAME+":search")
     context['LAYOUT_PARENT'] = LAYOUT_PARENT
     context['WIDE_LAYOUT_PARENT'] = WIDE_LAYOUT_PARENT
+    sidebar_categories=CategoryRepo(request=request).list(parent_id=None)
+    context['sidebar_categories']=sidebar_categories
     return context
 
 def get_customer_context(request,*args, **kwargs):

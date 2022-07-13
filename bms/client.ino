@@ -99,7 +99,6 @@ void execute_command(int my_register, String command)
     }
     if (command == "-")
     {
-
         digitalWrite(my_register, false);
     }
     if (command == "!")

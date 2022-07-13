@@ -12,7 +12,7 @@ class SupplierSerializer(serializers.ModelSerializer):
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model=Category
-        fields=['id','title','thumbnail','get_absolute_url']
+        fields=['id','title','thumbnail','get_absolute_url','get_edit_url']
  
 class BrandSerializer(serializers.ModelSerializer):
     class Meta:

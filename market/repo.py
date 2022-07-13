@@ -60,7 +60,11 @@ class CategoryRepo():
         if 'for_home' in kwargs:
             objects = objects.filter(Q(for_home=kwargs['for_home']))
         if 'parent_id' in kwargs:
-            objects=objects.filter(parent_id=kwargs['parent_id'])
+            parent_id=kwargs['parent_id']
+            if parent_id is None:
+                objects=objects.filter(parent=None)
+            else:
+                objects=objects.filter(parent_id=kwargs['parent_id'])
         return objects.all()
 
     def add_category(self,*args, **kwargs):
