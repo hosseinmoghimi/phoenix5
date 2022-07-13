@@ -18,6 +18,7 @@ urlpatterns = [
 
     path("projects/",login_required(views.ProjectsListView.as_view()),name="projects"),
     path("project/<int:pk>/",login_required(views.ProjectView.as_view()),name="project"),
+    path("copy_project/",login_required(views.CopyProjectView.as_view()),name="copy_project"),
     path("project_guantt/<int:pk>/",login_required(views.ProjectGuanttView.as_view()),name="project_guantt"),
     path("project_chart/<int:pk>/",login_required(views.ProjectChartView.as_view()),name="project_chart"),
 
@@ -41,5 +42,7 @@ urlpatterns = [
     path('add_signature/',login_required(apis.AddSignatureApi.as_view()),name="add_signature"),
     path('add_material/',login_required(apis.AddMaterialApi.as_view()),name="add_material"),
     path('add_service/',login_required(apis.AddServiceApi.as_view()),name="add_service"), 
+    path('copy_service_requests/',login_required(apis.CopyServiceRequestsApi.as_view()),name="copy_service_requests"), 
+    path('copy_material_requests/',login_required(apis.CopyMaterialRequestsApi.as_view()),name="copy_material_requests"), 
 
 ]

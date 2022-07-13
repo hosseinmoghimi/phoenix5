@@ -332,5 +332,4 @@ class AddServiceApi(APIView):
         context['log']=log
         return JsonResponse(context)
 
-
-        
+  

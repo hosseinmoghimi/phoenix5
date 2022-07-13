@@ -4,8 +4,8 @@
 <div class="card">
     <div class="card-header">
         <h5>
-            {{page.title}}  {% if project.archive %}
-            <span   class="badge badge-secondary">
+            {{page.title}} {% if project.archive %}
+            <span class="badge badge-secondary">
                 آرشیو شده
             </span>
             {% endif %}
@@ -24,14 +24,14 @@
 
                     </td>
                     <td>
-                        
+
                         <div>
                             {% if project.archive %}
-                            <span   class="badge badge-secondary">
+                            <span class="badge badge-secondary">
                                 آرشیو شده
                             </span>
                             {% endif %}
-                            
+
                         </div>
                         <div>
 
@@ -44,12 +44,24 @@
                             <a href="{% url 'projectmanager:project_guantt' pk=project.id %}" title="نمودار"
                                 class="mx-2 text-info"><i class="fa fa-bar-chart"></i> نمودار گانت</a>
                         </div>
+                        {% if perms.projectmanager.add_project %}
+                        <div class="">
+                            <form action="{% url 'projectmanager:copy_project' %}" method="post">
+                                {% csrf_token %}
+                                <input type="hidden" name="project_id" value="{{project.id}}" id="">
+                                <button type="submit" href="{{project.get_edit_url}}" class="text-success btn btn-link"><i
+                                        class="fa fa-copy"></i> کپی</button>
+                            </form>
+                        </div>
+                        {% endif %}
                         {% if perms.core.change_page %}
                         <div class="">
                             <a href="{{project.get_edit_url}}" target="_blank" title="ویرایش"
                                 class="mx-2 text-warning"><i class="fa fa-edit"></i> ویرایش</a>
                         </div>
                         {% endif %}
+
+
                         {% if perms.core.delete_page %}
                         <div class="">
                             <a href="{{project.get_delete_url}}" target="_blank" title="حذف" class="mx-2 text-danger"><i
@@ -115,7 +127,7 @@
                 </tr>
 
 
-               
+
 
 
                 <tr>

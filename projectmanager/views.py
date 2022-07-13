@@ -242,6 +242,25 @@ class ProjectView(View):
         return render(request, TEMPLATE_ROOT+"project.html", context)
 
 
+class CopyProjectView(View):
+    def post(self, request, *args, **kwargs):
+        context = {}
+        context['result']=FAILED
+        copy_project_form=CopyProjectForm(request.POST)
+        if copy_project_form.is_valid():
+            project_id=copy_project_form.cleaned_data['project_id']
+            project_repo=ProjectRepo(request=request)
+            source_project=project_repo.project(pk=project_id)
+            if source_project is None:
+                message="چنین پروژه ای پیدا نشد."
+                mv=MessageView(request=request)
+                mv.title=message
+                mv.body=message
+                return mv.response()
+            # project=project_repo.add_project(title=)
+        return JsonResponse(context)
+
+
 class ProjectGuanttView(View):
     def get(self, request, *args, **kwargs):
         context = getContext(request=request)
