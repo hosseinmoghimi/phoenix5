@@ -14,10 +14,7 @@ class CategorySerializer(serializers.ModelSerializer):
         model=Category
         fields=['id','title','thumbnail','get_absolute_url','get_edit_url']
  
-class BrandSerializer(serializers.ModelSerializer):
-    class Meta:
-        model=Brand
-        fields=['id','title','get_absolute_url','logo']
+
  
 class CartLineSerializer(serializers.ModelSerializer):
     product_or_service=ProductOrServiceSerializer()
@@ -34,6 +31,12 @@ class CategorySerializerForApi(serializers.ModelSerializer):
     class Meta:
         model=Category
         fields=['id','title','thumbnail','get_absolute_url','parent_id','get_products_list_url']
+
+
+class BrandSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Brand
+        fields=['id','title','thumbnail','get_absolute_url']
 
 
 

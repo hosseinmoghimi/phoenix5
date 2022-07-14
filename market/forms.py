@@ -1,6 +1,11 @@
 from django import forms
 class SearchForm(forms.Form):
-    searrch_for=forms.CharField(max_length=50, required=True)
+    search_for=forms.CharField(max_length=50, required=True)
+
+
+class AddBrandForm(forms.Form):
+    title=forms.CharField(max_length=100, required=True)
+
 
     
 class AddCategoryForm(forms.Form):
@@ -8,5 +13,5 @@ class AddCategoryForm(forms.Form):
     parent_id=forms.IntegerField( required=False)
 
 class AddProductForm(forms.Form):
-    title=forms.CharField(max_length=50, required=True)
+    title=forms.CharField(max_length=100, required=True)
     category_id=forms.IntegerField( required=False)

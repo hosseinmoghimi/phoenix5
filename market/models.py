@@ -8,7 +8,7 @@ from accounting.models import Product
 IMAGE_FOLDER = APP_NAME+"/images/"
 
 class Brand(Page):
-
+    products=models.ManyToManyField("accounting.product", blank=True,verbose_name=_("products"))
 
     @property
     def logo(self):

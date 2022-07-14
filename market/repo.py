@@ -4,7 +4,7 @@ from requests import request
 from accounting.models import Account
 from accounting.repo import AccountRepo, ProductRepo as ProductRepo_origin
 from market.apps import APP_NAME
-from market.models import Cart, CartLine, Category, Customer, Shop, Supplier
+from market.models import Brand, Cart, CartLine, Category, Customer, Shop, Supplier
 from django.db.models import Q
 from authentication.repo import ProfileRepo
 
@@ -82,6 +82,61 @@ class CategoryRepo():
 
         category.save()
         return category
+
+
+
+class BrandRepo():  
+    def __init__(self, *args, **kwargs):
+        self.request = None
+        self.user = None
+        if 'request' in kwargs:
+            self.request = kwargs['request']
+            self.user = self.request.user
+        if 'user' in kwargs:
+            self.user = kwargs['user']
+        
+        self.objects=Brand.objects.all()
+        self.profile=ProfileRepo(*args, **kwargs).me
+       
+
+    def brand(self, *args, **kwargs):
+        pk=0
+        if 'brand_id' in kwargs:
+            pk= kwargs['brand_id']
+            return self.objects.filter(pk=pk).first()
+       
+        elif 'pk' in kwargs:
+            pk=kwargs['pk']
+            return self.objects.filter(pk=pk).first()
+        elif 'id' in kwargs:
+            pk=kwargs['id']
+            return self.objects.filter(pk=pk).first()
+     
+    def list(self, *args, **kwargs):
+        objects = self.objects
+        if 'search_for' in kwargs:
+            search_for=kwargs['search_for']
+            objects = objects.filter(Q(title__contains=search_for)|Q(short_description__contains=search_for)|Q(description__contains=search_for))
+        # if 'for_home' in kwargs:
+        #     objects = objects.filter(Q(for_home=kwargs['for_home']))
+         
+        return objects.all()
+
+    def add_brand(self,*args, **kwargs):
+        if not self.user.has_perm(APP_NAME+".add_brand"):
+            return None
+        parent_id=None
+        brand=Brand()
+        if 'title' in kwargs:
+            brand.title = kwargs['title']
+            
+        if 'parent_id' in kwargs:
+            parent_id = kwargs['parent_id']
+            if parent_id is not None and parent_id!=0:
+                brand.parent_id=parent_id
+
+        brand.save()
+        return brand
 
 
         
