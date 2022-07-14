@@ -70,7 +70,6 @@
                                     <div class="row">
                                         <div class="col-6">
                                             <small class="text-muted">
-
                                                 فروشنده
                                             </small>
                                             <a href="{{invoice_line.invoice.pay_from.get_absolute_url}}">
@@ -83,8 +82,7 @@
                                         </div>
                                         <div class="col-6">
                                             <small class="text-muted">
-
-                                                خریدار :
+                                                خریدار 
                                             </small>
                                             <a href="{{invoice_line.invoice.pay_to.get_absolute_url}}">
                                                 <img src="{{invoice_line.invoice.pay_to.logo}}" class="rounded"
@@ -93,13 +91,11 @@
                                                     {{invoice_line.invoice.pay_to.title}}
                                                 </small>
                                             </a>
-
                                         </div>
                                     </div>
                                 </td>
                                 <td class="bordered">
                                     <small>
-
                                         {{invoice_line.invoice.invoice_datetime|to_persian_datetime|safe}}
                                     </small>
                                 </td>
