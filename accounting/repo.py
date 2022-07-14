@@ -689,8 +689,10 @@ class InvoiceLineRepo():
             objects=objects.filter(title__contains=kwargs['search_for'])
         if 'profile_id' in kwargs:
             objects=objects.filter(profile_id=kwargs['profile_id'])
-        if 'parent_id' in kwargs:
-            objects=objects.filter(parent_id=kwargs['parent_id'])
+        if 'profile_id' in kwargs:
+            objects=objects.filter(profile_id=kwargs['profile_id'])
+        if 'product_or_service_id' in kwargs:
+            objects=objects.filter(product_or_service_id=kwargs['product_or_service_id'])
         return objects.all()
     def my_list(self,*args, **kwargs):
         if self.request.user.has_perm(APP_NAME+".view_account"):
