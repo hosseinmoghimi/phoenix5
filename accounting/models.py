@@ -90,24 +90,24 @@ class Transaction(Page,LinkHelper):
 
     def save(self,*args, **kwargs):
         if self.transaction_datetime is None:
-            from django.utils import timezone
             self.transaction_datetime=PersianCalendar().date
         super(Transaction,self).save(*args, **kwargs)
-        # FinancialDocument.objects.filter(transaction=self).delete()
+        if self.status==TransactionStatusEnum.DRAFT or self.status==TransactionStatusEnum.CANCELED:
+            FinancialDocument.objects.filter(transaction=self).delete()
+        else:
+            fd_bedehkar=FinancialDocument.objects.filter(transaction=self).filter(account_id=self.pay_to.id).first()
+            if fd_bedehkar is None:
+                fd_bedehkar=FinancialDocument(transaction=self,account_id=self.pay_to.id,direction=FinancialDocumentTypeEnum.BEDEHKAR)
+            fd_bedehkar.bestankar=0
+            fd_bedehkar.bedehkar=self.amount
+            fd_bedehkar.save()
 
-        fd_bedehkar=FinancialDocument.objects.filter(transaction=self).filter(account_id=self.pay_to.id).first()
-        if fd_bedehkar is None:
-            fd_bedehkar=FinancialDocument(transaction=self,account_id=self.pay_to.id,direction=FinancialDocumentTypeEnum.BEDEHKAR)
-        fd_bedehkar.bestankar=0
-        fd_bedehkar.bedehkar=self.amount
-        fd_bedehkar.save()
-
-        fd_bestankar=FinancialDocument.objects.filter(transaction=self).filter(account_id=self.pay_from.id).first()
-        if fd_bestankar is None:
-            fd_bestankar=FinancialDocument(transaction=self,account_id=self.pay_from.id,direction=FinancialDocumentTypeEnum.BESTANKAR)
-        fd_bestankar.bestankar=self.amount
-        fd_bestankar.bedehkar=0
-        fd_bestankar.save()
+            fd_bestankar=FinancialDocument.objects.filter(transaction=self).filter(account_id=self.pay_from.id).first()
+            if fd_bestankar is None:
+                fd_bestankar=FinancialDocument(transaction=self,account_id=self.pay_from.id,direction=FinancialDocumentTypeEnum.BESTANKAR)
+            fd_bestankar.bestankar=self.amount
+            fd_bestankar.bedehkar=0
+            fd_bestankar.save()
 
     @property
     def persian_transaction_datetime(self,no_tag=False,*args, **kwargs):
