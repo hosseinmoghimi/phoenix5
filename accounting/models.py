@@ -208,7 +208,7 @@ class Account(models.Model,LinkHelper):
     logo_origin=models.ImageField(_("لوگو , تصویر"), null=True,blank=True,upload_to=IMAGE_FOLDER+"account/", height_field=None, width_field=None, max_length=None)
     title=models.CharField(_("عنوان"), null=True,blank=True,max_length=500)
     profile=models.ForeignKey("authentication.profile", verbose_name=_("profile"),null=True,blank=True, on_delete=models.CASCADE)
-    address=models.CharField(_("آدرس"),null=True,blank=True, max_length=50)
+    address=models.CharField(_("آدرس"),null=True,blank=True, max_length=200)
     tel=models.CharField(_("تلفن"),null=True,blank=True, max_length=50)
     description=models.CharField(_("توضیحات"),blank=True,max_length=5000)
     economic_no=models.CharField(_("شماره اقتصادی"),max_length=50,null=True,blank=True)

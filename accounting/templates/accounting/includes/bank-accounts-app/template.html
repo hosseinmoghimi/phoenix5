@@ -107,11 +107,6 @@
                                         </a>
 
                                     </div>
-                                    <div>
-
-                                    </div>
-
-
                                 </td>
                                 <td>
                                     <a :href="bank_account.bank.get_absolute_url">
@@ -120,7 +115,7 @@
                                     </a>
                                 </td>
                                 <td>
-                                    <a v-if="bank_account.profile.id" :href="bank_account.profile.get_absolute_url">
+                                    <a v-if="bank_account.profile" :href="bank_account.profile.get_absolute_url">
                                         <div class="media">
                                             <img :src="bank_account.profile.image" class="rounded-circle" width="32"
                                                 alt="">
