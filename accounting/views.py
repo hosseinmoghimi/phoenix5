@@ -923,6 +923,11 @@ class FinancialDocumentView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
         financial_document=FinancialDocumentRepo(request=request).financial_document(*args, **kwargs)
+        if financial_document is None:
+            mv=MessageView(request=request)
+            mv.title="چنین سندی یافت نشد."
+            mv.body="چنین سندی یافت نشد."
+            return mv.response()
         financial_document.normalize_balances()
 
         context['financial_document']=financial_document

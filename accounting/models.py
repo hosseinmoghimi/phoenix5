@@ -85,7 +85,7 @@ class Transaction(Page,LinkHelper):
         verbose_name_plural = _("Transactions")
 
     def __str__(self):
-        return self.title 
+        return f"{self.title} ({self.status})"
 
 
     def save(self,*args, **kwargs):
