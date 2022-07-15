@@ -758,6 +758,8 @@ class PaymentRepo():
         payment.creator=self.profile
         if 'title' in kwargs:
             payment.title=kwargs['title']
+        if 'status' in kwargs:
+            payment.status=kwargs['status']
 
         if 'pay_from_id' in kwargs:
             payment.pay_from_id=kwargs['pay_from_id']

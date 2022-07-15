@@ -91,7 +91,8 @@ class AddPaymentForm(forms.Form):
     amount=forms.IntegerField(required=True)
     payment_datetime=forms.CharField(max_length=50, required=True)
     payment_method=forms.CharField(max_length=50, required=True)
-    description=forms.CharField(max_length=50, required=False)
+    status=forms.CharField(max_length=50, required=False)
+    description=forms.CharField(max_length=200, required=False)
 
     
 class AddCostForm(forms.Form):

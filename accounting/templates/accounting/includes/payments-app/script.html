@@ -16,6 +16,7 @@
             payments: payments,
             payment_datetime: current_date,
             title: "",
+            status:"",
             pay_to_id: account_id,
             pay_from_id: account_id,
             amount: 0,
@@ -43,6 +44,7 @@
                     pay_to_id: parseInt(this.pay_to_id),
                     pay_from_id: parseInt(this.pay_from_id),
                     title: this.title,
+                    status: this.status,
                     description: this.description,
                     amount: parseInt(this.amount),
                     payment_datetime: this.payment_datetime,
@@ -56,6 +58,7 @@
                     payments_app.payments.push(data.payment)
                     if (data.result === 'SUCCEED') {
                         this.message = { show: true, body: "با موفقیت ذخیره شد.", color: 'success' }
+                        payments_app.title = ""
                     }
                     if (data.result === 'FAILED') {
                         this.message = { show: true, body: "خطا در ذخیره سازی ", color: 'danger' }

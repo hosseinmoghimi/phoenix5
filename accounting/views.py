@@ -47,6 +47,7 @@ def get_add_payment_context(request,*args, **kwargs):
     context={}
     if request.user.has_perm(APP_NAME+".add_payment"):
         accounts=AccountRepo(request=request).list(*args, **kwargs)
+        context['transaction_statuses']=(u[0] for u in TransactionStatusEnum.choices)
         context['payment_methods']=(u[0] for u in PaymentMethodEnum.choices)
         context['accounts']=accounts
         context['add_payment_form']=AddPaymentForm()

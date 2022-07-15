@@ -205,10 +205,12 @@ class AddPaymentApi(APIView):
                 description=fm['description']
                 amount=fm['amount']
                 payment_method=fm['payment_method']
+                status=fm['status']
                 title=fm['title']
                 payment_datetime=PersianCalendar().to_gregorian(payment_datetime)
                 payment=PaymentRepo(request=request).add_payment(
                     payment_method=payment_method,
+                    status=status,
                     description=description,
                     pay_from_id=pay_from_id,
                     amount=amount,
