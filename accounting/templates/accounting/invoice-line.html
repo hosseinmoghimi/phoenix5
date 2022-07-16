@@ -5,8 +5,8 @@
 
 {% load to_variz_text %}
 {% block content %}
-<div class="row">
-    <div class="col-md-12">
+<div class="row mt-3">
+    <div class="col-md-12 d-none">
 
         <div class="card">
             <div class="card-body">
@@ -84,7 +84,14 @@
             </div>
         </div>
     </div>
-    <div class="col-md-12">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <img src="{{invoice_line.product_or_service.thumbnail}}" width="100%" class="rounded" alt="">
+            </div>
+        </div>
+    </div>
+    <div class="col-md-8">
         <div class="card">
             <div class="card-body">
                 <table class="table">
@@ -102,8 +109,6 @@
                             </span>
                         </td>
                     </tr>
-
-                    
                     <tr>
                         <td class="text-left">
                             <small class="text-muted">
@@ -113,13 +118,28 @@
                         <td class="text-right">
                             <span>
                                 <a href="{{invoice_line.invoice.get_absolute_url}}">
-
                                     {{invoice_line.invoice.pk}}
+                                    
                                 </a>
                             </span>
                         </td>
                     </tr>
 
+                    <tr>
+                        <td class="text-left">
+                            <small class="text-muted">
+                                 فاکتور
+                            </small>
+                        </td>
+                        <td class="text-right">
+                            <span>
+                                <a href="{{invoice_line.invoice.get_absolute_url}}">
+                                    {{invoice_line.invoice.title}}
+                                    
+                                </a>
+                            </span>
+                        </td>
+                    </tr>
 
                     <tr>
                         <td class="text-left">
@@ -130,8 +150,13 @@
                         <td class="text-right">
 
                             <a href="{{invoice_line.invoice.pay_from.get_absolute_url}}">
+                                <div class="media">
+                                    <img src="{{invoice_line.invoice.pay_from.logo}}" class="rounded" width="48" alt="">
+                                    <div class="media-body">
+                                        {{invoice_line.invoice.pay_from.title}}
 
-                                {{invoice_line.invoice.pay_from.title}}
+                                    </div>
+                                </div>
                             </a>
                         </td>
                     </tr>
@@ -145,8 +170,13 @@
                         <td class="text-right">
 
                             <a href="{{invoice_line.invoice.pay_to.get_absolute_url}}">
+                                <div class="media">
+                                    <img src="{{invoice_line.invoice.pay_to.logo}}" class="rounded" width="48" alt="">
+                                    <div class="media-body">
+                                        {{invoice_line.invoice.pay_to.title}}
 
-                                {{invoice_line.invoice.pay_to.title}}
+                                    </div>
+                                </div>
                             </a>
                         </td>
                     </tr>
@@ -156,7 +186,7 @@
                         <td class="text-left">
 
                             <small class="text-muted">
-                                کالا / خدمات 
+                                کالا / خدمات
                             </small>
                         </td>
                         <td class="text-right">
@@ -180,9 +210,9 @@
                     </tr>
 
 
-                  
 
- 
+
+
 
 
 
