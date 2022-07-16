@@ -560,6 +560,19 @@ class InvoicePrintView(View):
         context['no_footer']=True
         context['no_navbar']=True
         return render(request,TEMPLATE_ROOT+"invoice-print.html",context)
+class InvoiceOfficialPrintView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        context.update(get_invoice_context(request=request,*args, **kwargs))
+
+        context['TUMAN']=False
+        context['RIAL']=True
+        from core.constants import RIAL
+        context['CURRENCY']=RIAL
+
+        context['no_footer']=True
+        context['no_navbar']=True
+        return render(request,TEMPLATE_ROOT+"invoice-official-print.html",context)
 class InvoicesView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)

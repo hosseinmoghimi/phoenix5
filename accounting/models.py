@@ -595,7 +595,9 @@ class Invoice(Transaction):
     ship_fee=models.IntegerField(_("هزینه حمل"),default=0)
     discount=models.IntegerField(_("تخفیف"),default=0)
  
-
+    def get_ofiicial_print_url(self):
+        return reverse(APP_NAME+":invoice_official_print",kwargs={'pk':self.pk})
+    
 
     def get_print_url(self):
         return reverse(APP_NAME+":invoice_print_currency",kwargs={'pk':self.pk,'currency':'r'})
