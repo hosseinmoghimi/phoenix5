@@ -399,7 +399,6 @@
                 </h6>
             </div>
             <div class="card-body px-5 farsi text-right">
-
                 <div>
                     واحد مبلغ ها
                     {{CURRENCY}}
@@ -422,10 +421,19 @@
                 {% endif %}
             </div>
         </div>
-
     </div>
     <div class="col-md-12">
         <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <p class="text-center">
+                            فروشنده : {{invoice.pay_from.title}}
+                        </p>
+                        <div class="mb-5">&nbsp;</div>
+                    </div>
+                </div>
+            </div>
             <div class="col-md-6">
                 <div class="card">
                     <div class="card-body">
@@ -442,30 +450,8 @@
                     </div>
                 </div>
             </div>
-
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-body">
-
-
-
-                        <p class="text-center">
-                            فروشنده : {{invoice.pay_from.title}}
-                        </p>
-
-
-
-                        <div class="mb-5">&nbsp;</div>
-                    </div>
-                </div>
-            </div>
-
         </div>
-
     </div>
-
-
-
 </div>
 
 {% endblock content %}
