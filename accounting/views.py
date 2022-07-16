@@ -237,6 +237,13 @@ def get_product_or_service_context(request,*args, **kwargs):
     context.update(PageContext(request=request,page=product_or_service))
     context.update(get_price_app_context(request=request,items=[product_or_service]))
 
+    # invoice_lines
+    invoice_lines=InvoiceLineRepo(request=request).list(product_or_service_id=product_or_service.pk)
+    context['invoice_lines']=invoice_lines
+    # invoice_lines_s=json.dumps(InvoiceLineWithInvoiceSerializer(invoice_lines,many=True).data)
+    # context['invoice_lines_s']=invoice_lines_s
+
+    
     return context
 
 def get_product_context(request,*args, **kwargs):
@@ -247,7 +254,8 @@ def get_product_context(request,*args, **kwargs):
         return mv.response()
     
     context=get_product_or_service_context(request=request,item=product,*args, **kwargs)
-
+    
+    
     # invoices
     invoices=InvoiceRepo(request=request).list(product_id=product.id)
     context['invoices']=invoices
@@ -731,12 +739,6 @@ class ProductView(View):
             mv=MessageView(request=request)
             mv.title="چنین کالایی یافت نشد."
         context.update(get_product_context(request=request,product=product))
-
-        invoice_lines=InvoiceLineRepo(request=request).list(product_or_service_id=product.pk)
-        context['invoice_lines']=invoice_lines
-        # invoice_lines_s=json.dumps(InvoiceLineWithInvoiceSerializer(invoice_lines,many=True).data)
-        # context['invoice_lines_s']=invoice_lines_s
-
         return render(request,TEMPLATE_ROOT+"product.html",context)
 
 class BankAccountsView(View):
@@ -800,10 +802,6 @@ class ServiceView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
         service=ServiceRepo(request=request).service(*args, **kwargs)
-        
-        invoice_lines=InvoiceLineRepo(request=request).list(product_or_service_id=service.pk)
-        context['invoice_lines']=invoice_lines
-
         context.update(get_service_context(request=request,service=service))
         return render(request,TEMPLATE_ROOT+"service.html",context)
         

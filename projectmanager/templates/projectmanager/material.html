@@ -57,6 +57,10 @@
         {% include "accounting/includes/invoices-app/template.html" %}
     </div>
 
+    <div class="col-md-12">
+
+        {% include "accounting/includes/item-invoice-lines-app/template.html" %}
+    </div>
 
     {% if warehouse_app_is_installed %}
 
@@ -105,5 +109,6 @@
 
 {% include "accounting/includes/invoices-app/script.html" %}
 
+{% include "accounting/includes/item-invoice-lines-app/script.html" %}
 
 {% endblock script %}

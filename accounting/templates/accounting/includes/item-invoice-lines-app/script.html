@@ -11,7 +11,8 @@
  
 <script>
     let invoice_lines_app_data = {
-        invoice_lines: JSON.parse(`{{invoice_lines_s|escapejs}}`),
+        invoice_lines: [],
+        // invoice_lines: JSON.parse(`{{invoice_lines_s|escapejs}}`),
     }
     let invoice_lines_app_methods = {
         to_price: function (vall) {

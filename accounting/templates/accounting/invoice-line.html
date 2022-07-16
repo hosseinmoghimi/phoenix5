@@ -30,12 +30,22 @@
 
 
                 <div class="row">
+                    <div class="col-md-12">
+                        <p class="text-right mx-5">
+                            فاکتور : <a href="{{invoice_line.invoice.get_absolute_url}}">
+                                {{invoice_line.invoice.title}}
+                            </a>
+                        </p>
+                    </div>
                     <div class="col-md-6">
+
+
                         <p class="text-right mx-5">
                             فروشنده : <a href="{{invoice_line.invoice.pay_from.get_absolute_url}}">
                                 {{invoice_line.invoice.pay_from.title}}
                             </a>
                         </p>
+
 
                         <p class="text-right mx-5">
                             خریدار : <a href="{{invoice_line.invoice.pay_to.get_absolute_url}}">
@@ -46,7 +56,15 @@
                     </div>
                     <div class="col-md-6">
                         <p class="text-left mx-5">
-                            تاریخ : {{invoice_line.invoiceinvoice_datetime|to_persian_datetime|safe}}
+                            شماره فاکتور :
+                            <a href="{{invoice_line.invoice.get_absolute_url}}">
+
+                                {{invoice_line.invoice.pk}}
+                            </a>
+                        </p>
+
+                        <p class="text-left mx-5">
+                            تاریخ : {{invoice_line.invoice.invoice_datetime|to_persian_datetime|safe}}
                         </p>
                     </div>
 
@@ -66,7 +84,113 @@
             </div>
         </div>
     </div>
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+                <table class="table">
 
+
+                    <tr>
+                        <td class="text-left">
+                            <small class="text-muted">
+                                تاریخ فاکتور
+                            </small>
+                        </td>
+                        <td class="text-right">
+                            <span>
+                                {{invoice_line.invoice.transaction_datetime|to_persian_datetime|safe}}
+                            </span>
+                        </td>
+                    </tr>
+
+                    
+                    <tr>
+                        <td class="text-left">
+                            <small class="text-muted">
+                                شماره فاکتور
+                            </small>
+                        </td>
+                        <td class="text-right">
+                            <span>
+                                <a href="{{invoice_line.invoice.get_absolute_url}}">
+
+                                    {{invoice_line.invoice.pk}}
+                                </a>
+                            </span>
+                        </td>
+                    </tr>
+
+
+                    <tr>
+                        <td class="text-left">
+                            <small class="text-muted">
+                                فروشنده :
+                            </small>
+                        </td>
+                        <td class="text-right">
+
+                            <a href="{{invoice_line.invoice.pay_from.get_absolute_url}}">
+
+                                {{invoice_line.invoice.pay_from.title}}
+                            </a>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="text-left">
+                            <small class="text-muted">
+                                خریدار :
+                            </small>
+                        </td>
+                        <td class="text-right">
+
+                            <a href="{{invoice_line.invoice.pay_to.get_absolute_url}}">
+
+                                {{invoice_line.invoice.pay_to.title}}
+                            </a>
+                        </td>
+                    </tr>
+
+
+                    <tr>
+                        <td class="text-left">
+
+                            <small class="text-muted">
+                                کالا / خدمات 
+                            </small>
+                        </td>
+                        <td class="text-right">
+
+                            <a href="{{invoice_line.product_or_service.get_absolute_url}}">
+
+                                {{invoice_line.product_or_service.title}}
+                            </a>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="text-left">
+                            <small class="text-muted">
+                                مقدار / تعداد درخواست شده
+                            </small>
+                        </td>
+                        <td class="text-right">
+                            {{invoice_line.quantity}} {{invoice_line.unit_name}}
+                        </td>
+                    </tr>
+
+
+                  
+
+ 
+
+
+
+
+                </table>
+            </div>
+        </div>
+    </div>
 
     <div class="col-md-12">
 
