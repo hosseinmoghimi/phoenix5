@@ -1,6 +1,6 @@
 from datetime import timedelta
 from accounting.enums import FinancialDocumentTypeEnum, PaymentMethodEnum, TransactionStatusEnum
-from core.constants import FAILED, SUCCEED
+from core.constants import FAILED, SUCCEED,MISC
 
 from core.enums import UnitNameEnum
 from utility.calendar import PersianCalendar
@@ -560,6 +560,9 @@ class AccountRepo():
         if self.profile is not None:
             self.me=Account.objects.filter(profile=self.profile).first()
         
+    def get_misc(self,*args, **kwargs):
+        misc,res=Account.objects.get_or_create(title=MISC)
+        return misc
 
     def account(self, *args, **kwargs):
         pk=0

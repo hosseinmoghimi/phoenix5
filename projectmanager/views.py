@@ -25,6 +25,7 @@ from projectmanager.repo import EventRepo, MaterialInvoiceRepo, MaterialRepo, Ma
 from projectmanager.serializers import EventSerializer,  MaterialSerializer, ProjectSerializerForGuantt, RequestSignatureForEmployeeSerializer, RequestSignatureSerializer, ServiceSerializer, ProjectSerializer, ServiceRequestSerializer, MaterialRequestSerializer
 from organization.repo import EmployeeRepo,OrganizationUnitRepo
 from organization.serializers import EmployeeSerializer,OrganizationUnitSerializer
+from accounting.views import getInvoiceLineContext
 TEMPLATE_ROOT = "projectmanager/"
 LAYOUT_PARENT = "phoenix/layout.html"
 
@@ -116,6 +117,10 @@ class ProjectsView(View):
 class RequestView(View):
     def get(self, request, *args, **kwargs):
         context = getContext(request=request)
+        context.update(getInvoiceLineContext(request=request,*args, **kwargs))
+        if 'invoice_line' in context:
+            print(context['invoice_line'])
+        print(context['invoice_line'])
 
         my_request = MaterialRequestRepo(
             request=request).material_request(*args, **kwargs)

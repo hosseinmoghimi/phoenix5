@@ -2,26 +2,40 @@
 <script>
     let warehouses = JSON.parse(`{{ware_houses|to_json_warehouses|escapejs}}`)
     let warehouses_app = new Vue({
-        el:"#warehouses-app",
+        el: "#warehouses-app",
         data: {
             warehouses: warehouses,
-            search_for:'',
-            waiting:false,
+            search_for: '',
+            waiting: false,
         },
         methods: {
-            filter:function(){
+            add_warehouse: function () {
+
+                let url = "{% url 'warehouse:add_warehouse' %}"
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    title: this.search_for,
+                }
+                $.post(url, payload).done(data => {
+                    if (data.result === 'SUCCEED') {
+
+                        warehouses_app.warehouses.push(data.warehouse)
+                    }
+                })
+            },
+            filter: function () {
                 this.warehouses = warehouses.filter(warehouse => warehouse.title.indexOf(this.search_for) > -1)
-         
+
             },
             to_price: function (vall) {
-                let color='danger'
-                if (vall>0)
-                color='success'
-                vall=to_price(vall,"{{CURRENCY}}")
+                let color = 'danger'
+                if (vall > 0)
+                    color = 'success'
+                vall = to_price(vall, "{{CURRENCY}}")
                 return `
                     <span class="text-${color}">${vall}</span>
                     `
-            }, 
+            },
         }
     })
 

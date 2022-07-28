@@ -1,7 +1,7 @@
 from inspect import signature
 from django.db.models import Q
 from requests import request
-from accounting.repo import InvoiceRepo
+from accounting.repo import AccountRepo, InvoiceRepo
 from authentication.repo import ProfileRepo
 from django.utils import timezone
 
@@ -48,7 +48,17 @@ class WareHouseRepo():
         if 'id' in kwargs:
             return self.objects.filter(pk=kwargs['id']).first()
 
-
+    def add_ware_house(self,*args, **kwargs):
+        if not self.user.has_perm(APP_NAME+".add_warehouse"):
+            return 
+        from projectmanager.repo import EmployeeRepo
+        # employee=EmployeeRepo(request=self.request).me
+        # if employee is None:
+        #     return
+        ware_house=WareHouse(*args, **kwargs) 
+        ware_house.account_id=AccountRepo(request=self.request).get_misc().id
+        ware_house.save()
+        return ware_house
 class WareHouseSheetSignatureRepo():
     def __init__(self, *args, **kwargs):
         self.request = None

@@ -48,8 +48,15 @@
 
                     <input type="text" v-model="search_for" class="form-control" placeholder="جستجو ..."
                         @input="filter()">
-                </form>
 
+
+                </form>
+                <div>
+
+                    <button v-if="warehouses.length==0" class="btn btn-info" @click="add_warehouse()">
+                        افزودن
+                    </button>
+                </div>
 
                 <div class="table-responsive">
                     <img v-if="false" width="32" src="{% static 'leo/img/loading.gif' %}" alt="">

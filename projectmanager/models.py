@@ -372,7 +372,8 @@ class Project(Page):
         for ii in self.invoices():
             sum += ii.sum_total()
         for child in self.childs.all():
-            sum+=child.sum_total()
+            if not child.status==ProjectStatusEnum.DRAFT:
+                sum+=child.sum_total()
         return sum
 
     def invoices(self):

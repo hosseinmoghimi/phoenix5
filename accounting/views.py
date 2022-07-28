@@ -600,41 +600,48 @@ class InvoiceEditView(View):
         context.update(get_edit_invoice_context(request=request,invoice=invoice,*args, **kwargs))
         
         return render(request,TEMPLATE_ROOT+"invoice-edit.html",context)
+def getInvoiceLineContext(request,*args, **kwargs):
+    context={}
+    invoice_line=InvoiceLineRepo(request=request).invoice_line(*args, **kwargs)
+    context['invoice_line']=invoice_line
+    
+    if app_is_installed('guarantee'):
+        from guarantee.repo import GuaranteeRepo
+        from guarantee.serializers import GuaranteeSerializer
+        guarantees=GuaranteeRepo(request=request).list(invoice_line_id=invoice_line.id)
+        context['guarantees']=guarantees
+        guarantees_s=json.dumps(GuaranteeSerializer(guarantees,many=True).data)
+        context['guarantees_s']=guarantees_s
+
+    
+    # warehouse_sheets=[]
+    if app_is_installed('warehouse'):
+        from warehouse.enums import WareHouseSheetDirectionEnum
+        from warehouse.repo import WareHouseSheetRepo,WareHouseRepo
+        from warehouse.forms import AddWarehouseSheetForm
+        warehouse_sheets=WareHouseSheetRepo(request=request).list(invoice_line_id=invoice_line.id)
+        warehouse_sheets_s=json.dumps(WareHouseSheetSerializer(warehouse_sheets,many=True).data)
+        context['warehouse_sheets_s']=warehouse_sheets_s
+        if request.user.has_perm('warehouse.add_warehousesheet'):
+            context['add_ware_house_sheet_form']=AddWarehouseSheetForm()
+            ware_houses=WareHouseRepo(request=request).list()
+            context['directions']=(direction[0] for direction in WareHouseSheetDirectionEnum.choices)
+            context['ware_houses']=ware_houses
+
+    # context['add_ware_house_sheet_form']=AddWarehouseSheetForm()
+
+    return context
+    
 class InvoiceLineView(View):
     def post(self,request,*args, **kwargs):
         return EditInvoiceApi().post(request=request,*args, **kwargs)
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
+        context.update(getInvoiceLineContext(request=request,*args, **kwargs))
         invoice_line=InvoiceLineRepo(request=request).invoice_line(*args, **kwargs)
         context['invoice_line']=invoice_line
 
             
-        
-        if app_is_installed('guarantee'):
-            from guarantee.repo import GuaranteeRepo
-            from guarantee.serializers import GuaranteeSerializer
-            guarantees=GuaranteeRepo(request=request).list(invoice_line_id=invoice_line.id)
-            context['guarantees']=guarantees
-            guarantees_s=json.dumps(GuaranteeSerializer(guarantees,many=True).data)
-            context['guarantees_s']=guarantees_s
-
-        
-        # warehouse_sheets=[]
-        if app_is_installed('warehouse'):
-            from warehouse.enums import WareHouseSheetDirectionEnum
-            from warehouse.repo import WareHouseSheetRepo,WareHouseRepo
-            from warehouse.forms import AddWarehouseSheetForm
-            warehouse_sheets=WareHouseSheetRepo(request=request).list(invoice_line_id=invoice_line.id)
-            warehouse_sheets_s=json.dumps(WareHouseSheetSerializer(warehouse_sheets,many=True).data)
-            context['warehouse_sheets_s']=warehouse_sheets_s
-            if request.user.has_perm('warehouse.add_warehousesheet'):
-                context['add_ware_house_sheet_form']=AddWarehouseSheetForm()
-                ware_houses=WareHouseRepo(request=request).list()
-                context['directions']=(direction[0] for direction in WareHouseSheetDirectionEnum.choices)
-                context['ware_houses']=ware_houses
-
-        # context['add_ware_house_sheet_form']=AddWarehouseSheetForm()
-
         return render(request,TEMPLATE_ROOT+"invoice-line.html",context)
 
 class TransactionView(View):
