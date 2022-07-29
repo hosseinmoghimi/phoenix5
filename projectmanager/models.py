@@ -386,7 +386,7 @@ class Project(Page):
         return reverse(APP_NAME+":project_chart",kwargs={'pk':self.pk})
     def get_full_description_for_chart(self):
         return f"""
-        <div>{to_price(self.sum_total())}</div>
+        <div><small class="text-muted">{to_price(self.sum_total())}</small></div>
         """
 class SampleForm(Page):
 
