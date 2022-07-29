@@ -116,8 +116,22 @@ class Transaction(Page,LinkHelper):
         return to_persian_datetime_tag(self.transaction_datetime)
 
 
+class ProductOrServiceCategory(models.Model):
+    title=models.CharField(_("عنوان"), max_length=50)
+    
+
+    class Meta:
+        verbose_name = _("ProductOrServiceCategory")
+        verbose_name_plural = _("ProductOrServiceCategories")
+
+    def __str__(self):
+        return self.title
+
+    def get_absolute_url(self):
+        return reverse(APP_NAME+":product_or_service_category", kwargs={"pk": self.pk})
+
 class ProductOrService(Page):
-    category_title=models.CharField(_("category_title"),null=True,blank=True, max_length=50)
+    product_or_service_category=models.ForeignKey("productorservicecategory", null=True,blank=True,verbose_name=_("دسته بندی"), on_delete=models.CASCADE)
     barcode=models.CharField(_("بارکد"),null=True,blank=True, max_length=100)
 
     

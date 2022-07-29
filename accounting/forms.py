@@ -83,6 +83,10 @@ class AddPriceForm(forms.Form):
     sell_price=forms.IntegerField(required=True)
     buy_price=forms.IntegerField(required=True)
     account_id=forms.IntegerField(required=False)
+
+class ChangeProductOrServiceCategoryTitleForm(forms.Form):
+    product_or_service_category_id=forms.IntegerField(required=True)
+    product_or_service_id=forms.IntegerField(required=True)
     
 class AddPaymentForm(forms.Form):
     title=forms.CharField(max_length=500, required=True)

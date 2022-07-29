@@ -3,10 +3,10 @@ from core.constants import FAILED,SUCCEED
 from rest_framework.views import APIView
 
 from utility.calendar import PersianCalendar
-from .repo import AccountRepo, BankAccountRepo, BankRepo, ChequeRepo, CostRepo, FinancialBalanceRepo,  FinancialDocumentRepo, InvoiceRepo, PaymentRepo, PriceRepo, ProductRepo, ServiceRepo, TransactionRepo
+from .repo import AccountRepo, BankAccountRepo, BankRepo, ChequeRepo, CostRepo, FinancialBalanceRepo,  FinancialDocumentRepo, InvoiceRepo, PaymentRepo, PriceRepo, ProductOrServiceRepo, ProductRepo, ServiceRepo, TransactionRepo
 from django.http import JsonResponse
 from .forms import *
-from .serializers import AccountSerializer, BankAccountSerializer, BankSerializer, ChequeSerializer, CostSerializer, FinancialBalanceSerializer, FinancialDocumentSerializer, InvoiceFullSerializer, InvoiceLineSerializer, PaymentSerializer, PriceSerializer, ProductSerializer, ServiceSerializer, TransactionSerializer
+from .serializers import AccountSerializer, BankAccountSerializer, BankSerializer, ChequeSerializer, CostSerializer, FinancialBalanceSerializer, FinancialDocumentSerializer, InvoiceFullSerializer, InvoiceLineSerializer, PaymentSerializer, PriceSerializer, ProductOrServiceCategorySerializer, ProductSerializer, ServiceSerializer, TransactionSerializer
 
 class AddBankAccountApi(APIView):
     def post(self,request,*args, **kwargs):
@@ -292,6 +292,30 @@ class AddAccountApi(APIView):
         context['log']=log
         return JsonResponse(context)
 
+class ChangeProductOrServiceCategoryApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        log=11
+        context['result']=FAILED
+        context['message']=""
+        if request.method=='POST':
+            log=22
+            ChangeProductOrServiceCategoryTitleForm_=ChangeProductOrServiceCategoryTitleForm(request.POST)
+            if ChangeProductOrServiceCategoryTitleForm_.is_valid():
+                log=33
+                cd=ChangeProductOrServiceCategoryTitleForm_.cleaned_data
+            
+                result,product_or_service_category,message=ProductOrServiceRepo(request=request).change_category(**cd)
+                context['message']=message
+                context['result']=result
+                if result ==SUCCEED:
+                    # context['product_or_service_category_title']=product_or_service_category.title
+                    # context['product_or_service_category_id']=product_or_service_category.pk
+                    context['product_or_service_category']=ProductOrServiceCategorySerializer(product_or_service_category).data
+        context['log']=log
+        return JsonResponse(context)
+
+    
      
 class AddProductApi(APIView):
     def post(self,request,*args, **kwargs):
