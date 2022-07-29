@@ -35,8 +35,8 @@
             </h4>
             {% endif %}
         </div>
-        <div id="collapse-services" class="collapse {% if expand_services %} show {% endif %}" aria-labelledby="heading-services"
-            data-parent="#accordion-services">
+        <div id="collapse-services" class="collapse {% if expand_services %} show {% endif %}"
+            aria-labelledby="heading-services" data-parent="#accordion-services">
 
 
             <div class="card-body">
@@ -94,16 +94,30 @@
                             <tr v-for="service in services">
 
                                 <td>
-                                    <a :href="service.get_pm_absolute_url">
 
-                                        <div class="media">
+                                    <div class="media">
+                                        <a :href="service.get_pm_absolute_url">
                                             <img :src="service.thumbnail" class="rounded" width="64" alt="">
-                                            <div class="media-body mr-2">
-                                                <span v-text="service.title"></span>
+                                        </a>
+                                        <div class="media-body mr-2">
+                                            <a :href="service.get_pm_absolute_url">
 
+                                                <span v-text="service.title"></span>
+                                            </a>
+                                            <div v-if="service.product_or_service_category">
+
+                                                <a :href="service.product_or_service_category.get_absolute_url">
+                                                    <small class="text-muted">
+
+                                                        <span v-text="service.product_or_service_category.title"></span>
+                                                    </small>
+
+
+
+                                                </a>
                                             </div>
                                         </div>
-                                    </a>
+                                    </div>
                                 </td>
                                 <td>
                                     <span v-text="to_price(service.unit_price)"></span>

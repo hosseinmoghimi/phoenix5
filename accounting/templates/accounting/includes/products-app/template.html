@@ -99,17 +99,37 @@
                             <tr v-for="product in products">
 
                                 <td>
-                                    <a :href="product.get_absolute_url">
+
+                                    <div>
 
                                         <div class="media">
-                                            <img :src="product.thumbnail" class="rounded" width="64" alt="">
+                                            <a :href="product.get_absolute_url">
+                                                <img :src="product.thumbnail" class="rounded" width="64" alt="">
+                                            </a>
                                             <div class="media-body mr-2">
-                                                <span v-text="product.title"></span>
+                                                <a :href="product.get_absolute_url">
 
+                                                    <span v-text="product.title"></span>
+                                                </a>
+                                                <div v-if="product.product_or_service_category">
+                                                    <a :href="product.product_or_service_category.get_absolute_url">
+                                                        <small class="text-muted">
+    
+                                                            <span v-text="product.product_or_service_category.title"></span>
+                                                        </small>
+    
+    
+    
+                                                    </a>
+                                                </div>
                                             </div>
+
+                                           
+
                                         </div>
 
-                                    </a>
+                                    </div>
+
                                 </td>
                                 <td>
                                     <div>

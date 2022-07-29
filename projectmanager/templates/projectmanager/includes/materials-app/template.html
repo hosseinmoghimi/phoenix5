@@ -49,15 +49,15 @@
 
                 <input type="text" v-model="search_for" class="form-control" placeholder="جستجو ..."
                     @input="filter(search_for)">
-                    {% if add_material_form %}
-                      <div class="text-right my-2">
+                {% if add_material_form %}
+                <div class="text-right my-2">
 
-                          <button v-show="show_add_btn" @click="add()" class="btn btn-success">
-                              <i class="fa fa-plus"></i>
-                              افزودن
-                            </button>
-                        </div>
-                    {% endif %}
+                    <button v-show="show_add_btn" @click="add()" class="btn btn-success">
+                        <i class="fa fa-plus"></i>
+                        افزودن
+                    </button>
+                </div>
+                {% endif %}
 
                 <div class="text-right my-2">
 
@@ -90,17 +90,35 @@
                             <tr v-for="material in materials">
 
                                 <td>
-                                    <a :href="material.get_pm_absolute_url">
 
-                                        <div class="media">
+                                    <div class="media">
+                                        <a :href="material.get_pm_absolute_url">
                                             <img :src="material.thumbnail" class="rounded" width="64" alt="">
-                                            <div class="media-body mr-2">
-                                                <span v-text="material.title"></span>
+                                        </a>
 
+                                        <div class="media-body mr-2">
+                                            <a :href="material.get_pm_absolute_url">
+
+                                                <span v-text="material.title"></span>
+                                            </a>
+                                            <div v-if="material.product_or_service_category">
+                                                <a :href="material.product_or_service_category.get_absolute_url">
+                                                    <small class="text-muted">
+
+                                                        <span
+                                                            v-text="material.product_or_service_category.title"></span>
+                                                    </small>
+
+
+
+                                                </a>
                                             </div>
                                         </div>
+                                    </div>
 
-                                    </a>
+
+
+
                                 </td>
                                 <td>
                                     <div>
