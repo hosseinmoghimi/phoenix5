@@ -744,7 +744,8 @@ class ProductOrServiceCategoriesView(View):
 class ProductOrServiceCategoryView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
-        product_or_service_category=ProductOrServiceCategoryRepo(request=request).product_or_service_category(*args, **kwargs)
+        product_or_service_category_repo=ProductOrServiceCategoryRepo(request=request)
+        product_or_service_category=product_or_service_category_repo.product_or_service_category(*args, **kwargs)
         if product_or_service_category is None:
             mv=MessageView(request=request)
             mv.title="چنین کالایی یافت نشد."
@@ -761,7 +762,9 @@ class ProductOrServiceCategoryView(View):
         context['services']=services
         services_s=json.dumps(ServiceSerializer(services,many=True).data)
         context['services_s']=services_s
-
+        context['product_or_service_category']=product_or_service_category
+        product_or_service_categories=product_or_service_category_repo.list()
+        context['product_or_service_categories']=product_or_service_categories
         return render(request,TEMPLATE_ROOT+"product-or-service-category.html",context)
 
 
