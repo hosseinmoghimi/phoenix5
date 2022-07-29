@@ -268,8 +268,9 @@ class ProjectGuanttView(View):
         context = getContext(request=request)
         project = ProjectRepo(request=request).project(*args, **kwargs)
         context['project'] = project
+        projects=ProjectRepo(request=request).list().filter(parent_id=project.pk)
         context['projects_s'] = json.dumps(
-            ProjectSerializerForGuantt(project.all_sub_projects().all(), many=True).data)
+            ProjectSerializerForGuantt(projects, many=True).data)
         return render(request, TEMPLATE_ROOT+"guantt.html", context)
 
 
