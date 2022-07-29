@@ -152,6 +152,7 @@ class UnitNameEnum(TextChoices):
     GERAM="گرم",_("گرم")
     KILOGERAM="کیلوگرم",_("کیلوگرم")
     TON="تن",_("تن")
+    LINE="خط",_("خط")
     METER="متر",_("متر")
     METER2="متر مربع",_("متر مربع")
     METER3="متر مکعب",_("متر مکعب")
