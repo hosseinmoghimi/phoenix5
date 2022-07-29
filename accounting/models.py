@@ -117,6 +117,7 @@ class Transaction(Page,LinkHelper):
 
 
 class ProductOrService(Page):
+    category_title=models.CharField(_("category_title"),null=True,blank=True, max_length=50)
     barcode=models.CharField(_("بارکد"),null=True,blank=True, max_length=100)
 
     
@@ -669,6 +670,7 @@ class InvoiceLine(models.Model,LinkHelper):
     row=models.IntegerField(_("row"),blank=True)
     product_or_service=models.ForeignKey("productorservice", verbose_name=_("productorservice"), on_delete=models.CASCADE)
     quantity=models.FloatField(_("quantity"))
+    discount=models.IntegerField(_("discount"),default=0)
     unit_price=models.IntegerField(_("unit_price"))
     unit_name=models.CharField(_("unit_name"),max_length=50,choices=UnitNameEnum.choices,default=UnitNameEnum.ADAD)
     description=models.CharField(_("description"),null=True,blank=True, max_length=50)
