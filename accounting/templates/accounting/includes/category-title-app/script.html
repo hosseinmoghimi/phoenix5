@@ -14,7 +14,7 @@
                 category_title_app.waiting = true
                 let payload = {
                     csrfmiddlewaretoken: csrfmiddlewaretoken,
-                    product_or_service_category_id: this.product_or_service_category_id,
+                    product_or_service_category_id: parseInt(this.product_or_service_category_id),
                     product_or_service_id: parseInt("{{product_or_service.pk}}"),
                 }
                 let url = "{% url 'accounting:change_product_or_service_category' %}"
