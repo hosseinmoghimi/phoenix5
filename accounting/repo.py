@@ -268,9 +268,6 @@ class ProductOrServiceRepo():
         return objects.all()
 
     def change_category(self,*args, **kwargs):
-        print("kwargs")
-        print(kwargs)
-        print(100*"#")
         result=FAILED
         product_or_service_category=None
         message=""
@@ -278,8 +275,6 @@ class ProductOrServiceRepo():
             return (result,product_or_service_category,message)
         product_or_service=self.product_or_service(*args, **kwargs)
         product_or_service_category=ProductOrServiceCategoryRepo(request=self.request).product_or_service_category(*args, **kwargs)
-        print(product_or_service)
-        print(product_or_service_category)
         if product_or_service is None or product_or_service_category is None:
             return (result,product_or_service_category,message) 
         

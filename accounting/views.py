@@ -748,11 +748,11 @@ class ProductOrServiceCategoryView(View):
         if product_or_service_category is None:
             mv=MessageView(request=request)
             mv.title="چنین کالایی یافت نشد."
+        # context['expand_products']=True
+        # context['expand_services']=True
         
         products=ProductRepo(request=request).list(product_or_service_category_id=product_or_service_category.pk)
         context['products']=products
-        context['expand_products']=True
-        context['expand_services']=True
         products_s=json.dumps(ProductSerializer(products,many=True).data)
         context['products_s']=products_s
         

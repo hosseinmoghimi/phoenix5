@@ -18,6 +18,7 @@
                     product_or_service_id: parseInt("{{product_or_service.pk}}"),
                 }
                 let url = "{% url 'accounting:change_product_or_service_category' %}"
+                console.log(payload)
                 $.post(url, payload).done((data) => {
                     category_title_app.edit = false
                     category_title_app.waiting = false
