@@ -292,7 +292,7 @@ class ProjectChartView(View):
 
         pages_s=[]
         for page in pages:
-            names=""
+            names=page.get_full_description_for_chart()
             pages_s.append({
                 'title': f"""{page.title}""",
                 'parent_id': page.parent_id,
@@ -303,7 +303,7 @@ class ProjectChartView(View):
 
             })
         for page in [project]:
-            names=""
+            names=page.get_full_description_for_chart()
             pages_s.append({
                 'title': f"""{page.title}""",
                 'parent_id': page.parent_id,

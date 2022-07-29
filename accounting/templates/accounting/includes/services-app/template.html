@@ -48,14 +48,14 @@
 
                 <input type="text" v-model="search_for" class="form-control" placeholder="جستجو ..."
                     @input="filter(search_for)">
-                    {% if add_service_form %}
-                    <div class="text-right my-2">
-                         <button @click="add()" class="btn btn-success">
-                  <i class="fa fa-plus"></i>
-                  افزودن
-              </button>
-                    </div>
-                  {% endif %}
+                {% if add_service_form %}
+                <div class="text-right my-2">
+                    <button @click="add()" class="btn btn-success">
+                        <i class="fa fa-plus"></i>
+                        افزودن
+                    </button>
+                </div>
+                {% endif %}
 
                 <div class="text-right my-2">
 
@@ -84,7 +84,9 @@
                                 درصد سود
 
                             </th>
+                            <th>
 
+                            </th>
                         </thead>
                         <tbody>
                             <tr v-for="service in services">
@@ -115,7 +117,17 @@
                                 <td v-if="show_sell_prices">
                                     <span v-text="percent(service)" class=""></span> %
                                 </td>
+                                <td>
 
+                                    {% if perms.accounting.change_service %}
+                                    <a :href="service.get_edit_url" target="_blank" title="ویرایش" class="mx-2"><i
+                                            class="fa fa-edit text-info"></i></a>
+                                    {% endif %}
+                                    {% if perms.accounting.delete_service %}
+                                    <a :href="service.get_delete_url" target="_blank" title="حذف" class="mx-2"><i
+                                            class="fa fa-trash text-danger"></i></a>
+                                    {% endif %}
+                                </td>
                             </tr>
                         </tbody>
                     </table>

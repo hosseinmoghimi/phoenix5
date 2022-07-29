@@ -15,7 +15,7 @@ class ProductBriefSerializer(serializers.ModelSerializer):
 class ServiceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Service
-        fields = ['id', 'title', 'get_absolute_url','buy_price', 'get_pm_absolute_url','unit_price','unit_name','thumbnail']
+        fields = ['id', 'title', 'get_absolute_url','buy_price', 'get_pm_absolute_url','unit_price','unit_name','thumbnail','get_edit_url','get_delete_url']
 
 class AccountSerializerFull(serializers.ModelSerializer):
     profile=ProfileSerializer()

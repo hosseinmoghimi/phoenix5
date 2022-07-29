@@ -13,7 +13,7 @@ from .apps import APP_NAME
 from accounting.models import Account
 from organization.models import OrganizationUnit,Employee,Letter,LetterSent
 IMAGE_FOLDER = APP_NAME+"/images/"
-
+from utility.currency import to_price
 
 class ProjectInvoice(Invoice):
     # project=models.ForeignKey("project", verbose_name=_("project"), on_delete=models.CASCADE)
@@ -384,7 +384,10 @@ class Project(Page):
 
     def get_sub_chart_url(self):
         return reverse(APP_NAME+":project_chart",kwargs={'pk':self.pk})
-
+    def get_full_description_for_chart(self):
+        return f"""
+        <div>{to_price(self.sum_total())}</div>
+        """
 class SampleForm(Page):
 
     class Meta:
