@@ -158,6 +158,7 @@ class UnitNameEnum(TextChoices):
     METER3="متر مکعب",_("متر مکعب")
     PART="قطعه",_("قطعه")
     Roll="رول",_("رول")
+    LINK="لینک",_("لینک")
     SHAKHEH="شاخه",_("شاخه")
     DASTGAH="دستگاه",_("دستگاه")
     SERVICE="سرویس",_("سرویس")
