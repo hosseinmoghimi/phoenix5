@@ -213,7 +213,7 @@ class PageComment(models.Model):
 
 
 class Icon(models.Model):
-    title = models.CharField(_("title"), null=True, blank=True, max_length=50)
+    title = models.CharField(_("title"), null=True, blank=True, max_length=300)
     icon_fa = models.CharField(
         _("icon fa"), null=True, blank=True, max_length=50)
     icon_material = models.CharField(
