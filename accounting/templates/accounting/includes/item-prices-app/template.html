@@ -11,6 +11,10 @@
                 <button class="btn btn-link" data-toggle="collapse" data-target="#collapseItemPrices"
                     aria-expanded="true" aria-controls="collapseItemPrices">
                     قیمت های ثبت شده
+
+                    <span v-if="prices.length>0" class="mx-2">
+                        <small class="text-danger" v-text="prices.length"></small>
+                    </span>
                 </button>
             </h5>
         </div>

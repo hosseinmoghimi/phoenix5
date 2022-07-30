@@ -147,6 +147,7 @@ def get_price_app_context(request,*args, **kwargs):
     context['unit_names']=unit_names
     prices=PriceRepo(request=request).list(item_id=items[0].id)
     context['prices']=prices
+    context['prices_s']=json.dumps(PriceSerializer(prices,many=True).data)
     return context
 
 def get_account_context(request,*args, **kwargs):
