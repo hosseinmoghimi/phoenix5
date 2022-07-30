@@ -319,8 +319,14 @@ class ProductOrServiceCategoryRepo():
             objects = objects.filter(Q(title__contains=search_for)|Q(short_description__contains=search_for)|Q(description__contains=search_for))
         if 'for_home' in kwargs:
             objects = objects.filter(Q(for_home=kwargs['for_home']))
+        if 'parent' in kwargs and kwargs['parent'] is None:
+            objects=objects.filter(super_category=None)
+        if 'super_category' in kwargs and kwargs['super_category'] is None:
+            objects=objects.filter(super_category=None)
         if 'parent_id' in kwargs:
-            objects=objects.filter(parent_id=kwargs['parent_id'])
+            objects=objects.filter(super_category_id=kwargs['parent_id'])
+        if 'super_category_id' in kwargs:
+            objects=objects.filter(super_category_id=kwargs['super_category_id'])
         if 'category_title' in kwargs:
             objects=objects.filter(category_title=kwargs['category_title'])
         return objects.all()

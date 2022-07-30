@@ -764,7 +764,7 @@ class ProductOrServiceCategoryView(View):
         services_s=json.dumps(ServiceSerializer(services,many=True).data)
         context['services_s']=services_s
         context['product_or_service_category']=product_or_service_category
-        product_or_service_categories=product_or_service_category_repo.list()
+        product_or_service_categories=product_or_service_category_repo.list(super_category=None)
         context['product_or_service_categories']=product_or_service_categories
         return render(request,TEMPLATE_ROOT+"product-or-service-category.html",context)
 

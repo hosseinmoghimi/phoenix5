@@ -117,8 +117,40 @@ class Transaction(Page,LinkHelper):
 
 
 class ProductOrServiceCategory(models.Model):
+    super_category=models.ForeignKey("productorservicecategory",related_name="sub_categories",blank=True,null=True, verbose_name=_("parent"), on_delete=models.SET_NULL)
     title=models.CharField(_("عنوان"), max_length=50)
     
+    def get_breadcrumb_link(self):
+        aaa=f"""
+                    <li class="breadcrumb-item"><a href="{self.get_absolute_url()}">
+                    <span class="farsi">
+                    {self.title}
+                    </span>
+                    </a></li> 
+                    
+                    
+                    """
+        if self.super_category is None:
+            return aaa
+        return self.super_category.get_breadcrumb_link()+aaa
+    def get_breadcrumb(self):
+        return f"""
+        
+                <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{reverse(APP_NAME+":product_or_service_categories")}">
+                    <span class="farsi">
+                    <i class="fa fa-home"></i>
+                    </span>
+                    </a></li> 
+
+                    {self.get_breadcrumb_link()}
+                </ol>
+                </nav>
+        """
+    def thumbnail(self):
+        return STATIC_URL+'archive/img/pages/thumbnail/folder.png'
+
 
     class Meta:
         verbose_name = _("ProductOrServiceCategory")
