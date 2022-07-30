@@ -1,5 +1,4 @@
 from django import forms
-
 class SearchForm(forms.Form):
     search_for=forms.CharField( max_length=200, required=False)
     start_date=forms.CharField(max_length=20, required=False)
@@ -121,10 +120,7 @@ class EditInvoiceForm(forms.Form):
     ship_fee=forms.IntegerField(required=True)
     status=forms.CharField(max_length=50, required=True)
     payment_method=forms.CharField(max_length=50, required=True)
-class ChangeWarehouseSheetStateForm(forms.Form):
-    warehouse_sheet_id=forms.IntegerField(required=True)
-    status=forms.CharField(max_length=50, required=True)
-    
+
 class AddCostForm(forms.Form):
     amount=forms.IntegerField(required=True)
     cost_type=forms.CharField( max_length=100, required=True)

@@ -725,6 +725,22 @@ class InvoiceLine(models.Model,LinkHelper):
     def save(self,*args, **kwargs):
         super(InvoiceLine,self).save(*args, **kwargs)
         self.invoice.save()
+        i=0
+        for invoice_line in self.invoice.invoice_lines().order_by('row'):
+            i+=1
+            if not invoice_line.row-i==0:
+                invoice_line.row=i
+                invoice_line.save()
+    def delete(self,*args, **kwargs):
+        invoice=self.invoice
+        super(InvoiceLine,self).delete()
+        i=0
+        for invoice_line in invoice.invoice_lines().order_by('row'):
+            i+=1
+            if not invoice_line.row-i==0:
+                invoice_line.row=i
+                invoice_line.save()
+
     class Meta:
         verbose_name = _("InvoiceLine")
         verbose_name_plural = _("InvoiceLines")
