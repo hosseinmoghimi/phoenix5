@@ -1,9 +1,11 @@
 {% extends "accounting/layout.html" %}
-
+{% load static %}
 {% block content %}
 <div class="row">
     <div class="col-md-12">
         <h4 class="text-center">
+        <img src="{% static 'accounting/img/pages/thumbnail/product.png' %}" class="rounded" width="64" alt="">
+
             {{product_or_service_category.title}}
         </h4>
     </div>
