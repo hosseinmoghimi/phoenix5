@@ -479,9 +479,14 @@ class InvoiceExcelView(View):
     def get(self,request,*args, **kwargs):
         now=PersianCalendar().date
         invoice=InvoiceRepo(request=request).invoice(*args, **kwargs)
+        if invoice is None:
+            mv=MessageView(request=request)
+            mv.title="فاکتور پیدا نشد."
+            mv.body="فاکتور پیدا نشد."
+            return mv.response()
         date=PersianCalendar().from_gregorian(now)
         lines=[]
-        for i,invoice_line in enumerate(invoice.invoice_lines(),1):
+        for i,invoice_line in enumerate(invoice.invoice_lines(),start=1):
             line={
                 'ردیف':i,
                 'title':invoice_line.product_or_service.title,
@@ -493,7 +498,69 @@ class InvoiceExcelView(View):
             lines.append(line)
                
         report_work_book=ReportWorkBook()
-        report_work_book=ReportWorkBook(origin_file_name=f'Page.xlsx')
+        report_work_book=ReportWorkBook(origin_file_name=f'Invoice.xlsx')
+        style=get_style(font_name='B Koodak',size=12,bold=False,color='FF000000',start_color='FFFFFF',end_color='FF000000')
+        # sheet1=ReportSheet(
+        #     data=lines,
+        #     start_row=3,
+        #     start_col=1,
+        #     table_has_header=False,
+        #     table_headers=None,
+        #     style=style,
+        #     sheet_name='links',
+            
+        # )
+        
+        start_row=3
+        report_work_book.add_sheet(
+            data=lines,
+            start_row=start_row,
+            table_has_header=False,
+            table_headers=None,
+            style=style,
+            sheet_name='Invoice',
+        )
+            
+        file_name=f"""{date.replace('/','').replace(':','')}   Page {1}.xlsx"""
+        
+        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        # response.AppendHeader("Content-Type", "application/vnd.ms-excel");
+        response["Content-disposition"]=f"attachment; filename={file_name}"
+        report_work_book.work_book.save(response)
+        report_work_book.work_book.close()
+        return response
+
+class NewInvoiceView(View):
+    def get(self,request,*args, **kwargs):
+        invoice=InvoiceRepo(request=request).create_invoice(*args, **kwargs)
+        url=reverse(APP_NAME+":edit_invoice",kwargs={'pk':invoice.pk})
+        return redirect(url)
+
+
+class InvoiceLetterOfIntentView(View):
+    def get(self,request,*args, **kwargs):
+        now=PersianCalendar().date
+        invoice=InvoiceRepo(request=request).invoice(*args, **kwargs)
+        if invoice is None:
+            mv=MessageView(request=request)
+            mv.title="فاکتور پیدا نشد."
+            mv.body="فاکتور پیدا نشد."
+            return mv.response()
+        date=PersianCalendar().from_gregorian(now)
+        lines=[]
+        for i,invoice_line in enumerate(invoice.invoice_lines(),1):
+            line={
+                'ردیف':i,
+                'title':invoice_line.product_or_service.title,
+                'آدرس':invoice_line.quantity,      
+                'unit_name':invoice_line.unit_name,      
+                'unit_price':0,      
+                'line_total':0,      
+            }
+            lines.append(line)
+               
+        report_work_book=ReportWorkBook()
+        report_work_book=ReportWorkBook(origin_file_name=f'Invoice.xlsx')
         style=get_style(font_name='B Koodak',size=12,bold=False,color='FF000000',start_color='FFFFFF',end_color='FF000000')
         # sheet1=ReportSheet(
         #     data=lines,
@@ -512,37 +579,8 @@ class InvoiceExcelView(View):
             table_has_header=False,
             table_headers=None,
             style=style,
-            sheet_name='links',
-        )
-        lines=[]
-        for i,document in enumerate([{'title':'dddd','get_download_url':'7654erftgh'}],1):
-            line={
-                'ردیف':i,
-                'عنوان ':document['title'],
-                'آدرس':document['get_download_url'],          
-            }
-            lines.append(line)
-            
-
-        # sheet2=ReportSheet(
-        #     # data=json.dumps(DocumentSerializer(page.documents.all(),many=True).data),
-        #     data=lines,
-        #     current_row=3,
-        #     table_has_header=False,
-        #     table_headers=None,
-        #     style=style,
-        #     sheet_name='docs',
-           
-        # )
-        report_work_book.add_sheet(
-              data=lines,
-            start_row=3,
-            table_has_header=False,
-            table_headers=None,
-            style=style,
-            sheet_name='docs',
-        )
-            
+            sheet_name='Invoice',
+        ) 
         file_name=f"""{date.replace('/','').replace(':','')}   Page {1}.xlsx"""
         
         response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
@@ -551,13 +589,6 @@ class InvoiceExcelView(View):
         report_work_book.work_book.save(response)
         report_work_book.work_book.close()
         return response
-
-class NewInvoiceView(View):
-    def get(self,request,*args, **kwargs):
-        invoice=InvoiceRepo(request=request).create_invoice(*args, **kwargs)
-        url=reverse(APP_NAME+":edit_invoice",kwargs={'pk':invoice.pk})
-        return redirect(url)
-
 
  
 class InvoiceView(View):

@@ -5,20 +5,23 @@
 <a href="{{invoice.get_edit_url}}" target="_blank" title="ویرایش" class="mx-2"><i class="fa fa-edit text-info"></i></a>
 
 <a href="{{invoice.get_edit_url2}}" target="_blank" title="ویرایش" class="mx-2"><i
-        class="fa fa-edit text-success"></i></a>
+                class="fa fa-edit text-success"></i></a>
 {% endif %}
 {% if perms.accounting.delete_invoice %}
 <a href="{{invoice.get_delete_url}}" target="_blank" title="حذف" class="mx-2"><i
-        class="fa fa-trash text-danger"></i></a>
+                class="fa fa-trash text-danger"></i></a>
 {% endif %}
 
 
 <a href="{{invoice.get_print_url}}" target="_blank" title="چاپ" class="mx-2"><i
-        class="material-icons text-success">print</i></a>
+                class="material-icons text-success">print</i></a>
 
 
-<a href="{{invoice.get_ofiicial_print_url}}" target="_blank" title="چاپ فاکتور رسمی" class="mx-2"><i
-        class="material-icons text-danger">print</i></a>
+<a href="{{invoice.get_official_print_url}}" target="_blank" title="چاپ فاکتور رسمی" class="mx-2"><i
+                class="material-icons text-danger">print</i></a>
+
+
+<a href="{{invoice.get_letter_of_intent_url}}" title="استعلام بها" class="mx-2"><i class="fa fa-tasks" aria-hidden="true"></i></a>
 
 
 <a href="{{invoice.get_excel_url}}" title="اکسل" class="mx-2"><i class="fa fa-file-excel-o" aria-hidden="true"></i></a>

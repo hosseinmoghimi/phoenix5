@@ -49,6 +49,7 @@ urlpatterns = [
     path("invoice/<int:pk>/",login_required(views.InvoiceView.as_view()),name="invoice"),
     path("invoice/print/<int:pk>/",login_required(views.InvoicePrintView.as_view()),name="invoice_print"),
     path("invoice/official_print/<int:pk>/",login_required(views.InvoiceOfficialPrintView.as_view()),name="invoice_official_print"),
+    path("invoice/invoice_letter_of_intent/<int:pk>/",login_required(views.InvoiceLetterOfIntentView.as_view()),name="invoice_letter_of_intent"),
     path("new_invoice/<int:pay_from_id>/<int:pay_to_id>/",login_required(views.NewInvoiceView.as_view()),name="new_invoice"),
     path("invoice/print/<int:pk>/<currency>/",login_required(views.InvoicePrintView.as_view()),name="invoice_print_currency"),
 

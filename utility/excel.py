@@ -136,10 +136,10 @@ class ReportWorkBook:
         sheet.table_headers=table_headers
 
 
-        self.sheet_counter+=1
+        sheet_counter=self.sheet_counter
         if self.origin_file_name is None:
             self.work_book.create_sheet(sheet.sheet_name)
-        worksheet=self.work_book.worksheets[self.sheet_counter]
+        worksheet=self.work_book.worksheets[sheet_counter]
         current_row=sheet.start_row
         start_col=sheet.start_col
         
