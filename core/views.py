@@ -376,6 +376,9 @@ class TagView(View):
         context['tag']=tag
         page_tags=tag.pagetag_set.all()
         context['page_tags']=page_tags
+        context['pages']=tag.pages()
+        context['pages_s']='[]'
+
         return render(request,TEMPLATE_ROOT+"tag.html",context)
         
 class PageTagView(View):

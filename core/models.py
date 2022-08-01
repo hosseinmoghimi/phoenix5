@@ -605,7 +605,11 @@ class Tag(models.Model,LinkHelper):
 
     def __str__(self):
         return self.title
- 
+    def pages(self):
+        pages_ids=[]
+        for page_tag in PageTag.objects.filter(tag_id=self.pk):
+            pages_ids.append(page_tag.page_id)
+        return Page.objects.filter(pk__in=pages_ids)
 
 class PageTag(models.Model,LinkHelper):
     page=models.ForeignKey("page", verbose_name=_("page"), on_delete=models.CASCADE)
