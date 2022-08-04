@@ -9,7 +9,7 @@ from projectmanager.repo import  EventRepo, MaterialRepo, MaterialRequestRepo, P
 from django.http import JsonResponse
 from organization.repo import OrganizationUnitRepo,EmployeeRepo
 from projectmanager.forms import *
-from projectmanager.serializers import EventSerializer, MaterialRequestFullSerializer, MaterialRequestSerializer, MaterialSerializer, OrganizationUnitSerializer, ProjectSerializer, RequestSerializer, RequestSignatureSerializer, ServiceRequestSerializer, ServiceSerializer
+from projectmanager.serializers import EventSerializer, MaterialRequestFullSerializer, MaterialRequestSerializer, MaterialSerializer, OrganizationUnitSerializer, ProjectSerializer, RequestSerializer, RequestSignatureSerializer, ServiceRequestFullSerializer, ServiceRequestSerializer, ServiceSerializer
 
 
 class AddProjectApi(APIView):
@@ -165,27 +165,28 @@ class AddServiceRequestApi(APIView):
             AddServiceRequestForm_=AddServiceRequestForm(request.POST)
             if AddServiceRequestForm_.is_valid():
                 log=3
-                fm=AddServiceRequestForm_.cleaned_data
-                service_title=fm['service_title']
-                employee_id=fm['employee_id']
-                project_id=fm['project_id']
-                quantity=fm['quantity']
-                unit_name=fm['unit_name']
-                unit_price=fm['unit_price']
-                service_id=fm['service_id']
-                description=fm['description']
-                service_request=ServiceRequestRepo(request=request).add_service_request(
-                    service_title=service_title,
-                    employee_id=employee_id,
-                    project_id=project_id,
-                    quantity=quantity,
-                    unit_name=unit_name,
-                    service_id=service_id,
-                    unit_price=unit_price,
-                    description=description,
+                cd=AddServiceRequestForm_.cleaned_data
+                # service_title=fm['service_title']
+                # employee_id=fm['employee_id']
+                # project_id=fm['project_id']
+                # quantity=fm['quantity']
+                # unit_name=fm['unit_name']
+                # unit_price=fm['unit_price']
+                # service_id=fm['service_id']
+                # description=fm['description']
+                # cd=fm
+                service_request=ServiceRequestRepo(request=request).add_service_request(**cd
+                    # service_title=service_title,
+                    # employee_id=employee_id,
+                    # project_id=project_id,
+                    # quantity=quantity,
+                    # unit_name=unit_name,
+                    # service_id=service_id,
+                    # unit_price=unit_price,
+                    # description=description,
                 )
                 if service_request is not None:
-                    context['service_request']=ServiceRequestSerializer(service_request).data
+                    context['service_request']=ServiceRequestFullSerializer(service_request).data
                     context['result']=SUCCEED
         context['log']=log
         return JsonResponse(context)

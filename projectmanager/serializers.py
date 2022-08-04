@@ -93,6 +93,19 @@ class ServiceRequestSerializer(serializers.ModelSerializer):
         'get_absolute_url']
 
 
+class ServiceRequestFullSerializer(serializers.ModelSerializer):
+    service=ServiceSerializer()
+    invoice=InvoiceSerializer()
+    project=ProjectSerializer()
+    employee=EmployeeSerializer()
+    class Meta:
+        model=ServiceRequest
+        fields=['id','total','invoice','service','persian_date_requested',
+        'quantity','persian_date_added','get_edit_url','get_delete_url',
+        'get_status_tag','project','employee','unit_name','unit_price',
+        'get_absolute_url']
+
+
 class MaterialRequestSerializer(serializers.ModelSerializer):
     material=MaterialSerializer()
     project=ProjectSerializer()

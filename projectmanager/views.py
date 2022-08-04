@@ -171,6 +171,19 @@ class ProjectView(View):
         material_invoices_s=json.dumps(InvoiceSerializer(material_invoices,many=True).data)
         context['material_invoices_s'] = material_invoices_s
 
+        
+
+        invoices = project.invoices()
+        context['invoices'] = invoices
+        context['invoices_s']=json.dumps(InvoiceSerializer(invoices,many=True).data)
+        
+        service_invoices=project.serviceinvoice_set.all()
+        context['service_invoices']=service_invoices
+        service_invoices_s=json.dumps(InvoiceSerializer(service_invoices,many=True).data)
+        context['service_invoices_s'] = service_invoices_s
+
+        
+
         events = EventRepo(request=request).list(project_id=project.id)
         context['events'] = events
         events_s = json.dumps(EventSerializer(events, many=True).data)

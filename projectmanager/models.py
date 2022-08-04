@@ -109,7 +109,6 @@ class Request(InvoiceLine, LinkHelper):
         verbose_name_plural = _("Requests")
 
     def save(self, *args, **kwargs):
-        
         self.row = len(self.invoice.lines.all())+1
         super(Request, self).save(*args, **kwargs)
 
@@ -257,6 +256,10 @@ class Project(Page):
 
     def material_requests(self):
         return Request.objects.filter(project=self).filter(type=RequestTypeEnum.MATERIAL_REQUEST)
+
+    @property
+    def serviceinvoice_set(self):
+        return ServiceInvoice.objects.filter(project_id=self.pk)
 
     @property
     def materialinvoice_set(self):

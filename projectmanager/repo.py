@@ -419,6 +419,16 @@ class ServiceRequestRepo():
         if 'service_id' in kwargs:
             if not kwargs['service_id']==0:
                 new_service_request.product_or_service_id = kwargs['service_id']
+
+        if 'invoice_id' in kwargs and kwargs['invoice_id'] is not None and kwargs['invoice_id']==-1: 
+            new_service_invoice=ServiceInvoice()
+            new_service_invoice.project_id = project.id
+            new_service_invoice.pay_from=project.contractor.account
+            new_service_invoice.pay_to=project.employer.account
+            new_service_invoice.save()
+            new_service_request.invoice_id = new_service_invoice.id
+        
+
         if 'quantity' in kwargs:
             new_service_request.quantity = kwargs['quantity']
         if 'unit_name' in kwargs:
