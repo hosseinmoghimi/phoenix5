@@ -109,7 +109,10 @@ class Request(InvoiceLine, LinkHelper):
         verbose_name_plural = _("Requests")
 
     def save(self, *args, **kwargs):
-        self.row = len(self.invoice.lines.all())+1
+        try:
+            self.row = len(self.invoice.lines.all())+1
+        except:
+            self.row=1
         super(Request, self).save(*args, **kwargs)
 
     def total(self):
