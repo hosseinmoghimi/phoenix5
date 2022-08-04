@@ -13,7 +13,7 @@ from .apps import APP_NAME
 from accounting.models import Account
 from organization.models import OrganizationUnit,Employee,Letter,LetterSent
 IMAGE_FOLDER = APP_NAME+"/images/"
-
+from utility.currency import to_price
 
 class ProjectInvoice(Invoice):
     # project=models.ForeignKey("project", verbose_name=_("project"), on_delete=models.CASCADE)
@@ -371,6 +371,9 @@ class Project(Page):
         sum = 0
         for ii in self.invoices():
             sum += ii.sum_total()
+        for child in self.childs.all():
+            if not child.status==ProjectStatusEnum.DRAFT:
+                sum+=child.sum_total()
         return sum
 
     def invoices(self):
@@ -381,6 +384,11 @@ class Project(Page):
 
     def get_sub_chart_url(self):
         return reverse(APP_NAME+":project_chart",kwargs={'pk':self.pk})
+    def get_full_description_for_chart(self):
+        return f"""
+        <div><small class="text-muted">{to_price(self.sum_total())}</small></div>
+        <div>{self.percentage_completed} %</div>
+        """
 
 class SampleForm(Page):
 

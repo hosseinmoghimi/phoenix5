@@ -172,8 +172,8 @@ class OrganizationUnitView(View):
         context['organization_unit'] = organization_unit
 
         for employee in organization_unit.employees:
-            if employee.account.profile.id==context['profile'].id:
-                context['selected_profile']=context['profile']
+            if 'profile' in context and context['profile'] is not None and employee.account.profile is not None and employee.account.profile.id==context['profile'].id:
+                context['selected_profile']=employee.account.profile
 
         # employees
         if True:

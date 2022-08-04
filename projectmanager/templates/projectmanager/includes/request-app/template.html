@@ -23,6 +23,21 @@
                     <tr>
                         <td class="text-left">
                             <small class="text-muted">
+                                فاکتور
+                            </small>
+                        </td>
+                        <td class="text-right">
+
+                            <a href="{{my_request.invoice.get_absolute_url}}">
+
+                                {{my_request.invoice.title}}
+                            </a>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="text-left">
+                            <small class="text-muted">
                                 پروژه
                             </small>
                         </td>
@@ -35,11 +50,11 @@
                         </td>
                     </tr>
 
-                    
+
                     <tr>
                         <td class="text-left">
                             <small class="text-muted">
-                                پیمانکار :
+                                پیمانکار 
                             </small>
                         </td>
                         <td class="text-right">
@@ -54,7 +69,7 @@
                     <tr>
                         <td class="text-left">
                             <small class="text-muted">
-                                کارفرما :
+                                کارفرما 
                             </small>
                         </td>
                         <td class="text-right">
@@ -66,12 +81,12 @@
                         </td>
                     </tr>
 
-                  
+
                     <tr>
                         <td class="text-left">
 
                             <small class="text-muted">
-                                مورد درخواست شده :
+                                مورد درخواست شده 
                             </small>
                         </td>
                         <td class="text-right">
@@ -121,7 +136,7 @@
                     </tr>
                     {% endif %}
 
-                    
+
                     {% if my_request.date_delivered %}
 
                     <tr>
@@ -144,7 +159,7 @@
                 </table>
             </div>
 
- 
+
 
 
             <div class="alert alert-info">
@@ -165,5 +180,25 @@
 
 
         </div>
+    </div>
+</div>
+
+<div class="row">
+
+
+    <div class="col-md-12">
+
+        {% include "accounting/includes/invoice-line-app/template.html" %}
+    </div>
+
+
+    <div class="col-md-12">
+
+        {% include "guarantee/includes/guarantees-app/template.html" %}
+    </div>
+
+    <div class="col-md-12">
+        {% include "warehouse/includes/warehouse-sheets-app/template.html" %}
+
     </div>
 </div>

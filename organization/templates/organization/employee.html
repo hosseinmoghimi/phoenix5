@@ -5,13 +5,13 @@
 
   <div class="text-center mt-3 mb-3">
 
-    <img src="{{employee.profile.image}}" width="128" class="rounded-circle" alt="">
+    <img src="{{employee.account.logo}}" width="128" class="rounded" alt="">
 </div>
 
 <h4 class="text-center">
     {{employee.name}}
 
-    <a href="{% url 'accounting:account' pk=employee.id %}" title="اکانت" class="mx-2"><i
+    <a href="{{employee.account.get_absolute_url}}" title="اکانت" class="mx-2"><i
         class="fa fa-user text-info"></i></a>
 
 

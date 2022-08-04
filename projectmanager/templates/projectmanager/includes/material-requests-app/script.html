@@ -13,6 +13,7 @@
         employees: JSON.parse(`{{employees_s|escapejs}}`),
         new_material_request_material_id: 1,
         add_material_request_form_title: "",
+        source_project_id:0,
         materials: [],
         add_material_request_form_unit_price: 0,
         add_material_request_form_unit_name: "",
@@ -61,6 +62,26 @@
 
             //     return to_price(sum_material_requests,'')
             // },
+
+            copy_from_project: function () {
+                console.log(this.source_project_id)
+
+                let payload = {
+                    source_project_id: this.source_project_id,
+                    destination_project_id: project_id,
+                    csrfmiddlewaretoken: csrfmiddlewaretoken
+                }
+                let url_copy_material_requests = "{% url 'projectmanager:copy_material_requests' %}"
+                var posting = $.post(url_copy_material_requests, payload);
+                posting.done((data) => {
+                    console.log(data)
+                    if (data.result === 'SUCCEED') {
+                        material_requests_app.material_requests = data.material_requests
+                    }
+                })
+
+            },
+
             to_price: function (value, CURRENCY) {
                 return to_price(value, CURRENCY)
             },

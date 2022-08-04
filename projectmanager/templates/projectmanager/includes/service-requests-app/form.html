@@ -56,8 +56,9 @@
                 <label for="">قیمت واحد
                     <small>
                         (
-                            <span v-if="add_service_request_form_unit_price>0" class="text-primary" v-text="to_price(add_service_request_form_unit_price)"></span>
-                    
+                        <span v-if="add_service_request_form_unit_price>0" class="text-primary"
+                            v-text="to_price(add_service_request_form_unit_price)"></span>
+
                         {{CURRENCY}}
                         )
                     </small>
@@ -114,6 +115,23 @@
             </tbody>
         </table>
     </div>
+    <form @submit.prevent="copy_from_project()">
 
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="">کپی از </label>
+                    <input type="number" required v-model="source_project_id" class="form-control">
+                    <button class="btn btn-block btn-success mt-2" type="submit">کپی کن</button>
 
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <a href="{% url 'accounting:services' %}" target="_blank">
+        <h6>
+            همه سرویس ها
+        </h6>
+    </a>
 </div>

@@ -392,14 +392,15 @@ class MajorViews(View):
 
         
 class BookViews(View):
-    def book(self,request,*args, **kwargs):
+    def get(self,request,*args, **kwargs):
         context=getContext(request=request)
         book=BookRepo(request=request).book(*args, **kwargs)
         context.update(PageContext(request=request,page=book))
         context['book']=book
         return render(request,TEMPLATE_ROOT+"book.html",context)
 
-    def books(self,request,*args, **kwargs):
+class BooksViews(View):
+    def get(self,request,*args, **kwargs):
         context=getContext(request=request)
         books=BookRepo(request=request).list(*args, **kwargs)
         context['books']=books
@@ -408,7 +409,7 @@ class BookViews(View):
 
         
 class SessionViews(View):
-    def session(self,request,*args, **kwargs):
+    def get(self,request,*args, **kwargs):
         context=getContext(request=request)
         if request.user.has_perm(APP_NAME+".add_attendance"):
             context['STATUS_PRESENT']=AttendanceStatusEnum.PRESENT
@@ -417,7 +418,6 @@ class SessionViews(View):
             context['STATUS_TASHVIGH']=AttendanceStatusEnum.TASHVIGH
             context['STATUS_TANBIH']=AttendanceStatusEnum.TANBIH
             context['add_attendence_form']=AddAttendanceForm()
-         
         session=SessionRepo(request=request).session(*args, **kwargs)
         me_student=StudentRepo(request=request).me
         me_teacher=TeacherRepo(request=request).me
@@ -445,6 +445,7 @@ class SessionViews(View):
 
         context.update(PageContext(request=request,page=session))
         context['session']=session
+        context['active_course']=session.active_course
         context['course']=session.active_course.course
 
         students=session.active_course.students.all()

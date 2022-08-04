@@ -35,8 +35,8 @@
             </h4>
             {% endif %}
         </div>
-        <div id="collapse-services" class="collapse" aria-labelledby="heading-services"
-            data-parent="#accordion-services">
+        <div id="collapse-services" class="collapse {% if expand_services %} show {% endif %}"
+            aria-labelledby="heading-services" data-parent="#accordion-services">
 
 
             <div class="card-body">
@@ -86,22 +86,38 @@
                                 درصد سود
 
                             </th>
+                            <th>
 
+                            </th>
                         </thead>
                         <tbody>
                             <tr v-for="service in services">
 
                                 <td>
-                                    <a :href="service.get_pm_absolute_url">
 
-                                        <div class="media">
+                                    <div class="media">
+                                        <a :href="service.get_pm_absolute_url">
                                             <img :src="service.thumbnail" class="rounded" width="64" alt="">
-                                            <div class="media-body mr-2">
-                                                <span v-text="service.title"></span>
+                                        </a>
+                                        <div class="media-body mr-2">
+                                            <a :href="service.get_pm_absolute_url">
 
+                                                <span v-text="service.title"></span>
+                                            </a>
+                                            <div v-if="service.product_or_service_category">
+
+                                                <a :href="service.product_or_service_category.get_absolute_url">
+                                                    <small class="text-muted">
+
+                                                        <span v-text="service.product_or_service_category.title"></span>
+                                                    </small>
+
+
+
+                                                </a>
                                             </div>
                                         </div>
-                                    </a>
+                                    </div>
                                 </td>
                                 <td>
                                     <span v-text="to_price(service.unit_price)"></span>
@@ -116,6 +132,16 @@
                                 </td>
                                 <td v-if="show_sell_prices">
                                     <span v-text="percent(service)" class=""></span> %
+                                </td>
+                                <td>
+                                    {% if perms.accounting.change_service %}
+                                    <a :href="service.get_edit_url" target="_blank" title="ویرایش" class="mx-2"><i
+                                            class="fa fa-edit text-info"></i></a>
+                                    {% endif %}
+                                    {% if perms.accounting.delete_service %}
+                                    <a :href="service.get_delete_url" target="_blank" title="حذف" class="mx-2"><i
+                                            class="fa fa-trash text-danger"></i></a>
+                                    {% endif %}
                                 </td>
 
                             </tr>

@@ -1,11 +1,11 @@
 from datetime import timedelta
 from accounting.enums import FinancialDocumentTypeEnum, PaymentMethodEnum, TransactionStatusEnum
-from core.constants import FAILED, SUCCEED
+from core.constants import FAILED, SUCCEED,MISC
 
 from core.enums import UnitNameEnum
 from utility.calendar import PersianCalendar
 from .apps import APP_NAME
-from .models import Account, Asset, Bank, BankAccount, Cheque, Cost, FinancialBalance, FinancialDocument, FinancialYear, Invoice, InvoiceLine, Payment, Price, Product,Service, Transaction
+from .models import Account, Asset, Bank, BankAccount, Cheque, Cost, FinancialBalance, FinancialDocument, FinancialYear, Invoice, InvoiceLine, Payment, Price, Product, ProductOrService, ProductOrServiceCategory,Service, Transaction
 from django.db.models import Q
 from authentication.repo import ProfileRepo
 from django.utils import timezone
@@ -208,6 +208,8 @@ class ProductRepo():
             objects = objects.filter(Q(for_home=kwargs['for_home']))
         if 'parent_id' in kwargs:
             objects=objects.filter(parent_id=kwargs['parent_id'])
+        if 'product_or_service_category_id' in kwargs:
+            objects=objects.filter(product_or_service_category_id=kwargs['product_or_service_category_id'])
         return objects.all()
 
     def add_product(self,*args, **kwargs):
@@ -224,6 +226,125 @@ class ProductRepo():
         product.save()
         message=product.title +" با موفقیت افزوده شد."
         return SUCCEED,product,message
+
+
+class ProductOrServiceRepo():
+    def __init__(self, *args, **kwargs):
+        self.request = None
+        self.user = None
+        if 'request' in kwargs:
+            self.request = kwargs['request']
+            self.user = self.request.user
+        if 'user' in kwargs:
+            self.user = kwargs['user']
+        
+        self.objects=ProductOrService.objects.all()
+        self.profile=ProfileRepo(*args, **kwargs).me
+       
+
+    def product_or_service(self, *args, **kwargs):
+        pk=0
+        if 'product_or_service' in kwargs:
+            return kwargs['product_or_service']
+        if 'product_or_service_id' in kwargs:
+            pk=kwargs['product_or_service_id']
+        elif 'pk' in kwargs:
+            pk=kwargs['pk']
+        elif 'id' in kwargs:
+            pk=kwargs['id']
+        return self.objects.filter(pk=pk).first()
+     
+    def list(self, *args, **kwargs):
+        objects = self.objects
+        if 'search_for' in kwargs:
+            search_for=kwargs['search_for']
+            objects = objects.filter(Q(title__contains=search_for)|Q(short_description__contains=search_for)|Q(description__contains=search_for))
+        if 'for_home' in kwargs:
+            objects = objects.filter(Q(for_home=kwargs['for_home']))
+        if 'parent_id' in kwargs:
+            objects=objects.filter(parent_id=kwargs['parent_id'])
+        if 'category_title' in kwargs:
+            objects=objects.filter(category_title=kwargs['category_title'])
+        return objects.all()
+
+    def change_category(self,*args, **kwargs):
+        result=FAILED
+        product_or_service_category=None
+        message=""
+        if not self.user.has_perm(APP_NAME+".change_productorservice"):
+            return (result,product_or_service_category,message)
+        product_or_service=self.product_or_service(*args, **kwargs)
+        product_or_service_category=ProductOrServiceCategoryRepo(request=self.request).product_or_service_category(*args, **kwargs)
+        if product_or_service is None or product_or_service_category is None:
+            return (result,product_or_service_category,message) 
+        
+        product_or_service.product_or_service_category_id = product_or_service_category.id
+        product_or_service.save()
+        result=SUCCEED
+        message="با موفقیت تغییر یافت."
+        return (result,product_or_service_category,message)
+
+
+
+class ProductOrServiceCategoryRepo():
+    def __init__(self, *args, **kwargs):
+        self.request = None
+        self.user = None
+        if 'request' in kwargs:
+            self.request = kwargs['request']
+            self.user = self.request.user
+        if 'user' in kwargs:
+            self.user = kwargs['user']
+        
+        self.objects=ProductOrServiceCategory.objects.all()
+        self.profile=ProfileRepo(*args, **kwargs).me
+       
+
+    def product_or_service_category(self, *args, **kwargs):
+        pk=0
+        if 'product_or_service_category' in kwargs:
+            return kwargs['product_or_service_category']
+        if 'product_or_service_category_id' in kwargs:
+            pk=kwargs['product_or_service_category_id']
+        elif 'pk' in kwargs:
+            pk=kwargs['pk']
+        elif 'id' in kwargs:
+            pk=kwargs['id']
+        return self.objects.filter(pk=pk).first()
+     
+    def list(self, *args, **kwargs):
+        objects = self.objects
+        if 'search_for' in kwargs:
+            search_for=kwargs['search_for']
+            objects = objects.filter(Q(title__contains=search_for)|Q(short_description__contains=search_for)|Q(description__contains=search_for))
+        if 'for_home' in kwargs:
+            objects = objects.filter(Q(for_home=kwargs['for_home']))
+        if 'parent' in kwargs and kwargs['parent'] is None:
+            objects=objects.filter(super_category=None)
+        if 'super_category' in kwargs and kwargs['super_category'] is None:
+            objects=objects.filter(super_category=None)
+        if 'parent_id' in kwargs:
+            objects=objects.filter(super_category_id=kwargs['parent_id'])
+        if 'super_category_id' in kwargs:
+            objects=objects.filter(super_category_id=kwargs['super_category_id'])
+        if 'category_title' in kwargs:
+            objects=objects.filter(category_title=kwargs['category_title'])
+        return objects.all()
+
+    def add_product_or_service_category(self,*args, **kwargs):
+        if not self.user.has_perm(APP_NAME+".add_productorservicecategory"):
+            return None
+        product_or_service_category=ProductOrServiceCategory()
+  
+        if 'title' in kwargs:
+            product_or_service_category.title = kwargs['title']
+        if len(Product.objects.filter(title=product_or_service_category.title))>0:
+            message="دسته بندی وارد شده تکراری می باشد."
+            return FAILED,None,message
+
+        product_or_service_category.save()
+        message=product_or_service_category.title +" با موفقیت افزوده شد."
+        return SUCCEED,product_or_service_category,message
 
 
 class ServiceRepo():
@@ -259,6 +380,9 @@ class ServiceRepo():
             objects = objects.filter(Q(for_home=kwargs['for_home']))
         if 'parent_id' in kwargs:
             objects=objects.filter(parent_id=kwargs['parent_id'])
+        if 'product_or_service_category_id' in kwargs:
+            objects=objects.filter(product_or_service_category_id=kwargs['product_or_service_category_id'])
+        
         return objects.all()
 
     def add_service(self,*args, **kwargs):
@@ -560,6 +684,9 @@ class AccountRepo():
         if self.profile is not None:
             self.me=Account.objects.filter(profile=self.profile).first()
         
+    def get_misc(self,*args, **kwargs):
+        misc,res=Account.objects.get_or_create(title=MISC)
+        return misc
 
     def account(self, *args, **kwargs):
         pk=0
@@ -689,8 +816,10 @@ class InvoiceLineRepo():
             objects=objects.filter(title__contains=kwargs['search_for'])
         if 'profile_id' in kwargs:
             objects=objects.filter(profile_id=kwargs['profile_id'])
-        if 'parent_id' in kwargs:
-            objects=objects.filter(parent_id=kwargs['parent_id'])
+        if 'profile_id' in kwargs:
+            objects=objects.filter(profile_id=kwargs['profile_id'])
+        if 'product_or_service_id' in kwargs:
+            objects=objects.filter(product_or_service_id=kwargs['product_or_service_id'])
         return objects.all()
     def my_list(self,*args, **kwargs):
         if self.request.user.has_perm(APP_NAME+".view_account"):
@@ -756,6 +885,8 @@ class PaymentRepo():
         payment.creator=self.profile
         if 'title' in kwargs:
             payment.title=kwargs['title']
+        if 'status' in kwargs:
+            payment.status=kwargs['status']
 
         if 'pay_from_id' in kwargs:
             payment.pay_from_id=kwargs['pay_from_id']

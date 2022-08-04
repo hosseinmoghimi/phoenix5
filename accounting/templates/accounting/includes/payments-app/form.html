@@ -99,6 +99,22 @@
 
 
         </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="">وضعیت پرداخت</label>
+
+
+                <select required v-model="status" class="form-control">
+                    {% for transaction_status in transaction_statuses %}
+                    <option value="{{transaction_status}}">{{transaction_status}}</option>
+
+                    {% endfor %}
+                </select>
+
+            </div>
+
+
+        </div>
 
 
 

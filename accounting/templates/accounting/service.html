@@ -17,6 +17,8 @@
 
     </div>
     <div class="col-md-4">
+{% include "accounting/includes/category-title-app/template.html" %}
+
         {% include "core/includes/page-downloads-app/template.html" %}
         {% include "core/includes/page-links-app/template.html" %}
         {% include "core/includes/page-tags-app/template.html" %}
@@ -36,7 +38,10 @@
         {% include "core/includes/page-like-app/page-likes.html" %}
 
     </div>
-    
+    <div class="col-md-12">
+
+        {% include "accounting/includes/item-invoice-lines-app/template.html" %}
+    </div>
 
 </div>
 
@@ -47,5 +52,7 @@
 {% include "core/includes/page-app/script.html" %}
 
 {% include "accounting/includes/item-prices-app/script.html" %}
+{% include "accounting/includes/item-invoice-lines-app/script.html" %}
+{% include "accounting/includes/category-title-app/script.html" %}
 
 {% endblock script %}

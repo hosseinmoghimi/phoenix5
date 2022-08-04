@@ -1,0 +1,40 @@
+<script>
+    let pages = JSON.parse(`{{pages_s|escapejs}}`)
+    let pages_app = new Vue({
+        el:"#pages-app",
+        data: {
+            pages: pages,
+            search_for:'',
+            waiting:false,
+        },
+        methods: {
+            filter:function(){
+                this.pages = pages.filter(page => page.title.indexOf(this.search_for) > -1)
+         
+            },
+            to_price: function (vall) {
+                let color='primary'
+                if (vall<0)
+                color='danger'
+                if (vall>0)
+                color='success'
+                vall=to_price(vall,"{{CURRENCY}}")
+                return `
+                    <span class="text-${color}">${vall}</span>
+                    `
+            },
+            create_employee: function (page_id) {
+                let url = "{% url 'organization:employee' pk=0 %}"
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    page_id: page_id
+                }
+                $.post(url, payload).done((data) => {
+                    console.log(data)
+                })
+            },
+           
+        }
+    })
+
+</script>

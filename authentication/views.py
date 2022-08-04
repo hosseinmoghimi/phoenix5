@@ -80,6 +80,9 @@ class ProfileViews(View):
             from accounting.views import AccountRepo
             accounts=AccountRepo(request=request).list(profile_id=selected_profile.id)
             context['accounts']=accounts
+            from accounting.serializers import AccountSerializer
+            accounts_s=json.dumps(AccountSerializer(accounts,many=True).data)
+            context['accounts_s']=accounts_s
         if selected_profile.enabled:
             if app_is_installed('projectmanager'):
                 from projectmanager.views import EmployeeRepo,EmployeeSerializer
@@ -201,6 +204,9 @@ class LoginViews(View):
         context['messages']=messages
         if 'next' in request.GET:
             context['next']=request.GET['next']
+        else:
+            context['next']=SITE_URL
+
         ProfileRepo(request=request).logout(request)
         context['login_form']=LoginForm()
         context['build_absolute_uri']=request.build_absolute_uri()
@@ -219,7 +225,7 @@ class LoginViews(View):
             if 'next' in login_form.cleaned_data:
                 next=login_form.cleaned_data['next']
             else:
-                next="/"
+                next=SITE_URL
             a=ProfileRepo(request=request).login(request=request,username=username,password=password)
             if a is not None:
                 (request,user)=a

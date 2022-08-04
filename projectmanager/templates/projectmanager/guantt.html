@@ -94,7 +94,7 @@
 
         <div class="row">
             <div class="col-md-4 ">
-                {% for sub_project in project.all_sub_projects.all %}
+                {% for sub_project in projects %}
                 <div class="mb-2">
                     <a class="btn btn-block btn-{{sub_project.color}}" href="{{sub_project.get_absolute_url}}">
 

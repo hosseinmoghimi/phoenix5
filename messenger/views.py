@@ -24,6 +24,7 @@ def getPusherContext(request,*args, **kwargs):
         notifications_s=json.dumps(NotificationSerializer(notifications,many=True).data)
         context['PUSHER_IS_ENABLE'] = True
         context['notifications_s']=notifications_s
+        context['notifications']=notifications
     else:
         context['PUSHER_IS_ENABLE'] = False
 

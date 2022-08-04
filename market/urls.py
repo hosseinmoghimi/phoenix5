@@ -18,6 +18,9 @@ urlpatterns = [
     
     path("suppliers/",login_required(views.HomeView.as_view()),name="suppliers"),
     path("supplier/<int:pk>/",login_required(views.SupplierView.as_view()),name="supplier"),
+    
+    path("brands/",login_required(views.BrandsView.as_view()),name="brands"),
+    path("brand/<int:pk>/",login_required(views.BrandView.as_view()),name="brand"),
 
 
     path("api/categories/",(apis.CategoriesApi.as_view()),name="api_categories"),

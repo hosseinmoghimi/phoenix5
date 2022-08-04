@@ -1,5 +1,4 @@
 from django import forms
-
 class SearchForm(forms.Form):
     search_for=forms.CharField( max_length=200, required=False)
     start_date=forms.CharField(max_length=20, required=False)
@@ -83,6 +82,10 @@ class AddPriceForm(forms.Form):
     sell_price=forms.IntegerField(required=True)
     buy_price=forms.IntegerField(required=True)
     account_id=forms.IntegerField(required=False)
+
+class ChangeProductOrServiceCategoryTitleForm(forms.Form):
+    product_or_service_category_id=forms.IntegerField(required=True)
+    product_or_service_id=forms.IntegerField(required=True)
     
 class AddPaymentForm(forms.Form):
     title=forms.CharField(max_length=500, required=True)
@@ -91,7 +94,8 @@ class AddPaymentForm(forms.Form):
     amount=forms.IntegerField(required=True)
     payment_datetime=forms.CharField(max_length=50, required=True)
     payment_method=forms.CharField(max_length=50, required=True)
-    description=forms.CharField(max_length=50, required=False)
+    status=forms.CharField(max_length=50, required=False)
+    description=forms.CharField(max_length=200, required=False)
 
     
 class AddCostForm(forms.Form):
@@ -116,10 +120,7 @@ class EditInvoiceForm(forms.Form):
     ship_fee=forms.IntegerField(required=True)
     status=forms.CharField(max_length=50, required=True)
     payment_method=forms.CharField(max_length=50, required=True)
-class ChangeWarehouseSheetStateForm(forms.Form):
-    warehouse_sheet_id=forms.IntegerField(required=True)
-    status=forms.CharField(max_length=50, required=True)
-    
+
 class AddCostForm(forms.Form):
     amount=forms.IntegerField(required=True)
     cost_type=forms.CharField( max_length=100, required=True)

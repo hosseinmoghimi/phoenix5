@@ -35,6 +35,9 @@ urlpatterns = [
     path("transactions_excel/<int:account_id_1>/<int:account_id_2>/",login_required(views.TransactionsExcelView.as_view()),name="transactions2_excel"),
     path("transactions_print/",login_required(views.TransactionsPrintView.as_view()),name="transactions_print"),
     
+    path("product_or_service_category/<int:pk>/",login_required(views.ProductOrServiceCategoryView.as_view()),name="product_or_service_category"),
+    path("product_or_service_categories/",login_required(views.ProductOrServiceCategoriesView.as_view()),name="product_or_service_categories"),
+    
     path("account/<int:pk>/",login_required(views.AccountView.as_view()),name="account"),
     path("accounts/",login_required(views.AccountsView.as_view()),name="accounts"),
     path("add_account/",login_required(apis.AddAccountApi.as_view()),name="add_account"),
@@ -45,6 +48,8 @@ urlpatterns = [
     path("invoice/excel/<int:pk>/",login_required(views.InvoiceExcelView.as_view()),name="invoice_excel"),
     path("invoice/<int:pk>/",login_required(views.InvoiceView.as_view()),name="invoice"),
     path("invoice/print/<int:pk>/",login_required(views.InvoicePrintView.as_view()),name="invoice_print"),
+    path("invoice/official_print/<int:pk>/",login_required(views.InvoiceOfficialPrintView.as_view()),name="invoice_official_print"),
+    path("invoice/invoice_letter_of_intent/<int:pk>/",login_required(views.InvoiceLetterOfIntentView.as_view()),name="invoice_letter_of_intent"),
     path("new_invoice/<int:pay_from_id>/<int:pay_to_id>/",login_required(views.NewInvoiceView.as_view()),name="new_invoice"),
     path("invoice/print/<int:pk>/<currency>/",login_required(views.InvoicePrintView.as_view()),name="invoice_print_currency"),
 
@@ -73,6 +78,9 @@ urlpatterns = [
   path("add_price/",login_required(apis.AddPriceApi.as_view()),name="add_price"),
 
   
+  path('add_product_or_service_category/',login_required(apis.AddProductApi.as_view()),name="add_product_or_service_category"),
+  path('change_product_or_service_category/',login_required(apis.ChangeProductOrServiceCategoryApi.as_view()),name="change_product_or_service_category"),
+
   path('add_product/',login_required(apis.AddProductApi.as_view()),name="add_product"),
   path('add_service/',login_required(apis.AddServiceApi.as_view()),name="add_service"),
 

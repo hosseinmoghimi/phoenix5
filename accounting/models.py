@@ -85,29 +85,29 @@ class Transaction(Page,LinkHelper):
         verbose_name_plural = _("Transactions")
 
     def __str__(self):
-        return self.title 
+        return f"{self.title} ({self.status})"
 
 
     def save(self,*args, **kwargs):
         if self.transaction_datetime is None:
-            from django.utils import timezone
             self.transaction_datetime=PersianCalendar().date
         super(Transaction,self).save(*args, **kwargs)
-        # FinancialDocument.objects.filter(transaction=self).delete()
+        if self.status==TransactionStatusEnum.DRAFT or self.status==TransactionStatusEnum.CANCELED:
+            FinancialDocument.objects.filter(transaction=self).delete()
+        else:
+            fd_bedehkar=FinancialDocument.objects.filter(transaction=self).filter(account_id=self.pay_to.id).first()
+            if fd_bedehkar is None:
+                fd_bedehkar=FinancialDocument(transaction=self,account_id=self.pay_to.id,direction=FinancialDocumentTypeEnum.BEDEHKAR)
+            fd_bedehkar.bestankar=0
+            fd_bedehkar.bedehkar=self.amount
+            fd_bedehkar.save()
 
-        fd_bedehkar=FinancialDocument.objects.filter(transaction=self).filter(account_id=self.pay_to.id).first()
-        if fd_bedehkar is None:
-            fd_bedehkar=FinancialDocument(transaction=self,account_id=self.pay_to.id,direction=FinancialDocumentTypeEnum.BEDEHKAR)
-        fd_bedehkar.bestankar=0
-        fd_bedehkar.bedehkar=self.amount
-        fd_bedehkar.save()
-
-        fd_bestankar=FinancialDocument.objects.filter(transaction=self).filter(account_id=self.pay_from.id).first()
-        if fd_bestankar is None:
-            fd_bestankar=FinancialDocument(transaction=self,account_id=self.pay_from.id,direction=FinancialDocumentTypeEnum.BESTANKAR)
-        fd_bestankar.bestankar=self.amount
-        fd_bestankar.bedehkar=0
-        fd_bestankar.save()
+            fd_bestankar=FinancialDocument.objects.filter(transaction=self).filter(account_id=self.pay_from.id).first()
+            if fd_bestankar is None:
+                fd_bestankar=FinancialDocument(transaction=self,account_id=self.pay_from.id,direction=FinancialDocumentTypeEnum.BESTANKAR)
+            fd_bestankar.bestankar=self.amount
+            fd_bestankar.bedehkar=0
+            fd_bestankar.save()
 
     @property
     def persian_transaction_datetime(self,no_tag=False,*args, **kwargs):
@@ -116,7 +116,55 @@ class Transaction(Page,LinkHelper):
         return to_persian_datetime_tag(self.transaction_datetime)
 
 
+class ProductOrServiceCategory(models.Model):
+    super_category=models.ForeignKey("productorservicecategory",related_name="sub_categories",blank=True,null=True, verbose_name=_("parent"), on_delete=models.SET_NULL)
+    title=models.CharField(_("عنوان"), max_length=50)
+    
+    def get_breadcrumb_link(self):
+        aaa=f"""
+                    <li class="breadcrumb-item"><a href="{self.get_absolute_url()}">
+                    <span class="farsi">
+                    {self.title}
+                    </span>
+                    </a></li> 
+                    
+                    
+                    """
+        if self.super_category is None:
+            return aaa
+        return self.super_category.get_breadcrumb_link()+aaa
+    def get_breadcrumb(self):
+        return f"""
+        
+                <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{reverse(APP_NAME+":product_or_service_categories")}">
+                    <span class="farsi">
+                    <i class="fa fa-home"></i>
+                    </span>
+                    </a></li> 
+
+                    {self.get_breadcrumb_link()}
+                </ol>
+                </nav>
+        """
+    def thumbnail(self):
+        return STATIC_URL+'archive/img/pages/thumbnail/folder.png'
+
+
+    class Meta:
+        verbose_name = _("ProductOrServiceCategory")
+        verbose_name_plural = _("ProductOrServiceCategories")
+
+    def __str__(self):
+        return self.title
+
+    def get_absolute_url(self):
+        return reverse(APP_NAME+":product_or_service_category", kwargs={"pk": self.pk})
+
 class ProductOrService(Page):
+    product_or_service_category=models.ForeignKey("productorservicecategory", null=True,blank=True,verbose_name=_("دسته بندی"), on_delete=models.CASCADE)
+    barcode=models.CharField(_("بارکد"),null=True,blank=True, max_length=100)
 
     
     @property
@@ -207,10 +255,14 @@ class Account(models.Model,LinkHelper):
     logo_origin=models.ImageField(_("لوگو , تصویر"), null=True,blank=True,upload_to=IMAGE_FOLDER+"account/", height_field=None, width_field=None, max_length=None)
     title=models.CharField(_("عنوان"), null=True,blank=True,max_length=500)
     profile=models.ForeignKey("authentication.profile", verbose_name=_("profile"),null=True,blank=True, on_delete=models.CASCADE)
-    
-    address=models.CharField(_("آدرس"),null=True,blank=True, max_length=50)
+    address=models.CharField(_("آدرس"),null=True,blank=True, max_length=200)
     tel=models.CharField(_("تلفن"),null=True,blank=True, max_length=50)
     description=models.CharField(_("توضیحات"),blank=True,max_length=5000)
+    economic_no=models.CharField(_("شماره اقتصادی"),max_length=50,null=True,blank=True)
+    melli_id=models.CharField(_("شناسه ملی"),max_length=50,null=True,blank=True)
+    register_no=models.CharField(_("شماره ثبت"),max_length=50,null=True,blank=True)
+    fax=models.CharField(_("شماره فکس"),max_length=50,null=True,blank=True)
+    postal_code=models.CharField(_("کد پستی"),max_length=50,null=True,blank=True)
 
     class_name=models.CharField(_("class_name"),blank=True, max_length=50)
     app_name=models.CharField(_("app_name"),blank=True,max_length=50)
@@ -590,7 +642,11 @@ class Invoice(Transaction):
     ship_fee=models.IntegerField(_("هزینه حمل"),default=0)
     discount=models.IntegerField(_("تخفیف"),default=0)
  
-
+    def get_official_print_url(self):
+        return reverse(APP_NAME+":invoice_official_print",kwargs={'pk':self.pk})
+    
+    def get_letter_of_intent_url(self):
+        return reverse(APP_NAME+":invoice_letter_of_intent",kwargs={'pk':self.pk})
 
     def get_print_url(self):
         return reverse(APP_NAME+":invoice_print_currency",kwargs={'pk':self.pk,'currency':'r'})
@@ -662,6 +718,7 @@ class InvoiceLine(models.Model,LinkHelper):
     row=models.IntegerField(_("row"),blank=True)
     product_or_service=models.ForeignKey("productorservice", verbose_name=_("productorservice"), on_delete=models.CASCADE)
     quantity=models.FloatField(_("quantity"))
+    discount=models.IntegerField(_("discount"),default=0)
     unit_price=models.IntegerField(_("unit_price"))
     unit_name=models.CharField(_("unit_name"),max_length=50,choices=UnitNameEnum.choices,default=UnitNameEnum.ADAD)
     description=models.CharField(_("description"),null=True,blank=True, max_length=50)
@@ -670,6 +727,22 @@ class InvoiceLine(models.Model,LinkHelper):
     def save(self,*args, **kwargs):
         super(InvoiceLine,self).save(*args, **kwargs)
         self.invoice.save()
+        i=0
+        for invoice_line in self.invoice.invoice_lines().order_by('row'):
+            i+=1
+            if not invoice_line.row-i==0:
+                invoice_line.row=i
+                invoice_line.save()
+    def delete(self,*args, **kwargs):
+        invoice=self.invoice
+        super(InvoiceLine,self).delete()
+        i=0
+        for invoice_line in invoice.invoice_lines().order_by('row'):
+            i+=1
+            if not invoice_line.row-i==0:
+                invoice_line.row=i
+                invoice_line.save()
+
     class Meta:
         verbose_name = _("InvoiceLine")
         verbose_name_plural = _("InvoiceLines")

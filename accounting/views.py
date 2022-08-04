@@ -16,8 +16,8 @@ from django.views import View
 from utility.calendar import PersianCalendar
 from utility.excel import ReportSheet,ReportWorkBook, get_style
 from accounting.apps import APP_NAME
-from accounting.repo import BankRepo,AssetRepo, CostRepo,BankAccountRepo, InvoiceLineRepo,AccountRepo,FinancialBalanceRepo, ChequeRepo, PaymentRepo, PriceRepo, ProductRepo,ServiceRepo,FinancialDocumentRepo,InvoiceRepo, TransactionRepo
-from accounting.serializers import AccountSerializer, AccountSerializerFull, AssetSerializer, BankAccountSerializer, BankSerializer, CostSerializer, FinancialBalanceSerializer, InvoiceFullSerializer,InvoiceLineSerializer,ChequeSerializer, InvoiceSerializer, PaymentSerializer, PriceSerializer, ProductSerializer,ServiceSerializer,FinancialDocumentForAccountSerializer,FinancialDocumentSerializer, TransactionSerializer
+from accounting.repo import BankRepo,AssetRepo, CostRepo,BankAccountRepo, InvoiceLineRepo,AccountRepo,FinancialBalanceRepo, ChequeRepo, PaymentRepo, PriceRepo, ProductOrServiceCategoryRepo, ProductRepo,ServiceRepo,FinancialDocumentRepo,InvoiceRepo, TransactionRepo
+from accounting.serializers import InvoiceLineWithInvoiceSerializer,AccountSerializer, AccountSerializerFull, AssetSerializer, BankAccountSerializer, BankSerializer, CostSerializer, FinancialBalanceSerializer, InvoiceFullSerializer,InvoiceLineSerializer,ChequeSerializer, InvoiceSerializer, PaymentSerializer, PriceSerializer, ProductOrServiceCategorySerializer, ProductSerializer,ServiceSerializer,FinancialDocumentForAccountSerializer,FinancialDocumentSerializer, TransactionSerializer
 from accounting.forms import *
 import json
 from phoenix.server_settings import phoenix_apps
@@ -47,6 +47,7 @@ def get_add_payment_context(request,*args, **kwargs):
     context={}
     if request.user.has_perm(APP_NAME+".add_payment"):
         accounts=AccountRepo(request=request).list(*args, **kwargs)
+        context['transaction_statuses']=(u[0] for u in TransactionStatusEnum.choices)
         context['payment_methods']=(u[0] for u in PaymentMethodEnum.choices)
         context['accounts']=accounts
         context['add_payment_form']=AddPaymentForm()
@@ -146,6 +147,7 @@ def get_price_app_context(request,*args, **kwargs):
     context['unit_names']=unit_names
     prices=PriceRepo(request=request).list(item_id=items[0].id)
     context['prices']=prices
+    context['prices_s']=json.dumps(PriceSerializer(prices,many=True).data)
     return context
 
 def get_account_context(request,*args, **kwargs):
@@ -231,11 +233,20 @@ def get_product_or_service_context(request,*args, **kwargs):
     if 'service' in kwargs:
         product_or_service=kwargs['service']
         context['service']=product_or_service
-
+    product_or_service_categories=ProductOrServiceCategoryRepo(request=request).list()
+    context['product_or_service_categories']=product_or_service_categories
     context['product_or_service']=product_or_service
+    context['product_or_service_category_s']=json.dumps(ProductOrServiceCategorySerializer(product_or_service.product_or_service_category).data)
     context.update(PageContext(request=request,page=product_or_service))
     context.update(get_price_app_context(request=request,items=[product_or_service]))
 
+    # invoice_lines
+    invoice_lines=InvoiceLineRepo(request=request).list(product_or_service_id=product_or_service.pk)
+    context['invoice_lines']=invoice_lines
+    # invoice_lines_s=json.dumps(InvoiceLineWithInvoiceSerializer(invoice_lines,many=True).data)
+    # context['invoice_lines_s']=invoice_lines_s
+
+    
     return context
 
 def get_product_context(request,*args, **kwargs):
@@ -246,7 +257,8 @@ def get_product_context(request,*args, **kwargs):
         return mv.response()
     
     context=get_product_or_service_context(request=request,item=product,*args, **kwargs)
-
+    
+    
     # invoices
     invoices=InvoiceRepo(request=request).list(product_id=product.id)
     context['invoices']=invoices
@@ -317,7 +329,38 @@ def get_add_bank_account_context(request,*args, **kwargs):
     context['banks']=banks
     return context
 
+def getInvoiceLineContext(request,*args, **kwargs):
+    context={}
+    invoice_line=InvoiceLineRepo(request=request).invoice_line(*args, **kwargs)
+    context['invoice_line']=invoice_line
+    
+    if app_is_installed('guarantee'):
+        from guarantee.repo import GuaranteeRepo
+        from guarantee.serializers import GuaranteeSerializer
+        guarantees=GuaranteeRepo(request=request).list(invoice_line_id=invoice_line.id)
+        context['guarantees']=guarantees
+        guarantees_s=json.dumps(GuaranteeSerializer(guarantees,many=True).data)
+        context['guarantees_s']=guarantees_s
 
+    
+    # warehouse_sheets=[]
+    if app_is_installed('warehouse'):
+        from warehouse.enums import WareHouseSheetDirectionEnum
+        from warehouse.repo import WareHouseSheetRepo,WareHouseRepo
+        from warehouse.forms import AddWarehouseSheetForm
+        warehouse_sheets=WareHouseSheetRepo(request=request).list(invoice_line_id=invoice_line.id)
+        warehouse_sheets_s=json.dumps(WareHouseSheetSerializer(warehouse_sheets,many=True).data)
+        context['warehouse_sheets_s']=warehouse_sheets_s
+        if request.user.has_perm('warehouse.add_warehousesheet'):
+            context['add_ware_house_sheet_form']=AddWarehouseSheetForm()
+            ware_houses=WareHouseRepo(request=request).list()
+            context['directions']=(direction[0] for direction in WareHouseSheetDirectionEnum.choices)
+            context['ware_houses']=ware_houses
+
+    # context['add_ware_house_sheet_form']=AddWarehouseSheetForm()
+
+    return context
+ 
 class HomeView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -436,9 +479,14 @@ class InvoiceExcelView(View):
     def get(self,request,*args, **kwargs):
         now=PersianCalendar().date
         invoice=InvoiceRepo(request=request).invoice(*args, **kwargs)
+        if invoice is None:
+            mv=MessageView(request=request)
+            mv.title="فاکتور پیدا نشد."
+            mv.body="فاکتور پیدا نشد."
+            return mv.response()
         date=PersianCalendar().from_gregorian(now)
         lines=[]
-        for i,invoice_line in enumerate(invoice.invoice_lines(),1):
+        for i,invoice_line in enumerate(invoice.invoice_lines(),start=1):
             line={
                 'ردیف':i,
                 'title':invoice_line.product_or_service.title,
@@ -450,7 +498,69 @@ class InvoiceExcelView(View):
             lines.append(line)
                
         report_work_book=ReportWorkBook()
-        report_work_book=ReportWorkBook(origin_file_name=f'Page.xlsx')
+        report_work_book=ReportWorkBook(origin_file_name=f'Invoice.xlsx')
+        style=get_style(font_name='B Koodak',size=12,bold=False,color='FF000000',start_color='FFFFFF',end_color='FF000000')
+        # sheet1=ReportSheet(
+        #     data=lines,
+        #     start_row=3,
+        #     start_col=1,
+        #     table_has_header=False,
+        #     table_headers=None,
+        #     style=style,
+        #     sheet_name='links',
+            
+        # )
+        
+        start_row=3
+        report_work_book.add_sheet(
+            data=lines,
+            start_row=start_row,
+            table_has_header=False,
+            table_headers=None,
+            style=style,
+            sheet_name='Invoice',
+        )
+            
+        file_name=f"""{date.replace('/','').replace(':','')}   Page {1}.xlsx"""
+        
+        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        # response.AppendHeader("Content-Type", "application/vnd.ms-excel");
+        response["Content-disposition"]=f"attachment; filename={file_name}"
+        report_work_book.work_book.save(response)
+        report_work_book.work_book.close()
+        return response
+
+class NewInvoiceView(View):
+    def get(self,request,*args, **kwargs):
+        invoice=InvoiceRepo(request=request).create_invoice(*args, **kwargs)
+        url=reverse(APP_NAME+":edit_invoice",kwargs={'pk':invoice.pk})
+        return redirect(url)
+
+
+class InvoiceLetterOfIntentView(View):
+    def get(self,request,*args, **kwargs):
+        now=PersianCalendar().date
+        invoice=InvoiceRepo(request=request).invoice(*args, **kwargs)
+        if invoice is None:
+            mv=MessageView(request=request)
+            mv.title="فاکتور پیدا نشد."
+            mv.body="فاکتور پیدا نشد."
+            return mv.response()
+        date=PersianCalendar().from_gregorian(now)
+        lines=[]
+        for i,invoice_line in enumerate(invoice.invoice_lines(),1):
+            line={
+                'ردیف':i,
+                'title':invoice_line.product_or_service.title,
+                'آدرس':invoice_line.quantity,      
+                'unit_name':invoice_line.unit_name,      
+                'unit_price':0,      
+                'line_total':0,      
+            }
+            lines.append(line)
+               
+        report_work_book=ReportWorkBook()
+        report_work_book=ReportWorkBook(origin_file_name=f'Invoice.xlsx')
         style=get_style(font_name='B Koodak',size=12,bold=False,color='FF000000',start_color='FFFFFF',end_color='FF000000')
         # sheet1=ReportSheet(
         #     data=lines,
@@ -469,37 +579,8 @@ class InvoiceExcelView(View):
             table_has_header=False,
             table_headers=None,
             style=style,
-            sheet_name='links',
-        )
-        lines=[]
-        for i,document in enumerate([{'title':'dddd','get_download_url':'7654erftgh'}],1):
-            line={
-                'ردیف':i,
-                'عنوان ':document['title'],
-                'آدرس':document['get_download_url'],          
-            }
-            lines.append(line)
-            
-
-        # sheet2=ReportSheet(
-        #     # data=json.dumps(DocumentSerializer(page.documents.all(),many=True).data),
-        #     data=lines,
-        #     current_row=3,
-        #     table_has_header=False,
-        #     table_headers=None,
-        #     style=style,
-        #     sheet_name='docs',
-           
-        # )
-        report_work_book.add_sheet(
-              data=lines,
-            start_row=3,
-            table_has_header=False,
-            table_headers=None,
-            style=style,
-            sheet_name='docs',
-        )
-            
+            sheet_name='Invoice',
+        ) 
         file_name=f"""{date.replace('/','').replace(':','')}   Page {1}.xlsx"""
         
         response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
@@ -508,13 +589,6 @@ class InvoiceExcelView(View):
         report_work_book.work_book.save(response)
         report_work_book.work_book.close()
         return response
-
-class NewInvoiceView(View):
-    def get(self,request,*args, **kwargs):
-        invoice=InvoiceRepo(request=request).create_invoice(*args, **kwargs)
-        url=reverse(APP_NAME+":edit_invoice",kwargs={'pk':invoice.pk})
-        return redirect(url)
-
 
  
 class InvoiceView(View):
@@ -559,6 +633,19 @@ class InvoicePrintView(View):
         context['no_footer']=True
         context['no_navbar']=True
         return render(request,TEMPLATE_ROOT+"invoice-print.html",context)
+class InvoiceOfficialPrintView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        context.update(get_invoice_context(request=request,*args, **kwargs))
+
+        context['TUMAN']=False
+        context['RIAL']=True
+        from core.constants import RIAL
+        context['CURRENCY']=RIAL
+
+        context['no_footer']=True
+        context['no_navbar']=True
+        return render(request,TEMPLATE_ROOT+"invoice-official-print.html",context)
 class InvoicesView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -578,41 +665,17 @@ class InvoiceEditView(View):
         context.update(get_edit_invoice_context(request=request,invoice=invoice,*args, **kwargs))
         
         return render(request,TEMPLATE_ROOT+"invoice-edit.html",context)
+   
 class InvoiceLineView(View):
     def post(self,request,*args, **kwargs):
         return EditInvoiceApi().post(request=request,*args, **kwargs)
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
+        context.update(getInvoiceLineContext(request=request,*args, **kwargs))
         invoice_line=InvoiceLineRepo(request=request).invoice_line(*args, **kwargs)
         context['invoice_line']=invoice_line
 
             
-        
-        if app_is_installed('guarantee'):
-            from guarantee.repo import GuaranteeRepo
-            from guarantee.serializers import GuaranteeSerializer
-            guarantees=GuaranteeRepo(request=request).list(invoice_line_id=invoice_line.id)
-            context['guarantees']=guarantees
-            guarantees_s=json.dumps(GuaranteeSerializer(guarantees,many=True).data)
-            context['guarantees_s']=guarantees_s
-
-        
-        # warehouse_sheets=[]
-        if app_is_installed('warehouse'):
-            from warehouse.enums import WareHouseSheetDirectionEnum
-            from warehouse.repo import WareHouseSheetRepo,WareHouseRepo
-            from warehouse.forms import AddWarehouseSheetForm
-            warehouse_sheets=WareHouseSheetRepo(request=request).list(invoice_line_id=invoice_line.id)
-            warehouse_sheets_s=json.dumps(WareHouseSheetSerializer(warehouse_sheets,many=True).data)
-            context['warehouse_sheets_s']=warehouse_sheets_s
-            if request.user.has_perm('warehouse.add_warehousesheet'):
-                context['add_ware_house_sheet_form']=AddWarehouseSheetForm()
-                ware_houses=WareHouseRepo(request=request).list()
-                context['directions']=(direction[0] for direction in WareHouseSheetDirectionEnum.choices)
-                context['ware_houses']=ware_houses
-
-        # context['add_ware_house_sheet_form']=AddWarehouseSheetForm()
-
         return render(request,TEMPLATE_ROOT+"invoice-line.html",context)
 
 class TransactionView(View):
@@ -696,6 +759,45 @@ class TransactionsPrintView(View):
             context['no_footer']=True
             context['no_navbar']=True
             return render(request,TEMPLATE_ROOT+"transactions-print.html",context)
+
+class ProductOrServiceCategoriesView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        product_or_service_categories=ProductOrServiceCategoryRepo(request=request).list(*args, **kwargs)
+        context['product_or_service_categories']=product_or_service_categories
+        product_or_service_categories_s=json.dumps(ProductOrServiceCategorySerializer(product_or_service_categories,many=True).data)
+        context['product_or_service_categories_s']=product_or_service_categories_s
+        context['expand_product_or_service_categories']=True
+        if request.user.has_perm(APP_NAME+".add_productorservicecategory"):
+            context['add_account_form']=AddAccountForm()
+        return render(request,TEMPLATE_ROOT+"product-or-service-categories.html",context)
+
+
+class ProductOrServiceCategoryView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        product_or_service_category_repo=ProductOrServiceCategoryRepo(request=request)
+        product_or_service_category=product_or_service_category_repo.product_or_service_category(*args, **kwargs)
+        if product_or_service_category is None:
+            mv=MessageView(request=request)
+            mv.title="چنین کالایی یافت نشد."
+        # context['expand_products']=True
+        # context['expand_services']=True
+        
+        products=ProductRepo(request=request).list(product_or_service_category_id=product_or_service_category.pk)
+        context['products']=products
+        products_s=json.dumps(ProductSerializer(products,many=True).data)
+        context['products_s']=products_s
+        
+
+        services=ServiceRepo(request=request).list(product_or_service_category_id=product_or_service_category.pk)
+        context['services']=services
+        services_s=json.dumps(ServiceSerializer(services,many=True).data)
+        context['services_s']=services_s
+        context['product_or_service_category']=product_or_service_category
+        product_or_service_categories=product_or_service_category_repo.list(super_category=None)
+        context['product_or_service_categories']=product_or_service_categories
+        return render(request,TEMPLATE_ROOT+"product-or-service-category.html",context)
 
 
 class ProductsView(View):
@@ -913,11 +1015,23 @@ class FinancialDocumentView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
         financial_document=FinancialDocumentRepo(request=request).financial_document(*args, **kwargs)
+        if financial_document is None:
+            mv=MessageView(request=request)
+            mv.title="چنین سندی یافت نشد."
+            mv.body="چنین سندی یافت نشد."
+            return mv.response()
         financial_document.normalize_balances()
 
         context['financial_document']=financial_document
         financial_balances=FinancialBalanceRepo(request=request).list(financial_document_id=financial_document.id)
         context['financial_balances']=financial_balances
+
+        transactions=[financial_document.transaction]
+        context['transactions']=transactions
+        transactions_s=json.dumps(TransactionSerializer(transactions,many=True).data)
+        context['transactions_s']=transactions_s
+
+
         if request.user.has_perm(APP_NAME+".add_financialdocument"):
             context['add_financial_balance_form']=AddFinancialBalanceForm()
             context['financial_balance_title_enum']=(cc[0] for cc in FinancialBalanceTitleEnum.choices)

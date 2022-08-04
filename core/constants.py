@@ -8,3 +8,4 @@ CURRENCY=CurrencyEnum.TUMAN
 
 TUMAN=CurrencyEnum.TUMAN
 RIAL=CurrencyEnum.RIAL
+MISC="متفرقه"

@@ -42,7 +42,7 @@ class AddPageDownloadForm(forms.Form):
 
 class AddPageLinkForm(forms.Form):
     page_id=forms.IntegerField(required=False)
-    title=forms.CharField(max_length=50,required=False)
+    title=forms.CharField(max_length=300,required=False)
     url=forms.CharField(max_length=2000,required=False)
 
 

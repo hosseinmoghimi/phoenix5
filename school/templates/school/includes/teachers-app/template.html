@@ -3,6 +3,14 @@
     <h4 class="title">
       <a href="{% url 'school:teachers' %}">
         لیست دبیران
+
+
+        <span v-if="teachers.length>0">
+          <small class="text-danger mx-2">
+            <span v-text="teachers.length"></span>
+          </small>
+        </span>
+
       </a>
     </h4>
   </div>
@@ -31,6 +39,6 @@
       {% include "authentication/includes/profiles-app/select-profile-form.html" %}
     </form>
   </div>
-{% endif %}
+  {% endif %}
 
 </div>

@@ -1,13 +1,13 @@
 from django import template
 register = template.Library()
-from phoenix.server_settings import SITE_FULL_BASE_ADDRESS
+from phoenix.server_settings import FULL_SITE_URL
 @register.filter
 def to_absolute_link(url):
     absolute_link=""
-    if SITE_FULL_BASE_ADDRESS[len(SITE_FULL_BASE_ADDRESS)-1]=="/" and url[0]=="/":
-        absolute_link=SITE_FULL_BASE_ADDRESS[0:len(SITE_FULL_BASE_ADDRESS)-1]+url
+    if FULL_SITE_URL[len(FULL_SITE_URL)-1]=="/" and url[0]=="/":
+        absolute_link=FULL_SITE_URL[0:len(FULL_SITE_URL)-1]+url
     else:
-        absolute_link=SITE_FULL_BASE_ADDRESS+url
+        absolute_link=FULL_SITE_URL+url
     if absolute_link[len(absolute_link)-1]=="/":
         pass
     else:

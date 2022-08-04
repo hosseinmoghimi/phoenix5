@@ -8,7 +8,7 @@ from organization.enums import *
 class OrganizationUnit(Page):
     pre_title = models.CharField(
         _("pre_title"), blank=True, null=True, max_length=50)
-    account = models.ForeignKey("accounting.account", null=True, blank=True, verbose_name=_(
+    account = models.ForeignKey("accounting.account",verbose_name=_(
         "account"), on_delete=models.CASCADE)
     parent = models.ForeignKey("organizationunit", related_name="childs",
                                null=True, blank=True, verbose_name=_("parent"), on_delete=models.CASCADE)
@@ -29,8 +29,8 @@ class OrganizationUnit(Page):
     def full_title(self,*args, **kwargs):
         a=""
         if self.parent is not None:
-            a+=self.parent.full_title +" "
-        return a+self.title
+            a+=" "+self.parent.full_title
+        return self.title+a
                                 
     def all_sub_orgs(self):
         ids=self.all_childs_ids()

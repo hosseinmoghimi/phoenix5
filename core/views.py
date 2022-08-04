@@ -9,7 +9,7 @@ from log.repo import LogRepo
 from core.enums import ColorEnum, IconsEnum, ParameterNameEnum, PictureNameEnum
 from core.models import Download, Link
 from core.repo import DownloadRepo, ImageRepo, PageDownloadRepo, PageImageRepo, PageLikeRepo, PagePermissionRepo, PageRepo, PageTagRepo, ParameterRepo, PictureRepo, TagRepo
-from core.serializers import PagePermissionSerializer,PageBriefSerializer, PageCommentSerializer, PageImageSerializer, PageDownloadSerializer, PageLinkSerializer, PageTagSerializer
+from core.serializers import PagePermissionSerializer,PageBriefSerializer, PageCommentSerializer, PageImageSerializer, PageDownloadSerializer, PageLinkSerializer, PageSerializer, PageTagSerializer, TagSerializer
 from phoenix.settings import ADMIN_URL, MEDIA_URL, STATIC_URL, SITE_URL
 from django.shortcuts import render
 from authentication.repo import ProfileRepo
@@ -91,6 +91,8 @@ def CoreContext(request, *args, **kwargs):
     current_datetime = pc.from_gregorian(now)
     context['current_date'] = current_datetime[:10]
     context['current_datetime'] = current_datetime
+    context['search_form'] = SearchForm()
+    context['search_action'] = reverse('core:search')
     from messenger.views import getPusherContext
     context.update(getPusherContext(request=request,profile=profile))
 
@@ -252,6 +254,43 @@ class HomeView(View):
     def get(self, request, *args, **kwargs):
         context=getContext(request=request)
         return render(request,TEMPLATE_ROOT+"index.html",context) 
+
+
+class SearchView(View):
+    def get(self, request, *args, **kwargs):
+        context = getContext(request=request)
+
+        return render(request, TEMPLATE_ROOT+"search.html", context)
+
+    def post(self, request, *args, **kwargs):
+        context = getContext(request=request)
+        search_form = SearchForm(request.POST)
+        if search_form.is_valid():
+            cd = search_form.cleaned_data
+            search_for = cd['search_for']
+            context['search_for'] = search_for
+
+            # tag = TagRepo(request=request).tag(
+            #     search_for=search_for)
+            # context['tags'] = tags
+            # tags_s = json.dumps(
+            #     TagSerializer(tags, many=True).data)
+            # context['tags_s'] = tags_s
+ 
+
+ 
+
+            pages = PageRepo(request=request).list(
+                search_for=search_for)
+            context['pages'] = pages
+            pages_s = json.dumps(
+                PageSerializer(pages, many=True).data)
+            context['pages_s'] = pages_s
+ 
+
+        return render(request, TEMPLATE_ROOT+"search.html", context)
+
+
 class PageView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -337,6 +376,9 @@ class TagView(View):
         context['tag']=tag
         page_tags=tag.pagetag_set.all()
         context['page_tags']=page_tags
+        context['pages']=tag.pages()
+        context['pages_s']='[]'
+
         return render(request,TEMPLATE_ROOT+"tag.html",context)
         
 class PageTagView(View):
@@ -377,7 +419,17 @@ class PagePrintView(View):
         context.update(PageContext(request=request,page=page))
         context['no_footer']=True
         context['no_navbar']=True
-        return render(request,TEMPLATE_ROOT+"includes/page-app/print.html",context)
+        context['is_printed']=True
+        
+        return render(request,TEMPLATE_ROOT+"page-print.html",context)
+
+
+class PageShowView(View):
+    def get(self, request, *args, **kwargs):
+        context=getContext(request=request)
+        page=PageRepo(request=request).page(*args, **kwargs)
+        context.update(PageContext(request=request,page=page))
+        return render(request,TEMPLATE_ROOT+"page-show.html",context)
 
 
 class PageEditView(View):

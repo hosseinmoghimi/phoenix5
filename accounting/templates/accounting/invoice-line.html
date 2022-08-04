@@ -5,8 +5,8 @@
 
 {% load to_variz_text %}
 {% block content %}
-<div class="row">
-    <div class="col-md-12">
+<div class="row mt-3">
+    <div class="col-md-12 d-none">
 
         <div class="card">
             <div class="card-body">
@@ -30,12 +30,22 @@
 
 
                 <div class="row">
+                    <div class="col-md-12">
+                        <p class="text-right mx-5">
+                            فاکتور : <a href="{{invoice_line.invoice.get_absolute_url}}">
+                                {{invoice_line.invoice.title}}
+                            </a>
+                        </p>
+                    </div>
                     <div class="col-md-6">
+
+
                         <p class="text-right mx-5">
                             فروشنده : <a href="{{invoice_line.invoice.pay_from.get_absolute_url}}">
                                 {{invoice_line.invoice.pay_from.title}}
                             </a>
                         </p>
+
 
                         <p class="text-right mx-5">
                             خریدار : <a href="{{invoice_line.invoice.pay_to.get_absolute_url}}">
@@ -46,7 +56,15 @@
                     </div>
                     <div class="col-md-6">
                         <p class="text-left mx-5">
-                            تاریخ : {{invoice_line.invoiceinvoice_datetime|to_persian_datetime|safe}}
+                            شماره فاکتور :
+                            <a href="{{invoice_line.invoice.get_absolute_url}}">
+
+                                {{invoice_line.invoice.pk}}
+                            </a>
+                        </p>
+
+                        <p class="text-left mx-5">
+                            تاریخ : {{invoice_line.invoice.invoice_datetime|to_persian_datetime|safe}}
                         </p>
                     </div>
 
@@ -66,7 +84,12 @@
             </div>
         </div>
     </div>
-
+    <div class="col-md-4">
+     {% include "accounting/includes/invoice-line-app/thumbnail.html" %}
+    </div>
+    <div class="col-md-8">
+     {% include "accounting/includes/invoice-line-app/brief-card.html" %}
+    </div>
 
     <div class="col-md-12">
 

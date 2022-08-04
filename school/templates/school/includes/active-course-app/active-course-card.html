@@ -2,7 +2,7 @@
     <div class="card-header">
         <h4 class="title">
             <small class="text-muted">
-                دوره
+                دوره فعال
             </small>
             <a href="{{active_course.get_absolute_url}}">
                 {{active_course.title}}
@@ -12,7 +12,7 @@
     <div class="card-body">
         <div class="mb-3">
             <h4>
-                {{active_course.year.title}}
+               سال تحصیلی  {{active_course.year.title}}
             </h4>
             <h5>
                 {{active_course.title}}
@@ -26,12 +26,40 @@
             </h5>
             <h5>
                 <small class="text-muted">
-                    درس
+                    واحد فعال
+                </small>
+                <a href="{{active_course.get_absolute_url}}">
+                    {{active_course.title}}
+                </a>
+            </h5>
+
+            
+            <h5>
+                <small class="text-muted">
+                    واحد درسی
                 </small>
                 <a href="{{active_course.course.get_absolute_url}}">
                     {{active_course.course.title}}
                 </a>
             </h5>
+
+            <h5>
+                <small class="text-muted">
+                    اتاق
+                </small>
+                <a href="{{active_course.classroom.get_absolute_url}}">
+                    {{active_course.classroom.title}}
+                </a>
+            </h5>
+            <h5>
+                <small class="text-muted">
+                    آموزشگاه
+                </small>
+                <a href="{{active_course.classroom.school.get_absolute_url}}">
+                    {{active_course.classroom.school.title}}
+                </a>
+            </h5>
+
             {% for major in active_course.course.major_set.all %}
             <h5>
                 <small class="text-muted">

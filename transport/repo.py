@@ -98,7 +98,7 @@ class VehicleRepo():
                 if 'vehicle_type' in kwargs:
                     vehicle.vehicle_type=kwargs['vehicle_type']
                 if 'brand' in kwargs:
-                    vehicle.brand=kwargs['brand']
+                    vehicle.brand_name=kwargs['brand']
                 vehicle.save()
                 message=""
                 return vehicle,message

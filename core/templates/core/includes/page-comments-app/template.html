@@ -36,7 +36,7 @@
                 <div class="media">
                     <img src="{{profile.image}}" class="rounded-circle" width="64" alt="">
                     <div class="media-body mr-2">
-                        <h6>{{profile.name}}</h6>
+                        <!-- <h6>{{profile.name}}</h6> -->
    
                             <textarea 
                             id="comment_inputed" 
@@ -45,7 +45,12 @@
                             rows="5"
                             ></textarea>
                             <button @click="add_comment"
-                             class="btn btn-primary farsi btn-round btn-wd float-right">ثبت نظر</button>
+                             class="btn btn-primary farsi btn-round btn-wd float-right mt-2">
+                             
+                             ثبت نظر
+                             <i class="fa fa-paper-plane" aria-hidden="true"></i>
+
+                            </button>
          
                     </div>
                 </div>

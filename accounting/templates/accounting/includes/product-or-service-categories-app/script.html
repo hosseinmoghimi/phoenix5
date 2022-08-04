@@ -1,0 +1,40 @@
+<script>
+    let product_or_service_categories = JSON.parse(`{{product_or_service_categories_s|escapejs}}`)
+    let product_or_service_categories_app = new Vue({
+        el:"#product-or-service-categories-app",
+        data: {
+            product_or_service_categories: product_or_service_categories,
+            search_for:'',
+            waiting:false,
+        },
+        methods: {
+            filter:function(){
+                this.product_or_service_categories = product_or_service_categories.filter(product_or_service_category => product_or_service_category.title.indexOf(this.search_for) > -1)
+         
+            },
+            to_price: function (vall) {
+                let color='primary'
+                if (vall<0)
+                color='danger'
+                if (vall>0)
+                color='success'
+                vall=to_price(vall,"{{CURRENCY}}")
+                return `
+                    <span class="text-${color}">${vall}</span>
+                    `
+            },
+            create_employee: function (account_id) {
+                let url = "{% url 'organization:employee' pk=0 %}"
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    account_id: account_id
+                }
+                $.post(url, payload).done((data) => {
+                    console.log(data)
+                })
+            },
+           
+        }
+    })
+
+</script>

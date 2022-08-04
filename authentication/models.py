@@ -1,5 +1,4 @@
 from utility.calendar import PersianCalendar
-from datetime import datetime
 from phoenix.settings import ADMIN_URL, MEDIA_URL, STATIC_URL
 from django.db import models
 

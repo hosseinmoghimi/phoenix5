@@ -134,7 +134,12 @@ class ProjectRepo():
         objects = self.objects
         if 'search_for' in kwargs:
             search_for=kwargs['search_for']
-            objects = objects.filter(Q(title__contains=search_for)|Q(short_description__contains=search_for)|Q(description__contains=search_for))
+            objects=PageRepo(request=self.request).list(*args, **kwargs).filter(app_name=APP_NAME).filter(class_name='project')
+            ids=[]
+            for obje in objects:
+                ids.append(obje.id)
+            objects=Project.objects.filter(id__in=ids)
+            # objects = objects.filter(Q(title__contains=search_for)|Q(short_description__contains=search_for)|Q(description__contains=search_for))
         if 'for_home' in kwargs:
             objects = objects.filter(Q(for_home=kwargs['for_home']))
         if 'parent_id' in kwargs:
@@ -344,6 +349,47 @@ class ServiceRequestRepo():
         
         self.objects=ServiceRequest.objects.all()
         self.profile=ProfileRepo(*args, **kwargs).me
+    def copy_service_requests(self,*args, **kwargs):
+        if not self.user.has_perm(APP_NAME+".add_servicerequest"):
+            return None
+        project_repo=ProjectRepo(request=self.request)
+        source_project=project_repo.project(project_id=kwargs['source_project_id'])
+        destination_project=project_repo.project(project_id=kwargs['destination_project_id'])
+        if source_project is None or destination_project is None:
+            return
+        service_requests=ServiceRequest.objects.filter(project_id=source_project.id)
+        for service_request in service_requests:
+            new_service_request=ServiceRequest()
+            new_service_request.project_id=destination_project.id
+            new_service_request.quantity=service_request.quantity
+            new_service_request.product_or_service_id=service_request.product_or_service_id
+            new_service_request.date_delivered=service_request.date_delivered
+            new_service_request.date_requested=service_request.date_requested
+            new_service_request.employee_id=service_request.employee_id
+            new_service_request.status=service_request.status
+            new_service_request.type=service_request.type
+            new_service_request.unit_price=service_request.unit_price
+            new_service_request.unit_name=service_request.unit_name
+            new_service_request.description=service_request.description
+            new_service_request.save()
+            # for request_signature in service_request.requestsignature_set.all():
+            #     new_request_signature=RequestSignature()
+            #     new_request_signature.employee_id=request_signature.employee_id
+            #     new_request_signature.status=request_signature.status
+            #     new_request_signature.description=request_signature.description
+            #     new_request_signature.date_added=request_signature.date_added             
+            #     new_request_signature.request_id=new_service_request.id             
+            #     new_request_signature.save()
+            employee=EmployeeRepo(request=self.request).me
+            if employee is not None:
+                new_request_signature=RequestSignature()
+                new_request_signature.employee_id=employee.id
+                new_request_signature.status=RequestStatusEnum.REQUESTED
+                new_request_signature.description=""
+                new_request_signature.request_id=new_service_request.id             
+                new_request_signature.save()
+        return ServiceRequest.objects.filter(project_id=destination_project.id)
+
     def add_service_request(self,*args, **kwargs):
         if not self.user.has_perm(APP_NAME+".add_servicerequest"):
             return None
@@ -566,6 +612,46 @@ class MaterialRequestRepo():
                 material_request_signature.save()
             return new_material_request
 
+    def copy_material_requests(self,*args, **kwargs):
+        if not self.user.has_perm(APP_NAME+".add_materialrequest"):
+            return None
+        project_repo=ProjectRepo(request=self.request)
+        source_project=project_repo.project(project_id=kwargs['source_project_id'])
+        destination_project=project_repo.project(project_id=kwargs['destination_project_id'])
+        if source_project is None or destination_project is None:
+            return
+        material_requests=MaterialRequest.objects.filter(project_id=source_project.id)
+        for material_request in material_requests:
+            new_material_request=MaterialRequest()
+            new_material_request.project_id=destination_project.id
+            new_material_request.quantity=material_request.quantity
+            new_material_request.product_or_service_id=material_request.product_or_service_id
+            new_material_request.date_delivered=material_request.date_delivered
+            new_material_request.date_requested=material_request.date_requested
+            new_material_request.employee_id=material_request.employee_id
+            new_material_request.status=material_request.status
+            new_material_request.type=material_request.type
+            new_material_request.unit_price=material_request.unit_price
+            new_material_request.unit_name=material_request.unit_name
+            new_material_request.description=material_request.description
+            new_material_request.save()
+            # for request_signature in service_request.requestsignature_set.all():
+            #     new_request_signature=RequestSignature()
+            #     new_request_signature.employee_id=request_signature.employee_id
+            #     new_request_signature.status=request_signature.status
+            #     new_request_signature.description=request_signature.description
+            #     new_request_signature.date_added=request_signature.date_added             
+            #     new_request_signature.request_id=new_service_request.id             
+            #     new_request_signature.save()
+            employee=EmployeeRepo(request=self.request).me
+            if employee is not None:
+                new_request_signature=RequestSignature()
+                new_request_signature.employee_id=employee.id
+                new_request_signature.status=RequestStatusEnum.REQUESTED
+                new_request_signature.description=""
+                new_request_signature.request_id=new_material_request.id             
+                new_request_signature.save()
+        return MaterialRequest.objects.filter(project_id=destination_project.id)
     def material_request(self, *args, **kwargs):
         pk=0
         if 'material_request_id' in kwargs:

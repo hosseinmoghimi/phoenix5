@@ -3,6 +3,7 @@ from django.db import models
 from django.http import Http404
 from django.shortcuts import reverse
 from django.utils.translation import gettext as _
+from phoenix.server_settings import QRCODE_ROOT, QRCODE_URL, FULL_SITE_URL
 from phoenix.settings import ADMIN_URL, MEDIA_URL, STATIC_URL, UPLOAD_ROOT
 from tinymce.models import HTMLField
 from utility.calendar import PersianCalendar
@@ -10,7 +11,7 @@ from utility.utils import LinkHelper
 
 from .apps import APP_NAME
 from .enums import *
-
+from utility.qrcode import generate_qrcode
 IMAGE_FOLDER = "images/"
 upload_storage = FileSystemStorage(location=UPLOAD_ROOT, base_url='/uploads')
 
@@ -98,7 +99,8 @@ class Page(models.Model, LinkHelper, ImageMixin):
     def class_title(self):
         return class_title(app_name=self.app_name,class_name=self.class_name)
 
-
+    def get_show_url(self):
+        return reverse(APP_NAME+":page_show",kwargs={'pk':self.pk})
     
 
     def save(self,*args, **kwargs):
@@ -108,7 +110,24 @@ class Page(models.Model, LinkHelper, ImageMixin):
             self.class_name='page'
         return super(Page,self).save()
 
-
+    
+    def get_qrcode_url(self):
+        if self.pk is None:
+            super(Page,self).save()
+        import os
+        file_path = QRCODE_ROOT
+        file_name=self.class_name+str(self.pk)+".svg"
+        file_address=os.path.join(QRCODE_ROOT,file_name)
+        # print(content)
+        # print(file_address)
+        # print(file_name)
+        # print(file_path)
+        # print(100*"$")
+        if not os.path.exists(file_address):
+            content=FULL_SITE_URL[0:-1]+self.get_absolute_url()
+            generate_qrcode(content=content,file_name=file_name,file_address=file_address,file_path=file_path,)
+        return f"{QRCODE_URL}{file_name}"
+ 
     @property
     def full_title(self):
         try:
@@ -194,7 +213,7 @@ class PageComment(models.Model):
 
 
 class Icon(models.Model):
-    title = models.CharField(_("title"), null=True, blank=True, max_length=50)
+    title = models.CharField(_("title"), null=True, blank=True, max_length=300)
     icon_fa = models.CharField(
         _("icon fa"), null=True, blank=True, max_length=50)
     icon_material = models.CharField(
@@ -586,7 +605,11 @@ class Tag(models.Model,LinkHelper):
 
     def __str__(self):
         return self.title
- 
+    def pages(self):
+        pages_ids=[]
+        for page_tag in PageTag.objects.filter(tag_id=self.pk):
+            pages_ids.append(page_tag.page_id)
+        return Page.objects.filter(pk__in=pages_ids)
 
 class PageTag(models.Model,LinkHelper):
     page=models.ForeignKey("page", verbose_name=_("page"), on_delete=models.CASCADE)

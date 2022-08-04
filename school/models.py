@@ -232,7 +232,6 @@ class Session(SchoolPage):
     session_no=models.IntegerField(_("جلسه شماره ؟"))
     start_time=models.DateTimeField(_("start"), auto_now=False, auto_now_add=False)
     end_time=models.DateTimeField(_("start"), auto_now=False, auto_now_add=False)
-
     def save(self,*args, **kwargs):
         self.class_name="session"
         return super(Session,self).save(*args, **kwargs)

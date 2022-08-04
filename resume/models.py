@@ -92,7 +92,7 @@ class ResumeIndex(models.Model,LinkHelper):
     call=models.CharField(_("call"),null=True,blank=True, max_length=50)
 
     def get_qrcode_url(self):
-        from phoenix.settings import QRCODE_ROOT,SITE_FULL_BASE_ADDRESS,QRCODE_URL
+        from phoenix.settings import QRCODE_ROOT,FULL_SITE_URL,QRCODE_URL
         from utility.qrcode import generate_qrcode
         
         if self.pk is None:
@@ -102,11 +102,12 @@ class ResumeIndex(models.Model,LinkHelper):
         file_name=APP_NAME+"_"+self.class_name+str(self.pk)+".svg"
         # file_address=os.path.join(file_path,file_name)
         file_address=os.path.join(QRCODE_ROOT,file_name)
-        content=SITE_FULL_BASE_ADDRESS[0:len(SITE_FULL_BASE_ADDRESS)-1]+self.get_absolute_url()
+        content=FULL_SITE_URL[0:len(FULL_SITE_URL)-1]+self.get_absolute_url()
         generate_qrcode(content=content,file_name=file_name,file_address=file_address,file_path=file_path)
 
         file_name=APP_NAME+"_"+self.class_name+str(self.pk)+".svg"   
         return f"{QRCODE_URL}{file_name}"
+
     def get_print_url(self):
         return reverse(APP_NAME+":resume_print",kwargs={'pk':self.pk})
     class Meta:

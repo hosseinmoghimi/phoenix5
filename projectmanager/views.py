@@ -8,6 +8,8 @@ from django.shortcuts import redirect, render
 from django.shortcuts import render, reverse
 from core.constants import FAILED, SUCCEED
 from core.enums import UnitNameEnum
+from core.repo import PageRepo
+from core.serializers import PageSerializer
 from core.views import CoreContext, MessageView, SearchForm, PageContext
 # Create your views here.
 from django.views import View
@@ -23,6 +25,7 @@ from projectmanager.repo import EventRepo, MaterialInvoiceRepo, MaterialRepo, Ma
 from projectmanager.serializers import EventSerializer,  MaterialSerializer, ProjectSerializerForGuantt, RequestSignatureForEmployeeSerializer, RequestSignatureSerializer, ServiceSerializer, ProjectSerializer, ServiceRequestSerializer, MaterialRequestSerializer
 from organization.repo import EmployeeRepo,OrganizationUnitRepo
 from organization.serializers import EmployeeSerializer,OrganizationUnitSerializer
+from accounting.views import getInvoiceLineContext
 TEMPLATE_ROOT = "projectmanager/"
 LAYOUT_PARENT = "phoenix/layout.html"
 
@@ -85,6 +88,11 @@ class SearchView(View):
             projects_s = json.dumps(ProjectSerializer(projects, many=True).data)
             context['projects_s'] = projects_s
 
+            pages = PageRepo(request=request).list(search_for=search_for).filter(app_name=APP_NAME)
+            context['pages'] = pages
+            pages_s = json.dumps(PageSerializer(pages, many=True).data)
+            context['pages_s'] = pages_s
+
 
 
         return render(request, TEMPLATE_ROOT+"search.html", context)
@@ -109,6 +117,7 @@ class ProjectsView(View):
 class RequestView(View):
     def get(self, request, *args, **kwargs):
         context = getContext(request=request)
+        context.update(getInvoiceLineContext(request=request,*args, **kwargs))
 
         my_request = MaterialRequestRepo(
             request=request).material_request(*args, **kwargs)
@@ -235,13 +244,33 @@ class ProjectView(View):
         return render(request, TEMPLATE_ROOT+"project.html", context)
 
 
+class CopyProjectView(View):
+    def post(self, request, *args, **kwargs):
+        context = {}
+        context['result']=FAILED
+        copy_project_form=CopyProjectForm(request.POST)
+        if copy_project_form.is_valid():
+            project_id=copy_project_form.cleaned_data['project_id']
+            project_repo=ProjectRepo(request=request)
+            source_project=project_repo.project(pk=project_id)
+            if source_project is None:
+                message="چنین پروژه ای پیدا نشد."
+                mv=MessageView(request=request)
+                mv.title=message
+                mv.body=message
+                return mv.response()
+            # project=project_repo.add_project(title=)
+        return JsonResponse(context)
+
+
 class ProjectGuanttView(View):
     def get(self, request, *args, **kwargs):
         context = getContext(request=request)
         project = ProjectRepo(request=request).project(*args, **kwargs)
         context['project'] = project
-        context['projects_s'] = json.dumps(
-            ProjectSerializerForGuantt(project.all_sub_projects().all(), many=True).data)
+        projects=ProjectRepo(request=request).list(parent_id=project.pk)
+        context['projects'] = projects
+        context['projects_s'] = json.dumps(ProjectSerializerForGuantt(projects, many=True).data)
         return render(request, TEMPLATE_ROOT+"guantt.html", context)
 
 
@@ -264,7 +293,7 @@ class ProjectChartView(View):
 
         pages_s=[]
         for page in pages:
-            names=""
+            names=page.get_full_description_for_chart()
             pages_s.append({
                 'title': f"""{page.title}""",
                 'parent_id': page.parent_id,
@@ -275,7 +304,7 @@ class ProjectChartView(View):
 
             })
         for page in [project]:
-            names=""
+            names=page.get_full_description_for_chart()
             pages_s.append({
                 'title': f"""{page.title}""",
                 'parent_id': page.parent_id,

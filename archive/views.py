@@ -1,7 +1,7 @@
 from django.http import Http404, JsonResponse
 from django.shortcuts import render,reverse
 from core.constants import CURRENCY, FAILED, SUCCEED 
-from core.views import CoreContext, PageContext,SearchForm
+from core.views import CoreContext, MessageView, PageContext,SearchForm
 # Create your views here.
 from django.views import View
 
@@ -54,6 +54,11 @@ class FolderView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
         folder=FolderRepo(request=request).folder(*args, **kwargs)
+        if folder is None:
+            mv=MessageView(request=request)
+            mv.title="چنین پوشه ای وجود ندارد."
+            mv.body="چنین پوشه ای وجود ندارد."
+            return mv.response()
         context['folder']=folder
         folder_s=json.dumps(FolderSerializer(folder).data)
         context['folder_s']=folder_s
@@ -76,6 +81,11 @@ class FileView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
         file=FileRepo(request=request).file(*args, **kwargs)
+        if file is None:
+            mv=MessageView(request=request)
+            mv.title="چنین فایلی وجود ندارد."
+            mv.body="چنین فایلی وجود ندارد."
+            return mv.response()
         context['file']=file
         context.update(PageContext(request=request,page=file))
         return render(request,TEMPLATE_ROOT+"file.html",context)

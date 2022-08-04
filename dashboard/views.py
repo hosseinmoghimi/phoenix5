@@ -32,8 +32,10 @@ class ParameterViews(View):
             LogRepo(request=request).add_log(title="Http404 dashboard views 1",app_name=APP_NAME)
             raise Http404
         if not request.user.has_perm("core.change_parameter"):
-            mv=MessageView(title="دسترسی غیر مجاز",body="<p>شما مجوز لازم برای دسترسی به این صفحه را ندارید.</p>")
-            return mv.response(request=request)
+            mv=MessageView(request=request,title="دسترسی غیر مجاز",body="<p>شما مجوز لازم برای دسترسی به این صفحه را ندارید.</p>")
+            # mv.title="دسترسی غیر مجاز"
+            # mv.body="<p>شما مجوز لازم برای دسترسی به این صفحه را ندارید.</p>"
+            return mv.response()
         app_name=kwargs['app_name']
 
         parameters=ParameterRepo(request=request,app_name=app_name).list(*args, **kwargs)

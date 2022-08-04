@@ -1,9 +1,8 @@
-from wsgiref.util import request_uri
 from django.shortcuts import render
 from core.enums import ParameterNameEnum
 from market.enums import ParameterMarketEnum
-from market.repo import SupplierRepo,CartLineRepo
-from market.serializers import SupplierSerializer,CartLineSerializer
+from market.repo import BrandRepo, SupplierRepo,CartLineRepo
+from market.serializers import BrandSerializer, SupplierSerializer,CartLineSerializer
 from market.forms import *
 from authentication.forms import AddMembershipRequestForm
 from core.repo import ParameterRepo, PictureRepo
@@ -11,7 +10,7 @@ from market.repo import CategoryRepo, ProductRepo
 from market.serializers import CategorySerializer, ProductSerializer
 # Create your views here.
 from django.shortcuts import render,reverse
-from core.views import CoreContext, MessageView,SearchForm
+from core.views import CoreContext, MessageView, PageContext,SearchForm
 # Create your views here.
 from django.views import View
 from market.apps import APP_NAME
@@ -34,6 +33,10 @@ def getContext(request, *args, **kwargs):
     context['search_action'] = reverse(APP_NAME+":search")
     context['LAYOUT_PARENT'] = LAYOUT_PARENT
     context['WIDE_LAYOUT_PARENT'] = WIDE_LAYOUT_PARENT
+    sidebar_categories=CategoryRepo(request=request).list(parent_id=None)
+    context['sidebar_categories']=sidebar_categories
+    sidebar_brands=BrandRepo(request=request).list()
+    context['sidebar_brands']=sidebar_brands
     return context
 
 def get_customer_context(request,*args, **kwargs):
@@ -82,9 +85,6 @@ class HomeView(View):
             request=request, app_name=APP_NAME).picture(name=ParameterMarketEnum.SHOP_HEADER_IMAGE)
         categories = CategoryRepo(request=request).list().exclude(parent_id__gte=1)
         context['categories'] = categories
-        print("categories")
-        print(categories)
-        print(100*"#")
         context['categories_s'] = json.dumps(CategorySerializer(categories,many=True).data)
         category=None
         context['category_s'] = json.dumps(CategorySerializer(category).data)
@@ -161,6 +161,56 @@ class CategoryView(View):
        
 
         return render(request, TEMPLATE_ROOT+"shop.html", context)
+
+
+
+class BrandsView(View):
+    def get(self, request, *args, **kwargs):
+        context = getContext(request)
+        brand_repo=BrandRepo(request=request)
+        brands=brand_repo.category(*args,**kwargs)
+         
+
+        context['brands'] = brands
+        brands_s = json.dumps(BrandSerializer(brands,many=True).data)
+        context['brands_s'] = brands_s
+        context['body_class'] = "ecommerce-page"
+        if request.user.has_perm(APP_NAME+".add_brand"):
+            context['add_brand_form'] = AddBrandForm()
+
+
+
+       
+
+        return render(request, TEMPLATE_ROOT+"brands.html", context)
+
+
+
+class BrandView(View):
+    def get(self, request, *args, **kwargs):
+        context = getContext(request)
+        brand_repo=BrandRepo(request=request)
+        brand=brand_repo.brand(*args,**kwargs)
+        if brand is None:
+            mv=MessageView(request=request)
+            return mv.response()
+        
+
+        context['brand'] = brand
+        brand_s = json.dumps(BrandSerializer(brand).data)
+        context['brand_s'] = brand_s
+        products=brand.products.all()
+        context['products'] = products
+        products_s = json.dumps(ProductSerializer(products,many=True).data)
+        context['products_s'] = products_s
+        context['body_class'] = "ecommerce-page"
+        context['shop_header_image'] = "ecommerce-page"
+        
+        context.update(PageContext(request=request,page=brand))
+
+       
+
+        return render(request, TEMPLATE_ROOT+"brand.html", context)
 
 
 class SearchView(View):

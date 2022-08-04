@@ -79,11 +79,9 @@ class AttendanceSerializer(serializers.ModelSerializer):
 
 
 
-class BookSerializer(serializers.ModelSerializer):
-    links=PageLinkSerializer(many=True)
-    downloads=DownloadSerializer(many=True)
+class BookSerializer(serializers.ModelSerializer): 
     courses=CourseSerializer(many=True)
     class Meta:
         model = Book
-        fields=['id','title','courses','get_absolute_url','get_edit_url','downloads','links','get_delete_url']
+        fields=['id','title','courses','get_absolute_url','get_edit_url','get_delete_url']
 

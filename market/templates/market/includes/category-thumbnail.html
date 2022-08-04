@@ -1,31 +1,35 @@
 <div class="card card-product card-plain no-shadow" data-colored-shadow="false">
-    <div class="card-header card-header-image">
-      <a :href="category.get_absolute_url">
-        <img :src="category.thumbnail" alt="...">
-      </a>
-    </div>
-    <div class="card-body">
-      <a :href="category.get_absolute_url">
-        <h4 class="card-title farsi text-center" v-text="category.title">
+  <div class="card-header card-header-image">
+    <a :href="category.get_absolute_url">
+      <img :src="category.thumbnail" alt="...">
+    </a>
+  </div>
+  <div class="card-body">
+    <a :href="category.get_absolute_url">
+      <h4 class="card-title farsi text-center" v-text="category.title">
 
-         
-        </h4> 
-        {% if perms.market.change_productcategory %}
-          <a target="_blank" :href="category.get_edit_url">
-            <i class="material-icons"   aria-hidden="true" >settings</i>
-          </a>
-          {% endif %}
-      </a>
-      <div class="description" v-html="category.short_description">
+
+      </h4>
+      {% if perms.market.change_productcategory %}
+      <div class="text-right">
+
+        <a target="_blank" :href="category.get_edit_url">
+          <!-- <i class="material-icons" aria-hidden="true">settings</i> -->
+          <i class="fa fa-edit"></i>
+        </a>
       </div>
+      {% endif %}
+    </a>
+    <div class="description" v-html="category.short_description">
     </div>
-    <div class="card-footer justify-content-between">
-      <!-- <div class="price-container">
+  </div>
+  <div class="card-footer justify-content-between">
+    <!-- <div class="price-container">
         <span class="price"> € 800</span>
       </div> -->
-      <!-- <button class="btn btn-rose btn-link btn-fab btn-fab-mini btn-round pull-right" rel="tooltip" title=""
+    <!-- <button class="btn btn-rose btn-link btn-fab btn-fab-mini btn-round pull-right" rel="tooltip" title=""
         data-placement="left" data-original-title="Remove from wishlist">
         <i class="material-icons"   aria-hidden="true" >favorite</i>
       </button> -->
-    </div>
-  </div> <!-- end card -->
+  </div>
+</div> <!-- end card -->

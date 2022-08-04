@@ -9,10 +9,11 @@ from phoenix.server_settings import MEDIA_URL
 from phoenix.settings import STATIC_URL
 from utility.calendar import PersianCalendar
 from messenger.enums import *
+from utility.utils import LinkHelper
 IMAGE_FOLDER=APP_NAME+"/images/"
  
 
-class Message(models.Model):
+class Message(models.Model,LinkHelper):
     title=models.CharField(_("title"), max_length=50)
     body=models.CharField(_("body"), max_length=50)
     channel=models.ForeignKey("channel", verbose_name=_("channel"), on_delete=models.CASCADE)
@@ -22,26 +23,19 @@ class Message(models.Model):
     date_send=models.DateTimeField(_("date send"), auto_now=False, auto_now_add=True)
     sender=models.ForeignKey("authentication.profile", verbose_name=_("sender"), on_delete=models.CASCADE)
     class_name="message"
-    def get_edit_url(self):
-        return f"{ADMIN_URL}{APP_NAME}/{self.class_name}/{self.pk}/change/"
+    app_name=APP_NAME
     class Meta:
         verbose_name = _("Message")
         verbose_name_plural = _("Messages")
     def perisan_date_send(self):
         return PersianCalendar().from_gregorian(self.date_send)
-    def get_absolute_url(self):
-        return "/Message/"
-    
-    # def __str__(self):
-    #     return self.title
+     
+    def __str__(self):
+        return self.title
     # def save(self,*args, **kwargs):
     #     self.class_name='message'
     #     return super(Message,self).save(*args, **kwargs)
-    # def get_absolute_url(self):
-    #     return reverse(APP_NAME+":message", kwargs={"pk": self.pk})
-
-    # def get_edit_url(self):
-    #     return f"{ADMIN_URL}{APP_NAME}/message/{self.pk}/change/"
+    
 
 class Channel(models.Model):
     title=models.CharField(_("title"), max_length=100)
@@ -105,8 +99,8 @@ class Member(models.Model):
     def get_absolute_url(self):
         return reverse(APP_NAME+":member", kwargs={"pk": self.pk})
 
-class Notification(Message):
+class Notification(Message,LinkHelper):
     member=models.ForeignKey("member", verbose_name=_("member"), on_delete=models.CASCADE)
-    read=models.BooleanField(_("read"),default=False)
-    def get_absolute_url(self):
-        return '/Notification/'
+    read=models.BooleanField(_("read"),default=False) 
+    app_name=APP_NAME
+    class_name="notification"

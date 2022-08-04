@@ -1,10 +1,12 @@
 from django import forms
 
-
+class AddWarehouseForm(forms.Form):
+    title=forms.CharField(max_length=100, required=True)
+     
 class ChangeWarehouseSheetStateForm(forms.Form):
     warehouse_sheet_id=forms.IntegerField(required=True)
     status=forms.CharField(max_length=50, required=True)
-     
+    
 class ReportForm(forms.Form):
     ware_house_sheet_id=forms.IntegerField(required=False)
     ware_house_id=forms.IntegerField(required=False)

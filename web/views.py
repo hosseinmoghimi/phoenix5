@@ -22,6 +22,7 @@ def getContext(request, *args, **kwargs):
     context['search_action'] = reverse(APP_NAME+":search")
     context['LAYOUT_PARENT'] = LAYOUT_PARENT
 
+
     if 'profile' in context and False:
         profile=context['profile']
         context['profile_button']={}

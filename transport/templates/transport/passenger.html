@@ -12,13 +12,24 @@
 <h4 class="text-center">
     {{account.title}}
 
-     
+
 </h4>
 
 <h4 class="text-center">
+    {% if account.profile %}
 
     <a href="{{account.profile.get_absolute_url}}" target="_blank" title="پروفایل" class="mx-2"><i
             class="fa fa-user text-info"></i></a>
+
+    {% endif %}
+
+
+    {% if account %}
+
+    <a href="{{account.get_absolute_url}}" target="_blank" title="اکانت" class="mx-2"><i
+            class="fa fa-user text-info"></i></a>
+
+    {% endif %}
 
     {% if perms.accounting.change_account %}
     <a href="{{account.get_edit_url}}" target="_blank" title="ویرایش" class="mx-2"><i
@@ -62,7 +73,7 @@
     {% if add_trip_form %}
 
     <div class="col-md-12">
-      {% include "transport/includes/add-trip-app/template.html" %}
+        {% include "transport/includes/add-trip-app/template.html" %}
     </div>
     {% endif %}
 
@@ -75,8 +86,8 @@
 {% include "accounting/includes/financial-documents-app/script.html" %}
 {% include "accounting/includes/payments-app/script.html" %}
 {% include "accounting/includes/transactions-app/script.html" %}
- {% if add_trip_form %}
+{% if add_trip_form %}
 
-    {% include "transport/includes/add-trip-app/script.html" %}
-  {% endif %}
+{% include "transport/includes/add-trip-app/script.html" %}
+{% endif %}
 {% endblock script %}

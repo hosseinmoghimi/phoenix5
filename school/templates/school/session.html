@@ -13,20 +13,26 @@
 </h4>
 <div class="row">
     <div class="col-md-4">
-        {% include "school/includes/courses-app/course-card.html" %}
+        {% include "core/includes/page-app/brief-card.html" %}
+    </div>
+  
+    <div class="col-md-4">
+
+        {% include "school/includes/active-course-app/active-course-card.html" %}
     </div>
     <div class="col-md-4">
         <div class="card">
             <div class="card-body farsi">
 
-                <div class="my-2 text-right">
+                <!-- <div class="my-2 text-right">
 
-                    {% post_to_telegram link_text="اشتراک با تلگرام" title=session.title obj_or_url=session.get_absolute_url  %}
+                    {% post_to_telegram link_text="اشتراک با تلگرام" title=session.title
+                    obj_or_url=session.get_absolute_url %}
 
                 </div>
                 <div class="my-2 text-right">
-                    {% post_to_whatsapp session.get_absolute_url link_text="  واتسپ" %}
-                </div>
+                    {% post_to_whatsapp session.get_absolute_url link_text=" واتسپ" %}
+                </div> -->
 
 
                 <h5>
@@ -39,6 +45,8 @@
 
             </div>
         </div>
+        {% include "school/includes/sessions-app/template.html" %}
+
     </div>
 
     <div class="col-md-4">
@@ -46,17 +54,13 @@
 
     </div>
 
-    <div class="col-md-6">
-        {% include "school/includes/sessions-app/template.html" %}
 
-    </div>
-
-    <div class="col-md-6">
+    <div class="col-md-4">
         {% include "core/includes/page-downloads-app/template.html" %}
 
 
     </div>
-    <div class="col-md-6">
+    <div class="col-md-4">
         {% include "core/includes/page-links-app/template.html" %}
 
 

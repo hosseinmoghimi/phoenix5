@@ -188,4 +188,50 @@ class AddServiceRequestApi(APIView):
                     context['result']=SUCCEED
         context['log']=log
         return JsonResponse(context)
+
+
+
         
+    
+class CopyServiceRequestsApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        log=11
+        context['result']=FAILED
+        if request.method=='POST':
+            log=22
+            report_form=CopyServiceRequestsForm(request.POST)
+            if report_form.is_valid():
+                log=33
+                cd=report_form.cleaned_data
+            
+                service_requests=ServiceRequestRepo(request=request).copy_service_requests(**cd)
+                if service_requests is not None:
+                    context['service_requests']=ServiceRequestSerializer(service_requests,many=True).data
+                    context['result']=SUCCEED
+        context['log']=log
+        return JsonResponse(context)
+
+
+        
+    
+class CopyMaterialRequestsApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        log=11
+        context['result']=FAILED
+        if request.method=='POST':
+            log=22
+            report_form=CopyMaterialRequestsForm(request.POST)
+            if report_form.is_valid():
+                log=33
+                cd=report_form.cleaned_data
+                material_requests=MaterialRequestRepo(request=request).copy_material_requests(**cd)
+                if material_requests is not None:
+                    context['material_requests']=MaterialRequestSerializer(material_requests,many=True).data
+                    context['result']=SUCCEED
+        context['log']=log
+        return JsonResponse(context)
+
+
+    
