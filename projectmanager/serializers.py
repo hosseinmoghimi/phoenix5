@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from accounting.models import ProductOrService
 
-from accounting.serializers import AccountSerializer, ProductOrServiceSerializer
+from accounting.serializers import AccountSerializer, InvoiceSerializer, ProductOrServiceSerializer
 from .models import Service,Material,Event,Employee, MaterialRequest, Request,Project,OrganizationUnit, RequestSignature, ServiceRequest
 from authentication.serializers import ProfileSerializer
 from organization.serializers import OrganizationUnitSerializer,EmployeeSerializer
@@ -100,6 +100,19 @@ class MaterialRequestSerializer(serializers.ModelSerializer):
     class Meta:
         model=Request
         fields=['id','total','material','persian_date_requested',
+        'quantity','persian_date_added','get_edit_url','get_delete_url',
+        'get_status_tag','project','employee','unit_name','unit_price',
+        'get_absolute_url']
+
+
+class MaterialRequestFullSerializer(serializers.ModelSerializer):
+    material=MaterialSerializer()
+    invoice=InvoiceSerializer()
+    project=ProjectSerializer()
+    employee=EmployeeSerializer()
+    class Meta:
+        model=Request
+        fields=['id','invoice','total','material','persian_date_requested',
         'quantity','persian_date_added','get_edit_url','get_delete_url',
         'get_status_tag','project','employee','unit_name','unit_price',
         'get_absolute_url']

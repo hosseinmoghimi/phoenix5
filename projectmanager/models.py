@@ -109,23 +109,8 @@ class Request(InvoiceLine, LinkHelper):
         verbose_name_plural = _("Requests")
 
     def save(self, *args, **kwargs):
-        if self.product is not None:
-            invoice = MaterialInvoice.objects.filter(
-                project_id=self.project.pk).first()
-            if invoice is None:
-                invoice = MaterialInvoice()
-                invoice.project_id = self.project.pk
-                invoice.save()
-        if self.service is not None:
-            invoice = ServiceInvoice.objects.filter(
-                project_id=self.project.pk).first()
-            if invoice is None:
-                invoice = ServiceInvoice()
-                invoice.project_id = self.project.pk
-                invoice.save()
         
-        self.invoice = invoice
-        self.row = len(invoice.lines.all())+1
+        self.row = len(self.invoice.lines.all())+1
         super(Request, self).save(*args, **kwargs)
 
     def total(self):
@@ -272,6 +257,10 @@ class Project(Page):
 
     def material_requests(self):
         return Request.objects.filter(project=self).filter(type=RequestTypeEnum.MATERIAL_REQUEST)
+
+    @property
+    def materialinvoice_set(self):
+        return MaterialInvoice.objects.filter(project_id=self.pk)
 
     def service_requests(self):
         return Request.objects.filter(project=self).filter(type=RequestTypeEnum.SERVICE_REQUEST)

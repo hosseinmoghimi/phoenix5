@@ -109,12 +109,12 @@ class ProjectRepo():
         self.profile=ProfileRepo(*args, **kwargs).me
         if self.user is not None and self.user.is_authenticated and self.user.has_perm(APP_NAME+".view_project"):
             self.objects=self.objects.all()
-        else:
+        elif self.profile is not None:
             me_emp=Employee.objects.filter(account__profile_id=self.profile.id).first()
             if me_emp is not None:
 
                 self.objects=self.objects.filter(id__in=me_emp.my_project_ids())
-            else:
+        else:
                 self.objects=self.objects.filter(id__in=[0])
 
 
@@ -571,6 +571,16 @@ class MaterialRequestRepo():
 
         if 'date_delivered' in kwargs:
             new_material_request.date_delivered = kwargs['date_delivered']
+        if 'invoice_id' in kwargs and kwargs['invoice_id'] is not None and kwargs['invoice_id']>0: 
+            new_material_request.invoice_id = kwargs['invoice_id']
+        if 'invoice_id' in kwargs and kwargs['invoice_id'] is not None and kwargs['invoice_id']==-1: 
+            new_material_invoice=MaterialInvoice()
+            new_material_invoice.project_id = project.id
+            # new_material_invoice.invoice_id = kwargs['invoice_id']
+            new_material_invoice.pay_from=project.contractor.account
+            new_material_invoice.pay_to=project.employer.account
+            new_material_invoice.save()
+            new_material_request.invoice_id = new_material_invoice.id
         if 'project_id' in kwargs:
             new_material_request.project_id = kwargs['project_id']
         if 'employee_id' in kwargs:

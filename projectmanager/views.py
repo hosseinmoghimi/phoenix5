@@ -1,7 +1,7 @@
 
 from django.http import JsonResponse
 from accounting.repo import InvoiceRepo, PriceRepo
-from accounting.serializers import PriceBriefSerializer
+from accounting.serializers import InvoiceSerializer, PriceBriefSerializer
 from accounting.views import InvoiceView, get_invoice_context, get_service_context, get_product_context,get_account_context
 from django.shortcuts import redirect, render
 # Create your views here.
@@ -166,6 +166,10 @@ class ProjectView(View):
             my_project_ids = me_emp.my_project_ids()
 
         context['invoices'] = project.invoices()
+        material_invoices=project.materialinvoice_set.all()
+        context['material_invoices']=material_invoices
+        material_invoices_s=json.dumps(InvoiceSerializer(material_invoices,many=True).data)
+        context['material_invoices_s'] = material_invoices_s
 
         events = EventRepo(request=request).list(project_id=project.id)
         context['events'] = events

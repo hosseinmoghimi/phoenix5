@@ -48,6 +48,7 @@ class AddEventForm(forms.Form):
 
 
 class AddMaterialRequestForm(forms.Form):
+    invoice_id=forms.IntegerField(required=False)
     project_id=forms.IntegerField(required=True)
     quantity=forms.FloatField(required=True)
     employee_id=forms.IntegerField(required=False)
@@ -101,8 +102,9 @@ class AddServiceForm(forms.Form):
     parent_id=forms.IntegerField( required=False)
          
 class AddServiceRequestForm(forms.Form):
-    employee_id=forms.IntegerField(required=False)
+    invoice_id=forms.IntegerField(required=False)
     project_id=forms.IntegerField(required=True)
+    employee_id=forms.IntegerField(required=False)
     quantity=forms.FloatField(required=True)
     unit_price=forms.IntegerField(required=True)
     service_id=forms.IntegerField(required=False)

@@ -13,7 +13,9 @@
         employees: JSON.parse(`{{employees_s|escapejs}}`),
         new_material_request_material_id: 1,
         add_material_request_form_title: "",
+        add_material_request_form_invoice_id:0,
         source_project_id:0,
+        invoices:  JSON.parse(`{{material_invoices_s|escapejs}}`),
         materials: [],
         add_material_request_form_unit_price: 0,
         add_material_request_form_unit_name: "",
@@ -98,6 +100,7 @@
 
                 let payload = {
                     project_id: page_id,
+                    invoice_id: parseInt(this.add_material_request_form_invoice_id),
                     material_id: this.selected_material().id,
                     unit_price: this.add_material_request_form_unit_price,
                     unit_name: this.add_material_request_form_unit_name,
@@ -108,7 +111,7 @@
                     csrfmiddlewaretoken: csrfmiddlewaretoken
                 }
 
-
+                // console.log(payload)
                 var posting = $.post(url_add_material_request, payload);
                 posting.fail(function (xhr, status, error) {
                     material_requests_app.waiting = false
@@ -123,8 +126,10 @@
                         // material_requests_app.show_add_material_request_form = false
                         material_requests_app.sum_material_requests += data.material_request.quantity * data.material_request.unit_price
                         showNotification('top', 'center', 'settings', 'success', `<div class="text-center farsi">با موفقیت افزوده شد.</div>`)
-
-
+                        if(material_requests_app.add_material_request_form_invoice_id==-1){
+                            material_requests_app.invoices.push(data.material_request.invoice)
+                        }
+                        material_requests_app.add_material_request_form_invoice_id=data.material_request.invoice.id
 
                     }
                     else {
@@ -150,7 +155,7 @@
                 // }
             },
             filter_list: function () {
-                if (this.add_material_request_form_title.length > 3) {
+                if (this.add_material_request_form_title.length > 2) {
 
                     this.materials = all_materials.filter(item => item.full_title.toUpperCase().includes(this.add_material_request_form_title.toUpperCase())).slice(0, 6);
                     try {

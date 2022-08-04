@@ -9,7 +9,7 @@ from projectmanager.repo import  EventRepo, MaterialRepo, MaterialRequestRepo, P
 from django.http import JsonResponse
 from organization.repo import OrganizationUnitRepo,EmployeeRepo
 from projectmanager.forms import *
-from projectmanager.serializers import EventSerializer, MaterialRequestSerializer, MaterialSerializer, OrganizationUnitSerializer, ProjectSerializer, RequestSerializer, RequestSignatureSerializer, ServiceRequestSerializer, ServiceSerializer
+from projectmanager.serializers import EventSerializer, MaterialRequestFullSerializer, MaterialRequestSerializer, MaterialSerializer, OrganizationUnitSerializer, ProjectSerializer, RequestSerializer, RequestSignatureSerializer, ServiceRequestSerializer, ServiceSerializer
 
 
 class AddProjectApi(APIView):
@@ -130,25 +130,26 @@ class AddMaterialRequestApi(APIView):
             AddMaterialRequestForm_=AddMaterialRequestForm(request.POST)
             if AddMaterialRequestForm_.is_valid():
                 log=3
-                fm=AddMaterialRequestForm_.cleaned_data
-                employee_id=fm['employee_id']
-                project_id=fm['project_id']
-                quantity=fm['quantity']
-                unit_name=fm['unit_name']
-                unit_price=fm['unit_price']
-                material_id=fm['material_id']
-                description=fm['description']
+                cleaned_data=AddMaterialRequestForm_.cleaned_data
+                # employee_id=cleaned_data['employee_id']
+                # project_id=cleaned_data['project_id']
+                # quantity=cleaned_data['quantity']
+                # unit_name=cleaned_data['unit_name']
+                # unit_price=cleaned_data['unit_price']
+                # material_id=cleaned_data['material_id']
+                # description=cleaned_data['description']
                 material_request=MaterialRequestRepo(request=request).add_material_request(
-                    employee_id=employee_id,
-                    project_id=project_id,
-                    quantity=quantity,
-                    unit_name=unit_name,
-                    material_id=material_id,
-                    unit_price=unit_price,
-                    description=description,
+                    **cleaned_data
+                    # employee_id=employee_id,
+                    # project_id=project_id,
+                    # quantity=quantity,
+                    # unit_name=unit_name,
+                    # material_id=material_id,
+                    # unit_price=unit_price,
+                    # description=description,
                 )
                 if material_request is not None:
-                    context['material_request']=MaterialRequestSerializer(material_request).data
+                    context['material_request']=MaterialRequestFullSerializer(material_request).data
                     context['result']=SUCCEED
         context['log']=log
         return JsonResponse(context)
