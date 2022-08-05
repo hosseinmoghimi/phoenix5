@@ -525,7 +525,7 @@ class RequestSignatureRepo():
         
         signature.employee_id=employee.id
         signature.save()
-        if employee.organization_unit.id==signature.request.project.employer.id:
+        if employee.organization_unit.id==signature.request.project.employer.id or employee.organization_unit.id==signature.request.project.contractor.id:
             signature.request.status=signature.status
             signature.request.save()
         return signature

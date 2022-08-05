@@ -19,6 +19,7 @@ class SignatureStatusEnum(TextChoices):
     PURCHASING='درحال خرید',_('درحال خرید')
     REQUESTED='درخواست شده',_('درخواست شده')
     PAID='تسویه شده',_('تسویه شده')
+    DELIVERED_FROM_EMPLOYER='تحویل گرفته شده از کارفرما',_('تحویل گرفته شده از کارفرما')
 
 
 class ProjectStatusEnum(TextChoices):
@@ -46,7 +47,9 @@ class RequestStatusEnum(TextChoices):
     AVAILABLE_IN_STORE="موجود در انبار",_("موجود در انبار")
     EXPORT_FROM_WARE_HOUSE="خارج شده از انبار",_("خارج شده از انبار")
     IMPORT_TO_WARE_HOUSE="وارد شده به انبار",_("وارد شده به انبار")
+    DELIVERED_FROM_EMPLOYER='تحویل گرفته شده از کارفرما',_('تحویل گرفته شده از کارفرما')
 
+    
 class AssignmentStatusEnum(TextChoices):
     DEFAULT='تعریف اولیه',_('تعریف اولیه')
     IN_PROGRESS='در جریان',_('در جریان')

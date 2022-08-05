@@ -191,9 +191,6 @@ class AddServiceRequestApi(APIView):
         context['log']=log
         return JsonResponse(context)
 
-
-
-        
     
 class CopyServiceRequestsApi(APIView):
     def post(self,request,*args, **kwargs):
@@ -214,8 +211,6 @@ class CopyServiceRequestsApi(APIView):
         context['log']=log
         return JsonResponse(context)
 
-
-        
     
 class CopyMaterialRequestsApi(APIView):
     def post(self,request,*args, **kwargs):
