@@ -6,7 +6,7 @@ from phoenix.server_settings import PUBLIC_ROOT
 
 from .settings import MEDIA_URL, MEDIA_ROOT, STATIC_URL, STATIC_ROOT, DEBUG,QRCODE_ROOT
 from django.views.static import serve
-from authentication.views import LoginViews,LogoutViews
+from authentication.views import LogoutViews,LoginViews
 # from core.icon import FavIconView
 # from web3auth import urls as web3auth_urls
 from core.views import HomeView
