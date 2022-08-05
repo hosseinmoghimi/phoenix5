@@ -10,6 +10,7 @@
     let all_materials = JSON.parse(`{{all_materials_s|escapejs}}`)
     let url_add_material_request = "{% url 'projectmanager:add_material_request' %}"
     material_requests_app_data = {
+        id:127,
         employees: JSON.parse(`{{employees_s|escapejs}}`),
         new_material_request_material_id: 1,
         add_material_request_form_title: "",
@@ -25,17 +26,20 @@
         waiting: false,
         sum_material_requests: 0,
         show_add_material_request_form: false,
-        add_material_request_form_employee_id: ""
+        add_material_request_form_employee_id: "",
+        filter_status:"",
     }
 </script>
 {% else %}
 <script>
     material_requests_app_data = {
         material_requests: material_requests,
+        id:127,
         waiting: false,
         sum_material_requests: 0,
         count_material_requests: 0,
         show_add_material_request_form: false,
+        filter_status:"",
     }
 </script>
 {% endif %}
@@ -64,7 +68,13 @@
 
             //     return to_price(sum_material_requests,'')
             // },
+            filter:function(){
+                this.material_requests=material_requests
 
+                if(this.filter_status!=""){
+                    this.material_requests=this.material_requests.filter(item=>item.status===material_requests_app.filter_status)
+                }
+            },
             copy_from_project: function () {
                 console.log(this.source_project_id)
 

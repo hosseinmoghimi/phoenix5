@@ -1,9 +1,9 @@
 {% extends "organization/layout.html" %}
 
 {% block content %}
- 
 
-  <div class="text-center mt-3 mb-3">
+
+<div class="text-center mt-3 mb-3">
 
     <img src="{{employee.account.logo}}" width="128" class="rounded" alt="">
 </div>
@@ -11,8 +11,7 @@
 <h4 class="text-center">
     {{employee.name}}
 
-    <a href="{{employee.account.get_absolute_url}}" title="اکانت" class="mx-2"><i
-        class="fa fa-user text-info"></i></a>
+    <a href="{{employee.account.get_absolute_url}}" title="اکانت" class="mx-2"><i class="fa fa-user text-info"></i></a>
 
 
     <a href="{{employee.account.profile.get_absolute_url}}" title="پروفایل" class="mx-2"><i
@@ -30,33 +29,38 @@
 
 </h4>
 <h5 class="text-center">
-        {{employee.job_title}}
-        
+    {{employee.job_title}}
+
 </h5>
 <h5 class="text-center">
-       <a href="{{employee.organization_unit.get_absolute_url}}">
+    <a href="{{employee.organization_unit.get_absolute_url}}">
         {{employee.organization_unit.title}}
 
-       </a> 
+    </a>
 </h5>
 
 
 <div class="row">
-        <div class="col-md-12">
-            {% include "projectmanager/includes/projects-list-app/template.html" %}
-        </div>
-        
+    <div class="col-md-12">
+        {% include "projectmanager/includes/projects-list-app/template.html" %}
+    </div>
     <div class="col-md-12">
         {% include "projectmanager/includes/request-signatures-app/template.html" %}
     </div>
-
+    <div class="col-md-12">
+        {% include "projectmanager/includes/material-requests-app/template.html" %}
     </div>
-
+    <div class="col-md-12">
+        {% include "projectmanager/includes/service-requests-app/template.html" %}
+    </div>
+</div>
 {% endblock content %}
 
 
 {% block script %}
-            {% include "projectmanager/includes/projects-list-app/script.html" %}
-        {% include "projectmanager/includes/request-signatures-app/script.html" %}
-  
+{% include "projectmanager/includes/projects-list-app/script.html" %}
+{% include "projectmanager/includes/request-signatures-app/script.html" %}
+{% include "projectmanager/includes/material-requests-app/script.html" %}
+{% include "projectmanager/includes/service-requests-app/script.html" %}
+
 {% endblock script %}

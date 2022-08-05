@@ -9,12 +9,18 @@ from organization.forms import *
 from django.views import View
 from django.http import JsonResponse
 from core.constants import SUCCEED,FAILED
-from projectmanager.repo import ProjectRepo,RequestSignatureRepo
 import json
 from organization.serializers import LetterSerializer,LetterSentSerializer
-from projectmanager.serializers import ProjectSerializer,RequestSignatureForEmployeeSerializer
 from organization.repo import EmployeeRepo,OrganizationUnitRepo,LetterRepo
 from organization.serializers import EmployeeSerializer,OrganizationUnitSerializer
+
+
+from projectmanager.repo import ProjectRepo,RequestSignatureRepo
+from projectmanager.serializers import ProjectSerializer,RequestSignatureForEmployeeSerializer,ServiceRequestSerializer,MaterialRequestSerializer
+from projectmanager.enums import RequestTypeEnum
+from projectmanager.views import get_requests_context
+from projectmanager.repo import ProjectRepo,RequestSignatureRepo
+
 LAYOUT_PARENT="phoenix/layout.html"
 TEMPLATE_ROOT="organization/"
 
@@ -51,8 +57,9 @@ class EmployeeView(View):
     def get(self, request, *args, **kwargs):
         context = getContext(request=request)
         employee = EmployeeRepo(request=request).employee(*args, **kwargs)
+        context.update(get_account_context(request=request,account=employee.account))
         context['employee'] = employee
-
+        
         projects = ProjectRepo(request=request).list(employee_id=employee.id)
         context['projects'] = projects
         context['show_all_projects'] = True
@@ -63,9 +70,26 @@ class EmployeeView(View):
             request=request).list(employee_id=employee.id)
 
         context['request_signatures'] = request_signatures
-        request_signatures_s = json.dumps(
-            RequestSignatureForEmployeeSerializer(request_signatures, many=True).data)
+        request_signatures_s = json.dumps(RequestSignatureForEmployeeSerializer(request_signatures, many=True).data)
         context['request_signatures_s'] = request_signatures_s
+
+
+        # from projectmanager 
+        if True:
+            context['filter_reauests_form']=True
+            requests=employee.request_set
+            service_requests=requests.filter(type=RequestTypeEnum.SERVICE_REQUEST)
+            context['service_requests'] = request_signatures
+            service_requests_s = json.dumps(ServiceRequestSerializer(service_requests, many=True).data)
+            context['service_requests_s'] = service_requests_s
+            context.update(get_requests_context(request=request))
+
+            material_requests=requests.filter(type=RequestTypeEnum.MATERIAL_REQUEST)
+            context['material_requests'] = material_requests
+            material_requests_s = json.dumps(MaterialRequestSerializer(material_requests, many=True).data)
+            context['material_requests_s'] = material_requests_s
+
+ 
 
         return render(request, TEMPLATE_ROOT+"employee.html", context)
 
@@ -196,6 +220,7 @@ class OrganizationUnitView(View):
 
         # projects
         if True:
+            
             projects = []
             (projects_employed, projects_contracted, org_projects) = ProjectRepo(
                 request=request).list(organization_unit_id=organization_unit.id)

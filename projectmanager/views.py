@@ -14,7 +14,7 @@ from core.views import CoreContext, MessageView, SearchForm, PageContext
 # Create your views here.
 from django.views import View
 
-from projectmanager.enums import ProjectStatusEnum, SignatureStatusEnum
+from projectmanager.enums import ProjectStatusEnum, RequestStatusEnum, SignatureStatusEnum
 
 from .forms import *
 from .apps import APP_NAME
@@ -36,8 +36,11 @@ def getContext(request, *args, **kwargs):
     context['search_action'] = reverse(APP_NAME+":search")
     context['LAYOUT_PARENT'] = LAYOUT_PARENT
     return context
-
-
+def get_requests_context(request, *args, **kwargs):
+    context={}
+    context['request_statuses']=(request_status[0] for request_status in RequestStatusEnum.choices)
+    context['request_statuses_']=context['request_statuses']
+    return context
 class HomeView(View):
     def get(self, request, *args, **kwargs):
         context = getContext(request=request)
@@ -176,7 +179,7 @@ class ProjectView(View):
         invoices = project.invoices()
         context['invoices'] = invoices
         context['invoices_s']=json.dumps(InvoiceSerializer(invoices,many=True).data)
-        
+
         service_invoices=project.serviceinvoice_set.all()
         context['service_invoices']=service_invoices
         service_invoices_s=json.dumps(InvoiceSerializer(service_invoices,many=True).data)
@@ -257,6 +260,7 @@ class ProjectView(View):
             all_materials = MaterialRepo(request=request).list()
             context['all_materials_s'] = json.dumps(
                 MaterialSerializer(all_materials, many=True).data)
+        context.update(get_requests_context(request=request))
 
         return render(request, TEMPLATE_ROOT+"project.html", context)
 
