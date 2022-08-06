@@ -291,6 +291,42 @@ class SearchView(View):
         return render(request, TEMPLATE_ROOT+"search.html", context)
 
 
+
+class SettingsView(View):
+    def get(self, request, *args, **kwargs):
+        context = getContext(request=request)
+
+        return render(request, TEMPLATE_ROOT+"settings.html", context)
+
+    def post(self, request, *args, **kwargs):
+        context = getContext(request=request)
+        search_form = SearchForm(request.POST)
+        if search_form.is_valid():
+            cd = search_form.cleaned_data
+            search_for = cd['search_for']
+            context['search_for'] = search_for
+
+            # tag = TagRepo(request=request).tag(
+            #     search_for=search_for)
+            # context['tags'] = tags
+            # tags_s = json.dumps(
+            #     TagSerializer(tags, many=True).data)
+            # context['tags_s'] = tags_s
+ 
+
+ 
+
+            pages = PageRepo(request=request).list(
+                search_for=search_for)
+            context['pages'] = pages
+            pages_s = json.dumps(
+                PageSerializer(pages, many=True).data)
+            context['pages_s'] = pages_s
+ 
+
+        return render(request, TEMPLATE_ROOT+"search.html", context)
+
+
 class PageView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)

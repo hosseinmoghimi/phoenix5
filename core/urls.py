@@ -7,6 +7,7 @@ app_name=APP_NAME
 urlpatterns = [
     path('',views.HomeView.as_view(),name="home"),
     path('search/',views.SearchView.as_view(),name="search"),
+    path('settings/',views.SettingsView.as_view(),name="settings"),
     path('page/<int:pk>/',views.PageView.as_view(),name="page"),
     path('pages_permissions/<int:pk>/',views.PagePermissionsView.as_view(),name="pages_permissions"),
     path('change_parameter/',apis.ChangeParameterApi.as_view(),name="change_parameter"),

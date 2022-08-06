@@ -1,0 +1,57 @@
+{% extends "core/wide-layout.html" %}
+
+{% block content %}
+{% include "core/includes/page-app/navbar.html" %}
+<div class="row">
+    <div class="col-md-12">
+
+        <div class="card">
+            <div class="card-body">
+                <ul class="nav">
+
+                    {% if perms.core.change_parameter %}
+                    <li class="nav-item my-auto mx-2">
+                        <a target="_blank" class="nav-link farsi " href="{{ADMIN_URL}}{{APP_NAME}}/">
+                            <i class="material-icons" aria-hidden="true">settings</i>
+                            مدیریت
+                        </a>
+                    </li>
+                    {% endif %}
+
+                    {% if perms.core.change_parameter %}
+                    <li class="nav-item my-auto mx-2">
+                        <a target="_blank" class="nav-link farsi " href="{{ADMIN_URL}}{{APP_NAME}}/">
+                            <i class="material-icons" aria-hidden="true">settings</i>
+                            دانلود بکاپ
+                        </a>
+                    </li>
+                    {% endif %}
+
+                    {% if perms.core.change_parameter %}
+                    <li class="nav-item my-auto mx-2">
+                        <a class="nav-link farsi " target="_blank"
+                            href="{% url 'dashboard:parameters' app_name=APP_NAME %}">
+                            <span class="material-icons">
+                                construction
+                            </span>
+
+                            پارامتر ها
+                        </a>
+                    </li>
+
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+{% endblock content %}
+
+
+{% block script %}
+{% include "core/includes/pages-app/script.html" %}
+
+{% endblock script %}
