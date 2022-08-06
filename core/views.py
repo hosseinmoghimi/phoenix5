@@ -1,5 +1,5 @@
 import json
-from django.http import Http404
+from django.http import Http404,HttpResponse
 from django.shortcuts import render,reverse
 from django.utils import timezone 
 
@@ -11,6 +11,7 @@ from core.models import Download, Link
 from core.repo import DownloadRepo, ImageRepo, PageDownloadRepo, PageImageRepo, PageLikeRepo, PagePermissionRepo, PageRepo, PageTagRepo, ParameterRepo, PictureRepo, TagRepo
 from core.serializers import PagePermissionSerializer,PageBriefSerializer, PageCommentSerializer, PageImageSerializer, PageDownloadSerializer, PageLinkSerializer, PageSerializer, PageTagSerializer, TagSerializer
 from phoenix.settings import ADMIN_URL, MEDIA_URL, STATIC_URL, SITE_URL
+from phoenix.server_settings import DB_FILE_PATH
 from django.shortcuts import render
 from authentication.repo import ProfileRepo
 from core.constants import CURRENCY
@@ -297,6 +298,55 @@ class SettingsView(View):
         context = getContext(request=request)
 
         return render(request, TEMPLATE_ROOT+"settings.html", context)
+
+    def post(self, request, *args, **kwargs):
+        context = getContext(request=request)
+        search_form = SearchForm(request.POST)
+        if search_form.is_valid():
+            cd = search_form.cleaned_data
+            search_for = cd['search_for']
+            context['search_for'] = search_for
+
+            # tag = TagRepo(request=request).tag(
+            #     search_for=search_for)
+            # context['tags'] = tags
+            # tags_s = json.dumps(
+            #     TagSerializer(tags, many=True).data)
+            # context['tags_s'] = tags_s
+ 
+
+ 
+
+            pages = PageRepo(request=request).list(
+                search_for=search_for)
+            context['pages'] = pages
+            pages_s = json.dumps(
+                PageSerializer(pages, many=True).data)
+            context['pages_s'] = pages_s
+ 
+
+        return render(request, TEMPLATE_ROOT+"search.html", context)
+
+
+class BackupView(View):
+    def get(self, request, *args, **kwargs):
+        context = getContext(request=request)
+        me = ProfileRepo(request=request).me
+        if not request.user.has_perm("core.change_download"):
+            mv=MessageView(request=request)
+            mv.title="عدم دسترسی مجاز"
+            return mv.response()
+        
+        file_path = str(DB_FILE_PATH)
+        # return JsonResponse({'download:':str(file_path)})
+        import os
+        filename="db_"+timezone.now().strftime("%Y%m%d_%H_%M_%S")+".sqlite3"
+        if os.path.exists(file_path):
+            with open(file_path, 'rb') as fh:
+                response = HttpResponse(
+                    fh.read(), content_type="application/force-download")
+                response['Content-Disposition'] = 'inline; filename=' + filename
+                return response
 
     def post(self, request, *args, **kwargs):
         context = getContext(request=request)
