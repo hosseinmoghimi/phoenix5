@@ -12,28 +12,28 @@
         </a>
 
         <a href="{% url 'projectmanager:services' %}">
-            <h6>
-              لیست سرویس ها
-            </h6>
-          </a>
-          
+          <h6>
+            لیست سرویس ها
+          </h6>
+        </a>
 
-          
-        
-          
-         
-          <a href="{% url 'organization:organization_units' %}">
-            <h6>
-              لیست واحد های سازمانی
-            </h6>
-          </a>
-          
-         
-          <a href="{% url 'projectmanager:projects' %}">
-            <h6>
-              لیست پروژه ها
-            </h6>
-          </a>
+
+
+
+
+
+        <a href="{% url 'organization:organization_units' %}">
+          <h6>
+            لیست واحد های سازمانی
+          </h6>
+        </a>
+
+
+        <a href="{% url 'projectmanager:projects' %}">
+          <h6>
+            لیست پروژه ها
+          </h6>
+        </a>
 
         <a href="{% url 'projectmanager:events' %}">
           <h6>
@@ -41,17 +41,22 @@
           </h6>
         </a>
 
-         
-       
+
+
 
 
       </div>
     </div>
+  </div> 
+  <div class="col-md-12">
+    {% include "core/includes/page-like-app/page-likes.html" %}
+
   </div>
+
 </div>
 {% endblock content %}
 
 
 {% block script %}
-
+ 
 {% endblock script %}

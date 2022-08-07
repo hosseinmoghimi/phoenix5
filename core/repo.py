@@ -283,6 +283,12 @@ class PageLikeRepo():
             self.request=kwargs['request']
             self.user=self.request.user
         self.objects=PageLike.objects.all()
+        if 'app_name' in kwargs:
+            app_name=kwargs['app_name']
+            self.app_name=app_name
+            self.objects=self.objects.filter(page__app_name=app_name)
+        else:
+            self.app_name=None
     def list(self,*args, **kwargs):
         objects=self.objects
         if 'profile_id' in kwargs and kwargs['profile_id']>0:

@@ -611,6 +611,7 @@ class Tag(models.Model,LinkHelper):
             pages_ids.append(page_tag.page_id)
         return Page.objects.filter(pk__in=pages_ids)
 
+
 class PageTag(models.Model,LinkHelper):
     page=models.ForeignKey("page", verbose_name=_("page"), on_delete=models.CASCADE)
     tag=models.ForeignKey("tag", verbose_name=_("tag"), on_delete=models.CASCADE)

@@ -8,7 +8,7 @@ from django.shortcuts import redirect, render
 from django.shortcuts import render, reverse
 from core.constants import FAILED, SUCCEED
 from core.enums import UnitNameEnum
-from core.repo import PageRepo
+from core.repo import PageLikeRepo, PageRepo
 from core.serializers import PageSerializer
 from core.views import CoreContext, MessageView, SearchForm, PageContext
 # Create your views here.
@@ -44,6 +44,14 @@ def get_requests_context(request, *args, **kwargs):
 class HomeView(View):
     def get(self, request, *args, **kwargs):
         context = getContext(request=request)
+        # pages=PageLikeRepo(request=request).list(page__app_name=APP_NAME,profile=)
+        # context['pages_s']=json.dumps(PageSerializer(pages,many=True).data)
+        me=context['profile']
+        if me is not None:
+            page_likes=PageLikeRepo(request=request,app_name=APP_NAME).list(profile_id=me.id)
+            context['page_likes']=page_likes
+
+
         return render(request, TEMPLATE_ROOT+"index.html", context)
 
 
