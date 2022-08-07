@@ -180,6 +180,8 @@ def get_account_context(request,*args, **kwargs):
 
 
 
+
+
     if request.user.has_perm(APP_NAME+".add_payment"):
         context.update(get_add_payment_context(request=request))
 
@@ -421,6 +423,16 @@ class SearchView(View):
             context['transactions']=transactions
             context['transactions_s']=json.dumps(TransactionSerializer(transactions,many=True).data)
 
+
+            products=ProductRepo(request=request).list(search_for=search_for)
+            context['products']=products
+            context['products_s']=json.dumps(ProductSerializer(products,many=True).data)
+
+
+
+            services=ServiceRepo(request=request).list(search_for=search_for)
+            context['services']=services
+            context['services_s']=json.dumps(ServiceSerializer(services,many=True).data)
 
         return render(request,TEMPLATE_ROOT+"search.html",context)
 
