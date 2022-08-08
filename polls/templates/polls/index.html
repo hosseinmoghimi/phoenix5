@@ -5,7 +5,7 @@
           <h4 class="text-center">
           {{POLLS_SYSTEM_TITLE.value}}
           {% if perms.core.change_parameter %}
-          <a title="تغییر بده" href="POLLS_SYSTEM_TITLE.get_edit_url">
+          <a title="تغییر بده" href="{{POLLS_SYSTEM_TITLE.get_edit_url}}">
               <i class="fa fa-edit text-warning mx-2"></i>
           </a>
             
@@ -23,6 +23,9 @@
               </div>
           </div>
       </div>
+
+ 
+
   </div>
 {% endblock content %}
 
