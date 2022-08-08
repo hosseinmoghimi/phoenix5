@@ -22,6 +22,16 @@ class HomeView(View):
         context=getContext(request=request,*args, **kwargs)
         param_repo=ParameterRepo(request=request,app_name=APP_NAME)
         context['POLLS_SYSTEM_TITLE']=param_repo.parameter(name=POLLS_PARAMETER_NAMES.POLLS_SYSTEM_TITLE)
+
+        
+        polls=PollRepo(request=request).list(*args, **kwargs)
+        context['polls']=polls
+        polls_s=json.dumps(PollSerializer(polls,many=True).data)
+        context['polls_s']=polls_s
+        context['expand_polls']=True
+        if request.user.has_perm(APP_NAME+".add_poll"):
+            context['add_poll_form']=AddPollForm()
+            
         return render(request,TEMPLATE_ROOT+"index.html",context)
 class PollsView(View):
     def get(self,request,*args, **kwargs):
