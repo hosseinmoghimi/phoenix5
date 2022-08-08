@@ -595,7 +595,7 @@ class PagePermission(models.Model):
  
 
 class Tag(models.Model,LinkHelper):
-    title=models.CharField(_("title"), max_length=50)
+    title=models.CharField(_("title"), max_length=200)
     class_name="tag"
     app_name=APP_NAME
 
