@@ -31,6 +31,14 @@ class ImageMixin():
 
     @property
     def thumbnail(self):
+        if self.thumbnail_origin:
+            return MEDIA_URL+str(self.thumbnail_origin)
+        if not self.thumbnail_origin:
+            try:
+                if self.parent is not None:
+                    return self.parent.thumbnail
+            except:
+                pass
         return self.get_or_create_thumbnail()
 
     def get_or_create_thumbnail(self, *args, **kwargs):

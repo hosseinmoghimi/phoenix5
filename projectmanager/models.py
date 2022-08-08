@@ -381,6 +381,7 @@ class Project(Page):
         return reverse(APP_NAME+":project_chart",kwargs={'pk':self.pk})
     def get_full_description_for_chart(self):
         return f"""
+        <div class="text-center"><img src="{self.thumbnail}" class="rounded" width="32" alt=""></div>
         <div><small class="text-muted">{to_price(self.sum_total())}</small></div>
         <div>{self.percentage_completed} %</div>
         """
