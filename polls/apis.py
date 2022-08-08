@@ -29,11 +29,11 @@ class AddOptionApi(APIView):
         if fm.is_valid():
             log=3
             cd=fm.cleaned_data
-            option=OptionRepo(request=request).add_option(**cd)
-            if option is not None:
+            options=OptionRepo(request=request).add_option(**cd)
+            if options is not None:
                 log=4
                 context['result']=SUCCEED
-                context['option']=OptionSerializer(option).data
+                context['options']=OptionSerializer(options,many=True).data
         context['log']=log
         return JsonResponse(context)
 

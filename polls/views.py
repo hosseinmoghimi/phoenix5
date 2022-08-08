@@ -31,7 +31,7 @@ class HomeView(View):
         context['expand_polls']=True
         if request.user.has_perm(APP_NAME+".add_poll"):
             context['add_poll_form']=AddPollForm()
-            
+
         return render(request,TEMPLATE_ROOT+"index.html",context)
 class PollsView(View):
     def get(self,request,*args, **kwargs):

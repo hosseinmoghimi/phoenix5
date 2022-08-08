@@ -92,6 +92,15 @@ class OptionRepo():
         return objects.all()
 
     def add_option(self,*args, **kwargs):
+        poll=PollRepo(request=self.request).poll(poll_id=kwargs['poll_id'])
+        if poll is None:
+            return
+        old_options=Option.objects.filter(title=kwargs['title']).filter(poll_id=poll.id)
+        if len(old_options)>0:
+            option=old_options.first()
+            self.select_option(option_id=option.id)
+            options=Option.objects.filter(poll_id=option.poll.id)
+            return options
         if not self.user.has_perm(APP_NAME+".add_option"):
             return None
         option=Option()
@@ -103,7 +112,8 @@ class OptionRepo():
         option.creator=self.profile
         option.save()
         self.select_option(option_id=option.id)
-        return option
+        options=Option.objects.filter(poll_id=option.poll.id)
+        return options
 
 
     def select_option(self,*args, **kwargs):
