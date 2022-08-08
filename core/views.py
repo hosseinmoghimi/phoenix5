@@ -464,6 +464,7 @@ class TagView(View):
         context['page_tags']=page_tags
         context['pages']=tag.pages()
         context['pages_s']='[]'
+        context['expand_pages']=True
 
         return render(request,TEMPLATE_ROOT+"tag.html",context)
         
