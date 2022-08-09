@@ -148,7 +148,7 @@ def PageContext(request, *args, **kwargs):
     
     # links
     if True:
-        links = page.pagelink_set.all()
+        links = page.pagelink_set.all().order_by('priority')
         links_s = json.dumps(PageLinkSerializer(links, many=True).data)
         context['links_s'] = links_s
         context['links'] = links
@@ -220,7 +220,7 @@ def PageContext(request, *args, **kwargs):
 
     # downloads
     if True:
-        downloads = PageDownloadRepo(request=request).list(page_id=page.id)
+        downloads = PageDownloadRepo(request=request).list(page_id=page.id).order_by('priority')
         context['downloads'] = downloads
         downloads_s = json.dumps(PageDownloadSerializer(downloads, many=True).data)
         context['page_downloads_s'] = downloads_s
@@ -229,7 +229,7 @@ def PageContext(request, *args, **kwargs):
 
     #images
     if True:
-        page_images = page.pageimage_set.all()
+        page_images = page.pageimage_set.all().order_by('priority')
         context['images_s'] = json.dumps(PageImageSerializer(page_images, many=True).data)
         if can_add_image:
             context['add_page_image_form'] = AddPageImageForm()

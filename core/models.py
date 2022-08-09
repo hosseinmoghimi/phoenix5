@@ -435,6 +435,7 @@ class Image(models.Model, LinkHelper):
     title = models.CharField(_("title"), max_length=50)
     description = HTMLField(_("توضیحات"), null=True,
                             blank=True, max_length=50000)
+    priority = models.IntegerField(_("priority"), default=1000)
 
     thumbnail_origin = models.ImageField(_("تصویر کوچک"), upload_to=IMAGE_FOLDER+'ImageBase/Thumbnail/',
                                          null=True, blank=True, height_field=None, width_field=None, max_length=None)
