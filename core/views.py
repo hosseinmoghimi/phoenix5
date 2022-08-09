@@ -8,7 +8,7 @@ from core.apps import APP_NAME
 from log.repo import LogRepo
 from core.enums import ColorEnum, IconsEnum, ParameterNameEnum, PictureNameEnum
 from core.models import Download, Link
-from core.repo import DownloadRepo, ImageRepo, PageDownloadRepo, PageImageRepo, PageLikeRepo, PagePermissionRepo, PageRepo, PageTagRepo, ParameterRepo, PictureRepo, TagRepo
+from core.repo import DownloadRepo, ImageRepo, LinkRepo, PageDownloadRepo, PageImageRepo, PageLikeRepo, PageLinkRepo, PagePermissionRepo, PageRepo, PageTagRepo, ParameterRepo, PictureRepo, TagRepo
 from core.serializers import PagePermissionSerializer,PageBriefSerializer, PageCommentSerializer, PageImageSerializer, PageDownloadSerializer, PageLinkSerializer, PageSerializer, PageTagSerializer, TagSerializer
 from phoenix.settings import ADMIN_URL, MEDIA_URL, STATIC_URL, SITE_URL
 from phoenix.server_settings import DB_FILE_PATH
@@ -287,7 +287,25 @@ class SearchView(View):
             pages_s = json.dumps(
                 PageSerializer(pages, many=True).data)
             context['pages_s'] = pages_s
+
+            links = PageLinkRepo(request=request).list(
+                search_for=search_for)
+            context['links'] = links
+            links_s = json.dumps(
+                PageLinkSerializer(links, many=True).data)
+            context['links_s'] = links_s
  
+
+
+        
+            # downloads
+            if True:
+                downloads = PageDownloadRepo(request=request).list(search_for=search_for)
+                context['downloads'] = downloads
+                downloads_s = json.dumps(PageDownloadSerializer(downloads, many=True).data)
+                context['page_downloads_s'] = downloads_s
+                  
+
 
         return render(request, TEMPLATE_ROOT+"search.html", context)
 

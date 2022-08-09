@@ -32,6 +32,7 @@ class RequestStatusEnum(TextChoices):
     DENIED='رد شده',_('رد شده')
     ACCEPTED='پذیرفته شده',_('پذیرفته شده')
     REQUESTED='درخواست شده',_('درخواست شده')
+    READY_FOR_PURCHASING='آماده برای خرید',_('آماده برای خرید')
     PURCHASING='در حال خرید',_('در حال خرید')
     EMPLOYERS='متعلق به کارفرما',_('متعلق به کارفرما')
     AVAILABLE_IN_STORE="موجود در انبار",_("موجود در انبار")
