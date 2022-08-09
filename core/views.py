@@ -289,7 +289,7 @@ class SearchView(View):
             context['pages_s'] = pages_s
 
             links = PageLinkRepo(request=request).list(
-                search_for=search_for)
+                search_for=search_for).order_by('priority')
             context['links'] = links
             links_s = json.dumps(
                 PageLinkSerializer(links, many=True).data)
@@ -300,7 +300,7 @@ class SearchView(View):
         
             # downloads
             if True:
-                downloads = PageDownloadRepo(request=request).list(search_for=search_for)
+                downloads = PageDownloadRepo(request=request).list(search_for=search_for).order_by('priority')
                 context['downloads'] = downloads
                 downloads_s = json.dumps(PageDownloadSerializer(downloads, many=True).data)
                 context['page_downloads_s'] = downloads_s
