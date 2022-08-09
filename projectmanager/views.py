@@ -124,7 +124,6 @@ class ProjectsView(View):
         return render(request, TEMPLATE_ROOT+"projects.html", context)
 
 
-
 class RequestView(View):
     def get(self, request, *args, **kwargs):
         context = getContext(request=request)
@@ -153,6 +152,7 @@ class RequestView(View):
                 context['add_signature_form'] = AddSignatureForm()
 
         return render(request, TEMPLATE_ROOT+"request.html", context)
+
 
 class ProjectsListView(View):
     def get(self, request, *args, **kwargs):

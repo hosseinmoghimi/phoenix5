@@ -266,7 +266,7 @@ class Project(Page):
         return pages_ids
     
     def all_sub_projects(self):
-        return Project.objects.filter(id__in=self.all_childs_ids())
+        return Project.objects.order_by('priority').filter(id__in=self.all_childs_ids())
 
 
     def material_requests(self):
