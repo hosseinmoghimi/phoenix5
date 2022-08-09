@@ -85,9 +85,10 @@ class ServiceRequestSerializer(serializers.ModelSerializer):
     service=ServiceSerializer()
     project=ProjectSerializer()
     employee=EmployeeSerializer()
+    invoice=InvoiceSerializer()
     class Meta:
         model=ServiceRequest
-        fields=['id','total','service','persian_date_requested',
+        fields=['id','total','invoice','service','persian_date_requested',
         'quantity','persian_date_added','get_edit_url','get_delete_url',
         'get_status_tag','project','employee','unit_name','unit_price','status',
         'get_absolute_url']

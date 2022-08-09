@@ -439,6 +439,8 @@ class ServiceRequestRepo():
             new_service_invoice.pay_to=project.employer.account
             new_service_invoice.save()
             new_service_request.invoice_id = new_service_invoice.id
+        if 'invoice_id' in kwargs and kwargs['invoice_id'] is not None and kwargs['invoice_id']>0: 
+            new_service_request.invoice_id = kwargs['invoice_id']
         
 
         if 'quantity' in kwargs:
