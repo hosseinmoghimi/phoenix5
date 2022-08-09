@@ -113,6 +113,18 @@ class Request(InvoiceLine, LinkHelper):
             self.row = len(self.invoice.lines.all())+1
         except:
             self.row=1
+        # print(100*"#")
+        # print(self.invoice_id)
+        # print("request")
+        # if self.invoice_id is None:
+        #     if self.type==RequestTypeEnum.MATERIAL_REQUEST:
+        #         invoice=MaterialInvoice()
+        #     if self.type==RequestTypeEnum.SERVICE_REQUEST:
+        #         invoice=ServiceInvoice()
+        #     invoice.pay_from=self.project.contractor.account
+        #     invoice.pay_to=self.project.employer.account
+        #     invoice.save()
+        #     self.invoice=invoice
         super(Request, self).save(*args, **kwargs)
 
     def total(self):

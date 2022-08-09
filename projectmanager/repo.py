@@ -358,9 +358,21 @@ class ServiceRequestRepo():
         if source_project is None or destination_project is None:
             return
         service_requests=ServiceRequest.objects.filter(project_id=source_project.id)
+
+        
+        invoice=ServiceInvoice.objects.filter(id=kwargs['invoice_id']).first()
+        if invoice is None:
+            invoice=ServiceInvoice()
+            invoice.pay_from_id=destination_project.contractor.account.id
+            invoice.pay_to_id=destination_project.employer.account.id
+            invoice.project_id=destination_project.id
+            invoice.save()
+        
+
         for service_request in service_requests:
             new_service_request=ServiceRequest()
             new_service_request.project_id=destination_project.id
+            new_service_request.invoice_id=invoice.id
             new_service_request.quantity=service_request.quantity
             new_service_request.product_or_service_id=service_request.product_or_service_id
             new_service_request.date_delivered=service_request.date_delivered
@@ -640,9 +652,19 @@ class MaterialRequestRepo():
         destination_project=project_repo.project(project_id=kwargs['destination_project_id'])
         if source_project is None or destination_project is None:
             return
+        # if 'invoice_id' in kwargs and kwargs['invoice_id']==-1:
+        invoice=MaterialInvoice.objects.filter(id=kwargs['invoice_id']).first()
+        if invoice is None:
+            invoice=MaterialInvoice()
+            invoice.pay_from_id=destination_project.contractor.account.id
+            invoice.pay_to_id=destination_project.employer.account.id
+            invoice.project_id=destination_project.id
+            invoice.save()
+        
         material_requests=MaterialRequest.objects.filter(project_id=source_project.id)
         for material_request in material_requests:
             new_material_request=MaterialRequest()
+            new_material_request.invoice_id=invoice.id
             new_material_request.project_id=destination_project.id
             new_material_request.quantity=material_request.quantity
             new_material_request.product_or_service_id=material_request.product_or_service_id

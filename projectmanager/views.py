@@ -51,7 +51,7 @@ class HomeView(View):
             page_likes=PageLikeRepo(request=request,app_name=APP_NAME).list(profile_id=me.id)
             context['page_likes']=page_likes
 
-
+        context['expand_likes']=True
         return render(request, TEMPLATE_ROOT+"index.html", context)
 
 

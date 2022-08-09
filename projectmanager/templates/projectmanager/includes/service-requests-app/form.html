@@ -132,6 +132,30 @@
     <form @submit.prevent="copy_from_project()">
 
         <div class="row">
+
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="">فاکتور</label>
+                    <select v-model="add_service_request_form_invoice_id" class="form-control farsi" id="" required>
+                        <option disabled selected>فاکتور مرتبط را انتخاب کنید</option>
+                        <!-- {% for invoice in project.materialinvoice_set.all  %}
+                          
+                        <option value="{{invoice.id}}">
+                            {{invoice.title}}
+                        </option>
+                        {% endfor %} -->
+    
+                               
+                        <option v-for="invoice in invoices" :value="invoice.id" v-text="invoice.id+' '+invoice.title">
+                        </option>
+                        <option value="-1">
+                            فاکتور جدید
+                        </option>
+                    </select>
+                </div>
+    
+            </div>
+
             <div class="col-md-4">
                 <div class="form-group">
                     <label for="">کپی از </label>

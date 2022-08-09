@@ -40,10 +40,12 @@
             console.log(this.source_project_id)
 
             let payload = {
-                source_project_id: this.source_project_id,
+                source_project_id: parseInt(this.source_project_id),
                 destination_project_id: project_id,
-                csrfmiddlewaretoken: csrfmiddlewaretoken
+                csrfmiddlewaretoken: csrfmiddlewaretoken,
+                invoice_id:parseInt(this.add_service_request_form_invoice_id),
             }
+            console.log(payload)
             let url_copy_service_requests = "{% url 'projectmanager:copy_service_requests' %}"
             var posting = $.post(url_copy_service_requests, payload);
             posting.done((data) => {

@@ -5,11 +5,12 @@ from .apps import APP_NAME
 class CopyServiceRequestsForm(forms.Form):
     source_project_id=forms.IntegerField(required=True)
     destination_project_id=forms.IntegerField(required=True)
- 
+    invoice_id=forms.IntegerField(required=True)
+    
 class CopyMaterialRequestsForm(forms.Form):
     source_project_id=forms.IntegerField(required=True)
     destination_project_id=forms.IntegerField(required=True)
- 
+    invoice_id=forms.IntegerField(required=True)
 
 
 class CopyProjectForm(forms.Form):
