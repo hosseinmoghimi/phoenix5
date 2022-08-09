@@ -1,4 +1,6 @@
 {% load to_persian_date %}
+{% load to_price %}
+{% load float_to_int %}
 {% load static %}
 <div class="card">
     <div class="card-body">
@@ -11,12 +13,14 @@
                 </td>
                 <td class="text-right">
                     {% if perms.accounting.change_invoiceline %}
-                    <a title="ویرایش" href="{{invoice_line.get_edit_url}}" class="mx-2 text-warning"><i class="fa fa-edit text-warning"></i> ویرایش</a>
+                    <a title="ویرایش" href="{{invoice_line.get_edit_url}}" class="mx-2 text-warning"><i
+                            class="fa fa-edit text-warning"></i> ویرایش</a>
 
                     {% endif %}
 
                     {% if perms.accounting.delete_invoiceline %}
-                    <a title="حذف" href="{{invoice_line.get_delete_url}}" class="mx-2 text-danger"><i class="fa fa-trash text-danger"></i> حذف</a>
+                    <a title="حذف" href="{{invoice_line.get_delete_url}}" class="mx-2 text-danger"><i
+                            class="fa fa-trash text-danger"></i> حذف</a>
 
                     {% endif %}
 
@@ -131,7 +135,45 @@
                     </small>
                 </td>
                 <td class="text-right">
-                    {{invoice_line.quantity}} {{invoice_line.unit_name}}
+                    {{invoice_line.quantity|float_to_int}} {{invoice_line.unit_name}}
+                </td>
+            </tr>
+
+            <tr>
+                <td class="text-left">
+                    <small class="text-muted">
+                        قیمت واحد
+                    </small>
+                </td>
+                <td class="text-right">
+                    {{invoice_line.unit_price|to_price}}
+                </td>
+            </tr>
+
+            <tr>
+                <td class="text-left">
+                    <small class="text-muted">
+                        قیمت کل
+                    </small>
+                </td>
+                <td class="text-right">
+                    {{invoice_line.line_total|to_price}}
+                </td>
+            </tr>
+
+  <tr>
+                <td class="text-left">
+                    <small class="text-muted">
+                     </small>
+                </td>
+                <td class="text-right">
+                    <div class="alert alert-info">
+
+                        <p>
+                            {{invoice_line.quantity|float_to_int}} {{invoice_line.unit_name}} * {{invoice_line.unit_price|to_price}} =
+                            {{invoice_line.line_total|to_price}}
+                        </p>
+                    </div>
                 </td>
             </tr>
         </table>

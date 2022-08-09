@@ -1,5 +1,6 @@
 {% load to_persian_date %}
 {% load to_price %}
+{% load float_to_int %}
 
 {% load to_persian_date %}
 {% load to_price %}
@@ -100,7 +101,7 @@
                                     </small>
                                 </td>
                                 <td class="bordered">
-                                    {{invoice_line.quantity}}
+                                    {{invoice_line.quantity|float_to_int}}
                                     {{invoice_line.unit_name}}
                                 </td>
                                 <td class="bordered">
