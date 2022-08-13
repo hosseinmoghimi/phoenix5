@@ -97,7 +97,7 @@ class CostSerializer(serializers.ModelSerializer):
     pay_to=AccountSerializer()
     class Meta:
         model = Cost
-        fields = ['id','title', 'pay_from','pay_to', 'amount','get_absolute_url','persian_transaction_datetime']
+        fields = ['id','title','status','cost_color','cost_type','status_color', 'pay_from','pay_to', 'amount','get_absolute_url','get_edit_url','get_delete_url','persian_transaction_datetime']
 
 
 

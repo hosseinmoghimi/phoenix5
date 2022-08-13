@@ -68,7 +68,8 @@ class Transaction(Page,LinkHelper):
     amount=models.IntegerField(_("مبلغ"),default=0)
     payment_method=models.CharField(_("نوع پرداخت"),choices=PaymentMethodEnum.choices,default=PaymentMethodEnum.DRAFT, max_length=50)
     transaction_datetime=models.DateTimeField(_("تاریخ تراکنش"), auto_now=False, auto_now_add=False)
-    
+    def status_color(self):
+        return self.color()
     def color(self):
         color="primary"
         if self.status==TransactionStatusEnum.DRAFT:
@@ -823,7 +824,7 @@ class Salary(Spend,LinkHelper):
 class Cost(Spend,LinkHelper):    
     cost_type=models.CharField(_("cost"),choices=CostTypeEnum.choices, max_length=50)
     class_name="cost"
-    def color(self):
+    def cost_color(self):
         color='primary'
         if self.cost_type==CostTypeEnum.WATER:
             color="info"

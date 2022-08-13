@@ -971,10 +971,12 @@ class CostRepo():
     def add_cost(self,*args, **kwargs):
         if not self.request.user.has_perm(APP_NAME+".add_cost"):
             return
-        cost=Cost()
+        cost=Cost(*args, **kwargs)
         cost.creator=self.profile
         if 'title' in kwargs:
             cost.title=kwargs['title']
+        if 'status' in kwargs:
+            cost.status=kwargs['status']
         if 'cost_type' in kwargs:
             cost.cost_type=kwargs['cost_type']
             cost.pay_to_id=CostRepo(request=self.request).cost_account(cost_type=kwargs['cost_type']).id
