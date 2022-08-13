@@ -889,6 +889,7 @@ class ServicesView(View):
         context['services']=services
         services_s=json.dumps(ServiceSerializer(services,many=True).data)
         context['services_s']=services_s
+        context['expand_services']=True
         if request.user.has_perm(APP_NAME+".add_service"):
             context['add_service_form']=AddServiceForm()
         return render(request,TEMPLATE_ROOT+"services.html",context)
