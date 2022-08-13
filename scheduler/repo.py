@@ -57,7 +57,4 @@ class AppointmentRepo():
             page_location=PageLocation(page_id=appointment.pk,location_id=location_id)
             page_location.save()
 
-        print("kwargs")
-        print(kwargs)
-        print(100*"#")
         return appointment
