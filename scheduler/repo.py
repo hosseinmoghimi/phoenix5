@@ -49,6 +49,7 @@ class AppointmentRepo():
             del kwargs['location_id']
         appointment=Appointment(*args, **kwargs)
         appointment.save()
+        appointment.profiles.add(self.profile)
 
         if location_id>0:
             # location=LocationRepo(request=self.request).location(pk=location_id)
