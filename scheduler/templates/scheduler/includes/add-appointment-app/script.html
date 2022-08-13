@@ -43,7 +43,7 @@
                     status: this.status,
                     color: this.color,
                     location_id:parseInt(this.location_id),
-                    date_fixed: this.date_fixed+" "+(this.time_fixed.hour<10?" ":"")+this.time_fixed.hour+":"+(this.time_fixed.minute<10?" ":"")+this.time_fixed.minute+":00",
+                    date_fixed: this.date_fixed+" "+(this.time_fixed.hour<10?"0":"")+this.time_fixed.hour+":"+(this.time_fixed.minute<10?"0":"")+this.time_fixed.minute+":00",
                 }
                 console.log(payload)
                 $.post(url, payload).done((data) => {
