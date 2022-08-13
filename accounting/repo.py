@@ -1,5 +1,5 @@
 from datetime import timedelta
-from accounting.enums import FinancialDocumentTypeEnum, PaymentMethodEnum, TransactionStatusEnum
+from accounting.enums import FinancialDocumentTypeEnum, PaymentMethodEnum, SpendTypeEnum, TransactionStatusEnum
 from core.constants import FAILED, SUCCEED,MISC
 
 from core.enums import UnitNameEnum
@@ -997,6 +997,7 @@ class CostRepo():
         # else:
         #     payment.financial_year_id=FinancialYear.get_by_date(date=payment.transaction_datetime).id
         cost.save()
+        cost.spend_type=SpendTypeEnum.COST
         return cost
 
 

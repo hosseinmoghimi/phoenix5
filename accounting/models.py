@@ -821,7 +821,7 @@ class Salary(Spend,LinkHelper):
             fb.save()
 
             
-class Cost(Spend,LinkHelper):    
+class Cost(Spend,LinkHelper):
     cost_type=models.CharField(_("cost"),choices=CostTypeEnum.choices, max_length=50)
     class_name="cost"
     def cost_color(self):
@@ -846,6 +846,7 @@ class Cost(Spend,LinkHelper):
 
    
     def save(self,*args, **kwargs):
+        self.spend_type=SpendTypeEnum.COST
         if self.class_name is None or self.class_name=="":
             self.class_name='cost'
         if self.app_name is None or self.app_name=="":
