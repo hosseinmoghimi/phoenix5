@@ -88,11 +88,12 @@ class PersianCalendar:
             if min_<0:
                 min_=0
             padding+=3
-            sec_=int(shamsi_date_time[padding:padding+2])
-            if sec_>59:
-                sec_=59
-            if sec_<0:
-                sec_=0
+            if len(shamsi_date_time)>(padding):
+                sec_=int(shamsi_date_time[padding:padding+2])
+                if sec_>59:
+                    sec_=59
+                if sec_<0:
+                    sec_=0
            
         if month_<7 and DAY_LIGHT_SAVING:
             HOURS_OFFSET_=1

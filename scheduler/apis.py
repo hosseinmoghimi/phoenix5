@@ -2,7 +2,7 @@ from multiprocessing import context
 from django.http import JsonResponse
 from rest_framework.views import APIView
 from core.constants import FAILED, SUCCEED
-
+from utility.calendar import PersianCalendar
 from scheduler.forms import *
 from scheduler.repo import AppointmentRepo
 from scheduler.serializers import AppointmentSerializer
@@ -13,6 +13,9 @@ class AddAppointmentApi(APIView):
         add_appointment_form=AddAppointmentForm(request.POST)
         if add_appointment_form.is_valid():
             cd=add_appointment_form.cleaned_data
+            datetime_fixed=cd['date_fixed'] 
+            datetime_fixed=PersianCalendar().to_gregorian(datetime_fixed)
+            cd['date_fixed']=datetime_fixed
             appointment=AppointmentRepo(request=request).add_appointment(**cd)
             if appointment is not None:
                 context['result']=SUCCEED

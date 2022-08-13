@@ -1,15 +1,15 @@
 <script>
-    let accounts_app_accounts = JSON.parse(`{{accounts_s|escapejs}}`)
-    let accounts_app = new Vue({
-        el:"#accounts-app",
+    let accounts_related_app = new Vue({
+        el:"#accounts-related-app",
         data: {
-            accounts: accounts_app_accounts,
+            accounts: JSON.parse(`{{accounts_s|escapejs}}`),
             search_for:'',
             waiting:false,
         },
         methods: {
             filter:function(){
-                this.accounts = accounts_app_accounts.filter(account => account.title.indexOf(this.search_for) > -1)
+                this.accounts = accounts.filter(account => account.title.indexOf(this.search_for) > -1)
+         
             },
             to_price: function (vall) {
                 let color='primary'
@@ -22,8 +22,8 @@
                     <span class="text-${color}">${vall}</span>
                     `
             },
-            create_employee: function (account_id) {
-                let url = "{% url 'organization:employee' pk=0 %}"
+            add_account: function (account_id) {
+                let url = "{% url 'accounting:employee' pk=0 %}"
                 let payload = {
                     csrfmiddlewaretoken: csrfmiddlewaretoken,
                     account_id: account_id
@@ -32,6 +32,8 @@
                     console.log(data)
                 })
             },
+           
         }
     })
+
 </script>

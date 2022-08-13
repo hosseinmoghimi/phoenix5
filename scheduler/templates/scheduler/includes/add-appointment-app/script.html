@@ -1,0 +1,60 @@
+{% load to_json %}
+<script>
+    let all_accounts=JSON.parse(`{{accounts_s|escapejs}}`)
+    let all_profiles=JSON.parse(`{{profiles_s|escapejs}}`)
+    let add_appointment_app = new Vue({
+        el:"#add-appointment-app",
+        data: {
+            accounts: all_accounts,
+            profiles: all_profiles,
+            search_for:'',
+            waiting:false,
+            title:"",
+            color:"",
+            status:"",
+            location_id:0,
+            date_fixed:current_date,
+            time_fixed:{hour:7,minute:0},
+        },
+        components: {
+            DatePicker: VuePersianDatetimePicker
+        },
+        methods: {
+            filter:function(){
+                this.appointments = appointments.filter(appointment => appointment.title.indexOf(this.search_for) > -1)
+         
+            },
+            to_price: function (vall) {
+                let color='primary'
+                if (vall<0)
+                color='danger'
+                if (vall>0)
+                color='success'
+                vall=to_price(vall,"{{CURRENCY}}")
+                return `
+                    <span class="text-${color}">${vall}</span>
+                    `
+            },
+            add_appointment: function () {
+                let url = "{% url 'scheduler:add_appointment' %}"
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    title: this.title,
+                    status: this.status,
+                    color: this.color,
+                    location_id:parseInt(this.location_id),
+                    date_fixed: this.date_fixed+" "+(this.time_fixed.hour<10?" ":"")+this.time_fixed.hour+":"+(this.time_fixed.minute<10?" ":"")+this.time_fixed.minute+":00",
+                }
+                console.log(payload)
+                $.post(url, payload).done((data) => {
+                    console.log(data)
+                    if(typeof appointments_app!='undefined'){
+                        appointments_app.appointments.push(data.appointment)
+                    }
+                })
+            },
+           
+        }
+    })
+
+</script>

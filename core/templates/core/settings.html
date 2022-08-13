@@ -1,4 +1,4 @@
-{% extends "core/wide-layout.html" %}
+{% extends "core/layout.html" %}
 
 {% block content %}
 {% include "core/includes/page-app/navbar.html" %}
@@ -11,7 +11,7 @@
 
                     {% if perms.core.change_parameter %}
                     <li class="nav-item my-auto mx-2">
-                        <a target="_blank" class="nav-link farsi " href="{{ADMIN_URL}}{{APP_NAME}}/">
+                        <a target="_blank" class="nav-link farsi " href="{{ADMIN_URL}}">
                             <i class="material-icons" aria-hidden="true">settings</i>
                             مدیریت
                         </a>

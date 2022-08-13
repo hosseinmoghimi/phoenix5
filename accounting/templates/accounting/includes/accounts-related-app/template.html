@@ -1,0 +1,147 @@
+{% load to_persian_date %}
+{% load to_price %}
+{% load to_amount_color %}
+{% load static %}
+<div id="accordion-accounts-related">
+
+
+    <div class="card" id="accounts-related-app">
+        <div class="card-header" id="heading-accounts-related">
+            <h5 class="text-center">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-accounts-related"
+                    aria-expanded="true" aria-controls="collapse-accounts-related">
+                    حساب های مالی
+
+
+                    <span v-if="accounts.length>0">
+                        <small class="text-danger mx-2">
+                            <span v-text="accounts.length"></span>
+                        </small>
+                    </span>
+
+
+                </button>
+            </h5>
+
+            {% if page_pre_description %}
+
+            <h5 class="text-center">
+                {{page_pre_description}}
+            </h5>
+            {% endif %}
+            {% if page_description %}
+
+            <h4 class="text-center">
+                {{page_description}}
+            </h4>
+            {% endif %}
+        </div>
+        <div id="collapse-accounts-related" class="collapse {% if expand_accounts %} show {% endif %}" aria-labelledby="heading-accounts-related"
+            data-parent="#accordion-accounts-related">
+
+
+            <div class="card-body">
+
+                {% load static %}
+                <form @submit.prevent="search()">
+                    <img src="{% static 'leo/img/loading.gif' %}" width="32" v-if="waiting" alt="">
+
+                    <input type="text" v-model="search_for" class="form-control" placeholder="جستجو ..."
+                        @input="filter()">
+                </form>
+
+
+                <div class="table-responsive">
+                    <img v-if="false" width="32" src="{% static 'leo/img/loading.gif' %}" alt="">
+                    <h6 v-if="false">
+
+                        <span class="text-muted">در حال بار گذاری ... </span>
+                    </h6>
+                    <table class="table table-striped">
+                        <thead>
+                            <th>
+                                حساب
+                            </th>
+                            <th>
+                                تماس
+                            </th>
+                            <th>
+                                پروفایل
+                            </th>
+                            <th>
+                                مانده
+                            </th>
+                            <th>
+
+                            </th>
+                        </thead>
+                        <tbody>
+
+
+                            <tr v-for="account in accounts">
+                                <td>
+                                    <a :href="account.get_absolute_url">
+                                        <div class="media">
+                                            <img :src="account.logo" class="rounded" width="32" alt="">
+                                            <div class="media-body mr-3">
+                                                <div>
+
+                                                    <span v-text="account.title"></span>
+                                                </div>
+                                                <div>
+                                                    <small class="text-muted">
+                                                        <span v-text="account.class_title"></span>
+                                                    </small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </a>
+
+
+                                </td>
+                                <td>
+                                     
+                                    <a v-if="account.get_whatsapp_link" :href="account.get_whatsapp_link">
+                                        <img src="{% static 'icons/whatsapp.png' %}" width="32" alt="">
+                                    <span :href="account.tel">
+
+                                    </span>
+
+                                    </a>
+                                </td>
+                                <td>
+                                    
+                                    <a v-if="account.profile" :href="account.profile.get_absolute_url">
+                                        <img :src="account.profile.image" class="rounded-circle" width="32" alt="">
+                                        <span v-text="account.profile.name"></span>
+                                    </a>
+
+                                </td>
+                                <td>
+                                    <span v-html="to_price(account.balance_rest)"></span>
+                                    </span>
+
+                                </td>
+                                <td>
+
+                                    {% if aaa and perms.projectmanager.add_employee and not account.employee %}
+                                    <form @submit.prevent="create_employee(account.id)">
+                                        {% csrf_token %}
+                                        <button class="btn btn-warning" type="submit">
+                                            ایجاد پرسنل
+                                        </button>
+                                    </form>
+                                    {% endif %}
+
+
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+</div>

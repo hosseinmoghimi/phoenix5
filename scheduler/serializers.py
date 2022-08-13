@@ -8,5 +8,5 @@ class AppointmentSerializer(serializers.ModelSerializer):
     locations=LocationSerializer(many=True)
     class Meta:
         model=Appointment
-        fields=['id','title','profiles','persian_date_fixed','locations','get_absolute_url']
+        fields=['id','title','status','color','status_color','profiles','persian_date_fixed','locations','get_absolute_url','get_delete_url','get_edit_url']
         
