@@ -1,8 +1,11 @@
 
+from requests import request
+from accounting.serializers import AccountSerializer
 from core.constants import FAILED,SUCCEED
 from django.http import JsonResponse
 from django.shortcuts import render
 # Create your views here.
+from accounting.repo import AccountRepo
 from django.shortcuts import render,reverse
 from core.enums import ColorEnum
 from core.views import CoreContext, PageContext,SearchForm
@@ -11,12 +14,12 @@ from django.views import View
 from map.repo import AreaRepo, LocationRepo
 from map.serializers import AreaSerializer, LocationSerializer
 from accounting.views import add_from_accounts_context
-from transport.enums import MaintenanceEnum, VehicleBrandEnum, VehicleColorEnum, VehicleTypeEnum
+from transport.enums import MaintenanceEnum, VehicleBrandEnum, VehicleColorEnum, VehicleTypeEnum, WeightUnitEnum
 from transport.forms import *
 from utility.calendar import PersianCalendar 
-from .serializers import ClientSerializer, DriverSerializer, MaintenanceSerializer,PassengerSerializer, ServiceManSerializer, TripCategorySerializer, TripPathSerializer, TripSerializer, VehicleSerializer, WorkShiftSerializer
+from .serializers import ClientSerializer, DriverSerializer, LuggageSerializer, MaintenanceSerializer,PassengerSerializer, ServiceManSerializer, TripCategorySerializer, TripPathSerializer, TripSerializer, VehicleSerializer, WorkShiftSerializer
 
-from .repo import ClientRepo, MaintenanceRepo, ServiceManRepo,TripCategoryRepo, DriverRepo,PassengerRepo, TripPathRepo, TripRepo, VehicleRepo, WorkShiftRepo
+from .repo import ClientRepo, LuggageRepo, MaintenanceRepo, ServiceManRepo,TripCategoryRepo, DriverRepo,PassengerRepo, TripPathRepo, TripRepo, VehicleRepo, WorkShiftRepo
 from .apps import APP_NAME
 # from .repo import ProductRepo
 # from .serializers import ProductSerializer
@@ -215,6 +218,16 @@ def get_add_maintenance_context(request,*args, **kwargs):
     context['trip_paths_s']=trip_paths_s
 
     context['add_trip_form']=AddTripForm()
+    return context
+
+def add_luggage_context(request=request,*args, **kwargs):
+    context={}
+     #accounts
+    accounts=AccountRepo(request=request).list(*args, **kwargs)
+    context['accounts']=accounts
+    accounts_s=json.dumps(AccountSerializer(accounts,many=True).data)
+    context['accounts_s']=accounts_s
+    context['weight_units']=(u[0] for u in WeightUnitEnum.choices)
     return context
 
 def get_add_work_event_context(request,*args, **kwargs):
@@ -474,6 +487,28 @@ class DriversView(View):
             context['add_driver_form']=AddDriverForm()
             context.update(add_from_accounts_context(request=request))
         return render(request,TEMPLATE_ROOT+"drivers.html",context)
+
+
+class LuggageView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        luggage=LuggageRepo(request=request).luggage(*args, **kwargs)
+        context.update(PageContext(request=request,page=luggage))
+        context['luggage']=luggage
+        context['luggage_s']=json.dumps(LuggageSerializer(luggage).data)
+        return render(request,TEMPLATE_ROOT+"luggage.html",context)
+
+class LuggagesView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        luggages=LuggageRepo(request=request).list(*args, **kwargs)
+        context['luggages']=luggages
+        luggages_s=json.dumps(LuggageSerializer(luggages,many=True).data)
+        context['luggages_s']=luggages_s
+        if request.user.has_perm(APP_NAME+".add_luggage"):
+            context['add_luggage_form']=AddLuggageForm()
+            context.update(add_luggage_context(request=request))
+        return render(request,TEMPLATE_ROOT+"luggages.html",context)
 
 
 class TripCategoriesView(View):

@@ -1,0 +1,29 @@
+
+{% extends "transport/wide-layout.html" %}
+
+
+{% block content %}
+
+
+  <div class="row">
+    {% if add_luggage_form %}
+      
+    <div class="col-md-12">
+      {% include "transport/includes/add-luggage-app/template.html" %}
+    </div>
+    {% endif %}
+    <div class="col-md-12">
+        {% include "transport/includes/luggages-app/template.html" %}
+    </div>
+  </div>
+{% endblock content %}
+
+
+{% block script %}
+{% include "transport/includes/luggages-app/script.html" %}
+
+{% if add_luggage_form %}
+
+{% include "transport/includes/add-luggage-app/script.html" %}
+{% endif %}
+{% endblock script %}

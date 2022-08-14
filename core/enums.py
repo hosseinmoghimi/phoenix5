@@ -65,6 +65,8 @@ def class_title(*args, **kwargs):
         class_title = "سرویس"
     elif class_name=="pm_service":
         class_title = "سرویس"
+    elif class_name=="luggage":
+        class_title = "محموله بار"
     elif class_name == "organizationunit":
         class_title = "واحد سازمانی"
     elif class_name == "event":

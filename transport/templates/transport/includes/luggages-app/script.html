@@ -1,0 +1,24 @@
+{% load to_json %}
+<script>
+    let luggages = JSON.parse(`{{luggages_s|escapejs}}`)
+    let luggages_app = new Vue({
+        el:"#luggages-app",
+        data: {
+            luggages: luggages,
+            search_for:'',
+            waiting:false,
+        },
+        methods: {
+            filter:function(){
+                this.luggages = luggages.filter(luggage => luggage.account.title.indexOf(this.search_for) > -1)
+         
+            },
+            to_price: function (vall) {
+                vall=to_price(vall,"")
+                return  vall
+            },
+          
+        }
+    })
+
+</script>

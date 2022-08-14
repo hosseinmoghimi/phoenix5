@@ -1,7 +1,7 @@
 from lib2to3.pgen2 import driver
 from rest_framework import serializers
 from authentication.serializers import ProfileSerializer
-from transport.models import Maintenance, Passenger,Driver, ServiceMan, Trip, TripCategory, TripPath, Vehicle,Client, WorkShift
+from transport.models import Luggage, Maintenance, Passenger,Driver, ServiceMan, Trip, TripCategory, TripPath, Vehicle,Client, WorkShift
 from map.serializers import AreaSerializer, LocationSerializer
 from accounting.serializers import AccountSerializer
 
@@ -10,6 +10,13 @@ class VehicleSerializer(serializers.ModelSerializer):
     class Meta:
         model =Vehicle
         fields=['id','title','plaque','thumbnail','brand','vehicle_type','color','get_absolute_url','get_edit_url','get_delete_url']
+
+
+class LuggageSerializer(serializers.ModelSerializer):
+    owner=AccountSerializer()
+    class Meta:
+        model =Luggage
+        fields=['id','title','thumbnail','is_fragile','owner','price','dimension','length','width','height','weight_unit','weight','get_absolute_url','get_edit_url','get_delete_url']
 
 
 

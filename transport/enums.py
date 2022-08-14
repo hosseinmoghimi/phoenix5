@@ -2,7 +2,11 @@ from core import enums as CoreEnums
 from django.db.models import TextChoices
 from django.utils.translation import gettext as _
 
-
+class WeightUnitEnum(TextChoices):
+    KILO_GRAM="کیلوگرم",_("کیلوگرم")
+    GRAM="گرم",_("گرم")
+    TON="تن",_("تن")
+    
 class TripStatusEnum(TextChoices):
     REQUESTED="درخواست شده",_("درخواست شده")
     APPROVED="تأیید شده",_("تأیید شده")

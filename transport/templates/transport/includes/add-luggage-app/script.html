@@ -1,0 +1,94 @@
+{% load to_json %}
+<script>
+    let accounts = JSON.parse(`{{accounts_s|escapejs}}`)
+    let add_luggage_app = new Vue({
+        el: "#add-luggage-app",
+        data: {
+            account_id: 0,
+            accounts: accounts,
+            weight:0,
+            title:"",
+            price:0,
+            is_fragile:false,
+            description:"",
+            name: "",
+            length: 0,
+            width: 0,
+            height: 0,
+            weight_unit:"",
+            search_for: '',
+            waiting: false,
+            message: {
+                show: false
+            }
+        },
+        methods: {
+            to_price: function (vall) {
+                vall=to_price(vall,"")
+                return  vall
+            },
+          
+            filter: function () {
+                this.accounts = accounts.filter(account => account.title.indexOf(this.search_for) > -1)
+                if (this.accounts.length > 0)
+                    this.account_id = this.accounts[0].id
+            },
+            add_luggage: function () {
+                let url = "{% url 'transport:add_luggage' %}"
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    owner_id: parseInt(this.account_id),
+                    length: parseInt(this.length),
+                    width: parseInt(this.width),
+                    height:parseInt( this.height),
+                    price: parseInt(this.price),
+                    is_fragile:this.is_fragile,
+                    title: this.title,
+                    weight_unit: this.weight_unit,
+                    weight: parseInt(this.weight),
+                    description: this.description,
+                }
+                add_luggage_app.waiting = true
+
+                $.post(url, payload).done((data) => {
+                    add_luggage_app.waiting = false
+
+                    if (data.result === 'FAILED') {
+                        add_luggage_app.message = {
+                            color: "danger",
+                            body: data.message,
+                            show: true,
+                        }
+                        setTimeout(() => {
+                            add_luggage_app.message = {
+                                show: false,
+                            }
+                        }, 3000);
+                    }
+                    if (data.result === 'SUCCEED') {
+                        if (typeof luggages_app != "undefined") {
+                            luggages_app.luggages.push(data.luggage)
+                        }
+
+                        add_luggage_app.title=""
+                        add_luggage_app.weight_unit=""
+                        add_luggage_app.owner_id=""
+                        add_luggage_app.message = {
+                            color: "success",
+                            body: "با موفقیت افزوده شد.",
+                            show: true,
+                        }
+                        setTimeout(() => {
+                            add_luggage_app.message = {
+                                show: false,
+                            }
+                        }, 3000);
+                    }
+                })
+
+            }
+
+        }
+    })
+
+</script>
