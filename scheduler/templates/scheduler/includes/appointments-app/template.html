@@ -102,8 +102,6 @@
                             </th>
                         </thead>
                         <tbody>
-
-
                             <tr v-for="appointment in appointments">
                                 <td>
                                     <a :href="appointment.get_absolute_url">
@@ -120,12 +118,9 @@
                                                         <span v-text="appointment.status"></span>
                                                     </span>
                                                 </div>
-
                                             </div>
                                         </div>
                                     </a>
-
-
                                 </td>
                                 <td>
                                     <div v-for="profile in appointment.profiles">
@@ -148,18 +143,15 @@
                                 </td>
                                 <td>
                                     {% if perms.scheduler.change_appointment %}
-                                    <a :href="appointment.get_edit_url" title="ویرایش" class="mx-2">
+                                    <a :href="appointment.get_edit_url" target="_blank" title="ویرایش" class="mx-2">
                                         <i class="fa fa-edit text-warning"></i>
                                     </a>
                                     {% endif %}
-
                                     {% if perms.scheduler.delete_appointment %}
-                                    <a :href="appointment.get_delete_url" title="حذف" class="mx-2">
+                                    <a :href="appointment.get_delete_url" target="_blank" title="حذف" class="mx-2">
                                         <i class="fa fa-trash text-danger"></i>
                                     </a>
                                     {% endif %}
-
-
                                 </td>
                             </tr>
                         </tbody>
@@ -167,7 +159,5 @@
                 </div>
             </div>
         </div>
-
-
     </div>
 </div>
