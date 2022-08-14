@@ -14,7 +14,6 @@ from accounting.views import add_from_accounts_context
 from transport.enums import MaintenanceEnum, VehicleBrandEnum, VehicleColorEnum, VehicleTypeEnum
 from transport.forms import *
 from utility.calendar import PersianCalendar 
-
 from .serializers import ClientSerializer, DriverSerializer, MaintenanceSerializer,PassengerSerializer, ServiceManSerializer, TripCategorySerializer, TripPathSerializer, TripSerializer, VehicleSerializer, WorkShiftSerializer
 
 from .repo import ClientRepo, MaintenanceRepo, ServiceManRepo,TripCategoryRepo, DriverRepo,PassengerRepo, TripPathRepo, TripRepo, VehicleRepo, WorkShiftRepo
