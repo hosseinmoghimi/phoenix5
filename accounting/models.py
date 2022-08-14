@@ -163,6 +163,7 @@ class ProductOrServiceCategory(models.Model):
     def get_absolute_url(self):
         return reverse(APP_NAME+":product_or_service_category", kwargs={"pk": self.pk})
 
+
 class ProductOrService(Page):
     product_or_service_category=models.ForeignKey("productorservicecategory", null=True,blank=True,verbose_name=_("دسته بندی"), on_delete=models.CASCADE)
     barcode=models.CharField(_("بارکد"),null=True,blank=True, max_length=100)
@@ -264,7 +265,7 @@ class Account(models.Model,LinkHelper):
     register_no=models.CharField(_("شماره ثبت"),max_length=50,null=True,blank=True)
     fax=models.CharField(_("شماره فکس"),max_length=50,null=True,blank=True)
     postal_code=models.CharField(_("کد پستی"),max_length=50,null=True,blank=True)
-
+    priority=models.IntegerField(_("priority"),default=1000)
     class_name=models.CharField(_("class_name"),blank=True, max_length=50)
     app_name=models.CharField(_("app_name"),blank=True,max_length=50)
     def default_bank_account(self):

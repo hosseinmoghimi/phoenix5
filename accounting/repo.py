@@ -679,7 +679,7 @@ class AccountRepo():
         if 'user' in kwargs:
             self.user = kwargs['user']
         
-        self.objects=Account.objects.all()
+        self.objects=Account.objects.order_by('priority')
         self.profile=ProfileRepo(*args, **kwargs).me
         if self.profile is not None:
             self.me=Account.objects.filter(profile=self.profile).first()
