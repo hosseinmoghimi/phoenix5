@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from accounting.models import ProductOrService
 
-from accounting.serializers import AccountSerializer, ProductOrServiceSerializer
+from accounting.serializers import AccountSerializer, InvoiceSerializer, ProductOrServiceSerializer
 from .models import Service,Material,Event,Employee, MaterialRequest, Request,Project,OrganizationUnit, RequestSignature, ServiceRequest
 from authentication.serializers import ProfileSerializer
 from organization.serializers import OrganizationUnitSerializer,EmployeeSerializer
@@ -30,7 +30,7 @@ class EventSerializer(serializers.ModelSerializer):
     project_related=ProjectBriefSerializer()
     class Meta:
         model=Event
-        fields=['id','project_related','thumbnail','likes_count','title','get_absolute_url','persian_event_datetime','persian_start_datetime','persian_end_datetime','get_edit_url']
+        fields=['id','project_related','get_delete_url','thumbnail','likes_count','title','get_absolute_url','persian_event_datetime','persian_start_datetime','persian_end_datetime','get_edit_url']
 
 
 class RequestSignatureSerializer(serializers.ModelSerializer):
@@ -85,9 +85,23 @@ class ServiceRequestSerializer(serializers.ModelSerializer):
     service=ServiceSerializer()
     project=ProjectSerializer()
     employee=EmployeeSerializer()
+    invoice=InvoiceSerializer()
     class Meta:
         model=ServiceRequest
-        fields=['id','total','service','persian_date_requested',
+        fields=['id','total','invoice','service','persian_date_requested',
+        'quantity','persian_date_added','get_edit_url','get_delete_url',
+        'get_status_tag','project','employee','unit_name','unit_price','status',
+        'get_absolute_url']
+
+
+class ServiceRequestFullSerializer(serializers.ModelSerializer):
+    service=ServiceSerializer()
+    invoice=InvoiceSerializer()
+    project=ProjectSerializer()
+    employee=EmployeeSerializer()
+    class Meta:
+        model=ServiceRequest
+        fields=['id','total','invoice','service','status','persian_date_requested',
         'quantity','persian_date_added','get_edit_url','get_delete_url',
         'get_status_tag','project','employee','unit_name','unit_price',
         'get_absolute_url']
@@ -95,11 +109,25 @@ class ServiceRequestSerializer(serializers.ModelSerializer):
 
 class MaterialRequestSerializer(serializers.ModelSerializer):
     material=MaterialSerializer()
+    invoice=InvoiceSerializer()
     project=ProjectSerializer()
     employee=EmployeeSerializer()
     class Meta:
         model=Request
-        fields=['id','total','material','persian_date_requested',
+        fields=['id','invoice','total','material','persian_date_requested','status',
+        'quantity','persian_date_added','get_edit_url','get_delete_url',
+        'get_status_tag','project','employee','unit_name','unit_price',
+        'get_absolute_url']
+
+
+class MaterialRequestFullSerializer(serializers.ModelSerializer):
+    material=MaterialSerializer()
+    invoice=InvoiceSerializer()
+    project=ProjectSerializer()
+    employee=EmployeeSerializer()
+    class Meta:
+        model=Request
+        fields=['id','invoice','total','material','persian_date_requested','status',
         'quantity','persian_date_added','get_edit_url','get_delete_url',
         'get_status_tag','project','employee','unit_name','unit_price',
         'get_absolute_url']

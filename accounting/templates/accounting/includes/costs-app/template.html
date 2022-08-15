@@ -84,7 +84,17 @@
                                     <a :href="cost.get_absolute_url">
                                         <span v-text="cost.title"></span>
                                     </a>
+                                    <div> 
+                                            <span :class="'mx-2 badge badge-'+cost.status_color">
 
+                                                <span v-text="cost.status"></span>
+                                            </span>
+                                       
+                                            <span :class="'mx-2 badge badge-'+cost.cost_color">
+
+                                                <span v-text="cost.cost_type"></span>
+                                            </span>
+                                    </div>
                                 </td>
                                 <td>
                                     <a :href="cost.pay_from.get_absolute_url">

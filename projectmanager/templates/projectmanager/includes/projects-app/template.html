@@ -44,7 +44,7 @@
 
 
         </div>
-        <div id="collapse-projects" class="collapse"
+        <div id="collapse-projects" class="collapse {% if expand_projects %} show {% endif %}"
             aria-labelledby="heading-projects" data-parent="#accordion-projects">
 
             <div class="card-body">
@@ -54,9 +54,7 @@
                     <a title="جزئیات" :href="project.get_absolute_url">
                         <div class="media">
 
-                            <i class="material-icons">
-                                engineering
-                            </i>
+                            <img :src="project.thumbnail" class="rounded" width="32" alt="">
 
                             <div class="media-body farsi">
 

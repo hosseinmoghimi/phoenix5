@@ -68,7 +68,8 @@ class Transaction(Page,LinkHelper):
     amount=models.IntegerField(_("مبلغ"),default=0)
     payment_method=models.CharField(_("نوع پرداخت"),choices=PaymentMethodEnum.choices,default=PaymentMethodEnum.DRAFT, max_length=50)
     transaction_datetime=models.DateTimeField(_("تاریخ تراکنش"), auto_now=False, auto_now_add=False)
-    
+    def status_color(self):
+        return self.color()
     def color(self):
         color="primary"
         if self.status==TransactionStatusEnum.DRAFT:
@@ -161,6 +162,7 @@ class ProductOrServiceCategory(models.Model):
 
     def get_absolute_url(self):
         return reverse(APP_NAME+":product_or_service_category", kwargs={"pk": self.pk})
+
 
 class ProductOrService(Page):
     product_or_service_category=models.ForeignKey("productorservicecategory", null=True,blank=True,verbose_name=_("دسته بندی"), on_delete=models.CASCADE)
@@ -263,7 +265,7 @@ class Account(models.Model,LinkHelper):
     register_no=models.CharField(_("شماره ثبت"),max_length=50,null=True,blank=True)
     fax=models.CharField(_("شماره فکس"),max_length=50,null=True,blank=True)
     postal_code=models.CharField(_("کد پستی"),max_length=50,null=True,blank=True)
-
+    priority=models.IntegerField(_("priority"),default=1000)
     class_name=models.CharField(_("class_name"),blank=True, max_length=50)
     app_name=models.CharField(_("app_name"),blank=True,max_length=50)
     def default_bank_account(self):
@@ -820,10 +822,10 @@ class Salary(Spend,LinkHelper):
             fb.save()
 
             
-class Cost(Spend,LinkHelper):    
+class Cost(Spend,LinkHelper):
     cost_type=models.CharField(_("cost"),choices=CostTypeEnum.choices, max_length=50)
     class_name="cost"
-    def color(self):
+    def cost_color(self):
         color='primary'
         if self.cost_type==CostTypeEnum.WATER:
             color="info"
@@ -845,6 +847,7 @@ class Cost(Spend,LinkHelper):
 
    
     def save(self,*args, **kwargs):
+        self.spend_type=SpendTypeEnum.COST
         if self.class_name is None or self.class_name=="":
             self.class_name='cost'
         if self.app_name is None or self.app_name=="":

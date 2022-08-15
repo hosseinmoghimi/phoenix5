@@ -1,0 +1,39 @@
+<script>
+    let accounts_related_app = new Vue({
+        el:"#accounts-related-app",
+        data: {
+            accounts: JSON.parse(`{{accounts_s|escapejs}}`),
+            search_for:'',
+            waiting:false,
+        },
+        methods: {
+            filter:function(){
+                this.accounts = accounts.filter(account => account.title.indexOf(this.search_for) > -1)
+         
+            },
+            to_price: function (vall) {
+                let color='primary'
+                if (vall<0)
+                color='danger'
+                if (vall>0)
+                color='success'
+                vall=to_price(vall,"{{CURRENCY}}")
+                return `
+                    <span class="text-${color}">${vall}</span>
+                    `
+            },
+            add_account: function (account_id) {
+                let url = "{% url 'accounting:employee' pk=0 %}"
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    account_id: account_id
+                }
+                $.post(url, payload).done((data) => {
+                    console.log(data)
+                })
+            },
+           
+        }
+    })
+
+</script>

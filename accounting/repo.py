@@ -1,5 +1,5 @@
 from datetime import timedelta
-from accounting.enums import FinancialDocumentTypeEnum, PaymentMethodEnum, TransactionStatusEnum
+from accounting.enums import FinancialDocumentTypeEnum, PaymentMethodEnum, SpendTypeEnum, TransactionStatusEnum
 from core.constants import FAILED, SUCCEED,MISC
 
 from core.enums import UnitNameEnum
@@ -679,7 +679,7 @@ class AccountRepo():
         if 'user' in kwargs:
             self.user = kwargs['user']
         
-        self.objects=Account.objects.all()
+        self.objects=Account.objects.order_by('priority')
         self.profile=ProfileRepo(*args, **kwargs).me
         if self.profile is not None:
             self.me=Account.objects.filter(profile=self.profile).first()
@@ -971,10 +971,12 @@ class CostRepo():
     def add_cost(self,*args, **kwargs):
         if not self.request.user.has_perm(APP_NAME+".add_cost"):
             return
-        cost=Cost()
+        cost=Cost(*args, **kwargs)
         cost.creator=self.profile
         if 'title' in kwargs:
             cost.title=kwargs['title']
+        if 'status' in kwargs:
+            cost.status=kwargs['status']
         if 'cost_type' in kwargs:
             cost.cost_type=kwargs['cost_type']
             cost.pay_to_id=CostRepo(request=self.request).cost_account(cost_type=kwargs['cost_type']).id
@@ -995,6 +997,7 @@ class CostRepo():
         # else:
         #     payment.financial_year_id=FinancialYear.get_by_date(date=payment.transaction_datetime).id
         cost.save()
+        cost.spend_type=SpendTypeEnum.COST
         return cost
 
 

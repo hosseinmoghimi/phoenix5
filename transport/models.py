@@ -13,6 +13,47 @@ from core.enums import ColorEnum,UnitNameEnum
 from accounting.models import Account
 
 
+# class Luggage2(Page,LinkHelper):
+#     app_name=APP_NAME
+#     class_name="luggage"
+#     thumbnail_origin=models.ImageField(_("تصویر کوچک"), upload_to=None, height_field=None, width_field=None, max_length=None)
+#     title=models.CharField(_("عنوان"), max_length=500)
+#     owner=models.ForeignKey("accounting.account", verbose_name=_("owner"), on_delete=models.CASCADE)
+#     price=models.IntegerField(_("price"),default=0)
+#     dimension=models.CharField(_("ابعاد"), max_length=50)
+#     weight=models.IntegerField(_("وزن"),default=0)
+#     is_fragile=models.BooleanField(_("شکستنی است؟"),default=False)
+#     class Meta:
+#         verbose_name = _("Luggage")
+#         verbose_name_plural = _("Luggages")
+
+#     def __str__(self):
+#         return self.title
+ 
+
+class Luggage(Page,LinkHelper): 
+    owner=models.ForeignKey("accounting.account", verbose_name=_("owner"), on_delete=models.CASCADE)
+    price=models.IntegerField(_("price"),default=0)
+    weight=models.IntegerField(_("وزن"),default=0)
+    is_fragile=models.BooleanField(_("شکستنی است؟"),default=False)
+    weight_unit=models.CharField(_("واحد وزن"),choices=WeightUnitEnum.choices,default=WeightUnitEnum.KILO_GRAM, max_length=50)
+    length=models.IntegerField(_("طول"),default=0)
+    width=models.IntegerField(_("عرض"),default=0)
+    height=models.IntegerField(_("ارتفاع"),default=0)
+    def dimension(self):
+        return f"{self.length}X{self.width}X{self.height}"
+    class Meta:
+        verbose_name = _("Luggage")
+        verbose_name_plural = _("Luggages")
+ 
+    def save(self,*args, **kwargs):
+        if self.class_name is None:
+            self.class_name="luggage"
+            
+        if self.app_name is None:
+            self.app_name=APP_NAME
+        return super(Luggage,self).save(*args, **kwargs)
+           
 class Driver(models.Model,LinkHelper):
     title=models.CharField(_("title"),null=True,blank=True, max_length=100)
     account=models.ForeignKey("accounting.account", verbose_name=_("account"), on_delete=models.CASCADE)

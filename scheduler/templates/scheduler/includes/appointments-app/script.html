@@ -2,25 +2,41 @@
 <script>
     let appointments = JSON.parse(`{{appointments_s|escapejs}}`)
     let appointments_app = new Vue({
-        el:"#appointments-app",
+        el: "#appointments-app",
         data: {
             appointments: appointments,
-            search_for:'',
-            waiting:false,
-            title:"",
+            search_for: '',
+            waiting: false,
+            color: "ALL",
+            status: "ALL",
+            title: "",
         },
         methods: {
-            filter:function(){
-                this.appointments = appointments.filter(appointment => appointment.title.indexOf(this.search_for) > -1)
-         
+            filter_color: function () {
+                if (this.color != 'ALL') {
+                    this.appointments = this.appointments.filter(appointment => appointment.color === appointments_app.color)
+                }
+            },
+            filter_status: function () {
+                if (this.status != 'ALL') {
+                    this.appointments = this.appointments.filter(appointment => appointment.status === appointments_app.status)
+                }
+            },
+            filter_title: function () {
+                this.appointments = appointments.filter(appointment => appointment.title.indexOf(this.search_for) > -1 )
+            },
+            filter: function () {
+                this.filter_title()
+                this.filter_color()
+                this.filter_status()
             },
             to_price: function (vall) {
-                let color='primary'
-                if (vall<0)
-                color='danger'
-                if (vall>0)
-                color='success'
-                vall=to_price(vall,"{{CURRENCY}}")
+                let color = 'primary'
+                if (vall < 0)
+                    color = 'danger'
+                if (vall > 0)
+                    color = 'success'
+                vall = to_price(vall, "{{CURRENCY}}")
                 return `
                     <span class="text-${color}">${vall}</span>
                     `
@@ -35,7 +51,7 @@
                     console.log(data)
                 })
             },
-           
+
         }
     })
 

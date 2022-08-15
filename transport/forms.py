@@ -1,5 +1,17 @@
 
 from django import forms
+
+class AddLuggageForm(forms.Form):
+    title=forms.CharField(max_length=100,required=True)
+    description=forms.CharField(max_length=1000,required=False)
+    weight_unit=forms.CharField(max_length=100,required=False)
+    length=forms.IntegerField(required=False)
+    width=forms.IntegerField(required=False)
+    height=forms.IntegerField(required=False)
+    owner_id=forms.IntegerField(required=True)
+    weight=forms.IntegerField(required=False)
+    price=forms.IntegerField(required=False)
+
 class AddTripForm(forms.Form):
     title=forms.CharField(max_length=50,required=False)
     vehicle_id=forms.IntegerField(required=False)

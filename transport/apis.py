@@ -1,8 +1,8 @@
 from core.constants import SUCCEED,FAILED
 from rest_framework.views import APIView
 from transport.forms import *
-from transport.repo import ClientRepo, DriverRepo, MaintenanceRepo, PassengerRepo, ServiceManRepo, TripCategoryRepo, TripPathRepo, VehicleRepo, WorkShiftRepo
-from transport.serializers import ClientSerializer, DriverSerializer, MaintenanceSerializer, PassengerSerializer, ServiceManSerializer, TripCategorySerializer, TripPathSerializer, VehicleSerializer, WorkShiftSerializer
+from transport.repo import ClientRepo, DriverRepo, LuggageRepo, MaintenanceRepo, PassengerRepo, ServiceManRepo, TripCategoryRepo, TripPathRepo, VehicleRepo, WorkShiftRepo
+from transport.serializers import ClientSerializer, DriverSerializer, LuggageSerializer, MaintenanceSerializer, PassengerSerializer, ServiceManSerializer, TripCategorySerializer, TripPathSerializer, VehicleSerializer, WorkShiftSerializer
 from django.http import JsonResponse
 
 from utility.calendar import PersianCalendar
@@ -94,6 +94,25 @@ class AddDriverApi(APIView):
                 context={
                     'result':SUCCEED,
                     'driver':DriverSerializer(driver).data
+                }
+        return JsonResponse(context)
+
+    
+class AddLuggageApi(APIView):
+    def post(self,request,*args, **kwargs):
+        
+        context={
+            'result':FAILED
+        }
+        fm=AddLuggageForm(request.POST)
+        if fm.is_valid():
+            cd=fm.cleaned_data
+            luggage,message,result=LuggageRepo(request=request).add_luggage(**cd)
+            if luggage is not None:
+                context={
+                    'result':SUCCEED,
+                    'message':message,
+                    'luggage':LuggageSerializer(luggage).data
                 }
         return JsonResponse(context)
 

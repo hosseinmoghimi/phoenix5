@@ -1,16 +1,15 @@
 <script>
-    let accounts = JSON.parse(`{{accounts_s|escapejs}}`)
+    let accounts_app_accounts = JSON.parse(`{{accounts_s|escapejs}}`)
     let accounts_app = new Vue({
         el:"#accounts-app",
         data: {
-            accounts: accounts,
+            accounts: accounts_app_accounts,
             search_for:'',
             waiting:false,
         },
         methods: {
             filter:function(){
-                this.accounts = accounts.filter(account => account.title.indexOf(this.search_for) > -1)
-         
+                this.accounts = accounts_app_accounts.filter(account => account.title.indexOf(this.search_for) > -1)
             },
             to_price: function (vall) {
                 let color='primary'
@@ -33,8 +32,6 @@
                     console.log(data)
                 })
             },
-           
         }
     })
-
 </script>

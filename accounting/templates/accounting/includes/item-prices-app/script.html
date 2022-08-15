@@ -29,9 +29,9 @@
                     unit_name: this.unit_name,
 
                 }
-                console.log(payload)
+                // console.log(payload)
                 $.post(url, payload).done((data) => {
-                    console.log(data)
+                    // console.log(data)
                     if (data.result === 'SUCCEED') {
                         
                         item_prices_app.prices.reverse()

@@ -1,0 +1,144 @@
+{% load static %}
+<div id="accordion-add-luggage">
+    <div class="card" id="add-luggage-app">
+        <div class="card-header" id="heading-add-luggage">
+            <h5 class="text-center">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-add-luggage"
+                    aria-expanded="true" aria-controls="collapse-add-luggage">
+                    افزودن محموله بار
+                </button>
+            </h5>
+
+
+        </div>
+        <div id="collapse-add-luggage" class="collapse" aria-labelledby="heading-add-luggage"
+            data-parent="#accordion-add-luggage">
+
+
+            <div class="card-body">
+
+                {% load static %}
+<form @submit.prevent="add_luggage()">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="">
+                                نام مالک
+                            </label>
+                            <input placeholder="جستجو ..." v-model="search_for" class="form-control" type="text"
+                                @input="filter()">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="">
+                                انتخاب مالک بار
+                            </label>
+                            <select required v-model="account_id" class="form-control" id="">
+                                <option :value="account.id" v-for="account in accounts" v-text="account.title"></option>
+                            </select>
+                        </div>
+
+
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="">عنوان بار</label>
+                            <input required type="text" v-model="title" class="form-control">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="">قیمت (
+                                <span v-text="to_price(price)"></span>
+                                تومان)</label>
+                            <input required type="number" v-model="price" class="form-control">
+                        </div>
+
+                    </div>
+
+
+
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label for="">طول</label>
+                            <input required type="number" v-model="length" class="form-control">
+                        </div>
+                    </div>
+
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label for="">عرض</label>
+                            <input required type="number" v-model="width" class="form-control">
+                        </div>
+                    </div>
+
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label for="">ارتفاع</label>
+                            <input required type="number" v-model="height" class="form-control">
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="">وزن</label>
+                            <input required type="number" v-model="weight" class="form-control">
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="">واحد وزن</label>
+                            <select required v-model="weight_unit" class="form-control">
+                                {% for weight_unit in weight_units %}
+                                <option value="{{weight_unit}}">{{weight_unit}}</option>
+
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="">شکستنی است ؟</label>
+                            <input type="checkbox" class="form-control" v-model="is_fragile">
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="">توضیحات</label>
+                            <input type="text" v-model="description" class="form-control">
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <div class="text-right">
+
+                            <button type="submit" class="btn btn-success">
+                                <i class="fa fa-plus"></i>
+                                افزودن
+                            </button>
+                            <img src="{% static 'leo/img/loading.gif' %}" width="32" v-if="waiting" alt="">
+
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="text-right farsi mx-3 my-3">
+
+
+                            <div v-html="message.body" v-if="message.show" :class="'alert alert-'+message.color"></div>
+                        </div>
+                    </div>
+
+
+
+                </div>
+
+            </form>
+            </div>
+        </div>
+    </div>
+
+
+</div>

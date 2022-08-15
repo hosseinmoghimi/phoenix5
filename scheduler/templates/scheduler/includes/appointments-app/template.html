@@ -24,16 +24,57 @@
             </h5>
 
         </div>
-        <div id="collapse-appointments" class="collapse" aria-labelledby="heading-appointments"
-            data-parent="#accordion-appointments">
+
+        <div id="collapse-appointments" class="collapse {% if expand_appointments %} show {% endif %}"
+            aria-labelledby="heading-appointments" data-parent="#accordion-appointments">
 
 
             <div class="card-body">
 
                 {% load static %}
                 <img src="{% static 'leo/img/loading.gif' %}" width="32" v-if="waiting" alt="">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="">عنوان</label>
+                            <input type="text" v-model="search_for" class="form-control" placeholder="جستجو ..."
+                                @input="filter()">
+                        </div>
 
-                <input type="text" v-model="search_for" class="form-control" placeholder="جستجو ..." @input="filter()">
+                    </div>
+                    {% if colors_ %}
+
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="" :class="'text-'+color">رنگ</label>
+                            <select @change="filter()" v-model="color" class="form-control">
+                                <option value="ALL">همه رنگ ها</option>
+                                {% for color in colors_ %}
+                                <option value="{{color}}">{{color}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    {% endif %}
+
+
+                    {% if appointment_statuses_ %}
+
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="" >وضعیت</label>
+                            <select @change="filter()" v-model="status" class="form-control">
+                                <option value="ALL">همه وضعیت ها</option>
+                                {% for status in appointment_statuses_ %}
+                                <option value="{{status}}">{{status}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    {% endif %}
+
+
+                </div>
 
 
                 <div class="table-responsive">
@@ -61,23 +102,25 @@
                             </th>
                         </thead>
                         <tbody>
-
-
                             <tr v-for="appointment in appointments">
                                 <td>
                                     <a :href="appointment.get_absolute_url">
                                         <div class="media">
+                                            <div :class="'bg-'+appointment.color" style="width:32px;height:32px;">
+                                                &nbsp;
+                                            </div>
                                             <div class="media-body mr-3">
                                                 <div>
-
                                                     <span v-text="appointment.title"></span>
                                                 </div>
-
+                                                <div>
+                                                    <span :class="'badge badge-'+appointment.status_color">
+                                                        <span v-text="appointment.status"></span>
+                                                    </span>
+                                                </div>
                                             </div>
                                         </div>
                                     </a>
-
-
                                 </td>
                                 <td>
                                     <div v-for="profile in appointment.profiles">
@@ -87,34 +130,28 @@
                                             <span v-text="profile.name"></span>
                                         </a>
                                     </div>
-
                                 </td>
                                 <td>
                                     <div v-for="location in appointment.locations">
                                         <a :href="location.get_absolute_url">
-
                                             <span v-html="location.title"></span>
                                         </a>
                                     </div>
                                 </td>
                                 <td>
-
                                     <span v-html="appointment.persian_date_fixed"></span>
-
-
                                 </td>
                                 <td>
-
-                                    {% if perms.projectmanager.add_employee and not appointment.employee %}
-                                    <form @submit.prevent="create_employee(appointment.id)">
-                                        {% csrf_token %}
-                                        <button class="btn btn-warning" type="submit">
-                                            ایجاد پرسنل
-                                        </button>
-                                    </form>
+                                    {% if perms.scheduler.change_appointment %}
+                                    <a :href="appointment.get_edit_url" target="_blank" title="ویرایش" class="mx-2">
+                                        <i class="fa fa-edit text-warning"></i>
+                                    </a>
                                     {% endif %}
-
-
+                                    {% if perms.scheduler.delete_appointment %}
+                                    <a :href="appointment.get_delete_url" target="_blank" title="حذف" class="mx-2">
+                                        <i class="fa fa-trash text-danger"></i>
+                                    </a>
+                                    {% endif %}
                                 </td>
                             </tr>
                         </tbody>
@@ -122,7 +159,5 @@
                 </div>
             </div>
         </div>
-
-
     </div>
 </div>

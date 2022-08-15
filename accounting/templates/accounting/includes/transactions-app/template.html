@@ -11,7 +11,7 @@
             <h5 class="text-center">
                 <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-transactions"
                     aria-expanded="true" aria-controls="collapse-transactions">
-                  تراکنش ها
+                    تراکنش ها
 
                     <span v-if="transactions.length>0">
                         <small class="text-danger mx-2">
@@ -35,8 +35,8 @@
             </h4>
             {% endif %}
         </div>
-        <div id="collapse-transactions" class="collapse {% if expand_transactions %} show {% endif %}" aria-labelledby="heading-transactions"
-            data-parent="#accordion-transactions">
+        <div id="collapse-transactions" class="collapse {% if expand_transactions %} show {% endif %}"
+            aria-labelledby="heading-transactions" data-parent="#accordion-transactions">
 
 
             <div class="card-body">
@@ -78,16 +78,16 @@
 
                             <tr v-for="transaction in transactions">
                                 <td>
-                                     
+
                                     <div>
                                         <span class="badge badge-primary">
                                             <span v-text="transaction.class_title"></span>
                                         </span>
 
-                                       
+
                                     </div>
                                     <div>
-                                        
+
 
                                         <span class="badge badge-primary">
                                             <span v-text="transaction.payment_method"></span>
@@ -114,20 +114,34 @@
                                     {% endif %}
                                 </td>
                                 <td>
-                                   
+
                                 </td>
 
                                 <td>
                                     <a :href="transaction.pay_from.get_absolute_url">
-                                        <span v-text="transaction.pay_from.title"></span>
+                                        <div class="media">
+                                            <img :src="transaction.pay_from.logo" width="32" class="rounded" alt="">
+                                            <div class="media-body mr-2">
+                                                <span v-text="transaction.pay_from.title"></span>
+
+                                            </div>
+                                        </div>
                                     </a>
                                 </td>
 
 
                                 <td>
+
                                     <a :href="transaction.pay_to.get_absolute_url">
-                                        <span v-text="transaction.pay_to.title"></span>
+                                        <div class="media">
+                                            <img :src="transaction.pay_to.logo" width="32" class="rounded" alt="">
+                                            <div class="media-body mr-2">
+                                                <span v-text="transaction.pay_to.title"></span>
+
+                                            </div>
+                                        </div>
                                     </a>
+                                    
                                 </td>
 
 

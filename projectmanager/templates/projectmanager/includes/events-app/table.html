@@ -83,11 +83,13 @@
                 {% if perms.projectmanager.change_event %}
 
 
-                <a title="ویرایش" :href="event.get_edit_url" target="_blank">
-                    <i class="material-icons">
-                        edit
-                    </i>
-                </a>
+                <a title="ویرایش" :href="event.get_edit_url" class="mx-2" target="_blank"><i class="fa fa-edit text-warning"></i></a>
+                {% endif %}
+
+                {% if perms.projectmanager.change_delete %}
+
+
+                <a title="حذف" :href="event.get_delete_url" class="mx-2" target="_blank"><i class="fa fa-trash text-danger"></i></a>
                 {% endif %}
 
             </td>

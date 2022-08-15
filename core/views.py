@@ -1,5 +1,5 @@
 import json
-from django.http import Http404
+from django.http import Http404,HttpResponse
 from django.shortcuts import render,reverse
 from django.utils import timezone 
 
@@ -8,9 +8,10 @@ from core.apps import APP_NAME
 from log.repo import LogRepo
 from core.enums import ColorEnum, IconsEnum, ParameterNameEnum, PictureNameEnum
 from core.models import Download, Link
-from core.repo import DownloadRepo, ImageRepo, PageDownloadRepo, PageImageRepo, PageLikeRepo, PagePermissionRepo, PageRepo, PageTagRepo, ParameterRepo, PictureRepo, TagRepo
+from core.repo import DownloadRepo, ImageRepo, LinkRepo, PageDownloadRepo, PageImageRepo, PageLikeRepo, PageLinkRepo, PagePermissionRepo, PageRepo, PageTagRepo, ParameterRepo, PictureRepo, TagRepo
 from core.serializers import PagePermissionSerializer,PageBriefSerializer, PageCommentSerializer, PageImageSerializer, PageDownloadSerializer, PageLinkSerializer, PageSerializer, PageTagSerializer, TagSerializer
 from phoenix.settings import ADMIN_URL, MEDIA_URL, STATIC_URL, SITE_URL
+from phoenix.server_settings import DB_FILE_PATH
 from django.shortcuts import render
 from authentication.repo import ProfileRepo
 from core.constants import CURRENCY
@@ -120,7 +121,7 @@ def PageContext(request, *args, **kwargs):
             can_write=page_permission.can_write
         # my_pages_ids=( page_permissions)
         
-    if True:
+    if request.user.has_perm(APP_NAME+".change_page"):
         context['set_thumbnail_header_form']=SetThumbnailHeaderForm()
 
     can_add_link=False
@@ -147,7 +148,7 @@ def PageContext(request, *args, **kwargs):
     
     # links
     if True:
-        links = page.pagelink_set.all()
+        links = page.pagelink_set.all().order_by('priority')
         links_s = json.dumps(PageLinkSerializer(links, many=True).data)
         context['links_s'] = links_s
         context['links'] = links
@@ -219,7 +220,7 @@ def PageContext(request, *args, **kwargs):
 
     # downloads
     if True:
-        downloads = PageDownloadRepo(request=request).list(page_id=page.id)
+        downloads = PageDownloadRepo(request=request).list(page_id=page.id).order_by('priority')
         context['downloads'] = downloads
         downloads_s = json.dumps(PageDownloadSerializer(downloads, many=True).data)
         context['page_downloads_s'] = downloads_s
@@ -228,7 +229,7 @@ def PageContext(request, *args, **kwargs):
 
     #images
     if True:
-        page_images = page.pageimage_set.all()
+        page_images = page.pageimage_set.all().order_by('priority')
         context['images_s'] = json.dumps(PageImageSerializer(page_images, many=True).data)
         if can_add_image:
             context['add_page_image_form'] = AddPageImageForm()
@@ -261,6 +262,109 @@ class SearchView(View):
         context = getContext(request=request)
 
         return render(request, TEMPLATE_ROOT+"search.html", context)
+
+    def post(self, request, *args, **kwargs):
+        context = getContext(request=request)
+        search_form = SearchForm(request.POST)
+        if search_form.is_valid():
+            cd = search_form.cleaned_data
+            search_for = cd['search_for']
+            context['search_for'] = search_for
+
+            # tag = TagRepo(request=request).tag(
+            #     search_for=search_for)
+            # context['tags'] = tags
+            # tags_s = json.dumps(
+            #     TagSerializer(tags, many=True).data)
+            # context['tags_s'] = tags_s
+ 
+
+ 
+
+            pages = PageRepo(request=request).list(
+                search_for=search_for)
+            context['pages'] = pages
+            pages_s = json.dumps(
+                PageSerializer(pages, many=True).data)
+            context['pages_s'] = pages_s
+
+            links = PageLinkRepo(request=request).list(
+                search_for=search_for).order_by('priority')
+            context['links'] = links
+            links_s = json.dumps(
+                PageLinkSerializer(links, many=True).data)
+            context['links_s'] = links_s
+ 
+
+
+        
+            # downloads
+            if True:
+                downloads = PageDownloadRepo(request=request).list(search_for=search_for).order_by('priority')
+                context['downloads'] = downloads
+                downloads_s = json.dumps(PageDownloadSerializer(downloads, many=True).data)
+                context['page_downloads_s'] = downloads_s
+                  
+
+
+        return render(request, TEMPLATE_ROOT+"search.html", context)
+
+
+
+class SettingsView(View):
+    def get(self, request, *args, **kwargs):
+        context = getContext(request=request)
+
+        return render(request, TEMPLATE_ROOT+"settings.html", context)
+
+    def post(self, request, *args, **kwargs):
+        context = getContext(request=request)
+        search_form = SearchForm(request.POST)
+        if search_form.is_valid():
+            cd = search_form.cleaned_data
+            search_for = cd['search_for']
+            context['search_for'] = search_for
+
+            # tag = TagRepo(request=request).tag(
+            #     search_for=search_for)
+            # context['tags'] = tags
+            # tags_s = json.dumps(
+            #     TagSerializer(tags, many=True).data)
+            # context['tags_s'] = tags_s
+ 
+
+ 
+
+            pages = PageRepo(request=request).list(
+                search_for=search_for)
+            context['pages'] = pages
+            pages_s = json.dumps(
+                PageSerializer(pages, many=True).data)
+            context['pages_s'] = pages_s
+ 
+
+        return render(request, TEMPLATE_ROOT+"search.html", context)
+
+
+class BackupView(View):
+    def get(self, request, *args, **kwargs):
+        context = getContext(request=request)
+        me = ProfileRepo(request=request).me
+        if not request.user.has_perm("core.change_download"):
+            mv=MessageView(request=request)
+            mv.title="عدم دسترسی مجاز"
+            return mv.response()
+        
+        file_path = str(DB_FILE_PATH)
+        # return JsonResponse({'download:':str(file_path)})
+        import os
+        filename="db_"+timezone.now().strftime("%Y%m%d_%H_%M_%S")+".sqlite3"
+        if os.path.exists(file_path):
+            with open(file_path, 'rb') as fh:
+                response = HttpResponse(
+                    fh.read(), content_type="application/force-download")
+                response['Content-Disposition'] = 'inline; filename=' + filename
+                return response
 
     def post(self, request, *args, **kwargs):
         context = getContext(request=request)
@@ -378,6 +482,7 @@ class TagView(View):
         context['page_tags']=page_tags
         context['pages']=tag.pages()
         context['pages_s']='[]'
+        context['expand_pages']=True
 
         return render(request,TEMPLATE_ROOT+"tag.html",context)
         

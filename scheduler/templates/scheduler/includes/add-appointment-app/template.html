@@ -1,0 +1,148 @@
+{% load to_persian_date %}
+{% load to_price %}
+{% load to_amount_color %}
+{% load static %}
+<div id="accordion-add-appointment">
+
+
+    <div class="card" id="add-appointment-app">
+        <div class="card-header" id="heading-add-appointment">
+            <h5 class="text-center">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-add-appointment"
+                    aria-expanded="true" aria-controls="collapse-add-appointment">
+                    افزودن قرار ملاقات ها
+                </button>
+            </h5>
+
+        </div>
+
+        <div id="collapse-add-appointment" class="collapse {% if expand_add_appointment %} show {% endif %}"
+            aria-labelledby="heading-add-appointment" data-parent="#accordion-add-appointment">
+
+
+            <div class="card-body">
+
+                {% load static %}
+                <img src="{% static 'leo/img/loading.gif' %}" width="32" v-if="waiting" alt="">
+
+              
+                
+                 
+                <form @submit.prevent="add_appointment()">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="">عنوان</label>
+                                <input type="text" v-model="title" class="form-control">
+                            </div>
+                        </div>
+
+
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="" :class="'text-'+color">رنگ</label>
+                                <select required v-model="color" class="form-control">
+                                    {% for color in colors %}
+                                    <option value="{{color}}">{{color}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for=""  >مکان</label>
+                                <select required v-model="location_id" class="form-control">
+                                    <option value="0">بدون موقعیت</option>
+                                    {% for location in locations %}
+                                    <option value="{{location.id}}">{{location.title}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="">وضعیت</label>
+                                <select required v-model="status" class="form-control">
+                                    {% for status in appointment_statuses %}
+                                    <option value="{{status}}">{{status}}</option>
+                                    {% endfor %}
+                                </select>
+
+                            </div>
+
+
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="">تاریخ</label>
+                                <date-picker v-model="date_fixed"></date-picker>
+
+
+                            </div>
+
+
+                        </div>
+
+
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="">ساعت</label>
+                                <select required v-model="time_fixed.hour" class="form-control">
+                                    <option value="0">0</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                    <option value="6">6</option>
+                                    <option value="7">7</option>
+                                    <option value="8">8</option>
+                                    <option value="9">9</option>
+                                    <option value="10">10</option>
+                                    <option value="11">11</option>
+                                    <option value="12">12</option>
+                                    <option value="13">13</option>
+                                    <option value="14">14</option>
+                                    <option value="15">15</option>
+                                    <option value="16">16</option>
+                                    <option value="17">17</option>
+                                    <option value="18">18</option>
+                                    <option value="19">19</option>
+                                    <option value="20">20</option>
+                                    <option value="21">21</option>
+                                    <option value="22">22</option>
+                                    <option value="23">23</option>
+                                </select>
+
+                            </div>
+
+
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="">دقیقه</label>
+                                <select required v-model="time_fixed.minute" class="form-control">
+                                    <option value="0">0</option>
+                                    <option value="15">15</option>
+                                    <option value="30">30</option>
+                                    <option value="45">45</option>
+                                </select>
+
+                            </div>
+
+
+                        </div>
+
+
+                    </div>
+                    <div class="">
+                        <button type="submit" class="btn btn-success">افزودن</button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+
+
+    </div>
+</div>

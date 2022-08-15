@@ -1,3 +1,4 @@
+{% load float_to_int %}
 {% load to_price %}
 {% load to_persian_date %}
 <div id="request-app">
@@ -105,7 +106,7 @@
                             </small>
                         </td>
                         <td class="text-right">
-                            {{my_request.quantity}} {{my_request.unit_name}}
+                            {{my_request.quantity|float_to_int}} {{my_request.unit_name}}
                         </td>
                     </tr>
 
@@ -165,7 +166,7 @@
             <div class="alert alert-info">
 
                 <p>
-                    {{my_request.quantity}} {{my_request.unit_name}} * {{my_request.unit_price|to_price}} =
+                    {{my_request.quantity|float_to_int}} {{my_request.unit_name}} * {{my_request.unit_price|to_price}} =
                     {{my_request.total|to_price}}
                 </p>
             </div>

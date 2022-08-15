@@ -109,23 +109,22 @@ class Request(InvoiceLine, LinkHelper):
         verbose_name_plural = _("Requests")
 
     def save(self, *args, **kwargs):
-        if self.product is not None:
-            invoice = MaterialInvoice.objects.filter(
-                project_id=self.project.pk).first()
-            if invoice is None:
-                invoice = MaterialInvoice()
-                invoice.project_id = self.project.pk
-                invoice.save()
-        if self.service is not None:
-            invoice = ServiceInvoice.objects.filter(
-                project_id=self.project.pk).first()
-            if invoice is None:
-                invoice = ServiceInvoice()
-                invoice.project_id = self.project.pk
-                invoice.save()
-        
-        self.invoice = invoice
-        self.row = len(invoice.lines.all())+1
+        try:
+            self.row = len(self.invoice.lines.all())+1
+        except:
+            self.row=1
+        # print(100*"#")
+        # print(self.invoice_id)
+        # print("request")
+        # if self.invoice_id is None:
+        #     if self.type==RequestTypeEnum.MATERIAL_REQUEST:
+        #         invoice=MaterialInvoice()
+        #     if self.type==RequestTypeEnum.SERVICE_REQUEST:
+        #         invoice=ServiceInvoice()
+        #     invoice.pay_from=self.project.contractor.account
+        #     invoice.pay_to=self.project.employer.account
+        #     invoice.save()
+        #     self.invoice=invoice
         super(Request, self).save(*args, **kwargs)
 
     def total(self):
@@ -267,11 +266,19 @@ class Project(Page):
         return pages_ids
     
     def all_sub_projects(self):
-        return Project.objects.filter(id__in=self.all_childs_ids())
+        return Project.objects.order_by('priority').filter(id__in=self.all_childs_ids())
 
 
     def material_requests(self):
         return Request.objects.filter(project=self).filter(type=RequestTypeEnum.MATERIAL_REQUEST)
+
+    @property
+    def serviceinvoice_set(self):
+        return ServiceInvoice.objects.filter(project_id=self.pk)
+
+    @property
+    def materialinvoice_set(self):
+        return MaterialInvoice.objects.filter(project_id=self.pk)
 
     def service_requests(self):
         return Request.objects.filter(project=self).filter(type=RequestTypeEnum.SERVICE_REQUEST)
@@ -386,6 +393,7 @@ class Project(Page):
         return reverse(APP_NAME+":project_chart",kwargs={'pk':self.pk})
     def get_full_description_for_chart(self):
         return f"""
+        <div class="text-center"><img src="{self.thumbnail}" class="rounded" width="32" alt=""></div>
         <div><small class="text-muted">{to_price(self.sum_total())}</small></div>
         <div>{self.percentage_completed} %</div>
         """

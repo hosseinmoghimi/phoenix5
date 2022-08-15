@@ -35,7 +35,6 @@ def getContext(request, *args, **kwargs):
     context['LAYOUT_PARENT'] = LAYOUT_PARENT
     return context
 
-
 def add_product_context(request,*args, **kwargs):
     context={}
     if request.user.has_perm(APP_NAME+".add_product"):
@@ -43,23 +42,26 @@ def add_product_context(request,*args, **kwargs):
         context['unit_names']=(unit_name[0] for unit_name in UnitNameEnum.choices)
     return context
 
-def get_add_payment_context(request,*args, **kwargs):
+def add_transaction_context(request,*args, **kwargs):
     context={}
-    if request.user.has_perm(APP_NAME+".add_payment"):
+    if request.user.has_perm(APP_NAME+".add_transaction"):
         accounts=AccountRepo(request=request).list(*args, **kwargs)
         context['transaction_statuses']=(u[0] for u in TransactionStatusEnum.choices)
         context['payment_methods']=(u[0] for u in PaymentMethodEnum.choices)
         context['accounts']=accounts
+    return context
+def get_add_payment_context(request,*args, **kwargs):
+    context={}
+    if request.user.has_perm(APP_NAME+".add_payment"):
+        context.update(add_transaction_context(request=request))
         context['add_payment_form']=AddPaymentForm()
     return context
     
 def get_add_cost_context(request,*args, **kwargs):
     context={}
     if request.user.has_perm(APP_NAME+".add_cost"):
-        context['payment_methods']=(u[0] for u in PaymentMethodEnum.choices)
+        context.update(add_transaction_context(request=request))
         context['cost_types']=(u[0] for u in CostTypeEnum.choices)
-        accounts=AccountRepo(request=request).list(*args, **kwargs)
-        context['accounts']=accounts
         context['add_cost_form']=AddCostForm()
     return context
     
@@ -177,6 +179,8 @@ def get_account_context(request,*args, **kwargs):
     costs=CostRepo(request=request).list(account_id=account.id)
     context['costs']=costs
     context['costs_s']=json.dumps(CostSerializer(costs,many=True).data)
+
+
 
 
 
@@ -421,6 +425,16 @@ class SearchView(View):
             context['transactions']=transactions
             context['transactions_s']=json.dumps(TransactionSerializer(transactions,many=True).data)
 
+
+            products=ProductRepo(request=request).list(search_for=search_for)
+            context['products']=products
+            context['products_s']=json.dumps(ProductSerializer(products,many=True).data)
+
+
+
+            services=ServiceRepo(request=request).list(search_for=search_for)
+            context['services']=services
+            context['services_s']=json.dumps(ServiceSerializer(services,many=True).data)
 
         return render(request,TEMPLATE_ROOT+"search.html",context)
 
@@ -875,6 +889,7 @@ class ServicesView(View):
         context['services']=services
         services_s=json.dumps(ServiceSerializer(services,many=True).data)
         context['services_s']=services_s
+        context['expand_services']=True
         if request.user.has_perm(APP_NAME+".add_service"):
             context['add_service_form']=AddServiceForm()
         return render(request,TEMPLATE_ROOT+"services.html",context)

@@ -12,7 +12,7 @@ class SetThumbnailHeaderForm(forms.Form):
 
 class AddPageTagForm(forms.Form):
     page_id=forms.IntegerField(required=True)
-    tag_title=forms.CharField(max_length=50, required=True)
+    tag_title=forms.CharField(max_length=200, required=True)
 
 
 class AddRelatedPageForm(forms.Form):

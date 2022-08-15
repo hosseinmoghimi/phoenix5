@@ -1,6 +1,6 @@
 {% extends "core/layout.html" %}
 {% block content %}
-<h4 class="text-center">
+<h4 class="text-center my-3">
     <small class="text-muted">
         تگ
     </small>
@@ -9,24 +9,6 @@
 
 
 <div class="row">
-    <div class="col-md-12">
-        <div class="card">
-            <div class="card-header">
-                <h5>
-                    صفحات
-                </h5>
-            </div>
-            <div class="card-body">
-                {% for page_tag in page_tags %}
-                <a href="{{page_tag.page.get_absolute_url}}">
-                    <h5 class="farsi">
-                        {{page_tag.page.title}}
-                    </h5>
-                </a>
-                {% endfor %}
-            </div>
-        </div>
-    </div>
     <div class="col-md-12">
         {% include "core/includes/pages-app/template.html" %}
     </div>

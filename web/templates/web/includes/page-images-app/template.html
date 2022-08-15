@@ -3,9 +3,10 @@
 
 
     <div id="page-images-app">
-
+        {% if add_page_image_form and aaaa %}
+          
         <h5 class="card-title text-center">
-
+            
             تصاویر
             <span v-if="images.length>0">
                 <small class="text-danger mx-2">
@@ -13,8 +14,9 @@
                 </small>
             </span>
         </h5>
-
-
+        
+        
+        {% endif %}
 
         <div class="row">
 

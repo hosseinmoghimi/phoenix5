@@ -1,20 +1,20 @@
 
 from django.http import JsonResponse
 from accounting.repo import InvoiceRepo, PriceRepo
-from accounting.serializers import PriceBriefSerializer
+from accounting.serializers import InvoiceSerializer, PriceBriefSerializer
 from accounting.views import InvoiceView, get_invoice_context, get_service_context, get_product_context,get_account_context
 from django.shortcuts import redirect, render
 # Create your views here.
 from django.shortcuts import render, reverse
 from core.constants import FAILED, SUCCEED
 from core.enums import UnitNameEnum
-from core.repo import PageRepo
+from core.repo import PageLikeRepo, PageRepo
 from core.serializers import PageSerializer
 from core.views import CoreContext, MessageView, SearchForm, PageContext
 # Create your views here.
 from django.views import View
 
-from projectmanager.enums import ProjectStatusEnum, SignatureStatusEnum
+from projectmanager.enums import ProjectStatusEnum, RequestStatusEnum, SignatureStatusEnum
 
 from .forms import *
 from .apps import APP_NAME
@@ -36,11 +36,22 @@ def getContext(request, *args, **kwargs):
     context['search_action'] = reverse(APP_NAME+":search")
     context['LAYOUT_PARENT'] = LAYOUT_PARENT
     return context
-
-
+def get_requests_context(request, *args, **kwargs):
+    context={}
+    context['request_statuses']=(request_status[0] for request_status in RequestStatusEnum.choices)
+    context['request_statuses_']=context['request_statuses']
+    return context
 class HomeView(View):
     def get(self, request, *args, **kwargs):
         context = getContext(request=request)
+        # pages=PageLikeRepo(request=request).list(page__app_name=APP_NAME,profile=)
+        # context['pages_s']=json.dumps(PageSerializer(pages,many=True).data)
+        me=context['profile']
+        if me is not None:
+            page_likes=PageLikeRepo(request=request,app_name=APP_NAME).list(profile_id=me.id)
+            context['page_likes']=page_likes
+
+        context['expand_likes']=True
         return render(request, TEMPLATE_ROOT+"index.html", context)
 
 
@@ -113,7 +124,6 @@ class ProjectsView(View):
         return render(request, TEMPLATE_ROOT+"projects.html", context)
 
 
-
 class RequestView(View):
     def get(self, request, *args, **kwargs):
         context = getContext(request=request)
@@ -143,6 +153,7 @@ class RequestView(View):
 
         return render(request, TEMPLATE_ROOT+"request.html", context)
 
+
 class ProjectsListView(View):
     def get(self, request, *args, **kwargs):
         return ProjectsView().get(request=request,parent_id=0,*args, **kwargs)
@@ -166,6 +177,23 @@ class ProjectView(View):
             my_project_ids = me_emp.my_project_ids()
 
         context['invoices'] = project.invoices()
+        material_invoices=project.materialinvoice_set.all()
+        context['material_invoices']=material_invoices
+        material_invoices_s=json.dumps(InvoiceSerializer(material_invoices,many=True).data)
+        context['material_invoices_s'] = material_invoices_s
+
+        
+
+        invoices = project.invoices()
+        context['invoices'] = invoices
+        context['invoices_s']=json.dumps(InvoiceSerializer(invoices,many=True).data)
+
+        service_invoices=project.serviceinvoice_set.all()
+        context['service_invoices']=service_invoices
+        service_invoices_s=json.dumps(InvoiceSerializer(service_invoices,many=True).data)
+        context['service_invoices_s'] = service_invoices_s
+
+        
 
         events = EventRepo(request=request).list(project_id=project.id)
         context['events'] = events
@@ -240,6 +268,7 @@ class ProjectView(View):
             all_materials = MaterialRepo(request=request).list()
             context['all_materials_s'] = json.dumps(
                 MaterialSerializer(all_materials, many=True).data)
+        context.update(get_requests_context(request=request))
 
         return render(request, TEMPLATE_ROOT+"project.html", context)
 

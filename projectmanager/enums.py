@@ -10,16 +10,6 @@ class RequestTypeEnum(TextChoices):
     MATERIAL_REQUEST='درخواست متریال',_('درخواست متریال')
     SERVICE_REQUEST='درخواست سرویس',_('درخواست سرویس')
 
-class SignatureStatusEnum(TextChoices):
-    DEFAULT='DEFAULT',_('DEFAULT')
-    DELIVERED='تحویل شده',_('تحویل شده')
-    IN_PROGRESS='در حال بررسی',_('درحال بررسی')
-    DENIED='رد شده',_('ردشده')
-    ACCEPTED='پذیرفته شده',_('پذیرفته شده')
-    PURCHASING='درحال خرید',_('درحال خرید')
-    REQUESTED='درخواست شده',_('درخواست شده')
-    PAID='تسویه شده',_('تسویه شده')
-
 
 class ProjectStatusEnum(TextChoices):
     INITIAL='تعریف اولیه',_('تعریف اولیه')
@@ -37,15 +27,22 @@ class RequestStatusEnum(TextChoices):
     DEFAULT='DEFAULT',_('DEFAULT')
     INITIAL='تعریف اولیه در سیستم',_('تعریف اولیه در سیستم')
     DELIVERED='تحویل شده',_('تحویل شده')
+    TESTING='در حال تست',_('در حال تست')
     IN_PROGRESS='در حال انجام',_('در حال انجام')
     DENIED='رد شده',_('رد شده')
     ACCEPTED='پذیرفته شده',_('پذیرفته شده')
     REQUESTED='درخواست شده',_('درخواست شده')
+    READY_FOR_PURCHASING='آماده برای خرید',_('آماده برای خرید')
     PURCHASING='در حال خرید',_('در حال خرید')
     EMPLOYERS='متعلق به کارفرما',_('متعلق به کارفرما')
     AVAILABLE_IN_STORE="موجود در انبار",_("موجود در انبار")
     EXPORT_FROM_WARE_HOUSE="خارج شده از انبار",_("خارج شده از انبار")
     IMPORT_TO_WARE_HOUSE="وارد شده به انبار",_("وارد شده به انبار")
+    DELIVERED_FROM_EMPLOYER='تحویل گرفته شده از کارفرما',_('تحویل گرفته شده از کارفرما')
+    PAID="پرداخت شده",_("پرداخت شده")
+
+
+SignatureStatusEnum=RequestStatusEnum  
 
 class AssignmentStatusEnum(TextChoices):
     DEFAULT='تعریف اولیه',_('تعریف اولیه')

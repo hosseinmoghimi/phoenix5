@@ -1,3 +1,4 @@
+{% load float_to_int %}
 <div class="card" id="warehouse-sheet-app">
     <div class="card-body">
         <div class="row">
@@ -21,7 +22,7 @@
 
             <div class="col-md-4 text-right farsi">
                 تعداد :
-                {{warehouse_sheet.quantity}}
+                {{warehouse_sheet.quantity|float_to_int}}
                 {{warehouse_sheet.unit_name}}
 
             </div>

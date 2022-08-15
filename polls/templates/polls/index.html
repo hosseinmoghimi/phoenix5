@@ -5,14 +5,14 @@
           <h4 class="text-center">
           {{POLLS_SYSTEM_TITLE.value}}
           {% if perms.core.change_parameter %}
-          <a title="تغییر بده" href="POLLS_SYSTEM_TITLE.get_edit_url">
+          <a title="تغییر بده" href="{{POLLS_SYSTEM_TITLE.get_edit_url}}">
               <i class="fa fa-edit text-warning mx-2"></i>
           </a>
             
           {% endif %}
           </h4>
       </div>
-      <div class="col-md-12">
+      <!-- <div class="col-md-12">
           <div class="card">
               <div class="card-body">
                   <h5>
@@ -22,10 +22,25 @@
                   </h5>
               </div>
           </div>
+      </div> -->
+
+      {% if add_poll_form %}
+      <div class="col-md-12">
+          {% include "polls/includes/add-poll-app/template.html" %}
       </div>
+      {% endif %}
+      <div class="col-md-12">
+          {% include "polls/includes/polls-app/template.html" %}
+      </div>
+
   </div>
 {% endblock content %}
 
 {% block script %}
   
+{% if add_poll_form %}
+{% include "polls/includes/add-poll-app/script.html" %}
+
+{% endif %}
+{% include "polls/includes/polls-app/script.html" %}
 {% endblock script %}

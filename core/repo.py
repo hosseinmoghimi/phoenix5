@@ -1,5 +1,5 @@
 from requests import request
-from .models import ContactMessage, Download, Image, Page, PageComment, PageDownload, PageImage, PageLike, PageLink, PagePermission, PageTag, Parameter,Picture, Tag
+from .models import ContactMessage, Download, Image, Link, Page, PageComment, PageDownload, PageImage, PageLike, PageLink, PagePermission, PageTag, Parameter,Picture, Tag
 from .constants import *
 from django.db.models import Q
 from authentication.repo import ProfileRepo
@@ -283,6 +283,12 @@ class PageLikeRepo():
             self.request=kwargs['request']
             self.user=self.request.user
         self.objects=PageLike.objects.all()
+        if 'app_name' in kwargs:
+            app_name=kwargs['app_name']
+            self.app_name=app_name
+            self.objects=self.objects.filter(page__app_name=app_name)
+        else:
+            self.app_name=None
     def list(self,*args, **kwargs):
         objects=self.objects
         if 'profile_id' in kwargs and kwargs['profile_id']>0:
@@ -626,6 +632,8 @@ class PageDownloadRepo:
         objects= self.objects
         if 'page_id' in kwargs:
             objects=objects.filter(page_id=kwargs['page_id'])
+        if 'search_for' in kwargs:
+            objects=objects.filter(title__contains=kwargs['search_for'])
         return objects
 
 
@@ -719,6 +727,8 @@ class PageLinkRepo:
         objects= self.objects
         if 'page_id' in kwargs:
             objects=objects.filter(page_id=kwargs['page_id'])
+        if 'search_for' in kwargs:
+            objects=objects.filter(title__contains=kwargs['search_for'])
         return objects
     def add_page_link(self,title,url,*args, **kwargs):
         
@@ -742,6 +752,36 @@ class PageLinkRepo:
         new_page_link.save()
         return new_page_link
 
+
+
+
+class LinkRepo:
+    def __init__(self,*args, **kwargs):
+        self.request=None
+        self.user=None
+        self.app_name=None
+        if 'request' in kwargs:
+            self.request=kwargs['request']
+            self.user=self.request.user
+        if 'user' in kwargs:
+            self.user=kwargs['user']
+        if 'app_name' in kwargs:
+            self.app_name=kwargs['app_name']
+        else:
+            self.app_name=None
+        self.profile=ProfileRepo(user=self.user).me
+        
+        self.objects=Link.objects.all()
+     
+    
+    def list(self,*args, **kwargs):
+        objects= self.objects
+        if 'page_id' in kwargs:
+            objects=objects.filter(page_id=kwargs['page_id'])
+        if 'search_for' in kwargs:
+            objects=objects.filter(title__contains=kwargs['search_for'])
+        return objects
+    
 
 class ContactMessageRepo:
     def __init__(self,*args, **kwargs):
@@ -813,4 +853,6 @@ class DownloadRepo:
         objects= self.objects
         if 'page_id' in kwargs:
             objects=objects.filter(page_id=kwargs['page_id'])
+        if 'search_for' in kwargs:
+            objects=objects.filter(title__contains=kwargs['search_for'])
         return objects

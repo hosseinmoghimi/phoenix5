@@ -1,12 +1,13 @@
 from django.contrib import admin
 
-from accounting.models import (Account, Asset, Bank, BankAccount, Cheque, FinancialBalance, FinancialDocument, FinancialDocumentTag, 
+from accounting.models import (Account, Asset, Bank, BankAccount, Cheque, Cost, FinancialBalance, FinancialDocument, FinancialDocumentTag, 
                                Invoice, InvoiceLine, Payment, Price, Product, ProductOrServiceCategory, Salary, Service,
                                Transaction, TransactionCategory)
 
 # Register your models here.
 admin.site.register(Asset)
 admin.site.register(Account)
+admin.site.register(Cost)
 admin.site.register(Cheque)
 admin.site.register(FinancialDocumentTag)
 admin.site.register(FinancialDocument)

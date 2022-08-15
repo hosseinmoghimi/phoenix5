@@ -5,11 +5,12 @@ from .apps import APP_NAME
 class CopyServiceRequestsForm(forms.Form):
     source_project_id=forms.IntegerField(required=True)
     destination_project_id=forms.IntegerField(required=True)
- 
+    invoice_id=forms.IntegerField(required=True)
+    
 class CopyMaterialRequestsForm(forms.Form):
     source_project_id=forms.IntegerField(required=True)
     destination_project_id=forms.IntegerField(required=True)
- 
+    invoice_id=forms.IntegerField(required=True)
 
 
 class CopyProjectForm(forms.Form):
@@ -48,6 +49,7 @@ class AddEventForm(forms.Form):
 
 
 class AddMaterialRequestForm(forms.Form):
+    invoice_id=forms.IntegerField(required=False)
     project_id=forms.IntegerField(required=True)
     quantity=forms.FloatField(required=True)
     employee_id=forms.IntegerField(required=False)
@@ -76,7 +78,7 @@ class AddSignatureForm(forms.Form):
     service_request_id=forms.IntegerField(required=False)
     material_request_id=forms.IntegerField(required=False)
     request_id=forms.IntegerField(required=True)
-    description=forms.CharField(max_length=50,required=False)
+    description=forms.CharField(max_length=500,required=False)
     status=forms.CharField(max_length=50,required=True)
 
 
@@ -101,8 +103,9 @@ class AddServiceForm(forms.Form):
     parent_id=forms.IntegerField( required=False)
          
 class AddServiceRequestForm(forms.Form):
-    employee_id=forms.IntegerField(required=False)
+    invoice_id=forms.IntegerField(required=False)
     project_id=forms.IntegerField(required=True)
+    employee_id=forms.IntegerField(required=False)
     quantity=forms.FloatField(required=True)
     unit_price=forms.IntegerField(required=True)
     service_id=forms.IntegerField(required=False)

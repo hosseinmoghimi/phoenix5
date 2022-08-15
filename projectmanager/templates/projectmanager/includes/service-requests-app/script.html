@@ -7,21 +7,51 @@
 <script>
     let all_services = JSON.parse(`{{all_services_s|escapejs}}`)
     let url_add_service_request = "{% url 'projectmanager:add_service_request' %}"
+
+    service_requests_app_data = {
+        
+        id:125,
+      
+        employees: JSON.parse(`{{employees_s|escapejs}}`),
+        new_service_request_service_id: 1,
+        add_service_request_form_title: "",
+        services: [],
+        invoices: JSON.parse("{{service_invoices_s|escapejs}}"),
+        source_project_id: 0,
+        add_service_request_form_invoice_id: 0,
+        add_service_request_form_unit_price: 0,
+        add_service_request_form_unit_name: "",
+        add_service_request_form_quantity: "",
+        add_service_request_form_description: "",
+        service_requests: service_requests,
+        waiting: false,
+        sum_service_requests: 0,
+        show_add_service_request_form: false,
+        add_service_request_form_employee_id: "",
+
+        filter_status:"",
+
+    }
+
+
+
     service_requests_app_methods = {
         copy_from_project: function () {
             console.log(this.source_project_id)
 
             let payload = {
-                source_project_id: this.source_project_id,
+                source_project_id: parseInt(this.source_project_id),
                 destination_project_id: project_id,
-                csrfmiddlewaretoken: csrfmiddlewaretoken
+                csrfmiddlewaretoken: csrfmiddlewaretoken,
+                invoice_id:parseInt(this.add_service_request_form_invoice_id),
             }
+            console.log(payload)
             let url_copy_service_requests = "{% url 'projectmanager:copy_service_requests' %}"
             var posting = $.post(url_copy_service_requests, payload);
             posting.done((data) => {
                 console.log(data)
-                if(data.result==='SUCCEED'){
-                    service_requests_app.service_requests=data.service_requests
+                if (data.result === 'SUCCEED') {
+                    service_requests_app.service_requests = data.service_requests
                 }
             })
 
@@ -37,6 +67,15 @@
                 return this.services[0]
             return {}
         },
+        
+        filter:function(){
+                this.service_requests=service_requests
+
+                if(this.filter_status!=""){
+                    this.service_requests=this.service_requests.filter(item=>item.status===service_requests_app.filter_status)
+                }
+            },
+
         add_service_request: function () {
 
             service_requests_app.waiting = true
@@ -44,6 +83,7 @@
             let payload = {
                 project_id: page_id,
                 service_id: this.selected_service().id,
+                invoice_id: parseInt(this.add_service_request_form_invoice_id),
                 unit_price: parseInt(this.add_service_request_form_unit_price),
                 unit_name: this.add_service_request_form_unit_name,
                 quantity: parseFloat(this.add_service_request_form_quantity),
@@ -52,7 +92,7 @@
                 description: this.add_service_request_form_description,
                 csrfmiddlewaretoken: csrfmiddlewaretoken
             }
-
+            console.log(payload)
             var posting = $.post(url_add_service_request, payload);
             posting.fail(function (xhr, status, error) {
                 service_requests_app.waiting = false
@@ -65,6 +105,16 @@
                     service_requests_app.service_requests.push(data.service_request)
                     service_requests_app.sum_service_requests += data.service_request.quantity * data.service_request.unit_price
                     showNotification('top', 'center', 'settings', 'success', `<div class="text-center farsi">با موفقیت افزوده شد.</div>`)
+                    console.log("service_requests_app.add_service_request_form_invoice_id")
+                    console.log(service_requests_app.add_service_request_form_invoice_id)
+
+                    if (service_requests_app.add_service_request_form_invoice_id == -1) {
+                        console.log(data.service_request.invoice)
+                        service_requests_app.invoices.push(data.service_request.invoice)
+                        service_requests_app.add_service_request_form_invoice_id = data.service_request.invoice.id
+                    }
+
+
                 }
                 else {
                 }
@@ -105,31 +155,21 @@
 
         },
     }
-    service_requests_app_data = {
-        employees: JSON.parse(`{{employees_s|escapejs}}`),
-        new_service_request_service_id: 1,
-        add_service_request_form_title: "",
-        services: [],
-        source_project_id: 0,
-        add_service_request_form_unit_price: 0,
-        add_service_request_form_unit_name: "",
-        add_service_request_form_quantity: "",
-        add_service_request_form_description: "",
-        service_requests: service_requests,
-        waiting: false,
-        sum_service_requests: 0,
-        show_add_service_request_form: false,
-        add_service_request_form_employee_id: ""
-    }
+
+
 </script>
 {% else %}
 <script>
     service_requests_app_data = {
         service_requests: service_requests,
+        
+        id:125,
         waiting: false,
         sum_service_requests: 0,
         count_service_requests: 0,
         show_add_service_request_form: false,
+
+        filter_status:"",
     }
 
 

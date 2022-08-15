@@ -46,15 +46,29 @@
                     </a>
                 </td>
                 <td>
-                    <small v-text="service_request.persian_date_requested">
-                    </small>
-                    <div>
+                    <div class="media">
                         <a :href="service_request.employee.get_absolute_url">
-                            <small>
-                                <span v-text="service_request.employee.title"></span>
-                            </small>
+
+                            <img :src="service_request.employee.account.logo" class="rounded-circle" width="32"></span>
+
                         </a>
+                        <div class="media-body mr-2">
+                            <div>
+
+                                <a :href="service_request.employee.get_absolute_url">
+                                    <small>
+                                        <span v-text="service_request.employee.title"></span>
+                                    </small>
+                                </a>
+                            </div>
+                            <div>
+                                <small v-text="service_request.persian_date_requested">
+                                </small>
+                            </div>
+                        </div>
                     </div>
+
+
                 </td>
                 {% if not project %}
                 <td>
@@ -65,11 +79,25 @@
                 {% endif %}
                 {% if not service %}
                 <td>
-                    <img :src="service_request.service.thumbnail" class="ml-2 rounded" width="32" alt="">
+                    <div class="media">
+                        <a target="_blank" :href="service_request.service.get_pm_absolute_url">
+                            <img :src="service_request.service.thumbnail" class="ml-2 rounded" width="32" alt="">
+                        </a>
 
-                    <a target="_blank" :href="service_request.service.get_pm_absolute_url"
-                        v-text="service_request.service.title">
-                    </a>
+                        <div class="media-body mr-2">
+                            <div>
+                                <a target="_blank" :href="service_request.service.get_pm_absolute_url"
+                                    v-text="service_request.service.title">
+                                </a>
+                            </div>
+                            <div>
+                                <a target="_blank" :href="service_request.invoice.pay_from.get_absolute_url">
+                                    <small class="text-muted" v-text="service_request.invoice.pay_from.title">
+                                    </small>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
                 </td>
                 {% endif %}
                 <td>

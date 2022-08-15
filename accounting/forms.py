@@ -98,16 +98,6 @@ class AddPaymentForm(forms.Form):
     description=forms.CharField(max_length=200, required=False)
 
     
-class AddCostForm(forms.Form):
-    title=forms.CharField(max_length=500, required=True)
-    cost_type=forms.CharField(max_length=50,required=True)
-    pay_to_id=forms.IntegerField(required=False)
-    pay_from_id=forms.IntegerField(required=True)
-    amount=forms.IntegerField(required=True)
-    payment_datetime=forms.CharField(max_length=50, required=True)
-    payment_method=forms.CharField(max_length=50, required=True)
-    description=forms.CharField(max_length=50, required=False)
-
 class EditInvoiceForm(forms.Form):
     invoice_id=forms.IntegerField(required=True)
     discount=forms.IntegerField(required=True)
@@ -127,8 +117,9 @@ class AddCostForm(forms.Form):
     description=forms.CharField( max_length=500, required=False)
     pay_from_id=forms.IntegerField(required=True)
     payment_method=forms.CharField( max_length=50, required=True)
-    title=forms.CharField( max_length=500, required=False)
     transaction_datetime=forms.CharField( max_length=50, required=True)
+    status=forms.CharField( max_length=100, required=False)
+    title=forms.CharField(max_length=500, required=True)
 
 class AddWageForm(forms.Form):
     # cost_type=forms.IntegerField(required=True)

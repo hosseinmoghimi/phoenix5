@@ -6,7 +6,7 @@
 <div id="accordion-invoices">
 
 
-    <div class="card">
+    <div class="card" id="invoices-app">
         <div class="card-header" id="heading-invoices">
             <h5 class="text-center">
                 <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-invoices"
@@ -36,8 +36,8 @@
             </h4>
             {% endif %}
         </div>
-        <div id="collapse-invoices" class="collapse {% if expand_invoices %} show {% endif %}" aria-labelledby="heading-invoices"
-            data-parent="#accordion-invoices">
+        <div id="collapse-invoices" class="collapse {% if expand_invoices %} show {% endif %}"
+            aria-labelledby="heading-invoices" data-parent="#accordion-invoices">
 
 
             <div class="card-body">
@@ -116,6 +116,9 @@
                                 </td>
                             </tr>
                             {% endfor %}
+
+
+                         
                         </tbody>
                     </table>
                 </div>

@@ -47,30 +47,68 @@
                     </a>
                 </td>
                 <td>
-                    <small v-text="material_request.persian_date_requested">
-                    </small>
+                  
                     <div>
-                        <a :href="material_request.employee.get_absolute_url">
-                            <small>
-                                <span v-text="material_request.employee.title"></span>
-                            </small>
-                        </a>
+
+                        <div class="media">
+                            <a :href="material_request.employee.get_absolute_url">
+                                <small>
+                                   
+                                    <img :src="material_request.employee.account.logo" class="rounded-circle" width="32" alt="">
+                                </small>
+                            </a>
+                            <div class="media-body mr-2">
+                                <div>
+
+                                    <a :href="material_request.employee.get_absolute_url">
+                                        <small>
+                                            <span v-text="material_request.employee.title"></span>
+                                        </small>
+                                    </a>
+                                </div>
+                                <div>
+                                    <small v-text="material_request.persian_date_requested">
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                       
                     </div>
                 </td>
                 {% if not project %}
                 <td>
-                    <a target="_blank" :href="material_request.project.get_absolute_url"
-                        v-text="material_request.project.title">
-                    </a>
+                    <div>
+
+                        <a target="_blank" :href="material_request.project.get_absolute_url"
+                            v-text="material_request.project.title">
+                        </a>
+                    </div>
                 </td>
                 {% endif %}
                 {% if not material %}
                 <td>
-                    <a target="_blank" :href="material_request.material.get_pm_absolute_url"
-                    >
-                    <img :src="material_request.material.thumbnail" class="ml-2 rounded" width="32" alt="">
-                    <span v-text="material_request.material.title"></span>
-                    </a>
+                    <div>
+                        <div class="media">
+                            <a target="_blank" :href="material_request.material.get_pm_absolute_url">
+                                <img :src="material_request.material.thumbnail" class="ml-2 rounded" width="32" alt="">
+                            </a>
+                            <div class="media-body mr-2">
+                                <a target="_blank" :href="material_request.material.get_pm_absolute_url">
+
+                                    <span v-text="material_request.material.title"></span>
+                                </a>
+                                <div v-if="material_request.invoice">
+                                    <a target="_blank" :href="material_request.invoice.pay_from.get_absolute_url">
+                                        <small class="text-muted"
+                                            v-text="material_request.invoice.pay_from.title"></small>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+
                 </td>
                 {% endif %}
                 <td>

@@ -31,6 +31,14 @@ class ImageMixin():
 
     @property
     def thumbnail(self):
+        if self.thumbnail_origin:
+            return MEDIA_URL+str(self.thumbnail_origin)
+        if not self.thumbnail_origin:
+            try:
+                if self.parent is not None:
+                    return self.parent.thumbnail
+            except:
+                pass
         return self.get_or_create_thumbnail()
 
     def get_or_create_thumbnail(self, *args, **kwargs):
@@ -427,6 +435,7 @@ class Image(models.Model, LinkHelper):
     title = models.CharField(_("title"), max_length=50)
     description = HTMLField(_("توضیحات"), null=True,
                             blank=True, max_length=50000)
+    priority = models.IntegerField(_("priority"), default=1000)
 
     thumbnail_origin = models.ImageField(_("تصویر کوچک"), upload_to=IMAGE_FOLDER+'ImageBase/Thumbnail/',
                                          null=True, blank=True, height_field=None, width_field=None, max_length=None)
@@ -595,7 +604,7 @@ class PagePermission(models.Model):
  
 
 class Tag(models.Model,LinkHelper):
-    title=models.CharField(_("title"), max_length=50)
+    title=models.CharField(_("title"), max_length=200)
     class_name="tag"
     app_name=APP_NAME
 
@@ -610,6 +619,7 @@ class Tag(models.Model,LinkHelper):
         for page_tag in PageTag.objects.filter(tag_id=self.pk):
             pages_ids.append(page_tag.page_id)
         return Page.objects.filter(pk__in=pages_ids)
+
 
 class PageTag(models.Model,LinkHelper):
     page=models.ForeignKey("page", verbose_name=_("page"), on_delete=models.CASCADE)

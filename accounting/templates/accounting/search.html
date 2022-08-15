@@ -56,6 +56,24 @@
         {% include "accounting/includes/accounts-app/template.html" %}
     </div>
     {% endif %}
+
+
+    
+    {% if products %}
+
+    <div class="col-md-12">
+        {% include "accounting/includes/products-app/template.html" %}
+    </div>
+    {% endif %}
+
+    
+    {% if services %}
+
+    <div class="col-md-12">
+        {% include "accounting/includes/services-app/template.html" %}
+    </div>
+    {% endif %}
+
 </div>
 {% endblock content %}
 
@@ -67,5 +85,7 @@
 {% include "accounting/includes/payments-app/script.html" %}
 {% include "accounting/includes/transactions-app/script.html" %}
 {% include "accounting/includes/accounts-app/script.html" %}
+{% include "accounting/includes/products-app/script.html" %}
+{% include "accounting/includes/services-app/script.html" %}
 
 {% endblock script %}
