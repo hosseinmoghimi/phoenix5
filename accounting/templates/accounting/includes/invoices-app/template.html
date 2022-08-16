@@ -85,7 +85,9 @@
                                 </td>
                                 <td>
                                     {{invoice.amount|to_price}}
-
+                                    <div>
+                                        <span class="badge badge-{{invoice.status_color}}">{{invoice.status}}</span>
+                                    </div>
                                 </td>
 
 
