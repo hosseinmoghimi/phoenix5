@@ -839,7 +839,7 @@ class PaymentRepo():
         if 'user' in kwargs:
             self.user = kwargs['user']
         
-        self.objects=Payment.objects
+        self.objects=Payment.objects.order_by('-transaction_datetime')
         self.profile=ProfileRepo(*args, **kwargs).me
         if self.user.has_perm(APP_NAME+".view_payment"):
             self.objects=self.objects
@@ -926,7 +926,7 @@ class CostRepo():
         if 'user' in kwargs:
             self.user = kwargs['user']
         
-        self.objects=Cost.objects
+        self.objects=Cost.objects.order_by('-transaction_datetime')
         self.profile=ProfileRepo(*args, **kwargs).me
         if self.user.has_perm(APP_NAME+".view_payment"):
             self.objects=self.objects
@@ -1011,7 +1011,7 @@ class InvoiceRepo():
         if 'user' in kwargs:
             self.user = kwargs['user']
         
-        self.objects=Invoice.objects.all()
+        self.objects=Invoice.objects.order_by('-transaction_datetime')
         self.profile=ProfileRepo(*args, **kwargs).me
 
     def create_invoice(self,*args, **kwargs):
@@ -1237,7 +1237,7 @@ class TransactionRepo():
         if 'user' in kwargs:
             self.user = kwargs['user']
         
-        self.objects=Transaction.objects
+        self.objects=Transaction.objects.order_by('-transaction_datetime')
         self.profile=ProfileRepo(*args, **kwargs).me
        
         if self.user.has_perm(APP_NAME+".view_transaction"):
