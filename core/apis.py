@@ -1,5 +1,5 @@
 from core.models import Page, PageLink
-from core.serializers import PageBriefSerializer, PageCommentSerializer, PageDownloadSerializer, PageImageSerializer, PageLikeSerializer, PageLinkSerializer, PagePermissionSerializer, PageSerializer, PageTagSerializer, ParameterSerializer, TagSerializer
+from core.serializers import PageBriefSerializer, PageCommentSerializer, PageDecodeSerializer, PageDownloadSerializer, PageImageSerializer, PageLikeSerializer, PageLinkSerializer, PagePermissionSerializer, PageSerializer, PageTagSerializer, ParameterSerializer, TagSerializer
 from rest_framework.views import APIView
 from django.http import JsonResponse
 from .forms import *
@@ -223,6 +223,52 @@ class AddPageCommentApi(APIView):
                     log =40
                     context['page_comment'] = PageCommentSerializer(
                         page_comment).data
+                    context['result'] = SUCCEED
+        context['log'] = log
+        return JsonResponse(context)
+
+class EncryptApi(APIView):
+ def post(self, request, *args, **kwargs):
+        log = 1
+        context = {}
+        log = 1
+        context = {}
+        context['result'] = FAILED
+        if request.method == 'POST':
+            log += 1
+            encrypt_page_form = EncryptPageForm(request.POST)
+            if encrypt_page_form.is_valid():
+                log += 1
+                # key = encrypt_page_form.cleaned_data['key']
+                # page_id = encrypt_page_form.cleaned_data['page_id']
+                page,key = PageRepo(request=request).encrypt(
+                    **encrypt_page_form.cleaned_data)
+                if page:
+                    context['page'] = PageSerializer(page).data
+                    context['key'] = key.decode("utf-8")
+                    context['result'] = SUCCEED
+        context['log'] = log
+        return JsonResponse(context)
+
+
+class DecryptApi(APIView):
+ def post(self, request, *args, **kwargs):
+        log = 1
+        context = {}
+        log = 1
+        context = {}
+        context['result'] = FAILED
+        if request.method == 'POST':
+            log += 1
+            decrypt_page_form = DecryptPageForm(request.POST)
+            if decrypt_page_form.is_valid():
+                log += 1
+                # key = encrypt_page_form.cleaned_data['key']
+                # page_id = encrypt_page_form.cleaned_data['page_id']
+                page = PageRepo(request=request).decrypt(
+                    **decrypt_page_form.cleaned_data)
+                if page:
+                    context['page'] = PageDecodeSerializer(page).data
                     context['result'] = SUCCEED
         context['log'] = log
         return JsonResponse(context)

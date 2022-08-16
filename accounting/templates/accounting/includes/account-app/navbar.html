@@ -20,6 +20,12 @@
     {{account.address}}
 </div>
 {% endif %}
+{% if account.description %}
+<div class="text-center farsi my-3">
+    <i class="fa fa-trash text-danger"></i>
+    {{account.description}}
+</div>
+{% endif %}
 {% if account.tel %}
 <div class="text-center farsi my-3">
     <a href="tel:{{account.tel}}">

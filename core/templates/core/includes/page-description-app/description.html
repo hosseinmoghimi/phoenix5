@@ -13,7 +13,11 @@
         <div id="collapse-page-description" class="collapse" aria-labelledby="heading-page-description"
             data-parent="#accordion-page-description">
             <div class="card-body farsi text-right">
-                {{page.description|safe}}
+                <div v-if="description.length==0">
+
+                    {{page.description|safe}}
+                </div>
+                <span v-html="description"></span>
             </div>
         </div>
     </div>

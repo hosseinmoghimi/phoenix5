@@ -25,6 +25,8 @@ urlpatterns = [
     path('add_page_download/',apis.AddPageDownloadApi.as_view(),name="add_page_download"),
     path('add_page_image/',apis.AddPageImageApi.as_view(),name="add_page_image"),
 
+    path('encrypt/',apis.EncryptApi.as_view(),name="encrypt"),
+    path('decrypt/',apis.DecryptApi.as_view(),name="decrypt"),
     path('delete_page_comment/',apis.DeletePageCommentApi.as_view(),name="delete_page_comment"),
     path('add_page_comment/',apis.AddPageCommentApi.as_view(),name="add_page_comment"),
     path('add_contact_message/',apis.AddContactMessageApi.as_view(),name="add_contact_message"),

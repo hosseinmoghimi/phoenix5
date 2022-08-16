@@ -10,6 +10,15 @@ class SetThumbnailHeaderForm(forms.Form):
     clear_header=forms.BooleanField(required=False)
 
 
+
+class EncryptPageForm(forms.Form):
+    page_id=forms.IntegerField(required=True)
+    key=forms.CharField(max_length=200,required=False)
+
+class DecryptPageForm(forms.Form):
+    page_id=forms.IntegerField(required=True)
+    key=forms.CharField(max_length=200,required=True)
+
 class AddPageTagForm(forms.Form):
     page_id=forms.IntegerField(required=True)
     tag_title=forms.CharField(max_length=200, required=True)

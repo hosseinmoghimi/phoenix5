@@ -1,0 +1,52 @@
+<div id="accordion-encryption">
+
+
+    <div class="card" id="encryption-app">
+        <div class="card-header" id="heading-encryption">
+            <h5 class="text-center">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-encryption"
+                    aria-expanded="true" aria-controls="collapse-encryption">
+
+                    رمز نگاری
+
+                </button>
+            </h5>
+        </div>
+        <div id="collapse-encryption" class="collapse " aria-labelledby="heading-encryption"
+            data-parent="#accordion-encryption">
+
+            <div class="card-body">
+<input required type="text" v-model="key" class=" mb-2 farsi form-control"
+                                placeholder="کلید رمزنگاری" maxlength="300">
+                                <form @submit.prevent="encrypt()">
+                                    <div class="">
+                                      <button class="btn btn-success" type="submit">رمز کن</button>
+                
+                                    </div>
+                
+                                </form>
+
+                                <form @submit.prevent="decrypt()">
+                                    <div class="">
+                                      <button class="btn btn-success" type="submit">باز کن</button>
+                
+                                    </div>
+                
+                                </form>
+
+            </div>
+            <div class="card-footer">
+                <h6 class="text-warning">
+
+                    از کلید برای رمز کردن و بازیابی کردن استفاده کنید.
+
+
+                </h6>
+
+
+
+            </div>
+        </div>
+    </div>
+
+</div>

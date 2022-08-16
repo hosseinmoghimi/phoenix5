@@ -1073,9 +1073,7 @@ class InvoiceRepo():
             pass
         else:
             return
-        if invoice.status==TransactionStatusEnum.DELIVERED:
-            return None
-        if invoice.status==TransactionStatusEnum.APPROVED:
+        if invoice.status==TransactionStatusEnum.FINISHED:
             return None
         if 'title' in kwargs:
             invoice.title=kwargs['title']
@@ -1110,19 +1108,23 @@ class InvoiceRepo():
         invoice.save()
         if 'lines' in kwargs:
             lines=kwargs['lines']
-            for line in lines:
-                if int(line['quantity'])>0:
-                    sw=False
-                    for line_origin in invoice.lines.all():
-                        b=line_origin.product_or_service_id
-                        a=line['product_or_service_id']
-                        if line_origin.product_or_service_id==line['product_or_service_id']:
+            for line in lines: 
+                # if int(line['quantity'])>0:
+                sw=False
+                for line_origin in invoice.lines.all():
+                    b=line_origin.product_or_service_id
+                    a=line['product_or_service_id']
+                    if line_origin.product_or_service_id==line['product_or_service_id']:
+                        if int(line['quantity'])>0:
                             line_origin.quantity=int(line['quantity'])
                             line_origin.unit_price=int(line['unit_price'])
                             line_origin.unit_name=line['unit_name']
                             line_origin.save()
-                            sw=True
-                    if not sw:
+                        else:
+                            line_origin.delete()
+                        sw=True
+                if not sw:
+                    if int(line['quantity'])>0:
                         invoice_line=InvoiceLine()
                         invoice_line.invoice=invoice
                         invoice_line.product_or_service_id=int(line['product_or_service_id'])
@@ -1131,7 +1133,7 @@ class InvoiceRepo():
                         invoice_line.unit_price=int(line['unit_price'])
                         invoice_line.unit_name=line['unit_name']
                         invoice_line.save()
-        
+                    
         invoice.save()
         return invoice
 

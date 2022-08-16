@@ -73,6 +73,7 @@ class TransactionStatusEnum(TextChoices):
     DELIVERED="تحویل شده",_("تحویل شده")
     APPROVED="تایید شده",_("تایید شده")
     CANCELED="کنسل شده",_("کنسل شده")
+    FINISHED="تایید نهایی شده",_("تایید نهایی شده")
     PASSED="پاس شده",_("پاس شده")
     FROM_PAST="مانده حساب از قبل",_("مانده حساب از قبل")
 

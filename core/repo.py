@@ -33,7 +33,16 @@ class ImageRepo:
 
 
 class PageRepo:
-    
+    def encrypt(self,*args, **kwargs):
+        page=self.page(*args, **kwargs)
+        key=page.encrypt(*args, **kwargs)
+        return page,key
+
+    def decrypt(self,key,*args, **kwargs):
+        page=self.page(*args, **kwargs)
+        page.decrypt(key)
+        return page
+
     def __init__(self,*args, **kwargs):
         self.request=None
         self.user=None

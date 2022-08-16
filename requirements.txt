@@ -21,3 +21,4 @@ python-resize-image
 Pillow
 django-filter 
 markdown
+cryptography

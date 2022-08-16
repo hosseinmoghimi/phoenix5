@@ -14,6 +14,11 @@ class PageSerializer(serializers.ModelSerializer):
         model=Page
         fields=['id','title','get_absolute_url']
 
+class PageDecodeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Page
+        fields=['id','short_description','description','get_absolute_url']
+
 
 class PageFullSerializer(serializers.ModelSerializer):
     class Meta:

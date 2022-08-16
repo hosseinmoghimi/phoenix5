@@ -1,0 +1,39 @@
+<script>
+    let encryption_app = new Vue({
+        el: "#encryption-app",
+        data: {
+            key: "abcdefghijklmnopqrtuvwxyz",
+        },
+        methods: {
+            encrypt: function () {
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    key: this.key,
+                    page_id: page_id,
+                }
+                console.log(payload)
+                $.post("{% url 'core:encrypt' %}", payload).done((data) => {
+                    console.log(data)
+                    encryption_app.key=data.key
+                })
+            },
+            decrypt: function () {
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    key: this.key,
+                    page_id: page_id,
+                }
+                $.post("{% url 'core:decrypt' %}", payload).done((data) => {
+                    console.log(data)
+                    if(typeof page_description_app!= 'undefined'){
+                        page_description_app.description=data.page.description
+                    }
+                    if(typeof page_short_description_app!= 'undefined'){
+                        page_short_description_app.short_description=data.page.short_description
+                    }
+                })
+                console.log(payload)
+            }
+        }
+    })
+</script>

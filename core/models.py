@@ -1,3 +1,4 @@
+from utility.encryption import Encrptor
 from django.core.files.storage import FileSystemStorage
 from django.db import models
 from django.http import Http404
@@ -116,9 +117,22 @@ class Page(models.Model, LinkHelper, ImageMixin):
             self.app_name=APP_NAME
         if self.class_name is None:
             self.class_name='page'
+ 
         return super(Page,self).save()
 
-    
+    def encrypt(self,*args, **kwargs):
+        encryptor=Encrptor(*args, **kwargs)
+        aa=encryptor.encrypt(plain=self.short_description)
+        self.short_description=aa.decode()
+        # self.save()
+        return encryptor.key
+    def decrypt(self,key,*args, **kwargs):
+        encryptor=Encrptor()
+        aa=encryptor.decrypt(cypher=self.short_description,key=key)
+        self.short_description=aa.decode()
+        
+
+
     def get_qrcode_url(self):
         if self.pk is None:
             super(Page,self).save()
