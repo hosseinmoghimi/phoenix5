@@ -1,4 +1,3 @@
-from datetime import timedelta
 from accounting.enums import FinancialDocumentTypeEnum, PaymentMethodEnum, SpendTypeEnum, TransactionStatusEnum
 from core.constants import FAILED, SUCCEED,MISC
 
@@ -324,7 +323,11 @@ class ProductOrServiceCategoryRepo():
         if 'super_category' in kwargs and kwargs['super_category'] is None:
             objects=objects.filter(super_category=None)
         if 'parent_id' in kwargs:
-            objects=objects.filter(super_category_id=kwargs['parent_id'])
+            parent_id=kwargs['parent_id']
+            if parent_id==0:
+                objects=objects.filter(super_category=None)
+            else:
+                objects=objects.filter(super_category_id=kwargs['parent_id'])
         if 'super_category_id' in kwargs:
             objects=objects.filter(super_category_id=kwargs['super_category_id'])
         if 'category_title' in kwargs:

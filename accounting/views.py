@@ -777,7 +777,7 @@ class TransactionsPrintView(View):
 class ProductOrServiceCategoriesView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
-        product_or_service_categories=ProductOrServiceCategoryRepo(request=request).list(*args, **kwargs)
+        product_or_service_categories=ProductOrServiceCategoryRepo(request=request).list(parent_id=0,*args, **kwargs)
         context['product_or_service_categories']=product_or_service_categories
         product_or_service_categories_s=json.dumps(ProductOrServiceCategorySerializer(product_or_service_categories,many=True).data)
         context['product_or_service_categories_s']=product_or_service_categories_s
