@@ -167,7 +167,7 @@ def get_account_context(request,*args, **kwargs):
     context['invoices_s']=json.dumps(InvoiceSerializer(invoices,many=True).data)
     count=int(ParameterRepo(request=request,app_name=APP_NAME).parameter(name=ParameterAccountingEnum.COUNT_OF_ITEM_PER_PAGE,default=100).value)
     count=kwargs['count'] if 'count' in kwargs else count
-    financial_documents=FinancialDocumentRepo(request=request).list(account_id=account.id)[:count]
+    financial_documents=FinancialDocumentRepo(request=request).list(account_id=account.id).order_by('transaction__transaction_datetime')[:count]
     context['financial_documents']=financial_documents
     context['financial_documents_s']=json.dumps(FinancialDocumentForAccountSerializer(financial_documents,many=True).data)
 
@@ -710,7 +710,7 @@ class TransactionsView(View):
             context['account_id_2']=kwargs['account_id_2']
         if 'account_id' in kwargs:
             context['account_id']=kwargs['account_id']
-        transactions=TransactionRepo(request=request).list(*args, **kwargs)
+        transactions=TransactionRepo(request=request).list(*args, **kwargs).order_by('-transaction_datetime')
         context['transactions']=transactions
         transactions_s=json.dumps(TransactionSerializer(transactions,many=True).data)
         context['transactions_s']=transactions_s
@@ -962,7 +962,7 @@ class AccountsView(View):
 class PaymentsView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
-        payments=PaymentRepo(request=request).list(*args, **kwargs)
+        payments=PaymentRepo(request=request).list(*args, **kwargs).order_by('-transaction_datetime')
         context['payments']=payments
         context['expand_payments']=True
 

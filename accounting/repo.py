@@ -876,7 +876,7 @@ class PaymentRepo():
             objects=objects.filter(Q(pay_to_id=kwargs['account_id'])|Q(pay_from_id=kwargs['account_id']))
         if 'profile_id' in kwargs:
             objects=objects.filter(account__profile_id=kwargs['profile_id'])
-        return objects.order_by('transaction_datetime')
+        return objects.order_by('-transaction_datetime')
 
     def add_payment(self,*args, **kwargs):
         if not self.request.user.has_perm(APP_NAME+".add_payment"):
@@ -966,7 +966,7 @@ class CostRepo():
             objects=objects.filter(Q(pay_to_id=kwargs['account_id'])|Q(pay_from_id=kwargs['account_id']))
         if 'profile_id' in kwargs:
             objects=objects.filter(account__profile_id=kwargs['profile_id'])
-        return objects.order_by('transaction_datetime')
+        return objects.order_by('-transaction_datetime')
 
     def add_cost(self,*args, **kwargs):
         if not self.request.user.has_perm(APP_NAME+".add_cost"):
@@ -1282,7 +1282,7 @@ class TransactionRepo():
             account_id_1=kwargs['account_id_1']
             account_id_2=kwargs['account_id_2']
             objects = self.objects.filter(Q(pay_from_id=account_id_1)|Q(pay_from_id=account_id_2)).filter(Q(pay_to_id=account_id_1)|Q(pay_to_id=account_id_2))
-        return objects.order_by('transaction_datetime')
+        return objects.order_by('-transaction_datetime')
 
 
 class SubAccountRepo():
