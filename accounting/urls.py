@@ -78,9 +78,9 @@ urlpatterns = [
   path("add_price/",login_required(apis.AddPriceApi.as_view()),name="add_price"),
 
   
-  path('add_product_or_service_category/',login_required(apis.AddProductApi.as_view()),name="add_product_or_service_category"),
   path('change_product_or_service_category/',login_required(apis.ChangeProductOrServiceCategoryApi.as_view()),name="change_product_or_service_category"),
 
+  path('add_product_or_service_category/',login_required(apis.AddProductOrServiceCategoryApi.as_view()),name="add_product_or_service_category"),
   path('add_product/',login_required(apis.AddProductApi.as_view()),name="add_product"),
   path('add_service/',login_required(apis.AddServiceApi.as_view()),name="add_service"),
 

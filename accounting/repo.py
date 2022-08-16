@@ -336,9 +336,11 @@ class ProductOrServiceCategoryRepo():
             return None
         product_or_service_category=ProductOrServiceCategory()
   
+        if 'parent_id' in kwargs and kwargs['parent_id'] is not None and kwargs['parent_id']>0:
+            product_or_service_category.super_category_id = kwargs['parent_id']
         if 'title' in kwargs:
             product_or_service_category.title = kwargs['title']
-        if len(Product.objects.filter(title=product_or_service_category.title))>0:
+        if len(ProductOrServiceCategory.objects.filter(title=product_or_service_category.title))>0:
             message="دسته بندی وارد شده تکراری می باشد."
             return FAILED,None,message
 

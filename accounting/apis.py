@@ -3,7 +3,7 @@ from core.constants import FAILED,SUCCEED
 from rest_framework.views import APIView
 
 from utility.calendar import PersianCalendar
-from .repo import AccountRepo, BankAccountRepo, BankRepo, ChequeRepo, CostRepo, FinancialBalanceRepo,  FinancialDocumentRepo, InvoiceRepo, PaymentRepo, PriceRepo, ProductOrServiceRepo, ProductRepo, ServiceRepo, TransactionRepo
+from .repo import AccountRepo, BankAccountRepo, BankRepo, ChequeRepo, CostRepo, FinancialBalanceRepo,  FinancialDocumentRepo, InvoiceRepo, PaymentRepo, PriceRepo, ProductOrServiceCategoryRepo, ProductOrServiceRepo, ProductRepo, ServiceRepo, TransactionRepo
 from django.http import JsonResponse
 from .forms import *
 from .serializers import AccountSerializer, BankAccountSerializer, BankSerializer, ChequeSerializer, CostSerializer, FinancialBalanceSerializer, FinancialDocumentSerializer, InvoiceFullSerializer, InvoiceLineSerializer, PaymentSerializer, PriceSerializer, ProductOrServiceCategorySerializer, ProductSerializer, ServiceSerializer, TransactionSerializer
@@ -312,6 +312,27 @@ class ChangeProductOrServiceCategoryApi(APIView):
                     # context['product_or_service_category_title']=product_or_service_category.title
                     # context['product_or_service_category_id']=product_or_service_category.pk
                     context['product_or_service_category']=ProductOrServiceCategorySerializer(product_or_service_category).data
+        context['log']=log
+        return JsonResponse(context)
+
+class AddProductOrServiceCategoryApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        log=11
+        message=""
+        context['result']=FAILED
+        if request.method=='POST':
+            log=22
+            report_form=AddProductOrServiceCategoryForm(request.POST)
+            if report_form.is_valid():
+                log=33
+                cd=report_form.cleaned_data
+            
+                result,product_or_service_category,message=ProductOrServiceCategoryRepo(request=request).add_product_or_service_category(**cd)
+                if product_or_service_category is not None:
+                    context['product_or_service_category']=ProductOrServiceCategorySerializer(product_or_service_category).data
+                    context['result']=result
+        context['message']=message
         context['log']=log
         return JsonResponse(context)
 

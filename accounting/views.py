@@ -811,6 +811,9 @@ class ProductOrServiceCategoryView(View):
         context['product_or_service_category']=product_or_service_category
         product_or_service_categories=product_or_service_category_repo.list(super_category=None)
         context['product_or_service_categories']=product_or_service_categories
+
+        if request.user.has_perm(APP_NAME+".add_add_productorservicecategory"):
+            context['add_product_or_service_category_form']=AddProductOrServiceCategoryForm()
         return render(request,TEMPLATE_ROOT+"product-or-service-category.html",context)
 
 

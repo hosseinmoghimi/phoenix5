@@ -4,19 +4,24 @@
 <div class="row">
     <div class="col-md-12">
         <h4 class="text-center">
-        <img src="{% static 'accounting/img/pages/thumbnail/product.png' %}" class="rounded" width="64" alt="">
+            <img src="{% static 'accounting/img/pages/thumbnail/product.png' %}" class="rounded" width="64" alt="">
 
             {{product_or_service_category.title}}
+            {% if perms.accounting.change_productorservicecategory %}
+            <a title="ویرایش" href="{{product_or_service_category.get_edit_url}}">
+                <i class="fa fa-edit text-warning"></i>
+            </a>
+            {% endif %}
         </h4>
-        
+
     </div>
     <div class="col-md-12">
         {{product_or_service_category.get_breadcrumb|safe}}
     </div>
-    {% if product_or_service_category.sub_categories.all %}
-      
+    {% if product_or_service_category.sub_categories.all or add_product_or_service_category_form %}
+
     <div class="col-md-12">
-        <div class="card">
+        <div class="card" id="product-or-service-category-app">
             <!-- <div class="card-header">
                 <h5>
                     سایر دسته بندی ها
@@ -36,7 +41,29 @@
                         </h6>
                     </li>
                     {% endfor %}
+
+                    <li class="nav-item" v-for="product_or_service_category_ in product_or_service_category_set">
+                        <h6>
+
+                            <a class="nave-link" :href="product_or_service_category_.get_absolute_url">
+                                <span v-text="product_or_service_category_.title"></span>
+                            </a>
+                        </h6>
+                    </li>
+
                 </ul>
+                {% if add_product_or_service_category_form %}
+                <form @submit.prevent="add_product_or_service_category()">
+                    <input required placeholder="افزودن دسته بندی" type="text" v-model="title" class="form-control">
+                </form>
+                <div>
+                    <div class="my-3 text-right" v-if="message.show">
+                        <span :class="'alert alert-'+message.color">
+                            <span class="farsi" v-html="message.body"></span>
+                        </span>
+                    </div>
+                </div>
+                {% endif %}
             </div>
         </div>
     </div>
@@ -78,8 +105,44 @@
 
 
 {% block script %}
+<script>
+    let parent_id = parseInt("{{product_or_service_category.id}}")
+</script>
 {% include "accounting/includes/products-app/script.html" %}
 {% include "accounting/includes/services-app/script.html" %}
 {% include "accounting/includes/add-product-app/script.html" %}
-
+<script>
+    let product_or_service_category_app = new Vue({
+        el: "#product-or-service-category-app",
+        data: {
+            title: "",
+            product_or_service_category_set: [],
+            message: { show: false },
+        },
+        methods: {
+            add_product_or_service_category: function () {
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    title: this.title,
+                    parent_id: parent_id,
+                }
+                console.log(payload)
+                let url = "{% url 'accounting:add_product_or_service_category' %}"
+                console.log(url)
+                $.post(url, payload).done(data => {
+                    console.log(data)
+                    if (data.result === 'SUCCEED') {
+                        product_or_service_category_app.product_or_service_category_set.push(data.product_or_service_category)
+                    }
+                    else {
+                        product_or_service_category_app.message = { show: true, body: data.message, color: 'danger' }
+                        setTimeout(() => {
+                            product_or_service_category_app.message = { show: false }
+                        }, 3000);
+                    }
+                })
+            }
+        }
+    })
+</script>
 {% endblock script %}

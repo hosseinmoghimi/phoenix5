@@ -121,6 +121,10 @@ class AddCostForm(forms.Form):
     status=forms.CharField( max_length=100, required=False)
     title=forms.CharField(max_length=500, required=True)
 
+class AddProductOrServiceCategoryForm(forms.Form):
+    parent_id=forms.IntegerField(required=False)
+    title=forms.CharField(max_length=100, required=True)
+
 class AddWageForm(forms.Form):
     # cost_type=forms.IntegerField(required=True)
     # amount=forms.IntegerField(required=True)

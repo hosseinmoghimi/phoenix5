@@ -117,10 +117,11 @@ class Transaction(Page,LinkHelper):
         return to_persian_datetime_tag(self.transaction_datetime)
 
 
-class ProductOrServiceCategory(models.Model):
+class ProductOrServiceCategory(models.Model,LinkHelper):
     super_category=models.ForeignKey("productorservicecategory",related_name="sub_categories",blank=True,null=True, verbose_name=_("parent"), on_delete=models.SET_NULL)
     title=models.CharField(_("عنوان"), max_length=50)
-    
+    class_name="productorservicecategory"
+    app_name=APP_NAME
     def get_breadcrumb_link(self):
         aaa=f"""
                     <li class="breadcrumb-item"><a href="{self.get_absolute_url()}">
