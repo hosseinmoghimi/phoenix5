@@ -239,9 +239,11 @@ class ProjectView(View):
         childs=project.childs.all()
         if len(childs)>0:
             sub_projects_material_requests=project.sub_projects_material_requests()
-            context['sub_projects_material_requests_s']=json.dumps(MaterialRequestSerializer(sub_projects_material_requests,many=True).data)
+            if len(sub_projects_material_requests)>0:
+                context['sub_projects_material_requests_s']=json.dumps(MaterialRequestSerializer(sub_projects_material_requests,many=True).data)
             sub_projects_service_requests=project.sub_projects_service_requests()
-            context['sub_projects_service_requests_s']=json.dumps(ServiceRequestSerializer(sub_projects_service_requests,many=True).data)
+            if len(sub_projects_service_requests)>0:
+                context['sub_projects_service_requests_s']=json.dumps(ServiceRequestSerializer(sub_projects_service_requests,many=True).data)
 
 
 
