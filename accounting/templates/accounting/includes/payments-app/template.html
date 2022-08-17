@@ -123,14 +123,7 @@
                                         <span v-text="payment.title"></span>
                                     </a>
 
-                                    {% for tag in payment.tags.all %}
-                                    <a href="{{tag.get_absolute_url}}">
-
-                                        <span class="badge badge-{{tag.color}}">
-                                            {{tag.name}}
-                                        </span>
-                                    </a>
-                                    {% endfor %}
+                                    
                                 </td>
                                 <td>
                                     <span v-text="to_price(payment.amount)"></span>
@@ -164,8 +157,7 @@
 
                                 <td>
 
-                                    {% include "accounting/includes/payment-app/navbar.html" %}
-
+                                 
                                 </td>
                             </tr>
                         </tbody>
@@ -173,7 +165,7 @@
                 </div>
             </div>
 
-            {% if add_payment_form %}
+            {% if add_payment_form_ %}
 
             <div class="card-footer">
                 {% include "accounting/includes/payments-app/form.html" %}
@@ -184,3 +176,9 @@
 
     </div>
 </div>
+
+
+{% if perms.accounting.add_payment %}
+{% include "accounting/includes/add-payment-app/template.html" %}
+  
+{% endif %}
