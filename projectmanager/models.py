@@ -235,7 +235,6 @@ class WareHouse(OrganizationUnit):
         verbose_name_plural = 'WareHouses'
 
 
-
 class Project(Page):
     parent = models.ForeignKey("project", verbose_name=_(
         "parent"),related_name="childs", null=True, blank=True, on_delete=models.CASCADE)
@@ -410,6 +409,7 @@ class Project(Page):
         <div><small class="text-muted">{to_price(self.sum_total())}</small></div>
         <div>{self.percentage_completed} %</div>
         """
+
 
 class SampleForm(Page):
 

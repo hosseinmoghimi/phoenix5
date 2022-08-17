@@ -18,7 +18,7 @@
         },
         mounted: function () {
             this.sum_service_requests = 0
-            this.sub_projects_service_requests_app.forEach(service_request => {
+            this.sub_projects_service_requests.forEach(service_request => {
                 this.sum_service_requests += service_request.total
 
                 this.count_service_requests += service_request.quantity

@@ -239,10 +239,35 @@ class ProjectView(View):
         childs=project.childs.all()
         if len(childs)>0:
             sub_projects_material_requests=project.sub_projects_material_requests()
-            context['sub_projects_material_requests_s']=json.dumps(MaterialRequestSerializer(sub_projects_material_requests,many=True).data)
-            
+            sub_projects_material_requests_=[]
+            for sub_projects_material_request in sub_projects_material_requests:
+                if not sub_projects_material_request.project.status == ProjectStatusEnum.DRAFT:
+                    sw=False
+                    for sub_projects_material_request_ in sub_projects_material_requests_:
+                        if sub_projects_material_request.product_or_service.id == sub_projects_material_request_.product_or_service.id:
+                            sub_projects_material_request_.quantity+=sub_projects_material_request.quantity
+                            sw=True
+                    if not sw:
+                        sub_projects_material_requests_.append(sub_projects_material_request)
+            context['sub_projects_material_requests_s']=json.dumps(MaterialRequestSerializer(sub_projects_material_requests_,many=True).data)
+
+
+
+
             sub_projects_service_requests=project.sub_projects_service_requests()
-            context['sub_projects_service_requests_s']=json.dumps(ServiceRequestSerializer(sub_projects_service_requests,many=True).data)
+            sub_projects_service_requests_=[]
+            for sub_projects_service_request in sub_projects_service_requests:
+                if not sub_projects_service_request.project.status == ProjectStatusEnum.DRAFT:
+                    sw=False
+                    for sub_projects_service_request_ in sub_projects_service_requests_:
+                        if sub_projects_service_request.product_or_service.id == sub_projects_service_request_.product_or_service.id:
+                            sub_projects_service_request_.quantity+=sub_projects_service_request.quantity
+                            sw=True
+                    if not sw:
+                        sub_projects_service_requests_.append(sub_projects_service_request)
+            context['sub_projects_service_requests_s']=json.dumps(ServiceRequestSerializer(sub_projects_service_requests_,many=True).data)
+
+
 
         return render(request, TEMPLATE_ROOT+"project.html", context)
 
