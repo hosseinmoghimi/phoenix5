@@ -17,9 +17,7 @@
           <i class="fa fa-edit text-warning"></i>
         </a>
     </div>
-    <div class="text-center">
-        {{resume_index.get_edit_btn|safe}}
-    </div>
+   
   {% endif %}
             </div>
         </div>
@@ -49,10 +47,10 @@
 
                             {% if resume_index.birth_day %}
                             <li><i class="bi bi-chevron-left"></i> <strong>تاریخ تولد:</strong>
-                                <span>{{resume_index.birth_day}}</span>
+                                <span class="mx-2">{{resume_index.birth_day}}</span>
                             </li>
                             <li><i class="bi bi-chevron-left"></i> <strong>تاریخ تولد:</strong>
-                                <span>{{resume_index.birth_day|to_persian_date|safe}}</span>
+                                <span class="mx-2">{{resume_index.birth_day|to_persian_date|safe}}</span>
                             </li>
 
                             {% endif %}
@@ -61,7 +59,7 @@
 
                             {% if resume_index.city %}
                             <li><i class="bi bi-chevron-left"></i> <strong>متولد:</strong>
-                                <span>{{resume_index.city}}</span>
+                                <span class="mx-2">{{resume_index.city}}</span>
                             </li>
 
                             {% endif %}
@@ -79,7 +77,7 @@
                         <ul>
                             {% if resume_index.age %}
                             <li><i class="bi bi-chevron-left"></i> <strong>سن:</strong>
-                                <span>{{resume_index.age}}</span>
+                                <span class="mx-2">{{resume_index.age}}</span>
                             </li>
 
                             {% endif %}
@@ -87,13 +85,17 @@
                          
                             {% if resume_index.freelance %}
                             <li><i class="bi bi-chevron-left"></i> <strong>Freelance:</strong>
-                                <span>{{resume_index.freelance}}</span>
+                                <span class="mx-2">{{resume_index.freelance}}</span>
                             </li>
 
                             {% endif %}
                             {% if resume_index.profile.mobile %}
-                            <li><i class="bi bi-chevron-left"></i> <strong>همراه:</strong>
-                                <span>{{resume_index.profile.mobile}}</span>
+                            <li><i class="bi bi-chevron-left"></i> 
+                                <strong>همراه:</strong>
+                               <a href="tel:{{resume_index.profile.mobile}}" >
+
+                                   <span class="mx-2" >{{resume_index.profile.mobile}}</span>
+                                </a>
                             </li>
 
                             {% endif %}
@@ -106,19 +108,24 @@
                         <ul>
                             {% if resume_index.email %}
                             <li><i class="bi bi-chevron-left"></i> <strong>PhEmailone:</strong>
-                                <span>{{resume_index.email}}</span>
+                                <span class="mx-2">
+                                    <a href="mailto:{{resume_index.email}}">
+
+                                        {{resume_index.email}}
+                                    </a>
+                                </span>
                             </li>
 
                             {% endif %}
 
                             {% if resume_index.degree %}
                             <li><i class="bi bi-chevron-left"></i> <strong>مدرک تحصیلی:</strong>
-                                <span>{{resume_index.degree}}</span>
+                                <span  class="mx-2">{{resume_index.degree}}</span>
                             </li>
 
                             {% endif %}
                             <li><i class="bi bi-chevron-left"></i> <strong>وب سایت:</strong>
-                                <a target="_blank" href="{{resume_index.website}}" class="mx-3">
+                                <a target="_blank" href="{{resume_index.website}}" class="mx-2">
                                     
                                     <span>{{resume_index.website}}</span>
                                 </a>
