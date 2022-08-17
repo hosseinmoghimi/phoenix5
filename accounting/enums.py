@@ -58,13 +58,15 @@ class CostTypeEnum(TextChoices):
 
 class PaymentMethodEnum(TextChoices):
     DRAFT="پیش نویس",_("پیش نویس")
-    NO_PAYMENT="پرداخت نشده",_("پرداخت نشده")
+    # NO_PAYMENT="پرداخت نشده",_("پرداخت نشده")
     MOBILE_BANK="همراه بانک",_("همراه بانک")
+    PRODUCT="فروش کالا",_("فروش کالا")
+    SERVICE="فروش خدمات",_("فروش خدمات")
     IN_CASH="نقدی",_("نقدی")
     CHEQUE="چک",_("چک")
     POS="کارتخوان",_("کارتخوان")
     CARD="کارت به کارت",_("کارت به کارت")
-    FROM_PAST="مانده حساب از قبل",_("مانده حساب از قبل")
+    # FROM_PAST="مانده حساب از قبل",_("مانده حساب از قبل")
 
 
 class TransactionStatusEnum(TextChoices):
