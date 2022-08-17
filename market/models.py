@@ -48,6 +48,7 @@ class Order(Invoice):
  
 class Category(models.Model,LinkHelper, ImageMixin):
     thumbnail_origin = models.ImageField(_("تصویر کوچک"), upload_to=IMAGE_FOLDER+'Category/Thumbnail/',null=True, blank=True, height_field=None, width_field=None, max_length=None)
+    header_origin = models.ImageField(_("تصویر سربرگ"), upload_to=IMAGE_FOLDER+'Category/Header/',null=True, blank=True, height_field=None, width_field=None, max_length=None)
     parent=models.ForeignKey("category",blank=True,null=True, verbose_name=_("parent"),related_name="childs", on_delete=models.SET_NULL)
     title=models.CharField(_("title"), max_length=50)
     for_home=models.BooleanField(_("for_home"),default=False)
@@ -88,6 +89,7 @@ class Category(models.Model,LinkHelper, ImageMixin):
                
         """
        
+
 class Supplier(Page):
     account=models.ForeignKey("accounting.account", verbose_name=_("account"), on_delete=models.CASCADE)
     
@@ -126,8 +128,6 @@ class Customer(models.Model,LinkHelper):
             self.app_name=APP_NAME
         return super(Customer,self).save(*args, **kwargs)
 
-
-
  
 class Cart(Invoice):
 
@@ -142,6 +142,7 @@ class Cart(Invoice):
         if self.app_name is None or self.app_name=="":
             self.app_name=APP_NAME
         return super(Cart,self).save(*args, **kwargs)
+
 
 class Shop(models.Model,LinkHelper):
     supplier=models.ForeignKey("supplier", verbose_name=_("supplier"), on_delete=models.CASCADE)

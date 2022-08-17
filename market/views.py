@@ -149,7 +149,7 @@ class CategoryView(View):
         context['products_s'] = json.dumps(ProductSerializer(products,many=True).data)
         # context['top_products'] = products.order_by('-priority')[:3]
         # if request.user.has_perm("core.add_product") and len(categories) == 0:
-        if request.user.has_perm("core.add_product"):
+        if request.user.has_perm("accounting.add_product"):
             context['add_product_form'] = AddProductForm()
         # if request.user.has_perm(APP_NAME+".add_category") and len(products) == 0:
         if request.user.has_perm(APP_NAME+".add_category"):
@@ -157,10 +157,10 @@ class CategoryView(View):
 
         context['add_membership_request_form'] = AddMembershipRequestForm()
 
+        if request.user.has_perm(APP_NAME+".change_category"):
+            context['add_existing_product_to_category_form']=AddExistingProductToCategoryForm()
 
-       
-
-        return render(request, TEMPLATE_ROOT+"shop.html", context)
+        return render(request, TEMPLATE_ROOT+"category.html", context)
 
 
 

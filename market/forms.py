@@ -7,6 +7,10 @@ class AddBrandForm(forms.Form):
     title=forms.CharField(max_length=100, required=True)
 
 
+class AddExistingProductToCategoryForm(forms.Form):
+    product_id=forms.IntegerField(required=True)
+    category_id=forms.IntegerField(required=True)
+    add=forms.BooleanField(required=True)
     
 class AddCategoryForm(forms.Form):
     title=forms.CharField(max_length=50, required=True)
