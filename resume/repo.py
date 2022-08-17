@@ -274,7 +274,61 @@ class ResumeSkillRepo:
             resume_skill.save()
             return resume_skill
 
-            
+
+class ResumeServiceRepo:
+    def __init__(self,*args, **kwargs):
+        self.request=None
+        self.user=None
+        self.language=LanguageEnum.ENGLISH
+        
+        if 'language' in kwargs:
+            self.language=kwargs['language']        
+        if 'request' in kwargs:
+            self.request=kwargs['request']
+            self.user=self.request.user
+        if 'user' in kwargs:
+            self.user=kwargs['user']
+        self.profile=ProfileRepo(user=self.user).me
+        self.objects=ResumeService.objects.all()#.filter(language=self.language)
+    
+    def resume_service(self,*args, **kwargs):
+        pk=0
+        if 'resume_service_id' in kwargs:
+            pk=kwargs['resume_service_id']           
+        elif 'pk' in kwargs:
+            pk=kwargs['pk']
+        elif 'id' in kwargs:
+            pk=kwargs['id']
+        resume_service= self.objects.filter(pk=pk).first()
+        return resume_service
+    def add(self,*args, **kwargs):
+        if 'resume_index_id' in kwargs:
+            resume_index_id=kwargs['resume_index_id']
+            resume_index=ResumeIndex.objects.filter(pk=resume_index_id).first()
+            if resume_index is None:
+                return None
+            if self.user.has_perm(APP_NAME+".add_resumefact") or self.profile==resume_index.profile:
+                pass
+            else:
+                return None
+            resume_fact=ResumeFact()
+            resume_fact.icon=IconEnum.award
+            resume_fact.color="#0563bb"
+            resume_fact.resume_index=resume_index
+            if 'title' in kwargs:
+                resume_fact.title=kwargs['title']
+            if 'count' in kwargs:
+                resume_fact.count=kwargs['count']
+            if 'color' in kwargs:
+                resume_fact.color=kwargs['color']
+            if 'priority' in kwargs:
+                resume_fact.priority=kwargs['priority']
+            if 'icon' in kwargs:
+                resume_fact.icon=kwargs['icon']
+            resume_fact.save()
+            return resume_fact
+
+             
 
 class ContactMessageRepo:
     def __init__(self,*args, **kwargs):
