@@ -272,13 +272,38 @@ class Project(Page):
         sub_projects_material_requests=[]
         ids=self.all_childs_ids()
         sub_projects_material_requests=MaterialRequest.objects.filter(project_id__in=ids)
-        return sub_projects_material_requests
+        
+        sub_projects_material_requests_=[]
+        for sub_projects_material_request in sub_projects_material_requests:
+            if not sub_projects_material_request.project.status == ProjectStatusEnum.DRAFT:
+                sw=False
+                for sub_projects_material_request_ in sub_projects_material_requests_:
+                    if sub_projects_material_request.product_or_service.id == sub_projects_material_request_.product_or_service.id:
+                        sub_projects_material_request_.quantity+=sub_projects_material_request.quantity
+                        sw=True
+                if not sw:
+                    sub_projects_material_requests_.append(sub_projects_material_request)
+                    
+        return sub_projects_material_requests_
 
     def sub_projects_service_requests(self):
         sub_projects_service_requests=[]
         ids=self.all_childs_ids()
         sub_projects_service_requests=ServiceRequest.objects.filter(project_id__in=ids)
-        return sub_projects_service_requests
+
+    
+        sub_projects_service_requests_=[]
+        for sub_projects_service_request in sub_projects_service_requests:
+            if not sub_projects_service_request.project.status == ProjectStatusEnum.DRAFT:
+                sw=False
+                for sub_projects_service_request_ in sub_projects_service_requests_:
+                    if sub_projects_service_request.product_or_service.id == sub_projects_service_request_.product_or_service.id:
+                        sub_projects_service_request_.quantity+=sub_projects_service_request.quantity
+                        sw=True
+                if not sw:
+                    sub_projects_service_requests_.append(sub_projects_service_request)
+                    
+        return sub_projects_service_requests_
         
     def material_requests(self):
         return Request.objects.filter(project=self).filter(type=RequestTypeEnum.MATERIAL_REQUEST)
