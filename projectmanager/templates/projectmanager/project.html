@@ -71,16 +71,21 @@
             </div>
 
 
+            {% if sub_projects_material_requests_s %}
             <div class="col-md-12">
                 {% include "projectmanager/includes/sub-projects-material-requests-app/template.html" %}
             </div>
 
+            {% endif %}
             
+            {% if sub_projects_service_requests_s %}
 
             <div class="col-md-12">
                 {% include "projectmanager/includes/sub-projects-service-requests-app/template.html" %}
             </div>
-
+  
+              
+            {% endif %}
        
 
             <div class="col-md-12">
@@ -147,8 +152,14 @@
 {% include "projectmanager/includes/events-app/script.html" %}
 {% include "projectmanager/includes/project-edit-app/script.html" %}
 {% include "accounting/includes/invoices-app/script.html" %}
+{% if sub_projects_material_requests_s %}
 {% include "projectmanager/includes/sub-projects-material-requests-app/script.html" %}
+  
+{% endif %}
+{% if sub_projects_service_requests_s %}
+  
 {% include "projectmanager/includes/sub-projects-service-requests-app/script.html" %}
+{% endif %}
 
 
 {% endblock script %}
