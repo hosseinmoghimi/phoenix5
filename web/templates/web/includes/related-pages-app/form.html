@@ -54,7 +54,11 @@
 
         <div class="col-md-3">
             <button @click="show_add_form=false" class="btn btn-outline-secondary farsi">انصراف</button>
-            <button type="submit" class="btn btn-primary farsi">تایید</button>
+            <button type="submit"  class="btn btn-primary farsi">
+                
+            <span v-if="add">افزودن</span>
+            <span v-if="!add">حذف</span>
+            </button>
 
         </div>
     </div>
