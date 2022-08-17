@@ -70,6 +70,19 @@
                 {% include "projectmanager/includes/service-requests-app/template.html" %}
             </div>
 
+
+            <div class="col-md-12">
+                {% include "projectmanager/includes/sub-projects-material-requests-app/template.html" %}
+            </div>
+
+            
+
+            <div class="col-md-12">
+                {% include "projectmanager/includes/sub-projects-service-requests-app/template.html" %}
+            </div>
+
+       
+
             <div class="col-md-12">
                 {% include "projectmanager/includes/project-edit-app/template.html" %}
             </div>
@@ -134,6 +147,8 @@
 {% include "projectmanager/includes/events-app/script.html" %}
 {% include "projectmanager/includes/project-edit-app/script.html" %}
 {% include "accounting/includes/invoices-app/script.html" %}
+{% include "projectmanager/includes/sub-projects-material-requests-app/script.html" %}
+{% include "projectmanager/includes/sub-projects-service-requests-app/script.html" %}
 
 
 {% endblock script %}

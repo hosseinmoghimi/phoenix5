@@ -1,0 +1,32 @@
+{% if filter_reauests_form %}
+<div class="card">
+    <div class="card-body">
+        <h6>
+            فیلتر کردن درخواست ها
+        </h6>
+        <div class="row">
+            
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="">وضعیت</label>
+                    <select v-model="filter_status" class="form-control farsi"   required>
+                        <option disabled selected>وضعیت مرتبط را انتخاب کنید</option>
+                        {% for request_status in request_statuses %}
+
+                        <option value="{{request_status}}">
+                            {{request_status}}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <button @click="filter()" class="btn btn-success">فیلتر کن</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+  
+{% endif %}

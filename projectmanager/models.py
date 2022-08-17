@@ -269,6 +269,18 @@ class Project(Page):
         return Project.objects.order_by('priority').filter(id__in=self.all_childs_ids())
 
 
+    def sub_projects_material_requests(self):
+        sub_projects_material_requests=[]
+        ids=self.all_childs_ids()
+        sub_projects_material_requests=MaterialRequest.objects.filter(project_id__in=ids)
+        return sub_projects_material_requests
+
+    def sub_projects_service_requests(self):
+        sub_projects_service_requests=[]
+        ids=self.all_childs_ids()
+        sub_projects_service_requests=ServiceRequest.objects.filter(project_id__in=ids)
+        return sub_projects_service_requests
+        
     def material_requests(self):
         return Request.objects.filter(project=self).filter(type=RequestTypeEnum.MATERIAL_REQUEST)
 
@@ -391,6 +403,7 @@ class Project(Page):
 
     def get_sub_chart_url(self):
         return reverse(APP_NAME+":project_chart",kwargs={'pk':self.pk})
+    
     def get_full_description_for_chart(self):
         return f"""
         <div class="text-center"><img src="{self.thumbnail}" class="rounded" width="32" alt=""></div>

@@ -124,42 +124,6 @@ class ProjectsView(View):
         return render(request, TEMPLATE_ROOT+"projects.html", context)
 
 
-class RequestView(View):
-    def get(self, request, *args, **kwargs):
-        context = getContext(request=request)
-        context.update(getInvoiceLineContext(request=request,*args, **kwargs))
-
-        my_request = MaterialRequestRepo(
-            request=request).material_request(*args, **kwargs)
-        if my_request is None:
-            my_request = ServiceRequestRepo(
-                request=request).service_request(*args, **kwargs)
-
-        context['my_request'] = my_request
-
-        request_signatures = my_request.requestsignature_set.all()
-        context['request_signatures'] = request_signatures
-        request_signatures_s = json.dumps(
-            RequestSignatureSerializer(request_signatures, many=True).data)
-        context['request_signatures_s'] = request_signatures_s
-
-        # add_signature_form
-        if True:
-            context['signature_statuses'] = (
-                i[0] for i in SignatureStatusEnum.choices)
-            employee = EmployeeRepo(request=self.request).me
-            if employee is not None:
-                context['add_signature_form'] = AddSignatureForm()
-
-        return render(request, TEMPLATE_ROOT+"request.html", context)
-
-
-class ProjectsListView(View):
-    def get(self, request, *args, **kwargs):
-        return ProjectsView().get(request=request,parent_id=0,*args, **kwargs)
-        # return ProjectsView().get(request=request,*args, **kwargs)
-
-
 class ProjectView(View):
     def get(self, request, *args, **kwargs):
         context = getContext(request=request)
@@ -270,7 +234,53 @@ class ProjectView(View):
                 MaterialSerializer(all_materials, many=True).data)
         context.update(get_requests_context(request=request))
 
+
+
+        childs=project.childs.all()
+        if len(childs)>0:
+            sub_projects_material_requests=project.sub_projects_material_requests()
+            context['sub_projects_material_requests_s']=json.dumps(MaterialRequestSerializer(sub_projects_material_requests,many=True).data)
+            
+            sub_projects_service_requests=project.sub_projects_service_requests()
+            context['sub_projects_service_requests_s']=json.dumps(ServiceRequestSerializer(sub_projects_service_requests,many=True).data)
+
         return render(request, TEMPLATE_ROOT+"project.html", context)
+
+
+class RequestView(View):
+    def get(self, request, *args, **kwargs):
+        context = getContext(request=request)
+        context.update(getInvoiceLineContext(request=request,*args, **kwargs))
+
+        my_request = MaterialRequestRepo(
+            request=request).material_request(*args, **kwargs)
+        if my_request is None:
+            my_request = ServiceRequestRepo(
+                request=request).service_request(*args, **kwargs)
+
+        context['my_request'] = my_request
+
+        request_signatures = my_request.requestsignature_set.all()
+        context['request_signatures'] = request_signatures
+        request_signatures_s = json.dumps(
+            RequestSignatureSerializer(request_signatures, many=True).data)
+        context['request_signatures_s'] = request_signatures_s
+
+        # add_signature_form
+        if True:
+            context['signature_statuses'] = (
+                i[0] for i in SignatureStatusEnum.choices)
+            employee = EmployeeRepo(request=self.request).me
+            if employee is not None:
+                context['add_signature_form'] = AddSignatureForm()
+
+        return render(request, TEMPLATE_ROOT+"request.html", context)
+
+
+class ProjectsListView(View):
+    def get(self, request, *args, **kwargs):
+        return ProjectsView().get(request=request,parent_id=0,*args, **kwargs)
+        # return ProjectsView().get(request=request,*args, **kwargs)
 
 
 class CopyProjectView(View):
