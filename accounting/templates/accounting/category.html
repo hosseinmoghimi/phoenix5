@@ -1,0 +1,40 @@
+{% extends "accounting/layout.html" %}
+{% block content %}
+<div class="row">
+  <div class="col-md-12">
+    <div class="text-center my-3">
+      {{category.get_breadcrumb_tag|safe}}
+    </div>
+  </div>
+  <div class="col-md-12">
+    <h4 class="text-center">
+      {{category.title}}
+
+      {% if perms.accounting.change_category %}
+      <a title="ویرایش" href="{{category.get_edit_url}}" target="_blank"><i class="fa fa-edit text-warning mx-2"></i></a>
+        
+      {% endif %}
+
+      
+      {% if perms.accounting.delete_category %}
+      <a title="حذف" href="{{category.get_dalete_url}}" target="_blank"><i class="fa fa-trash text-danger mx-2"></i></a>
+        
+      {% endif %}
+    </h4>
+  </div>
+  <div class="col-md-12">
+    {% include "accounting/includes/categories-app/template.html" %}
+  </div>
+  <div class="col-md-12">
+    {% include "accounting/includes/products-app/template.html" %}
+  </div>
+  <div class="col-md-12">
+    {% include "accounting/includes/services-app/template.html" %}
+  </div>
+</div>
+{% endblock content %}
+{% block script %}
+    {% include "accounting/includes/products-app/script.html" %}
+    {% include "accounting/includes/services-app/script.html" %}
+    {% include "accounting/includes/categories-app/script.html" %}
+{% endblock script %}

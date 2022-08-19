@@ -1,7 +1,7 @@
 from authentication.models import IMAGE_FOLDER
 from core.enums import ColorEnum, UnitNameEnum,BS_ColorCode
 from core.middleware import get_request
-from core.models import Color, Page
+from core.models import Color, ImageMixin, Page
 from django.db import models
 from django.shortcuts import reverse
 from django.utils import timezone
@@ -763,6 +763,46 @@ class InvoiceLine(models.Model,LinkHelper):
     def service(self):
         return Service.objects.filter(pk=self.pk).first()
   
+
+
+class Category(models.Model,LinkHelper, ImageMixin):
+    thumbnail_origin = models.ImageField(_("تصویر کوچک"), upload_to=IMAGE_FOLDER+'Category/Thumbnail/',null=True, blank=True, height_field=None, width_field=None, max_length=None)
+    header_origin = models.ImageField(_("تصویر سربرگ"), upload_to=IMAGE_FOLDER+'Category/Header/',null=True, blank=True, height_field=None, width_field=None, max_length=None)
+    parent=models.ForeignKey("category",blank=True,null=True, verbose_name=_("parent"),related_name="childs", on_delete=models.SET_NULL)
+    title=models.CharField(_("title"), max_length=200)
+    for_home=models.BooleanField(_("for_home"),default=False)
+    products_or_services=models.ManyToManyField("accounting.productorservice", blank=True,verbose_name=_("products"))
+    class_name='category'
+    app_name=APP_NAME
+    def __str__(self):
+        return self.title
+    class Meta:
+        verbose_name = 'Category'
+        verbose_name_plural = 'Categories'
+ 
+ 
+    def get_breadcrumb_link(self):
+        aaa=""
+        if self.parent is not None:
+            aaa+="/"
+        aaa+=f"""
+                    <a href="{self.get_absolute_url()}">
+                    <span class="farsi">
+                    {self.title}
+                    </span>
+                    </a> 
+                    """
+        if self.parent is None:
+            return aaa
+        return self.parent.get_breadcrumb_link()+aaa
+    def get_breadcrumb_tag(self):
+        return f"""
+        
+                
+                    {self.get_breadcrumb_link()}
+               
+        """
+       
 
 class Spend(Transaction,LinkHelper):    
     spend_type=models.CharField(_("spend_type"),choices=SpendTypeEnum.choices, max_length=50)

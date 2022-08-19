@@ -3,7 +3,7 @@ from core.constants import CURRENCY
 from core.enums import UnitNameEnum
 from core.models import ImageMixin, _,LinkHelper,models,reverse,Page
 from market.apps import APP_NAME
-from accounting.models import Product
+from accounting.models import Product,Category
 # Create your models here.
 IMAGE_FOLDER = APP_NAME+"/images/"
 
@@ -45,51 +45,7 @@ class Order(Invoice):
             self.app_name=APP_NAME
         return super(Order,self).save(*args, **kwargs)
  
- 
-class Category(models.Model,LinkHelper, ImageMixin):
-    thumbnail_origin = models.ImageField(_("تصویر کوچک"), upload_to=IMAGE_FOLDER+'Category/Thumbnail/',null=True, blank=True, height_field=None, width_field=None, max_length=None)
-    header_origin = models.ImageField(_("تصویر سربرگ"), upload_to=IMAGE_FOLDER+'Category/Header/',null=True, blank=True, height_field=None, width_field=None, max_length=None)
-    parent=models.ForeignKey("category",blank=True,null=True, verbose_name=_("parent"),related_name="childs", on_delete=models.SET_NULL)
-    title=models.CharField(_("title"), max_length=50)
-    for_home=models.BooleanField(_("for_home"),default=False)
-    products=models.ManyToManyField("accounting.product", blank=True,verbose_name=_("products"))
-    class_name='category'
-    app_name=APP_NAME
-    def __str__(self):
-        return self.title
-    class Meta:
-        verbose_name = 'Category'
-        verbose_name_plural = 'Categories'
-
-    def get_products_list_url(self):
-        return reverse(APP_NAME+":api_category_products",kwargs={'category_id':self.pk})
-    def get_breadcrumb_tag_temp(self):
-        breadcrumb_tag=""
-
-        return breadcrumb_tag
-    def get_breadcrumb_link(self):
-        aaa=""
-        if self.parent is not None:
-            aaa+="/"
-        aaa+=f"""
-                    <a href="{self.get_absolute_url()}">
-                    <span class="farsi">
-                    {self.title}
-                    </span>
-                    </a> 
-                    """
-        if self.parent is None:
-            return aaa
-        return self.parent.get_breadcrumb_link()+aaa
-    def get_breadcrumb_tag(self):
-        return f"""
-        
-                
-                    {self.get_breadcrumb_link()}
-               
-        """
-       
-
+  
 class Supplier(Page):
     account=models.ForeignKey("accounting.account", verbose_name=_("account"), on_delete=models.CASCADE)
     

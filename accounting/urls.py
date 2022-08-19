@@ -38,6 +38,9 @@ urlpatterns = [
     path("product_or_service_category/<int:pk>/",login_required(views.ProductOrServiceCategoryView.as_view()),name="product_or_service_category"),
     path("product_or_service_categories/",login_required(views.ProductOrServiceCategoriesView.as_view()),name="product_or_service_categories"),
     
+    path("category/<int:pk>/",login_required(views.CategoryView.as_view()),name="category"),
+    path("categories/",login_required(views.CategoriesView.as_view()),name="categories"),
+    
     path("account/<int:pk>/",login_required(views.AccountView.as_view()),name="account"),
     path("accounts/",login_required(views.AccountsView.as_view()),name="accounts"),
     path("add_account/",login_required(apis.AddAccountApi.as_view()),name="add_account"),
@@ -72,6 +75,7 @@ urlpatterns = [
     
 
 
+    path("add_category/",login_required(apis.AddCategoryApi.as_view()),name="add_category"),
 
   path("add_payment/",login_required(apis.AddPaymentApi.as_view()),name="add_payment"),
   path("add_cheque/",login_required(apis.AddChequeApi.as_view()),name="add_cheque"),

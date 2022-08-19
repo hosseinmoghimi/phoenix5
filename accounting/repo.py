@@ -4,7 +4,7 @@ from core.constants import FAILED, SUCCEED,MISC
 from core.enums import UnitNameEnum
 from utility.calendar import PersianCalendar
 from .apps import APP_NAME
-from .models import Account, Asset, Bank, BankAccount, Cheque, Cost, FinancialBalance, FinancialDocument, FinancialYear, Invoice, InvoiceLine, Payment, Price, Product, ProductOrService, ProductOrServiceCategory,Service, Transaction
+from .models import Account, Asset, Bank, BankAccount, Category, Cheque, Cost, FinancialBalance, FinancialDocument, FinancialYear, Invoice, InvoiceLine, Payment, Price, Product, ProductOrService, ProductOrServiceCategory,Service, Transaction
 from django.db.models import Q
 from authentication.repo import ProfileRepo
 from django.utils import timezone
@@ -350,6 +350,74 @@ class ProductOrServiceCategoryRepo():
         product_or_service_category.save()
         message=product_or_service_category.title +" با موفقیت افزوده شد."
         return SUCCEED,product_or_service_category,message
+
+
+
+class CategoryRepo():
+    def __init__(self, *args, **kwargs):
+        self.request = None
+        self.user = None
+        if 'request' in kwargs:
+            self.request = kwargs['request']
+            self.user = self.request.user
+        if 'user' in kwargs:
+            self.user = kwargs['user']
+        
+        self.objects=Category.objects.all()
+        self.profile=ProfileRepo(*args, **kwargs).me
+       
+
+    def category(self, *args, **kwargs):
+        pk=0
+        if 'category' in kwargs:
+            return kwargs['category']
+        if 'category_id' in kwargs:
+            pk=kwargs['category_id']
+        elif 'pk' in kwargs:
+            pk=kwargs['pk']
+        elif 'id' in kwargs:
+            pk=kwargs['id']
+        return self.objects.filter(pk=pk).first()
+     
+    def list(self, *args, **kwargs):
+        objects = self.objects
+        if 'search_for' in kwargs:
+            search_for=kwargs['search_for']
+            objects = objects.filter(Q(title__contains=search_for)|Q(short_description__contains=search_for)|Q(description__contains=search_for))
+        if 'for_home' in kwargs:
+            objects = objects.filter(Q(for_home=kwargs['for_home']))
+        if 'parent' in kwargs and kwargs['parent'] is None:
+            objects=objects.filter(parent=None)
+        if 'super_category' in kwargs and kwargs['super_category'] is None:
+            objects=objects.filter(super_category=None)
+        if 'parent_id' in kwargs:
+            parent_id=kwargs['parent_id']
+            if parent_id==0:
+                objects=objects.filter(parent=None)
+            else:
+                objects=objects.filter(parent_id=kwargs['parent_id'])
+        if 'super_category_id' in kwargs:
+            objects=objects.filter(parent_id=kwargs['super_category_id'])
+        if 'category_title' in kwargs:
+            objects=objects.filter(category_title=kwargs['category_title'])
+        return objects.all()
+
+    def add_category(self,*args, **kwargs):
+        if not self.user.has_perm(APP_NAME+".add_category"):
+            return None
+        category=Category()
+  
+        if 'parent_id' in kwargs and kwargs['parent_id'] is not None and kwargs['parent_id']>0:
+            category.parent_id = kwargs['parent_id']
+        if 'title' in kwargs:
+            category.title = kwargs['title']
+        if len(Category.objects.filter(title=category.title))>0:
+            message="دسته بندی وارد شده تکراری می باشد."
+            return FAILED,None,message
+
+        category.save()
+        message=category.title +" با موفقیت افزوده شد."
+        return SUCCEED,category,message
 
 
 class ServiceRepo():

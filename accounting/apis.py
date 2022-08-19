@@ -1,12 +1,13 @@
 import json
+from unicodedata import category
 from core.constants import FAILED,SUCCEED
 from rest_framework.views import APIView
 
 from utility.calendar import PersianCalendar
-from .repo import AccountRepo, BankAccountRepo, BankRepo, ChequeRepo, CostRepo, FinancialBalanceRepo,  FinancialDocumentRepo, InvoiceRepo, PaymentRepo, PriceRepo, ProductOrServiceCategoryRepo, ProductOrServiceRepo, ProductRepo, ServiceRepo, TransactionRepo
+from .repo import AccountRepo, BankAccountRepo, BankRepo, CategoryRepo, ChequeRepo, CostRepo, FinancialBalanceRepo,  FinancialDocumentRepo, InvoiceRepo, PaymentRepo, PriceRepo, ProductOrServiceCategoryRepo, ProductOrServiceRepo, ProductRepo, ServiceRepo, TransactionRepo
 from django.http import JsonResponse
 from .forms import *
-from .serializers import AccountSerializer, BankAccountSerializer, BankSerializer, ChequeSerializer, CostSerializer, FinancialBalanceSerializer, FinancialDocumentSerializer, InvoiceFullSerializer, InvoiceLineSerializer, PaymentSerializer, PriceSerializer, ProductOrServiceCategorySerializer, ProductSerializer, ServiceSerializer, TransactionSerializer
+from .serializers import AccountSerializer, BankAccountSerializer, BankSerializer, CategorySerializer, ChequeSerializer, CostSerializer, FinancialBalanceSerializer, FinancialDocumentSerializer, InvoiceFullSerializer, InvoiceLineSerializer, PaymentSerializer, PriceSerializer, ProductOrServiceCategorySerializer, ProductSerializer, ServiceSerializer, TransactionSerializer
 
 class AddBankAccountApi(APIView):
     def post(self,request,*args, **kwargs):
@@ -221,6 +222,31 @@ class AddPaymentApi(APIView):
                 if payment is not None:
                     context['payment']=PaymentSerializer(payment).data
                     context['result']=SUCCEED
+        context['log']=log
+        return JsonResponse(context)
+        
+ 
+        
+class AddCategoryApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        log=1
+        context['result']=FAILED
+        message=""
+        if request.method=='POST':
+            log=2
+            AddCategoryForm_=AddCategoryForm(request.POST)
+            if AddCategoryForm_.is_valid():
+                log=3
+                fm=AddCategoryForm_.cleaned_data
+                 
+                SUCCEED,category,message=CategoryRepo(request=request).add_category( 
+                    **AddCategoryForm_.cleaned_data
+                )
+                if category is not None:
+                    context['category']=CategorySerializer(category).data
+                    context['result']=SUCCEED
+        context['message']=message
         context['log']=log
         return JsonResponse(context)
         

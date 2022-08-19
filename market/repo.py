@@ -2,7 +2,7 @@ from unicodedata import category
 
 from requests import request
 from accounting.models import Account
-from accounting.repo import AccountRepo, ProductRepo as ProductRepo_origin
+from accounting.repo import AccountRepo, ProductRepo as ProductRepo_origin,CategoryRepo
 from market.apps import APP_NAME
 from market.models import Brand, Cart, CartLine, Category, Customer, Shop, Supplier
 from django.db.models import Q
@@ -25,7 +25,7 @@ class ProductRepo(ProductRepo_origin):
             return objects.filter(Q(title__contains=kwargs['search_for'])|Q(short_description__contains=kwargs['search_for']))
         return objects
 
-class CategoryRepo():  
+class Category11Repo():  
     def __init__(self, *args, **kwargs):
         self.request = None
         self.user = None

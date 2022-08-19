@@ -16,8 +16,8 @@ from django.views import View
 from utility.calendar import PersianCalendar
 from utility.excel import ReportSheet,ReportWorkBook, get_style
 from accounting.apps import APP_NAME
-from accounting.repo import BankRepo,AssetRepo, CostRepo,BankAccountRepo, InvoiceLineRepo,AccountRepo,FinancialBalanceRepo, ChequeRepo, PaymentRepo, PriceRepo, ProductOrServiceCategoryRepo, ProductRepo,ServiceRepo,FinancialDocumentRepo,InvoiceRepo, TransactionRepo
-from accounting.serializers import InvoiceLineWithInvoiceSerializer,AccountSerializer, AccountSerializerFull, AssetSerializer, BankAccountSerializer, BankSerializer, CostSerializer, FinancialBalanceSerializer, InvoiceFullSerializer,InvoiceLineSerializer,ChequeSerializer, InvoiceSerializer, PaymentSerializer, PriceSerializer, ProductOrServiceCategorySerializer, ProductSerializer,ServiceSerializer,FinancialDocumentForAccountSerializer,FinancialDocumentSerializer, TransactionSerializer
+from accounting.repo import BankRepo,AssetRepo, CategoryRepo, CostRepo,BankAccountRepo, InvoiceLineRepo,AccountRepo,FinancialBalanceRepo, ChequeRepo, PaymentRepo, PriceRepo, ProductOrServiceCategoryRepo, ProductRepo,ServiceRepo,FinancialDocumentRepo,InvoiceRepo, TransactionRepo
+from accounting.serializers import CategorySerializer, InvoiceLineWithInvoiceSerializer,AccountSerializer, AccountSerializerFull, AssetSerializer, BankAccountSerializer, BankSerializer, CostSerializer, FinancialBalanceSerializer, InvoiceFullSerializer,InvoiceLineSerializer,ChequeSerializer, InvoiceSerializer, PaymentSerializer, PriceSerializer, ProductOrServiceCategorySerializer, ProductSerializer,ServiceSerializer,FinancialDocumentForAccountSerializer,FinancialDocumentSerializer, TransactionSerializer
 from accounting.forms import *
 import json
 from phoenix.server_settings import phoenix_apps
@@ -815,6 +815,53 @@ class ProductOrServiceCategoryView(View):
         if request.user.has_perm(APP_NAME+".add_add_productorservicecategory"):
             context['add_product_or_service_category_form']=AddProductOrServiceCategoryForm()
         return render(request,TEMPLATE_ROOT+"product-or-service-category.html",context)
+
+class CategoriesView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        categories=CategoryRepo(request=request).list(parent_id=0,*args, **kwargs)
+        context['categories']=categories
+        categories_s=json.dumps(CategorySerializer(categories,many=True).data)
+        context['categories_s']=categories_s
+        context['expand_categories']=True
+        if request.user.has_perm(APP_NAME+".add_category"):
+            context['add_category_form']=AddCategoryForm()
+        return render(request,TEMPLATE_ROOT+"categories.html",context)
+
+
+class CategoryView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        context['expand_categories']=True
+        category_repo=CategoryRepo(request=request)
+        category=category_repo.category(*args, **kwargs)
+        if category is None:
+            mv=MessageView(request=request)
+            mv.title="دسته بندی مورد نظر یافت نشد."
+        # context['expand_products']=True
+        # context['expand_services']=True
+        products_or_services=category.products_or_services.all()
+
+        products=products_or_services.filter(class_name='product')
+        context['products']=products
+        products_s=json.dumps(ProductSerializer(products,many=True).data)
+        context['products_s']=products_s
+        
+
+        services=products_or_services.filter(class_name='service')
+        context['services']=services
+        services_s=json.dumps(ServiceSerializer(services,many=True).data)
+        context['services_s']=services_s
+
+
+        context['category']=category
+        categories=category_repo.list(parent_id=category.id)
+        context['categories']=categories
+        context['categories_s']=json.dumps(CategorySerializer(categories,many=True).data)
+
+        if request.user.has_perm(APP_NAME+".add_category"):
+            context['add_category_form']=AddCategoryForm()
+        return render(request,TEMPLATE_ROOT+"category.html",context)
 
 
 class ProductsView(View):
