@@ -251,6 +251,29 @@ class AddCategoryApi(APIView):
         return JsonResponse(context)
         
 
+        
+class AddItemCategoryApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        log=1
+        context['result']=FAILED
+        message="1111"
+        if request.method=='POST':
+            log=2
+            AddItemCategoryForm_=AddItemCategoryForm(request.POST)
+            if AddItemCategoryForm_.is_valid():
+                log=3
+                result,item_categories,message=CategoryRepo(request=request).add_item_category( 
+                    **AddItemCategoryForm_.cleaned_data
+                )
+                if result ==SUCCEED:
+                    context['item_categories']=CategorySerializer(item_categories,many=True).data
+                    context['result']=SUCCEED
+        context['message']=message
+        context['log']=log
+        return JsonResponse(context)
+        
+
 class AddPriceApi(APIView):
     def post(self,request,*args, **kwargs):
         context={}

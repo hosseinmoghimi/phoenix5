@@ -75,7 +75,6 @@ urlpatterns = [
     
 
 
-    path("add_category/",login_required(apis.AddCategoryApi.as_view()),name="add_category"),
 
   path("add_payment/",login_required(apis.AddPaymentApi.as_view()),name="add_payment"),
   path("add_cheque/",login_required(apis.AddChequeApi.as_view()),name="add_cheque"),
@@ -84,6 +83,8 @@ urlpatterns = [
   
   path('change_product_or_service_category/',login_required(apis.ChangeProductOrServiceCategoryApi.as_view()),name="change_product_or_service_category"),
 
+  path("add_category/",login_required(apis.AddCategoryApi.as_view()),name="add_category"),
+  path('add_item_category/',login_required(apis.AddItemCategoryApi.as_view()),name="add_item_category"),
   path('add_product_or_service_category/',login_required(apis.AddProductOrServiceCategoryApi.as_view()),name="add_product_or_service_category"),
   path('add_product/',login_required(apis.AddProductApi.as_view()),name="add_product"),
   path('add_service/',login_required(apis.AddServiceApi.as_view()),name="add_service"),

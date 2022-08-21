@@ -172,13 +172,13 @@ class ProjectView(View):
             OrganizationUnitSerializer(organization_units, many=True).data)
         context['organization_units_s'] = organization_units_s
 
-        service_requests = project.service_requests()
+        service_requests = project.service_requests().order_by('product_or_service__title')
         context['service_requests'] = service_requests
         service_requests_s = json.dumps(
             ServiceRequestSerializer(service_requests, many=True).data)
         context['service_requests_s'] = service_requests_s
 
-        material_requests = project.material_requests()
+        material_requests = project.material_requests().order_by('product_or_service__title')
         context['material_requests'] = material_requests
         material_requests_s = json.dumps(
             MaterialRequestSerializer(material_requests, many=True).data)

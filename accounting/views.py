@@ -250,7 +250,17 @@ def get_product_or_service_context(request,*args, **kwargs):
     # invoice_lines_s=json.dumps(InvoiceLineWithInvoiceSerializer(invoice_lines,many=True).data)
     # context['invoice_lines_s']=invoice_lines_s
 
-    
+
+    #item_categories
+    item_categories=product_or_service.category_set.all()
+    context['item_categories']=item_categories
+    context['item_categories_s']=json.dumps(CategorySerializer(item_categories,many=True).data)
+    if request.user.has_perm(APP_NAME+".change_productorservice"):
+        all_categories=CategoryRepo(request=request).list().order_by('title')
+        context['all_categories']=all_categories
+        context['all_categories_s']=json.dumps(CategorySerializer(all_categories,many=True).data)
+        context['add_item_category_form']=AddItemCategoryForm()
+
     return context
 
 def get_product_context(request,*args, **kwargs):

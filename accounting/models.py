@@ -771,7 +771,7 @@ class Category(models.Model,LinkHelper, ImageMixin):
     parent=models.ForeignKey("category",blank=True,null=True, verbose_name=_("parent"),related_name="childs", on_delete=models.SET_NULL)
     title=models.CharField(_("title"), max_length=200)
     for_home=models.BooleanField(_("for_home"),default=False)
-    products_or_services=models.ManyToManyField("accounting.productorservice", blank=True,verbose_name=_("products"))
+    products_or_services=models.ManyToManyField("accounting.productorservice", blank=True,verbose_name=_("products or services"))
     class_name='category'
     app_name=APP_NAME
     def __str__(self):

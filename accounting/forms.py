@@ -125,6 +125,12 @@ class AddProductOrServiceCategoryForm(forms.Form):
     parent_id=forms.IntegerField(required=False)
     title=forms.CharField(max_length=100, required=True)
 
+    
+class AddItemCategoryForm(forms.Form):
+    category_id=forms.IntegerField(required=False)
+    product_or_service_id=forms.IntegerField(required=False)
+
+
 class AddCategoryForm(forms.Form):
     parent_id=forms.IntegerField(required=False)
     title=forms.CharField(max_length=100, required=True)

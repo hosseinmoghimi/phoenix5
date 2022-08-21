@@ -420,6 +420,35 @@ class CategoryRepo():
         return SUCCEED,category,message
 
 
+    def add_item_category(self,*args, **kwargs):
+        result=FAILED
+        categories=[]
+        message=""
+        if not self.user.has_perm(APP_NAME+".add_category"):
+            return None
+        category=self.category(*args, **kwargs)
+        if category is None:
+            message="دسته بندی مورد نظر پیدا نشد."
+            return result,categories,message
+        
+        product_or_service=ProductOrService.objects.filter(pk=kwargs['product_or_service_id']).first()
+        if product_or_service is None:
+            message="آیتم مورد نظر پیدا نشد."
+            return result,categories,message
+         
+        if product_or_service in category.products_or_services.all():
+            category.products_or_services.remove(product_or_service.id)
+            message= " با موفقیت حذف شد."
+            result=SUCCEED
+        else:
+            category.products_or_services.add(product_or_service.id)
+            message= " با موفقیت افزوده شد."
+            result=SUCCEED
+        
+        categories=product_or_service.category_set.all()
+        return result,categories,message
+
+
 class ServiceRepo():
     def __init__(self, *args, **kwargs):
         self.request = None

@@ -100,7 +100,11 @@
                                 <div v-if="material_request.invoice">
                                     <a target="_blank" :href="material_request.invoice.pay_from.get_absolute_url">
                                         <small class="text-muted"
+                                            v-text="material_request.invoice.id"></small>
+-
+                                            <small class="text-muted"
                                             v-text="material_request.invoice.pay_from.title"></small>
+
                                     </a>
                                 </div>
                             </div>

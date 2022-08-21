@@ -1,0 +1,44 @@
+{% load to_persian_date %}
+{% load to_price %}
+{% load to_amount_color %}
+{% load static %}
+
+<div class="card" id="item-categories-app">
+    <div class="card-header" id="heading-item-categories">
+        <h5 class="text-center">
+            دسته بندی ها
+        </h5>
+    </div>
+    <div class="card-body">
+        {% if perms.accounting.change_productorservice %}
+        <div  >
+            <h4 v-for="category in item_categories">
+                <a :href="category.get_absolute_url">
+                    <span v-text="category.title">
+                    </span>
+                </a>
+            </h4>
+            <button @click="edit=true" class="btn btn-link btn-warning">
+                <i class="fa fa-edit"></i>
+            </button>
+        </div>
+
+        <div v-if="edit">
+            <form @submit.prevent="add_item_category()">
+                <img src="{% static 'leo/img/loading.gif' %}" width="32" v-if="waiting" alt="">
+                <select v-model="category_id" class="form-control">
+
+                    <option v-for="category in all_categories" :value="category.id" v-text="category.title"></option>
+                </select>
+                <button type="submit" class="btn btn-block btn-success">تایید</button>
+            </form>
+        </div>
+        {% else %}
+        <h4>
+            <a href="{{product_or_service.product_or_service_category.get_absolute_url}}">
+                {{product_or_service.product_or_service_category.title}}
+            </a>
+        </h4>
+        {% endif %}
+    </div>
+</div>
