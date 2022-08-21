@@ -650,17 +650,11 @@ class MaterialRequestRepo():
             return new_material_request
 
     def copy_material_requests(self,*args, **kwargs):
-        print(10*" kwargs")
-        print(kwargs)
         if not self.user.has_perm(APP_NAME+".add_materialrequest"):
             return None
         project_repo=ProjectRepo(request=self.request)
         source_project=project_repo.project(project_id=kwargs['source_project_id'])
         destination_project=project_repo.project(project_id=kwargs['destination_project_id'])
-        # print(10*" source_project")
-        # print(source_project)
-        # print(10*" destination_project")
-        # print(destination_project)
         if source_project is None or destination_project is None:
             return 
 
@@ -674,8 +668,6 @@ class MaterialRequestRepo():
             invoice.project_id=destination_project.id
             invoice.save()
 
-        # print(10*" invoice")
-        # print(invoice)
         
         material_requests=MaterialRequest.objects.filter(project_id=source_project.id)
         for material_request in material_requests:
