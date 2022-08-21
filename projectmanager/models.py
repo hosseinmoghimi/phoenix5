@@ -113,9 +113,6 @@ class Request(InvoiceLine, LinkHelper):
             self.row = len(self.invoice.lines.all())+1
         except:
             self.row=1
-        # print(100*"#")
-        # print(self.invoice_id)
-        # print("request")
         # if self.invoice_id is None:
         #     if self.type==RequestTypeEnum.MATERIAL_REQUEST:
         #         invoice=MaterialInvoice()

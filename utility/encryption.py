@@ -32,14 +32,8 @@ class Encrptor:
         encoding = 'utf-8'
         cypher=bytearray(cypher,encoding)
         cypher=bytes(cypher)
-        print(10*" cypher")
-        print(cypher)
-        print(10*" cypher")
         self.key=bytearray(self.key,encoding)
         self.key=bytes(self.key)
-        print(5* "__decrypt__key")
-        print(self.key)
-        print(5* "__decrypt__key")
         self.fernet = Fernet(self.key)
        
         decMessage = self.fernet.decrypt(cypher)

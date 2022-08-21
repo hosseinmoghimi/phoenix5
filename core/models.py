@@ -140,11 +140,6 @@ class Page(models.Model, LinkHelper, ImageMixin):
         file_path = QRCODE_ROOT
         file_name=self.class_name+str(self.pk)+".svg"
         file_address=os.path.join(QRCODE_ROOT,file_name)
-        # print(content)
-        # print(file_address)
-        # print(file_name)
-        # print(file_path)
-        # print(100*"$")
         if not os.path.exists(file_address):
             content=FULL_SITE_URL[0:-1]+self.get_absolute_url()
             generate_qrcode(content=content,file_name=file_name,file_address=file_address,file_path=file_path,)
