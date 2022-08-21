@@ -175,7 +175,7 @@ class ProjectRepo():
             project.employer_id=kwargs['employer_id']
         if 'percentage_completed' in kwargs and kwargs['percentage_completed'] is not None and kwargs['percentage_completed']>0:
             project.percentage_completed=kwargs['percentage_completed']
-
+        parent=None
         if 'parent_id' in kwargs and kwargs['parent_id'] is not None and kwargs['parent_id']>0:
             parent_id=kwargs['parent_id']
             parent=Project.objects.filter(pk=parent_id).first()
@@ -198,6 +198,9 @@ class ProjectRepo():
                 project.end_date=end_date
 
         project.save()
+        if project.parent is not None:
+            for organization_unit in project.parent.organization_units.all():
+                project.organization_units.add(organization_unit)
         return project
 
     def edit_project(self,*args, **kwargs):
