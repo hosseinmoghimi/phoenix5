@@ -14,6 +14,7 @@ class PageSerializer(serializers.ModelSerializer):
         model=Page
         fields=['id','title','get_absolute_url']
 
+
 class PageDecodeSerializer(serializers.ModelSerializer):
     class Meta:
         model=Page
@@ -32,7 +33,6 @@ class PagePermissionSerializer(serializers.ModelSerializer):
     class Meta:
         model=PagePermission
         fields=['id','page','can_write','profile']
-
 
 
 class PageLikeSerializer(serializers.ModelSerializer):

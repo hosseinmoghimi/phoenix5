@@ -75,34 +75,41 @@ class SearchView(View):
             materials_s = json.dumps(
                 MaterialSerializer(materials, many=True).data)
             context['materials_s'] = materials_s
-
+            context['expands_materials']=True
+            
             services = ServiceRepo(request=request).list(search_for=search_for)
             context['services'] = services
             services_s = json.dumps(
                 ServiceSerializer(services, many=True).data)
             context['services_s'] = services_s
+            context['expands_services']=True
 
             events = EventRepo(request=request).list(search_for=search_for)
             context['events'] = events
             events_s = json.dumps(EventSerializer(events, many=True).data)
             context['events_s'] = events_s
+            context['expands_events']=True
+
 
             
             organization_units = OrganizationUnitRepo(request=request).list(search_for=search_for)
             context['organization_units'] = organization_units
             organization_units_s = json.dumps(OrganizationUnitSerializer(organization_units, many=True).data)
             context['organization_units_s'] = organization_units_s
+            context['expands_organization_units']=True
 
             
             projects = ProjectRepo(request=request).list(search_for=search_for)
             context['projects'] = projects
             projects_s = json.dumps(ProjectSerializer(projects, many=True).data)
             context['projects_s'] = projects_s
+            context['expands_projects']=True
 
             pages = PageRepo(request=request).list(search_for=search_for).filter(app_name=APP_NAME)
             context['pages'] = pages
             pages_s = json.dumps(PageSerializer(pages, many=True).data)
             context['pages_s'] = pages_s
+            context['expands_pages']=True
 
 
 
