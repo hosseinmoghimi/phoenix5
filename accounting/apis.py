@@ -77,6 +77,7 @@ class AddChequeApi(APIView):
         context['log']=log
         return JsonResponse(context)
 
+
 class GetReportApi(APIView):
     def post(self,request,*args, **kwargs):
         context={}
@@ -94,11 +95,19 @@ class GetReportApi(APIView):
                 
                 # context['cheques']=ChequeSerializer(ChequeRepo(request=request).list(**cd),many=True).data
                 # context['payments']=PaymentSerializer(PaymentRepo(request=request).list(**cd),many=True).data
-                context['transactions']=TransactionSerializer(TransactionRepo(request=request).list(**cd),many=True).data
-                context['financial_documents']=FinancialDocumentSerializer(FinancialDocumentRepo(request=request).list(**cd),many=True).data
+                transactions=TransactionRepo(request=request).list(**cd)
+                # print(100*"#")
+                # print("GetReportForm_")
+                # print(cd)
+                # print(100*"#")
+                # financial_documents=FinancialDocumentRepo(request=request).list(transactions=transactions)
+                financial_documents=FinancialDocumentRepo(request=request).list(**cd)
+                context['transactions']=TransactionSerializer(transactions,many=True).data
+                context['financial_documents']=FinancialDocumentSerializer(financial_documents,many=True).data
                 context['result']=SUCCEED
         context['log']=log
         return JsonResponse(context)
+
 
 class EditInvoiceApi(APIView):
     def post(self,request,*args, **kwargs):
@@ -225,7 +234,6 @@ class AddPaymentApi(APIView):
         context['log']=log
         return JsonResponse(context)
         
- 
         
 class AddCategoryApi(APIView):
     def post(self,request,*args, **kwargs):
@@ -251,7 +259,6 @@ class AddCategoryApi(APIView):
         return JsonResponse(context)
         
 
-        
 class AddItemCategoryApi(APIView):
     def post(self,request,*args, **kwargs):
         context={}
@@ -341,6 +348,7 @@ class AddAccountApi(APIView):
         context['log']=log
         return JsonResponse(context)
 
+
 class ChangeProductOrServiceCategoryApi(APIView):
     def post(self,request,*args, **kwargs):
         context={}
@@ -364,6 +372,7 @@ class ChangeProductOrServiceCategoryApi(APIView):
         context['log']=log
         return JsonResponse(context)
 
+
 class AddProductOrServiceCategoryApi(APIView):
     def post(self,request,*args, **kwargs):
         context={}
@@ -385,7 +394,6 @@ class AddProductOrServiceCategoryApi(APIView):
         context['log']=log
         return JsonResponse(context)
 
-    
      
 class AddProductApi(APIView):
     def post(self,request,*args, **kwargs):

@@ -718,12 +718,17 @@ class FinancialDocumentRepo:
         objects = self.objects.all()
         if 'category_id' in kwargs:
             objects = objects.filter(category_id=kwargs['category_id'])
+        if 'transactions' in kwargs:
+            transaction_ids=(transaction.id for transaction in kwargs['transactions'])
+            objects=objects.filter(transaction_id__in=transaction_ids)
         if 'for_home' in kwargs:
             objects = objects.filter(for_home=kwargs['for_home'])
         if 'start_date' in kwargs and kwargs['start_date'] is not None:
             objects = objects.filter(transaction__transaction_datetime__gte=kwargs['start_date'])
         if 'end_date' in kwargs and kwargs['end_date'] is not None:
             objects = objects.filter(transaction__transaction_datetime__lte=kwargs['end_date'])
+        if 'amount' in kwargs and kwargs['amount'] is not None and kwargs['amount']>0:
+            objects = objects.filter(transaction__amount=kwargs['amount'])
         if 'profile_id' in kwargs and kwargs['profile_id'] is not None is not None and kwargs['profile_id']>0:
             objects = objects.filter(account__profile_id=kwargs['profile_id'])
         if 'search_for' in kwargs and kwargs['search_for'] is not None:
@@ -1365,6 +1370,8 @@ class TransactionRepo():
         
 
         objects = self.objects
+        if 'amount' in kwargs and not kwargs['amount']is None and not kwargs['amount']==0 :
+            objects=objects.filter(Q(amount=kwargs['amount']))
         if 'payment_method' in kwargs and not kwargs['payment_method']=="" and not kwargs['payment_method']is None:
             objects=objects.filter(Q(payment_method=kwargs['payment_method']))
         if 'start_date' in kwargs:
@@ -1379,7 +1386,8 @@ class TransactionRepo():
         if 'parent_id' in kwargs:
             objects=objects.filter(parent_id=kwargs['parent_id'])
         if 'account_id' in kwargs:
-            objects=objects.filter(Q(pay_from_id=kwargs['account_id'])|Q(pay_to_id=kwargs['account_id']))
+            if kwargs['account_id']>0:
+                objects=objects.filter(Q(pay_from_id=kwargs['account_id'])|Q(pay_to_id=kwargs['account_id']))
         if 'account_id_1' in kwargs and 'account_id_2' in kwargs:
             account_id_1=kwargs['account_id_1']
             account_id_2=kwargs['account_id_2']
