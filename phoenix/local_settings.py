@@ -12,27 +12,12 @@ FULL_SITE_URL="https://cryptalx.com/"
 QRCODE_ROOT=os.path.join(PUBLIC_ROOT,'qrcode')
 DEBUG=True
 
-ALLOWED_HOSTS = ['*']
-SECRET_KEY = 'django-insecure-bt+o^tb1w_vl6vj%tjn-&=v5^m*w3)5a8(i&uoo)6on&pi-x6('
-
-TIME_ZONE = 'Asia/Tehran'
-
-SITE_URL='/'
-
-STATIC_ROOT=os.path.join(PUBLIC_ROOT,'static')
-MEDIA_ROOT=os.path.join(PUBLIC_ROOT,'media')
-STATIC_URL = SITE_URL+'static/'
-MEDIA_URL =  SITE_URL+'media/'
-ADMIN_URL=SITE_URL+"admin/"
-QRCODE_URL=SITE_URL+"qrcode/"
-
-STATICFILES_DIRS=[os.path.join(BASE_DIR,'static')]
-
-
+DB_FILE_NAME="db_20220817_22_41_46.sqlite3"
+DB_FILE_PATH=os.path.join(BASE_DIR,DB_FILE_NAME)
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db20220804.sqlite3',
+        'NAME': DB_FILE_PATH,
     }
 }
 INSTALLED_APPS = [
@@ -78,6 +63,23 @@ INSTALLED_APPS = [
     'school',
     'bms',
 ]
+SECRET_KEY = 'django-insecure-bt+o^tb1w_vl6vj%tjn-&=v5^m*w3)5a8(i&uoo)6on&pi-x6('
+
+ALLOWED_HOSTS = ['*']
+# TIME_ZONE = 'Asia/Tehran'
+TIME_ZONE = 'UTC'
+
+SITE_URL='/'
+
+STATIC_ROOT=os.path.join(PUBLIC_ROOT,'static')
+MEDIA_ROOT=os.path.join(PUBLIC_ROOT,'media')
+STATIC_URL = SITE_URL+'static/'
+MEDIA_URL =  SITE_URL+'media/'
+ADMIN_URL=SITE_URL+"admin/"
+QRCODE_URL=SITE_URL+"qrcode/"
+
+STATICFILES_DIRS=[os.path.join(BASE_DIR,'static')]
+
 
 
 
