@@ -22,6 +22,12 @@ urlpatterns = [
     path("page_edit/<int:pk>/",views.PageEditView.as_view(),name='page_edit'),
     path("image_download/<int:pk>/",views.ImageDownloadView.as_view(),name='image_download'),
     path("pageimage/<int:pk>/",views.PageImageView.as_view(),name='pageimage'),
+
+    
+    path('download_media/',views.DownloadMediaApi.as_view(),name="download_media"),
+    path('download_uploads/',views.DownloadUploadsApi.as_view(),name="download_uploads"),
+  
+  
     path('add_page_download/',apis.AddPageDownloadApi.as_view(),name="add_page_download"),
     path('add_page_image/',apis.AddPageImageApi.as_view(),name="add_page_image"),
 
@@ -34,8 +40,6 @@ urlpatterns = [
     path('toggle_like/',apis.TogglePageLikeApi.as_view(),name="toggle_like"),
     path('add_page_tag/',apis.AddPageTagApi.as_view(),name="add_page_tag"),
 
-    
-    path('download_media/',apis.DownloadMediaApi.as_view(),name="download_media"),
     path('add_page_permission/',apis.AddPagePermissionApi.as_view(),name="add_page_permission"),
     path('set_thumbnail_header/',apis.SetThumbnailHeaderApi.as_view(),name="set_thumbnail_header"),
 

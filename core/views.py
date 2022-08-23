@@ -395,6 +395,75 @@ class BackupView(View):
         return render(request, TEMPLATE_ROOT+"search.html", context)
 
 
+ 
+    
+class DownloadMediaApi(View):
+    def get(self, request, *args, **kwargs):
+       
+            
+        from utility.compress import Compress
+        from core.views import MessageView
+        from django.utils import timezone
+        from django.http import HttpResponse
+        import os
+        from phoenix.server_settings import MEDIA_ROOT,TEMPORARY_ROOT
+        media_zip_file = Compress(folder=MEDIA_ROOT,output_folder=TEMPORARY_ROOT,output_file_name="media").get_output_archive
+        
+        # print(10*" media_zip_file")
+        # print(media_zip_file)
+        
+        if media_zip_file is not None:
+            # file_path = str(UPLOAD_ROOT)
+            # file_path=os.path.join(file_path,"uploads.zip")
+            filename="media_"+timezone.now().strftime("%Y%m%d_%H_%M_%S")+".zip"
+            # print(10*" file_path")
+            # print(file_path)
+            file_path=media_zip_file
+            if os.path.exists(file_path):
+                with open(file_path, 'rb') as fh:
+                    response = HttpResponse(
+                        fh.read(), content_type="application/force-download")
+                    response['Content-Disposition'] = 'inline; filename=' + filename
+                    return response
+                        
+        mv=MessageView(request=request)
+        mv.title="عدم دسترسی مجاز"
+        return mv.response()
+    
+class DownloadUploadsApi(View):
+    def get(self, request, *args, **kwargs):
+            
+        from utility.compress import Compress
+        from core.views import MessageView
+        from django.utils import timezone
+        from django.http import HttpResponse
+        import os
+        from phoenix.server_settings import UPLOAD_ROOT,TEMPORARY_ROOT
+        uploads_zip_file = Compress(folder=UPLOAD_ROOT,output_folder=TEMPORARY_ROOT,output_file_name="uploads").get_output_archive
+        
+        # print(10*" media_zip_file")
+        # print(media_zip_file)
+        
+        if uploads_zip_file is not None:
+            # file_path = str(UPLOAD_ROOT)
+            # file_path=os.path.join(file_path,"uploads.zip")
+            filename="uploads_"+timezone.now().strftime("%Y%m%d_%H_%M_%S")+".zip"
+            # print(10*" file_path")
+            # print(file_path)
+            file_path=uploads_zip_file
+            if os.path.exists(file_path):
+                with open(file_path, 'rb') as fh:
+                    response = HttpResponse(
+                        fh.read(), content_type="application/force-download")
+                    response['Content-Disposition'] = 'inline; filename=' + filename
+                    return response
+                
+        mv=MessageView(request=request)
+        mv.title="عدم دسترسی مجاز"
+        return mv.response()
+   
+
+
 class PageView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)

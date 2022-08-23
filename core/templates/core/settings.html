@@ -20,16 +20,25 @@
 
                     {% if perms.core.change_parameter %}
                     <li class="nav-item my-auto mx-2">
-                        <form action="{% url 'core:download_media' %}" method="POST">
-                            {% csrf_token %}
-                            <button type="submit" class="nav-link farsi">
-                                <i class="material-icons" aria-hidden="true">settings</i>
-                                دانلود مدیا
-                            </button>
-                        </form>
-                        
+                        <a target="_blank" href="{% url 'core:download_media' %}" class="nav-link farsi">
+                            <i class="material-icons" aria-hidden="true">settings</i>
+                            دانلود مدیا
+                        </a>
                     </li>
                     {% endif %}
+
+                    {% if perms.core.change_parameter %}
+                    <li class="nav-item my-auto mx-2">
+
+                        <a target="_blank" href="{% url 'core:download_uploads' %}" class="nav-link farsi">
+                            <i class="material-icons" aria-hidden="true">settings</i>
+                            دانلود آپلود ها
+                        </a>
+
+
+                    </li>
+                    {% endif %}
+
 
                     {% if perms.core.change_parameter %}
                     <li class="nav-item my-auto mx-2">

@@ -6,13 +6,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 HOME_APP_URLS='projectmanager.urls'
 ALLOW_REGISTER_ONLINE=False
 UPLOAD_ROOT="d:\\phoenix5\\uploads"
+TEMPORARY_ROOT="d:\\phoenix5\\temp"
 PUBLIC_ROOT=os.path.join(BASE_DIR,'public_html')
 FULL_SITE_URL="http://127.0.0.1:8000/"
 FULL_SITE_URL="https://cryptalx.com/"
 QRCODE_ROOT=os.path.join(PUBLIC_ROOT,'qrcode')
 DEBUG=True
 
-DB_FILE_NAME="db_20220817_22_41_46.sqlite3"
+DB_FILE_NAME="db_20220823_13_29_18.sqlite3"
 DB_FILE_PATH=os.path.join(BASE_DIR,DB_FILE_NAME)
 DATABASES = {
     'default': {
