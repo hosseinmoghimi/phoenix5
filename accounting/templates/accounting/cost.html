@@ -13,6 +13,23 @@
         {% include "accounting/includes/transaction-app/brief.html" %}
 
     </div>
+    {% if page.short_description %}
+      
+    <div class="col-md-12">
+        {% include "core/includes/page-description-app/short-description.html" %}
+        
+    </div>
+    {% endif %}
+
+    
+    {% if page.description %}
+      
+    <div class="col-md-12">
+        {% include "core/includes/page-description-app/description.html" %}
+        
+    </div>
+    {% endif %}
+
     <div class="col-md-4">
         {% include "core/includes/page-links-app/template.html" %}
     </div>
