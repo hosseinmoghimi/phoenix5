@@ -206,7 +206,11 @@ class ProjectView(View):
                 OrganizationUnitSerializer(employers, many=True).data)
             context['project_status_enum'] = (i[0]
                                               for i in ProjectStatusEnum.choices)
-
+            statuses=[]
+            for status in RequestStatusEnum.choices:
+                statuses.append(status[0])
+            
+            context['statuses_s']=json.dumps(statuses)
             context['add_event_form'] = AddEventForm()
             context['edit_project_form'] = EditProjectForm()
             all_organization_units = OrganizationUnitRepo(

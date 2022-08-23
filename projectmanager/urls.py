@@ -44,5 +44,7 @@ urlpatterns = [
     path('add_service/',login_required(apis.AddServiceApi.as_view()),name="add_service"), 
     path('copy_service_requests/',login_required(apis.CopyServiceRequestsApi.as_view()),name="copy_service_requests"), 
     path('copy_material_requests/',login_required(apis.CopyMaterialRequestsApi.as_view()),name="copy_material_requests"), 
+    path('copy_service_requests_from_invoice/',login_required(apis.CopyServiceRequestsFromInvoiceApi.as_view()),name="copy_service_requests_from_invoice"), 
+    path('copy_material_requests_from_invoice/',login_required(apis.CopyMaterialRequestsFromInvoiceApi.as_view()),name="copy_material_requests_from_invoice"), 
 
 ]

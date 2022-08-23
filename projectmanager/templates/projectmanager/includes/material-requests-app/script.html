@@ -11,12 +11,15 @@
     let url_add_material_request = "{% url 'projectmanager:add_material_request' %}"
     material_requests_app_data = {
         id: 127,
+        add_material_request_form_status:"",
         employees: JSON.parse(`{{employees_s|escapejs}}`),
         new_material_request_material_id: 1,
         add_material_request_form_title: "",
         add_material_request_form_invoice_id: 0,
         source_project_id: 0,
+        source_invoice_id:0,
         invoices: JSON.parse(`{{material_invoices_s|escapejs}}`),
+        statuses: JSON.parse(`{{statuses_s|escapejs}}`),
         materials: [],
         add_material_request_form_unit_price: 0,
         add_material_request_form_unit_name: "",
@@ -81,12 +84,36 @@
                 let payload = {
                     source_project_id: parseInt(this.source_project_id),
                     destination_project_id: project_id,
+                    status: this.add_material_request_form_status,
                     invoice_id: parseInt(this.add_material_request_form_invoice_id),
                     csrfmiddlewaretoken: csrfmiddlewaretoken
                 }
                 console.log(payload)
 
                 let url_copy_material_requests = "{% url 'projectmanager:copy_material_requests' %}"
+                var posting = $.post(url_copy_material_requests, payload);
+                posting.done((data) => {
+                    console.log(data)
+                    if (data.result === 'SUCCEED') {
+                        material_requests_app.material_requests = data.material_requests
+                    }
+                })
+
+            },
+
+            copy_from_invoice: function () {
+                console.log(this.source_invoice_id)
+
+                let payload = {
+                    source_invoice_id: parseInt(this.source_invoice_id),
+                    destination_project_id: project_id,
+                    invoice_id: parseInt(this.add_material_request_form_invoice_id),
+                    status: this.add_material_request_form_status,
+                    csrfmiddlewaretoken: csrfmiddlewaretoken
+                }
+                console.log(payload)
+
+                let url_copy_material_requests = "{% url 'projectmanager:copy_material_requests_from_invoice' %}"
                 var posting = $.post(url_copy_material_requests, payload);
                 posting.done((data) => {
                     console.log(data)

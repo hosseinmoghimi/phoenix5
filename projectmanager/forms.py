@@ -6,11 +6,27 @@ class CopyServiceRequestsForm(forms.Form):
     source_project_id=forms.IntegerField(required=True)
     destination_project_id=forms.IntegerField(required=True)
     invoice_id=forms.IntegerField(required=True)
+    status=forms.CharField(max_length=50, required=False)
     
 class CopyMaterialRequestsForm(forms.Form):
     source_project_id=forms.IntegerField(required=True)
     destination_project_id=forms.IntegerField(required=True)
     invoice_id=forms.IntegerField(required=True)
+    status=forms.CharField(max_length=50, required=False)
+
+
+
+class CopyServiceRequestsFromInvoiceForm(forms.Form):
+    source_invoice_id=forms.IntegerField(required=True)
+    destination_project_id=forms.IntegerField(required=True)
+    invoice_id=forms.IntegerField(required=True)
+    status=forms.CharField(max_length=50, required=False)
+    
+class CopyMaterialRequestsFromInvoiceForm(forms.Form):
+    source_invoice_id=forms.IntegerField(required=True)
+    destination_project_id=forms.IntegerField(required=True)
+    invoice_id=forms.IntegerField(required=True)
+    status=forms.CharField(max_length=50, required=False)
 
 
 class CopyProjectForm(forms.Form):

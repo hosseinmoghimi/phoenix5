@@ -1,3 +1,4 @@
+from os import stat
 from organization.models import Employee
 from core.enums import ParameterNameEnum
 from core.repo import PagePermissionRepo, PageRepo, ParameterRepo
@@ -355,12 +356,37 @@ class ServiceRequestRepo():
     def copy_service_requests(self,*args, **kwargs):
         if not self.user.has_perm(APP_NAME+".add_servicerequest"):
             return None
-        project_repo=ProjectRepo(request=self.request)
-        source_project=project_repo.project(project_id=kwargs['source_project_id'])
-        destination_project=project_repo.project(project_id=kwargs['destination_project_id'])
-        if source_project is None or destination_project is None:
+        status=None
+        if 'status' in kwargs and kwargs['status'] is not None and not kwargs['status']=="":
+            status=kwargs['status'] 
+
+        
+
+        source_project=None
+        if 'source_project_id' in kwargs:
+            source_project=Project.objects.filter(pk=kwargs['source_project_id']).first()
+        
+        destination_project=None
+        if 'destination_project_id' in kwargs:
+            destination_project=Project.objects.filter(pk=kwargs['destination_project_id']).first()
+        
+        source_invoice=None
+        if 'source_invoice_id' in kwargs:
+            source_invoice=ServiceInvoice.objects.filter(pk=kwargs['source_invoice_id']).first()
+        
+        if destination_project is None:
             return
-        service_requests=ServiceRequest.objects.filter(project_id=source_project.id)
+        if source_project is None and source_invoice is None:
+            return
+            
+
+
+        if source_project is not None:
+            service_requests=ServiceRequest.objects.filter(project_id=source_project.id)
+        if source_invoice is not None:
+            service_requests=ServiceRequest.objects.filter(invoice_id=source_invoice.id)
+        
+
 
         
         invoice=ServiceInvoice.objects.filter(id=kwargs['invoice_id']).first()
@@ -382,6 +408,8 @@ class ServiceRequestRepo():
             new_service_request.date_requested=service_request.date_requested
             new_service_request.employee_id=service_request.employee_id
             new_service_request.status=service_request.status
+            if status is not None:
+                new_service_request.status=status
             new_service_request.type=service_request.type
             new_service_request.unit_price=service_request.unit_price
             new_service_request.unit_name=service_request.unit_name
@@ -650,26 +678,58 @@ class MaterialRequestRepo():
             return new_material_request
 
     def copy_material_requests(self,*args, **kwargs):
+        print(10*" copy_material_requests")
+        print(kwargs)
         if not self.user.has_perm(APP_NAME+".add_materialrequest"):
             return None
-        project_repo=ProjectRepo(request=self.request)
-        source_project=project_repo.project(project_id=kwargs['source_project_id'])
-        destination_project=project_repo.project(project_id=kwargs['destination_project_id'])
-        if source_project is None or destination_project is None:
+            
+        status=None
+        if 'status' in kwargs and kwargs['status'] is not None and not kwargs['status']=="":
+            status=kwargs['status']
+        
+        source_project=None
+        if 'source_project_id' in kwargs:
+            source_project=Project.objects.filter(pk=kwargs['source_project_id']).first()
+        
+        destination_project=None
+        if 'destination_project_id' in kwargs:
+            destination_project=Project.objects.filter(pk=kwargs['destination_project_id']).first()
+        
+        source_invoice=None
+        if 'source_invoice_id' in kwargs:
+            source_invoice=MaterialInvoice.objects.filter(pk=kwargs['source_invoice_id']).first()
+        
+        print('source_project')
+        print(source_project)
+        print('destination_project')
+        print(destination_project)
+        print('source_invoice')
+        print(source_invoice)
+        
+        
+        if destination_project is None:
             return 
+        if source_invoice is None and source_project is None:
+            return
 
         invoice=MaterialInvoice.objects.filter(id=kwargs['invoice_id']).first()
         
-        
+        i=1
+        print(i)
         if invoice is None:
             invoice=MaterialInvoice()
             invoice.pay_from_id=destination_project.contractor.account.id
             invoice.pay_to_id=destination_project.employer.account.id
             invoice.project_id=destination_project.id
             invoice.save()
+            
+        i=2
+        print(i)
 
-        
-        material_requests=MaterialRequest.objects.filter(project_id=source_project.id)
+        if source_project is not None:
+            material_requests=MaterialRequest.objects.filter(project_id=source_project.id)
+        if source_invoice is not None:
+            material_requests=MaterialRequest.objects.filter(invoice_id=source_invoice.id)
         for material_request in material_requests:
             new_material_request=MaterialRequest()
             new_material_request.invoice_id=invoice.id
@@ -680,6 +740,8 @@ class MaterialRequestRepo():
             new_material_request.date_requested=material_request.date_requested
             new_material_request.employee_id=material_request.employee_id
             new_material_request.status=material_request.status
+            if status is not None:
+                new_material_request.status=status
             new_material_request.type=material_request.type
             new_material_request.unit_price=material_request.unit_price
             new_material_request.unit_name=material_request.unit_name
@@ -701,7 +763,12 @@ class MaterialRequestRepo():
                 new_request_signature.description=""
                 new_request_signature.request_id=new_material_request.id             
                 new_request_signature.save()
+        
+        print(10)
+
         return MaterialRequest.objects.filter(project_id=destination_project.id)
+
+
     def material_request(self, *args, **kwargs):
         pk=0
         if 'material_request_id' in kwargs:
