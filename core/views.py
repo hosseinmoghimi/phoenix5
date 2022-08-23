@@ -2,7 +2,11 @@ import json
 from django.http import Http404,HttpResponse
 from django.shortcuts import render,reverse
 from django.utils import timezone 
-
+from utility.compress import Compress
+from django.utils import timezone
+from django.http import HttpResponse
+import os
+from phoenix.server_settings import MEDIA_ROOT,TEMPORARY_ROOT
 from utility.calendar import PersianCalendar
 from core.apps import APP_NAME
 from log.repo import LogRepo
@@ -401,14 +405,12 @@ class DownloadMediaApi(View):
     def get(self, request, *args, **kwargs):
        
             
-        from utility.compress import Compress
-        from core.views import MessageView
-        from django.utils import timezone
-        from django.http import HttpResponse
-        import os
-        from phoenix.server_settings import MEDIA_ROOT,TEMPORARY_ROOT
+        if not request.user.has_perm(APP_NAME+".add_parameter"):
+            mv=MessageView(request=request)
+            mv.title="عدم دسترسی مجاز"
+            return mv.response()
+
         media_zip_file = Compress(folder=MEDIA_ROOT,output_folder=TEMPORARY_ROOT,output_file_name="media").get_output_archive
-        
         # print(10*" media_zip_file")
         # print(media_zip_file)
         
@@ -432,9 +434,12 @@ class DownloadMediaApi(View):
     
 class DownloadUploadsApi(View):
     def get(self, request, *args, **kwargs):
-            
+         
+        if not request.user.has_perm("core.change_download"):
+            mv=MessageView(request=request)
+            mv.title="عدم دسترسی مجاز"
+            return mv.response()   
         from utility.compress import Compress
-        from core.views import MessageView
         from django.utils import timezone
         from django.http import HttpResponse
         import os

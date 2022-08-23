@@ -28,6 +28,7 @@ urlpatterns = [
     path("cheques/",login_required(views.ChequesView.as_view()),name="cheques"), 
     
     path("transaction/<int:pk>/",login_required(views.TransactionView.as_view()),name="transaction"),
+    path("transactions/<int:account_id>/",login_required(views.TransactionsView.as_view()),name="account_transactions"),
     path("transactions/",login_required(views.TransactionsView.as_view()),name="transactions"),
     path("transactions/<int:account_id>/",login_required(views.TransactionsView.as_view()),name="transactions1"),
     path("transactions/<int:account_id_1>/<int:account_id_2>/",login_required(views.TransactionsView.as_view()),name="transactions2"),
@@ -47,6 +48,7 @@ urlpatterns = [
 
     path("invoice_line/<int:pk>/",login_required(views.InvoiceLineView.as_view()),name="invoiceline"),
     path("invoice/edit/<int:pk>/",login_required(views.InvoiceEditView.as_view()),name="edit_invoice"),
+    path("invoices/<int:account_id>/",login_required(views.InvoicesView.as_view()),name="account_invoices"),
     path("invoices/",login_required(views.InvoicesView.as_view()),name="invoices"),
     path("invoice/excel/<int:pk>/",login_required(views.InvoiceExcelView.as_view()),name="invoice_excel"),
     path("invoice/<int:pk>/",login_required(views.InvoiceView.as_view()),name="invoice"),
@@ -58,6 +60,7 @@ urlpatterns = [
 
     path("financial_document/<int:pk>/",login_required(views.FinancialDocumentView.as_view()),name="financialdocument"),
     path("financial_documents/",login_required(views.FinancialDocumentsView.as_view()),name="financial_documents"),
+    path("financial_documents/<int:account_id>/",login_required(views.FinancialDocumentsView.as_view()),name="account_financial_documents"),
     
     path("asset/<int:pk>/",login_required(views.AssetView.as_view()),name="asset"),
     path("assets/",login_required(views.AssetsView.as_view()),name="assets"),
