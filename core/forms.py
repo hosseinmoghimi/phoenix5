@@ -3,6 +3,9 @@ class SearchForm(forms.Form):
     # app_name=forms.CharField(max_length=50,required=False)
     search_for=forms.CharField(max_length=500,required=True)
 
+class DownloadMediaForm(forms.Form):
+    pass
+
 
 class SetThumbnailHeaderForm(forms.Form):
     page_id=forms.IntegerField(required=True)

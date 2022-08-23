@@ -115,6 +115,47 @@ class AddPagePermissionApi(APIView):
 
     
     
+class DownloadMediaApi(APIView):
+    def post(self, request, *args, **kwargs):
+        log = 1
+        context = {}
+        context['result'] = FAILED
+        if request.method == 'POST':
+            log += 1
+            add_page_tag_form = DownloadMediaForm(request.POST)
+            if add_page_tag_form.is_valid():
+                log += 1
+                cd=add_page_tag_form.cleaned_data
+                 
+                from utility.compress import Compress
+                from core.views import MessageView
+                from django.utils import timezone
+                from django.http import HttpResponse
+                import os
+                from phoenix.server_settings import MEDIA_ROOT,UPLOAD_ROOT
+                media_zip_file = Compress(folder=MEDIA_ROOT,output_folder=UPLOAD_ROOT).get_output_archive
+                
+                # print(10*" media_zip_file")
+                # print(media_zip_file)
+                
+                if media_zip_file is not None:
+                    # file_path = str(UPLOAD_ROOT)
+                    # file_path=os.path.join(file_path,"uploads.zip")
+                    filename="media_"+timezone.now().strftime("%Y%m%d_%H_%M_%S")+".zip"
+                    # print(10*" file_path")
+                    # print(file_path)
+                    file_path=media_zip_file
+                    if os.path.exists(file_path):
+                        with open(file_path, 'rb') as fh:
+                            response = HttpResponse(
+                                fh.read(), content_type="application/force-download")
+                            response['Content-Disposition'] = 'inline; filename=' + filename
+                            return response
+                        
+        mv=MessageView(request=request)
+        mv.title="عدم دسترسی مجاز"
+        return mv.response()
+    
 class SetThumbnailHeaderApi(APIView):
     def post(self, request, *args, **kwargs):
         log = 1
