@@ -1,14 +1,14 @@
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import redirect, render,reverse
 import json
-from authentication.serializers import ProfileSerializer
+from authentication.serializers import ProfileContactSerializer, ProfileSerializer
 from authentication.enums import *
 from core.constants import FAILED, SUCCEED
 from core.enums import *
 from core.utils import app_is_installed
 from .forms import *
 from core.repo import ImageRepo, PageLikeRepo, ParameterRepo, PictureRepo
-from .repo import ProfileRepo
+from .repo import ProfileContactRepo, ProfileRepo
 from core.views import CoreContext, MessageView
 from django.views import View
 from authentication.apps import APP_NAME
@@ -95,7 +95,10 @@ class ProfileViews(View):
             context['no_navbar']=True
             context['no_footer']=True
 
-
+        profile_contacts=ProfileContactRepo(request=request).list(profile_id=selected_profile.id).order_by('priority')
+        context['profile_contacts']=profile_contacts
+        profile_contacts_s=json.dumps(ProfileContactSerializer(profile_contacts,many=True).data)
+        context['profile_contacts_s']=profile_contacts_s
         page_likes=PageLikeRepo(request=request).list(profile_id=selected_profile.id)
         context['page_likes']=page_likes
 

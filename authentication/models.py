@@ -160,6 +160,7 @@ class ProfileContact(models.Model):
     url=models.CharField(_("url"),null=True,blank=True, max_length=5000)
     icon=models.CharField(_("icon"), null=True,blank=True, max_length=5000)
     bs_class=models.CharField(_("bootstrap class"), null=True,blank=True, max_length=50)
+    priority=models.IntegerField(_("priority"),default=100)
     class_name="profilecontact"
     class Meta:
         verbose_name = _("ProfileContact")

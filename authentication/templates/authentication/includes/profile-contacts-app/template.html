@@ -1,0 +1,22 @@
+<div class="card mb-3" id="profile-contacts-app">
+    <div class="card-header">
+        <h6 class="text-center">
+
+            اطلاعات تماس
+        </h6>
+    </div>
+    <div class="card-body">
+        {% for profile_contact in profile_contacts %}
+
+        <div class="mb-2 text-right">
+            <a class="btn btn-primary" href="{{profile_contact.url}}">
+                <span class="farsi">
+
+                    {{profile_contact.name}} : 
+                    {{profile_contact.value}} 
+                </span>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</div>

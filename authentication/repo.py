@@ -5,7 +5,7 @@ from django.utils import timezone
 from core.constants import FAILED, SUCCEED
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.models import User
-from .models import Profile
+from .models import Profile, ProfileContact
 from .apps import APP_NAME
 from django.db.models import Q
 
@@ -401,3 +401,44 @@ class ProfileRepo():
         result=SUCCEED
         message="successfully!"
         return (result,profile,message)
+
+
+
+ 
+class ProfileContactRepo:
+    def __init__(self, *args, **kwargs):
+        self.request = None
+        self.user = None
+        if 'request' in kwargs:
+            self.request = kwargs['request']
+            self.user = self.request.user
+        if 'user' in kwargs:
+            self.user = kwargs['user']
+        self.objects = ProfileContact.objects
+        self.profile = ProfileRepo(user=self.user).me
+        # self.me=Store.objects.filter(profile=self.profile).first()
+
+    def list(self, *args, **kwargs):
+        objects = self.objects.all()
+        if 'for_home' in kwargs:
+            objects = objects.filter(for_home=kwargs['for_home'])
+        if 'profile_id' in kwargs:
+            objects = objects.filter(profile_id=kwargs['profile_id'])
+        if 'product_id' in kwargs:
+            objects = objects.filter(invoice_line__product_or_service_id=kwargs['product_id'])
+        if 'invoice_id' in kwargs:
+            objects = objects.filter(invoice_line__invoice_id=kwargs['invoice_id'])
+        if 'search_for' in kwargs:
+            search_for=kwargs['search_for']
+            objects = objects.filter(title__contains=search_for) 
+        return objects
+
+    def profile_contact(self, *args, **kwargs):
+        if 'profile_contact_id' in kwargs:
+            return self.objects.filter(pk= kwargs['profile_contact_id']).first()
+        if 'pk' in kwargs:
+            return self.objects.filter(pk= kwargs['pk']).first()
+        if 'id' in kwargs:
+            return self.objects.filter(pk= kwargs['id']).first()
+
+ 
