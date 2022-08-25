@@ -15,12 +15,7 @@ class Compress():
             output_folder=kwargs['output_folder']
         if 'folder' in kwargs and kwargs['folder'] is not None:
             folder=kwargs['folder']
-            # folder=os.path.join(BASE_DIR,folder)
-        # print(7*" Compress")
-        # print(7*" kwargs")
-        # print(kwargs)
         output_folder=os.path.join(output_folder,output_file_name)
         a=shutil.make_archive(output_folder, compress_file_type, folder)
-        # print(10*" zip file")
-        # print(a)
+    
         self.get_output_archive=str(a)

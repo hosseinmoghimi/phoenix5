@@ -1,9 +1,9 @@
 import json
 from django.shortcuts import render
 from bms.apps import APP_NAME
-from bms.repo import FeederRepo
+from bms.repo import CommandRepo, FeederRepo
 from core.views import CoreContext
-from bms.serializers import FeederFullSerializer, FeederSerializer, RelaySerializer
+from bms.serializers import CommandSerializer, FeederFullSerializer, FeederSerializer, RelaySerializer
 from django.views import View
 
 TEMPLATE_ROOT="bms/"
@@ -15,7 +15,9 @@ def getContext(request,*args, **kwargs):
 class HomeView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
-
+        commands=CommandRepo(request=request).list(for_home=True)
+        context['commands']=commands
+        context['commands_s']=json.dumps(CommandSerializer(commands,many=True).data)
         return render(request,TEMPLATE_ROOT+"index.html",context)
 class FeedersView(View):
     def get(self,request,*args, **kwargs):

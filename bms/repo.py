@@ -71,6 +71,8 @@ class CommandRepo():
         self.objects = Command.objects
     def list(self,*args, **kwargs):
         objects= self.objects
+        if 'for_home' in kwargs:
+            objects=objects.filter(for_home=kwargs['for_home'])
         if 'location_id' in kwargs:
             objects=objects.filter(location_id=kwargs['location_id'])
         if 'search_for' in kwargs:

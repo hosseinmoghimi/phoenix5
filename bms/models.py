@@ -96,6 +96,7 @@ class Command(models.Model,LinkHelper):
     value=models.CharField(_("value"), max_length=50)
     color=models.CharField(_("color"),choices=ColorEnum.choices,default=ColorEnum.PRIMARY, max_length=50)
     Iteration=models.IntegerField(_("Iteration"),default=1)
+    for_home=models.BooleanField(_("for home"),default=False)
     profiles=models.ManyToManyField("authentication.profile",blank=True, verbose_name=_("profile"))
     thumbnail_origin=models.ImageField(_("thumbnail"), upload_to=IMAGE_FOLDER+"command/", height_field=None, width_field=None, max_length=None,null=True,blank=True)
     app_name=APP_NAME
