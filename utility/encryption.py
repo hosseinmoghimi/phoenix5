@@ -16,6 +16,8 @@ class Encrptor:
             self.key = Fernet.generate_key()
 
     def encrypt(self,plain,*args, **kwargs):
+        print(self.key)
+        print(10 * " self.key")
         self.fernet = Fernet(self.key)
         encMessage = self.fernet.encrypt(plain.encode())
        

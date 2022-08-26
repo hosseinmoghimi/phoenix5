@@ -10,6 +10,7 @@ from school.apps import APP_NAME
 from django.utils.translation import gettext as _
 from school.settings import *
 from school.enums import *
+from library.models import Book as LibraryBook
 
 
 class SchoolPage(Page):
@@ -297,8 +298,7 @@ class Attendance(models.Model):
     def persian_time_added(self):
         return PersianCalendar().from_gregorian(self.time_added)
 
-
-class Book(SchoolPage): 
+class Book(LibraryBook): 
     class Meta:
         verbose_name = _("Book")
         verbose_name_plural = _("Books")
@@ -308,6 +308,7 @@ class Book(SchoolPage):
 
     def save(self,*args, **kwargs):
         self.class_name='book'
+        self.app_name=APP_NAME
         return super(Book,self).save(*args, **kwargs)
 
 
