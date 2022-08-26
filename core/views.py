@@ -26,11 +26,13 @@ from core.forms import *
 # Create your views here.
 TEMPLATE_ROOT = "core/"
 LAYOUT_PARENT='phoenix/layout.html'
+WIDE_LAYOUT_PARENT='phoenix/wide-layout.html'
 
 
 def CoreContext(request, *args, **kwargs):
     context = {}
     context['LAYOUT_PARENT'] = LAYOUT_PARENT
+    context['WIDE_LAYOUT_PARENT'] = WIDE_LAYOUT_PARENT
 
     from phoenix.server_settings import phoenix_apps
     PictureRepo_=PictureRepo(request=request,app_name=APP_NAME)

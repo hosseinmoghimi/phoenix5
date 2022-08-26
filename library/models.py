@@ -27,7 +27,8 @@ class LibraryPage(CoreBasicPage):
         verbose_name_plural = _("TaxPages")
 
     def save(self, *args, **kwargs):
-        self.app_name = APP_NAME
+        if self.app_name is None:
+            self.app_name = APP_NAME
         return super(LibraryPage, self).save(*args, **kwargs)
 
 class Book(LibraryPage):
@@ -43,6 +44,10 @@ class Book(LibraryPage):
  
     def save(self,*args, **kwargs):
         self.class_name='book'
+        if self.year is None:
+            self.year=2020
+        if self.price is None:
+            self.price=0
         return super(Book,self).save(*args, **kwargs)
 
 class Member(models.Model,Admin_Model):
