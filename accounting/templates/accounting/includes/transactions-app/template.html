@@ -80,17 +80,18 @@
                                 <td>
 
                                     <div>
-                                        <span class="badge badge-primary">
-                                            <span v-text="transaction.class_title"></span>
+                                        <span :class="'mx-2 badge badge-'+transaction.status_color">
+                                            <span v-text="transaction.status">
+
+                                            </span>
                                         </span>
-
-
                                     </div>
+
                                     <div>
+                                        <span :class="'mx-2 badge badge-'+transaction.payment_method_color">
+                                            <span v-text="transaction.payment_method">
 
-
-                                        <span class="badge badge-primary">
-                                            <span v-text="transaction.payment_method"></span>
+                                            </span>
                                         </span>
                                     </div>
                                 </td>
@@ -141,7 +142,7 @@
                                             </div>
                                         </div>
                                     </a>
-                                    
+
                                 </td>
 
 

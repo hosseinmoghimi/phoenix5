@@ -36,8 +36,8 @@
             </h4>
             {% endif %}
         </div>
-        <div id="collapse-payments" class="collapse {% if expand_payments %} show {% endif %}" aria-labelledby="heading-payments"
-            data-parent="#accordion-payments">
+        <div id="collapse-payments" class="collapse {% if expand_payments %} show {% endif %}"
+            aria-labelledby="heading-payments" data-parent="#accordion-payments">
 
 
             <div class="card-body">
@@ -61,8 +61,12 @@
                                 تاریخ
                             </th>
                             <th>
+                                <small>
 
+                                    وضعیت و نحوه پرداخت
+                                </small>
                             </th>
+                            
                         </thead>
                         <tbody>
                             {% for payment in payments1 %}
@@ -108,7 +112,20 @@
                                     {{payment.transaction_datetime|to_persian_datetime|safe}}
 
                                 </td>
+                                <td>
 
+                                    <div>
+                                        <span class="mx-2 badge badge-{{payment.status_color}}">
+                                            {{payment.status}}
+                                        </span>
+                                    </div>
+
+                                    <div>
+                                        <span class="mx-2 badge badge-{{payment.payment_method_color}}">
+                                            {{payment.payment_method}}
+                                        </span>
+                                    </div>
+                                </td>
                                 <td>
 
                                     {% include "accounting/includes/payment-app/navbar.html" %}
@@ -123,7 +140,7 @@
                                         <span v-text="payment.title"></span>
                                     </a>
 
-                                    
+
                                 </td>
                                 <td>
                                     <span v-text="to_price(payment.amount)"></span>
@@ -156,8 +173,24 @@
                                 </td>
 
                                 <td>
+ 
 
-                                 
+                                        <div class="text-right">
+                                            <span :class="'mx-2 badge badge-'+payment.status_color">
+                                                <span v-text="payment.status">
+    
+                                                </span>
+                                            </span>
+                                        </div>
+    
+                                        <div class="text-right">
+                                            <span :class="'mx-2 badge badge-'+payment.payment_method_color">
+                                                <span v-text="payment.payment_method">
+    
+                                                </span>
+                                            </span>
+                                        </div>
+                                     
                                 </td>
                             </tr>
                         </tbody>
@@ -180,5 +213,5 @@
 
 {% if perms.accounting.add_payment %}
 {% include "accounting/includes/add-payment-app/template.html" %}
-  
+
 {% endif %}

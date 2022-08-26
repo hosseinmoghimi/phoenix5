@@ -108,7 +108,7 @@ class PaymentSerializer(serializers.ModelSerializer):
     pay_to=AccountSerializer()
     class Meta:
         model = Payment
-        fields = ['id','title', 'pay_from','pay_to', 'amount','get_absolute_url','persian_transaction_datetime']
+        fields = ['id','title', 'pay_from','pay_to','status_color','status','payment_method','payment_method_color', 'amount','get_absolute_url','persian_transaction_datetime']
 
 
 
@@ -133,7 +133,7 @@ class TransactionSerializer(serializers.ModelSerializer):
     pay_from=AccountSerializer()
     class Meta:
         model = Transaction
-        fields = ['id','class_title', 'pay_from','pay_to','title','category','persian_transaction_datetime','amount', 'get_absolute_url','payment_method']
+        fields = ['id','class_title', 'pay_from','pay_to','title','category','persian_transaction_datetime','amount', 'get_absolute_url','payment_method','status','payment_method_color','status_color']
 
 class FinancialDocumentSerializer(serializers.ModelSerializer):
     account = AccountSerializer()
