@@ -81,6 +81,23 @@ class Transaction(Page,LinkHelper):
         if self.status==TransactionStatusEnum.CANCELED:
             color="secondary"
         return color
+    def payment_method_color(self):
+        color="primary"
+        if self.payment_method==PaymentMethodEnum.CARD:
+            color="primary"
+        if self.payment_method==PaymentMethodEnum.PRODUCT:
+            color="danger"
+        if self.payment_method==PaymentMethodEnum.SERVICE:
+            color="success"
+        if self.payment_method==PaymentMethodEnum.MOBILE_BANK:
+            color="warning"
+        if self.payment_method==PaymentMethodEnum.IN_CASH:
+            color="warning"
+        if self.payment_method==PaymentMethodEnum.POS:
+            color="warning"
+        if self.payment_method==PaymentMethodEnum.CARD:
+            color="secondary"
+        return color
     class Meta:
         verbose_name = _("Transaction")
         verbose_name_plural = _("Transactions")

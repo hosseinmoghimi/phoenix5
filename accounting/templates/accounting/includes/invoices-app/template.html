@@ -82,6 +82,9 @@
                                         </span>
                                     </a>
                                     {% endfor %}
+                                    <div>
+                                     <span class="badge badge-{{invoice.payment_method_color}}">{{invoice.payment_method}}</span>   
+                                    </div>
                                 </td>
                                 <td>
                                     {{invoice.amount|to_price}}
