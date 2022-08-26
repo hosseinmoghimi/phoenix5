@@ -8,15 +8,16 @@
         </h4>
     </div>
     <div class="card-body">
+        <input type="text" placeholder="جستجو ..." v-model="search_for" @input="search()" class="form-control">
        {% include "library/includes/books-app/table.html" %}
 
      
     </div>
     <div class="card-footer">
-        
-        {% if add_book_form %}
-       {% include "library/includes/books-app/add-book-form.html" %}
-          
-        {% endif %}
+        <h6>
+
+            تعداد کتاب ها :
+            <span v-text="books.length"></span>
+        </h6>
     </div>
 </div>
