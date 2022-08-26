@@ -31,6 +31,8 @@ def class_title(*args, **kwargs):
         app_name=kwargs['app_name']
 
     class_title = "صفحه"
+    if class_name == "exam":
+        class_title = "آزمون"
     if class_name == "poll":
         class_title = "پرسش"
     if class_name == "payment":

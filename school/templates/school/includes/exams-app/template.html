@@ -1,0 +1,93 @@
+<div id="accordion-exams">
+
+    <div class="card" id="exams-app">
+        <div class="card-header" id="headingExams">
+
+
+            <h5 class="text-center">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapseExams" aria-expanded="true"
+                    aria-controls="collapseExams">
+                    آزمون ها
+                </button>
+            </h5>
+
+
+
+        </div>
+        
+        <div id="collapseExams" class="collapse {% if expand_exams %} show {% endif %}" aria-labelledby="headingExams" data-parent="#accordion-exams">
+            <div class="card-body farsi text-right">
+                <div class="mb-3">
+                    <input type="text" v-model="search_for" class="form-control" @input="filter()"
+                        placeholder="جستجو ...">
+                </div>
+                <div v-for="exam in exams" class="mb-3">
+                    <h5>
+                        <small class="text-muted">
+                            <i class="fa fa-exam"></i>
+                            آزمون
+                        </small>
+                        <a :href="exam.get_absolute_url">
+                            <span v-text="exam.title"></span>
+                        </a>
+                        {% if perms.school.change_exam %}
+                        <a title="ویرایش" target="_blank" :href="exam.get_edit_url" class="mr-2">
+                            <i class="fa fa-edit"></i>
+                        </a>
+                        {% endif %}
+
+                        {% if perms.school.delete_exam %}
+                        <a title="حذف" target="_blank" :href="exam.get_delete_url" class="mr-2">
+                            <i class="fa fa-trash text-danger"></i>
+                        </a>
+                        {% endif %}
+                    </h5>
+                    <div class="mr-5" v-for="doc in exam.documents">
+                        <a :href="doc.get_download_url">
+                            <span v-html="doc.get_icon_tag" class="ml-2"></span>
+                            <span v-text="doc.title"></span>
+                        </a>
+                        {% if perms.school.change_document %}
+                        <a title="ویرایش" target="_blank" :href="doc.get_edit_url" class="mr-2">
+                            <i class="fa fa-edit"></i>
+                        </a>
+                        {% endif %}
+
+                        {% if perms.core.delete_document %}
+                        <a title="حذف" target="_blank" :href="doc.get_delete_url" class="mr-2">
+                            <i class="fa fa-trash text-danger"></i>
+                        </a>
+                        {% endif %}
+
+                    </div>
+                    <div class="mr-5" v-for="link in exam.links">
+                        <a target="_blank" :href="link.url">
+                            <span v-html="link.get_icon_tag" class="ml-2"></span>
+                            <span v-text="link.title"></span>
+                        </a>
+                        {% if perms.school.change_exam %}
+                        <a title="ویرایش" target="_blank" :href="link.get_edit_url" class="mr-2">
+                            <i class="fa fa-edit"></i>
+                        </a>
+                        {% endif %}
+
+                        {% if perms.core.delete_exam %}
+                        <a title="حذف" target="_blank" :href="link.get_delete_url" class="mr-2">
+                            <i class="fa fa-trash text-danger"></i>
+                        </a>
+                        {% endif %}
+
+                    </div>
+                    <hr>
+                </div>
+            </div>
+            {% if add_exam_form %}
+            <div class="card-footer">
+                <form @submit.prevent="add_exam()">
+                    <input type="text" v-model="title" class="form-control" placeholder="عنوان آزمون جدید">
+                </form>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>

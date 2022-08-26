@@ -11,12 +11,14 @@ from django.utils.translation import gettext as _
 from school.settings import *
 from school.enums import *
 from library.models import Book as LibraryBook
+from utility.utils import LinkHelper
 
 
-class SchoolPage(Page):
+class SchoolPage(Page,LinkHelper):
 
     def save(self,*args, **kwargs):
-        self.app_name=APP_NAME
+        if self.app_name is None:
+            self.app_name=APP_NAME
         return super(SchoolPage,self).save(*args, **kwargs)
 
 
@@ -124,6 +126,51 @@ class EducationalYear(models.Model):
             </a>
         """
 
+
+class Exam(SchoolPage):
+    def save(self,*args, **kwargs):
+        if self.class_name is None:
+            self.class_name='exam'
+        super(Exam,self).save(*args, **kwargs)
+    
+
+    class Meta:
+        verbose_name = _("Exam")
+        verbose_name_plural = _("Exams")
+ 
+ 
+class Question(models.Model,LinkHelper):
+    exam=models.ForeignKey("exam", verbose_name=_("exam"), on_delete=models.CASCADE)
+    question=HTMLField(_("question"), max_length=5000)
+    app_name=APP_NAME
+    class_name="question"
+    def options(self):
+        return self.option_set.all().order_by('priority')
+    class Meta:
+        verbose_name = _("Question")
+        verbose_name_plural = _("Questions")
+
+    def __str__(self):
+        return self.question
+ 
+
+class Option(models.Model,LinkHelper):
+    question=models.ForeignKey("question", verbose_name=_("question"), on_delete=models.CASCADE)
+    priority=models.IntegerField(_("number"))
+    option=HTMLField(_("question"), max_length=5000)
+    correct=models.BooleanField(_("correct"),default=False)
+
+    app_name=APP_NAME
+    class_name="option"
+
+    class Meta:
+        verbose_name = _("Option")
+        verbose_name_plural = _("Options")
+ 
+
+    def __str__(self):
+        return self.option
+ 
 
 class ActiveCourse(models.Model):
     class_name="activecourse"
@@ -297,6 +344,7 @@ class Attendance(models.Model):
         return PersianCalendar().from_gregorian(self.exit_time)
     def persian_time_added(self):
         return PersianCalendar().from_gregorian(self.time_added)
+
 
 class Book(LibraryBook): 
     class Meta:

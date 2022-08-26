@@ -1,0 +1,39 @@
+<script>
+
+    let exams = JSON.parse("{{exams_s|escapejs}}")
+
+    let exams_app_data = {
+        exams: exams,
+        search_for: "",
+        title: "",
+    }
+    let exams_app_methods = {
+        add_exam: function () {
+            let payload = {
+                csrfmiddlewaretoken: csrfmiddlewaretoken,
+                title: this.title,
+            }
+            console.log(payload)
+            let url = "{% url 'school:add_exam' %}"
+            $.post(url, payload).done((data) => {
+                console.log(data)
+                exams_app.exams.push(data.exam)
+                exams_app.title = ""
+            })
+        },
+        filter: function () {
+            this.exams = exams.filter((exam) => {
+                if (exam.title.indexOf(exams_app.search_for) > -1)
+                    return true
+
+            })
+        },
+    }
+</script>
+<script>
+    let exams_app = new Vue({
+        el: "#exams-app",
+        data: exams_app_data,
+        methods: exams_app_methods,
+    })
+</script>

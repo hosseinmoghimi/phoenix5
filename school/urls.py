@@ -23,8 +23,17 @@ urlpatterns = [
     path("student/<int:pk>/",login_required(views.StudentViews().student),name="student"),
     path("api/add_student/",login_required(apis.StudentApi().add_student),name="add_student"),
 
-    path("teachers/",login_required(views.TeacherViews().teachers),name="teachers"),
-    path("teacher/<int:pk>/",login_required(views.TeacherViews().teacher),name="teacher"),
+    path("exams/",login_required(views.ExamsView.as_view()),name="exams"),
+    path("exam/<int:pk>/",login_required(views.ExamView.as_view()),name="exam"),
+    path("add_exam/",login_required(apis.AddExamApi.as_view()),name="add_exam"),
+    
+    path("questions/",login_required(views.QuestionsView.as_view()),name="questions"),
+    path("question/<int:pk>/",login_required(views.QuestionView.as_view()),name="question"),
+    path("add_question/",login_required(apis.AddQuestionApi.as_view()),name="add_question"),
+
+
+    path("teachers/",login_required(views.TeachersView.as_view()),name="teachers"),
+    path("teacher/<int:pk>/",login_required(views.TeacherView.as_view()),name="teacher"),
     path("api/add_teacher/",login_required(apis.TeacherApi().add_teacher),name="add_teacher"),
 
     path("majors/",login_required(views.MajorViews().majors),name="majors"),

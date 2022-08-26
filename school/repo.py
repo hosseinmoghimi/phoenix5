@@ -1,7 +1,7 @@
 from authentication.repo import ProfileRepo
 import school
 from school.enums import AttendanceStatusEnum
-from .models import ActiveCourse, Attendance, ClassRoom, Course, EducationalYear, Major, School, Session,Student,Teacher,Book
+from .models import ActiveCourse, Attendance, ClassRoom, Course, EducationalYear, Exam, Major, Question, School, Session,Student,Teacher,Book
 from .apps import APP_NAME
 from django.db.models import Q
 from django.utils import timezone
@@ -149,6 +149,57 @@ class MajorRepo():
         major.save()
         return major
     
+class ExamRepo():
+    
+    def __init__(self,*args, **kwargs):
+        self.request = None
+        self.user = None
+        if 'request' in kwargs:
+            self.request = kwargs['request']
+            self.user = self.request.user
+        if 'user' in kwargs:
+            self.user = kwargs['user']
+        self.objects = Exam.objects
+        self.profile=ProfileRepo(user=self.user).me
+    
+    def list(self,*args, **kwargs):
+        objects=self.objects.all()
+        if 'school_id' in kwargs:
+            objects=objects.filter(school_id=kwargs['school_id'])
+        if 'course_id' in kwargs:
+            course=CourseRepo(request=self.request).course(pk=kwargs['course_id'])
+            if course is not None:
+                return course.books.all()
+            return
+        if 'search_for' in kwargs:
+            objects=objects.filter(title__contains=kwargs['search_for'])
+        return objects
+    
+    def exam(self,*args, **kwargs):
+        if 'exam_id' in kwargs:
+            pk=kwargs['exam_id']
+        elif 'pk' in kwargs:
+            pk=kwargs['pk']
+        elif 'id' in kwargs:
+            pk=kwargs['id']
+        return self.objects.filter(pk=pk).first()
+
+    def add_exam(self,*args, **kwargs):
+        if not self.request.user.has_perm(APP_NAME+".add_exam"):
+            return
+        exam=Exam(*args, **kwargs)
+        exam.save() 
+        return exam
+ 
+
+    def add_question(self,*args, **kwargs):
+        if not self.request.user.has_perm(APP_NAME+".add_question"):
+            return
+        question=Question(*args, **kwargs)
+        question.save() 
+        return question
+ 
+
 class BookRepo():
     
     def __init__(self,*args, **kwargs):
@@ -211,6 +262,8 @@ class BookRepo():
             return
         course.books.add(book)
         return book
+
+
 class ClassRoomRepo():
    
     def __init__(self,*args, **kwargs):

@@ -1,0 +1,68 @@
+<div id="accordion-questions">
+
+    <div class="card" id="questions-app">
+        <div class="card-header" id="headingQuestions">
+
+
+            <h5 class="text-center">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapseQuestions" aria-expanded="true"
+                    aria-controls="collapseQuestions">
+                    سوال ها
+                </button>
+            </h5>
+
+
+
+        </div>
+        
+        <div id="collapseQuestions" class="collapse {% if expand_questions %} show {% endif %}" aria-labelledby="headingQuestions" data-parent="#accordion-questions">
+            <div class="card-body farsi text-right">
+                <div class="mb-3">
+                    <input type="text" v-model="search_for" class="form-control" @input="filter()"
+                        placeholder="جستجو ...">
+                </div>
+                <div v-for="question in questions" class="mb-3">
+                    <h5>
+                        <small class="text-muted">
+                            <i class="fa fa-question"></i>
+                            پرسش
+                        </small>
+                        <a :href="question.get_absolute_url">
+                            <span v-text="question.question"></span>
+                        </a>
+                        {% if perms.school.change_question %}
+                        <a title="ویرایش" target="_blank" :href="question.get_edit_url" class="mr-2">
+                            <i class="fa fa-edit"></i>
+                        </a>
+                        {% endif %}
+
+                        {% if perms.school.delete_question %}
+                        <a title="حذف" target="_blank" :href="question.get_delete_url" class="mr-2">
+                            <i class="fa fa-trash text-danger"></i>
+                        </a>
+                        {% endif %}
+                    </h5>
+                  
+                    <div class="mr-5" v-for="option in question.options">
+                        <button class="btn btn-light btn-block mb-2">
+                            
+                            <span v-text="option.priority"></span>
+                            <span v-html="option.option"></span>
+                        </button>
+                        
+
+                    </div>
+                    <hr>
+                </div>
+            </div>
+            {% if add_question_form %}
+            <div class="card-footer">
+                <form @submit.prevent="add_question()">
+                    <input type="text" v-model="title" class="form-control" placeholder="عنوان آزمون جدید">
+                <button class="btn btn-success">+</button>
+                </form>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>

@@ -2,8 +2,8 @@ from django.shortcuts import render,reverse
 from authentication.repo import ProfileRepo
 from core.views import CoreContext, MessageView, PageContext,ParameterNameEnum,ParameterRepo
 from school.enums import AttendanceStatusEnum
-from school.repo import ActiveCourseRepo, AttendanceRepo, BookRepo, ClassRoomRepo, CourseRepo, EducationalYearRepo, MajorRepo, SchoolRepo, SessionRepo, StudentRepo, TeacherRepo
-from school.serializers import AttendanceSerializer,ActiveCourseSerializer, CourseSerializerWithMajors, MajorSerializer, CourseSerializer, BookSerializer, ClassRoomSerializer, SchoolSerializer, SessionSerializer, StudentSerializer, TeacherSerializer
+from school.repo import ActiveCourseRepo, AttendanceRepo, BookRepo, ClassRoomRepo, CourseRepo, EducationalYearRepo, ExamRepo, MajorRepo, SchoolRepo, SessionRepo, StudentRepo, TeacherRepo
+from school.serializers import AttendanceSerializer,ActiveCourseSerializer, CourseSerializerWithMajors, ExamSerializer, MajorSerializer, CourseSerializer, BookSerializer, ClassRoomSerializer, QuestionSerializer, SchoolSerializer, SessionSerializer, StudentSerializer, TeacherSerializer
 from .apps import APP_NAME
 from django.views import View
 from .forms import *
@@ -312,8 +312,8 @@ class ActiveCourseViews(View):
 
 
         
-class TeacherViews(View):
-    def teacher(self,request,*args, **kwargs):
+class TeacherView(View):
+    def get(self,request,*args, **kwargs):
         context=getContext(request=request)
         teacher=TeacherRepo(request=request).teacher(*args, **kwargs)
         context['teacher']=teacher
@@ -347,8 +347,8 @@ class TeacherViews(View):
 
         return render(request,TEMPLATE_ROOT+"teacher.html",context)
 
-
-    def teachers(self,request,*args, **kwargs):
+class TeachersView(View):
+    def get(self,request,*args, **kwargs):
         context=getContext(request=request)
         teachers=TeacherRepo(request=request).list(*args, **kwargs)
         context['teachers']=teachers
@@ -358,6 +358,91 @@ class TeacherViews(View):
             profiles=ProfileRepo(request=request).list()
             context['profiles']=profiles
         return render(request,TEMPLATE_ROOT+"teachers.html",context)
+
+
+        
+class ExamView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        exam=ExamRepo(request=request).exam(*args, **kwargs)
+        context.update(PageContext(request=request,page=exam))
+        context['exam']=exam
+        if request.user.has_perm(APP_NAME+'.add_question'):
+            context['add_question_form']=AddQuestionForm()
+        questions=exam.question_set.all()
+        context['questions']=questions
+        context['questions_s']=json.dumps(QuestionSerializer(questions,many=True).data)
+        if exam is None:
+            mv=MessageView(request=request)
+            mv.links = []
+            mv.message_text_html = None
+            mv.message_color = 'warning'
+            mv.has_home_link = True
+            mv.header_color = "rose"
+            mv.message_icon = ''
+            mv.header_icon = '<i class="fa fa-exclamation-triangle" aria-hidden="true"></i>'
+            mv.message_text = "شما مجوز مشاهده این صفحه را ندارید."
+            mv.header_text = "دسترسی غیر مجاز"
+            mv.message_html = ""
+
+            return mv.response()
+
+
+         
+        return render(request,TEMPLATE_ROOT+"exam.html",context)
+
+class ExamsView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        exams=ExamRepo(request=request).list(*args, **kwargs)
+        context['expand_exams']=True
+        context['exams']=exams
+        context['exams_s']=json.dumps(ExamSerializer(exams,many=True).data)
+        if request.user.has_perm(APP_NAME+".add_exam"):
+            context['add_exam_form']=AddExamForm()
+        return render(request,TEMPLATE_ROOT+"exams.html",context)
+
+
+class QuestionView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        exam=ExamRepo(request=request).exam(*args, **kwargs)
+        context.update(PageContext(request=request,page=exam))
+        context['exam']=exam
+        if request.user.has_perm(APP_NAME+'.add_question'):
+            context['add_question_form']=AddQuestionForm()
+        questions=exam.question_set.all()
+        context['questions']=questions
+        context['questions_s']=json.dumps(QuestionSerializer(questions,many=True).data)
+        if exam is None:
+            mv=MessageView(request=request)
+            mv.links = []
+            mv.message_text_html = None
+            mv.message_color = 'warning'
+            mv.has_home_link = True
+            mv.header_color = "rose"
+            mv.message_icon = ''
+            mv.header_icon = '<i class="fa fa-exclamation-triangle" aria-hidden="true"></i>'
+            mv.message_text = "شما مجوز مشاهده این صفحه را ندارید."
+            mv.header_text = "دسترسی غیر مجاز"
+            mv.message_html = ""
+
+            return mv.response()
+
+
+         
+        return render(request,TEMPLATE_ROOT+"exam.html",context)
+
+class QuestionsView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        exams=ExamRepo(request=request).list(*args, **kwargs)
+        context['expand_exams']=True
+        context['exams']=exams
+        context['exams_s']=json.dumps(ExamSerializer(exams,many=True).data)
+        if request.user.has_perm(APP_NAME+".add_exam"):
+            context['add_exam_form']=AddExamForm()
+        return render(request,TEMPLATE_ROOT+"exams.html",context)
 
 
         

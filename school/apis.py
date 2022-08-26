@@ -2,8 +2,8 @@ from django.http.response import JsonResponse
 from django.utils import timezone
 from core.serializers import DownloadSerializer
 from school.forms import *
-from school.repo import ActiveCourseRepo, AttendanceRepo, BookRepo, ClassRoomRepo, CourseRepo, MajorRepo, SchoolRepo, SessionRepo, StudentRepo, TeacherRepo
-from school.serializers import ActiveCourseSerializer, AttendanceSerializer, BookSerializer, ClassRoomSerializer, CourseSerializer, MajorSerializer, SchoolSerializer, SessionSerializer, StudentSerializer, TeacherSerializer
+from school.repo import ActiveCourseRepo, AttendanceRepo, BookRepo, ClassRoomRepo, CourseRepo, ExamRepo, MajorRepo, SchoolRepo, SessionRepo, StudentRepo, TeacherRepo
+from school.serializers import ActiveCourseSerializer, AttendanceSerializer, BookSerializer, ClassRoomSerializer, CourseSerializer, ExamSerializer, MajorSerializer, QuestionSerializer, SchoolSerializer, SessionSerializer, StudentSerializer, TeacherSerializer
 from .apps import APP_NAME
 from rest_framework.views import APIView
 from core.constants import SUCCEED,FAILED
@@ -109,6 +109,41 @@ class ActiveCourseApi(APIView):
         context['log']=log
         return JsonResponse(context)
 
+class AddExamApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={'result':FAILED}
+        log=1
+
+        add_exam_form=AddExamForm(request.POST)
+        if add_exam_form.is_valid():
+            log=3
+            cd=add_exam_form.cleaned_data
+            title=cd['title']
+            exam=ExamRepo(request=request).add_exam(title=title)
+            if exam is not None:
+                context['exam']=ExamSerializer(exam).data
+                context['result']=SUCCEED
+        context['log']=log
+        return JsonResponse(context)
+    
+class AddQuestionApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={'result':FAILED}
+        log=1
+
+        add_question_form=AddQuestionForm(request.POST)
+        if add_question_form.is_valid():
+            log=3
+            cd=add_question_form.cleaned_data
+            question=cd['question']
+            exam_id=cd['exam_id']
+            question=ExamRepo(request=request).add_question(question=question,exam_id=exam_id)
+            if question is not None:
+                context['question']=QuestionSerializer(question).data
+                context['result']=SUCCEED
+        context['log']=log
+        return JsonResponse(context)
+    
 
 class BookApi(APIView):
     def add_document(self,request,*args, **kwargs):

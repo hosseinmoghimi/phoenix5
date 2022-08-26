@@ -4,7 +4,7 @@ from school.repo import EducationalYearRepo
 from .apps import APP_NAME
 from rest_framework import serializers
 from authentication.serializers import ProfileSerializer
-from .models import ActiveCourse, Attendance, Book, ClassRoom, Course, EducationalYear, Major, School, Session, Student, Teacher
+from .models import ActiveCourse, Attendance, Book, ClassRoom, Course, EducationalYear, Exam, Major, Option, Question, School, Session, Student, Teacher
 
 class StudentSerializer(serializers.ModelSerializer):
     profile=ProfileSerializer()
@@ -84,4 +84,26 @@ class BookSerializer(serializers.ModelSerializer):
     class Meta:
         model = Book
         fields=['id','title','courses','get_absolute_url','get_edit_url','get_delete_url']
+
+
+
+
+class ExamSerializer(serializers.ModelSerializer): 
+    class Meta:
+        model = Exam
+        fields=['id','title','get_absolute_url','get_edit_url','get_delete_url']
+
+
+class OptionSerializer(serializers.ModelSerializer): 
+    class Meta:
+        model = Option
+        fields=['id','option','priority','get_edit_url','get_delete_url']
+
+
+
+class QuestionSerializer(serializers.ModelSerializer): 
+    options=OptionSerializer(many=True)
+    class Meta:
+        model = Question
+        fields=['id','question','options','get_absolute_url','get_edit_url','get_delete_url']
 

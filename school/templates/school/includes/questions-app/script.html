@@ -1,0 +1,40 @@
+<script>
+
+    let questions = JSON.parse("{{questions_s|escapejs}}")
+
+    let questions_app_data = {
+        questions: questions,
+        search_for: "",
+        title: "",
+    }
+    let questions_app_methods = {
+        add_question: function () {
+            let payload = {
+                csrfmiddlewaretoken: csrfmiddlewaretoken,
+                exam_id: parseInt("{{exam.id}}"),
+                question: this.title,
+            }
+            console.log(payload)
+            let url = "{% url 'school:add_question' %}"
+            $.post(url, payload).done((data) => {
+                console.log(data)
+                questions_app.questions.push(data.question)
+                questions_app.title = ""
+            })
+        },
+        filter: function () {
+            this.questions = questions.filter((question) => {
+                if (question.title.indexOf(questions_app.search_for) > -1)
+                    return true
+
+            })
+        },
+    }
+</script>
+<script>
+    let questions_app = new Vue({
+        el: "#questions-app",
+        data: questions_app_data,
+        methods: questions_app_methods,
+    })
+</script>
