@@ -172,6 +172,23 @@ class Option(models.Model,LinkHelper):
         return self.option
  
 
+class SelectedOption(models.Model,LinkHelper):
+    option=models.ForeignKey("option", verbose_name=_("option"), on_delete=models.CASCADE)
+    student=models.ForeignKey("student", verbose_name=_("student"), on_delete=models.CASCADE)
+    date_added=models.DateTimeField(_("date_added"), auto_now=False, auto_now_add=True)
+    
+    app_name=APP_NAME
+    class_name="selectedoption"
+
+    class Meta:
+        verbose_name = _("SelectedOption")
+        verbose_name_plural = _("SelectedOptions")
+ 
+
+    def __str__(self):
+        return self.option
+ 
+
 class ActiveCourse(models.Model):
     class_name="activecourse"
     year=models.ForeignKey("EducationalYear", verbose_name=_("سال تحصیلی"), on_delete=models.CASCADE)
