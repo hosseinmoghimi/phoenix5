@@ -12,6 +12,8 @@ class ProfileContatcTypeEnum(TextChoices):
     EMAIL="ایمیل" , _("ایمیل")
     WHATSAPP="واتسپ" , _("واتسپ")
     TELEGRAM="تلگرام" , _("تلگرام")
+    YOUTUBE="یوتوب" , _("یوتوب")
+    INSTAGRAM="اینستاگرام" , _("آدرس")
     ADDRESS="آدرس" , _("آدرس")
     WEBSITE="وب سایت" , _("وب سایت")
 
