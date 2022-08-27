@@ -1,6 +1,6 @@
 from rest_framework.views import APIView
-from authentication.repo import ProfileRepo
-from authentication.serializers import ProfileSerializer
+from authentication.repo import ProfileContactRepo, ProfileRepo
+from authentication.serializers import ProfileContactSerializer, ProfileSerializer
 from django.http import JsonResponse
 from authentication.forms import *
 from core.constants import FAILED, SUCCEED
@@ -39,6 +39,29 @@ class AddProfileApi(APIView):
                 log=4
                 profile=ProfileSerializer(profile).data
         context['profile']=profile
+        context['result']=result
+        context['message']=message
+        context['log']=log
+        return JsonResponse(context)
+
+
+class AddProfileContactApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        message=None
+        message=" sfh sdjfh sldjk skdlfh ksdjlhf lks"
+        profile=None
+        log=2
+        result=FAILED
+        add_profile_form=AddProfileContactForm(request.POST)
+        if add_profile_form.is_valid():
+            log=3
+            cd=add_profile_form.cleaned_data
+            (result,profile_contact,message)=ProfileContactRepo(request=request).add_profile_contact(**cd)
+            if profile_contact is not None:
+                log=4
+                # profile_contact=ProfileContactSerializer(profile_contact).data
+                context['profile_contact']=ProfileContactSerializer(profile_contact).data
         context['result']=result
         context['message']=message
         context['log']=log

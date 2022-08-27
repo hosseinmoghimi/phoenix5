@@ -94,11 +94,17 @@ class ProfileViews(View):
         if not selected_profile.enabled:
             context['no_navbar']=True
             context['no_footer']=True
-
-        profile_contacts=ProfileContactRepo(request=request).list(profile_id=selected_profile.id).order_by('priority')
-        context['profile_contacts']=profile_contacts
-        profile_contacts_s=json.dumps(ProfileContactSerializer(profile_contacts,many=True).data)
-        context['profile_contacts_s']=profile_contacts_s
+        
+        if True:
+            if request.user.has_perm(APP_NAME+".add_profilecontact"):
+                contact_type_enums=list(t[0] for t in ProfileContatcTypeEnum.choices)
+                context['contact_type_enums_s']=json.dumps(contact_type_enums)
+                context['contact_type_enums']=contact_type_enums
+                context['add_profile_contact_form']=AddProfileContactForm()
+            profile_contacts=ProfileContactRepo(request=request).list(profile_id=selected_profile.id).order_by('priority')
+            context['profile_contacts']=profile_contacts
+            profile_contacts_s=json.dumps(ProfileContactSerializer(profile_contacts,many=True).data)
+            context['profile_contacts_s']=profile_contacts_s
         page_likes=PageLikeRepo(request=request).list(profile_id=selected_profile.id)
         context['page_likes']=page_likes
 

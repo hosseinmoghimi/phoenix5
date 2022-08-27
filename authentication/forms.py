@@ -22,6 +22,13 @@ class ChangeProfileImageForm(forms.Form):
     image=forms.ImageField(required=True)
 
 
+class AddProfileContactForm(forms.Form):
+    profile_id=forms.IntegerField(required=True)
+    name=forms.CharField(max_length=50, required=True)
+    value=forms.CharField(max_length=500, required=True)
+    url=forms.CharField(max_length=500, required=False)
+
+
 class AddMembershipRequestForm(forms.Form):
     profile_id=forms.IntegerField(required=True)
     image=forms.ImageField(required=True)

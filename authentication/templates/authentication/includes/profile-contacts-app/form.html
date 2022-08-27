@@ -1,0 +1,59 @@
+{% if add_profile_contact_form %}
+<div class="text-right">
+    <button @click="show_form=true" v-if="!show_form" class="btn btn-success">
+        <i class="fa fa-plus"></i>
+    </button>
+
+    <button @click="show_form=false" v-if="show_form" class="btn btn-secondary">
+        <i class="fa fa-plus"></i>
+    </button>
+</div>
+<div v-if="show_form">
+
+  <form @submit.prevent="add_profile_contact()">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="form-group">
+                <label for="">عنوان</label>
+                <select v-model="form_name" class="form-control">
+                    <option :value="contact_type" v-for="contact_type in contact_type_enums" v-text="contact_type"></option>
+                </select>
+            </div>
+        </div>
+
+        <div class="col-md-12">
+            <div class="form-group">
+                <label for="">مقدار</label>
+                <input type="text" v-model="form_value" class="form-control" required>
+            </div>
+        </div>
+
+        <div class="col-md-12">
+            <div class="form-group">
+                <label for="">لینک</label>
+                <input type="text" v-model="form_url" class="form-control">
+            </div>
+        </div>
+        
+
+        <div class="col-md-12">
+            <div class="form-group">
+            <button class="btn btn-success">
+                <i class="fa fa-plus"></i>
+                افزودن
+            </button>     
+            </div>
+        </div>
+        
+    </div>
+  </form>
+  <div>
+    <p>
+        https://wa.me/+98
+    </p>
+    <p>
+        https://wa.me/+98
+    </p>
+  </div>
+</div>
+{% endif %}

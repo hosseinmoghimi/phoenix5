@@ -9,14 +9,28 @@
         {% for profile_contact in profile_contacts %}
 
         <div class="mb-2 text-right">
-            <a class="btn btn-primary" href="{{profile_contact.url}}">
+            <a class="btn btn-primary btn-block" href="{{profile_contact.url}}">
                 <span class="farsi">
 
-                    {{profile_contact.name}} : 
-                    {{profile_contact.value}} 
+                    {{profile_contact.name}} :
+                    {{profile_contact.value}}
                 </span>
             </a>
         </div>
         {% endfor %}
+
+        <div class="mb-2 text-right" v-for="profile_contact in profile_contacts">
+            <a class="btn btn-primary btn-block" :href="profile_contact.url">
+                <span class="farsi">
+                    <span v-text="profile_contact.name"></span> :
+                    <span v-text="profile_contact.value"></span>
+
+                </span>
+            </a>
+        </div>
+
+    </div>
+    <div class="card-footer">
+        {% include "authentication/includes/profile-contacts-app/form.html" %}
     </div>
 </div>

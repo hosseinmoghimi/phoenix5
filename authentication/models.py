@@ -155,7 +155,7 @@ class Profile(models.Model,LinkHelper):
 class ProfileContact(models.Model):
 
     profile=models.ForeignKey("profile", verbose_name=_("profile"), on_delete=models.CASCADE)
-    name=models.CharField(_("name"), max_length=50)
+    name=models.CharField(_("name"),choices=ProfileContatcTypeEnum.choices,default=ProfileContatcTypeEnum.MOBILE, max_length=50)
     value=models.CharField(_("value"), max_length=50)
     url=models.CharField(_("url"),null=True,blank=True, max_length=5000)
     icon=models.CharField(_("icon"), null=True,blank=True, max_length=5000)

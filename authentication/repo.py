@@ -440,5 +440,16 @@ class ProfileContactRepo:
             return self.objects.filter(pk= kwargs['pk']).first()
         if 'id' in kwargs:
             return self.objects.filter(pk= kwargs['id']).first()
-
  
+    def add_profile_contact(self,*args, **kwargs):
+        result=FAILED
+        message="sdfsdfsdf"
+        profile_contact=None
+        if not self.request.user.has_perm(APP_NAME+".change_profile"):
+            return (result,profile_contact,message)
+        profile_contact=ProfileContact(*args, **kwargs)
+        profile_contact.save()
+        result=SUCCEED
+        message="با موفقیت افزوده شد."
+
+        return (result,profile_contact,message)
