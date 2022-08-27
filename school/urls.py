@@ -30,6 +30,8 @@ urlpatterns = [
     path("questions/",login_required(views.QuestionsView.as_view()),name="questions"),
     path("question/<int:pk>/",login_required(views.QuestionView.as_view()),name="question"),
     path("add_question/",login_required(apis.AddQuestionApi.as_view()),name="add_question"),
+    
+    path("select_option/",login_required(apis.SelectOptionApi.as_view()),name="select_option"),
 
 
     path("teachers/",login_required(views.TeachersView.as_view()),name="teachers"),

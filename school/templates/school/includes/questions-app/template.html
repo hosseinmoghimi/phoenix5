@@ -44,7 +44,7 @@
                     </h5>
                   
                     <div class="mr-5" v-for="option in question.options">
-                        <button class="btn btn-light btn-block mb-2">
+                        <button :id="'btn-'+option.id" class="btn btn-block mb-2 btn-light" @click="select_option(option.id)">
                             
                             <span v-text="option.priority"></span>
                             <span v-html="option.option"></span>

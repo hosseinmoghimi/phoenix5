@@ -3,7 +3,7 @@ from django.utils import timezone
 from core.serializers import DownloadSerializer
 from school.forms import *
 from school.repo import ActiveCourseRepo, AttendanceRepo, BookRepo, ClassRoomRepo, CourseRepo, ExamRepo, MajorRepo, SchoolRepo, SessionRepo, StudentRepo, TeacherRepo
-from school.serializers import ActiveCourseSerializer, AttendanceSerializer, BookSerializer, ClassRoomSerializer, CourseSerializer, ExamSerializer, MajorSerializer, QuestionSerializer, SchoolSerializer, SessionSerializer, StudentSerializer, TeacherSerializer
+from school.serializers import ActiveCourseSerializer, AttendanceSerializer, BookSerializer, ClassRoomSerializer, CourseSerializer, ExamSerializer, MajorSerializer, OptionFullSerializer, OptionSerializer, QuestionSerializer, SchoolSerializer, SessionSerializer, StudentSerializer, TeacherSerializer
 from .apps import APP_NAME
 from rest_framework.views import APIView
 from core.constants import SUCCEED,FAILED
@@ -140,6 +140,24 @@ class AddQuestionApi(APIView):
             question=ExamRepo(request=request).add_question(question=question,exam_id=exam_id)
             if question is not None:
                 context['question']=QuestionSerializer(question).data
+                context['result']=SUCCEED
+        context['log']=log
+        return JsonResponse(context)
+    
+
+class SelectOptionApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={'result':FAILED}
+        log=1
+
+        select_option_form=SelectOptionForm(request.POST)
+        if select_option_form.is_valid():
+            log=3
+            cd=select_option_form.cleaned_data
+            option_id=cd['option_id']
+            option=ExamRepo(request=request).select_option(option_id=option_id)
+            if option is not None:
+                context['option']=OptionFullSerializer(option).data
                 context['result']=SUCCEED
         context['log']=log
         return JsonResponse(context)

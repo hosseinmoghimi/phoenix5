@@ -1,7 +1,9 @@
+from urllib import request
 from authentication.repo import ProfileRepo
 import school
 from school.enums import AttendanceStatusEnum
-from .models import ActiveCourse, Attendance, ClassRoom, Course, EducationalYear, Exam, Major, Question, School, Session,Student,Teacher,Book
+from school.forms import SelectOptionForm
+from .models import ActiveCourse, Attendance, ClassRoom, Course, EducationalYear, Exam, Major, Question, School, SelectedOption, Session,Student,Teacher,Book
 from .apps import APP_NAME
 from django.db.models import Q
 from django.utils import timezone
@@ -199,6 +201,13 @@ class ExamRepo():
         question.save() 
         return question
  
+    def select_option(self,*args, **kwargs):
+        if not self.request.user.has_perm(APP_NAME+".add_selectedoption"):
+            return
+        select_option=SelectedOption(*args, **kwargs)
+        select_option.student=StudentRepo(request=self.request).me
+        select_option.save() 
+        return select_option.option
 
 class BookRepo():
     

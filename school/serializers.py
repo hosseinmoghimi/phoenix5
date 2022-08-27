@@ -99,6 +99,11 @@ class OptionSerializer(serializers.ModelSerializer):
         model = Option
         fields=['id','option','priority','get_edit_url','get_delete_url']
 
+class OptionFullSerializer(serializers.ModelSerializer): 
+    class Meta:
+        model = Option
+        fields=['id','option','priority','correct','get_edit_url','get_delete_url']
+
 
 
 class QuestionSerializer(serializers.ModelSerializer): 

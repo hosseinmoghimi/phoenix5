@@ -10,9 +10,12 @@ class AddSchoolForm(forms.Form):
     title=forms.CharField( max_length=50, required=True)
 class AddClassRoomForm(forms.Form):
     title=forms.CharField( max_length=50, required=True)
+    school_id=forms.IntegerField(required=True)
 class AddQuestionForm(forms.Form):
     exam_id=forms.IntegerField(required=True)
     question=forms.CharField( max_length=50, required=True)
+class SelectOptionForm(forms.Form):
+    option_id=forms.IntegerField(required=True)
 class AddExamForm(forms.Form):
     title=forms.CharField( max_length=200, required=True)
 class AddMajorForm(forms.Form):

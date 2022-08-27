@@ -186,8 +186,12 @@ class SelectedOption(models.Model,LinkHelper):
  
 
     def __str__(self):
-        return self.option
+        return f"{self.student} :{self.option.question} : {self.option}"
  
+    def save(self,*args, **kwargs):
+        SelectedOption.objects.filter(student_id=self.student.id).filter(option__question_id=self.option.question.id).delete()
+        super(SelectedOption,self).save()
+
 
 class ActiveCourse(models.Model):
     class_name="activecourse"
