@@ -469,6 +469,28 @@ class DownloadUploadsApi(View):
         mv.title="عدم دسترسی مجاز"
         return mv.response()
    
+class PageDownloadsView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        if not request.user.has_perm(APP_NAME+".view_pagedownload"):
+            mv=MessageView(request=request)
+            mv.title="صفحه مورد نظر پیدا نشد."
+            return mv.response()
+        page_downloads=PageDownloadRepo(request=request).list(*args, **kwargs)
+        context['page_downloads']=page_downloads
+        return render(request,TEMPLATE_ROOT+"page-downloads.html",context)
+
+class PageLinksView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        page=PageRepo(request=request).page(*args, **kwargs)
+        if page is None:
+            mv=MessageView(request=request)
+            mv.title="صفحه مورد نظر پیدا نشد."
+            return mv.response()
+        context.update(PageContext(request=request,page=page))
+        return render(request,TEMPLATE_ROOT+"page.html",context)
+
 
 
 class PageView(View):
