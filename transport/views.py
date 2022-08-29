@@ -13,7 +13,7 @@ from core.views import CoreContext, PageContext,SearchForm
 from django.views import View
 from map.repo import AreaRepo, LocationRepo
 from map.serializers import AreaSerializer, LocationSerializer
-from accounting.views import add_from_accounts_context
+from accounting.views import add_from_accounts_context, add_transaction_context
 from transport.enums import MaintenanceEnum, VehicleBrandEnum, VehicleColorEnum, VehicleTypeEnum, WeightUnitEnum
 from transport.forms import *
 from utility.calendar import PersianCalendar 
@@ -171,11 +171,11 @@ def get_maintenances_context(request,*args, **kwargs):
         context['clients_s']=json.dumps(ClientSerializer(clients,many=True).data)
 
         context['maintenance_types']=(maintenance_type[0] for maintenance_type in MaintenanceEnum.choices)
-
+        context.update(get_add_maintenance_context(request=request))
     return context
 
 def get_add_maintenance_context(request,*args, **kwargs):
-    context={}
+    context=add_transaction_context(request=request)
 
      #vehicles
     vehicles=VehicleRepo(request=request).list(*args, **kwargs)

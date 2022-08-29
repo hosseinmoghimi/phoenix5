@@ -50,6 +50,9 @@ class AddMaintenanceForm(forms.Form):
     client_id=forms.IntegerField( required=False)
     service_man_id=forms.IntegerField( required=False)
     amount=forms.IntegerField(required=False)
+    status=forms.CharField(max_length=50, required=False)
+    payment_method=forms.CharField(max_length=50, required=False)
+    
 
 class AddTripCategoryForm(forms.Form):
     title=forms.CharField(max_length=100,required=True)
