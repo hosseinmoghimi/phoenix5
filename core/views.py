@@ -483,13 +483,13 @@ class PageDownloadsView(View):
 class PageLinksView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
-        page=PageRepo(request=request).page(*args, **kwargs)
-        if page is None:
+        if not request.user.has_perm(APP_NAME+".view_pagelink"):
             mv=MessageView(request=request)
             mv.title="صفحه مورد نظر پیدا نشد."
             return mv.response()
-        context.update(PageContext(request=request,page=page))
-        return render(request,TEMPLATE_ROOT+"page.html",context)
+        page_links=PageLinkRepo(request=request).list(*args, **kwargs)
+        context['page_links']=page_links
+        return render(request,TEMPLATE_ROOT+"page-links.html",context) 
 
 
 

@@ -1,19 +1,19 @@
 {% load to_persian_date %}
 {% load static %}
-<div id="accordion-page-downloads">
+<div id="accordion-page-links">
 
 
-    <div id="page-downloads-app" class="card">
-        <div class="card-header" id="heading-page-downloads">
+    <div id="page-links-app" class="card">
+        <div class="card-header" id="heading-page-links">
             <h5 class="text-center">
-                <button aclass="btn btn-link" data-toggle="collapse" data-target="#collapse-page-downloads"
-                    aria-expanded="true" aria-controls="collapse-page-downloads">
-                    دانلود ها
-                    {% if page_downloads %}
+                <button aclass="btn btn-link" data-toggle="collapse" data-target="#collapse-page-links"
+                    aria-expanded="true" aria-controls="collapse-page-links">
+                    لینک ها
+                    {% if page_links %}
 
                     <span>
                         <small class="text-danger mx-2">
-                            {{page_downloads|length}}
+                            {{page_links|length}}
                         </small>
                     </span>
                     {% endif %}
@@ -22,8 +22,8 @@
             </h5>
         </div>
 
-        <div id="collapse-page-downloads" class="collapse" aria-labelledby="heading-page-downloads"
-            data-parent="#accordion-page-downloads">
+        <div id="collapse-page-links" class="collapse" aria-labelledby="heading-page-links"
+            data-parent="#accordion-page-links">
 
             <div class="card-body">
                 <div class="table-responsive">
@@ -31,7 +31,7 @@
                         <thead>
 
                             <th>
-                                دانلود
+                                لینک
                             </th>
 
                             <th>
@@ -49,51 +49,51 @@
                         </thead>
                         <tbody>
 
-                            {% for page_download in page_downloads %}
+                            {% for page_link in page_links %}
 
 
                             <tr>
                                 <td>
-                                    <a class="mr-2" target="" href="{{page_download.get_download_url}}">
+                                    <a class="mr-2" target="" href="{{page_link.url}}">
                                         <h6>
-                                            {{page_download.get_icon_tag|safe}}
-                                            {{page_download.title}}
+                                            {{page_link.get_icon_tag|safe}}
+                                            {{page_link.title}}
                                         </h6>
                                     </a>
                                 </td>
 
                                 <td>
-                                    <a class="mr-2" target="" href="{{page_download.page.get_absolute_url}}">
+                                    <a class="mr-2" target="" href="{{page_link.page.get_absolute_url}}">
                                         <h6>
-                                            {{page_download.page.title}}
+                                            {{page_link.page.title}}
                                         </h6>
                                     </a>
                                 </td>
                                 <td>
                                     <h6>
-                                        {{page_download.page.app_name}}
+                                        {{page_link.page.app_name}}
                                     </h6>
                                 </td>
                                 <td>
                                     <h6>
-                                        {{page_download.page.class_title}}
+                                        {{page_link.page.class_title}}
                                     </h6>
                                 </td>
 
                                 <td>
-                                    {{page_download.date_added|to_persian_datetime|safe}}
+                                    {{page_link.date_added|to_persian_datetime|safe}}
                                 </td>
 
 
                                 <td>
-                                    {% if perms.core.change_download %}
-                                    <a href="{{page_download.get_edit_url}}" target="_blank" title="ویرایش"
+                                    {% if perms.core.change_link %}
+                                    <a href="{{page_link.get_edit_url}}" target="_blank" title="ویرایش"
                                         class="ml-2 docs-creator">
                                         <i class="fa fa-edit text-info"></i>
                                     </a>
                                     {% endif %}
-                                    {% if perms.core.delete_download %}
-                                    <a href="{{page_download.get_delete_url}}" target="_blank" title="حذف"
+                                    {% if perms.core.delete_link %}
+                                    <a href="{{page_link.get_delete_url}}" target="_blank" title="حذف"
                                         class="ml-2 docs-creator">
                                         <i class="fa fa-trash text-danger"></i>
                                     </a>
