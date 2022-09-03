@@ -1174,6 +1174,8 @@ class InvoiceRepo():
     def edit_invoice(self,*args, **kwargs):
         
         invoice=self.invoice(*args, **kwargs)
+        if not invoice.editable:
+            return (FAILED,invoice,"این سند قابل ویرایش نمی باشد")
         if invoice is None:
             return
         if self.user.has_perm(APP_NAME+".change_invoice"):
@@ -1244,7 +1246,9 @@ class InvoiceRepo():
                         invoice_line.save()
                     
         invoice.save()
-        return invoice
+        result=SUCCEED
+        message="فاکتور با موفقیت ویرایش شد."
+        return (result,invoice,message)
 
 
 class ChequeRepo():
@@ -1368,6 +1372,21 @@ class TransactionRepo():
             pk=kwargs['id']
         return self.objects.filter(pk=pk).first()
      
+     
+    def roll_back(self,*args, **kwargs):
+        transaction=self.transaction(*args, **kwargs)
+        if transaction is not None:
+            transaction.roll_back()
+            return transaction
+
+
+    def print(self,*args, **kwargs):
+        transaction=self.transaction(*args, **kwargs)
+        if transaction is not None:
+            transaction.add_print_event()
+            return transaction
+
+
     def list(self, *args, **kwargs):
         
 
@@ -1376,6 +1395,8 @@ class TransactionRepo():
             objects=objects.filter(Q(amount=kwargs['amount']))
         if 'payment_method' in kwargs and not kwargs['payment_method']=="" and not kwargs['payment_method']is None:
             objects=objects.filter(Q(payment_method=kwargs['payment_method']))
+        if 'status' in kwargs and not kwargs['status']=="" and not kwargs['status']is None:
+            objects=objects.filter(Q(status=kwargs['status']))
         if 'start_date' in kwargs:
             objects=objects.filter(Q(transaction_datetime__gte=kwargs['start_date']))
         if 'end_date' in kwargs:

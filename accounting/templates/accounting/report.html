@@ -121,6 +121,23 @@
 
 
             </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="">وضعیت</label>
+
+
+                    <select v-model="status" class="form-control">
+                        <option value="">همه</option>
+                        {% for status in transaction_statuses %}
+                        <option value="{{status}}">{{status}}</option>
+
+                        {% endfor %}
+                    </select>
+
+                </div>
+
+
+            </div>
 
 
 
@@ -183,6 +200,7 @@
             start_date: current_date,
             end_date: current_date,
             amount: 0,
+            status:"",
             search_for: "",
             waiting: false,
             payment_method: "",
@@ -199,6 +217,7 @@
                     account_id: this.account_id,
                     start_date: this.start_date,
                     end_date: this.end_date,
+                    status: this.status,
                     amount: this.amount,
                     search_for: this.search_for,
                     payment_method: this.payment_method,

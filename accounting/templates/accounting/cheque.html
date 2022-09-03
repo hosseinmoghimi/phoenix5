@@ -67,19 +67,37 @@
     </div>
 
     <div class="col-md-4">
-        {% include "core/includes/page-links-app/template.html" %}
-
-    </div>
-    <div class="col-md-4">
         {% include "core/includes/page-downloads-app/template.html" %}
 
     </div>
+    <div class="col-md-4">
+        {% include "core/includes/page-links-app/template.html" %}
 
+    </div>
+
+    <div class="col-md-4">
+        {% include "core/includes/page-tags-app/template.html" %}
+
+    </div>
+    {% if roll_back_transaction_form %}
+
+    <div class="col-md-12 px-0">
+    
+        {% include "accounting/includes/roll-back-transaction-app/template.html" %}
+    </div>
+    
+    {% endif %}
 </div>
 {% endblock content %}
 
 
 {% block script %}
 {% include "accounting/includes/transaction-app/script.html" %}
+{% if roll_back_transaction_form %}
+ 
 
+    {% include "accounting/includes/roll-back-transaction-app/script.html" %}
+ 
+
+{% endif %}
 {% endblock script %}

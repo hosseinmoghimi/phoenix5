@@ -52,6 +52,51 @@ class AddBankApi(APIView):
         context['log']=log
         return JsonResponse(context)
 
+
+class RollBackTransactionApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        log=1
+        context['result']=FAILED
+        if request.method=='POST':
+            log=2
+            RollBackTransactionForm_=RollBackTransactionForm(request.POST)
+
+
+
+            
+            if RollBackTransactionForm_.is_valid():
+                log=3
+                transaction=TransactionRepo(request=request).roll_back(**RollBackTransactionForm_.cleaned_data)
+                if transaction is not None:
+                    context['transaction']=TransactionSerializer(transaction).data
+                    context['result']=SUCCEED
+        context['log']=log
+        return JsonResponse(context)
+
+
+class PrintTransactionApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        log=1
+        context['result']=FAILED
+        if request.method=='POST':
+            log=2
+            PrintTransactionForm_=PrintTransactionForm(request.POST)
+
+
+
+            
+            if PrintTransactionForm_.is_valid():
+                log=3
+                transaction=TransactionRepo(request=request).print(**PrintTransactionForm_.cleaned_data)
+                if transaction is not None:
+                    context['transaction']=TransactionSerializer(transaction).data
+                    context['result']=SUCCEED
+        context['log']=log
+        return JsonResponse(context)
+
+
 class AddChequeApi(APIView):
     def post(self,request,*args, **kwargs):
         context={}
@@ -137,7 +182,7 @@ class EditInvoiceApi(APIView):
                 payment_method=fm['payment_method']
                 status=fm['status']
                 invoice_datetime=PersianCalendar().to_gregorian(invoice_datetime)
-                invoice=InvoiceRepo(request=request).edit_invoice(
+                (result,invoice,message)=InvoiceRepo(request=request).edit_invoice(
                     invoice_id=invoice_id,
                     lines=lines,
                     status=status,
@@ -153,7 +198,8 @@ class EditInvoiceApi(APIView):
                 if invoice is not None:
                     context['invoice']=InvoiceFullSerializer(invoice).data
                     context['invoice_lines']=InvoiceLineSerializer(invoice.invoice_lines(),many=True).data
-                    context['result']=SUCCEED
+                    context['result']=result
+                    context['message']=message
         context['log']=log
         return JsonResponse(context)
 

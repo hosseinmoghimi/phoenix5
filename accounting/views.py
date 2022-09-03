@@ -223,6 +223,11 @@ def get_transaction_context(request,*args, **kwargs):
     financial_balances_s=json.dumps(FinancialBalanceSerializer(financial_balances,many=True).data)
     context['financial_balances_s']=financial_balances_s
 
+
+
+    if not transaction.editable and request.user.has_perm(APP_NAME+".change_transaction"):
+        context['roll_back_transaction_form']=RollBackTransactionForm()
+        
     return context
 
 def get_product_or_service_context(request,*args, **kwargs):
@@ -394,6 +399,7 @@ class ReportView(View):
         
         context['payment_methods']=(u[0] for u in PaymentMethodEnum.choices)
 
+        context['transaction_statuses']=(u[0] for u in TransactionStatusEnum.choices)
         context['financial_documents_s']='[]'
         context['transactions_s']='[]'
         context['transactions_s']='[]'
@@ -639,11 +645,13 @@ class InvoiceView(View):
             context['ware_houses']=ware_houses
             
         return render(request,TEMPLATE_ROOT+"invoice.html",context)
+
 class InvoicePrintView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
         context.update(get_invoice_context(request=request,*args, **kwargs))
         currency=CURRENCY
+        context['TRANSACTION_PRINTING']=True
         context['TUMAN']=True
         context['RIAL']=False
         if 'currency' in kwargs:

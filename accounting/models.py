@@ -68,6 +68,12 @@ class Transaction(Page,LinkHelper):
     amount=models.IntegerField(_("مبلغ"),default=0)
     payment_method=models.CharField(_("نوع پرداخت"),choices=PaymentMethodEnum.choices,default=PaymentMethodEnum.DRAFT, max_length=50)
     transaction_datetime=models.DateTimeField(_("تاریخ تراکنش"), auto_now=False, auto_now_add=False)
+    print_datetime=models.DateTimeField(_("تاریخ چاپ"),null=True,blank=True, auto_now=False, auto_now_add=False)
+    def add_print_event(self,*args, **kwargs):
+        from django.utils import timezone
+        self.print_datetime=timezone.now()
+        super(Transaction,self).save()
+
     def status_color(self):
         return self.color()
     def color(self):
@@ -105,6 +111,10 @@ class Transaction(Page,LinkHelper):
     def __str__(self):
         return f"{self.title} ({self.status})"
 
+    def roll_back(self,*args, **kwargs):
+        self.status=TransactionStatusEnum.ROLL_BACKED
+        super(Transaction,self).save(*args, **kwargs)
+
 
     def save(self,*args, **kwargs):
         if self.transaction_datetime is None:
@@ -132,6 +142,29 @@ class Transaction(Page,LinkHelper):
         if no_tag:
             return PersianCalendar().from_gregorian(self.transaction_datetime)
         return to_persian_datetime_tag(self.transaction_datetime)
+
+    @property
+    def editable(self):
+        old_transaction=Transaction.objects.filter(pk=self.pk).first()
+        if old_transaction is None:
+            return True
+        if old_transaction.status==TransactionStatusEnum.ROLL_BACKED:
+            return True
+        if old_transaction.status==TransactionStatusEnum.FROM_PAST:
+            return True
+        if old_transaction.status==TransactionStatusEnum.CANCELED:
+            return True
+        if old_transaction.status==TransactionStatusEnum.FINISHED:
+            return False
+        if old_transaction.status==TransactionStatusEnum.PASSED:
+            return False
+        if old_transaction.status==TransactionStatusEnum.DELIVERED:
+            return False
+        if old_transaction.status==TransactionStatusEnum.DRAFT:
+            return True
+        if old_transaction.status==TransactionStatusEnum.IN_PROGRESS:
+            return True
+        return False
 
 
 class ProductOrServiceCategory(models.Model,LinkHelper):
@@ -672,12 +705,7 @@ class Invoice(Transaction):
         return reverse(APP_NAME+":invoice_print_currency",kwargs={'pk':self.pk,'currency':'r'})
     def get_excel_url(self):
         return reverse(APP_NAME+":invoice_excel",kwargs={'pk':self.pk})
-    def editable(self):
-        if self.status==TransactionStatusEnum.DRAFT:
-            return True
-        if self.status==TransactionStatusEnum.IN_PROGRESS:
-            return True
-        return False
+    
     def get_title(self):
         return self.title or f"فاکتور شماره {self.pk}"
   
@@ -744,7 +772,10 @@ class InvoiceLine(models.Model,LinkHelper):
     description=models.CharField(_("description"),null=True,blank=True, max_length=50)
     class_name="invoiceline"
     app_name=APP_NAME
+
     def save(self,*args, **kwargs):
+        if not self.invoice.editable:
+            return None
         super(InvoiceLine,self).save(*args, **kwargs)
         self.invoice.save()
         i=0
@@ -754,6 +785,8 @@ class InvoiceLine(models.Model,LinkHelper):
                 invoice_line.row=i
                 invoice_line.save()
     def delete(self,*args, **kwargs):
+        if not self.invoice.editable:
+            return None
         invoice=self.invoice
         super(InvoiceLine,self).delete()
         i=0
@@ -780,7 +813,6 @@ class InvoiceLine(models.Model,LinkHelper):
     def service(self):
         return Service.objects.filter(pk=self.pk).first()
   
-
 
 class Category(models.Model,LinkHelper, ImageMixin):
     thumbnail_origin = models.ImageField(_("تصویر کوچک"), upload_to=IMAGE_FOLDER+'Category/Thumbnail/',null=True, blank=True, height_field=None, width_field=None, max_length=None)
@@ -854,7 +886,6 @@ class Payment(Transaction):
             self.transaction_datetime=PersianCalendar().date
         super(Payment,self).save(*args, **kwargs)
         
-
 
 class Salary(Spend,LinkHelper):    
     class_name="wage"

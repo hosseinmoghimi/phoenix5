@@ -91,6 +91,8 @@ urlpatterns = [
   path('add_product_or_service_category/',login_required(apis.AddProductOrServiceCategoryApi.as_view()),name="add_product_or_service_category"),
   path('add_product/',login_required(apis.AddProductApi.as_view()),name="add_product"),
   path('add_service/',login_required(apis.AddServiceApi.as_view()),name="add_service"),
+  path('print_transaction/',login_required(apis.PrintTransactionApi.as_view()),name="print_transaction"),
+  path('roll_back_transaction/',login_required(apis.RollBackTransactionApi.as_view()),name="roll_back_transaction"),
 
 
 

@@ -4,7 +4,7 @@
 
 {% load to_variz_text %}
 {% block content %}
-<div class="row">
+<div class="row" id="invoice-print-app">
     <div class="col-md-12">
 
         <div class="card">
@@ -65,7 +65,7 @@
             <div class="col-md-6">
                 <div class="card">
                     <div class="card-body">
- 
+
 
                         <p class="text-center">
                             خریدار : {{invoice.pay_to.title}}
@@ -82,7 +82,7 @@
             <div class="col-md-6">
                 <div class="card">
                     <div class="card-body">
- 
+
 
 
                         <p class="text-center">
@@ -102,9 +102,18 @@
     <div class="col-md-12">
         {% include "accounting/includes/invoice-app/description.html" %}
     </div>
+    <div class="col-md-12">
+        <div class="text-right" v-show="printing">
+            <button @click="print()" class="btn btn-info">
+                <i class="fa fa-print"></i>
+                چاپ
+            </button>
 
-
-
+            <a href="{{invoice.get_absolute_url}}" class="farsi mx-3">
+                {{invoice.title}}
+            </a>
+        </div>
+    </div>
 </div>
 
 {% endblock content %}
@@ -116,5 +125,33 @@
     let invoice_lines = JSON.parse(`{{invoice_lines_s|escapejs}}`)
 </script>
 {% include "accounting/includes/invoice-lines-app/script.html" %}
+<script>
+    let invoice_print_app = new Vue({
+        el: "#invoice-print-app",
+        data: {
+            printing: true
+        },
+        methods: {
+            print: function () {
+                let url = "{% url 'accounting:print_transaction' %}"
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    transaction_id: parseInt("{{transaction.id}}")
+                }
+                $.post(url, payload).done(data => {
 
+                })
+
+                this.printing = false
+                setTimeout(() => {
+                    window.print()
+                    invoice_print_app.printing = true
+                }, 200);
+                setTimeout(() => {
+                    invoice_print_app.printing = true
+                }, 5000);
+            }
+        }
+    })
+</script>
 {% endblock script %}

@@ -53,6 +53,11 @@ class AddProductForm(forms.Form):
     category_id=forms.IntegerField(required=False)
     title=forms.CharField(max_length=500,required=True)
 
+class PrintTransactionForm(forms.Form):
+    transaction_id=forms.IntegerField(required=False)
+    
+class RollBackTransactionForm(forms.Form):
+    transaction_id=forms.IntegerField(required=False)
     
 class AddServiceForm(forms.Form):
     title=forms.CharField(max_length=500,required=True)
@@ -63,6 +68,7 @@ class GetReportForm(forms.Form):
     amount=forms.IntegerField(required=False)
     search_for=forms.CharField(max_length=50, required=False)
     payment_method=forms.CharField(max_length=50, required=False)
+    status=forms.CharField(max_length=50, required=False)
     start_date=forms.CharField(max_length=50, required=False)
     end_date=forms.CharField(max_length=50, required=False)
 

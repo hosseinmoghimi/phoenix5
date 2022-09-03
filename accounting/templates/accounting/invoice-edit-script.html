@@ -163,16 +163,16 @@
                 $.post(url, payload).done((data) => {
                     console.log(data)
                     if (data.result === 'SUCCEED') {
-                        edit_invoice_app.message = { show: true, body: "با موفقیت ذخیره شد.", color: 'success' }
+                        edit_invoice_app.message = { show: true, body: data.message, color: 'success' }
                         setTimeout(() => {
-                            edit_invoice_app.message = { show: false, body: "با موفقیت ذخیره شد.", color: 'success' }
+                            edit_invoice_app.message = { show: false }
 
                         }, 3000);
                     }
                     if (data.result === 'FAILED') {
-                        edit_invoice_app.message = { show: true, body: "خطا در ذخیره فاکتور.", color: 'danger' }
+                        edit_invoice_app.message = { show: true, body: data.message, color: 'danger' }
                         setTimeout(() => {
-                            edit_invoice_app.message = { show: false, body: "با موفقیت ذخیره شد.", color: 'success' }
+                            edit_invoice_app.message = { show: false }
 
                         }, 3000);
                     }
