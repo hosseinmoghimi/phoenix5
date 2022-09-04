@@ -2,6 +2,7 @@ from django.http import Http404, HttpResponse, JsonResponse
 from django.shortcuts import redirect, render,reverse
 from authentication.repo import ProfileRepo
 from authentication.serializers import ProfileSerializer
+from phoenix.constants import TUMAN
 from warehouse.serializers import WareHouseSheetSerializer
 from accounting import apis
 from accounting.apis import EditInvoiceApi
@@ -626,6 +627,7 @@ class InvoiceView(View):
         context=getContext(request=request)
         invoice=InvoiceRepo(request=request).invoice(*args, **kwargs)
         
+        context['COEF_PRICE']=1
         if invoice is None:
             mv=MessageView(request=request)
             mv.title="چنین فاکتوری یافت نشد."
@@ -654,6 +656,7 @@ class InvoicePrintView(View):
         context['TRANSACTION_PRINTING']=True
         context['TUMAN']=True
         context['RIAL']=False
+        context['COEF_PRICE']=1
         if 'currency' in kwargs:
             currency=kwargs['currency']
             if currency=='r':
@@ -661,7 +664,8 @@ class InvoicePrintView(View):
                 context['RIAL']=True
                 from core.constants import RIAL
                 context['CURRENCY']=RIAL
-
+                if CURRENCY==TUMAN:
+                    context['COEF_PRICE']=10
         context['no_footer']=True
         context['no_navbar']=True
         return render(request,TEMPLATE_ROOT+"invoice-print.html",context)

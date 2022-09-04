@@ -1,11 +1,2 @@
-from core.enums import CurrencyEnum
-
-
-SUCCEED="SUCCEED"
-FAILED="FAILED"
-
-CURRENCY=CurrencyEnum.RIAL
-
-TUMAN=CurrencyEnum.TUMAN
-RIAL=CurrencyEnum.RIAL
-MISC="متفرقه"
+from phoenix.constants import *
+from phoenix.server_settings import CURRENCY

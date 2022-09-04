@@ -1,6 +1,6 @@
 from django.utils.translation import gettext as _
 from django.db.models import TextChoices
-
+from phoenix.enums import *
 from phoenix.settings import SITE_URL
 
 class AppNameEnum(TextChoices):
@@ -16,10 +16,6 @@ class AppNameEnum(TextChoices):
     dashboard='dashboard',_('dashboard')
     polls='polls',_('polls')
 
-class CurrencyEnum(TextChoices):
-    TUMAN="تومان",_("تومان")
-    RIAL="ریال",_("ریال")
-    DOLLAR="دلار",_("دلار")
 
 
 def class_title(*args, **kwargs):
