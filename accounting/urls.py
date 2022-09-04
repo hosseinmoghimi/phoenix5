@@ -18,7 +18,7 @@ urlpatterns = [
     path("add_bank/",login_required(apis.AddBankApi.as_view()),name="add_bank"),
 
     path("products/",login_required(views.ProductsView.as_view()),name="products"),
-    path("product/<int:pk>/",login_required(views.ProductView.as_view()),name="product"),
+    path("product/<int:pk>/",(views.ProductView.as_view()),name="product"),
 
     path("service/<int:pk>/",login_required(views.ServiceView.as_view()),name="service"),
     path("services/",login_required(views.ServicesView.as_view()),name="services"),
