@@ -250,6 +250,13 @@ def get_product_or_service_context(request,*args, **kwargs):
     context.update(PageContext(request=request,page=product_or_service))
     context.update(get_price_app_context(request=request,items=[product_or_service]))
 
+
+    # invoices
+    invoices=InvoiceRepo(request=request).list(product_or_service_id=product_or_service.id)
+    context['invoices']=invoices
+    invoices_s=json.dumps(InvoiceSerializer(invoices,many=True).data)
+    context['invoices_s']=invoices_s
+
     # invoice_lines
     invoice_lines=InvoiceLineRepo(request=request).list(product_or_service_id=product_or_service.pk)
     context['invoice_lines']=invoice_lines
@@ -279,11 +286,6 @@ def get_product_context(request,*args, **kwargs):
     context=get_product_or_service_context(request=request,item=product,*args, **kwargs)
     
     
-    # invoices
-    invoices=InvoiceRepo(request=request).list(product_id=product.id)
-    context['invoices']=invoices
-    invoices_s=json.dumps(InvoiceSerializer(invoices,many=True).data)
-    context['invoices_s']=invoices_s
 
 
     if app_is_installed('guarantee'):

@@ -581,14 +581,15 @@ class PriceRepo:
         if 'user' in kwargs:
             self.user = kwargs['user']
         self.profile = ProfileRepo(user=self.user).me
-        self.objects = Price.objects.order_by('-date_added')
-        if self.user.has_perm(APP_NAME+".view_price"):
-            self.objects = self.objects.all()
-        elif self.profile is not None:
-            self.objects = self.objects.filter(account__profile_id=self.profile.id)
-        else:
-            self.objects = self.objects.filter(pk=0)
+        if self.profile is None:
+            self.objects = Price.objects.filter(id=0)
 
+        elif self.request.user.has_perm(APP_NAME+".view_price"):
+            self.objects = Price.objects.order_by('-date_added')
+        else:
+            self.objects = self.objects.filter(account__profile_id=self.profile.id)
+        self.objects = self.objects.order_by('-date_added')
+ 
 
     def list(self, *args, **kwargs):
         objects = self.objects.all()
@@ -892,12 +893,13 @@ class InvoiceLineRepo():
             self.user = self.request.user
         if 'user' in kwargs:
             self.user = kwargs['user']
-        
-        self.objects=InvoiceLine.objects.all()
         self.profile=ProfileRepo(*args, **kwargs).me
-        if self.profile is not None:
-            self.me=Account.objects.filter(profile=self.profile).first()
-        
+        if self.user.has_perm(APP_NAME+".view_invoice"):
+            self.objects=InvoiceLine.objects.all()
+        elif self.profile is not None:
+            self.objects=InvoiceLine.objects.filter(Q(invoice__pay_from__profile_id=self.profile.id)|Q(invoice__pay_to__profile_id=self.profile.id))
+        else:
+            self.objects=InvoiceLine.objects.filter(id=0)
 
     def invoice_line(self, *args, **kwargs):
         pk=0
@@ -1121,6 +1123,13 @@ class InvoiceRepo():
         self.objects=Invoice.objects.order_by('-transaction_datetime')
         self.profile=ProfileRepo(*args, **kwargs).me
 
+        self.profile=ProfileRepo(*args, **kwargs).me
+        if self.user.has_perm(APP_NAME+".view_invoice"):
+            self.objects=Invoice.objects.all()
+        elif self.profile is not None:
+            self.objects=Invoice.objects.filter(Q(pay_from__profile_id=self.profile.id)|Q(pay_to__profile_id=self.profile.id))
+        else:
+            self.objects=Invoice.objects.filter(id=0)
     def create_invoice(self,*args, **kwargs):
         if not self.user.has_perm(APP_NAME+".add_invoice"):
 
@@ -1166,6 +1175,12 @@ class InvoiceRepo():
         if 'product_id' in kwargs:
             product_id=kwargs['product_id']
             invoice_lines=InvoiceLine.objects.filter(product_or_service_id=product_id)
+            ids=(invoice_line.invoice_id for invoice_line in invoice_lines)
+            objects= objects.filter(id__in=ids)
+
+        if 'product_or_service_id' in kwargs:
+            product_or_service_id=kwargs['product_or_service_id']
+            invoice_lines=InvoiceLine.objects.filter(product_or_service_id=product_or_service_id)
             ids=(invoice_line.invoice_id for invoice_line in invoice_lines)
             objects= objects.filter(id__in=ids)
         return objects.all()
