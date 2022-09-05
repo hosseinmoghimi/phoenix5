@@ -12,12 +12,12 @@
     <div class="card-body">
         {% if perms.accounting.change_productorservice %}
         <div  >
-            <h4 v-for="category in item_categories">
+            <h6 v-for="category in item_categories">
                 <a :href="category.get_absolute_url">
-                    <span v-text="category.title">
+                    <span v-text="category.full_title">
                     </span>
                 </a>
-            </h4>
+            </h6>
             <button @click="edit=true" class="btn btn-link btn-warning">
                 <i class="fa fa-edit"></i>
             </button>
@@ -28,7 +28,7 @@
                 <img src="{% static 'leo/img/loading.gif' %}" width="32" v-if="waiting" alt="">
                 <select v-model="category_id" class="form-control">
 
-                    <option v-for="category in all_categories" :value="category.id" v-text="category.title"></option>
+                    <option v-for="category in all_categories" :value="category.id" v-text="category.full_title"></option>
                 </select>
                 <button type="submit" class="btn btn-block btn-success">تایید</button>
             </form>

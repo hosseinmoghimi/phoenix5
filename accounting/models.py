@@ -781,12 +781,13 @@ class Category(models.Model,LinkHelper, ImageMixin):
     products_or_services=models.ManyToManyField("accounting.productorservice", blank=True,verbose_name=_("products or services"))
     class_name='category'
     app_name=APP_NAME
+    
     def __str__(self):
         return self.title
+    
     class Meta:
         verbose_name = 'Category'
         verbose_name_plural = 'Categories'
- 
  
     def get_breadcrumb_link(self):
         aaa=""
@@ -802,6 +803,7 @@ class Category(models.Model,LinkHelper, ImageMixin):
         if self.parent is None:
             return aaa
         return self.parent.get_breadcrumb_link()+aaa
+    
     def get_breadcrumb_tag(self):
         return f"""
         
@@ -809,7 +811,13 @@ class Category(models.Model,LinkHelper, ImageMixin):
                     {self.get_breadcrumb_link()}
                
         """
-       
+    
+    @property
+    def full_title(self):
+        if self.parent is not None:
+            return self.parent.full_title+" / " +self.title
+        return self.title
+
 
 class Spend(Transaction,LinkHelper):    
     spend_type=models.CharField(_("spend_type"),choices=SpendTypeEnum.choices, max_length=50)
