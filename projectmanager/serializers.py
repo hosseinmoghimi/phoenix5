@@ -88,7 +88,7 @@ class ServiceRequestSerializer(serializers.ModelSerializer):
         model=ServiceRequest
         fields=['id','total','invoice','service','persian_date_requested',
         'quantity','persian_date_added','get_edit_url','get_delete_url',
-        'get_status_tag','project','employee','unit_name','unit_price','status',
+        'get_status_tag','project','employee','unit_name','unit_price','status','row',
         'get_absolute_url']
 
 
@@ -101,7 +101,7 @@ class ServiceRequestFullSerializer(serializers.ModelSerializer):
         model=ServiceRequest
         fields=['id','total','invoice','service','status','persian_date_requested',
         'quantity','persian_date_added','get_edit_url','get_delete_url',
-        'get_status_tag','project','employee','unit_name','unit_price',
+        'get_status_tag','project','employee','unit_name','unit_price','row',
         'get_absolute_url']
 
 

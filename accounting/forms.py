@@ -109,6 +109,7 @@ class AddPaymentForm(forms.Form):
 class EditInvoiceForm(forms.Form):
     invoice_id=forms.IntegerField(required=True)
     discount=forms.IntegerField(required=True)
+    title=forms.CharField(max_length=300, required=True)
     lines=forms.CharField(max_length=50000, required=True)
     description=forms.CharField(max_length=5000, required=False)
     invoice_datetime=forms.CharField(max_length=20, required=True)

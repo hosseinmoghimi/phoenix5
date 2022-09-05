@@ -40,9 +40,10 @@
             <tr v-for="service_request in service_requests">
                 <td>
                     <a target="_blank" :href="service_request.get_absolute_url" title="نمایش کامل">
-                        <i class="material-icons">
+                        # <small class="text-muted" v-text="service_request.row"></small>
+                        <!-- <i class="material-icons">
                             ballot
-                        </i>
+                        </i> -->
                     </a>
                 </td>
                 <td>

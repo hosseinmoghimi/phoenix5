@@ -179,6 +179,7 @@ class EditInvoiceApi(APIView):
                 description=fm['description']
                 discount=fm['discount']
                 invoice_id=fm['invoice_id']
+                title=fm['title']
                 payment_method=fm['payment_method']
                 status=fm['status']
                 invoice_datetime=PersianCalendar().to_gregorian(invoice_datetime)
@@ -186,6 +187,7 @@ class EditInvoiceApi(APIView):
                     invoice_id=invoice_id,
                     lines=lines,
                     status=status,
+                    title=title,
                     payment_method=payment_method,
                     description=description,
                     discount=discount,

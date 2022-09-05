@@ -1099,7 +1099,7 @@ class InvoiceRepo():
 
    
     def edit_invoice(self,*args, **kwargs):
-        
+        print(kwargs)
         invoice=self.invoice(*args, **kwargs)
         if not invoice.editable:
             return (FAILED,invoice,"این سند قابل ویرایش نمی باشد")
@@ -1124,6 +1124,9 @@ class InvoiceRepo():
 
         if 'status' in kwargs:
             invoice.status=kwargs['status']
+
+        if 'title' in kwargs:
+            invoice.title=kwargs['title']
 
         if 'pay_to_id' in kwargs:
             invoice.pay_to_id=kwargs['pay_to_id']
