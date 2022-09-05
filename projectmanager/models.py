@@ -432,7 +432,8 @@ class Project(Page):
         <div>{self.percentage_completed} %</div>
         """
 
-
+    def __str__(self):
+        return self.full_title
 class SampleForm(Page):
 
     class Meta:

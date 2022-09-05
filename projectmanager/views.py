@@ -296,7 +296,6 @@ class ProjectsListView(View):
         return ProjectsView().get(request=request,parent_id=0,*args, **kwargs)
         # return ProjectsView().get(request=request,*args, **kwargs)
 
-
 class CopyProjectView(View):
     def post(self, request, *args, **kwargs):
         context = {}
@@ -427,6 +426,7 @@ class MaterialView(View):
     def get(self, request, *args, **kwargs):
         context = getContext(request=request)
         material = MaterialRepo(request=request).product(*args, **kwargs)
+        return redirect(material.get_absolute_url())
         context.update(get_product_context(request=request, product=material))
         context['material'] = material
 
@@ -457,6 +457,7 @@ class ServiceView(View):
         context = getContext(request=request)
 
         service = ServiceRepo(request=request).service(*args, **kwargs)
+        return redirect(service.get_absolute_url())
         context.update(get_service_context(request=request, service=service))
 
         service_requests = ServiceRequestRepo(request=request).list(service_id=service.id)

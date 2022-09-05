@@ -1,7 +1,8 @@
-
-
 from pathlib import Path
 import os
+
+CURRENCY="ریال"
+CURRENCY="تومان"
 BASE_DIR = Path(__file__).resolve().parent.parent
 HOME_APP_URLS='projectmanager.urls'
 ALLOW_REGISTER_ONLINE=False
