@@ -1149,8 +1149,6 @@ class InvoiceRepo():
 
         if 'lines' in kwargs:
             lines=kwargs['lines']
-            print(10 * " lines")
-            print(lines)
             for line in lines: 
                 # if int(line['quantity'])>0:
                 sw=False
