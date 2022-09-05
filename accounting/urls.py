@@ -36,8 +36,6 @@ urlpatterns = [
     path("transactions_excel/<int:account_id_1>/<int:account_id_2>/",login_required(views.TransactionsExcelView.as_view()),name="transactions2_excel"),
     path("transactions_print/",login_required(views.TransactionsPrintView.as_view()),name="transactions_print"),
     
-    path("product_or_service_category/<int:pk>/",login_required(views.ProductOrServiceCategoryView.as_view()),name="product_or_service_category"),
-    path("product_or_service_categories/",login_required(views.ProductOrServiceCategoriesView.as_view()),name="product_or_service_categories"),
     
     path("category/<int:pk>/",login_required(views.CategoryView.as_view()),name="category"),
     path("categories/",login_required(views.CategoriesView.as_view()),name="categories"),
@@ -84,11 +82,9 @@ urlpatterns = [
   path("add_price/",login_required(apis.AddPriceApi.as_view()),name="add_price"),
 
   
-  path('change_product_or_service_category/',login_required(apis.ChangeProductOrServiceCategoryApi.as_view()),name="change_product_or_service_category"),
 
   path("add_category/",login_required(apis.AddCategoryApi.as_view()),name="add_category"),
   path('add_item_category/',login_required(apis.AddItemCategoryApi.as_view()),name="add_item_category"),
-  path('add_product_or_service_category/',login_required(apis.AddProductOrServiceCategoryApi.as_view()),name="add_product_or_service_category"),
   path('add_product/',login_required(apis.AddProductApi.as_view()),name="add_product"),
   path('add_service/',login_required(apis.AddServiceApi.as_view()),name="add_service"),
   path('print_transaction/',login_required(apis.PrintTransactionApi.as_view()),name="print_transaction"),

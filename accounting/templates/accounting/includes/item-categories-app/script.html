@@ -2,9 +2,7 @@
     let item_categories_app = new Vue({
         el: "#item-categories-app",
         data: {
-            // category_title: "{{product_or_service.category_title}}",
             item_categories: JSON.parse("{{item_categories_s|escapejs}}"),
-            // product_or_service_category_get_absolute_url: "{{product_or_service.product_or_service_category_id}}",
             waiting: false,
             all_categories:JSON.parse("{{all_categories_s|escapejs}}"),
             edit: false,
@@ -27,8 +25,6 @@
                     if (data.result === 'SUCCEED') {
                         
                         item_categories_app.item_categories = data.item_categories
-                        // category_title_app.product_or_service_category_id = data.product_or_service_category_id
-                        // category_title_app.product_or_service_category_title = data.product_or_service_category_title
                     }
                 })
             }

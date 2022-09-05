@@ -1,31 +1,24 @@
 from rest_framework import serializers
-from .models import Account, Asset, Bank, BankAccount, Category, Cheque, Cost, FinancialBalance, FinancialDocument, Invoice, InvoiceLine, Payment, Price, Product, ProductOrService, ProductOrServiceCategory,Service,  Transaction
+from .models import Account, Asset, Bank, BankAccount, Category, Cheque, Cost, FinancialBalance, FinancialDocument, Invoice, InvoiceLine, Payment, Price, Product, ProductOrService,Service,  Transaction
 from authentication.serializers import ProfileSerializer
 
-class ProductOrServiceCategorySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ProductOrServiceCategory
-        fields = ['id', 'title', 'get_absolute_url']
-
+ 
 
 class ProductSerializer(serializers.ModelSerializer):
-    product_or_service_category=ProductOrServiceCategorySerializer()
     class Meta:
         model = Product
-        fields = ['id', 'title','product_or_service_category', 'get_absolute_url','buy_price', 'get_pm_absolute_url','get_edit_url','get_delete_url','available','unit_price','unit_name','thumbnail']
+        fields = ['id', 'title','get_absolute_url','buy_price', 'get_pm_absolute_url','get_edit_url','get_delete_url','available','unit_price','unit_name','thumbnail']
 
 class ProductBriefSerializer(serializers.ModelSerializer):
-    product_or_service_category=ProductOrServiceCategorySerializer()
     class Meta:
         model = Product
-        fields = ['id', 'title','product_or_service_category', 'get_absolute_url', 'get_pm_absolute_url', 'thumbnail','get_edit_url','get_delete_url']
+        fields = ['id', 'title','get_absolute_url', 'get_pm_absolute_url', 'thumbnail','get_edit_url','get_delete_url']
 
 
 class ServiceSerializer(serializers.ModelSerializer):
-    product_or_service_category=ProductOrServiceCategorySerializer()
     class Meta:
         model = Service
-        fields = ['id', 'title' ,'product_or_service_category','get_absolute_url','buy_price', 'get_pm_absolute_url','unit_price','unit_name','thumbnail','get_edit_url','get_delete_url']
+        fields = ['id', 'title' ,'get_absolute_url','buy_price', 'get_pm_absolute_url','unit_price','unit_name','thumbnail','get_edit_url','get_delete_url']
 
 class AccountSerializerFull(serializers.ModelSerializer):
     profile=ProfileSerializer()

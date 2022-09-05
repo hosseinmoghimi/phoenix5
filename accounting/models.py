@@ -166,57 +166,8 @@ class Transaction(Page,LinkHelper):
             return True
         return False
 
-
-class ProductOrServiceCategory(models.Model,LinkHelper):
-    super_category=models.ForeignKey("productorservicecategory",related_name="sub_categories",blank=True,null=True, verbose_name=_("parent"), on_delete=models.SET_NULL)
-    title=models.CharField(_("عنوان"), max_length=50)
-    class_name="productorservicecategory"
-    app_name=APP_NAME
-    def get_breadcrumb_link(self):
-        aaa=f"""
-                    <li class="breadcrumb-item"><a href="{self.get_absolute_url()}">
-                    <span class="farsi">
-                    {self.title}
-                    </span>
-                    </a></li> 
-                    
-                    
-                    """
-        if self.super_category is None:
-            return aaa
-        return self.super_category.get_breadcrumb_link()+aaa
-    def get_breadcrumb(self):
-        return f"""
-        
-                <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{reverse(APP_NAME+":product_or_service_categories")}">
-                    <span class="farsi">
-                    <i class="fa fa-home"></i>
-                    </span>
-                    </a></li> 
-
-                    {self.get_breadcrumb_link()}
-                </ol>
-                </nav>
-        """
-    def thumbnail(self):
-        return STATIC_URL+'archive/img/pages/thumbnail/folder.png'
-
-
-    class Meta:
-        verbose_name = _("ProductOrServiceCategory")
-        verbose_name_plural = _("ProductOrServiceCategories")
-
-    def __str__(self):
-        return self.title
-
-    def get_absolute_url(self):
-        return reverse(APP_NAME+":product_or_service_category", kwargs={"pk": self.pk})
-
-
+ 
 class ProductOrService(Page):
-    product_or_service_category=models.ForeignKey("productorservicecategory", null=True,blank=True,verbose_name=_("دسته بندی"), on_delete=models.CASCADE)
     barcode=models.CharField(_("بارکد"),null=True,blank=True, max_length=100)
 
     

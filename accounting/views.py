@@ -17,8 +17,8 @@ from django.views import View
 from utility.calendar import PersianCalendar
 from utility.excel import ReportSheet,ReportWorkBook, get_style
 from accounting.apps import APP_NAME
-from accounting.repo import BankRepo,AssetRepo, CategoryRepo, CostRepo,BankAccountRepo, InvoiceLineRepo,AccountRepo,FinancialBalanceRepo, ChequeRepo, PaymentRepo, PriceRepo, ProductOrServiceCategoryRepo, ProductRepo,ServiceRepo,FinancialDocumentRepo,InvoiceRepo, TransactionRepo
-from accounting.serializers import CategorySerializer, InvoiceLineWithInvoiceSerializer,AccountSerializer, AccountSerializerFull, AssetSerializer, BankAccountSerializer, BankSerializer, CostSerializer, FinancialBalanceSerializer, InvoiceFullSerializer,InvoiceLineSerializer,ChequeSerializer, InvoiceSerializer, PaymentSerializer, PriceSerializer, ProductOrServiceCategorySerializer, ProductSerializer,ServiceSerializer,FinancialDocumentForAccountSerializer,FinancialDocumentSerializer, TransactionSerializer
+from accounting.repo import BankRepo,AssetRepo, CategoryRepo, CostRepo,BankAccountRepo, InvoiceLineRepo,AccountRepo,FinancialBalanceRepo, ChequeRepo, PaymentRepo, PriceRepo,  ProductRepo,ServiceRepo,FinancialDocumentRepo,InvoiceRepo, TransactionRepo
+from accounting.serializers import CategorySerializer, InvoiceLineWithInvoiceSerializer,AccountSerializer, AccountSerializerFull, AssetSerializer, BankAccountSerializer, BankSerializer, CostSerializer, FinancialBalanceSerializer, InvoiceFullSerializer,InvoiceLineSerializer,ChequeSerializer, InvoiceSerializer, PaymentSerializer, PriceSerializer,  ProductSerializer,ServiceSerializer,FinancialDocumentForAccountSerializer,FinancialDocumentSerializer, TransactionSerializer
 from accounting.forms import *
 import json
 from phoenix.server_settings import phoenix_apps
@@ -243,10 +243,7 @@ def get_product_or_service_context(request,*args, **kwargs):
     if 'service' in kwargs:
         product_or_service=kwargs['service']
         context['service']=product_or_service
-    product_or_service_categories=ProductOrServiceCategoryRepo(request=request).list()
-    context['product_or_service_categories']=product_or_service_categories
     context['product_or_service']=product_or_service
-    context['product_or_service_category_s']=json.dumps(ProductOrServiceCategorySerializer(product_or_service.product_or_service_category).data)
     context.update(PageContext(request=request,page=product_or_service))
     context.update(get_price_app_context(request=request,items=[product_or_service]))
 
@@ -798,48 +795,7 @@ class TransactionsPrintView(View):
             context['no_navbar']=True
             return render(request,TEMPLATE_ROOT+"transactions-print.html",context)
 
-class ProductOrServiceCategoriesView(View):
-    def get(self,request,*args, **kwargs):
-        context=getContext(request=request)
-        product_or_service_categories=ProductOrServiceCategoryRepo(request=request).list(parent_id=0,*args, **kwargs)
-        context['product_or_service_categories']=product_or_service_categories
-        product_or_service_categories_s=json.dumps(ProductOrServiceCategorySerializer(product_or_service_categories,many=True).data)
-        context['product_or_service_categories_s']=product_or_service_categories_s
-        context['expand_product_or_service_categories']=True
-        if request.user.has_perm(APP_NAME+".add_productorservicecategory"):
-            context['add_account_form']=AddAccountForm()
-        return render(request,TEMPLATE_ROOT+"product-or-service-categories.html",context)
-
-
-class ProductOrServiceCategoryView(View):
-    def get(self,request,*args, **kwargs):
-        context=getContext(request=request)
-        product_or_service_category_repo=ProductOrServiceCategoryRepo(request=request)
-        product_or_service_category=product_or_service_category_repo.product_or_service_category(*args, **kwargs)
-        if product_or_service_category is None:
-            mv=MessageView(request=request)
-            mv.title="چنین کالایی یافت نشد."
-        # context['expand_products']=True
-        # context['expand_services']=True
-        
-        products=ProductRepo(request=request).list(product_or_service_category_id=product_or_service_category.pk)
-        context['products']=products
-        products_s=json.dumps(ProductSerializer(products,many=True).data)
-        context['products_s']=products_s
-        
-
-        services=ServiceRepo(request=request).list(product_or_service_category_id=product_or_service_category.pk)
-        context['services']=services
-        services_s=json.dumps(ServiceSerializer(services,many=True).data)
-        context['services_s']=services_s
-        context['product_or_service_category']=product_or_service_category
-        product_or_service_categories=product_or_service_category_repo.list(super_category=None)
-        context['product_or_service_categories']=product_or_service_categories
-
-        if request.user.has_perm(APP_NAME+".add_add_productorservicecategory"):
-            context['add_product_or_service_category_form']=AddProductOrServiceCategoryForm()
-        return render(request,TEMPLATE_ROOT+"product-or-service-category.html",context)
-
+ 
 class CategoriesView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
