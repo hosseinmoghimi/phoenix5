@@ -114,7 +114,7 @@ class MaterialRequestSerializer(serializers.ModelSerializer):
         model=Request
         fields=['id','invoice','total','material','persian_date_requested','status',
         'quantity','persian_date_added','get_edit_url','get_delete_url',
-        'get_status_tag','project','employee','unit_name','unit_price',
+        'get_status_tag','project','employee','unit_name','unit_price','row',
         'get_absolute_url']
 
 
@@ -127,5 +127,5 @@ class MaterialRequestFullSerializer(serializers.ModelSerializer):
         model=Request
         fields=['id','invoice','total','material','persian_date_requested','status',
         'quantity','persian_date_added','get_edit_url','get_delete_url',
-        'get_status_tag','project','employee','unit_name','unit_price',
+        'get_status_tag','project','employee','unit_name','unit_price','row',
         'get_absolute_url']
