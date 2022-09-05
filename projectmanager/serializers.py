@@ -55,17 +55,15 @@ class RequestSignatureForEmployeeSerializer(serializers.ModelSerializer):
 
 
 class MaterialSerializer(serializers.ModelSerializer):
-    product_or_service_category=ProductOrServiceSerializer()
     class Meta:
         model = Material
-        fields = ['id', 'title','product_or_service_category', 'get_pm_absolute_url','full_title','buy_price','available','unit_price','unit_name','thumbnail']
+        fields = ['id', 'title','get_pm_absolute_url','full_title','buy_price','available','unit_price','unit_name','thumbnail']
 
 
 class ServiceSerializer(serializers.ModelSerializer):
-    product_or_service_category=ProductOrServiceSerializer()
     class Meta:
         model = Service
-        fields = ['id', 'title','product_or_service_category',  'get_pm_absolute_url','get_absolute_url','full_title','buy_price','unit_price','unit_name','thumbnail','get_edit_url','get_delete_url']
+        fields = ['id', 'title','get_pm_absolute_url','get_absolute_url','full_title','buy_price','unit_price','unit_name','thumbnail','get_edit_url','get_delete_url']
 
 
 class ProjectSerializer(serializers.ModelSerializer):
