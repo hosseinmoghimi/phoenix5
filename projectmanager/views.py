@@ -166,7 +166,7 @@ class ProjectView(View):
 
         
 
-        events = EventRepo(request=request).list(project_id=project.id)
+        events = EventRepo(request=request).list(project_id=project.id).order_by('event_datetime')
         context['events'] = events
         events_s = json.dumps(EventSerializer(events, many=True).data)
         context['events_s'] = events_s
@@ -179,13 +179,13 @@ class ProjectView(View):
             OrganizationUnitSerializer(organization_units, many=True).data)
         context['organization_units_s'] = organization_units_s
 
-        service_requests = project.service_requests().order_by('product_or_service__title')
+        service_requests = project.service_requests().order_by('invoice_id').order_by('row')
         context['service_requests'] = service_requests
         service_requests_s = json.dumps(
             ServiceRequestSerializer(service_requests, many=True).data)
         context['service_requests_s'] = service_requests_s
 
-        material_requests = project.material_requests().order_by('product_or_service__title')
+        material_requests = project.material_requests().order_by('invoice_id').order_by('row')
         context['material_requests'] = material_requests
         material_requests_s = json.dumps(
             MaterialRequestSerializer(material_requests, many=True).data)

@@ -1179,6 +1179,7 @@ class InvoiceRepo():
                         invoice_line.save()
                     
         invoice.save()
+        invoice.normalize_rows()
         result=SUCCEED
         message="فاکتور با موفقیت ویرایش شد."
         return (result,invoice,message)

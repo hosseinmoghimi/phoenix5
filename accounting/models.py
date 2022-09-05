@@ -717,6 +717,7 @@ class Invoice(Transaction):
             if not invoice_line.row-i==0:
                 invoice_line.row=i
                 invoice_line.save()
+        
 
 class InvoiceLine(models.Model,LinkHelper):
     date_added=models.DateTimeField(_("date_added"), auto_now=False, auto_now_add=True)
@@ -736,7 +737,6 @@ class InvoiceLine(models.Model,LinkHelper):
             return None
         super(InvoiceLine,self).save(*args, **kwargs)
         self.invoice.save()
-        self.invoice.normalize_rows()
         # for invoice_line in self.invoice.invoice_lines().order_by('row'):
         #     i+=1
         #     if not invoice_line.row-i==0:
