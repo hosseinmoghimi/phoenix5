@@ -343,6 +343,67 @@ class EventRepo():
         return location
 
 
+class RequestSignatureRepo():
+    def __init__(self, *args, **kwargs):
+        self.request = None
+        self.user = None
+        if 'request' in kwargs:
+            self.request = kwargs['request']
+            self.user = self.request.user
+        if 'user' in kwargs:
+            self.user = kwargs['user']
+        self.profile=ProfileRepo(*args, **kwargs).me
+        self.objects = RequestSignature.objects.order_by('date_added')
+        return
+        if self.user is not None and self.user.has_perm(APP_NAME+".view_warehouse"):
+            self.objects = WareHouse.objects.order_by('title')
+        elif self.profile is not None:
+            self.objects = WareHouse.objects.filter(account__profile=self.profile).order_by('title')
+        else:
+            self.objects = WareHouse.objects.filter(pk__lte=0).order_by('title')
+
+    def add_signature(self,*args, **kwargs):
+        if self.user.has_perm(APP_NAME+".add_requestsignature"):
+            pass
+        
+        from projectmanager.repo import EmployeeRepo
+        employee=EmployeeRepo(request=self.request).me
+        if employee is None:
+            return
+        signature=RequestSignature()
+        if 'request_id' in kwargs:
+            signature.request_id=kwargs['request_id']
+        if 'status' in kwargs:
+            signature.status=kwargs['status']
+        if 'description' in kwargs:
+            signature.description=kwargs['description']
+        
+        signature.employee_id=employee.id
+        signature.save()
+        if employee.organization_unit.id==signature.request.project.employer.id or employee.organization_unit.id==signature.request.project.contractor.id:
+            signature.request.status=signature.status
+            signature.request.save()
+        return signature
+    
+    def list(self,*args, **kwargs):
+        objects=self.objects
+        if 'employee_id' in kwargs:
+            objects= objects.filter(employee_id=kwargs['employee_id'])
+        return objects
+    
+    def request_signature(self, *args, **kwargs):
+        if 'request_signature_id' in kwargs:
+            return self.objects.filter(pk=kwargs['request_signature_id']).first()
+        if 'pk' in kwargs:
+            return self.objects.filter(pk=kwargs['pk']).first()
+        if 'store_id' in kwargs:
+            return self.objects.filter(store_id=kwargs['store_id']).first()
+        if 'owner_id' in kwargs:
+            return self.objects.filter(owner_id=kwargs['owner_id']).first()
+        if 'id' in kwargs:
+            return self.objects.filter(pk=kwargs['id']).first()
+    
+
 class ServiceRequestRepo():
     def __init__(self, *args, **kwargs):
         self.request = None
@@ -400,9 +461,10 @@ class ServiceRequestRepo():
             invoice.save()
         
 
-        for service_request in service_requests:
+        for service_request in service_requests.order_by("row"):
             new_service_request=ServiceRequest()
             new_service_request.project_id=destination_project.id
+            new_service_request.row=service_request.row
             new_service_request.invoice_id=invoice.id
             new_service_request.quantity=service_request.quantity
             new_service_request.product_or_service_id=service_request.product_or_service_id
@@ -535,67 +597,6 @@ class ServiceRequestRepo():
         return objects.all()
 
 
-class RequestSignatureRepo():
-    def __init__(self, *args, **kwargs):
-        self.request = None
-        self.user = None
-        if 'request' in kwargs:
-            self.request = kwargs['request']
-            self.user = self.request.user
-        if 'user' in kwargs:
-            self.user = kwargs['user']
-        self.profile=ProfileRepo(*args, **kwargs).me
-        self.objects = RequestSignature.objects.order_by('date_added')
-        return
-        if self.user is not None and self.user.has_perm(APP_NAME+".view_warehouse"):
-            self.objects = WareHouse.objects.order_by('title')
-        elif self.profile is not None:
-            self.objects = WareHouse.objects.filter(account__profile=self.profile).order_by('title')
-        else:
-            self.objects = WareHouse.objects.filter(pk__lte=0).order_by('title')
-
-    def add_signature(self,*args, **kwargs):
-        if self.user.has_perm(APP_NAME+".add_requestsignature"):
-            pass
-        
-        from projectmanager.repo import EmployeeRepo
-        employee=EmployeeRepo(request=self.request).me
-        if employee is None:
-            return
-        signature=RequestSignature()
-        if 'request_id' in kwargs:
-            signature.request_id=kwargs['request_id']
-        if 'status' in kwargs:
-            signature.status=kwargs['status']
-        if 'description' in kwargs:
-            signature.description=kwargs['description']
-        
-        signature.employee_id=employee.id
-        signature.save()
-        if employee.organization_unit.id==signature.request.project.employer.id or employee.organization_unit.id==signature.request.project.contractor.id:
-            signature.request.status=signature.status
-            signature.request.save()
-        return signature
-    
-    def list(self,*args, **kwargs):
-        objects=self.objects
-        if 'employee_id' in kwargs:
-            objects= objects.filter(employee_id=kwargs['employee_id'])
-        return objects
-    
-    def request_signature(self, *args, **kwargs):
-        if 'request_signature_id' in kwargs:
-            return self.objects.filter(pk=kwargs['request_signature_id']).first()
-        if 'pk' in kwargs:
-            return self.objects.filter(pk=kwargs['pk']).first()
-        if 'store_id' in kwargs:
-            return self.objects.filter(store_id=kwargs['store_id']).first()
-        if 'owner_id' in kwargs:
-            return self.objects.filter(owner_id=kwargs['owner_id']).first()
-        if 'id' in kwargs:
-            return self.objects.filter(pk=kwargs['id']).first()
-            
-
 class MaterialRequestRepo():
     def __init__(self, *args, **kwargs):
         self.request = None
@@ -720,8 +721,9 @@ class MaterialRequestRepo():
             material_requests=MaterialRequest.objects.filter(project_id=source_project.id)
         if source_invoice is not None:
             material_requests=MaterialRequest.objects.filter(invoice_id=source_invoice.id)
-        for material_request in material_requests:
+        for material_request in material_requests.order_by('row'):
             new_material_request=MaterialRequest()
+            new_material_request.row=material_request.row
             new_material_request.invoice_id=invoice.id
             new_material_request.project_id=destination_project.id
             new_material_request.quantity=material_request.quantity
