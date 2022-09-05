@@ -1115,6 +1115,7 @@ class InvoiceRepo():
             return None
         if 'title' in kwargs:
             invoice.title=kwargs['title']
+        
         if 'pay_from_id' in kwargs:
             invoice.pay_from_id=kwargs['pay_from_id']
 
@@ -1144,8 +1145,12 @@ class InvoiceRepo():
             invoice.tax_percent=kwargs['tax_percent']
 
         invoice.save()
+
+
         if 'lines' in kwargs:
             lines=kwargs['lines']
+            print(10 * " lines")
+            print(lines)
             for line in lines: 
                 # if int(line['quantity'])>0:
                 sw=False
@@ -1157,6 +1162,7 @@ class InvoiceRepo():
                             line_origin.quantity=int(line['quantity'])
                             line_origin.unit_price=int(line['unit_price'])
                             line_origin.unit_name=line['unit_name']
+                            line_origin.row=line['row']
                             line_origin.save()
                         else:
                             line_origin.delete()

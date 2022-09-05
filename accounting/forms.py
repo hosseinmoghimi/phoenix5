@@ -59,6 +59,7 @@ class PrintTransactionForm(forms.Form):
 class RollBackTransactionForm(forms.Form):
     transaction_id=forms.IntegerField(required=False)
     
+
 class AddServiceForm(forms.Form):
     title=forms.CharField(max_length=500,required=True)
 
@@ -72,6 +73,7 @@ class GetReportForm(forms.Form):
     start_date=forms.CharField(max_length=50, required=False)
     end_date=forms.CharField(max_length=50, required=False)
 
+
 class AddFinancialDocumentForm(forms.Form):
     title=forms.CharField( max_length=200, required=True)
     bestankar=forms.IntegerField(required=True)
@@ -79,9 +81,12 @@ class AddFinancialDocumentForm(forms.Form):
     bedehkar=forms.IntegerField(required=True)
     category_id=forms.IntegerField(required=True)
  
+
 class AddChequeForm(forms.Form):
     title=forms.CharField( max_length=500, required=True)
-    
+
+
+
 class AddPriceForm(forms.Form):
     unit_name=forms.CharField(required=False,max_length=50)
     product_or_service_id=forms.IntegerField(required=True)
@@ -114,6 +119,7 @@ class EditInvoiceForm(forms.Form):
     status=forms.CharField(max_length=50, required=True)
     payment_method=forms.CharField(max_length=50, required=True)
 
+
 class AddCostForm(forms.Form):
     amount=forms.IntegerField(required=True)
     cost_type=forms.CharField( max_length=100, required=True)
@@ -123,6 +129,7 @@ class AddCostForm(forms.Form):
     transaction_datetime=forms.CharField( max_length=50, required=True)
     status=forms.CharField( max_length=100, required=False)
     title=forms.CharField(max_length=500, required=True)
+
 
 class AddProductOrServiceCategoryForm(forms.Form):
     parent_id=forms.IntegerField(required=False)
@@ -138,6 +145,7 @@ class AddCategoryForm(forms.Form):
     parent_id=forms.IntegerField(required=False)
     title=forms.CharField(max_length=100, required=True)
 
+
 class AddWageForm(forms.Form):
     # cost_type=forms.IntegerField(required=True)
     # amount=forms.IntegerField(required=True)
@@ -150,9 +158,13 @@ class AddWageForm(forms.Form):
     payment_method=forms.CharField( max_length=50, required=True)
     title=forms.CharField( max_length=500, required=True)
     transaction_datetime=forms.CharField( max_length=50, required=True)
+
+
 class AddTransactionDocumentForm(forms.Form):
     transaction_id=forms.IntegerField(required=True)
     title=forms.CharField( max_length=50, required=True)
+
+
 class AddTransactionLinkForm(forms.Form):
     transaction_id=forms.IntegerField(required=True)
     title=forms.CharField( max_length=500000, required=True)
