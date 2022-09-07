@@ -1099,7 +1099,6 @@ class InvoiceRepo():
 
    
     def edit_invoice(self,*args, **kwargs):
-        # print(kwargs)
         invoice=self.invoice(*args, **kwargs)
         if not invoice.editable:
             return (FAILED,invoice,"این سند قابل ویرایش نمی باشد")
