@@ -1,0 +1,103 @@
+<script>
+    let me_account_id = 0
+</script>
+{% if me_account %}
+<script>
+    me_account_id = parseInt("{{me_account.id}}")
+</script>
+{% endif %}
+<script>
+    let add_cheque_app = new Vue({
+        el: "#add-cheque-app",
+        data: {
+
+            search_for: '',
+            transaction_datetime: current_date,
+            sarresid_datetime: current_date,
+            title: "",
+            bank_id: 0,
+            serial_no: "",
+            sayyad_no: "",
+            pay_to_id: me_account_id,
+            pay_from_id: me_account_id,
+            amount: 0,
+            status:"",
+            description: "",
+            payment_method: "پیش نویس",
+            waiting: false,
+            show_add_form: false,
+            message: {
+                show: false,
+                color: "success",
+                body: "",
+            }
+        },
+        components: {
+            DatePicker: VuePersianDatetimePicker,
+        },
+        methods: {
+            filter: function () {
+                this.cheques = cheques.filter(cheque => cheque.title.indexOf(this.search_for) > -1)
+            },
+            add_cheque: function () {
+                if (!(parseInt(add_cheque_app.amount) > 0)) {
+                    add_cheque_app.message = { show: true, body: "خطا در ذخیره سازی  . مبلغ را وارد کنید.", color: 'warning' }
+                    setTimeout(() => {
+                        add_cheque_app.message = { show: false, body: "خطا در ذخیره سازی ", color: 'danger' }
+                    }, 2000);
+                    return
+                }
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    pay_from_id: parseInt(this.pay_from_id),
+                    pay_to_id: parseInt(this.pay_to_id),
+                    title: this.title,
+                    status:this.status,
+                    description: this.description,
+                    amount: parseInt(this.amount),
+                    transaction_datetime: this.transaction_datetime,
+                    sarresid_datetime: this.sarresid_datetime,
+                    bank_id:parseInt(this.bank_id),
+                    sayyad_no: this.sayyad_no,
+                    serial_no: this.serial_no,
+                    payment_method: this.payment_method,
+                }
+                console.log(payload)
+                add_cheque_app.waiting = true
+                let url = "{% url 'accounting:add_cheque' %}"
+                $.post(url, payload).done((data) => {
+                    console.log(data)
+                    add_cheque_app.description = ""
+                    add_cheque_app.title = ""
+                    add_cheque_app.amount = 0
+                    add_cheque_app.waiting = false
+                    if (data.result === 'SUCCEED') {
+                        if (typeof cheques_app != "undefined") {
+                            cheques_app.cheques.push(data.cheque)
+                        }
+                        add_cheque_app.message = { show: true, body: "با موفقیت ذخیره شد.", color: 'success' }
+                    }
+                    if (data.result === 'FAILED') {
+                        add_cheque_app.message = { show: true, body: "خطا در ذخیره سازی ", color: 'danger' }
+                    }
+                    setTimeout(() => {
+                        add_cheque_app.message = { show: false, body: "خطا در ذخیره سازی ", color: 'danger' }
+
+                    }, 2000);
+                })
+            },
+            to_price: function (vall) {
+                let color = 'primary'
+                if (vall < 0)
+                    color = 'danger'
+                if (vall > 0)
+                    color = 'success'
+                vall = to_price(vall, "{{CURRENCY}}")
+                return `
+                    <span class="text-${color}">${vall}</span>
+                    `
+            },
+        }
+    })
+
+</script>

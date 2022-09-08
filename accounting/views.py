@@ -939,7 +939,9 @@ class ChequesView(View):
         cheques_s=json.dumps(ChequeSerializer(cheques,many=True).data)
         context['cheques_s']=cheques_s
         if request.user.has_perm(APP_NAME+".add_cheque"):
+            context.update(add_transaction_context(request=request))
             context['add_cheque_form']=AddChequeForm()
+            context['banks']=BankRepo(request=request).list()
         return render(request,TEMPLATE_ROOT+"cheques.html",context)
 class ChequeView(View):
     def get(self,request,*args, **kwargs):

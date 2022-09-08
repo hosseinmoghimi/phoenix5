@@ -1201,7 +1201,7 @@ class ChequeRepo():
     def add_cheque(self,*args, **kwargs):
         if not self.request.user.has_perm(APP_NAME+".add_cheque"):
             return
-        cheque=Cheque()
+        cheque=Cheque(*args, **kwargs)
         me_acc=AccountRepo(request=self.request).me
 
         if 'title' in kwargs:
