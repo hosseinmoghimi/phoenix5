@@ -84,6 +84,15 @@ class AddFinancialDocumentForm(forms.Form):
 
 class AddChequeForm(forms.Form):
     title=forms.CharField( max_length=500, required=True)
+    pay_from_id=forms.IntegerField(required=True)
+    pay_to_id=forms.IntegerField(required=True)
+    amount=forms.IntegerField(required=True)
+    description=forms.CharField( max_length=500, required=False)
+    sayyad_no=forms.CharField( max_length=50, required=True)
+    sarresid_datetime=forms.CharField( max_length=50, required=True)
+    transaction_datetime=forms.CharField( max_length=50, required=True)
+    serial_no=forms.CharField( max_length=50, required=True)
+    bank_id=forms.IntegerField(required=True)
 
 
 

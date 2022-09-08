@@ -60,8 +60,8 @@ class Price(models.Model,LinkHelper):
 
 
 class Transaction(Page,LinkHelper):
-    pay_from=models.ForeignKey("account",related_name="transactions_from", verbose_name=_("پرداخت کننده"), on_delete=models.CASCADE)
-    pay_to=models.ForeignKey("account", related_name="transactions_to",verbose_name=_("دریافت کننده"), on_delete=models.CASCADE)
+    pay_from=models.ForeignKey("account",related_name="transactions_from", verbose_name=_("پرداخت کننده"), on_delete=models.PROTECT)
+    pay_to=models.ForeignKey("account", related_name="transactions_to",verbose_name=_("دریافت کننده"), on_delete=models.PROTECT)
     creator=models.ForeignKey("authentication.profile",null=True,blank=True, verbose_name=_("ثبت شده توسط"), on_delete=models.SET_NULL)
     status=models.CharField(_("وضعیت"),choices=TransactionStatusEnum.choices,default=TransactionStatusEnum.DRAFT, max_length=50)
     category=models.ForeignKey("transactioncategory",null=True,blank=True, verbose_name=_("دسته بندی"), on_delete=models.SET_NULL)
@@ -437,7 +437,7 @@ class FinancialYear(models.Model):
 
 
 class FinancialDocument(models.Model,LinkHelper):
-    account=models.ForeignKey("account", verbose_name=_("account"), on_delete=models.CASCADE)
+    account=models.ForeignKey("account", verbose_name=_("account"), on_delete=models.PROTECT)
     bedehkar=models.IntegerField(_("bedehkar"),default=0)
     bestankar=models.IntegerField(_("bestankar"),default=0)
     transaction=models.ForeignKey("transaction",verbose_name=_("transaction"), on_delete=models.CASCADE)
@@ -585,6 +585,10 @@ class FinancialDocumentTag(models.Model):
 
 class Cheque(Transaction,LinkHelper):
     cheque_date=models.DateField(_("تاریخ چک"), auto_now=False, auto_now_add=False)
+    bank=models.ForeignKey("bank", verbose_name=_("bank"), on_delete=models.PROTECT)
+    sayyad_no=models.CharField(_("شماره صیاد"), max_length=50)
+    sarresid_datetime=models.DateTimeField(_("تاریخ سررسید"), auto_now=False, auto_now_add=False)
+    serial_no=models.CharField(_("شماره سری و سریال چک"), max_length=50)
     
     def persian_cheque_date(self,no_tag=False):
         if no_tag:
