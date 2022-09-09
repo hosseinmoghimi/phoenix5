@@ -2,6 +2,14 @@
 
 {% block content %}
   <div class="row">
+
+    
+  {% if add_drug_form %}
+  <div class="col-md-12">
+    {% include "health/includes/add-drug-app/template.html" %}
+  </div>
+  {% endif %}
+
     <div class="col-md-12">
        {% include "health/includes/drugs-app/template.html" %}
     </div>
@@ -11,4 +19,7 @@
 {% block script %}
 {% include "health/includes/drugs-app/script.html" %}
   
+{% if add_drug_form %}
+  {% include "health/includes/add-drug-app/script.html" %}
+{% endif %}
 {% endblock script %}

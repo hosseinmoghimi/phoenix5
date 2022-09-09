@@ -58,20 +58,17 @@
                         <tbody>
                             <tr v-for="drug in drugs">
                                 <td>
-                                    <a :href="drug.get_absolute_url">
-                                        <div class="media">
+                                    <div class="media">
+                                        <a :href="drug.get_absolute_url">
+
                                             <img :src="drug.thumbnail" class="rounded" width="48" alt="">
-                                            <div class="media-body mr-3">
-                                                <div>
-
-                                                    <span v-text="drug.title"></span>
-                                                </div>
-
-                                            </div>
+                                        </a>
+                                        <div class="media-body mr-3">
+                                            <a :href="drug.get_absolute_url">
+                                                <div v-text="drug.title"></div>
+                                            </a>
                                         </div>
-                                    </a>
-
-
+                                    </div>
                                 </td>
 
                                 <td>

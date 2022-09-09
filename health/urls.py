@@ -19,4 +19,5 @@ urlpatterns = [
     path("drug/<int:pk>/",login_required(views.DrugView.as_view()),name="drug"),
 
     
+    path("add_drug/",login_required(apis.AddDrugApi.as_view()),name="add_drug"),
 ]

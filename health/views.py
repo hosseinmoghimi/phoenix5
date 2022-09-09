@@ -53,6 +53,10 @@ class DrugsView(View):
         drugs=DrugRepo(request=request).list(*args, **kwargs)
         context['drugs']=drugs
         context['drugs_s']=json.dumps(DrugSerializer(drugs,many=True).data)
+        
+        if request.user.has_perm(APP_NAME+".add_drug"):
+            context['add_drug_form']=AddDrugForm()
+
         return render(request,TEMPLATE_ROOT+"drugs.html",context)
 
 

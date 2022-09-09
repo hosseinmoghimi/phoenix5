@@ -1,0 +1,31 @@
+{% load to_json %}
+<script>
+    let add_drug_app = new Vue({
+        el:"#add-drug-app",
+        data: {
+            title: "",
+            search_for:'',
+            waiting:false,
+        },
+        methods: {
+             
+            add_drug: function (account_id) {
+                let url = "{% url 'health:add_drug' %}"
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    title: this.title
+                }
+                $.post(url, payload).done((data) => {
+                    console.log(data)
+                    if(data.result==="SUCCEED"){
+                        if(typeof drugs_app!="undefined"){
+                            drugs_app.drugs.push(data.drug)
+                        }
+                    }
+                })
+            },
+           
+        }
+    })
+
+</script>

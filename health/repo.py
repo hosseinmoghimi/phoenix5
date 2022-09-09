@@ -71,11 +71,9 @@ class DrugRepo():
             pk=kwargs['id']
         return self.objects.filter(pk=pk).first()
 
-    def add(self,*args, **kwargs):
-        if not self.request.user.has_perm(APP_NAME+".add_patient"):
+    def add_drug(self,*args, **kwargs):
+        if not self.request.user.has_perm(APP_NAME+".add_drug"):
             return
-        patient=Patient()
-        if 'title' in kwargs:
-            patient.title=kwargs['title']
-        patient.save()
-        return patient
+        drug=Drug(*args, **kwargs) 
+        drug.save()
+        return drug
