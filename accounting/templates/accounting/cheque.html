@@ -8,7 +8,7 @@
 
 <h4 class="text-center my-3">
     {{cheque.title}}
-  
+
     <span class="badge badge-{{cheque.color}}">
         {{cheque.status}}
     </span>
@@ -27,74 +27,131 @@
     <div class="col-md-12">
         <div class="card">
             <div class="card-body farsi text-right">
-                <div>
-                    وضعیت :
-                    <span class="badge badge-{{cheque.color}}">
+                <table class="table">
+                    <tr>
+                        <td class="text-left">
+                            <small class="text-muted text-left">
+                                وضعیت :
+                            </small>
 
-                        {{cheque.status}}
-                    </span>
-                </div>
+                        </td>
+                        <td class="text-right">
+                            <span class="badge badge-{{cheque.color}}">
 
-
-                
-                
-
-
-                <div>
-                    مبلغ چک :
-                    {{cheque.amount|to_price}}
-                </div>
-                <div>
-                    تاریخ سررسید چک :
-                    {{cheque.sarresid_datetime|to_persian_date|safe}}
-                </div>
+                                {{cheque.status}}
+                            </span>
+                        </td>
+                    </tr>
 
 
-                <div>
-                    تاریخ وصول چک :
-                    {{cheque.transaction_datetime|to_persian_date|safe}}
-                </div>
+                    <tr>
+                        <td class="text-left">
+                            <small class="text-muted text-left">
+                                مبلغ چک :
+                            </small>
+                        </td>
+                        <td class="text-right">
 
+                            {{cheque.amount|to_price}}
+                        </td>
+                    </tr>
 
-                
-                <div>
-                    سریال چک :
-                    {{cheque.serial_no}}
-                </div>
+                    <tr>
+                        <td class="text-left">
+                            <small class="text-muted text-left">
+                                تاریخ سررسید چک :
+                            </small>
+                        </td>
+                        <td class="text-right">
+                            
+                            {{cheque.sarresid_datetime|to_persian_date|safe}}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="text-left">
+                            <small class="text-muted text-left">
+                                تاریخ وصول چک :
+                            </small>
+                            
+                        </td>
+                        <td class="text-right">
+                            {{cheque.transaction_datetime|to_persian_date|safe}}
 
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="text-left">
 
-                
-                <div>
-                    شماره صیاد چک :
-                    {{cheque.sayyad_no}}
-                </div>
+                            <small class="text-muted text-left">
+                                سریال چک :
+                            </small>
+                        </td>
+                        <td class="text-right">
+                          
+        
+                            {{cheque.serial_no}}
+                        </td>
+                    </tr>
 
+                    <tr>
+                        <td class="text-left">
 
-                <div>
-                   
-                    <small class="text-muted">
-                        پرداخت کننده (بستانکار) 
+                            <small class="text-muted text-left">
+                                شماره صیاد چک :
+                            </small>
+                        </td>
+                        <td class="text-right">
+                           
                         
-                    </small>
-                    <a href="{{cheque.pay_from.get_absolute_url}}">
-                        <img src="{{cheque.pay_from.logo}}" class="rounded-circle" width="64" alt="">
-                        {{cheque.pay_from.title}}
-                    </a>
-                </div>
-                
-                
-                
-                <div>
-                    <small class="text-muted">
-                        دریافت کننده (بدهکار): 
+        
+                            {{cheque.sayyad_no}}
+                       
+        
+                        </td>
+                    </tr>
 
-                    </small>
-                    <a href="{{cheque.pay_to.get_absolute_url}}">
-                        <img src="{{cheque.pay_to.logo}}" class="rounded-circle" width="64" alt="">
-                      {{cheque.pay_to.title}}
-                    </a>
-                </div>
+                    <tr>
+                        <td class="text-left">
+                            <small class="text-muted text-left">
+                                پرداخت کننده (بستانکار) :
+        
+                            </small>
+                        </td>
+                        <td class="text-right">
+                       
+                         
+                            <a href="{{cheque.pay_from.get_absolute_url}}">
+                                <img src="{{cheque.pay_from.logo}}" class="rounded-circle" width="64" alt="">
+                                {{cheque.pay_from.title}}
+                            </a>
+                      
+                        </td>
+                    </tr>
 
+                    <tr>
+                        <td class="text-left">
+                           
+                            <small class="text-muted text-left">
+                                دریافت کننده (بدهکار):
+        
+                            </small>
+                        
+                        </td>
+                        <td class="text-right">
+    <a href="{{cheque.pay_to.get_absolute_url}}">
+                                <img src="{{cheque.pay_to.logo}}" class="rounded-circle" width="64" alt="">
+                                {{cheque.pay_to.title}}
+                            </a>
+                        </td>
+                    </tr>
+                </table>
+
+
+
+
+ 
+
+              
             </div>
         </div>
     </div>
@@ -121,10 +178,10 @@
     {% if roll_back_transaction_form %}
 
     <div class="col-md-12 px-0">
-    
+
         {% include "accounting/includes/roll-back-transaction-app/template.html" %}
     </div>
-    
+
     {% endif %}
 </div>
 {% endblock content %}
@@ -133,10 +190,10 @@
 {% block script %}
 {% include "accounting/includes/transaction-app/script.html" %}
 {% if roll_back_transaction_form %}
- 
 
-    {% include "accounting/includes/roll-back-transaction-app/script.html" %}
- 
+
+{% include "accounting/includes/roll-back-transaction-app/script.html" %}
+
 
 {% endif %}
 {% endblock script %}
