@@ -584,16 +584,18 @@ class FinancialDocumentTag(models.Model):
 
 
 class Cheque(Transaction,LinkHelper):
-    cheque_date=models.DateField(_("تاریخ چک"), auto_now=False, auto_now_add=False)
     bank=models.ForeignKey("bank", verbose_name=_("bank"), on_delete=models.PROTECT)
     sayyad_no=models.CharField(_("شماره صیاد"), max_length=50)
     sarresid_datetime=models.DateTimeField(_("تاریخ سررسید"), auto_now=False, auto_now_add=False)
     serial_no=models.CharField(_("شماره سری و سریال چک"), max_length=50)
+    @property
+    def cheque_date(self):
+        return self.sarresid_datetime
     
     def persian_cheque_date(self,no_tag=False):
         if no_tag:
-            return PersianCalendar().from_gregorian(self.cheque_date)
-        return to_persian_datetime_tag(self.cheque_date)
+            return PersianCalendar().from_gregorian(self.sarresid_datetime)
+        return to_persian_datetime_tag(self.sarresid_datetime)
     class Meta:
         verbose_name = _("چک")
         verbose_name_plural = _("چک ها")
