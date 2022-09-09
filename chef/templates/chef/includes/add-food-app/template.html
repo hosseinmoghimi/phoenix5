@@ -1,0 +1,51 @@
+{% load to_persian_date %}
+{% load to_price %}
+{% load to_amount_color %}
+{% load static %}
+<div id="accordion-add-food">
+
+
+    <div class="card" id="add-food-app">
+        <div class="card-header" id="heading-add-food">
+            <h5 class="text-center">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-add-food"
+                    aria-expanded="true" aria-controls="collapse-add-food">
+                    افزودن غذای جدید
+
+
+
+
+
+                </button>
+            </h5>
+
+        </div>
+        <div id="collapse-add-food" class="collapse" aria-labelledby="heading-add-food"
+            data-parent="#accordion-add-food">
+
+
+            <div class="card-body">
+
+                
+                <form @submit.prevent="add_food()">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="">نام غذا</label>
+                                <input type="text" v-model="title" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <button class="btn btn-success" type="submit">
+                                <i class="fa fa-plus"></i>
+                                افزودن
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+
+    </div>
+</div>

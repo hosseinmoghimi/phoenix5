@@ -7,5 +7,6 @@ urlpatterns = [
     path("",(views.HomeView.as_view()),name="home"),
     path("search/",(views.SearchView.as_view()),name="search"),
     path("food/",login_required(views.FoodsView.as_view()),name="foods"),
-    path("food/<int:pk>/",login_required(views.FoodView.as_view()),name="food"),
+    path("food/<int:pk>/",(views.FoodView.as_view()),name="food"),
+    path("add_food/",login_required(apis.AddFoodApi.as_view()),name="add_food"),
 ]

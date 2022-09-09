@@ -1,3 +1,4 @@
+from chef.apps import APP_NAME
 from .models import Food
 from django.db.models import Q
 from authentication.repo import ProfileRepo
@@ -31,3 +32,10 @@ class FoodRepo():
             return self.objects.filter(pk=kwargs['id']).first()
         if 'title' in kwargs:
             return self.objects.filter(pk=kwargs['title']).first()
+    
+    def add_food(self,*args, **kwargs):
+        if not self.request.user.has_perm(APP_NAME+".add_food"):
+            return
+        food=Food(*args, **kwargs)
+        food.save()
+        return food

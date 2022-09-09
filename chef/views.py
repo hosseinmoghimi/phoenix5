@@ -31,13 +31,6 @@ class HomeView(View):
         return render(request,TEMPLATE_ROOT+"index.html",context)
 
 class SearchView(View):
-    def get(self,request,*args, **kwargs):
-        context=getContext(request=request)
-        products=ProductRepo(request=request).list()
-        context['products']=products
-        products_s=json.dumps(ProductSerializer(products,many=True).data)
-        context['products_s']=products_s
-        return render(request,TEMPLATE_ROOT+"index.html",context)
     def post(self,request,*args, **kwargs):
         context=getContext(request=request)
         search_form=SearchForm(request.POST)
@@ -47,7 +40,7 @@ class SearchView(View):
             context['foods']=foods
             foods_s=json.dumps(FoodSerializer(foods,many=True).data)
             context['foods_s']=foods_s
-        return render(request,TEMPLATE_ROOT+"index.html",context)
+        return render(request,TEMPLATE_ROOT+"foods.html",context)
 
 class FoodsView(View):
     def get(self,request,*args, **kwargs):
@@ -56,7 +49,12 @@ class FoodsView(View):
         context['foods']=foods
         foods_s=json.dumps(FoodSerializer(foods,many=True).data)
         context['foods_s']=foods_s
+        if request.user.has_perm(APP_NAME+".add_food"):
+            context['add_food_form']=AddFoodForm()
+
         return render(request,TEMPLATE_ROOT+"foods.html",context)
+
+
 class FoodView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
