@@ -6,7 +6,7 @@
     </div>
     <div class="card-body">
         {% if add_cheque_form_ %}
-            {% include "accounting/includes/cheques-app/add-cheque-form.html" %}
+        {% include "accounting/includes/cheques-app/add-cheque-form.html" %}
         {% endif %}
 
         {% include "accounting/includes/cheques-app/table.html" %}
@@ -16,7 +16,8 @@
     <div class="card-footer">
         <p>
 
-            توضیحات : ...
+            تعداد : 
+            <span v-text="cheques.length"></span>
         </p>
     </div>
 
