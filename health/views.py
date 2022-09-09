@@ -64,6 +64,7 @@ class DrugView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
         drug=DrugRepo(request=request).drug(*args, **kwargs)
+        context.update(PageContext(request=request,page=drug))
         context['drug']=drug
         return render(request,TEMPLATE_ROOT+"drug.html",context)
 
