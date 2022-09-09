@@ -1222,6 +1222,7 @@ class ChequeRepo():
         else:
             cheque.pay_from_id=me_acc.id
 
+        cheque.payment_method=PaymentMethodEnum.CHEQUE
 
         cheque.creator=self.profile
 

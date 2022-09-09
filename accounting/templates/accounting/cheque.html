@@ -36,13 +36,37 @@
                 </div>
 
 
+                
+                
+
+
                 <div>
                     مبلغ چک :
                     {{cheque.amount|to_price}}
                 </div>
                 <div>
-                    تاریخ چک :
-                    {{cheque.cheque_date|to_persian_date|safe}}
+                    تاریخ سررسید چک :
+                    {{cheque.sarresid_datetime|to_persian_date|safe}}
+                </div>
+
+
+                <div>
+                    تاریخ وصول چک :
+                    {{cheque.transaction_datetime|to_persian_date|safe}}
+                </div>
+
+
+                
+                <div>
+                    سریال چک :
+                    {{cheque.serial_no}}
+                </div>
+
+
+                
+                <div>
+                    شماره صیاد چک :
+                    {{cheque.sayyad_no}}
                 </div>
 
 
@@ -79,7 +103,7 @@
         {% include "core/includes/page-tags-app/template.html" %}
 
     </div>
-    
+
     <div class="col-md-12">
         {% include "core/includes/page-images-app/template.html" %}
 

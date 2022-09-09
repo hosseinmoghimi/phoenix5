@@ -88,6 +88,7 @@ class AddChequeForm(forms.Form):
     pay_to_id=forms.IntegerField(required=True)
     amount=forms.IntegerField(required=True)
     description=forms.CharField( max_length=500, required=False)
+    status=forms.CharField( max_length=50, required=False)
     sayyad_no=forms.CharField( max_length=50, required=True)
     sarresid_datetime=forms.CharField( max_length=50, required=True)
     transaction_datetime=forms.CharField( max_length=50, required=True)
