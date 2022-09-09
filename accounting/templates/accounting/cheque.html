@@ -71,18 +71,27 @@
 
 
                 <div>
+                   
+                    <small class="text-muted">
+                        پرداخت کننده (بستانکار) 
+                        
+                    </small>
                     <a href="{{cheque.pay_from.get_absolute_url}}">
                         <img src="{{cheque.pay_from.logo}}" class="rounded-circle" width="64" alt="">
-                  پرداخت کننده (بستانکار)      {{cheque.pay_from.title}}
+                        {{cheque.pay_from.title}}
                     </a>
                 </div>
-
-
-
+                
+                
+                
                 <div>
+                    <small class="text-muted">
+                        دریافت کننده (بدهکار): 
+
+                    </small>
                     <a href="{{cheque.pay_to.get_absolute_url}}">
                         <img src="{{cheque.pay_to.logo}}" class="rounded-circle" width="64" alt="">
-                       دریافت کننده (بدهکار):  {{cheque.pay_to.title}}
+                      {{cheque.pay_to.title}}
                     </a>
                 </div>
 
