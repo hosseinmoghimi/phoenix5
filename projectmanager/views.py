@@ -116,6 +116,21 @@ class SearchView(View):
         return render(request, TEMPLATE_ROOT+"search.html", context)
 
 
+class NewProjectView(View):
+    def get(self, request, *args, **kwargs):
+        context = getContext(request=request)
+        projects = ProjectRepo(request=request).list(*args, **kwargs)
+        context['projects'] = projects
+        context['expand_add_project'] = True
+        projects_s = json.dumps(ProjectSerializer(projects, many=True).data)
+        context['projects_s'] = projects_s
+        if request.user.has_perm(APP_NAME+".add_project"):
+            context['add_root_project_form']=AddProjectForm()
+            context['statuses']=(i[0] for i in ProjectStatusEnum.choices)
+            context['employers']=OrganizationUnitRepo(request=request).list(parent_id=None)
+        return render(request, TEMPLATE_ROOT+"add-project.html", context)
+
+
 class ProjectsView(View):
     def get(self, request, *args, **kwargs):
         context = getContext(request=request)
@@ -290,6 +305,7 @@ class RequestView(View):
 
         return render(request, TEMPLATE_ROOT+"request.html", context)
 
+ 
 
 class ProjectsListView(View):
     def get(self, request, *args, **kwargs):
