@@ -1,23 +1,24 @@
-from django.shortcuts import render
-from core.enums import ParameterNameEnum
-from market.enums import ParameterMarketEnum
-from market.repo import BrandRepo, SupplierRepo,CartLineRepo
-from market.serializers import BrandSerializer, SupplierSerializer,CartLineSerializer
-from market.forms import *
-from authentication.forms import AddMembershipRequestForm
-from core.repo import ParameterRepo, PictureRepo
-from market.repo import CategoryRepo, ProductRepo
-from market.serializers import CategorySerializer, ProductSerializer
-# Create your views here.
-from django.shortcuts import render,reverse
-from core.views import CoreContext, MessageView, PageContext,SearchForm
-# Create your views here.
-from django.views import View
-from market.apps import APP_NAME
 # from .repo import ProductRepo
 # from .serializers import ProductSerializer
 import json
- 
+
+from authentication.forms import AddMembershipRequestForm
+from core.enums import ParameterNameEnum
+from core.repo import ParameterRepo, PictureRepo
+from core.views import CoreContext, MessageView, PageContext, SearchForm
+# Create your views here.
+from django.shortcuts import render, reverse
+# Create your views here.
+from django.views import View
+
+from market.apps import APP_NAME
+from market.enums import ParameterMarketEnum
+from market.forms import *
+from market.repo import (BrandRepo, CartLineRepo, CategoryRepo, ProductRepo,
+                         SupplierRepo)
+from market.serializers import (BrandSerializer, CartLineSerializer,
+                                CategorySerializer, ProductSerializer,
+                                SupplierSerializer)
 
 TEMPLATE_ROOT = "market/"
 
@@ -85,7 +86,14 @@ class HomeView(View):
             request=request, app_name=APP_NAME).picture(name=ParameterMarketEnum.SHOP_HEADER_IMAGE)
         categories = CategoryRepo(request=request).list().exclude(parent_id__gte=1)
         context['categories'] = categories
-        context['categories_s'] = json.dumps(CategorySerializer(categories,many=True).data)
+        categories_s = json.dumps(CategorySerializer(categories,many=True).data)
+
+        # print(10*" # ")
+        # print("categories_s")
+        # print(categories[0].get_market_absolute_url())
+        # print(categories_s)
+
+        context['categories_s'] = categories_s
         category=None
         context['category_s'] = json.dumps(CategorySerializer(category).data)
         # context['offers'] = OfferRepo(request=request).list(for_home=True)

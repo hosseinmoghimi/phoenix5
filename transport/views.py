@@ -489,6 +489,28 @@ class DriversView(View):
         return render(request,TEMPLATE_ROOT+"drivers.html",context)
 
 
+class TransportView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        luggage=LuggageRepo(request=request).luggage(*args, **kwargs)
+        context.update(PageContext(request=request,page=luggage))
+        context['luggage']=luggage
+        context['luggage_s']=json.dumps(LuggageSerializer(luggage).data)
+        return render(request,TEMPLATE_ROOT+"transport.html",context)
+
+class TransportsView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        luggages=LuggageRepo(request=request).list(*args, **kwargs)
+        context['luggages']=luggages
+        luggages_s=json.dumps(LuggageSerializer(luggages,many=True).data)
+        context['luggages_s']=luggages_s
+        if request.user.has_perm(APP_NAME+".add_luggage"):
+            context['add_luggage_form']=AddLuggageForm()
+            context.update(add_luggage_context(request=request))
+        return render(request,TEMPLATE_ROOT+"transports.html",context)
+
+
 class LuggageView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)

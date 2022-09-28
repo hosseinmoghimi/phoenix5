@@ -165,8 +165,44 @@ class Transaction(Page,LinkHelper):
         if old_transaction.status==TransactionStatusEnum.IN_PROGRESS:
             return True
         return False
-
  
+
+class DoubleTransaction(Page): 
+    # employer_transaction_id=models.IntegerField(_("employer_transaction_id"),default=0)
+    # middle_transaction_id=models.IntegerField(_("middle_transaction_id"),default=0)
+    employer_transaction=models.ForeignKey("transaction", related_name="employer_transaction_set",verbose_name=_("employer_transaction"),null=True,blank=True, on_delete=models.SET_NULL)
+    middle_transaction=models.ForeignKey("transaction", related_name="middle_transaction_set",verbose_name=_("middle_transaction"),null=True,blank=True, on_delete=models.SET_NULL)
+    # employer=models.ForeignKey("account", related_name="double_transaction_employer_set",verbose_name=_("employer"), on_delete=models.CASCADE)
+    # middle=models.ForeignKey("account", related_name="double_transaction_middle_set",verbose_name=_("middle"), on_delete=models.CASCADE)
+    # contractor=models.ForeignKey("account", related_name="double_transaction_contractor_set",verbose_name=_("contractor"), on_delete=models.CASCADE)
+    # employer_paid=models.IntegerField(_("employer_paid"))
+    # middle_paid=models.IntegerField(_("middle_paid"))
+    # date_added=models.DateTimeField(_("date_added"), auto_now=False, auto_now_add=True)
+    # employer_transaction_date_time=models.DateTimeField(_("date_added"), auto_now=False, auto_now_add=False)
+    # middle_transaction_date_time=models.DateTimeField(_("date_added"), auto_now=False, auto_now_add=False)
+    # @property
+    # def employer_transaction(self):
+        # return Transaction.objects.filter(pk=self.employer_transaction_id).first()
+    # @property
+    # def middle_transaction(self):
+        # return Transaction.objects.filter(pk=self.middle_transaction_id).first()
+
+    class Meta:
+        verbose_name = _("DoubleTransaction")
+        verbose_name_plural = _("DoubleTransactions")
+
+    def save(self,*args, **kwargs):
+        if self.app_name is None or self.app_name=="":
+            self.app_name=APP_NAME
+        if self.class_name is None or self.class_name=="":
+            self.class_name="doubletransaction"
+
+
+        # if self.employer_transaction is None:
+            # employer_transaction=Transaction()
+        super(DoubleTransaction,self).save()
+
+
 class ProductOrService(Page):
     barcode=models.CharField(_("بارکد"),null=True,blank=True, max_length=100)
 
@@ -788,6 +824,22 @@ class Category(models.Model,LinkHelper, ImageMixin):
     class_name='category'
     app_name=APP_NAME
     
+    @property
+    def products(self):
+        ids=[]
+        for products_or_service in self.products_or_services.all():
+            ids.append(products_or_service.id)
+        products=Product.objects.filter(id__in=ids)
+        return products
+
+    @property
+    def services(self):
+        ids=[]
+        for products_or_service in self.products_or_services.all():
+            ids.append(products_or_service.id)
+        services=Service.objects.filter(id__in=ids)
+        return services
+    
     def __str__(self):
         return self.title
     
@@ -824,6 +876,8 @@ class Category(models.Model,LinkHelper, ImageMixin):
             return self.parent.full_title+" / " +self.title
         return self.title
 
+    def get_market_absolute_url(self):
+        return reverse("market:category",kwargs={'pk':self.pk})
 
 class Spend(Transaction,LinkHelper):    
     spend_type=models.CharField(_("spend_type"),choices=SpendTypeEnum.choices, max_length=50)

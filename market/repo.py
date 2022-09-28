@@ -25,7 +25,7 @@ class ProductRepo(ProductRepo_origin):
             return objects.filter(Q(title__contains=kwargs['search_for'])|Q(short_description__contains=kwargs['search_for']))
         return objects
 
-class Category11Repo():  
+class CategoryRepo121():  
     def __init__(self, *args, **kwargs):
         self.request = None
         self.user = None

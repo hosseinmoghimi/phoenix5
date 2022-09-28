@@ -17,7 +17,7 @@ from django.views import View
 from utility.calendar import PersianCalendar
 from utility.excel import ReportSheet,ReportWorkBook, get_style
 from accounting.apps import APP_NAME
-from accounting.repo import BankRepo,AssetRepo, CategoryRepo, CostRepo,BankAccountRepo, InvoiceLineRepo,AccountRepo,FinancialBalanceRepo, ChequeRepo, PaymentRepo, PriceRepo,  ProductRepo,ServiceRepo,FinancialDocumentRepo,InvoiceRepo, TransactionRepo
+from accounting.repo import BankRepo,AssetRepo, CategoryRepo, CostRepo,BankAccountRepo, DoubleTransactionRepo, InvoiceLineRepo,AccountRepo,FinancialBalanceRepo, ChequeRepo, PaymentRepo, PriceRepo,  ProductRepo,ServiceRepo,FinancialDocumentRepo,InvoiceRepo, TransactionRepo
 from accounting.serializers import CategorySerializer, InvoiceLineWithInvoiceSerializer,AccountSerializer, AccountSerializerFull, AssetSerializer, BankAccountSerializer, BankSerializer, CostSerializer, FinancialBalanceSerializer, InvoiceFullSerializer,InvoiceLineSerializer,ChequeSerializer, InvoiceSerializer, PaymentSerializer, PriceSerializer,  ProductSerializer,ServiceSerializer,FinancialDocumentForAccountSerializer,FinancialDocumentSerializer, TransactionSerializer
 from accounting.forms import *
 import json
@@ -229,6 +229,66 @@ def get_transaction_context(request,*args, **kwargs):
     if not transaction.editable and request.user.has_perm(APP_NAME+".change_transaction"):
         context['roll_back_transaction_form']=RollBackTransactionForm()
         
+    return context
+
+def get_double_transaction_context(request,*args, **kwargs):
+    context={}
+    if 'double_transaction' in kwargs:
+        transaction=kwargs['double_transaction']
+    else:
+        double_transaction=DoubleTransactionRepo(request=request).double_transaction(*args, **kwargs)
+    context['double_transaction']=double_transaction
+    
+    transactions=[double_transaction.employer_transaction,double_transaction.middle_transaction]
+    context['transactions']=transactions
+    transactions_s=json.dumps(TransactionSerializer(transactions,many=True).data)
+    context['transactions_s']=transactions_s
+
+    context.update(PageContext(request=request,page=double_transaction))
+    if double_transaction.employer_transaction is not None:
+
+        financial_documents=FinancialDocumentRepo(request=request).list(transaction_id=double_transaction.employer_transaction.id)
+        financial_documents=double_transaction.employer_transaction.financialdocument_set.all()
+        context['financial_documents']=financial_documents
+        context['financial_documents_s']=json.dumps(FinancialDocumentSerializer(financial_documents,many=True).data)
+                
+
+        financial_balances=FinancialBalanceRepo(request=request).list(transaction_id=double_transaction.employer_transaction.id)
+        context['financial_balances']=financial_balances
+        financial_balances_s=json.dumps(FinancialBalanceSerializer(financial_balances,many=True).data)
+        context['financial_balances_s']=financial_balances_s
+
+
+
+        if not double_transaction.employer_transaction.editable and request.user.has_perm(APP_NAME+".change_transaction"):
+            context['roll_back_transaction_form']=RollBackTransactionForm()
+            
+            
+
+
+
+    if double_transaction.middle_transaction is not None:
+
+        financial_documents=FinancialDocumentRepo(request=request).list(transaction_id=double_transaction.middle_transaction.id)
+        financial_documents=double_transaction.middle_transaction.financialdocument_set.all()
+        context['financial_documents']=financial_documents
+        context['financial_documents_s']=json.dumps(FinancialDocumentSerializer(financial_documents,many=True).data)
+                
+
+        financial_balances=FinancialBalanceRepo(request=request).list(transaction_id=double_transaction.middle_transaction.id)
+        context['financial_balances']=financial_balances
+        financial_balances_s=json.dumps(FinancialBalanceSerializer(financial_balances,many=True).data)
+        context['financial_balances_s']=financial_balances_s
+
+
+
+        if not double_transaction.middle_transaction.editable and request.user.has_perm(APP_NAME+".change_transaction"):
+            context['roll_back_transaction_form']=RollBackTransactionForm()
+            
+            
+
+
+  
     return context
 
 def get_product_or_service_context(request,*args, **kwargs):
@@ -888,6 +948,33 @@ class BankAccountView(View):
         return render(request,TEMPLATE_ROOT+"bank-account.html",context)
 
 
+
+class DoubleTransactionView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        # double_transaction=DoubleTransactionRepo(request=request).double_transaction(*args, **kwargs)
+        # context['double_transaction']=double_transaction
+        context.update(get_double_transaction_context(request=request,*args, **kwargs))
+        if context['double_transaction'] is None:
+            mv=MessageView(request=request)
+            mv.title="چنین تراکنشی یافت نشد."
+        return render(request,TEMPLATE_ROOT+"double-transaction.html",context)
+
+class DoubleTransactionsView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        if 'account_id_1' in kwargs:
+            context['account_id_1']=kwargs['account_id_1']
+        if 'account_id_2' in kwargs:
+            context['account_id_2']=kwargs['account_id_2']
+        if 'account_id' in kwargs:
+            context['account_id']=kwargs['account_id']
+        transactions=TransactionRepo(request=request).list(*args, **kwargs).order_by('-transaction_datetime')
+        context['transactions']=transactions
+        transactions_s=json.dumps(TransactionSerializer(transactions,many=True).data)
+        context['transactions_s']=transactions_s
+        context['expand_transactions']=True
+        return render(request,TEMPLATE_ROOT+"transactions.html",context)
 
 
 class BanksView(View):

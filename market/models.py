@@ -7,6 +7,9 @@ from accounting.models import Product,Category
 # Create your models here.
 IMAGE_FOLDER = APP_NAME+"/images/"
 
+
+ 
+
 class Brand(Page):
     products=models.ManyToManyField("accounting.product", blank=True,verbose_name=_("products"))
 

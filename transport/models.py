@@ -1,4 +1,4 @@
-from accounting.models import Asset, Transaction
+from accounting.models import Asset, DoubleTransaction, Transaction
 from utility.calendar import PERSIAN_MONTH_NAMES, PersianCalendar, to_persian_datetime_tag
 from phoenix.settings import STATIC_URL
 from django.db import models
@@ -31,7 +31,7 @@ from accounting.models import Account
 #         return self.title
  
 
-class Luggage(Page,LinkHelper): 
+class Luggage(Page,LinkHelper):
     owner=models.ForeignKey("accounting.account", verbose_name=_("owner"), on_delete=models.CASCADE)
     price=models.IntegerField(_("price"),default=0)
     weight=models.IntegerField(_("وزن"),default=0)
@@ -53,7 +53,34 @@ class Luggage(Page,LinkHelper):
         if self.app_name is None:
             self.app_name=APP_NAME
         return super(Luggage,self).save(*args, **kwargs)
-           
+
+
+class Transport(DoubleTransaction):
+    # customer=models.ForeignKey("customer", verbose_name=_("مشتری"), on_delete=models.CASCADE)
+    # customer=models.ForeignKey("customer", verbose_name=_("مشتری"), on_delete=models.CASCADE)
+    # driver=models.ForeignKey("driver", verbose_name=_("راننده"), on_delete=models.CASCADE)
+    # luggage=models.ForeignKey("luggage", verbose_name=_("luggage"),related_name="transport_set", on_delete=models.CASCADE)
+
+    load=models.CharField(_("بار"), max_length=200,null=True,blank=True)
+    ghabz_no=models.CharField(_("شماره قبض"), max_length=50,null=True,blank=True)
+    barnameh_no=models.CharField(_("شماره بارنامه"), max_length=50,null=True,blank=True)
+    date_sent=models.DateTimeField(_("تاریخ ارسال"), auto_now=False, auto_now_add=False)
+    date_delivered=models.DateTimeField(_("تاریخ تحویل"), auto_now=False, auto_now_add=False,null=True,blank=True)
+    
+
+    class Meta:
+        verbose_name = _("Transport")
+        verbose_name_plural = _("Transports")
+
+
+    def save(self,*args, **kwargs):
+        if self.app_name is None or self.app_name=="":
+            self.app_name=APP_NAME
+        if self.class_name is None or self.class_name=="":
+            self.class_name="transport"
+ 
+        super(Transport,self).save()
+          
 class Driver(models.Model,LinkHelper):
     title=models.CharField(_("title"),null=True,blank=True, max_length=100)
     account=models.ForeignKey("accounting.account", verbose_name=_("account"), on_delete=models.CASCADE)

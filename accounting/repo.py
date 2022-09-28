@@ -4,7 +4,7 @@ from core.constants import FAILED, SUCCEED,MISC
 from core.enums import UnitNameEnum
 from utility.calendar import PersianCalendar
 from .apps import APP_NAME
-from .models import Account, Asset, Bank, BankAccount, Category, Cheque, Cost, FinancialBalance, FinancialDocument, FinancialYear, Invoice, InvoiceLine, Payment, Price, Product, ProductOrService, Service, Transaction
+from .models import Account, Asset, Bank, BankAccount, Category, Cheque, Cost, DoubleTransaction, FinancialBalance, FinancialDocument, FinancialYear, Invoice, InvoiceLine, Payment, Price, Product, ProductOrService, Service, Transaction
 from django.db.models import Q
 from authentication.repo import ProfileRepo
 from django.utils import timezone
@@ -1389,6 +1389,84 @@ class SubAccountRepo():
         return objects.all()
 
    
+
+
+class DoubleTransactionRepo():
+    def __init__(self, *args, **kwargs):
+        self.request = None
+        self.user = None
+        if 'request' in kwargs:
+            self.request = kwargs['request']
+            self.user = self.request.user
+        if 'user' in kwargs:
+            self.user = kwargs['user']
+        
+        self.objects=DoubleTransaction.objects
+        self.profile=ProfileRepo(*args, **kwargs).me
+       
+        if self.user.has_perm(APP_NAME+".view_transaction"):
+            self.objects = self.objects
+        elif self.profile is not None:
+            self.objects = self.objects.filter(Q(pay_from__profile=self.profile)|Q(pay_to__profile=self.profile))
+        else:
+            self.objects = self.objects.filter(pk=0)
+
+    def double_transaction(self, *args, **kwargs):
+        pk=0
+        if 'double_transaction' in kwargs:
+            return kwargs['double_transaction']
+        if 'double_transaction_id' in kwargs:
+            pk=kwargs['double_transaction_id']
+        elif 'pk' in kwargs:
+            pk=kwargs['pk']
+        elif 'id' in kwargs:
+            pk=kwargs['id']
+        return self.objects.filter(pk=pk).first()
+     
+     
+    def roll_back(self,*args, **kwargs):
+        transaction=self.transaction(*args, **kwargs)
+        if transaction is not None:
+            transaction.roll_back()
+            return transaction
+
+
+    def print(self,*args, **kwargs):
+        transaction=self.transaction(*args, **kwargs)
+        if transaction is not None:
+            transaction.add_print_event()
+            return transaction
+
+
+    def list(self, *args, **kwargs):
+        
+
+        objects = self.objects
+        if 'amount' in kwargs and not kwargs['amount']is None and not kwargs['amount']==0 :
+            objects=objects.filter(Q(amount=kwargs['amount']))
+        if 'payment_method' in kwargs and not kwargs['payment_method']=="" and not kwargs['payment_method']is None:
+            objects=objects.filter(Q(payment_method=kwargs['payment_method']))
+        if 'status' in kwargs and not kwargs['status']=="" and not kwargs['status']is None:
+            objects=objects.filter(Q(status=kwargs['status']))
+        if 'start_date' in kwargs:
+            objects=objects.filter(Q(transaction_datetime__gte=kwargs['start_date']))
+        if 'end_date' in kwargs:
+            objects=objects.filter(Q(transaction_datetime__lte=kwargs['end_date']))
+        if 'search_for' in kwargs:
+            search_for=kwargs['search_for']
+            objects = objects.filter(Q(title__contains=search_for)|Q(short_description__contains=search_for)|Q(description__contains=search_for))
+        if 'for_home' in kwargs:
+            objects = objects.filter(Q(for_home=kwargs['for_home']))
+        if 'parent_id' in kwargs:
+            objects=objects.filter(parent_id=kwargs['parent_id'])
+        if 'account_id' in kwargs:
+            if kwargs['account_id']>0:
+                objects=objects.filter(Q(pay_from_id=kwargs['account_id'])|Q(pay_to_id=kwargs['account_id']))
+        if 'account_id_1' in kwargs and 'account_id_2' in kwargs:
+            account_id_1=kwargs['account_id_1']
+            account_id_2=kwargs['account_id_2']
+            objects = self.objects.filter(Q(pay_from_id=account_id_1)|Q(pay_from_id=account_id_2)).filter(Q(pay_to_id=account_id_1)|Q(pay_to_id=account_id_2))
+        return objects.order_by('-transaction_datetime')
 
 
 

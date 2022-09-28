@@ -17,6 +17,9 @@ urlpatterns = [
     path("trip_category/<int:pk>/",login_required(views.TripCategoryView.as_view()),name="tripcategory"),
     path("add_trip_category/",login_required(apis.AddTripCategoryApi.as_view()),name="add_trip_category"),
 
+    path("transport/<int:pk>/",login_required(views.TransportView.as_view()),name="transport"),
+    path("transports/",login_required(views.TransportsView.as_view()),name="transports"),
+
     path("luggage/<int:pk>/",login_required(views.LuggageView.as_view()),name="luggage"),
     path("luggages/",login_required(views.LuggagesView.as_view()),name="luggages"),
     path("add_luggage/",login_required(apis.AddLuggageApi.as_view()),name="add_luggage"),

@@ -70,6 +70,7 @@ class PaymentMethodEnum(TextChoices):
     CARD="کارت به کارت",_("کارت به کارت")
     # FROM_PAST="مانده حساب از قبل",_("مانده حساب از قبل")
 
+ 
 
 class TransactionStatusEnum(TextChoices):
     DRAFT="پیش نویس",_("پیش نویس")

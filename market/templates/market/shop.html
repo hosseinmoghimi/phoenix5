@@ -12,7 +12,7 @@
           {{parent.get_edit_btn|safe}}
           {% endif %}
 
-          
+
 
           <h1 class="title farsi text-center">{{parent.title}}</h1>
 
@@ -115,7 +115,6 @@
   <!-- section -->
   <div class="section">
     <div class="container">
-      <h2 class="section-title text-center farsi">دسته بندی را انتخاب کنید</h2>
       <div class="row">
         <div class="col-lg-3"></div>
         <div class="col-lg-6">
@@ -127,6 +126,8 @@
       </div>
       <div class="row">
         <div class="col-md-9">
+          <h3 class="section-title text-center farsi">دسته بندی را انتخاب کنید</h3>
+
           <div class="row rtl">
             <div v-for="category in categories" class="col-md-4 col-6">
               {% include "market/includes/category-thumbnail.html" %}

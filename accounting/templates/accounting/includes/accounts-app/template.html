@@ -80,13 +80,16 @@
 
                             <tr v-for="account in accounts">
                                 <td>
-                                    <a :href="account.get_absolute_url">
-                                        <div class="media">
+                                    <div class="media">
+                                        <a :href="account.get_absolute_url">
                                             <img :src="account.logo" class="rounded" width="32" alt="">
-                                            <div class="media-body mr-3">
-                                                <div>
-
+                                        </a>
+                                        <div class="media-body mr-3">
+                                            <div>
+                                                
+                                                <a :href="account.get_absolute_url">
                                                     <span v-text="account.title"></span>
+                                                </a>
                                                 </div>
                                                 <div>
                                                     <small class="text-muted">
@@ -95,7 +98,6 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    </a>
 
 
                                 </td>
