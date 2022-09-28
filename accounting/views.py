@@ -733,6 +733,7 @@ class InvoiceOfficialPrintView(View):
         context=getContext(request=request)
         context.update(get_invoice_context(request=request,*args, **kwargs))
 
+        context['COEF_PRICE']=10
         context['TUMAN']=False
         context['RIAL']=True
         from core.constants import RIAL
