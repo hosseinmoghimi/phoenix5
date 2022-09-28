@@ -240,8 +240,16 @@ class SearchView(View):
 class ProductView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
-        products=ProductRepo(request=request).list()
-        context['products']=products
-        products_s=json.dumps(ProductSerializer(products,many=True).data)
-        context['products_s']=products_s
+        product=ProductRepo(request=request).product(*args, **kwargs)
+        context.update(PageContext(request=request,page=product))
+        context['product']=product
+        context['body_class']="product-page"
+        product_s=json.dumps(ProductSerializer(product).data)
+        context['product_s']=product_s
+        related_pages_=product.related_pages.filter(class_name="product")
+        ids=(p.id for p in related_pages_)
+        related_pages=ProductRepo(request=request).list().filter(id__in=ids)
+        related_pages_s=json.dumps(ProductSerializer(related_pages,many=True).data)
+        context['related_pages_s']=related_pages_s
+        context['related_pages']=related_pages
         return render(request,TEMPLATE_ROOT+"product.html",context)

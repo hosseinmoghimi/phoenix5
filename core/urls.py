@@ -44,5 +44,6 @@ urlpatterns = [
 
     path('add_page_permission/',apis.AddPagePermissionApi.as_view(),name="add_page_permission"),
     path('set_thumbnail_header/',apis.SetThumbnailHeaderApi.as_view(),name="set_thumbnail_header"),
+    path('delete_page_image/',apis.DeletePageImageApi.as_view(),name="delete_page_image"),
 
 ]

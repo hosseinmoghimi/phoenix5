@@ -89,12 +89,13 @@
     <!-- section -->
     <div class="section">
         <div class="container">
-            <h2 class="section-title text-center farsi">دسته بندی را انتخاب کنید</h2>
             <div class="row">
                 <div class="col-lg-3"></div>
                 <div class="col-lg-6">
+
+                    <h3 class="section-title text-center farsi">دسته بندی را انتخاب کنید</h3>
                     <div class="rtl text-center">
-                        {{category.get_breadcrumb_tag|safe}}
+                        {{category.get_market_breadcrumb_tag|safe}}
                     </div>
                 </div>
                 {% if add_existing_product_to_category_form %}
@@ -105,9 +106,15 @@
 
                 </div>
                 {% endif %}
-            
+
             </div>
-            <div class="row"  id="shop-app">
+            <div class="row" id="shop-app">
+                <div class="col-md-3">
+
+                    {% include "market/includes/shop-sidebar.html" %}
+
+                </div>
+
                 <div class="col-md-9">
                     <div class="row rtl">
                         <div v-for="category in categories" class="col-md-4 col-6">
@@ -135,7 +142,7 @@
                             </div>
                             {% endif %}
 
-                         
+
 
 
                             {% if add_category_form %}
@@ -162,12 +169,6 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-3">
-
-                    {% include "market/includes/shop-sidebar.html" %}
-
-                </div>
-
             </div>
             <br>
 

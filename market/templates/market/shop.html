@@ -119,12 +119,18 @@
         <div class="col-lg-3"></div>
         <div class="col-lg-6">
           <div class="rtl text-center">
-            {{parent.get_breadcrumb_tag|safe}}
+            {{parent.get_market_breadcrumb_tag|safe}}
           </div>
         </div>
         <div class="col-lg-3"></div>
       </div>
-      <div class="row">
+      <div class="row ">
+        <div class="col-md-3">
+
+          {% include "market/includes/shop-sidebar.html" %}
+
+        </div>
+
         <div class="col-md-9">
           <h3 class="section-title text-center farsi">دسته بندی را انتخاب کنید</h3>
 
@@ -176,12 +182,6 @@
             </div>
           </div>
         </div>
-        <div class="col-md-3">
-
-          {% include "market/includes/shop-sidebar.html" %}
-
-        </div>
-
       </div>
       <br>
 

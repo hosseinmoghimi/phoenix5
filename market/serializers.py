@@ -45,7 +45,7 @@ class BrandSerializer(serializers.ModelSerializer):
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model=Product
-        fields=['id','title','thumbnail','get_absolute_url']
+        fields=['id','title','thumbnail','get_market_absolute_url']
 
 
 class ProductSerializerForApi(serializers.ModelSerializer):

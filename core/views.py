@@ -116,6 +116,8 @@ def PageContext(request, *args, **kwargs):
         raise Http404
     context = {}
     context['page'] = page
+    if page.class_name=="product":
+        context['page_is_product']=True
     profile=ProfileRepo(request=request).me
 
     can_read=False

@@ -6,6 +6,9 @@ class SearchForm(forms.Form):
 class DownloadMediaForm(forms.Form):
     pass
 
+class DeletePageImageForm(forms.Form):
+    page_id=forms.IntegerField(required=True)
+    image_id=forms.IntegerField(required=True)
 
 class SetThumbnailHeaderForm(forms.Form):
     page_id=forms.IntegerField(required=True)

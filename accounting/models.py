@@ -272,7 +272,8 @@ class Product(ProductOrService):
         if self.app_name is None or self.app_name=="":
             self.app_name=APP_NAME
         return super(Product,self).save(*args, **kwargs)
-
+    def get_market_absolute_url(self):
+        return reverse("market:product",kwargs={'pk':self.pk})
  
 class Service(ProductOrService):
 
@@ -290,7 +291,19 @@ class Service(ProductOrService):
             self.app_name=APP_NAME
         return super(Service,self).save(*args, **kwargs)
 
+class ProductSpecification(models.Model):
+    product=models.ForeignKey("product", verbose_name=_("product"), on_delete=models.CASCADE)
+    name=models.CharField(_("name"), max_length=50)
+    value=models.CharField(_("value"), max_length=50)
 
+    class Meta:
+        verbose_name = _("ProductSpecification")
+        verbose_name_plural = _("ProductSpecifications")
+
+    def __str__(self):
+        return f"{self.product.title}:{self.name}:{self.value}"
+
+  
 class Account(models.Model,LinkHelper):
     logo_origin=models.ImageField(_("لوگو , تصویر"), null=True,blank=True,upload_to=IMAGE_FOLDER+"account/", height_field=None, width_field=None, max_length=None)
     title=models.CharField(_("عنوان"), null=True,blank=True,max_length=500)
@@ -847,12 +860,16 @@ class Category(models.Model,LinkHelper, ImageMixin):
         verbose_name = 'Category'
         verbose_name_plural = 'Categories'
  
-    def get_breadcrumb_link(self):
+    def get_breadcrumb_link(self,*args, **kwargs):
+        if "app_name" in kwargs:
+            get_absolute_url=reverse(kwargs['app_name']+":category",kwargs={'pk':self.pk})
+        else:
+            get_absolute_url=self.get_absolute_url()
         aaa=""
         if self.parent is not None:
             aaa+="/"
         aaa+=f"""
-                    <a href="{self.get_absolute_url()}">
+                    <a href="{get_absolute_url}">
                     <span class="farsi">
                     {self.title}
                     </span>
@@ -860,14 +877,37 @@ class Category(models.Model,LinkHelper, ImageMixin):
                     """
         if self.parent is None:
             return aaa
-        return self.parent.get_breadcrumb_link()+aaa
+        return self.parent.get_breadcrumb_link(*args, **kwargs)+aaa
     
+    def get_market_breadcrumb_link(self,*args, **kwargs):
+        return self.get_breadcrumb_link(app_name="market")
+    def get_market_breadcrumb_link1(self,*args, **kwargs):
+        get_absolute_url=reverse("market:category",kwargs={'pk':self.pk})
+        aaa=""
+        if self.parent is not None:
+            aaa+="/"
+        aaa+=f"""
+                    <a href="{get_absolute_url}">
+                    <span class="farsi">
+                    {self.title}
+                    </span>
+                    </a> 
+                    """
+        if self.parent is None:
+            return aaa
+        return self.parent.get_market_breadcrumb_link(*args, **kwargs)+aaa
+     
     def get_breadcrumb_tag(self):
         return f"""
         
                 
                     {self.get_breadcrumb_link()}
                
+        """
+    
+    def get_market_breadcrumb_tag(self):
+        return f"""
+                    {self.get_market_breadcrumb_link()}
         """
     
     @property

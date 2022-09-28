@@ -27,9 +27,12 @@ class ImageMixin():
 
     @property
     def image(self):
-        if self.image_main_origin:
-            return MEDIA_URL+str(self.image_main_origin)
+        try:
 
+            if self.image_main_origin:
+                return MEDIA_URL+str(self.image_main_origin)
+        except:
+            return self.thumbnail
     @property
     def thumbnail(self):
         if self.thumbnail_origin:

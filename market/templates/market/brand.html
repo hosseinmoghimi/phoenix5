@@ -3,7 +3,7 @@
 {% block content %}
 
 <div class="page-header header-filter header-small" data-parallax="true"
-    style="background-image: url(&quot;{{brand.logo}}&quot;); transform: translate3d(0px, 0px, 0px);">
+    style="background-image: url(&quot;{{brand.header}}&quot;); transform: translate3d(0px, 0px, 0px);">
     <div class="container">
         <div class="row">
             <div class="col-md-8 ml-auto mr-auto text-center">
@@ -120,17 +120,19 @@
     <!-- section -->
     <div class="section">
         <div class="container">
-            <h2 class="section-title text-center farsi">لیست کالا ها</h2>
             <div class="row">
                 <div class="col-lg-3"></div>
                 <div class="col-lg-6">
-                    <div class="rtl text-center">
-                        {{brand.title}}
-                    </div>
+
                 </div>
                 <div class="col-lg-3"></div>
             </div>
             <div class="row">
+                <div class="col-md-3">
+
+                    {% include "market/includes/shop-sidebar.html" %}
+
+                </div>
                 <div class="col-md-9">
                     <div class="row rtl">
 
@@ -170,17 +172,13 @@
 
 
                     </div>
-                    <div class="row">
-                        <div class="col-md-3 ml-auto mr-auto">
-                            <button rel="tooltip" class="btn btn-rose btn-round" data-original-title="" title="">Load
-                                more...</button>
-                        </div>
+                    <div class="rtl text-right">
+                        {{brand.title}}
                     </div>
-                </div>
-                <div class="col-md-3">
 
-                    {% include "market/includes/shop-sidebar.html" %}
+                    <h3 class="section-title text-right farsi">لیست کالا ها</h3>
 
+                    
                 </div>
 
             </div>
@@ -247,68 +245,68 @@
 {% block script %}
 <script>
     let brand_app = new Vue({
-      el: "#brand-app",
-      data: {
-        new_product_title: '',
-        new_category_title: '',
-        products: JSON.parse(`{{products_s|escapejs}}`),
-  
-  
-      },
-      methods: {
-        to_price: function (value) {
-          return toPrice(value, TUMAN)
+        el: "#brand-app",
+        data: {
+            new_product_title: '',
+            new_category_title: '',
+            products: JSON.parse(`{{products_s|escapejs}}`),
+
+
         },
-        add_product: function () {
-          let url = add_product_url
-  
-  
-          let posting = $.post(url, {
-            title: shop_app.new_product_title,
-            category_id: shop_app.parent_id,
-            csrfmiddlewaretoken: csrfmiddlewaretoken
-          })
-  
-          posting.done(function (data) {
-            if (data.result === 'SUCCEED') {
-  
-              shop_app.new_product_title = ''
-              shop_app.products.push(data.product)
-            }
-            else {
-              console.log(data)
-  
-            }
-          })
+        methods: {
+            to_price: function (value) {
+                return toPrice(value, TUMAN)
+            },
+            add_product: function () {
+                let url = add_product_url
+
+
+                let posting = $.post(url, {
+                    title: shop_app.new_product_title,
+                    category_id: shop_app.parent_id,
+                    csrfmiddlewaretoken: csrfmiddlewaretoken
+                })
+
+                posting.done(function (data) {
+                    if (data.result === 'SUCCEED') {
+
+                        shop_app.new_product_title = ''
+                        shop_app.products.push(data.product)
+                    }
+                    else {
+                        console.log(data)
+
+                    }
+                })
+            },
+
+
+
+            add_category: function () {
+                let url = add_category_url
+
+
+                let posting = $.post(url, {
+                    title: shop_app.new_category_title,
+                    parent_id: shop_app.parent.id,
+                    csrfmiddlewaretoken: csrfmiddlewaretoken
+                })
+
+                posting.done(function (data) {
+                    console.log(data)
+                    if (data.result === 'SUCCEED') {
+
+                        shop_app.new_category_title = ''
+                        shop_app.categories.push(data.category)
+                    }
+                    else {
+                        console.log(data)
+
+                    }
+                })
+            },
+
         },
-  
-  
-  
-        add_category: function () {
-          let url = add_category_url
-  
-  
-          let posting = $.post(url, {
-            title: shop_app.new_category_title,
-            parent_id: shop_app.parent.id,
-            csrfmiddlewaretoken: csrfmiddlewaretoken
-          })
-  
-          posting.done(function (data) {
-            console.log(data)
-            if (data.result === 'SUCCEED') {
-  
-              shop_app.new_category_title = ''
-              shop_app.categories.push(data.category)
-            }
-            else {
-              console.log(data)
-  
-            }
-          })
-        },
-  
-      },
     })
-  </script>
+</script>
 {% endblock script %}
