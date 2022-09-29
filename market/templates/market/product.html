@@ -45,14 +45,14 @@
                         </span>
 
                         {% endif %}
-                        
+
                     </h3>
 
                     <div class="farsi text-right">
 
-                        
+
                         {% include "core/includes/page-like-app/template.html" %}
-                        
+
                     </div>
                     {% if product.brand %}
                     <div class="text-right farsi">
@@ -73,7 +73,7 @@
                         <span class="price h4 price-old mx-2 farsi text-muted" style="text-decoration: line-through">
                             {{product.old_price|to_price}}
                         </span>
-                        <span class="price h4 price-old mx-2 farsi text-danger"  >
+                        <span class="price h4 price-old mx-2 farsi text-danger">
                             {{product.unit_price|to_price}}
                         </span>
                     </div>
@@ -184,7 +184,7 @@
 
 
 
-                 
+
 
 
 
@@ -205,17 +205,55 @@
 
             </div>
         </div>
-        {% if page.downloads.all or add_page_download_form %}
+        <div class="row">
 
-        <div class="my-5 farsi">
-            <div class="row">
-                <div class="col-md-12">
-                    {% include "core/includes/page-downloads-app/template.html" %}
+            {% if page.downloads.all or add_page_download_form %}
+            <div class="col-md-4">
 
+                <div class="my-5 farsi">
+                    <div class="row">
+                        <div class="col-md-12">
+                            {% include "core/includes/page-downloads-app/template.html" %}
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            {% endif %}
+            {% if page.links.all or add_page_link_form %}
+            <div class="col-md-4">
+
+
+                <div class="my-5 farsi">
+                    <div class="row">
+                        <div class="col-md-12">
+                            {% include "core/includes/page-links-app/template.html" %}
+
+                        </div>
+                    </div>
                 </div>
             </div>
+            {% endif %}
+
+            {% if page.tags.all or add_page_link_form %}
+            <div class="col-md-4">
+
+
+                <div class="my-5 farsi">
+                    <div class="row">
+                        <div class="col-md-12">
+                            {% include "core/includes/page-tags-app/template.html" %}
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
         </div>
-        {% endif %}
+
+
 
         <div id="product-features">
 
@@ -231,25 +269,13 @@
                         <div class="card-body">
                             <h3 class="text-center">
                                 نظرات کاربران
+                                <small class="text-muted">
+                                    (
+                                        <span v-text="page_comments.length"></span>
+                                    )
+                                </small>
                             </h3>
-                            {% for page_comment in page.pagecomment_set.all1 %}
-                            <div class="py-3">
-
-                                <div class="media">
-                                    <img src="{{page_comment.profile.image}}" class="rounded-circle" width="64" alt="">
-                                    <div class="media-body">
-                                        <h6 class="small">{{page_comment.profile.name}}
-                                            <span class="text-secondary mx-3 small">
-
-                                                {{page_comment.date_added|to_persian_datetime|safe}}
-                                            </span>
-                                        </h6>
-                                        <div class="text-secondary text-right">{{page_comment.comment}}</div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {% endfor %}
+                           
                             <div class="py-3" v-for="page_comment in page_comments">
                                 <page-comment-component :page_comment="page_comment">
                                 </page-comment-component>
@@ -406,5 +432,7 @@
 
 
 {% include "core/includes/page-downloads-app/script.html" %}
+{% include "core/includes/page-links-app/script.html" %}
+{% include "core/includes/page-tags-app/script.html" %}
 
 {% endblock %}

@@ -249,6 +249,7 @@ class ProductOrService(Page):
 
 
 class Product(ProductOrService):
+    # specifications=models.ManyToManyField("ProductSpecification", verbose_name=_("ویژگی ها"))
 
     class Meta:
         verbose_name = _("Product")
@@ -275,6 +276,7 @@ class Product(ProductOrService):
     def get_market_absolute_url(self):
         return reverse("market:product",kwargs={'pk':self.pk})
  
+
 class Service(ProductOrService):
 
     class Meta:
@@ -291,11 +293,14 @@ class Service(ProductOrService):
             self.app_name=APP_NAME
         return super(Service,self).save(*args, **kwargs)
 
-class ProductSpecification(models.Model):
+
+class ProductSpecification(models.Model,LinkHelper):
     product=models.ForeignKey("product", verbose_name=_("product"), on_delete=models.CASCADE)
     name=models.CharField(_("name"), max_length=50)
     value=models.CharField(_("value"), max_length=50)
-
+    app_name=APP_NAME
+    class_name="productspecification"
+    
     class Meta:
         verbose_name = _("ProductSpecification")
         verbose_name_plural = _("ProductSpecifications")

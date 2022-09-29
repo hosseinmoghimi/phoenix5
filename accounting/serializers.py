@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Account, Asset, Bank, BankAccount, Category, Cheque, Cost, FinancialBalance, FinancialDocument, Invoice, InvoiceLine, Payment, Price, Product, ProductOrService,Service,  Transaction
+from .models import Account, Asset, Bank, BankAccount, Category, Cheque, Cost, FinancialBalance, FinancialDocument, Invoice, InvoiceLine, Payment, Price, Product, ProductOrService, ProductSpecification,Service,  Transaction
 from authentication.serializers import ProfileSerializer
 
  
@@ -7,6 +7,13 @@ class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = ['id', 'title','get_absolute_url','buy_price', 'get_pm_absolute_url','get_edit_url','get_delete_url','available','unit_price','unit_name','thumbnail']
+
+ 
+class ProdoctSpecificationSerializer(serializers.ModelSerializer):
+    product=ProductSerializer()
+    class Meta:
+        model = ProductSpecification
+        fields = ['id', 'product','name','value', 'get_edit_url','get_delete_url']
 
 
 class ProductBriefSerializer(serializers.ModelSerializer):

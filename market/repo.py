@@ -1,7 +1,3 @@
-from unicodedata import category
-
-from requests import request
-from accounting.models import Account
 from accounting.repo import AccountRepo, ProductRepo as ProductRepo_origin,CategoryRepo
 from market.apps import APP_NAME
 from market.models import Brand, Cart, CartLine, Category, Customer, Shop, Supplier
@@ -152,7 +148,7 @@ class SupplierRepo():
         
         self.objects=Supplier.objects.all()
         self.profile=ProfileRepo(*args, **kwargs).me
-       
+        self.me=Supplier.objects.filter(account__profile_id=self.profile.id).first()       
 
     def supplier(self, *args, **kwargs):
         pk=0
@@ -320,7 +316,7 @@ class ShopRepo():
         
         self.objects=Shop.objects.all()
         self.profile=ProfileRepo(*args, **kwargs).me
-        self.customer= CustomerRepo(request=request).me
+        self.customer= CustomerRepo(request=self.request).me
        
 
     def shop(self, *args, **kwargs):
@@ -351,6 +347,10 @@ class ShopRepo():
             objects=objects.filter(productorservice_id=kwargs['productorservice_id'])
         if 'unit_name' in kwargs:
             objects=objects.filter(unit_name=kwargs['unit_name'])
+        if 'product_id' in kwargs:
+            objects=objects.filter(product_or_service_id=kwargs['product_id'])
+        if 'supplier_id' in kwargs:
+            objects=objects.filter(supplier_id=kwargs['supplier_id'])
         return objects.all()
 
     def add_shop(self,*args, **kwargs):

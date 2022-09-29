@@ -1,14 +1,13 @@
 from accounting.models import Invoice,Product as AccountingProduct
 from core.constants import CURRENCY
 from core.enums import UnitNameEnum
+from market.enums import *
 from core.models import ImageMixin, _,LinkHelper,models,reverse,Page
 from market.apps import APP_NAME
 from accounting.models import Product,Category
 # Create your models here.
 IMAGE_FOLDER = APP_NAME+"/images/"
 
-
- 
 
 class Brand(Page):
     products=models.ManyToManyField("accounting.product", blank=True,verbose_name=_("products"))
@@ -50,6 +49,7 @@ class Order(Invoice):
  
   
 class Supplier(Page):
+    region=models.ForeignKey("map.area", verbose_name=_("region"), on_delete=models.CASCADE)
     account=models.ForeignKey("accounting.account", verbose_name=_("account"), on_delete=models.CASCADE)
     
 
@@ -69,6 +69,8 @@ class Supplier(Page):
 
 
 class Customer(models.Model,LinkHelper):
+    region=models.ForeignKey("map.area", verbose_name=_("region"), on_delete=models.CASCADE)
+    level=models.CharField(_("level"),choices=CustomerLevelEnum.choices,default=CustomerLevelEnum.REGULAR, max_length=50)
     account=models.ForeignKey("accounting.account", verbose_name=_("account"), on_delete=models.CASCADE)
     class_name="customer"
     app_name=APP_NAME
@@ -104,10 +106,15 @@ class Cart(Invoice):
 
 
 class Shop(models.Model,LinkHelper):
+    region=models.ForeignKey("map.area", verbose_name=_("region"), on_delete=models.CASCADE)
     supplier=models.ForeignKey("supplier", verbose_name=_("supplier"), on_delete=models.CASCADE)
     product_or_service=models.ForeignKey("accounting.productorservice", verbose_name=_("product_or_service"), on_delete=models.CASCADE)
     available=models.IntegerField(_("available"))
+    expire_datetime=models.DateTimeField(_("تاریخ اعتبار تا"), auto_now=False, auto_now_add=False)
+    specifications=models.ManyToManyField("accounting.ProductSpecification",blank=True, verbose_name=_("ویژگی ها"))
+    level=models.CharField(_("level"),choices=CustomerLevelEnum.choices,default=CustomerLevelEnum.REGULAR, max_length=50)
     unit_name=models.CharField(_("unit_name"),choices=UnitNameEnum.choices,default=UnitNameEnum.ADAD, max_length=50)
+
     unit_price=models.IntegerField(_("unit_price"))
     class_name="shop"
     app_name=APP_NAME

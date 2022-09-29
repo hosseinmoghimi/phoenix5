@@ -14,10 +14,10 @@ from django.views import View
 from market.apps import APP_NAME
 from market.enums import ParameterMarketEnum
 from market.forms import *
-from market.repo import (BrandRepo, CartLineRepo, CategoryRepo, ProductRepo,
+from market.repo import (BrandRepo, CartLineRepo, CategoryRepo, ProductRepo, ShopRepo,
                          SupplierRepo)
 from market.serializers import (BrandSerializer, CartLineSerializer,
-                                CategorySerializer, ProductSerializer,
+                                CategorySerializer, ProductSerializer,ProdoctSpecificationSerializer,
                                 SupplierSerializer)
 
 TEMPLATE_ROOT = "market/"
@@ -38,6 +38,10 @@ def getContext(request, *args, **kwargs):
     context['sidebar_categories']=sidebar_categories
     sidebar_brands=BrandRepo(request=request).list()
     context['sidebar_brands']=sidebar_brands
+
+
+    me_supplier=SupplierRepo(request=request).me
+    context['me_supplier']=me_supplier
     return context
 
 def get_customer_context(request,*args, **kwargs):
@@ -252,4 +256,13 @@ class ProductView(View):
         related_pages_s=json.dumps(ProductSerializer(related_pages,many=True).data)
         context['related_pages_s']=related_pages_s
         context['related_pages']=related_pages
+        me_supplier=context["me_supplier"]
+        if me_supplier is not None:
+            supplier_shops=ShopRepo(request=request).list(product_id=product.id,supplier_id=me_supplier.id)
+        else:
+            supplier_shops=[]
+        context['supplier_shops']=supplier_shops
+        specifications=product.productspecification_set.all()
+        specifications_s=json.dumps(ProdoctSpecificationSerializer(specifications,many=True).data)
+        context['specifications_s']=specifications_s
         return render(request,TEMPLATE_ROOT+"product.html",context)
