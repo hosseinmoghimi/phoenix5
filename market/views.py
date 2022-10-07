@@ -60,6 +60,8 @@ def get_suppliers_context(request,*args, **kwargs):
     context['suppliers']=suppliers
     context['suppliers_s']=json.dumps(SupplierSerializer(suppliers,many=True).data)
     return context
+
+
 class SupplierView(View):
     def get(self, request, *args, **kwargs):
         context = getContext(request)
@@ -76,6 +78,7 @@ class SupplierView(View):
 
 
         return render(request, TEMPLATE_ROOT+"supplier.html", context)
+
 
 class HomeView(View):
     def get(self, request, *args, **kwargs):
@@ -111,7 +114,8 @@ class HomeView(View):
             context['add_product_form'] = AddProductForm()
         # if request.user.has_perm(APP_NAME+".add_category") and len(products) == 0:
         if request.user.has_perm(APP_NAME+".add_category"):
-            context['add_category_form'] = AddCategoryForm()
+            pass
+            # context['add_category_form'] = AddCategoryForm()
 
         context['add_membership_request_form'] = AddMembershipRequestForm()
 
@@ -125,6 +129,7 @@ class HomeView(View):
         context.update(get_suppliers_context(request=request,*args, **kwargs))
 
         return render(request, TEMPLATE_ROOT+"shop.html", context)
+
 
 class CategoryView(View):
     def get(self, request, *args, **kwargs):
@@ -170,10 +175,10 @@ class CategoryView(View):
         context['add_membership_request_form'] = AddMembershipRequestForm()
 
         if request.user.has_perm(APP_NAME+".change_category"):
-            context['add_existing_product_to_category_form']=AddExistingProductToCategoryForm()
+            pass
+            # context['add_existing_product_to_category_form']=AddExistingProductToCategoryForm()
 
         return render(request, TEMPLATE_ROOT+"category.html", context)
-
 
 
 class BrandsView(View):
@@ -195,7 +200,6 @@ class BrandsView(View):
        
 
         return render(request, TEMPLATE_ROOT+"brands.html", context)
-
 
 
 class BrandView(View):
@@ -240,6 +244,7 @@ class SearchView(View):
         products_s=json.dumps(ProductSerializer(products,many=True).data)
         context['products_s']=products_s
         return render(request,TEMPLATE_ROOT+"index.html",context)
+
 
 class ProductView(View):
     def get(self,request,*args, **kwargs):

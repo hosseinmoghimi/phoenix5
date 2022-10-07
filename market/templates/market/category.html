@@ -117,16 +117,25 @@
 
                 <div class="col-md-9">
                     <div class="row rtl">
-                        <div v-for="category in categories" class="col-md-4 col-6">
+                        {% for category in categories %}
+
+                        <div class="col-md-4 col-6">
                             {% include "market/includes/category-thumbnail.html" %}
                         </div>
+                        {% endfor %}
 
 
-
-
-                        <div class="col-md-4 col-6" v-for="product in products">
+                        {% for product in products %}
+                        <div class="col-md-4 col-6">
                             {% include "market/includes/product-thumbnail.html" %}
                         </div>
+                        {% endfor %}
+
+
+
+
+
+
                         <div class="col-12">
                             <div class="row">
                             </div>

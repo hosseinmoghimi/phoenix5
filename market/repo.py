@@ -148,8 +148,10 @@ class SupplierRepo():
         
         self.objects=Supplier.objects.all()
         self.profile=ProfileRepo(*args, **kwargs).me
-        self.me=Supplier.objects.filter(account__profile_id=self.profile.id).first()       
-
+        if self.profile is not None:
+            self.me=Supplier.objects.filter(account__profile_id=self.profile.id).first()       
+        else:
+            self.me=None
     def supplier(self, *args, **kwargs):
         pk=0
         if 'supplier_id' in kwargs:

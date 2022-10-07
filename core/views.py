@@ -6,7 +6,7 @@ from utility.compress import Compress
 from django.utils import timezone
 from django.http import HttpResponse
 import os
-from phoenix.server_settings import MEDIA_ROOT,TEMPORARY_ROOT
+from phoenix.server_settings import DEBUG, MEDIA_ROOT,TEMPORARY_ROOT,DB_FILE_PATH,ADMIN_URL, MEDIA_URL, STATIC_URL, SITE_URL,phoenix_apps
 from utility.calendar import PersianCalendar
 from core.apps import APP_NAME
 from log.repo import LogRepo
@@ -14,13 +14,10 @@ from core.enums import ColorEnum, IconsEnum, ParameterNameEnum, PictureNameEnum
 from core.models import Download, Link
 from core.repo import DownloadRepo, ImageRepo, LinkRepo, PageDownloadRepo, PageImageRepo, PageLikeRepo, PageLinkRepo, PagePermissionRepo, PageRepo, PageTagRepo, ParameterRepo, PictureRepo, TagRepo
 from core.serializers import PagePermissionSerializer,PageBriefSerializer, PageCommentSerializer, PageImageSerializer, PageDownloadSerializer, PageLinkSerializer, PageSerializer, PageTagSerializer, TagSerializer
-from phoenix.settings import ADMIN_URL, MEDIA_URL, STATIC_URL, SITE_URL
-from phoenix.server_settings import DB_FILE_PATH
 from django.shortcuts import render
 from authentication.repo import ProfileRepo
 from core.constants import CURRENCY
 
-from phoenix.server_settings import phoenix_apps
 from django.views import View
 from core.forms import *
 # Create your views here.
@@ -71,6 +68,7 @@ def CoreContext(request, *args, **kwargs):
    
     context['APP_NAME'] = app_name
     context['ADMIN_URL'] = ADMIN_URL
+    context['DEBUG'] = DEBUG
     context['STATIC_URL'] = STATIC_URL
     context['MEDIA_URL'] = MEDIA_URL
     context['SITE_URL'] = SITE_URL

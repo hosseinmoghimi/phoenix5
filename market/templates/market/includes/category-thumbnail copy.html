@@ -1,19 +1,19 @@
 <div class="card card-product card-plain no-shadow" data-colored-shadow="false">
   <div class="card-header card-header-image">
-    <a href="{{category.get_market_absolute_url}}">
-      <img src="{{category.thumbnail}}" alt="...">
+    <a :href="category.get_market_absolute_url">
+      <img :src="category.thumbnail" alt="...">
     </a>
   </div>
   <div class="card-body">
-    <a href="{{category.get_market_absolute_url}}">
-      <h4 class="card-title farsi text-center">
+    <a :href="category.get_market_absolute_url">
+      <h4 class="card-title farsi text-center" v-text="category.title">
 
-        {{category.title}}
+
       </h4>
       {% if perms.market.change_productcategory %}
       <div class="text-right">
 
-        <a target="_blank" href="{{category.get_edit_url}}">
+        <a target="_blank" :href="category.get_edit_url">
           <!-- <i class="material-icons" aria-hidden="true">settings</i> -->
           <!-- <i class="fa fa-edit"></i> -->
         </a>

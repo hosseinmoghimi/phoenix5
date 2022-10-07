@@ -34,14 +34,23 @@
                     {% include "market/includes/product-images-app/template.html" %}
                 </div>
                 <div class="col-md-6 col-sm-6">
-                    <span class="farsi">
+                    <div class="farsi text-right">
                         {{product.category.get_market_breadcrumb_link|safe}}
-                    </span>
+                    </div>
                     <h3 class="title">{{product.title}}
                         {% if perms.market.change_product %}
                         <span class="mx-2">
 
                             {{product.get_edit_btn|safe}}
+                        </span>
+
+                        <span class="mx-2">
+
+                           <a href="{{product.get_absolute_url}}" title="حسابداری">
+                            <i class="fa fa-edit text-info">
+
+                            </i>
+                           </a>
                         </span>
 
                         {% endif %}

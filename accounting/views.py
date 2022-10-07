@@ -895,6 +895,7 @@ class CategoryView(View):
         context['services_s']=services_s
 
 
+
         context['category']=category
         categories=category_repo.list(parent_id=category.id)
         context['categories']=categories
@@ -902,6 +903,11 @@ class CategoryView(View):
 
         if request.user.has_perm(APP_NAME+".add_category"):
             context['add_category_form']=AddCategoryForm()
+
+
+        if request.user.has_perm(APP_NAME+".add_product"):
+            context['add_product_form']=AddProductForm()
+            context['unit_names']=(i[0] for i in UnitNameEnum.choices)
         return render(request,TEMPLATE_ROOT+"category.html",context)
 
 

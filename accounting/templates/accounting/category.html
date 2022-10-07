@@ -12,6 +12,7 @@
 
       {% if perms.accounting.change_category %}
       <a title="ویرایش" href="{{category.get_edit_url}}" target="_blank"><i class="fa fa-edit text-warning mx-2"></i></a>
+      <a title="مارکت" href="{{category.get_market_absolute_url}}" target="_blank"><i class="fa fa-edit text-info mx-2"></i></a>
         
       {% endif %}
 
@@ -31,10 +32,17 @@
   <div class="col-md-12">
     {% include "accounting/includes/services-app/template.html" %}
   </div>
+  {% if add_product_form %}
+  <div class="col-md-12">
+    {% include "accounting/includes/add-product-app/template.html" %}
+  </div>
+  {% endif %}
 </div>
 {% endblock content %}
 {% block script %}
     {% include "accounting/includes/products-app/script.html" %}
     {% include "accounting/includes/services-app/script.html" %}
     {% include "accounting/includes/categories-app/script.html" %}
+    {% include "accounting/includes/add-product-app/script.html" %}
+
 {% endblock script %}

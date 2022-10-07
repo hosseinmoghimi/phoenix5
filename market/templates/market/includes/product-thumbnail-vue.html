@@ -1,27 +1,24 @@
-{% load to_price %}
 <div class="card card-product card-plain no-shadow" data-colored-shadow="false">
   <div class="card-header card-header-image">
-    <a href="{{product.get_market_absolute_url}}">
-      <img src="{{product.thumbnail}}" alt="...">
+    <a :href="product.get_market_absolute_url">
+      <img :src="product.thumbnail" alt="...">
     </a>
   </div>
   <div class="card-body">
-    <a href="{{product.get_market_absolute_url}}">
-      <h4 class="card-title farsi  text-center">
-        {{product.title}}
+    <a :href="product.get_market_absolute_url">
+      <h4 class="card-title farsi  text-center" v-text="product.title">
+
       </h4>
 
     </a>
     <!-- <div v-if="product.short_description" class="description" v-html="product.short_description"> -->
 
-    {% if product.brand %}
-    <div class="description text-center">
-      <a href="{{product.brand.get_absolute_url}}" title="{{product.brand.title}}">
-        <img src="{{product.brand.image}}" height="32" alt="">
+    </div>
+    <div v-if="product.brand" class="description text-center">
+      <a :href="product.brand.get_absolute_url" :title="product.brand.title">
+        <img :src="product.brand.image" height="32" alt="">
       </a>
     </div>
-    {% endif %}
-
 
     <!-- <div v-if="product.model_name" class="description text-center" v-text="product.model_name">
      
@@ -30,16 +27,9 @@
   </div>
   <div class="card-footer justify-content-between text-center">
     <div class="price-container">
-
-      {% if product.get_price %}
-      <span class="price text-success text-center">
-        {{product.get_price|to_price}}
-      </span>
-      {% else %}
-      <span class="price text-warning text-center">ناموجود</span>
-
-      {% endif %}
-
+      <span class="price text-success text-center" v-if="product.get_price>0"
+        v-text="to_price(product.get_price)"></span>
+      <span class="price text-warning text-center" v-if="product.get_price<=0">ناموجود</span>
     </div>
     <!-- <button class="btn btn-rose btn-link btn-fab btn-fab-mini btn-round pull-right" rel="tooltip" title=""
       data-placement="bottom" data-original-title="حذف از لیست من">

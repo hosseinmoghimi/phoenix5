@@ -1,3 +1,4 @@
+from unicodedata import category
 from accounting.enums import FinancialDocumentTypeEnum, PaymentMethodEnum, SpendTypeEnum, TransactionStatusEnum
 from core.constants import FAILED, SUCCEED,MISC
 
@@ -219,8 +220,11 @@ class ProductRepo():
         if len(Product.objects.filter(title=product.title))>0:
             message="کالای وارد شده تکراری می باشد."
             return FAILED,None,message
-
         product.save()
+        if 'category_id' in kwargs:
+            category=Category.objects.filter(pk=kwargs['category_id']).first()
+            if category is not None:
+                category.products_or_services.add(product)
         message=product.title +" با موفقیت افزوده شد."
         return SUCCEED,product,message
 

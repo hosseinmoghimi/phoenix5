@@ -18,6 +18,7 @@ from utility.utils import LinkHelper
 from accounting.apps import APP_NAME
 from accounting.enums import *
 
+
 class Asset(Page,LinkHelper):
     price=models.IntegerField(_("price"),default=0)
     class Meta:
@@ -246,6 +247,10 @@ class ProductOrService(Page):
     class Meta:
         verbose_name = _("ProductOrService")
         verbose_name_plural = _("ProductOrServices")
+
+    @property
+    def category(self):
+        return self.category_set.first()
 
 
 class Product(ProductOrService):
@@ -923,6 +928,7 @@ class Category(models.Model,LinkHelper, ImageMixin):
 
     def get_market_absolute_url(self):
         return reverse("market:category",kwargs={'pk':self.pk})
+
 
 class Spend(Transaction,LinkHelper):    
     spend_type=models.CharField(_("spend_type"),choices=SpendTypeEnum.choices, max_length=50)

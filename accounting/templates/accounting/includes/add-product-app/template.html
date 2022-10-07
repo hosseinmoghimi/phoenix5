@@ -30,6 +30,15 @@
                                 </div>
 
                             </div>
+                            {% if category %}
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="">نام دسته بندی</label>
+                                    <input type="text" disabled class="form-control" value="{{category.title}}">
+                                </div>
+
+                            </div>
+                            {% endif %}
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="">قیمت خرید</label>
