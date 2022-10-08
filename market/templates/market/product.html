@@ -46,11 +46,11 @@
 
                         <span class="mx-2">
 
-                           <a href="{{product.get_absolute_url}}" title="حسابداری">
-                            <i class="fa fa-edit text-info">
+                            <a href="{{product.get_absolute_url}}" title="حسابداری">
+                                <i class="fa fa-edit text-info">
 
-                            </i>
-                           </a>
+                                </i>
+                            </a>
                         </span>
 
                         {% endif %}
@@ -214,51 +214,27 @@
 
             </div>
         </div>
-        <div class="row">
+        <div class="row mt-5">
 
-            {% if page.downloads.all or add_page_download_form %}
             <div class="col-md-4">
+                {% include "market/includes/page-downloads-app/template.html" %}
 
-                <div class="my-5 farsi">
-                    <div class="row">
-                        <div class="col-md-12">
-                            {% include "core/includes/page-downloads-app/template.html" %}
 
-                        </div>
-                    </div>
-                </div>
 
             </div>
-            {% endif %}
-            {% if page.links.all or add_page_link_form %}
             <div class="col-md-4">
 
 
-                <div class="my-5 farsi">
-                    <div class="row">
-                        <div class="col-md-12">
-                            {% include "core/includes/page-links-app/template.html" %}
+                {% include "market/includes/page-links-app/template.html" %}
 
-                        </div>
-                    </div>
-                </div>
             </div>
-            {% endif %}
 
-            {% if page.tags.all or add_page_link_form %}
             <div class="col-md-4">
 
 
-                <div class="my-5 farsi">
-                    <div class="row">
-                        <div class="col-md-12">
-                            {% include "core/includes/page-tags-app/template.html" %}
+                {% include "market/includes/page-tags-app/template.html" %}
 
-                        </div>
-                    </div>
-                </div>
             </div>
-            {% endif %}
 
         </div>
 
@@ -280,11 +256,11 @@
                                 نظرات کاربران
                                 <small class="text-muted">
                                     (
-                                        <span v-text="page_comments.length"></span>
+                                    <span v-text="page_comments.length"></span>
                                     )
                                 </small>
                             </h3>
-                           
+
                             <div class="py-3" v-for="page_comment in page_comments">
                                 <page-comment-component :page_comment="page_comment">
                                 </page-comment-component>
