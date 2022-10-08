@@ -99,7 +99,7 @@ class ResumeIndexView(View):
         context['title'] = resume_index.title
         context['resume_skills'] = resume_index.resumeskill_set.all()
         me=context['profile']
-        if request.user.has_perm(APP_NAME+".change_resumeindex") or me.id==resume_index.profile_id:
+        if me is not None and (request.user.has_perm(APP_NAME+".change_resumeindex") or me.id==resume_index.profile_id):
             context['edit_resume_form']=EditResumeForm()
 
         services=resume_index.resumeservice_set.all().order_by('priority')

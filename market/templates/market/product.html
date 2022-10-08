@@ -249,40 +249,10 @@
         <div id="comments"></div>
         <div class="my-5 farsi">
             <div class="row">
-                <div class="col-md-12" id="page-comments-app">
-                    <div class="card">
-                        <div class="card-body">
-                            <h3 class="text-center">
-                                نظرات کاربران
-                                <small class="text-muted">
-                                    (
-                                    <span v-text="page_comments.length"></span>
-                                    )
-                                </small>
-                            </h3>
+                <div class="col-md-8 ml-auto mr-auto">
+                    {% include "market/includes/page-comments-app/template.html" %}
 
-                            <div class="py-3" v-for="page_comment in page_comments">
-                                <page-comment-component :page_comment="page_comment">
-                                </page-comment-component>
 
-                            </div>
-                            {% if add_page_comment_form %}
-
-                            <div class="media">
-                                <img src="{{profile.image}}" class="rounded-circle" width="64" alt="">
-                                <div class="media-body mr-2">
-                                    <h6>{{profile.name}}</h6>
-
-                                    <textarea id="comment_inputed" v-model="comment" class="farsi form-control"
-                                        rows="5"></textarea>
-                                    <button @click="add_comment"
-                                        class="btn btn-primary farsi btn-round btn-wd float-right">ثبت نظر</button>
-
-                                </div>
-                            </div>
-                            {% endif %}
-                        </div>
-                    </div>
 
                 </div>
             </div>
@@ -322,10 +292,10 @@
 
 
 {% block script %}
-<script src="{% static 'vendor/js/vue.min.js' %}"></script>
+
 <script>
-    let page_id = parseInt("{{page.id}}")
-    let page_comment_component_template = `
+   
+    let page_comment_component_template22 = `
     
     <div class="media">
     <a :href="page_comment.profile.get_absolute_url">
@@ -380,10 +350,7 @@
     `
 </script>
 
-
-{% include "market/includes/product-images-app/script.html" %}
-
-
+ 
 
 {% if me_supplier %}
 {% include "market/includes/product-shops-app/script.html" %}
@@ -397,8 +364,10 @@
 
 
 {% include "market/includes/product-specifications-app/script.html" %}
-{% include "core/includes/page-related-app/script.html" %}
-
+{% include "core/includes/page-app/script.html" %}
+<script>
+    page_comment_component_template = `{% include 'market/includes/page-comments-app/component.html' %}`
+</script>
 
 
 
@@ -406,18 +375,8 @@
 {% include "market/includes/add-to-cart-app/script.html" %}
 {% include "market/includes/cart-app/cart-app.html" %}
 {% endif %}
+ 
 
 
-
-{% if add_related_page_form %}
-{% include "core/includes/page-related-app/script.html" %}
-{% endif %}
-{% include "core/includes/page-like-app/script.html" %}
-{% include "core/includes/page-comments-app/script.html" %}
-
-
-{% include "core/includes/page-downloads-app/script.html" %}
-{% include "core/includes/page-links-app/script.html" %}
-{% include "core/includes/page-tags-app/script.html" %}
 
 {% endblock %}
