@@ -234,7 +234,7 @@
         filter_list: function () {
             if (this.add_service_request_form_title) {
 
-                this.services = all_services.filter((item) => { return item.full_title.toUpperCase().indexOf(this.add_service_request_form_title.toUpperCase()) > -1 }).slice(0, 6);
+                this.services = all_services.filter((item) => { return item.full_title.toUpperCase().indexOf(this.add_service_request_form_title.toUpperCase()) > -1 }).slice(0, 10);
                 try {
                     this.add_service_request_form_unit_price = this.selected_service().unit_price
                     this.add_service_request_form_unit_name = this.selected_service().unit_name
