@@ -1,0 +1,41 @@
+<script>
+    let url_add_product_specification = "{% url 'accounting:add_product_specification' %}"
+    let product_specifications = JSON.parse(`{{product_specifications_s|escapejs}}`)
+
+    let product_specifications_app = new Vue({
+        el: "#product-specifications-app",
+        data: {
+
+            specifications: product_specifications,
+            new_spec_name: '',
+            new_spec_value: '',
+        },
+        mounted: function () {
+
+        },
+        methods: {
+            add_specification: function () {
+
+                let url = url_add_product_specification
+                let payload = {
+                    name: product_specifications_app.new_spec_name,
+                    value: product_specifications_app.new_spec_value,
+                    product_id: page_id,
+                    csrfmiddlewaretoken: csrfmiddlewaretoken
+
+                }
+                let posting = $.post(url, payload)
+                posting.done(function (data) {
+                    if (data.result === 'SUCCEED') {
+
+                        product_specifications_app.specifications.push(data.product_specification)
+                        // product_specifications_app.new_spec_name = ''
+                        product_specifications_app.new_spec_value = ''
+                    }
+                })
+
+            },
+        },
+
+    })
+</script>

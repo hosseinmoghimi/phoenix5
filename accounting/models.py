@@ -301,8 +301,8 @@ class Service(ProductOrService):
 
 class ProductSpecification(models.Model,LinkHelper):
     product=models.ForeignKey("product", verbose_name=_("product"), on_delete=models.CASCADE)
-    name=models.CharField(_("name"), max_length=50)
-    value=models.CharField(_("value"), max_length=50)
+    name=models.CharField(_("name"), max_length=200)
+    value=models.CharField(_("value"), max_length=200)
     app_name=APP_NAME
     class_name="productspecification"
     
@@ -843,6 +843,7 @@ class Category(models.Model,LinkHelper, ImageMixin):
     parent=models.ForeignKey("category",blank=True,null=True, verbose_name=_("parent"),related_name="childs", on_delete=models.SET_NULL)
     title=models.CharField(_("title"), max_length=200)
     for_home=models.BooleanField(_("for_home"),default=False)
+    priority=models.IntegerField(_("اولویت / ترتیب"),default="1000")
     products_or_services=models.ManyToManyField("accounting.productorservice", blank=True,verbose_name=_("products or services"))
     class_name='category'
     app_name=APP_NAME

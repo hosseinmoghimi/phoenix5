@@ -1,0 +1,63 @@
+<div id="accordion-product-specifications">
+    <div class="card" id="product-specifications-app">
+        <div class="card-header" id="heading-product-specifications">
+            <h5 class="text-center">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-product-specifications"
+                    aria-expanded="true" aria-controls="collapse-product-specifications">
+                    ویژگی های محصول
+                </button>
+            </h5>
+        </div>
+        <div id="collapse-product-specifications"
+            class="collapse {% if expand_product_specifications %} show {% endif %}"
+            aria-labelledby="heading-product-specifications" data-parent="#accordion-product-specifications">
+            <div class="card-body">
+                <table class=" mx-3 table table-striped">
+                    <tr v-for="specification in specifications">
+                        <td class="text-left text-muted">
+                            <span v-text="specification.name"></span>
+                        </td>
+                        <td class="text-right">
+                            <span v-text="specification.value"></span>
+                        </td>
+                        {% if add_product_specification_form %}
+                        <td class="text-right">
+                            <a target="_blank" title="ویرایش" :href="specification.get_edit_url">
+                                <i class="material-icons text-warning">
+                                    edit
+                                </i>
+                            </a>
+                        </td>
+                        {% endif %}
+                    </tr>
+                </table>
+            </div>
+            <div class="card-footer">
+                {% if add_product_specification_form %}
+                <form @submit.prevent="add_specification">
+                    <div class="row">
+                        <div class="col-4">
+                            <input required placeholder="نام ویژگی جدید" type="text" v-model="new_spec_name"
+                                class="form-control">
+
+                        </div>
+                        <div class="col-4">
+                            <input required placeholder="مقدار ویژگی جدید" type="text" v-model="new_spec_value"
+                                class="form-control">
+
+                        </div>
+                        <div class="col-4">
+                            <button class="btn btn-success farsi" type="submit">
+                                <i class="material-icons" aria-hidden="true">settings</i>
+                                افزودن ویژگی جدید
+                            </button>
+                        </div>
+                    </div>
+
+
+                </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>

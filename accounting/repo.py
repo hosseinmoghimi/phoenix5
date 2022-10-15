@@ -1,3 +1,4 @@
+from math import prod
 from unicodedata import category
 from accounting.enums import FinancialDocumentTypeEnum, PaymentMethodEnum, SpendTypeEnum, TransactionStatusEnum
 from core.constants import FAILED, SUCCEED,MISC
@@ -5,7 +6,7 @@ from core.constants import FAILED, SUCCEED,MISC
 from core.enums import UnitNameEnum
 from utility.calendar import PersianCalendar
 from .apps import APP_NAME
-from .models import Account, Asset, Bank, BankAccount, Category, Cheque, Cost, DoubleTransaction, FinancialBalance, FinancialDocument, FinancialYear, Invoice, InvoiceLine, Payment, Price, Product, ProductOrService, Service, Transaction
+from .models import Account, Asset, Bank, BankAccount, Category, Cheque, Cost, DoubleTransaction, FinancialBalance, FinancialDocument, FinancialYear, Invoice, InvoiceLine, Payment, Price, Product, ProductOrService, ProductSpecification, Service, Transaction
 from django.db.models import Q
 from authentication.repo import ProfileRepo
 from django.utils import timezone
@@ -229,6 +230,21 @@ class ProductRepo():
         return SUCCEED,product,message
 
 
+    def add_product_specification(self,*args, **kwargs):
+        if not self.user.has_perm(APP_NAME+".add_productspecification"):
+            return None
+        product=self.product(*args, **kwargs)
+        if product is not None:
+            product_specification=ProductSpecification(product=product)
+            if 'name' in kwargs:
+                product_specification.name = kwargs['name']
+
+            if 'value' in kwargs:
+                product_specification.value = kwargs['value']
+            product_specification.save()
+            return product_specification 
+
+
 class ProductOrServiceRepo():
     def __init__(self, *args, **kwargs):
         self.request = None
@@ -305,20 +321,20 @@ class CategoryRepo():
         if 'for_home' in kwargs:
             objects = objects.filter(Q(for_home=kwargs['for_home']))
         if 'parent' in kwargs and kwargs['parent'] is None:
-            objects=objects.filter(parent=None)
+            objects=self.list_home()
         if 'super_category' in kwargs and kwargs['super_category'] is None:
             objects=objects.filter(super_category=None)
         if 'parent_id' in kwargs:
             parent_id=kwargs['parent_id']
             if parent_id==0:
-                objects=objects.filter(parent=None)
+                objects=self.list_home()
             else:
                 objects=objects.filter(parent_id=kwargs['parent_id'])
         if 'super_category_id' in kwargs:
             objects=objects.filter(parent_id=kwargs['super_category_id'])
         if 'category_title' in kwargs:
             objects=objects.filter(category_title=kwargs['category_title'])
-        return objects.all()
+        return objects.order_by("priority")
 
     def add_category(self,*args, **kwargs):
         if not self.user.has_perm(APP_NAME+".add_category"):
@@ -337,6 +353,13 @@ class CategoryRepo():
         message=category.title +" با موفقیت افزوده شد."
         return SUCCEED,category,message
 
+
+    def list_home(self, *args, **kwargs):
+        home=self.objects.filter(parent=None).first()
+        if home is None:
+            return []
+        return self.objects.filter(parent_id=home.id).order_by("priority")
+         
 
     def add_item_category(self,*args, **kwargs):
         result=FAILED

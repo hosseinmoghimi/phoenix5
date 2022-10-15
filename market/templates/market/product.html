@@ -116,6 +116,19 @@
 
                     {% endif %}
                     <!-- <h3 class="main-price">$335</h3> -->
+
+
+
+
+
+
+
+
+
+
+                </div>
+
+                <div class="col-12">
                     <div id="accordion" role="tablist">
                         <div class="card card-collapse">
                             <div class="card-header" role="tab" id="headingSpecification">
@@ -188,18 +201,7 @@
 
 
                     </div>
-
-
-
-
-
-
-
-
-
                 </div>
-
-
 
                 {% if me_supplier %}
 
@@ -263,7 +265,7 @@
         {% if related_pages or add_related_page_form %}
 
         <div class="related-products" id="related-products-div">
-            <h3 class="title text-center">صفحات مرتبط</h3>
+            <h3 class="title text-center">محصولات مرتبط</h3>
             {% include "market/includes/related-products-app/template.html" %}
 
         </div>
@@ -294,7 +296,7 @@
 {% block script %}
 
 <script>
-   
+
     let page_comment_component_template22 = `
     
     <div class="media">
@@ -350,7 +352,7 @@
     `
 </script>
 
- 
+
 
 {% if me_supplier %}
 {% include "market/includes/product-shops-app/script.html" %}
@@ -375,7 +377,7 @@
 {% include "market/includes/add-to-cart-app/script.html" %}
 {% include "market/includes/cart-app/cart-app.html" %}
 {% endif %}
- 
+
 
 
 

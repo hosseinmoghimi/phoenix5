@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from market.models import Brand, CartLine, Category,Product, Shop, Supplier
-from accounting.serializers import ProductOrServiceSerializer, ProductSerializer as ProductSerializer_origin,ProdoctSpecificationSerializer
+from accounting.serializers import ProductOrServiceSerializer, ProductSerializer as ProductSerializer_origin,ProductSpecificationSerializer
 
  
 class SupplierSerializer(serializers.ModelSerializer):

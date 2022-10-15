@@ -39,6 +39,11 @@ class AddFinancialBalanceForm(forms.Form):
     bestanker=forms.IntegerField(required=False)
     amount=forms.IntegerField(required=False)
 
+class AddProductSpecificationForm(forms.Form):
+    product_id=forms.IntegerField(required=True)
+    name=forms.CharField(max_length=200,required=True)
+    value=forms.CharField(max_length=200,required=True)
+
 
 class AddStorePriceForm(forms.Form):
     product_or_service_id=forms.IntegerField(required=True)

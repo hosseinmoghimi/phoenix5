@@ -11,8 +11,8 @@
                     {% if perms.market.change_category %}
                     <a title="ویرایش" href="{{category.get_edit_url}}" target="_blank">
                         <i class="fa fa-edit text-warning"></i>
-                    </a>  
-                    
+                    </a>
+
                     <a title="مارکت" href="{{category.get_absolute_url}}" target="_blank">
                         <i class="fa fa-edit text-info"></i>
                     </a>
@@ -142,40 +142,40 @@
 
                         <div class="col-12">
                             <div class="row">
+                                {% if add_product_form and aaar %}
+
+                                <div class="col-md-4">
+
+                                    <form v-if="categories.length==0" @submit.prevent="add_product">
+
+                                        <input type="text" v-model="new_product_title" class="form-control farsi"
+                                            placeholder="محصول جدید">
+                                    </form>
+                                </div>
+                                {% endif %}
+
+
+
+
+                                {% if add_category_form and jhfrytui %}
+
+                                <div class="col-md-4">
+
+                                    <form v-if="products.length==0" @submit.prevent="add_category">
+
+                                        <input type="text" v-model="new_category_title" class="form-control farsi"
+                                            placeholder="دسته بندی جدید">
+                                    </form>
+                                </div>
+                                {% endif %}
                             </div>
-                            {% if add_product_form %}
-
-                            <div class="col-md-4">
-
-                                <form v-if="categories.length==0" @submit.prevent="add_product">
-
-                                    <input type="text" v-model="new_product_title" class="form-control farsi"
-                                        placeholder="محصول جدید">
-                                </form>
-                            </div>
-                            {% endif %}
-
-
-
-
-                            {% if add_category_form %}
-
-                            <div class="col-md-4">
-
-                                <form v-if="products.length==0" @submit.prevent="add_category">
-
-                                    <input type="text" v-model="new_category_title" class="form-control farsi"
-                                        placeholder="دسته بندی جدید">
-                                </form>
-                            </div>
-                            {% endif %}
 
                         </div>
 
 
 
                     </div>
-                    <div class="row">
+                    <div class="d-none row">
                         <div class="col-md-3 ml-auto mr-auto">
                             <button rel="tooltip" class="btn btn-rose btn-round" data-original-title="" title="">Load
                                 more...</button>

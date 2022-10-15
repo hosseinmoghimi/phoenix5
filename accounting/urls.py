@@ -92,7 +92,7 @@ urlpatterns = [
   path('add_service/',login_required(apis.AddServiceApi.as_view()),name="add_service"),
   path('print_transaction/',login_required(apis.PrintTransactionApi.as_view()),name="print_transaction"),
   path('roll_back_transaction/',login_required(apis.RollBackTransactionApi.as_view()),name="roll_back_transaction"),
-  path('add_product_specification/',login_required(apis.RollBackTransactionApi.as_view()),name="add_product_specification"),
+  path('add_product_specification/',login_required(apis.AddProductSpecificationApi.as_view()),name="add_product_specification"),
 
 
 

@@ -18,9 +18,10 @@ from utility.calendar import PersianCalendar
 from utility.excel import ReportSheet,ReportWorkBook, get_style
 from accounting.apps import APP_NAME
 from accounting.repo import BankRepo,AssetRepo, CategoryRepo, CostRepo,BankAccountRepo, DoubleTransactionRepo, InvoiceLineRepo,AccountRepo,FinancialBalanceRepo, ChequeRepo, PaymentRepo, PriceRepo,  ProductRepo,ServiceRepo,FinancialDocumentRepo,InvoiceRepo, TransactionRepo
-from accounting.serializers import CategorySerializer, InvoiceLineWithInvoiceSerializer,AccountSerializer, AccountSerializerFull, AssetSerializer, BankAccountSerializer, BankSerializer, CostSerializer, FinancialBalanceSerializer, InvoiceFullSerializer,InvoiceLineSerializer,ChequeSerializer, InvoiceSerializer, PaymentSerializer, PriceSerializer,  ProductSerializer,ServiceSerializer,FinancialDocumentForAccountSerializer,FinancialDocumentSerializer, TransactionSerializer
+from accounting.serializers import ProductSpecificationSerializer,CategorySerializer, InvoiceLineWithInvoiceSerializer,AccountSerializer, AccountSerializerFull, AssetSerializer, BankAccountSerializer, BankSerializer, CostSerializer, FinancialBalanceSerializer, InvoiceFullSerializer,InvoiceLineSerializer,ChequeSerializer, InvoiceSerializer, PaymentSerializer, PriceSerializer,  ProductSerializer,ServiceSerializer,FinancialDocumentForAccountSerializer,FinancialDocumentSerializer, TransactionSerializer
 from accounting.forms import *
 import json
+from utility.log import leolog
 from phoenix.server_settings import phoenix_apps
 from core.repo import ParameterRepo
 from accounting.enums import ParameterAccountingEnum
@@ -339,8 +340,13 @@ def get_product_context(request,*args, **kwargs):
         mv=MessageView(request=request)
         mv.title="چنین کالایی یافت نشد."
         return mv.response()
-    
     context=get_product_or_service_context(request=request,item=product,*args, **kwargs)
+    product_specifications=product.productspecification_set.all()
+    product_specifications_s=json.dumps(ProductSpecificationSerializer(product_specifications,many=True).data)
+    context['product_specifications_s']=product_specifications_s
+    context['product_specifications']=product_specifications
+    if request.user.has_perm(APP_NAME+".add_productspecification"):
+        context['add_product_specification_form']=AddProductSpecificationForm()
     
     
 

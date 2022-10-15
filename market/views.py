@@ -1,6 +1,7 @@
 # from .repo import ProductRepo
 # from .serializers import ProductSerializer
 import json
+from accounting.views import get_product_context
 
 from authentication.forms import AddMembershipRequestForm
 from core.enums import ParameterNameEnum
@@ -17,7 +18,7 @@ from market.forms import *
 from market.repo import (BrandRepo, CartLineRepo, CategoryRepo, ProductRepo, ShopRepo,
                          SupplierRepo)
 from market.serializers import (BrandSerializer, CartLineSerializer,
-                                CategorySerializer, ProductSerializer,ProdoctSpecificationSerializer,
+                                CategorySerializer, ProductSerializer,ProductSpecificationSerializer,
                                 SupplierSerializer)
 
 TEMPLATE_ROOT = "market/"
@@ -34,7 +35,7 @@ def getContext(request, *args, **kwargs):
     context['search_action'] = reverse(APP_NAME+":search")
     context['LAYOUT_PARENT'] = LAYOUT_PARENT
     context['WIDE_LAYOUT_PARENT'] = WIDE_LAYOUT_PARENT
-    sidebar_categories=CategoryRepo(request=request).list(parent_id=None)
+    sidebar_categories=CategoryRepo(request=request).list_home()
     context['sidebar_categories']=sidebar_categories
     sidebar_brands=BrandRepo(request=request).list()
     context['sidebar_brands']=sidebar_brands
@@ -50,7 +51,6 @@ def get_customer_context(request,*args, **kwargs):
     context['cart_lines']=cart_lines
     context['cart_lines_s']=json.dumps(CartLineSerializer(cart_lines).data)
     return context
-
 
 def get_suppliers_context(request,*args, **kwargs):
     context={}
@@ -251,6 +251,7 @@ class ProductView(View):
         context=getContext(request=request)
         product=ProductRepo(request=request).product(*args, **kwargs)
         context.update(PageContext(request=request,page=product))
+        context.update(get_product_context(request=request,product=product))
         context['product']=product
         context['body_class']="product-page"
         product_s=json.dumps(ProductSerializer(product).data)
@@ -267,7 +268,4 @@ class ProductView(View):
         else:
             supplier_shops=[]
         context['supplier_shops']=supplier_shops
-        specifications=product.productspecification_set.all()
-        specifications_s=json.dumps(ProdoctSpecificationSerializer(specifications,many=True).data)
-        context['specifications_s']=specifications_s
         return render(request,TEMPLATE_ROOT+"product.html",context)

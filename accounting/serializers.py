@@ -9,7 +9,7 @@ class ProductSerializer(serializers.ModelSerializer):
         fields = ['id', 'title','get_absolute_url','buy_price', 'get_pm_absolute_url','get_edit_url','get_delete_url','available','unit_price','unit_name','thumbnail']
 
  
-class ProdoctSpecificationSerializer(serializers.ModelSerializer):
+class ProductSpecificationSerializer(serializers.ModelSerializer):
     product=ProductSerializer()
     class Meta:
         model = ProductSpecification
