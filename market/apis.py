@@ -19,6 +19,42 @@ class AddCategoryApi(APIView):
                 context['result']=SUCCEED
         return JsonResponse(context)
 
+class AddToCartApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        context['result']=FAILED
+        add_product_form=AddProductForm(request.POST)
+        if add_product_form.is_valid():
+            (result,product,message)=ProductRepo(request=request).add_product(**add_product_form.cleaned_data)
+            if product is not None:
+                category=CategoryRepo(request=request).category(pk=add_product_form.cleaned_data['category_id'])
+                if category is not None:
+                    category.products.add(product)
+                context['product']=ProductSerializer(product).data
+                context['result']=SUCCEED
+            else:
+                context['message']=message
+        return JsonResponse(context)
+
+
+
+class AddShopApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        context['result']=FAILED
+        add_product_form=AddProductForm(request.POST)
+        if add_product_form.is_valid():
+            (result,product,message)=ProductRepo(request=request).add_product(**add_product_form.cleaned_data)
+            if product is not None:
+                category=CategoryRepo(request=request).category(pk=add_product_form.cleaned_data['category_id'])
+                if category is not None:
+                    category.products.add(product)
+                context['product']=ProductSerializer(product).data
+                context['result']=SUCCEED
+            else:
+                context['message']=message
+        return JsonResponse(context)
+
 
 
 

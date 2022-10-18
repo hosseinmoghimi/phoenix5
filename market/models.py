@@ -1,4 +1,5 @@
-from accounting.models import Invoice,Product as AccountingProduct
+import datetime
+from accounting.models import Invoice, InvoiceLine,Product as AccountingProduct
 from core.constants import CURRENCY
 from core.enums import UnitNameEnum
 from market.enums import *
@@ -80,7 +81,7 @@ class Customer(models.Model,LinkHelper):
         verbose_name_plural = _("Customers")
 
     def __str__(self):
-        return self.title
+        return self.account.title
  
     def save(self,*args, **kwargs):
         if self.class_name is None or self.class_name=="":
@@ -104,7 +105,23 @@ class Cart(Invoice):
             self.app_name=APP_NAME
         return super(Cart,self).save(*args, **kwargs)
 
+class CartLine(models.Model,LinkHelper):
+    date_added=models.DateTimeField(_("date_added"), auto_now=False, auto_now_add=True)
+    customer=models.ForeignKey("customer",blank=True, verbose_name=_("invoice"), on_delete=models.CASCADE)
+    row=models.IntegerField(_("row"),blank=True)
+    quantity=models.FloatField(_("quantity"))
+    discount=models.IntegerField(_("discount"),default=0)
+    shop=models.ForeignKey("shop", verbose_name=_("shop"), on_delete=models.CASCADE)
+    description=models.CharField(_("description"),null=True,blank=True, max_length=50)
+    class_name="cartline"
+    app_name=APP_NAME
+    class Meta:
+        verbose_name = _("CartLine")
+        verbose_name_plural = _("CartLines")
 
+    def __str__(self):
+        return f"{self.customer} ^ {self.quantity} {self.shop.unit_name} * {self.shop.product.title} "
+   
 class Shop(models.Model,LinkHelper):
     region=models.ForeignKey("map.area", verbose_name=_("region"), on_delete=models.CASCADE)
     supplier=models.ForeignKey("supplier", verbose_name=_("supplier"), on_delete=models.CASCADE)
@@ -121,7 +138,7 @@ class Shop(models.Model,LinkHelper):
     @property
     def in_carts(self):
         counter=0
-        for cart_line in CartLine.objects.filter(product_or_service=self.product_or_service):
+        for cart_line in CartLine.objects.filter(shop__product_or_service=self.product_or_service):
             counter+=cart_line.quantity
         return counter
     
@@ -134,14 +151,4 @@ class Shop(models.Model,LinkHelper):
         return f"{self.supplier.title} /{self.product_or_service.title} / هر {self.unit_name}:{self.unit_price} {CURRENCY}"
  
 
-class CartLine(models.Model,LinkHelper):
-    customer=models.ForeignKey("customer", verbose_name=_("customer"), on_delete=models.CASCADE)
-    shop=models.ForeignKey("shop", verbose_name=_("shop"), on_delete=models.CASCADE)
-    quantity=models.IntegerField(_("quantity"))
-    class Meta:
-        verbose_name = _("CartLine")
-        verbose_name_plural = _("CartLines")
-  
-    def __str__(self):
-        return f"{self.shop.supplier.title} /{self.shop.product_or_service.title} / {self.customer.title} / {self.quantity}"
  

@@ -19,8 +19,14 @@ urlpatterns = [
     path("suppliers/",login_required(views.HomeView.as_view()),name="suppliers"),
     path("supplier/<int:pk>/",login_required(views.SupplierView.as_view()),name="supplier"),
     
+    path("cart/<int:customer_id>/",(views.CartView.as_view()),name="customer_cart"),
+    path("cart/",(views.CartView.as_view()),name="cart"),
+    
     path("brands/",(views.BrandsView.as_view()),name="brands"),
     path("brand/<int:pk>/",(views.BrandView.as_view()),name="brand"),
+    
+    path("shops/",(views.ShopsView.as_view()),name="shops"),
+    path("shop/<int:pk>/",(views.ShopView.as_view()),name="shop"),
 
 
     path("api/categories/",(apis.CategoriesApi.as_view()),name="api_categories"),
@@ -28,6 +34,7 @@ urlpatterns = [
     path("api/products/<int:category_id>/",(apis.ProductsApi.as_view()),name="api_category_products"),
     path("add_category/",(apis.AddCategoryApi.as_view()),name="add_category"),
     path("add_product/",(apis.AddProductApi.as_view()),name="add_product"),
-    path("add_shop/",(apis.AddProductApi.as_view()),name="add_shop"),
+    path("add_to_cart/",(apis.AddToCartApi.as_view()),name="add_to_cart"),
+    path("add_shop/",(apis.AddShopApi.as_view()),name="add_shop"),
     
 ]

@@ -9,19 +9,19 @@ class SupplierSerializer(serializers.ModelSerializer):
         fields=['id','title','thumbnail','get_absolute_url']
    
  
-class CartLineSerializer(serializers.ModelSerializer):
-    product_or_service=ProductOrServiceSerializer()
-    class Meta:
-        model=CartLine
-        fields=['id','product_or_service','get_absolute_url']
-
-
 class ShopSerializer(serializers.ModelSerializer):
     product_or_service=ProductOrServiceSerializer()
     supplier=SupplierSerializer()
     class Meta:
         model=Shop
         fields=['id','product_or_service','supplier','unit_price','in_carts','available','unit_name','get_absolute_url']
+
+
+class CartLineSerializer(serializers.ModelSerializer):
+    shop=ShopSerializer()
+    class Meta:
+        model=CartLine
+        fields=['id','shop','get_absolute_url']
 
 
 class CategorySerializerForApi(serializers.ModelSerializer):

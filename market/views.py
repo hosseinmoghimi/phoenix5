@@ -15,11 +15,12 @@ from django.views import View
 from market.apps import APP_NAME
 from market.enums import ParameterMarketEnum
 from market.forms import *
-from market.repo import (BrandRepo, CartLineRepo, CategoryRepo, ProductRepo, ShopRepo,
+from market.repo import (BrandRepo, CartLineRepo, CategoryRepo, CustomerRepo, ProductRepo, ShopRepo,
                          SupplierRepo)
 from market.serializers import (BrandSerializer, CartLineSerializer,
-                                CategorySerializer, ProductSerializer,ProductSpecificationSerializer,
+                                CategorySerializer, ProductSerializer,ProductSpecificationSerializer, ShopSerializer,
                                 SupplierSerializer)
+from utility.log import leolog
 
 TEMPLATE_ROOT = "market/"
 
@@ -40,7 +41,10 @@ def getContext(request, *args, **kwargs):
     sidebar_brands=BrandRepo(request=request).list()
     context['sidebar_brands']=sidebar_brands
 
+    me_customer=CustomerRepo(request=request).me
+    context['me_customer']=me_customer
 
+    leolog(me_customer=me_customer)
     me_supplier=SupplierRepo(request=request).me
     context['me_supplier']=me_supplier
     return context
@@ -49,7 +53,7 @@ def get_customer_context(request,*args, **kwargs):
     context={}
     cart_lines=CartLineRepo(request=request).my_lines()
     context['cart_lines']=cart_lines
-    context['cart_lines_s']=json.dumps(CartLineSerializer(cart_lines).data)
+    context['cart_lines_s']=json.dumps(CartLineSerializer(cart_lines,many=True).data)
     return context
 
 def get_suppliers_context(request,*args, **kwargs):
@@ -91,7 +95,7 @@ class HomeView(View):
             name=ParameterMarketEnum.SHOP_HEADER_SLOGAN)
         context['shop_header_image'] = PictureRepo(
             request=request, app_name=APP_NAME).picture(name=ParameterMarketEnum.SHOP_HEADER_IMAGE)
-        categories = CategoryRepo(request=request).list().exclude(parent_id__gte=1)
+        categories = CategoryRepo(request=request).list_home()
         context['categories'] = categories
         categories_s = json.dumps(CategorySerializer(categories,many=True).data)
 
@@ -181,6 +185,30 @@ class CategoryView(View):
         return render(request, TEMPLATE_ROOT+"category.html", context)
 
 
+class CartView(View):
+    def get(self, request, *args, **kwargs):
+        context = getContext(request)
+        if 'customer_id' in kwargs:
+            customer=CustomerRepo(request=request).customer(*args, **kwargs)
+        else:
+            customer=CustomerRepo(request=request).me
+        if customer is None:
+            mv=MessageView(request=request)
+            return mv.response()
+        
+
+        context['customer'] = customer
+        cart_lines=customer.cartline_set.all()
+        cart_lines_s = json.dumps(CartLineSerializer(cart_lines,many=True).data)
+        context['cart_lines_s'] = cart_lines_s
+        context['cart_lines'] = cart_lines
+        context['body_class'] = "shopping-cart"
+        context['shop_header_image'] = "ecommerce-page"
+        
+        return render(request, TEMPLATE_ROOT+"cart.html", context)
+
+
+
 class BrandsView(View):
     def get(self, request, *args, **kwargs):
         context = getContext(request)
@@ -229,6 +257,44 @@ class BrandView(View):
         return render(request, TEMPLATE_ROOT+"brand.html", context)
 
 
+class ShopsView(View):
+    def get(self, request, *args, **kwargs):
+        context = getContext(request)
+        shop_repo=ShopRepo(request=request)
+        shops=shop_repo.list(*args,**kwargs)
+         
+
+        context['shops'] = shops
+        shops_s = json.dumps(ShopSerializer(shops,many=True).data)
+        context['shops_s'] = shops_s
+        context['body_class'] = "ecommerce-page"
+        if request.user.has_perm(APP_NAME+".add_brand"):
+            context['add_brand_form'] = AddBrandForm()
+
+        return render(request, TEMPLATE_ROOT+"shops.html", context)
+
+
+class ShopView(View):
+    def get(self, request, *args, **kwargs):
+        context = getContext(request)
+        shop_repo=ShopRepo(request=request)
+        shop=shop_repo.shop(*args,**kwargs)
+        if shop is None:
+            mv=MessageView(request=request)
+            return mv.response()
+        
+
+        context['shop'] = shop
+        shop_s = json.dumps(ShopSerializer(shop).data)
+        context['shop_s'] = shop_s 
+        context['body_class'] = "ecommerce-page"
+        context['shop_header_image'] = "ecommerce-page"
+        
+        context.update(PageContext(request=request,page=shop.product_or_service))
+
+        return render(request, TEMPLATE_ROOT+"shop.html", context)
+
+
 class SearchView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -262,10 +328,23 @@ class ProductView(View):
         related_pages_s=json.dumps(ProductSerializer(related_pages,many=True).data)
         context['related_pages_s']=related_pages_s
         context['related_pages']=related_pages
+
+        shops=product.shop_set.all()
+        shops_s=json.dumps(ShopSerializer(shops,many=True).data)
+        context["shops_s"]=shops_s
+
+
         me_supplier=context["me_supplier"]
+        me_customer=context["me_customer"]
+        
         if me_supplier is not None:
             supplier_shops=ShopRepo(request=request).list(product_id=product.id,supplier_id=me_supplier.id)
         else:
             supplier_shops=[]
+        
+        if me_customer is not None:
+            in_cart=0
+            context.update(get_customer_context(request=request,customer=me_customer))
+            context['in_cart']=in_cart
         context['supplier_shops']=supplier_shops
         return render(request,TEMPLATE_ROOT+"product.html",context)

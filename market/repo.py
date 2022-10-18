@@ -261,7 +261,7 @@ class CartRepo():
         
         self.objects=Cart.objects.all()
         self.profile=ProfileRepo(*args, **kwargs).me
-        self.customer= CustomerRepo(request=request).me
+        self.customer= CustomerRepo(request=self.request).me
        
 
     def cart(self, *args, **kwargs):
@@ -304,6 +304,7 @@ class CartRepo():
         supplier.title=title
         supplier.save()
         return supplier
+
 
 
 class ShopRepo():  
@@ -374,7 +375,8 @@ class ShopRepo():
         return shop
 
 
-    
+     
+
 
 class CartLineRepo():  
     def __init__(self, *args, **kwargs):
