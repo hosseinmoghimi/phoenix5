@@ -1,3 +1,5 @@
+{% if product_specifications or product.short_description or product.description %}
+  
 <div class="card">
     <div class="card-body">
         <h5>
@@ -11,7 +13,7 @@
             </a>
             {% endif %}
 
-            {% if product.short_description%}
+            {% if product.short_description %}
 
             <a class="mx-3" data-toggle="collapse" href="#collapseShortDescription" aria-expanded="true"
                 aria-controls="collapseShortDescription">
@@ -105,3 +107,4 @@
         </div>
     </div>
 </div>
+{% endif %}

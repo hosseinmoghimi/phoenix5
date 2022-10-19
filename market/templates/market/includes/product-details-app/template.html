@@ -1,9 +1,16 @@
+
+{% if page.pagelink_set.all or page.pagedownload_set.all or page.pagetag_set.all %}
+    
+    
 <div class="card">
     <div class="card-body">
+        {% if page.pagelink_set.all %}
+          
         <h4>
             لینک ها
         </h4>
-
+        
+        {% endif %}
         {% for page_link in page.pagelink_set.all %}
         <a href="{{page_link.url}}">
             <h5 class="mr-5">
@@ -15,10 +22,12 @@
         {% endfor %}
 
 
-
+        {% if page.pagedownload_set.all %}
+       
         <h4>
             دانلود ها
         </h4>
+        {% endif %}
 
         {% for page_download in page.pagedownload_set.all %}
         <a href="{{page_download.get_download_url}}">
@@ -29,10 +38,12 @@
             </h5>
         </a>
         {% endfor %}
-
+        {% if page.pagetag_set.all %}
+       
         <h4>
             تگ ها
         </h4>
+        {% endif %}
 
         <p>
             {% for page_tag in page.pagetag_set.all %}
@@ -47,3 +58,4 @@
         </p>
     </div>
 </div>
+{% endif %}
