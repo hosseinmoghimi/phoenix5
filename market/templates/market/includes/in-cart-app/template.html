@@ -3,7 +3,8 @@
     <a class="btn btn-white float-left" href="{% url 'market:cart' %}">
         <span class="farsi">
             
-            {{in_cart}}
+            <span v-text="in_cart"></span>
+            <span v-text="in_cart_unit"></span>
             
         </span>
         <i class="material-icons mx-2">shopping_cart</i>

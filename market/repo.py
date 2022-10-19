@@ -1,6 +1,7 @@
 from itertools import product
 from urllib import request
 from accounting.repo import AccountRepo, ProductRepo as ProductRepo_origin,CategoryRepo
+from core.enums import UnitNameEnum
 from market.apps import APP_NAME
 from market.models import Brand, Cart, CartLine, Category, Customer, Shop, Supplier
 from django.db.models import Q
@@ -442,10 +443,11 @@ class CartLineRepo():
         if 'customer_id' in kwargs:
             objects=objects.filter(customer_id=kwargs['customer_id'])
         in_cart=0
+        in_cart_unit=UnitNameEnum.ADAD
         for a in objects:
             in_cart+=a.quantity
-        leolog(in_cart=in_cart)
-        return int(in_cart)
+            in_cart_unit=a.shop.unit_name
+        return (in_cart,in_cart_unit)
     def list(self, *args, **kwargs):
         objects = self.objects
         if 'search_for' in kwargs:

@@ -4,9 +4,8 @@
 let in_cart_app = new Vue({
         el: "#in-cart-app",
         data: {
-            cart_lines: cart_lines,
-            total: 0,
-            save_done: false,
+            in_cart:parseInt(`{{in_cart}}`),
+            in_cart_unit:"{{in_cart_unit}}"
         },
         
     })

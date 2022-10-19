@@ -21,7 +21,7 @@ class CartLineSerializer(serializers.ModelSerializer):
     shop=ShopSerializer()
     class Meta:
         model=CartLine
-        fields=['id','shop']
+        fields=['id','shop','quantity']
 
 
 class CategorySerializerForApi(serializers.ModelSerializer):
