@@ -43,8 +43,7 @@ def getContext(request, *args, **kwargs):
 
     me_customer=CustomerRepo(request=request).me
     context['me_customer']=me_customer
-
-    leolog(me_customer=me_customer)
+ 
     me_supplier=SupplierRepo(request=request).me
     context['me_supplier']=me_supplier
     return context
