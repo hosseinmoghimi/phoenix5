@@ -1,8 +1,12 @@
+from itertools import product
+from urllib import request
 from accounting.repo import AccountRepo, ProductRepo as ProductRepo_origin,CategoryRepo
 from market.apps import APP_NAME
 from market.models import Brand, Cart, CartLine, Category, Customer, Shop, Supplier
 from django.db.models import Q
 from authentication.repo import ProfileRepo
+from phoenix.constants import FAILED, SUCCEED
+from utility.log import leolog
 
 
 
@@ -293,17 +297,26 @@ class CartRepo():
             objects=objects.filter(pay_to_id=kwargs['customer_id'])
         return objects.all()
 
-    def add_supplier(self,*args, **kwargs):
-        if not self.user.has_perm(APP_NAME+".add_supplier"):
-            return None
-        title=None
-        if 'title' in kwargs:
-            title = kwargs['title'] 
+    def add_to_cart(self,*args, **kwargs):
+        result=FAILED
+        message=""
+        cart_line=CartLine()
 
-        supplier=Supplier()
-        supplier.title=title
-        supplier.save()
-        return supplier
+        if 'shop_id' in kwargs:
+            cart_line.shop_id = kwargs['shop_id'] 
+
+            
+        if 'quantity' in kwargs:
+            cart_line.quantity = kwargs['quantity'] 
+
+        cart_line.customer = CustomerRepo(request=self.request).me
+        cart_line.row = 1
+        cart_line.save()
+        if cart_line is not None:
+            result=SUCCEED
+            message="با موفقیت اضافه شد."
+        CartLine.objects.filter(shop_id=cart_line.shop_id).filter(customer_id=cart_line.customer_id).exclude(id=cart_line.pk).delete()
+        return (result,cart_line,message)
 
 
 
@@ -415,7 +428,24 @@ class CartLineRepo():
     def my_lines(self, *args, **kwargs):
         if self.customer is not None:
             return self.list(customer_id=self.customer.id,*args, **kwargs)
-
+    def in_cart(self,*args, **kwargs):
+        
+        objects = self.objects
+        if 'product_or_service_id' in kwargs:
+            objects=objects.filter(shop__product_or_service_id=kwargs['product_or_service_id'])
+        if 'productorservice_id' in kwargs:
+            objects=objects.filter(shop__product_or_service_id=kwargs['productorservice_id'])
+        if 'unit_name' in kwargs:
+            objects=objects.filter(shop__unit_name=kwargs['unit_name'])
+        if 'shop_id' in kwargs:
+            objects=objects.filter(shop_id=kwargs['shop_id'])
+        if 'customer_id' in kwargs:
+            objects=objects.filter(customer_id=kwargs['customer_id'])
+        in_cart=0
+        for a in objects:
+            in_cart+=a.quantity
+        leolog(in_cart=in_cart)
+        return int(in_cart)
     def list(self, *args, **kwargs):
         objects = self.objects
         if 'search_for' in kwargs:

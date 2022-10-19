@@ -343,7 +343,7 @@ class ProductView(View):
             supplier_shops=[]
         
         if me_customer is not None:
-            in_cart=0
+            in_cart=CartLineRepo(request=request).in_cart(product_or_service_id=product.pk,customer_id=me_customer.pk)
             context.update(get_customer_context(request=request,customer=me_customer))
             context['in_cart']=in_cart
         context['supplier_shops']=supplier_shops

@@ -4,8 +4,8 @@ from rest_framework.views import APIView
 from accounting.repo import ProductRepo
 from core.constants import FAILED,SUCCEED
 from market.forms import *
-from market.serializers import CategorySerializer, CategorySerializerForApi, ProductSerializer,ProductSerializerForApi
-from market.repo import CategoryRepo
+from market.serializers import CartLineSerializer, CategorySerializer, CategorySerializerForApi, ProductSerializer,ProductSerializerForApi
+from market.repo import CartRepo, CategoryRepo
 
 class AddCategoryApi(APIView):
     def post(self,request,*args, **kwargs):
@@ -23,14 +23,11 @@ class AddToCartApi(APIView):
     def post(self,request,*args, **kwargs):
         context={}
         context['result']=FAILED
-        add_product_form=AddProductForm(request.POST)
-        if add_product_form.is_valid():
-            (result,product,message)=ProductRepo(request=request).add_product(**add_product_form.cleaned_data)
-            if product is not None:
-                category=CategoryRepo(request=request).category(pk=add_product_form.cleaned_data['category_id'])
-                if category is not None:
-                    category.products.add(product)
-                context['product']=ProductSerializer(product).data
+        AddToCartForm_=AddToCartForm(request.POST)
+        if AddToCartForm_.is_valid():
+            (result,cart_line,message)=CartRepo(request=request).add_to_cart(**AddToCartForm_.cleaned_data)
+            if result==SUCCEED:
+                context['cart_line']=CartLineSerializer(cart_line).data
                 context['result']=SUCCEED
             else:
                 context['message']=message

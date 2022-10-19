@@ -107,12 +107,12 @@ class Cart(Invoice):
 
 class CartLine(models.Model,LinkHelper):
     date_added=models.DateTimeField(_("date_added"), auto_now=False, auto_now_add=True)
-    customer=models.ForeignKey("customer",blank=True, verbose_name=_("invoice"), on_delete=models.CASCADE)
+    customer=models.ForeignKey("customer",blank=True, verbose_name=_("مشتری"), on_delete=models.CASCADE)
     row=models.IntegerField(_("row"),blank=True)
-    quantity=models.FloatField(_("quantity"))
-    discount=models.IntegerField(_("discount"),default=0)
+    quantity=models.FloatField(_("تعداد"))
+    discount=models.IntegerField(_("تخفیف"),default=0)
     shop=models.ForeignKey("shop", verbose_name=_("shop"), on_delete=models.CASCADE)
-    description=models.CharField(_("description"),null=True,blank=True, max_length=50)
+    description=models.CharField(_("توضیحات"),null=True,blank=True, max_length=50)
     class_name="cartline"
     app_name=APP_NAME
     class Meta:
@@ -120,7 +120,7 @@ class CartLine(models.Model,LinkHelper):
         verbose_name_plural = _("CartLines")
 
     def __str__(self):
-        return f"{self.customer} ^ {self.quantity} {self.shop.unit_name} * {self.shop.product.title} "
+        return f"{self.customer} ^ {self.quantity} {self.shop.unit_name} * {self.shop.product_or_service.title} "
    
 class Shop(models.Model,LinkHelper):
     region=models.ForeignKey("map.area", verbose_name=_("region"), on_delete=models.CASCADE)

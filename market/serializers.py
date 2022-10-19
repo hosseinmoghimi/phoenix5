@@ -14,14 +14,14 @@ class ShopSerializer(serializers.ModelSerializer):
     supplier=SupplierSerializer()
     class Meta:
         model=Shop
-        fields=['id','product_or_service','supplier','unit_price','in_carts','available','unit_name','get_absolute_url']
+        fields=['id','product_or_service','level','supplier','unit_price','in_carts','available','unit_name','get_absolute_url']
 
 
 class CartLineSerializer(serializers.ModelSerializer):
     shop=ShopSerializer()
     class Meta:
         model=CartLine
-        fields=['id','shop','get_absolute_url']
+        fields=['id','shop']
 
 
 class CategorySerializerForApi(serializers.ModelSerializer):
