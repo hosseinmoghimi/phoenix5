@@ -7,6 +7,17 @@ class AddBrandForm(forms.Form):
     title=forms.CharField(max_length=100, required=True)
 
 
+class AddShopForm(forms.Form):
+    supplier_id=forms.IntegerField(required=True)
+    product_id=forms.IntegerField( required=True)
+    specifications=forms.CharField(max_length=2000, required=False)
+    unit_name=forms.CharField(required=True)
+    old_price=forms.CharField(required=False)
+    buy_price=forms.CharField(required=False)
+    level=forms.CharField(required=False)
+    unit_price=forms.IntegerField(required=True)
+    available=forms.IntegerField(required=False)
+
 class AddToCartForm(forms.Form):
     shop_id=forms.IntegerField(required=True)
     quantity=forms.IntegerField(required=True)

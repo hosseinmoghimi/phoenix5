@@ -6,7 +6,7 @@ from accounting.serializers import ProductOrServiceSerializer, ProductSerializer
 class SupplierSerializer(serializers.ModelSerializer):
     class Meta:
         model=Supplier
-        fields=['id','title','thumbnail','get_absolute_url']
+        fields=['id','title','thumbnail','region','get_absolute_url']
    
  
 class ShopSerializer(serializers.ModelSerializer):

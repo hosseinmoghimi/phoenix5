@@ -1,0 +1,85 @@
+<div id="accordion-product-or-service-unit-names">
+    <div class="card" id="product-or-service-unit-names-app">
+        <div class="card-header" id="heading-product-or-service-unit-names">
+            <h5 class="text-center">
+                <button class="btn btn-link" data-toggle="collapse"
+                    data-target="#collapse-product-or-service-unit-names" aria-expanded="true"
+                    aria-controls="collapse-product-or-service-unit-names">
+                    واحد های فروش
+                </button>
+            </h5>
+        </div>
+        <div id="collapse-product-or-service-unit-names"
+            class="collapse {% if expand_product_specifications %} show {% endif %}"
+            aria-labelledby="heading-product-or-service-unit-names"
+            data-parent="#accordion-product-or-service-unit-names">
+            <div class="card-body">
+                <table class=" mx-3 table table-striped">
+                    <thead>
+
+                        <th>واحد فروش</th>
+                        <th>ضریب</th>
+                    </thead>
+                    <tr v-for="product_or_service_unit_name in product_or_service_unit_names">
+
+                        <td class="text-right">
+                            <span v-text="product_or_service_unit_name.unit_name"></span>
+                        </td>
+                        <td class="text-right">
+                            <span v-text="product_or_service_unit_name.coef"></span>
+                        </td>
+                        <td>
+
+                        </td>
+                        <td class="text-right">
+                        {% if perms.accounting.edit_productorserviceunitname %}
+                            <a target="_blank" title="ویرایش" :href="product_or_service_unit_name.get_edit_url">
+                                <i class="fa fa-edit text-warning mx-2">
+                                </i>
+                            </a>
+                        {% endif %}
+
+                        {% if perms.accounting.delete_productorserviceunitname %}
+                            <a target="_blank" title="حذف" :href="product_or_service_unit_name.get_delete_url">
+                                <i class="fa fa-trash text-danger mx-2">
+                                </i>
+                            </a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="card-footer">
+                {% if add_product_or_service_unit_name_form %}
+                <form @submit.prevent="add_product_or_service_unit_name">
+                    <div class="row">
+                        <div class="col-4">
+
+                            <select name="" id="" class="form-control" v-model="unit_name">
+
+                                {% for unit_name in all_unit_names_for_add_product_or_service_form %}
+                                <option value="{{unit_name}}">{{unit_name}}</option>
+                                {% endfor %}
+
+                            </select>
+                        </div>
+                        <div class="col-4">
+                            <input required placeholder="ضریب واحد جدید" type="text" v-model="coef"
+                                class="form-control">
+
+                        </div>
+                        <div class="col-4">
+                            <button class="btn btn-success farsi" type="submit">
+                                <i class="material-icons" aria-hidden="true">settings</i>
+                                افزودن واحد جدید
+                            </button>
+                        </div>
+                    </div>
+
+
+                </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>

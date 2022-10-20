@@ -13,7 +13,7 @@ from django.shortcuts import render, reverse
 from django.views import View
 
 from market.apps import APP_NAME
-from market.enums import ParameterMarketEnum
+from market.enums import CustomerLevelEnum, ParameterMarketEnum
 from market.forms import *
 from market.repo import (BrandRepo, CartLineRepo, CategoryRepo, CustomerRepo, ProductRepo, ShopRepo,
                          SupplierRepo)
@@ -338,6 +338,8 @@ class ProductView(View):
         
         if me_supplier is not None:
             supplier_shops=ShopRepo(request=request).list(product_id=product.id,supplier_id=me_supplier.id)
+            context['add_shop_form']=AddShopForm()
+            context['shop_levels'] = (i[0] for i in CustomerLevelEnum.choices)
         else:
             supplier_shops=[]
         

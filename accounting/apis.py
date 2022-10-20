@@ -8,7 +8,7 @@ from utility.log import leolog
 from .repo import AccountRepo, BankAccountRepo, BankRepo, CategoryRepo, ChequeRepo, CostRepo, FinancialBalanceRepo,  FinancialDocumentRepo, InvoiceRepo, PaymentRepo, PriceRepo, ProductOrServiceRepo, ProductRepo, ServiceRepo, TransactionRepo
 from django.http import JsonResponse
 from .forms import *
-from .serializers import AccountSerializer, BankAccountSerializer, BankSerializer, CategorySerializer, ChequeSerializer, CostSerializer, FinancialBalanceSerializer, FinancialDocumentSerializer, InvoiceFullSerializer, InvoiceLineSerializer, PaymentSerializer, PriceSerializer,  ProductSerializer, ProductSpecificationSerializer, ServiceSerializer, TransactionSerializer
+from .serializers import AccountSerializer, BankAccountSerializer, BankSerializer, CategorySerializer, ChequeSerializer, CostSerializer, FinancialBalanceSerializer, FinancialDocumentSerializer, InvoiceFullSerializer, InvoiceLineSerializer, PaymentSerializer, PriceSerializer, ProductOrServiceUnitNameSerializer,  ProductSerializer, ProductSpecificationSerializer, ServiceSerializer, TransactionSerializer
 
 class AddBankAccountApi(APIView):
     def post(self,request,*args, **kwargs):
@@ -94,6 +94,30 @@ class AddProductSpecificationApi(APIView):
                 product_specification=ProductRepo(request=request).add_product_specification(**cd)
                 if product_specification is not None:
                     context['product_specification']=ProductSpecificationSerializer(product_specification).data
+                    context['result']=SUCCEED
+        context['log']=log
+        return JsonResponse(context)
+
+
+class AddProductOrServiceUnitNameApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        log=1
+        context['result']=FAILED
+        if request.method=='POST':
+            log=2
+            AddProductSpecificationForm_=AddProductOrServiceUnitNameForm(request.POST)
+
+
+
+            
+            if AddProductSpecificationForm_.is_valid():
+                cd=AddProductSpecificationForm_.cleaned_data
+                log=3
+                cd=AddProductSpecificationForm_.cleaned_data
+                product_or_service_unit_name=ProductOrServiceRepo(request=request).add_product_or_service_unit_name(**cd)
+                if product_or_service_unit_name is not None:
+                    context['product_or_service_unit_name']=ProductOrServiceUnitNameSerializer(product_or_service_unit_name).data
                     context['result']=SUCCEED
         context['log']=log
         return JsonResponse(context)

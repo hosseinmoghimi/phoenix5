@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Account, Asset, Bank, BankAccount, Category, Cheque, Cost, FinancialBalance, FinancialDocument, Invoice, InvoiceLine, Payment, Price, Product, ProductOrService, ProductSpecification,Service,  Transaction
+from .models import Account, Asset, Bank, BankAccount, Category, Cheque, Cost, FinancialBalance, FinancialDocument, Invoice, InvoiceLine, Payment, Price, Product, ProductOrService, ProductOrServiceUnitName, ProductSpecification,Service,  Transaction
 from authentication.serializers import ProfileSerializer
 
  
@@ -180,3 +180,8 @@ class AssetSerializer(serializers.ModelSerializer):
         model = Asset
         fields = ['id','title','thumbnail','get_absolute_url','get_delete_url','get_edit_url']
 
+
+class ProductOrServiceUnitNameSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProductOrServiceUnitName
+        fields = ['id', 'unit_name','coef','get_edit_url','get_delete_url']

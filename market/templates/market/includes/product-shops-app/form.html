@@ -9,13 +9,14 @@
             </h4>
         </div>
         <div class="col-md-3">
+            
             <label>واحد فروش</label>
             <select v-model="unit_name" required class="selectpicker farsi" data-style="select-with-transition"
                 data-size="4">
-                {% for unit_name in product.unit_names.all %}
-                <option value="{{unit_name.name}}" class="farsi">
+                {% for unit_name in product.unit_names %}
+                <option value="{{unit_name.unit_name}}" class="farsi">
 
-                    {{unit_name.name}}
+                    {{unit_name.unit_name}}
                 </option>
                 {% endfor %}
             </select>

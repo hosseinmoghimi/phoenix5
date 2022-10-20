@@ -149,17 +149,17 @@ def BS_ColorCode(bs_color):
 
 class UnitNameEnum(TextChoices):
     ADAD="عدد",_("عدد")
-    GERAM="گرم",_("گرم")
     KILOGERAM="کیلوگرم",_("کیلوگرم")
+    METER="متر",_("متر")
+    SHAKHEH="شاخه",_("شاخه")
+    GERAM="گرم",_("گرم")
     TON="تن",_("تن")
     LINE="خط",_("خط")
-    METER="متر",_("متر")
     METER2="متر مربع",_("متر مربع")
     METER3="متر مکعب",_("متر مکعب")
     PART="قطعه",_("قطعه")
     Roll="رول",_("رول")
     LINK="لینک",_("لینک")
-    SHAKHEH="شاخه",_("شاخه")
     DASTGAH="دستگاه",_("دستگاه")
     SERVICE="سرویس",_("سرویس")
     PACK="بسته",_("بسته")
@@ -169,6 +169,10 @@ class UnitNameEnum(TextChoices):
     CUP="فنجان",_("فنجان")
     JOFT="جفت",_("جفت")
     DAST="دست",_("دست")
+    CARTON="کارتن",_("کارتن")
+    JABE="جعبه",_("جعبه")
+    SABAD="سبد",_("سبد")
+    RAS="راس",_("راس")
 
 
 class IconsEnum(TextChoices):

@@ -3,6 +3,7 @@ from accounting.models import Invoice, InvoiceLine,Product as AccountingProduct
 from core.constants import CURRENCY
 from core.enums import UnitNameEnum
 from market.enums import *
+from django.utils import timezone
 from core.models import ImageMixin, _,LinkHelper,models,reverse,Page
 from market.apps import APP_NAME
 from accounting.models import Product,Category
@@ -90,6 +91,22 @@ class Customer(models.Model,LinkHelper):
             self.app_name=APP_NAME
         return super(Customer,self).save(*args, **kwargs)
 
+class MarketInvoice(Invoice):
+
+    
+
+    class Meta:
+        verbose_name = _("MarketInvoice")
+        verbose_name_plural = _("MarketInvoices")
+ 
+    def save(self, *args, **kwargs):
+        if self.title is None or self.title == "":
+            self.title = "فاکتور فروش شماره   "+self.pk
+        self.class_name = "marketinvoice"
+        self.app_name = APP_NAME
+
+        return super(MarketInvoice, self).save(*args, **kwargs)
+
  
 class Cart(Invoice):
 
@@ -123,7 +140,7 @@ class CartLine(models.Model,LinkHelper):
         return f"{self.customer} ^ {self.quantity} {self.shop.unit_name} * {self.shop.product_or_service.title} "
    
 class Shop(models.Model,LinkHelper):
-    region=models.ForeignKey("map.area", verbose_name=_("region"), on_delete=models.CASCADE)
+    # region=models.ForeignKey("map.area", verbose_name=_("region"), on_delete=models.CASCADE)
     supplier=models.ForeignKey("supplier", verbose_name=_("supplier"), on_delete=models.CASCADE)
     product_or_service=models.ForeignKey("accounting.productorservice", verbose_name=_("product_or_service"), on_delete=models.CASCADE)
     available=models.IntegerField(_("available"))
@@ -131,8 +148,10 @@ class Shop(models.Model,LinkHelper):
     specifications=models.ManyToManyField("accounting.ProductSpecification",blank=True, verbose_name=_("ویژگی ها"))
     level=models.CharField(_("level"),choices=CustomerLevelEnum.choices,default=CustomerLevelEnum.REGULAR, max_length=50)
     unit_name=models.CharField(_("unit_name"),choices=UnitNameEnum.choices,default=UnitNameEnum.ADAD, max_length=50)
-
+    old_price=models.IntegerField(_("old_price"))
+    buy_price=models.IntegerField(_("buy_price"))
     unit_price=models.IntegerField(_("unit_price"))
+
     class_name="shop"
     app_name=APP_NAME
     @property
@@ -142,6 +161,14 @@ class Shop(models.Model,LinkHelper):
             counter+=cart_line.quantity
         return counter
     
+    def save(self, *args, **kwargs):
+        if self.expire_datetime is None:
+            self.expire_datetime =timezone.now()
+
+        # if self.region is None:
+        #     self.region=self.supplier.region
+
+        return super(Shop, self).save(*args, **kwargs)
 
     class Meta:
         verbose_name = _("Shop")

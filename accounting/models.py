@@ -207,7 +207,16 @@ class DoubleTransaction(Page):
 class ProductOrService(Page):
     barcode=models.CharField(_("بارکد"),null=True,blank=True, max_length=100)
 
-    
+    def unit_names(self):
+        unit_names=ProductOrServiceUnitName.objects.filter(product_or_service_id=self.pk)
+        if len(unit_names)==0:
+            product_or_service_unit_name=ProductOrServiceUnitName()
+            product_or_service_unit_name.product_or_service_id=self.pk
+            product_or_service_unit_name.unit_name=UnitNameEnum.ADAD
+            product_or_service_unit_name.save()
+            return [product_or_service_unit_name]
+        return unit_names
+
     @property
     def unit_price(self):
         request=get_request()
@@ -251,6 +260,31 @@ class ProductOrService(Page):
     @property
     def category(self):
         return self.category_set.first()
+
+    def save(self,*args, **kwargs):
+        super(ProductOrService,self).save()
+        unit_names=ProductOrServiceUnitName.objects.filter(product_or_service_id=self.pk)
+        if len(unit_names)==0:
+            product_or_service_unit_name=ProductOrServiceUnitName()
+            product_or_service_unit_name.product_or_service_id=self.pk
+            product_or_service_unit_name.unit_name=UnitNameEnum.ADAD
+            product_or_service_unit_name.save()
+
+class ProductOrServiceUnitName(models.Model,LinkHelper):
+    product_or_service=models.ForeignKey("productorservice", verbose_name=_("productorservice"), on_delete=models.CASCADE)
+    unit_name=models.CharField(_("unit_name"),max_length=50,choices=UnitNameEnum.choices,default=UnitNameEnum.ADAD)
+    coef=models.IntegerField(_("coef"),default=1)
+    app_name=APP_NAME
+    class_name="productorserviceunitname"
+    
+
+    class Meta:
+        verbose_name = _("ProductOrServiceUnitName")
+        verbose_name_plural = _("ProductOrServiceUnitNames")
+
+    def __str__(self):
+        return f"{self.product_or_service.title} {self.unit_name}"
+ 
 
 
 class Product(ProductOrService):

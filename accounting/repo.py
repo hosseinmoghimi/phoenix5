@@ -6,7 +6,7 @@ from core.constants import FAILED, SUCCEED,MISC
 from core.enums import UnitNameEnum
 from utility.calendar import PersianCalendar
 from .apps import APP_NAME
-from .models import Account, Asset, Bank, BankAccount, Category, Cheque, Cost, DoubleTransaction, FinancialBalance, FinancialDocument, FinancialYear, Invoice, InvoiceLine, Payment, Price, Product, ProductOrService, ProductSpecification, Service, Transaction
+from .models import Account, Asset, Bank, BankAccount, Category, Cheque, Cost, DoubleTransaction, FinancialBalance, FinancialDocument, FinancialYear, Invoice, InvoiceLine, Payment, Price, Product, ProductOrService, ProductOrServiceUnitName, ProductSpecification, Service, Transaction
 from django.db.models import Q
 from authentication.repo import ProfileRepo
 from django.utils import timezone
@@ -284,8 +284,16 @@ class ProductOrServiceRepo():
             objects=objects.filter(category_title=kwargs['category_title'])
         return objects.all()
  
+    def add_product_or_service_unit_name(self,*args, **kwargs):
+        if not self.user.has_perm(APP_NAME+".add_productorserviceunitname"):
+            return None
+        
+        productorserviceunitnames=ProductOrServiceUnitName.objects.filter(product_or_service_id=kwargs['product_or_service_id']).filter(unit_name=kwargs['unit_name'])
+        if len(productorserviceunitnames)==0:
+            productorserviceunitname=ProductOrServiceUnitName( **kwargs)
+            productorserviceunitname.save()
+            return productorserviceunitname
 
- 
 
 class CategoryRepo():
     def __init__(self, *args, **kwargs):

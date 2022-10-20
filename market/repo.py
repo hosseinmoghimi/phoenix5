@@ -371,19 +371,35 @@ class ShopRepo():
         return objects.all()
 
     def add_shop(self,*args, **kwargs):
+        leolog(add_shop_repo_kwargs=kwargs)
         if not self.user.has_perm(APP_NAME+".add_shop"):
             return None
-        shop=Shop(*args, **kwargs)
+        shop=Shop()
         if 'product_or_service_id' in kwargs:
-            shop.productorservice_id = kwargs['product_or_service_id'] 
+            shop.product_or_service_id = kwargs['product_or_service_id'] 
         if 'productorservice_id' in kwargs:
-            shop.productorservice_id = kwargs['productorservice_id'] 
-        if 'supplier_id' in kwargs:
-            shop.supplier_id = kwargs['unit_name'] 
+            shop.product_or_service_id = kwargs['productorservice_id'] 
+        if 'product_id' in kwargs:
+            shop.product_or_service_id = kwargs['product_id'] 
+        if 'unit_name' in kwargs:
+            shop.unit_name = kwargs['unit_name'] 
         if 'supplier_id' in kwargs:
             shop.supplier_id = kwargs['supplier_id'] 
-        if 'supplier' in kwargs:
-            shop.supplier_id = kwargs['supplier'].id 
+
+        if 'old_price' in kwargs:
+            shop.old_price = kwargs['old_price'] 
+        if 'buy_price' in kwargs:
+            shop.buy_price = kwargs['buy_price']
+        if 'unit_price' in kwargs:
+            shop.unit_price = kwargs['unit_price'] 
+
+            
+        if 'available' in kwargs:
+            shop.available = kwargs['available'] 
+        if 'level' in kwargs:
+            shop.level = kwargs['level'] 
+        if 'expire_datetime' in kwargs:
+            shop.expire_datetime = kwargs['expire_datetime'] 
 
         shop.save()
         return shop

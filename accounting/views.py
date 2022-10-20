@@ -18,7 +18,7 @@ from utility.calendar import PersianCalendar
 from utility.excel import ReportSheet,ReportWorkBook, get_style
 from accounting.apps import APP_NAME
 from accounting.repo import BankRepo,AssetRepo, CategoryRepo, CostRepo,BankAccountRepo, DoubleTransactionRepo, InvoiceLineRepo,AccountRepo,FinancialBalanceRepo, ChequeRepo, PaymentRepo, PriceRepo,  ProductRepo,ServiceRepo,FinancialDocumentRepo,InvoiceRepo, TransactionRepo
-from accounting.serializers import ProductSpecificationSerializer,CategorySerializer, InvoiceLineWithInvoiceSerializer,AccountSerializer, AccountSerializerFull, AssetSerializer, BankAccountSerializer, BankSerializer, CostSerializer, FinancialBalanceSerializer, InvoiceFullSerializer,InvoiceLineSerializer,ChequeSerializer, InvoiceSerializer, PaymentSerializer, PriceSerializer,  ProductSerializer,ServiceSerializer,FinancialDocumentForAccountSerializer,FinancialDocumentSerializer, TransactionSerializer
+from accounting.serializers import ProductOrServiceUnitNameSerializer, ProductSpecificationSerializer,CategorySerializer, InvoiceLineWithInvoiceSerializer,AccountSerializer, AccountSerializerFull, AssetSerializer, BankAccountSerializer, BankSerializer, CostSerializer, FinancialBalanceSerializer, InvoiceFullSerializer,InvoiceLineSerializer,ChequeSerializer, InvoiceSerializer, PaymentSerializer, PriceSerializer,  ProductSerializer,ServiceSerializer,FinancialDocumentForAccountSerializer,FinancialDocumentSerializer, TransactionSerializer
 from accounting.forms import *
 import json
 from utility.log import leolog
@@ -307,7 +307,11 @@ def get_product_or_service_context(request,*args, **kwargs):
     context['product_or_service']=product_or_service
     context.update(PageContext(request=request,page=product_or_service))
     context.update(get_price_app_context(request=request,items=[product_or_service]))
-
+    
+    product_or_service_unit_names=product_or_service.unit_names()
+    context['product_or_service_unit_names']=product_or_service_unit_names
+    product_or_service_unit_names_s=json.dumps(ProductOrServiceUnitNameSerializer(product_or_service_unit_names,many=True).data)
+    context['product_or_service_unit_names_s']=product_or_service_unit_names_s
 
     # invoices
     invoices=InvoiceRepo(request=request).list(product_or_service_id=product_or_service.id)
@@ -332,6 +336,9 @@ def get_product_or_service_context(request,*args, **kwargs):
         context['all_categories_s']=json.dumps(CategorySerializer(all_categories,many=True).data)
         context['add_item_category_form']=AddItemCategoryForm()
 
+        # for adding unit name
+        context['all_unit_names_for_add_product_or_service_form']=(u[0] for u in UnitNameEnum.choices)
+        context['add_product_or_service_unit_name_form']=AddProductOrServiceUnitNameForm()
     return context
 
 def get_product_context(request,*args, **kwargs):

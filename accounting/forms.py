@@ -45,6 +45,11 @@ class AddProductSpecificationForm(forms.Form):
     value=forms.CharField(max_length=200,required=True)
 
 
+class AddProductOrServiceUnitNameForm(forms.Form):
+    product_or_service_id=forms.IntegerField(required=True)
+    unit_name=forms.CharField(max_length=200,required=True)
+    coef=forms.IntegerField(required=False)
+    
 class AddStorePriceForm(forms.Form):
     product_or_service_id=forms.IntegerField(required=True)
     store_id=forms.IntegerField(required=True)
