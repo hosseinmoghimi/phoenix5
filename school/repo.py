@@ -1,6 +1,5 @@
-from urllib import request
 from authentication.repo import ProfileRepo
-import school
+from phoenix.constants import FAILED, SUCCEED
 from school.enums import AttendanceStatusEnum
 from school.forms import SelectOptionForm
 from .models import ActiveCourse, Attendance, ClassRoom, Course, EducationalYear, Exam, Major, Question, School, SelectedOption, Session,Student,Teacher,Book
@@ -522,7 +521,7 @@ class TeacherRepo():
             self.user = kwargs['user']
         self.objects = Teacher.objects
         self.profile=ProfileRepo(user=self.user).me
-        self.me=Teacher.objects.filter(profile=self.profile).first()
+        self.me=Teacher.objects.filter(account__profile=self.profile).first()
     def list(self,*args, **kwargs):
         objects=self.objects.all()
         if 'school_id' in kwargs:
@@ -540,18 +539,31 @@ class TeacherRepo():
         if 'id' in kwargs:
             return self.objects.filter(pk=kwargs['id']).first()
          
+ 
 
     def add_teacher(self,*args, **kwargs):
+        result=FAILED
+        message=""
+        teacher=None
         if not self.request.user.has_perm(APP_NAME+".add_teacher"):
             return
-
+        account_id=kwargs['account_id']
+        teacher=Teacher.objects.filter(account_id=account_id).first()
+        if teacher is not None:
+            result=FAILED
+            message="قبلا دبیری با این اکانت ایجاد شده است."
+            return result,message,teacher
         teacher=self.teacher(*args, **kwargs)
         if teacher is None:
             teacher=Teacher()
-            teacher.profile_id=kwargs['profile_id']
+            teacher.account_id=account_id
             teacher.save()
-            return teacher
+        if teacher is not None:
+            result=SUCCEED
+            message="دبیر جدید با موفقیت افزوده شد."
+        return result,message,teacher
 
+    
 
     
 class StudentRepo():
@@ -565,7 +577,7 @@ class StudentRepo():
             self.user = kwargs['user']
         self.objects = Student.objects
         self.profile=ProfileRepo(user=self.user).me
-        self.me=Student.objects.filter(profile=self.profile).first()
+        self.me=Student.objects.filter(account__profile=self.profile).first()
     def list(self,*args, **kwargs):
         objects=self.objects.all()
         if 'school_id' in kwargs:
@@ -574,6 +586,7 @@ class StudentRepo():
             objects=objects.filter(Q(profile__user__first_name__contains=kwargs['search_for'])|Q(profile__user__last_name__contains=kwargs['search_for']))
         return objects
     def student(self,*args, **kwargs):
+        pk=0
         if 'profile_id' in kwargs:
             return self.objects.filter(profile_id=kwargs['profile_id']).first()
         if 'student_id' in kwargs:
@@ -587,16 +600,26 @@ class StudentRepo():
     
 
     def add_student(self,*args, **kwargs):
+        result=FAILED
+        message=""
+        student=None
         if not self.request.user.has_perm(APP_NAME+".add_student"):
             return
-
+        account_id=kwargs['account_id']
+        student=Student.objects.filter(account_id=account_id).first()
+        if student is not None:
+            result=FAILED
+            message="قبلا دانش آموزی با این اکانت ایجاد شده است."
+            return result,message,student
         student=self.student(*args, **kwargs)
         if student is None:
             student=Student()
-            student.profile_id=kwargs['profile_id']
+            student.account_id=account_id
             student.save()
-            return student
-
+        if student is not None:
+            result=SUCCEED
+            message="دانش آموز جدید با موفقیت افزوده شد."
+        return result,message,student
 
     
 class EducationalYearRepo():

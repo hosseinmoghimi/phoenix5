@@ -5,12 +5,12 @@ from .apps import APP_NAME
 from rest_framework import serializers
 from authentication.serializers import ProfileSerializer
 from .models import ActiveCourse, Attendance, Book, ClassRoom, Course, EducationalYear, Exam, Major, Option, Question, School, Session, Student, Teacher
-
+from accounting.serializers import AccountSerializer
 class StudentSerializer(serializers.ModelSerializer):
-    profile=ProfileSerializer()
+    account=AccountSerializer()
     class Meta:
         model = Student
-        fields=['id','profile','get_absolute_url','get_edit_url']
+        fields=['id','account','get_absolute_url','get_edit_url']
 
 
 class SessionSerializer(serializers.ModelSerializer):
@@ -20,10 +20,10 @@ class SessionSerializer(serializers.ModelSerializer):
 
 
 class TeacherSerializer(serializers.ModelSerializer):
-    profile=ProfileSerializer()
+    account=AccountSerializer()
     class Meta:
         model = Teacher
-        fields=['id','profile','get_absolute_url','get_edit_url']
+        fields=['id','account','get_absolute_url','get_edit_url']
 
 class SchoolSerializer(serializers.ModelSerializer):
     class Meta:

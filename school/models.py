@@ -266,7 +266,8 @@ class ClassRoom(models.Model):
 
 class Teacher(models.Model):
     class_name="teacher"
-    profile=models.ForeignKey("authentication.profile", verbose_name=_("profile"), on_delete=models.CASCADE)
+    account=models.ForeignKey("accounting.account", verbose_name=_("account"), on_delete=models.CASCADE)
+    # profile=models.ForeignKey("authentication.profile", verbose_name=_("profile"), on_delete=models.CASCADE)
     
 
     class Meta:
@@ -274,7 +275,7 @@ class Teacher(models.Model):
         verbose_name_plural = _("Teachers")
 
     def __str__(self):
-        return self.profile.name
+        return self.account.title
 
     def get_absolute_url(self):
         return reverse(APP_NAME+":"+self.class_name, kwargs={"pk": self.pk})
@@ -383,17 +384,18 @@ class Book(LibraryBook):
 
 class Student(models.Model):
     class_name="student"
-    profile=models.ForeignKey("authentication.profile", verbose_name=_("profile"), on_delete=models.CASCADE)
+    account=models.ForeignKey("accounting.account", verbose_name=_("account"), on_delete=models.CASCADE)
+    # profile=models.ForeignKey("authentication.profile", verbose_name=_("profile"), on_delete=models.CASCADE)
     
     @property
     def name(self):
-        return self.profile.name
+        return self.account.title
     class Meta:
         verbose_name = _("Student")
         verbose_name_plural = _("Students")
 
     def __str__(self):
-        return self.profile.name
+        return self.account.title
 
     def get_absolute_url(self):
         return reverse(APP_NAME+":"+self.class_name, kwargs={"pk": self.pk})

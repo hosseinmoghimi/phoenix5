@@ -1,49 +1,56 @@
+{% if related_pages or add_related_page_form %}
 {% load to_price %}
-<div id="related-pages-app">
-    <div class="row">
-        <div class="col-md-8 ml-auto mr-auto mb-3">
-            {% if add_related_page_form %}
+<div class="related-products" id="related-products-div">
 
-            {% include "market/includes/related-products-app/form.html" %}
-            {% endif %}
+    <h3 class="title text-center">محصولات مرتبط</h3>
+
+    <div id="related-pages-app">
+        <div class="row">
+            <div class="col-md-8 ml-auto mr-auto mb-3">
+                {% if add_related_page_form %}
+
+                {% include "market/includes/related-products-app/form.html" %}
+                {% endif %}
+            </div>
         </div>
-    </div>
-    <div class="row">
+        <div class="row">
 
 
-        <div class="col-lg-3 col-md-6 mr-auto ml-auto" v-for="related_page in related_pages">
+            <div class="col-lg-3 col-md-6 mr-auto ml-auto" v-for="related_page in related_pages">
 
-            <div class="card card-product">
-                <div class="card-header card-header-image">
-                    <a :href="related_page.get_market_absolute_url">
-                        <img class="img" :src="related_page.thumbnail">
-                    </a>
-                </div>
-                <div class="card-body">
-                    <h6 class="card-category text-rose" v-text="related_page.sub_title"></h6>
-                    <h4 class="card-title">
-                        <a :href="related_page.get_market_absolute_url" v-text="related_page.title"></a>
-                    </h4>
-                    <div class="card-description" v-html="related_page.short_description">
-
+                <div class="card card-product">
+                    <div class="card-header card-header-image">
+                        <a :href="related_page.get_market_absolute_url">
+                            <img class="img" :src="related_page.thumbnail">
+                        </a>
                     </div>
-                </div>
-                <div class="card-footer justify-content-between">
-                    <div class="price">
-                        <h4>
-                            <span class="" v-text="to_price(related_page.get_price,'{{CURRENCY}}')"></span>
+                    <div class="card-body">
+                        <h6 class="card-category text-rose" v-text="related_page.sub_title"></h6>
+                        <h4 class="card-title">
+                            <a :href="related_page.get_market_absolute_url" v-text="related_page.title"></a>
                         </h4>
+                        <div class="card-description" v-html="related_page.short_description">
+
+                        </div>
                     </div>
-                    <div class="stats">
-                        <button type="button" rel="tooltip" title="Saved to Wishlist"
-                            class="btn btn-just-icon btn-link btn-rose">
-                            <i class="material-icons">favorite</i>
-                        </button>
+                    <div class="card-footer justify-content-between">
+                        <div class="price">
+                            <h4>
+                                <span class="" v-text="to_price(related_page.get_price,'{{CURRENCY}}')"></span>
+                            </h4>
+                        </div>
+                        <div class="stats">
+                            <button type="button" rel="tooltip" title="Saved to Wishlist"
+                                class="btn btn-just-icon btn-link btn-rose">
+                                <i class="material-icons">favorite</i>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
+
+
         </div>
-
-
     </div>
 </div>
+{% endif %}

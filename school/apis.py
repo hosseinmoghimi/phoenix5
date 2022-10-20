@@ -6,6 +6,7 @@ from school.repo import ActiveCourseRepo, AttendanceRepo, BookRepo, ClassRoomRep
 from school.serializers import ActiveCourseSerializer, AttendanceSerializer, BookSerializer, ClassRoomSerializer, CourseSerializer, ExamSerializer, MajorSerializer, OptionFullSerializer, OptionSerializer, QuestionSerializer, SchoolSerializer, SessionSerializer, StudentSerializer, TeacherSerializer
 from .apps import APP_NAME
 from rest_framework.views import APIView
+from utility.log import leolog
 from core.constants import SUCCEED,FAILED
 class SchoolApi(APIView):
     def add_school(self,request,*args, **kwargs):
@@ -243,25 +244,9 @@ class AttendanceApi(APIView):
                     context['result']=SUCCEED
         context['log']=log
         return JsonResponse(context)
-class TeacherApi(APIView):
-    def add_teacher(self,request,*args, **kwargs):
-        context={'result':FAILED}
-        log=1
-        if request.method=='POST':
-            log=2
-            my_form=AddTeacherForm(request.POST)
-            if my_form.is_valid():
-                log=3
-                cd=my_form.cleaned_data
-                profile_id=cd['profile_id']
-                teacher=TeacherRepo(request=request).add_teacher(profile_id=profile_id)
-                if teacher is not None:
-                    context['teacher']=TeacherSerializer(teacher).data
-                    context['result']=SUCCEED
-        context['log']=log
-        return JsonResponse(context)
-class StudentApi(APIView):
-    def add_student(self,request,*args, **kwargs):
+  
+class AddStudentApi(APIView):
+    def post(self,request,*args, **kwargs):
         context={'result':FAILED}
         log=1
         if request.method=='POST':
@@ -270,13 +255,35 @@ class StudentApi(APIView):
             if my_form.is_valid():
                 log=3
                 cd=my_form.cleaned_data
-                profile_id=cd['profile_id']
-                student=StudentRepo(request=request).add_student(profile_id=profile_id)
-                if student is not None:
+                result,message,student=StudentRepo(request=request).add_student(**cd)
+                if result ==SUCCEED:
                     context['student']=StudentSerializer(student).data
-                    context['result']=SUCCEED
+                context['result']=result
+                context['message']=message
         context['log']=log
         return JsonResponse(context)
+
+
+class AddTeacherApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={'result':FAILED}
+        log=1
+        if request.method=='POST':
+            log=2
+            my_form=AddTeacherForm(request.POST)
+            if my_form.is_valid():
+                log=3
+                cd=my_form.cleaned_data
+                result,message,teacher=TeacherRepo(request=request).add_teacher(**cd)
+                if result ==SUCCEED:
+                    context['teacher']=TeacherSerializer(teacher).data
+                context['result']=result
+                context['message']=message
+        context['log']=log
+        return JsonResponse(context)
+
+
+
 class ClassRoomApi(APIView):
     def add_classroom(self,request,*args, **kwargs):
         context={'result':FAILED}

@@ -10,7 +10,7 @@
         <div class="row title-row">
             {% if me_customer %}
             <div class="col-md-4 mr-auto">
-               {% include 'market/includes/in-cart-app/template.html' %}
+                {% include 'market/includes/in-cart-app/template.html' %}
             </div>
             {% endif %}
 
@@ -18,7 +18,7 @@
     </div>
 </div>
 <div class="section">
-    <div class="container">
+    <div class="container rtl">
         <div class="main main-raised main-product">
             <div class="row">
                 <div class="col-md-6 col-sm-6">
@@ -109,26 +109,36 @@
             </div>
         </div>
 
-        <div class="row mt-5">
-            {% if me_supplier %}
-
-            <div class="col-md-12">
-
-                {% include "market/includes/product-shops-app/template.html" %}
-            </div>
-            {% endif %}
-
-            <div class="col-12">
-
-                {% include 'market/includes/product-descriptions-app/template.html' %}
-
-            </div>
-            <div class="col-md-12">
-                {% include 'market/includes/product-details-app/template.html' %}
+        {% if me_supplier %}
 
 
-            </div>
-        </div>
+        {% include "market/includes/product-shops-app/template.html" %}
+        {% endif %}
+
+
+        {% include 'market/includes/product-descriptions-app/template.html' %}
+
+        {% include 'market/includes/product-details-app/template.html' %}
+
+
+
+
+
+
+
+        {% include "market/includes/product-features-app/template.html" %}
+
+
+
+        {% include "market/includes/page-comments-app/template.html" %}
+
+
+
+
+
+
+        {% include "market/includes/related-products-app/template.html" %}
+
 
 
 
@@ -139,34 +149,10 @@
 
 
 
-<div id="product-features">
-
-    {% include "market/includes/product-features-app/template.html" %}
-</div>
-
-
-<div id="comments"></div>
-<div class="my-5 farsi">
-    <div class="row">
-        <div class="col-md-8 ml-auto mr-auto">
-            {% include "market/includes/page-comments-app/template.html" %}
 
 
 
-        </div>
-    </div>
-</div>
 
-
-
-{% if related_pages or add_related_page_form %}
-
-<div class="related-products" id="related-products-div">
-    <h3 class="title text-center">محصولات مرتبط</h3>
-    {% include "market/includes/related-products-app/template.html" %}
-
-</div>
-{% endif %}
 
 {% if order_lines %}
 

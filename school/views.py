@@ -1,4 +1,5 @@
 from django.shortcuts import render,reverse
+from accounting.views import add_from_accounts_context
 from authentication.repo import ProfileRepo
 from core.views import CoreContext, MessageView, PageContext,ParameterNameEnum,ParameterRepo
 from school.enums import AttendanceStatusEnum
@@ -174,8 +175,7 @@ class SchoolViews(View):
 
         
 class StudentViews(View):
-    
-    def student(self,request,*args, **kwargs):
+    def get(self,request,*args, **kwargs):
         context=getContext(request=request)
         student=StudentRepo(request=request).student(*args, **kwargs)
         context['student']=student
@@ -208,15 +208,16 @@ class StudentViews(View):
 
         return render(request,TEMPLATE_ROOT+"student.html",context)
 
-    def students(self,request,*args, **kwargs):
+     
+class StudentsViews(View):
+    def get(self,request,*args, **kwargs):
         context=getContext(request=request)
         students=StudentRepo(request=request).list(*args, **kwargs)
         context['students']=students
         context['students_s']=json.dumps(StudentSerializer(students,many=True).data)
-        if request.user.has_perm(APP_NAME+".add_teacher"):
+        if request.user.has_perm(APP_NAME+".add_student"):
             context['add_student_form']=AddStudentForm()
-            profiles=ProfileRepo(request=request).list()
-            context['profiles']=profiles
+            context.update(add_from_accounts_context(request=request))
         return render(request,TEMPLATE_ROOT+"students.html",context)
 
 
@@ -356,7 +357,11 @@ class TeachersView(View):
         if request.user.has_perm(APP_NAME+".add_teacher"):
             context['add_teacher_form']=AddTeacherForm()
             profiles=ProfileRepo(request=request).list()
-            context['profiles']=profiles
+            context['profiles']=profiles 
+        if request.user.has_perm(APP_NAME+".add_teacher"):
+            context['add_teacher_form']=AddTeacherForm()
+            context.update(add_from_accounts_context(request=request))
+      
         return render(request,TEMPLATE_ROOT+"teachers.html",context)
 
 
