@@ -1,4 +1,4 @@
-{% extends "accounting/layout.html" %}
+{% extends "accounting/wide-layout.html" %}
 
 {% load to_persian_date %}
 
@@ -40,14 +40,11 @@
                         </p>
                     </div>
 
-                    <div class="col-4">
-                        <div class="row">
-                            <div class="col-8  farsi text-left">تاریخ</div>
-                            <div class="col-4  farsi text-right">{{invoice.invoice_datetime|to_persian_date|safe}}</div>
+                    <div class="col-4"> 
+                            <div class="  farsi text-left" style="text-align: left;">تاریخ : {{invoice.invoice_datetime|to_persian_date|safe}}</div>
 
-                            <div class="col-8  farsi text-left">شماره</div>
-                            <div class="col-4  farsi text-right">{{invoice.pk}}</div>
-                        </div>
+                            <div class="  farsi text-left" style="text-align: left;">شماره : {{invoice.pk}}</div>
+                         
 
                     </div>
 

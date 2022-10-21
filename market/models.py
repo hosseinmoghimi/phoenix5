@@ -1,4 +1,5 @@
 import datetime
+from email.policy import default
 from accounting.models import Invoice, InvoiceLine,Product as AccountingProduct
 from core.constants import CURRENCY
 from core.enums import UnitNameEnum
@@ -101,7 +102,7 @@ class MarketInvoice(Invoice):
  
     def save(self, *args, **kwargs):
         if self.title is None or self.title == "":
-            self.title = "فاکتور فروش شماره   "+self.pk
+            self.title = "فاکتور فروش"
         self.class_name = "marketinvoice"
         self.app_name = APP_NAME
 
@@ -125,7 +126,7 @@ class Cart(Invoice):
 class CartLine(models.Model,LinkHelper):
     date_added=models.DateTimeField(_("date_added"), auto_now=False, auto_now_add=True)
     customer=models.ForeignKey("customer",blank=True, verbose_name=_("مشتری"), on_delete=models.CASCADE)
-    row=models.IntegerField(_("row"),blank=True)
+    row=models.IntegerField(_("row"),default=1,blank=True)
     quantity=models.FloatField(_("تعداد"))
     discount=models.IntegerField(_("تخفیف"),default=0)
     shop=models.ForeignKey("shop", verbose_name=_("shop"), on_delete=models.CASCADE)
@@ -138,7 +139,13 @@ class CartLine(models.Model,LinkHelper):
 
     def __str__(self):
         return f"{self.customer} ^ {self.quantity} {self.shop.unit_name} * {self.shop.product_or_service.title} "
-   
+    def save(self,*args, **kwargs):
+        old_ones=CartLine.objects.filter(customer_id=self.customer_id).filter(shop_id=self.shop_id)
+        old_ones.delete()
+        if len(old_ones)>0:
+            old_ones.exclude(pk=old_ones.first().id).delete()
+        super(CartLine,self).save()
+
 class Shop(models.Model,LinkHelper):
     # region=models.ForeignKey("map.area", verbose_name=_("region"), on_delete=models.CASCADE)
     supplier=models.ForeignKey("supplier", verbose_name=_("supplier"), on_delete=models.CASCADE)
@@ -154,6 +161,11 @@ class Shop(models.Model,LinkHelper):
 
     class_name="shop"
     app_name=APP_NAME
+
+    @property
+    def product(self):
+        return Product.objects.filter(pk=self.product_or_service.pk).first()
+        
     @property
     def in_carts(self):
         counter=0

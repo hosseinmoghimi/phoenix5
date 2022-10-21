@@ -164,7 +164,7 @@ def get_account_context(request,*args, **kwargs):
         raise Http404
     context['account']=account
 
-    invoices=account.invoices()
+    invoices=InvoiceRepo(request=request).list(account_id=account.id)
     context['invoices']=invoices
     context['invoices_s']=json.dumps(InvoiceSerializer(invoices,many=True).data)
     count=int(ParameterRepo(request=request,app_name=APP_NAME).parameter(name=ParameterAccountingEnum.COUNT_OF_ITEM_PER_PAGE,default=100).value)

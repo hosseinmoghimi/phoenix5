@@ -1,13 +1,13 @@
 <tr class="farsi">
     <td>
         <div class="img-container">
-            <a :title="cart_line.shop.product.title" :href="cart_line.shop.product.get_absolute_url">
+            <a :title="cart_line.shop.product.title" :href="cart_line.shop.product.get_market_absolute_url">
             <img class="rounded" :src="cart_line.shop.product.thumbnail" alt="...">
             </a>
         </div>
     </td>
     <td class="td-name">
-        <a :href="cart_line.shop.product.get_absolute_url">
+        <a :href="cart_line.shop.product.get_market_absolute_url">
             <div class="text-right">
 
                 <span v-text="cart_line.shop.product.title"></span>

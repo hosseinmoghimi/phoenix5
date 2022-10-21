@@ -1130,7 +1130,7 @@ class InvoiceRepo():
             invoice_lines=InvoiceLine.objects.filter(product_or_service_id=product_or_service_id)
             ids=(invoice_line.invoice_id for invoice_line in invoice_lines)
             objects= objects.filter(id__in=ids)
-        return objects.all()
+        return objects.order_by("-transaction_datetime")
 
    
     def edit_invoice(self,*args, **kwargs):

@@ -3,10 +3,11 @@ from unicodedata import category
 from django.http import JsonResponse
 from rest_framework.views import APIView
 from accounting.repo import ProductRepo
+from accounting.serializers import InvoiceSerializer
 from core.constants import FAILED,SUCCEED
 from market.forms import *
 from market.serializers import CartLineSerializer, CategorySerializer, CategorySerializerForApi, ProductSerializer,ProductSerializerForApi, ShopSerializer
-from market.repo import CartRepo, CategoryRepo, ShopRepo
+from market.repo import CartLineRepo, CartRepo, CategoryRepo, ShopRepo
 
 class AddCategoryApi(APIView):
     def post(self,request,*args, **kwargs):
@@ -32,6 +33,30 @@ class AddToCartApi(APIView):
                 context['result']=SUCCEED
             else:
                 context['message']=message
+        return JsonResponse(context)
+
+
+
+
+class CheckoutApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        context['result']=FAILED
+        log=1
+        log=2
+        checkout_form=CheckoutForm(request.POST)
+        if checkout_form.is_valid():
+            log=3
+            cd=checkout_form.cleaned_data
+            cd['cart_lines']=json.loads(cd['cart_lines'])
+            market_invoices,result,message=CartRepo(request=request).checkout(
+                **cd
+            )
+            if result ==SUCCEED:
+                # shops=ProductRepo(request=request).product(pk=product_id).shop_set.all()
+                context['market_invoices']=InvoiceSerializer(market_invoices,many=True).data
+                context['result']=SUCCEED
+        context['log']=log
         return JsonResponse(context)
 
 

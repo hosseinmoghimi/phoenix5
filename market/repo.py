@@ -1,14 +1,13 @@
-from itertools import product
-from urllib import request
+from accounting.models import InvoiceLine
 from accounting.repo import AccountRepo, ProductRepo as ProductRepo_origin,CategoryRepo
 from core.enums import UnitNameEnum
 from market.apps import APP_NAME
-from market.models import Brand, Cart, CartLine, Category, Customer, Shop, Supplier
+from market.models import Brand, Cart, CartLine, Category, Customer, MarketInvoice, Shop, Supplier
 from django.db.models import Q
 from authentication.repo import ProfileRepo
 from phoenix.constants import FAILED, SUCCEED
 from utility.log import leolog
-
+from django.utils import timezone
 
 
 class ProductRepo(ProductRepo_origin): 
@@ -254,6 +253,50 @@ class CustomerRepo():
         return customer
 
 
+class MarketInvoiceRepo():  
+    def __init__(self, *args, **kwargs):
+        self.request = None
+        self.user = None
+        self.me = None
+        if 'request' in kwargs:
+            self.request = kwargs['request']
+            self.user = self.request.user
+        if 'user' in kwargs:
+            self.user = kwargs['user']
+        
+        self.objects=MarketInvoice.objects.all()
+        self.profile=ProfileRepo(*args, **kwargs).me
+        # self.account=AccountRepo(request=request).me
+        if self.profile is not None:
+            self.me=Customer.objects.filter(account__profile_id=self.profile.id).first()
+       
+
+    def market_invoice(self, *args, **kwargs):
+        pk=0
+        if 'market_invoice_id' in kwargs:
+            pk= kwargs['market_invoice_id']
+            return self.objects.filter(pk=pk).first()
+       
+        elif 'pk' in kwargs:
+            pk=kwargs['pk']
+            return self.objects.filter(pk=pk).first()
+        elif 'id' in kwargs:
+            pk=kwargs['id']
+            return self.objects.filter(pk=pk).first()
+     
+    def list(self, *args, **kwargs):
+        objects = self.objects
+        if 'search_for' in kwargs:
+            search_for=kwargs['search_for']
+            objects = objects.filter(Q(title__contains=search_for)|Q(short_description__contains=search_for)|Q(description__contains=search_for))
+        if 'for_home' in kwargs:
+            objects = objects.filter(Q(for_home=kwargs['for_home']))
+        if 'parent_id' in kwargs:
+            objects=objects.filter(parent_id=kwargs['parent_id'])
+        return objects.all()
+ 
+
+
 class CartRepo():  
     def __init__(self, *args, **kwargs):
         self.request = None
@@ -319,8 +362,55 @@ class CartRepo():
         CartLine.objects.filter(shop_id=cart_line.shop_id).filter(customer_id=cart_line.customer_id).exclude(id=cart_line.pk).delete()
         return (result,cart_line,message)
 
+    def checkout(self,*args, **kwargs):
+        message=""
+        result=FAILED
+        cart=None
+        customer=CustomerRepo(request=self.request).customer(**kwargs)
+        if not customer.account.profile.user==self.request.user:
+            return result,message,cart
+        for edited_cart_line in kwargs['cart_lines']:
+            cart_line=CartLine()
+            cart_line.customer=customer
+            cart_line.shop_id=edited_cart_line['shop_id']
+            cart_line.quantity=edited_cart_line['quantity']
+            cart_line.save()
+        cart_lines=customer.cartline_set.all()
+        market_invoices=[]
+        for cart_line in cart_lines:
+            result=FAILED
+            new_market_invoice=None
+            pay_from_id=cart_line.shop.supplier.account.id
+            pay_to_id=customer.account.id
+            for market_invoice in market_invoices:
+                if market_invoice.pay_from_id==pay_from_id:
+                    new_market_invoice=market_invoice
+            if new_market_invoice is None:
+                new_market_invoice=MarketInvoice()
+                new_market_invoice.pay_from_id=pay_from_id
+                new_market_invoice.pay_to_id=pay_to_id
+                new_market_invoice.title=f"سفارش جدید {customer.account.title} از {cart_line.shop.supplier.title}"
+                new_market_invoice.invoice_datetime=timezone.now()
+                new_market_invoice.save()
+                market_invoices.append(new_market_invoice)
+            leolog(new_market_invoice=new_market_invoice)
+            market_invoice_line=InvoiceLine()
+            market_invoice_line.invoice=new_market_invoice
+            market_invoice_line.product_or_service=cart_line.shop.product_or_service
+            market_invoice_line.quantity=cart_line.quantity
+            market_invoice_line.unit_price=cart_line.shop.unit_price
+            market_invoice_line.unit_name=cart_line.shop.unit_name
+            market_invoice_line.save()
+            result=SUCCEED
 
-
+            message="با موفقیت خرید شد."
+            if result==SUCCEED:
+                cart_line.delete()
+        leolog(market_invoices=market_invoices,message=message,result=result)
+        # market_invoice=MarketInvoice()
+        # market_invoice.save()
+        # market_invoices.append(market_invoice)
+        return market_invoices,result,message
 class ShopRepo():  
     def __init__(self, *args, **kwargs):
         self.request = None

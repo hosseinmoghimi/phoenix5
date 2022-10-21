@@ -821,7 +821,7 @@ class Invoice(Transaction):
 class InvoiceLine(models.Model,LinkHelper):
     date_added=models.DateTimeField(_("date_added"), auto_now=False, auto_now_add=True)
     invoice=models.ForeignKey("invoice",blank=True, verbose_name=_("invoice"),related_name="lines", on_delete=models.CASCADE)
-    row=models.IntegerField(_("row"),blank=True)
+    row=models.IntegerField(_("row"),default=1,blank=True)
     product_or_service=models.ForeignKey("productorservice", verbose_name=_("productorservice"), on_delete=models.CASCADE)
     quantity=models.FloatField(_("quantity"))
     discount=models.IntegerField(_("discount"),default=0)

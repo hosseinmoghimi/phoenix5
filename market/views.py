@@ -1,7 +1,7 @@
 # from .repo import ProductRepo
 # from .serializers import ProductSerializer
 import json
-from accounting.views import get_product_context
+from accounting.views import get_invoice_context, get_product_context
 
 from authentication.forms import AddMembershipRequestForm
 from core.enums import ParameterNameEnum
@@ -15,7 +15,7 @@ from django.views import View
 from market.apps import APP_NAME
 from market.enums import CustomerLevelEnum, ParameterMarketEnum
 from market.forms import *
-from market.repo import (BrandRepo, CartLineRepo, CategoryRepo, CustomerRepo, ProductRepo, ShopRepo,
+from market.repo import (BrandRepo, CartLineRepo, CategoryRepo, CustomerRepo, MarketInvoiceRepo, ProductRepo, ShopRepo,
                          SupplierRepo)
 from market.serializers import (BrandSerializer, CartLineSerializer,
                                 CategorySerializer, ProductSerializer,ProductSpecificationSerializer, ShopSerializer,
@@ -184,6 +184,37 @@ class CategoryView(View):
         return render(request, TEMPLATE_ROOT+"category.html", context)
 
 
+class InvoicesView(View):
+    def get(self, request, *args, **kwargs):
+        pass
+
+
+class InvoiceView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        invoice=MarketInvoiceRepo(request=request).market_invoice(*args, **kwargs)
+        
+        context['COEF_PRICE']=1
+        if invoice is None:
+            mv=MessageView(request=request)
+            mv.title="چنین فاکتوری یافت نشد."
+            return mv.response()
+        context.update(get_invoice_context(request=request,*args, **kwargs))
+        # context['no_navbar']=True
+        # context['no_footer']=True
+
+    
+        if request.user.has_perm('warehouse.add_warehousesheet'):
+            from warehouse.enums import WareHouseSheetDirectionEnum
+            from warehouse.repo import WareHouseSheetRepo,WareHouseRepo
+            from warehouse.forms import AddWarehouseSheetForm,AddWarehouseSheetsForInvoiceForm
+            context['add_ware_house_sheet_form']=AddWarehouseSheetsForInvoiceForm()
+            ware_houses=WareHouseRepo(request=request).list()
+            context['directions']=(direction[0] for direction in WareHouseSheetDirectionEnum.choices)
+            context['ware_houses']=ware_houses
+            
+        return render(request,TEMPLATE_ROOT+"market-invoice.html",context)
+
 class CartView(View):
     def get(self, request, *args, **kwargs):
         context = getContext(request)
@@ -198,6 +229,7 @@ class CartView(View):
 
         context['customer'] = customer
         cart_lines=customer.cartline_set.all()
+        leolog(cart_lines=cart_lines)
         cart_lines_s = json.dumps(CartLineSerializer(cart_lines,many=True).data)
         context['cart_lines_s'] = cart_lines_s
         context['cart_lines'] = cart_lines

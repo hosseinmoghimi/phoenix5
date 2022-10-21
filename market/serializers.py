@@ -9,19 +9,6 @@ class SupplierSerializer(serializers.ModelSerializer):
         fields=['id','title','thumbnail','region','get_absolute_url']
    
  
-class ShopSerializer(serializers.ModelSerializer):
-    product_or_service=ProductOrServiceSerializer()
-    supplier=SupplierSerializer()
-    class Meta:
-        model=Shop
-        fields=['id','product_or_service','level','supplier','unit_price','in_carts','available','unit_name','get_absolute_url']
-
-
-class CartLineSerializer(serializers.ModelSerializer):
-    shop=ShopSerializer()
-    class Meta:
-        model=CartLine
-        fields=['id','shop','quantity']
 
 
 class CategorySerializerForApi(serializers.ModelSerializer):
@@ -52,3 +39,16 @@ class ProductSerializerForApi(serializers.ModelSerializer):
     class Meta:
         model=Product
         fields=['id','title','thumbnail','get_absolute_url']
+        
+class ShopSerializer(serializers.ModelSerializer):
+    product=ProductSerializer()
+    supplier=SupplierSerializer()
+    class Meta:
+        model=Shop
+        fields=['id','product','level','supplier','unit_price','in_carts','available','unit_name','get_absolute_url']
+
+class CartLineSerializer(serializers.ModelSerializer):
+    shop=ShopSerializer()
+    class Meta:
+        model=CartLine
+        fields=['id','shop','quantity']
