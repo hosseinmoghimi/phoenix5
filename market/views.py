@@ -212,7 +212,7 @@ class InvoiceView(View):
             ware_houses=WareHouseRepo(request=request).list()
             context['directions']=(direction[0] for direction in WareHouseSheetDirectionEnum.choices)
             context['ware_houses']=ware_houses
-            
+        context['LAYOUT_PARENT']="phoenix/layout.html"
         return render(request,TEMPLATE_ROOT+"market-invoice.html",context)
 
 class CartView(View):
