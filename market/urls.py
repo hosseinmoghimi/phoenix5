@@ -28,6 +28,10 @@ urlpatterns = [
     path("shops/",(views.ShopsView.as_view()),name="shops"),
     path("shop/<int:pk>/",(views.ShopView.as_view()),name="shop"),
 
+    
+    path("customers/",(views.CustomersView.as_view()),name="customers"),
+    path("customer/<int:pk>/",(views.CustomerView.as_view()),name="customer"),
+
     path("invoices/",login_required(views.InvoicesView.as_view()),name="marketinvoices"),
     path("invoice/<int:pk>/",login_required(views.InvoiceView.as_view()),name="marketinvoice"),
 

@@ -1,7 +1,7 @@
 <script>
     let add_to_cart_component_template = `{% include "market/includes/add-to-cart-app/component.html" %}`
     let url_add_to_cart = "{% url 'market:add_to_cart' %}"
-    let shops = JSON.parse(`{{shops_s|escapejs}}`)
+    let shops = JSON.parse(`{{customer_shops_s|escapejs}}`)
 
     let add_to_cart_component = Vue.component('add-to-cart-component', {
         data: function () {
@@ -66,15 +66,15 @@
     })
     let add_to_cart_app = new Vue({
         el: "#add-to-cart-app",
+        data: { 
+            shops: shops,
+            message: {show:false},
+        },
         mounted: function () {
 
         },
         components: {
             add_to_cart_component,
-        },
-        data: { 
-            shops: shops,
-            message: {show:false},
         },
         methods: {
             show_message: function (color, timeout, message) {

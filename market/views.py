@@ -18,7 +18,7 @@ from market.forms import *
 from market.repo import (BrandRepo, CartLineRepo, CategoryRepo, CustomerRepo, MarketInvoiceRepo, ProductRepo, ShopRepo,
                          SupplierRepo)
 from market.serializers import (BrandSerializer, CartLineSerializer,
-                                CategorySerializer, ProductSerializer,ProductSpecificationSerializer, ShopSerializer,
+                                CategorySerializer, CustomerSerializer, ProductSerializer,ProductSpecificationSerializer, ShopSerializer,
                                 SupplierSerializer)
 from utility.log import leolog
 
@@ -215,6 +215,7 @@ class InvoiceView(View):
         context['LAYOUT_PARENT']="phoenix/layout.html"
         return render(request,TEMPLATE_ROOT+"market-invoice.html",context)
 
+
 class CartView(View):
     def get(self, request, *args, **kwargs):
         context = getContext(request)
@@ -286,6 +287,42 @@ class BrandView(View):
        
 
         return render(request, TEMPLATE_ROOT+"brand.html", context)
+
+class CustomersView(View):
+    def get(self, request, *args, **kwargs):
+        context = getContext(request)
+        customer_repo=CustomerRepo(request=request)
+        customers=customer_repo.list(*args,**kwargs)
+         
+
+        context['customers'] = customers
+        customers_s = json.dumps(CustomerSerializer(customers,many=True).data)
+        context['customers_s'] = customers_s
+        context['body_class'] = "ecommerce-page"
+        if request.user.has_perm(APP_NAME+".add_brand"):
+            context['add_brand_form'] = AddBrandForm()
+
+        return render(request, TEMPLATE_ROOT+"customers.html", context)
+
+
+
+class CustomerView(View):
+    def get(self, request, *args, **kwargs):
+        context = getContext(request)
+        customer_repo=CustomerRepo(request=request)
+        customer=customer_repo.customer(*args,**kwargs)
+         
+
+        context['customer'] = customer
+        market_invoices=MarketInvoiceRepo(request=request).list(customer_id=customer.id)
+        context['market_invoices'] = market_invoices
+         
+        context['body_class'] = "product-page"
+        if request.user.has_perm(APP_NAME+".add_brand"):
+            context['add_brand_form'] = AddBrandForm()
+
+        return render(request, TEMPLATE_ROOT+"customer.html", context)
+
 
 
 class ShopsView(View):
@@ -360,9 +397,9 @@ class ProductView(View):
         context['related_pages_s']=related_pages_s
         context['related_pages']=related_pages
 
-        shops=product.shop_set.all()
-        shops_s=json.dumps(ShopSerializer(shops,many=True).data)
-        context["shops_s"]=shops_s
+        # shops=product.shop_set.all()
+        # shops_s=json.dumps(ShopSerializer(shops,many=True).data)
+        # context["shops_s"]=shops_s
 
 
         me_supplier=context["me_supplier"]
@@ -372,6 +409,10 @@ class ProductView(View):
             supplier_shops=ShopRepo(request=request).list(product_id=product.id,supplier_id=me_supplier.id)
             context['add_shop_form']=AddShopForm()
             context['shop_levels'] = (i[0] for i in CustomerLevelEnum.choices)
+            shops=ShopRepo(request=request).list(product_id=product.id,supplier_id=me_supplier.id)
+            shops_s=json.dumps(ShopSerializer(shops,many=True).data)
+            context["supplier_shops_s"]=shops_s
+            context["supplier_shops"]=shops
         else:
             supplier_shops=[]
         
@@ -380,5 +421,8 @@ class ProductView(View):
             context.update(get_customer_context(request=request,customer=me_customer))
             context['in_cart']=in_cart
             context['in_cart_unit']=in_cart_unit
-        context['supplier_shops']=supplier_shops
+            shops=ShopRepo(request=request).list(product_id=product.id,level=me_customer.level)
+            shops_s=json.dumps(ShopSerializer(shops,many=True).data)
+            context["customer_shops_s"]=shops_s
+            context["customer_shops"]=shops
         return render(request,TEMPLATE_ROOT+"product.html",context)

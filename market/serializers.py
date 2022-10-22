@@ -1,6 +1,6 @@
 from rest_framework import serializers
-from market.models import Brand, CartLine, Category,Product, Shop, Supplier
-from accounting.serializers import ProductOrServiceSerializer, ProductSerializer as ProductSerializer_origin,ProductSpecificationSerializer
+from market.models import Brand, CartLine, Category, Customer,Product, Shop, Supplier
+from accounting.serializers import AccountSerializer, ProductOrServiceSerializer, ProductSerializer as ProductSerializer_origin,ProductSpecificationSerializer
 
  
 class SupplierSerializer(serializers.ModelSerializer):
@@ -33,6 +33,14 @@ class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model=Product
         fields=['id','title','thumbnail','get_market_absolute_url']
+
+        
+class CustomerSerializer(serializers.ModelSerializer):
+    account=AccountSerializer()
+    class Meta:
+        model=Customer
+        fields=['id','account','get_absolute_url']
+        
 
 
 class ProductSerializerForApi(serializers.ModelSerializer):

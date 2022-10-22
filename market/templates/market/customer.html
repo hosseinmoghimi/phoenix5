@@ -1,0 +1,123 @@
+{% extends "market/layout.html" %}
+{% load to_price %}
+{% load to_persian_date %}
+{% load static %}
+
+
+
+{% block page_header %}
+<div class="page-header header-filter" id="product-main" data-parallax="true" filter-color="rose"
+    style="background-image: url('{{product.header}}');">
+
+</div>
+<div class="section farsi">
+    <div class="container rtl">
+        <div class="main main-raised main-product">
+            <div class="row">
+                <div class="col-6">
+                    <h5>
+                        <span class="small text-muted">حساب مالی</span>
+                        <a href="{{customer.account.get_absolute_url}}">
+
+                            {{customer.account.title}}
+                        </a>
+                    </h5>
+                </div>
+                <div class="col-6">
+
+                    <a href="#">
+                        لیست سفارشات
+
+                    </a>
+                </div>
+                <div class="col-12">
+
+                </div>
+
+
+
+            </div>
+        </div>
+
+
+
+
+    </div>
+
+
+</div>
+
+
+
+
+
+
+
+
+{% endblock %}
+
+
+{% block content %}
+<div class="container">
+
+    <div class="card">
+        <div class="card-body">
+            <table class="table table-striped rtl farsi text-right">
+                <thead>
+                    <th>
+                        سفارش
+                    </th>
+                    <th>
+                        فروشنده
+                    </th>
+                    <th>
+                        خریدار
+                    </th>
+                    <th>
+                        مبلغ
+                    </th>
+                    <th>
+                        تاریخ
+                    </th>
+                </thead>
+                <tbody>
+                    {% for market_invoice in market_invoices %}
+
+                    <tr>
+                        <td>
+                            <a href="{{market_invoice.get_absolute_url}}">{{market_invoice.title}}</a>
+                        </td>
+
+                        <td>
+                            <a href="{{market_invoice.pay_from.get_absolute_url}}">{{market_invoice.pay_from.title}}</a>
+
+                        </td>
+
+                        <td>
+                            <a href="{{market_invoice.pay_to.get_absolute_url}}">{{market_invoice.pay_to.title}}</a>
+
+                        </td>
+                        <td>
+                            {{market_invoice.sum_total|to_price}}
+                        </td>
+                        <td>
+                            {{market_invoice.transaction_datetime|to_persian_datetime|safe}}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+{% block modal %}
+{% endblock %}
+
+
+
+{% block script %}
+
+
+{% endblock %}

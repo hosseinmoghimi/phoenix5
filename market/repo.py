@@ -293,6 +293,14 @@ class MarketInvoiceRepo():
             objects = objects.filter(Q(for_home=kwargs['for_home']))
         if 'parent_id' in kwargs:
             objects=objects.filter(parent_id=kwargs['parent_id'])
+        if 'customer_id' in kwargs:
+            customer=Customer.objects.filter(pk=kwargs['customer_id']).first()
+            if customer is not None:
+                objects=objects.filter(pay_to_id=customer.account.id)
+        if 'supplier_id' in kwargs:
+            supplier=Customer.objects.filter(pk=kwargs['supplier']).first()
+            if supplier is not None:
+                objects=objects.filter(pay_to_id=supplier.account.id)
         return objects.all()
  
 
@@ -458,10 +466,11 @@ class ShopRepo():
             objects=objects.filter(product_or_service_id=kwargs['product_id'])
         if 'supplier_id' in kwargs:
             objects=objects.filter(supplier_id=kwargs['supplier_id'])
+        if 'level' in kwargs:
+            objects=objects.filter(level=kwargs['level'])
         return objects.all()
 
     def add_shop(self,*args, **kwargs):
-        leolog(add_shop_repo_kwargs=kwargs)
         if not self.user.has_perm(APP_NAME+".add_shop"):
             return None
         shop=Shop()
