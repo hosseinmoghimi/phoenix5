@@ -1,4 +1,4 @@
-{% extends "accounting/wide-layout.html" %}
+{% extends "accounting/layout.html" %}
 
 {% load to_persian_date %}
 
@@ -57,6 +57,8 @@
             {% include "accounting/includes/invoice-lines-app/print.html" %}
         </div>
     </div>
+    {% if not invoice.editable %}
+      
     <div class="col-md-12">
         <div class="row">
             <div class="col-6">
@@ -111,6 +113,7 @@
             </a>
         </div>
     </div>
+    {% endif %}
 </div>
 
 {% endblock content %}

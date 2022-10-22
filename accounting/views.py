@@ -314,7 +314,14 @@ def get_product_or_service_context(request,*args, **kwargs):
     context['product_or_service_unit_names_s']=product_or_service_unit_names_s
 
     # invoices
-    invoices=InvoiceRepo(request=request).list(product_or_service_id=product_or_service.id)
+    if request.user.has_perm(APP_NAME+".view_invoice"):
+        invoices=InvoiceRepo(request=request).list(product_or_service_id=product_or_service.id)
+        invoice_lines=InvoiceLineRepo(request=request).list(product_or_service_id=product_or_service.pk)
+    else:    
+        me_account=AccountRepo(request=request).me
+        invoices=InvoiceRepo(request=request).list(product_or_service_id=product_or_service.id,account_id=me_account.id)
+        invoice_lines=InvoiceLineRepo(request=request).list(product_or_service_id=product_or_service.pk,account_id=me_account.id)
+        
     context['invoices']=invoices
     invoices_s=json.dumps(InvoiceSerializer(invoices,many=True).data)
     context['invoices_s']=invoices_s

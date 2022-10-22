@@ -534,7 +534,7 @@ class PriceRepo:
         elif self.request.user.has_perm(APP_NAME+".view_price"):
             self.objects = Price.objects.order_by('-date_added')
         else:
-            self.objects = self.objects.filter(account__profile_id=self.profile.id)
+            self.objects =Price.objects.filter(account__profile_id=self.profile.id)
         self.objects = self.objects.order_by('-date_added')
  
 
@@ -872,8 +872,8 @@ class InvoiceLineRepo():
             objects=objects.filter(title__contains=kwargs['search_for'])
         if 'profile_id' in kwargs:
             objects=objects.filter(profile_id=kwargs['profile_id'])
-        if 'profile_id' in kwargs:
-            objects=objects.filter(profile_id=kwargs['profile_id'])
+        if 'account_id' in kwargs:
+            objects=objects.filter(Q(invoice__pay_from_id=kwargs['account_id'])|Q(invoice__pay_to_id=kwargs['account_id']))
         if 'product_or_service_id' in kwargs:
             objects=objects.filter(product_or_service_id=kwargs['product_or_service_id'])
         return objects.all()

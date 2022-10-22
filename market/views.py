@@ -230,7 +230,6 @@ class CartView(View):
 
         context['customer'] = customer
         cart_lines=customer.cartline_set.all()
-        leolog(cart_lines=cart_lines)
         cart_lines_s = json.dumps(CartLineSerializer(cart_lines,many=True).data)
         context['cart_lines_s'] = cart_lines_s
         context['cart_lines'] = cart_lines

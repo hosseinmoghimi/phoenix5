@@ -150,7 +150,8 @@ def PageContext(request, *args, **kwargs):
         can_add_location=True
         can_add_related_page=True
 
-
+    if profile is not None:
+        can_add_comment=True
     
     # links
     if True:

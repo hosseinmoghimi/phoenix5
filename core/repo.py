@@ -317,11 +317,12 @@ class PageCommentRepo:
             self.request=kwargs['request']
             self.user=self.request.user
         self.objects=PageComment.objects
+        self.profile=ProfileRepo(request=self.request).me
     def add_comment(self,*args, **kwargs):
         
         can_write=False
         page=PageRepo(request=self.request).page(*args, **kwargs)
-        if self.user.has_perm(APP_NAME+".change_page"):
+        if self.user.has_perm(APP_NAME+".change_page") or self.profile is not None:
             can_write=True
         if not can_write:
             self.profile=ProfileRepo(request=self.request).me

@@ -12,14 +12,11 @@
         class="fa fa-trash text-danger"></i></a>
 {% endif %}
 
-
-{% if not invoice.editable %}
-
-
+ 
 <a href="{{invoice.get_print_url}}" target="_blank" title="چاپ" class="mx-2"><i
         class="material-icons text-success">print</i></a>
 
-{% endif %}
+ 
 
 {% if not invoice.editable %}
 
