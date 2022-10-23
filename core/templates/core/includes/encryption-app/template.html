@@ -18,17 +18,19 @@
             <div class="card-body">
                 <input required type="text" v-model="key" class=" mb-2 farsi form-control" placeholder="کلید رمزنگاری"
                     maxlength="32">
+<div class="text-right">
 
-                <button @click="encrypt()" class="btn btn-success" type="submit">رمز نگاری کن</button>
-
-
-
-
-                <button @click="decrypt()" class="btn btn-danger" type="submit">رمز گشایی کن</button>
-           
-            
-
-                <button @click="decrypt_once()" class="btn btn-danger" type="submit">برای نمایش رمز گشایی کن</button>
+    <button @click="encrypt()" class="btn btn-success farsi" type="submit">رمز نگاری کن</button>
+    
+    
+    
+    
+    <button @click="decrypt()" class="btn btn-danger farsi" type="submit">رمز گشایی کن</button>
+    
+    
+    
+    <button @click="decrypt_once()" class="btn btn-danger farsi" type="submit">برای نمایش رمز گشایی کن</button>
+</div>
            
                 <div class="mt-3">
 
