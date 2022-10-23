@@ -659,6 +659,7 @@ class ImageView(View):
         
 class MessageView(View):
     def __init__(self, request, *args, **kwargs):
+        self.back_url = request.META.get('HTTP_REFERER')
         self.request = request
         self.links = []
         self.title = None
@@ -706,6 +707,11 @@ class MessageView(View):
             self.header_text = 'خطا'
         if self.message_text is None:
             self.message_text = 'متاسفانه خطایی رخ داده است.'
+        back_link=Link(url=(self.back_url),
+                        color=ColorEnum.PRIMARY+' btn-round',
+                        icon_material=IconsEnum.home,
+                        title='بازگشت', new_tab=False)
+        self.links.append(back_link)
         if self.has_home_link:
             btn_home = Link(url=(SITE_URL),
                             color=ColorEnum.PRIMARY+' btn-round',
@@ -714,6 +720,7 @@ class MessageView(View):
             self.links.append(btn_home)
         context['links'] = self.links
 
+        context['back_url'] = self.back_url
         context['header_text'] = self.header_text
         context['header_color'] = self.header_color
         context['header_icon'] = self.header_icon

@@ -74,7 +74,12 @@ class OrganizationUnitRepo():
             pk=kwargs['pk']
         elif 'id' in kwargs:
             pk=kwargs['id']
-        return self.objects.filter(pk=pk).first()
+        organization_unit= self.objects.filter(pk=pk).first()
+        if self.request.user.has_perm(APP_NAME+".view_organizationunit"):
+            return organization_unit
+        me_employee=EmployeeRepo(request=self.request).me
+        if me_employee is not None and me_employee in organization_unit.employees.all():
+            return organization_unit
      
     def list(self, *args, **kwargs):
         objects = self.objects

@@ -1,3 +1,5 @@
+from cgitb import reset
+from email import message
 from math import prod
 from unicodedata import category
 from accounting.enums import FinancialDocumentTypeEnum, PaymentMethodEnum, SpendTypeEnum, TransactionStatusEnum
@@ -1078,9 +1080,13 @@ class InvoiceRepo():
         else:
             self.objects=Invoice.objects.filter(id=0)
     def create_invoice(self,*args, **kwargs):
+        message=""
+        invoice=None
+        result=FAILED
         if not self.user.has_perm(APP_NAME+".add_invoice"):
+            message="شما مجوز لازم برای ایجاد فاکتور جدید ندارید."
 
-            return
+            return invoice,result,message
         me_account=AccountRepo(request=self.request).me
         if me_account is None:
             return
@@ -1098,7 +1104,7 @@ class InvoiceRepo():
         invoice.save()
         invoice.title=f"فاکتور شماره {invoice.pk}"
         invoice.save()
-        return invoice
+        return invoice,result,message
 
     def invoice(self, *args, **kwargs):
         if 'invoice' in kwargs:

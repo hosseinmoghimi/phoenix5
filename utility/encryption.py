@@ -1,6 +1,8 @@
 from cryptography.fernet import Fernet
 import base64
 
+from utility.log import leolog
+
 
 class Encrptor:
     def __init__(self,*args, **kwargs):
@@ -16,11 +18,10 @@ class Encrptor:
             self.key = Fernet.generate_key()
 
     def encrypt(self,plain,*args, **kwargs):
-        print(self.key)
-        print(10 * " self.key")
+        leolog(plain=plain)
         self.fernet = Fernet(self.key)
         encMessage = self.fernet.encrypt(plain.encode())
-       
+        leolog(encMessage=encMessage)
         return encMessage
 
 

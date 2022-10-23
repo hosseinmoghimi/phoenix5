@@ -318,6 +318,7 @@ class PageCommentRepo:
             self.user=self.request.user
         self.objects=PageComment.objects
         self.profile=ProfileRepo(request=self.request).me
+        
     def add_comment(self,*args, **kwargs):
         
         can_write=False

@@ -642,9 +642,19 @@ class InvoiceExcelView(View):
 
 class NewInvoiceView(View):
     def get(self,request,*args, **kwargs):
-        invoice=InvoiceRepo(request=request).create_invoice(*args, **kwargs)
-        url=reverse(APP_NAME+":edit_invoice",kwargs={'pk':invoice.pk})
-        return redirect(url)
+        invoice,result,message=InvoiceRepo(request=request).create_invoice(*args, **kwargs)
+        if invoice is not None:
+            url=reverse(APP_NAME+":edit_invoice",kwargs={'pk':invoice.pk})
+            return redirect(url)
+        else:
+            back_url=reverse(APP_NAME+":home")
+            back_url=request.META.get('HTTP_REFERER')
+            mv=MessageView(request=request)
+            mv.title=message
+            mv.body=message
+            mv.message=message
+            mv.back_url=back_url
+            return mv.response()
 
 
 class InvoiceLetterOfIntentView(View):
@@ -1088,7 +1098,9 @@ class AccountView(View):
         context=getContext(request=request)
         account=AccountRepo(request=request).account(*args, **kwargs)
         context['account']=account
-
+        me_account=context['me_account']
+        if account==me_account:
+            context['account_is_me']=True
         context.update(get_account_context(request=request,account=account))
         return render(request,TEMPLATE_ROOT+"account.html",context)      
 class AccountsView(View):

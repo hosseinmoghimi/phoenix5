@@ -60,6 +60,12 @@
                     {{link.get_link_btn|safe}}
 
                     {% endfor %}
+                    {% if back_url and ssss %}
+                    <a href="{{back_url}}" class="btn btn-info">
+
+                        بازگشت
+                    </a>
+                    {% endif %}
                 </div>
 
 

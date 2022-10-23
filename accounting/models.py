@@ -270,6 +270,7 @@ class ProductOrService(Page):
             product_or_service_unit_name.unit_name=UnitNameEnum.ADAD
             product_or_service_unit_name.save()
 
+
 class ProductOrServiceUnitName(models.Model,LinkHelper):
     product_or_service=models.ForeignKey("productorservice", verbose_name=_("productorservice"), on_delete=models.CASCADE)
     unit_name=models.CharField(_("unit_name"),max_length=50,choices=UnitNameEnum.choices,default=UnitNameEnum.ADAD)
@@ -285,7 +286,6 @@ class ProductOrServiceUnitName(models.Model,LinkHelper):
     def __str__(self):
         return f"{self.product_or_service.title} {self.unit_name}"
  
-
 
 class Product(ProductOrService):
     # specifications=models.ManyToManyField("ProductSpecification", verbose_name=_("ویژگی ها"))

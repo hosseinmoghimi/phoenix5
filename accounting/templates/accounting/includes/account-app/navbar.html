@@ -34,6 +34,10 @@
     </a>
 </div>
 {% endif %}
+
+{% if perms.accounting.view_account or account_is_me %}
+
+
 <h4 class="text-center">
     <span class="text-{{account.balance.rest|to_amount_color}}">
         مانده :
@@ -45,17 +49,21 @@
         {{account.balance.rest|to_horuf}} {{CURRENCY}}
     </span>
 </h4>
-{% if not bank_account and account %}
+{% endif %}
+{% if not bank_account and account and me_account %}
 
 <div class="text-center my-3">
-    <a class=" farsi btn btn-danger" href="{% url 'accounting:new_invoice' pay_from_id=account.id pay_to_id=0 %}">
+    <a class=" farsi btn btn-danger"
+        href="{% url 'accounting:new_invoice' pay_from_id=account.id pay_to_id=me_account.id %}">
         فاکتور خرید
     </a>
-    <a class=" farsi btn btn-success" href="{% url 'accounting:new_invoice' pay_from_id=0 pay_to_id=account.id %}">
+    <a class=" farsi btn btn-success"
+        href="{% url 'accounting:new_invoice' pay_from_id=me_account.id pay_to_id=account.id %}">
         فاکتور فروش
     </a>
 </div>
 
+{% if perms.accounting.view_account or account_is_me %}
 
 <div class="text-center my-3">
     <a class=" farsi btn btn-link" href="{% url 'accounting:account_invoices' account_id=account.id %}">
@@ -69,9 +77,10 @@
     <a class=" farsi btn btn-link" href="{% url 'accounting:account_transactions' account_id=account.id %}">
         تراکنش ها
     </a>
-    
+
 </div>
 
+{% endif %}
 {% endif %}
 
 {% for acc in account.employee_set.all %}
@@ -155,4 +164,3 @@
     </a>
 </div>
 {% endfor %}
-    
