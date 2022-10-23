@@ -1,3 +1,4 @@
+from phoenix.constants import SUCCEED
 from utility.encryption import Encrptor
 from django.core.files.storage import FileSystemStorage
 from django.db import models
@@ -8,6 +9,7 @@ from phoenix.server_settings import QRCODE_ROOT, QRCODE_URL, FULL_SITE_URL
 from phoenix.settings import ADMIN_URL, MEDIA_URL, STATIC_URL, UPLOAD_ROOT
 from tinymce.models import HTMLField
 from utility.calendar import PersianCalendar
+from utility.log import leolog
 from utility.utils import LinkHelper
 
 from .apps import APP_NAME
@@ -125,15 +127,19 @@ class Page(models.Model, LinkHelper, ImageMixin):
 
     def encrypt(self,*args, **kwargs):
         encryptor=Encrptor(*args, **kwargs)
-        aa=encryptor.encrypt(plain=self.short_description)
-        self.short_description=aa.decode()
-        # self.save()
+        self.short_description=encryptor.encrypt(plain=self.short_description).decode()
+        self.description=encryptor.encrypt(plain=self.description).decode()
+        self.save()
         return encryptor.key
+
     def decrypt(self,key,*args, **kwargs):
-        encryptor=Encrptor()
-        aa=encryptor.decrypt(cypher=self.short_description,key=key)
-        self.short_description=aa.decode()
+        encryptor=Encrptor(key=key)
         
+        result,self.short_description=encryptor.decrypt(cypher=self.short_description)
+        result,self.description=encryptor.decrypt(cypher=self.description)
+        if result==SUCCEED and 'save' in kwargs and kwargs['save']:
+            self.save()
+        return result
 
 
     def get_qrcode_url(self):

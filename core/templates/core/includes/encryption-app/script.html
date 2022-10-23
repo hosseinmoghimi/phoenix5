@@ -2,38 +2,162 @@
     let encryption_app = new Vue({
         el: "#encryption-app",
         data: {
-            key: "abcdefghijklmnopqrtuvwxyz",
+            key: "",
+            message: { show: false }
         },
         methods: {
+            check_key: function () {
+                if (this.key.length > 0) {
+                    return true
+                }
+                else {
+                    encryption_app.message = {
+                        show: true,
+                        body: "کلید رمز را وارد کنید.",
+                        color: "danger"
+                    }
+                    setTimeout(() => {
+                        encryption_app.message = {
+                            show: false,
+                        }
+                    }, 2000);
+                    return false
+
+                }
+            },
             encrypt: function () {
+                if (!this.check_key()) {
+                    return
+                }
+
                 let payload = {
                     csrfmiddlewaretoken: csrfmiddlewaretoken,
                     key: this.key,
                     page_id: page_id,
                 }
-                console.log(payload)
                 $.post("{% url 'core:encrypt' %}", payload).done((data) => {
-                    console.log(data)
-                    encryption_app.key=data.key
+                    // encryption_app.key=data.key
+                    if (data.result === "SUCCEED") {
+                        encryption_app.message = {
+                            show: true,
+                            body: "با موفقیت رمز گذاری شد.",
+                            color: "success"
+                        }
+                        setTimeout(() => {
+                            encryption_app.message = {
+                                show: false,
+                            }
+                        }, 2000);
+                    }
+                    if (typeof page_description_app != 'undefined') {
+                        page_description_app.description = data.page.description
+                    }
+                    if (typeof page_short_description_app != 'undefined') {
+                        page_short_description_app.short_description = data.page.short_description
+                    }
+
                 })
             },
             decrypt: function () {
+                if (!this.check_key()) {
+                    return
+                }
                 let payload = {
                     csrfmiddlewaretoken: csrfmiddlewaretoken,
                     key: this.key,
                     page_id: page_id,
                 }
                 $.post("{% url 'core:decrypt' %}", payload).done((data) => {
-                    console.log(data)
-                    if(typeof page_description_app!= 'undefined'){
-                        page_description_app.description=data.page.description
+
+                    if (data.result === "SUCCEED") {
+                        encryption_app.message = {
+                            show: true,
+                            body: "با موفقیت رمزگشایی شد.",
+                            color: "success"
+                        }
+                        setTimeout(() => {
+                            encryption_app.message = {
+                                show: false,
+                            }
+                        }, 2000);
                     }
-                    if(typeof page_short_description_app!= 'undefined'){
-                        page_short_description_app.short_description=data.page.short_description
+
+
+                    if (data.result === "FAILED") {
+                        encryption_app.message = {
+                            show: true,
+                            body: "کلید ناصحیح در رمزگشایی",
+                            color: "danger"
+                        }
+                        setTimeout(() => {
+                            encryption_app.message = {
+                                show: false,
+                            }
+                        }, 2000);
+                    }
+
+
+
+
+                    if (typeof page_description_app != 'undefined') {
+                        page_description_app.description = data.page.description
+                    }
+                    if (typeof page_short_description_app != 'undefined') {
+                        page_short_description_app.short_description = data.page.short_description
                     }
                 })
-                console.log(payload)
-            }
+            },
+
+            decrypt_once: function () {
+                if (!this.check_key()) {
+                    return
+                }
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    key: this.key,
+                    page_id: page_id,
+                }
+                $.post("{% url 'core:decrypt_once' %}", payload).done((data) => {
+
+                    if (data.result === "SUCCEED") {
+                        encryption_app.message = {
+                            show: true,
+                            body: "با موفقیت فقط برای نمایش رمزگشایی شد.",
+                            color: "warning"
+                        }
+                        setTimeout(() => {
+                            encryption_app.message = {
+                                show: false,
+                            }
+                        }, 2000);
+                    }
+
+
+                    if (data.result === "FAILED") {
+                        encryption_app.message = {
+                            show: true,
+                            body: "کلید ناصحیح در رمزگشایی",
+                            color: "danger"
+                        }
+                        setTimeout(() => {
+                            encryption_app.message = {
+                                show: false,
+                            }
+                        }, 2000);
+                    }
+
+
+
+
+                    if (typeof page_description_app != 'undefined') {
+                        page_description_app.description = data.page.description
+                    }
+                    if (typeof page_short_description_app != 'undefined') {
+                        page_short_description_app.short_description = data.page.short_description
+                    }
+                })
+            },
+
         }
     })
 </script>

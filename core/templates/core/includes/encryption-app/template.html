@@ -16,23 +16,28 @@
             data-parent="#accordion-encryption">
 
             <div class="card-body">
-<input required type="text" v-model="key" class=" mb-2 farsi form-control"
-                                placeholder="کلید رمزنگاری" maxlength="300">
-                                <form @submit.prevent="encrypt()">
-                                    <div class="">
-                                      <button class="btn btn-success" type="submit">رمز کن</button>
-                
-                                    </div>
-                
-                                </form>
+                <input required type="text" v-model="key" class=" mb-2 farsi form-control" placeholder="کلید رمزنگاری"
+                    maxlength="32">
 
-                                <form @submit.prevent="decrypt()">
-                                    <div class="">
-                                      <button class="btn btn-success" type="submit">باز کن</button>
-                
-                                    </div>
-                
-                                </form>
+                <button @click="encrypt()" class="btn btn-success" type="submit">رمز نگاری کن</button>
+
+
+
+
+                <button @click="decrypt()" class="btn btn-danger" type="submit">رمز گشایی کن</button>
+           
+            
+
+                <button @click="decrypt_once()" class="btn btn-danger" type="submit">برای نمایش رمز گشایی کن</button>
+           
+                <div class="mt-3">
+
+                    <div class="my-3 text-right" v-if="message.show">
+                        <span :class="'alert alert-'+message.color">
+                            <span class="farsi" v-html="message.body"></span>
+                        </span>
+                    </div>
+                </div>
 
             </div>
             <div class="card-footer">

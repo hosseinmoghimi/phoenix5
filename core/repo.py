@@ -1,3 +1,4 @@
+from unittest import result
 from requests import request
 from .models import ContactMessage, Download, Image, Link, Page, PageComment, PageDownload, PageImage, PageLike, PageLink, PagePermission, PageTag, Parameter,Picture, Tag
 from .constants import *
@@ -40,8 +41,8 @@ class PageRepo:
 
     def decrypt(self,key,*args, **kwargs):
         page=self.page(*args, **kwargs)
-        page.decrypt(key)
-        return page
+        result=page.decrypt(key,*args, **kwargs)
+        return page,result
 
     def __init__(self,*args, **kwargs):
         self.request=None
@@ -318,7 +319,7 @@ class PageCommentRepo:
             self.user=self.request.user
         self.objects=PageComment.objects
         self.profile=ProfileRepo(request=self.request).me
-        
+
     def add_comment(self,*args, **kwargs):
         
         can_write=False

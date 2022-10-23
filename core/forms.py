@@ -19,7 +19,7 @@ class SetThumbnailHeaderForm(forms.Form):
 
 class EncryptPageForm(forms.Form):
     page_id=forms.IntegerField(required=True)
-    key=forms.CharField(max_length=200,required=False)
+    key=forms.CharField(max_length=32,required=False)
 
 class DecryptPageForm(forms.Form):
     page_id=forms.IntegerField(required=True)

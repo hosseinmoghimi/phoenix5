@@ -4,11 +4,11 @@ def leolog(*args, **kwargs):
         return
     print("")
     print("")
+    print(80*"#")
     for a in kwargs:
-        print(80*" #")
         print(a)
-        print(80*" #")
+        print(80*"-")
         print(kwargs[a])
-    print(80*" #")
+        print(80*"#")
     print("")
     print("")

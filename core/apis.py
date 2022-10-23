@@ -261,6 +261,7 @@ class AddPageCommentApi(APIView):
         context['log'] = log
         return JsonResponse(context)
 
+
 class EncryptApi(APIView):
  def post(self, request, *args, **kwargs):
         log = 1
@@ -278,8 +279,10 @@ class EncryptApi(APIView):
                 page,key = PageRepo(request=request).encrypt(
                     **encrypt_page_form.cleaned_data)
                 if page:
-                    context['page'] = PageSerializer(page).data
-                    context['key'] = key.decode("utf-8")
+                    context['page'] = PageDecodeSerializer(page).data
+                    # context['key'] = key.decode("utf-8")
+                    # context['description'] = page.description
+                    # context['short_description'] = page.short_description
                     context['result'] = SUCCEED
         context['log'] = log
         return JsonResponse(context)
@@ -299,11 +302,34 @@ class DecryptApi(APIView):
                 log += 1
                 # key = encrypt_page_form.cleaned_data['key']
                 # page_id = encrypt_page_form.cleaned_data['page_id']
-                page = PageRepo(request=request).decrypt(
+                page ,result = PageRepo(request=request).decrypt(
                     **decrypt_page_form.cleaned_data)
                 if page:
                     context['page'] = PageDecodeSerializer(page).data
-                    context['result'] = SUCCEED
+                    context['result'] = result
+        context['log'] = log
+        return JsonResponse(context)
+
+
+class DecryptOnceApi(APIView):
+ def post(self, request, *args, **kwargs):
+        log = 1
+        context = {}
+        log = 1
+        context = {}
+        context['result'] = FAILED
+        if request.method == 'POST':
+            log += 1
+            decrypt_page_form = DecryptPageForm(request.POST)
+            if decrypt_page_form.is_valid():
+                log += 1
+                # key = encrypt_page_form.cleaned_data['key']
+                # page_id = encrypt_page_form.cleaned_data['page_id']
+                page ,result = PageRepo(request=request).decrypt(save=False,
+                    **decrypt_page_form.cleaned_data)
+                if page:
+                    context['page'] = PageDecodeSerializer(page).data
+                    context['result'] = result
         context['log'] = log
         return JsonResponse(context)
 
