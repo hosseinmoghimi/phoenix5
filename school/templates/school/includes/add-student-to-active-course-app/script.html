@@ -1,16 +1,23 @@
 <script>
-    let add_student_to_active_course_app=new Vue({
-        el:"#add-student-to-active-course-app",
-        data:{
-            profile_id:"",
-            all_students:JSON.parse("{{all_students_s|escapejs}}")
-
+    all_students = JSON.parse("{{all_students_s|escapejs}}")
+    let add_student_to_active_course_app = new Vue({
+        el: "#add-student-to-active-course-app",
+        data: {
+            student_id: 0,
+            all_students: all_students,
+            search_for: "",
         },
-        methods:{
-            add_student:function(){
+        methods: {
+            filter: function () {
+                this.all_students = all_students.filter(student => student.account.title.indexOf(add_student_to_active_course_app.search_for) > -1)
+                if (this.all_students.length > 0) {
+                    this.student_id = this.all_students[0].id
+                }
+            },
+            add_student: function () {
                 let payload = {
                     active_course_id: active_course_id,
-                    profile_id: this.profile_id,
+                    student_id: this.student_id,
                     csrfmiddlewaretoken: csrfmiddlewaretoken
                 }
                 console.log(payload)

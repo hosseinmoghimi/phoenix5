@@ -20,4 +20,5 @@ urlpatterns = [
 
     
     path("add_drug/",login_required(apis.AddDrugApi.as_view()),name="add_drug"),
+    path("add_patient/",login_required(apis.AddPatientApi.as_view()),name="add_patient"),
 ]

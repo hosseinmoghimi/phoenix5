@@ -26,7 +26,17 @@
         {% include "school/includes/active-course-app/template.html" %}
 
     </div>
-   
+
+
+    {% if add_book_to_course_form %}
+
+    <div class="col-md-4">
+        {% include "school/includes/add-book-to-course-app/template.html" %}
+
+    </div>
+    {% endif %}
+
+
 </div>
 {% endblock content %}
 
@@ -36,5 +46,9 @@
 </script>
 {% include "school/includes/active-course-app/script.html" %}
 {% include "school/includes/books-app/script.html" %}
+{% if add_book_to_course_form %}
 
+{% include "school/includes/add-book-to-course-app/script.html" %}
+
+{% endif %}
 {% endblock script %}

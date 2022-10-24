@@ -1,5 +1,7 @@
+from urllib import request
 from authentication.repo import ProfileRepo
 from phoenix.constants import FAILED, SUCCEED
+from library.repo import BookRepo
 from school.enums import AttendanceStatusEnum
 from school.forms import SelectOptionForm
 from .models import ActiveCourse, Attendance, ClassRoom, Course, EducationalYear, Exam, Major, Question, School, SelectedOption, Session,Student,Teacher,Book
@@ -208,7 +210,7 @@ class ExamRepo():
         select_option.save() 
         return select_option.option
 
-class BookRepo():
+class BookRepo2():
     
     def __init__(self,*args, **kwargs):
         self.request = None
@@ -378,7 +380,11 @@ class ActiveCourseRepo():
         if not self.request.user.has_perm(APP_NAME+".change_activecourse"):
             return
         active_course=self.active_course(*args, **kwargs)
-        teacher=Teacher.objects.filter(profile_id=kwargs['profile_id']).first()
+        teacher=Teacher.objects.filter(pk=kwargs['teacher_id']).first()
+        if teacher is None:
+            result=FAILED
+            return
+
         if active_course is None or teacher is None:
             return
         if not teacher in active_course.teachers.all():
@@ -391,12 +397,18 @@ class ActiveCourseRepo():
         if not self.request.user.has_perm(APP_NAME+".change_activecourse"):
             return
         active_course=self.active_course(*args, **kwargs)
-        student=Student.objects.filter(profile_id=kwargs['profile_id']).first()
+        student=Student.objects.filter(pk=kwargs['student_id']).first()
+        if student is None:
+            result=FAILED
+            return
+
         if active_course is None or student is None:
             return
         if not student in active_course.students.all():
             active_course.students.add(student)
             return student
+
+
 
 class CourseRepo():
     def __init__(self,*args, **kwargs):
@@ -425,6 +437,19 @@ class CourseRepo():
             pk=kwargs['id']
         return self.objects.filter(pk=pk).first()
 
+    def add_book_to_course(self,*args, **kwargs):
+        if not self.request.user.has_perm(APP_NAME+".change_activecourse"):
+            return
+        course=self.course(*args, **kwargs)
+        book=BookRepo(request=self.request).book(*args, **kwargs)
+       
+
+        if course is None or book is None:
+            result=FAILED
+            return
+        if not book in course.books.all():
+            course.books.add(book)
+            return book
 
     def add_course(self,*args, **kwargs):
         if not self.request.user.has_perm(APP_NAME+".add_course"):
@@ -633,7 +658,7 @@ class EducationalYearRepo():
             self.user = kwargs['user']
         self.objects = EducationalYear.objects
         self.profile=ProfileRepo(user=self.user).me
-        self.me=Student.objects.filter(profile=self.profile).first()
+        self.me=Student.objects.filter(account__profile=self.profile).first()
     def list(self,*args, **kwargs):
         objects=self.objects.all()
         if 'school_id' in kwargs:

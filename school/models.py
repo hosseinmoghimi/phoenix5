@@ -10,7 +10,7 @@ from school.apps import APP_NAME
 from django.utils.translation import gettext as _
 from school.settings import *
 from school.enums import *
-from library.models import Book as LibraryBook
+from library.models import Book
 from utility.utils import LinkHelper
 
 
@@ -68,7 +68,7 @@ class Course(models.Model):
     class_name="course"
     title=models.CharField(_("نام واحد درسی "), max_length=100)
     level=models.IntegerField(_("level"))
-    books=models.ManyToManyField("book", verbose_name=_("books"),blank=True)
+    books=models.ManyToManyField("library.book", verbose_name=_("books"),blank=True)
     course_count=models.IntegerField(_("تعداد واحد"))
     def majors(self):
         return self.major_set.all()
@@ -368,18 +368,18 @@ class Attendance(models.Model):
         return PersianCalendar().from_gregorian(self.time_added)
 
 
-class Book(LibraryBook): 
-    class Meta:
-        verbose_name = _("Book")
-        verbose_name_plural = _("Books")
+# class Book(LibraryBook): 
+#     class Meta:
+#         verbose_name = _("Book")
+#         verbose_name_plural = _("Books")
  
-    def courses(self):
-        return self.course_set.all()
+#     def courses(self):
+#         return self.course_set.all()
 
-    def save(self,*args, **kwargs):
-        self.class_name='book'
-        self.app_name=APP_NAME
-        return super(Book,self).save(*args, **kwargs)
+#     def save(self,*args, **kwargs):
+#         self.class_name='book'
+#         self.app_name=APP_NAME
+#         return super(Book,self).save(*args, **kwargs)
 
 
 class Student(models.Model):

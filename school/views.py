@@ -22,6 +22,7 @@ def getContext(request,*args, **kwargs):
  
     return context
 
+
 class BasicViews(View):
     def search(self, request, *args, **kwargs):
         context = getContext(request)
@@ -127,6 +128,7 @@ class ClassRoomViews(View):
         context['classrooms_s']=json.dumps(ClassRoomSerializer(classrooms,many=True).data)
         return render(request,TEMPLATE_ROOT+"classrooms.html",context)
 
+
 class EducationalYearViews(View):
     def educational_year(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -139,6 +141,7 @@ class EducationalYearViews(View):
  
 
         return render(request,TEMPLATE_ROOT+"educational-year.html",context)
+
 
 class SchoolViews(View):
     def school(self,request,*args, **kwargs):
@@ -171,7 +174,6 @@ class SchoolViews(View):
         if request.user.has_perm(APP_NAME+".add_school"):
             context['add_school_form']=AddSchoolForm()
         return render(request,TEMPLATE_ROOT+"schools.html",context)
-
 
         
 class StudentViews(View):
@@ -222,7 +224,7 @@ class StudentsViews(View):
 
 
 class CourseViews(View):
-    def course(self,request,*args, **kwargs):
+    def get(self,request,*args, **kwargs):
         context=getContext(request=request)
         course=CourseRepo(request=request).course(*args, **kwargs)
         context['course']=course
@@ -230,11 +232,17 @@ class CourseViews(View):
 
 
         
-        books=BookRepo(request=request).list(course_id=course.id)
+        books=course.books.all()
         context['books']=books
         context['books_s']=json.dumps(BookSerializer(books,many=True).data)
         if request.user.has_perm(APP_NAME+".add_book"):
-            context['add_book_form']=AddBookForm()
+            # context['add_book_form']=AddBookForm()
+
+            context['add_book_to_course_form']=AddBookToCourseForm()
+            all_books=BookRepo(request=request).list()
+            context['all_books']=all_books
+            context['all_books_s']=json.dumps(BookSerializer(all_books,many=True).data)
+
 
         
         active_courses=course.activecourse_set.all()
@@ -243,7 +251,8 @@ class CourseViews(View):
 
         return render(request,TEMPLATE_ROOT+"course.html",context)
 
-    def courses(self,request,*args, **kwargs):
+class CoursesViews(View):
+    def get(self,request,*args, **kwargs):
         context=getContext(request=request)
         courses=CourseRepo(request=request).list(*args, **kwargs)
         context['courses']=courses
@@ -256,9 +265,10 @@ class CourseViews(View):
 
         return render(request,TEMPLATE_ROOT+"courses.html",context)
 
+
 class ActiveCourseViews(View):
 
-    def active_course(self,request,*args, **kwargs):
+    def get(self,request,*args, **kwargs):
         context=getContext(request=request)
         active_course=ActiveCourseRepo(request=request).active_course(*args, **kwargs)
         context['books']=active_course.course.books.all()
@@ -299,18 +309,21 @@ class ActiveCourseViews(View):
             context['all_teachers_s']=json.dumps(TeacherSerializer(all_teachers,many=True).data)
 
 
+
         if request.user.has_perm(APP_NAME+".add_session"):
             context['add_session_form']=AddSessionForm()
         return render(request,TEMPLATE_ROOT+"active-course.html",context)
 
-    def active_courses(self,request,*args, **kwargs):
+
+class ActiveCoursesViews(View):
+
+    def get(self,request,*args, **kwargs):
         context=getContext(request=request)
         active_courses=ActiveCourseRepo(request=request).list()
         context['active_courses']=active_courses
         context['active_courses_s']=json.dumps(ActiveCourseSerializer(active_courses,many=True).data)
  
         return render(request,TEMPLATE_ROOT+"active-courses.html",context)
-
 
         
 class TeacherView(View):
@@ -348,6 +361,7 @@ class TeacherView(View):
 
         return render(request,TEMPLATE_ROOT+"teacher.html",context)
 
+
 class TeachersView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -363,7 +377,6 @@ class TeachersView(View):
             context.update(add_from_accounts_context(request=request))
       
         return render(request,TEMPLATE_ROOT+"teachers.html",context)
-
 
         
 class ExamView(View):
@@ -395,6 +408,7 @@ class ExamView(View):
 
          
         return render(request,TEMPLATE_ROOT+"exam.html",context)
+
 
 class ExamsView(View):
     def get(self,request,*args, **kwargs):
@@ -438,6 +452,7 @@ class QuestionView(View):
          
         return render(request,TEMPLATE_ROOT+"exam.html",context)
 
+
 class QuestionsView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -448,7 +463,6 @@ class QuestionsView(View):
         if request.user.has_perm(APP_NAME+".add_exam"):
             context['add_exam_form']=AddExamForm()
         return render(request,TEMPLATE_ROOT+"exams.html",context)
-
 
         
 class MajorViews(View):
@@ -479,7 +493,6 @@ class MajorViews(View):
 
         return render(request,TEMPLATE_ROOT+"majors.html",context)
 
-
         
 class BookViews(View):
     def get(self,request,*args, **kwargs):
@@ -488,6 +501,7 @@ class BookViews(View):
         context.update(PageContext(request=request,page=book))
         context['book']=book
         return render(request,TEMPLATE_ROOT+"book.html",context)
+
 
 class BooksViews(View):
     def get(self,request,*args, **kwargs):

@@ -1,16 +1,16 @@
-<div class="card" id="add-teacher-to-active-course-app">
+<div class="card" id="add-book-to-course-app">
     <div class="card-body">
         <h5>
-            افزودن دبیر
+            افزودن کتاب
         </h5>
-        <form @submit.prevent="add_teacher()">
+        <form @submit.prevent="add_book()">
 
             <div class="form-group">
                 <label for="">شناسه </label>
                 <input type="text" class="form-control" v-model="search_for" @input="filter()">
-                <select name="" v-model="teacher_id" class="form-control">
-                    <option v-for="teacher in all_teachers" :value="teacher.id" v-text="teacher.account.title"></option>
+                <select name="" v-model="book_id" class="form-control">
 
+                    <option v-for="book in all_books" :value="book.id" v-text="book.title"></option>
                 </select>
             </div>
             <button type="submit" class="btn btn-success">

@@ -1,6 +1,7 @@
 from health.models import Drug, Patient
 from health.apps import APP_NAME
 from core.repo import ProfileRepo
+from phoenix.constants import FAILED, SUCCEED
 
 class PatientRepo():
     
@@ -32,14 +33,26 @@ class PatientRepo():
             pk=kwargs['id']
         return self.objects.filter(pk=pk).first()
 
-    def add(self,*args, **kwargs):
+    def add_patient(self,*args, **kwargs):
+        result=FAILED
+        patient=None
+        message=""
         if not self.request.user.has_perm(APP_NAME+".add_patient"):
             return
         patient=Patient()
         if 'title' in kwargs:
             patient.title=kwargs['title']
-        patient.save()
-        return patient
+        if 'account_id' in kwargs:
+            account_id=kwargs['account_id']
+            if len(Patient.objects.filter(account_id=account_id))==0:
+                patient.account_id=account_id
+                patient.save()
+                result=SUCCEED
+                message="با موفقیت اضافه شد."
+            else:
+                message="حساب انتخاب شده تکراری می باشد."
+
+        return patient,result,message
 
 class DrugRepo():
     

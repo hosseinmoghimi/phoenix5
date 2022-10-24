@@ -6,6 +6,7 @@ from health.serializers import DrugSerializer, PatientSerializer
 from health.enums import *
 from health.apps import APP_NAME
 from django.views import View
+from accounting.views import add_from_accounts_context
 from health.forms import *
 import json
 
@@ -33,6 +34,9 @@ class PatientsView(View):
         context=getContext(request=request)
         patients=PatientRepo(request=request).list(*args, **kwargs)
         context['patients']=patients
+        if request.user.has_perm(APP_NAME+".add_patient"):
+            context.update(add_from_accounts_context(request=request))
+            context['add_patient_form']=AddPatientForm()
         context['patients_s']=json.dumps(PatientSerializer(patients,many=True).data)
         return render(request,TEMPLATE_ROOT+"patients.html",context)
 

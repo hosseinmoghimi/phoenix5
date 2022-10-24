@@ -3,6 +3,7 @@ from core.serializers import DownloadSerializer, PageLinkSerializer
 from school.repo import EducationalYearRepo
 from .apps import APP_NAME
 from rest_framework import serializers
+from library.serializers import BookSerializer
 from authentication.serializers import ProfileSerializer
 from .models import ActiveCourse, Attendance, Book, ClassRoom, Course, EducationalYear, Exam, Major, Option, Question, School, Session, Student, Teacher
 from accounting.serializers import AccountSerializer
@@ -78,14 +79,7 @@ class AttendanceSerializer(serializers.ModelSerializer):
         fields=['id','session','status','color','student','get_delete_url','description','persian_time_added','persian_enter_time','persian_exit_time','get_edit_url']
 
 
-
-class BookSerializer(serializers.ModelSerializer): 
-    courses=CourseSerializer(many=True)
-    class Meta:
-        model = Book
-        fields=['id','title','courses','get_absolute_url','get_edit_url','get_delete_url']
-
-
+ 
 
 
 class ExamSerializer(serializers.ModelSerializer): 

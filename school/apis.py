@@ -48,67 +48,74 @@ class CourseApi(APIView):
         context['log']=log
         return JsonResponse(context)
 
+class AddStudentToActiveCourseApi(APIView):
 
-class ActiveCourseApi(APIView):
-    def add_active_course(self,request,*args, **kwargs):
+    def post(self,request,*args, **kwargs):
+        context={'result':FAILED}
+        result=FAILED
+        log=2
+        my_form=AddStudentToActiveCourseForm(request.POST)
+        if my_form.is_valid():
+            log=3
+            cd=my_form.cleaned_data
+            student=ActiveCourseRepo(request=request).add_student_to_active_course(**my_form.cleaned_data)
+            if student is not None:
+                context['student']=StudentSerializer(student).data
+                result=SUCCEED
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
+  
+class AddActiveCourseApi(APIView):
+    def post(self,request,*args, **kwargs):
         context={'result':FAILED}
         log=1
-        if request.method=='POST':
-            log=2
-            my_form=AddActiveCourseForm(request.POST)
-            if my_form.is_valid():
-                log=3
-                cd=my_form.cleaned_data
-                title=cd['title']
-                classroom_id=cd['classroom_id']
-                course_id=cd['course_id']
-                active_course=ActiveCourseRepo(request=request).add_active_course(title=title,classroom_id=classroom_id,course_id=course_id)
-                if active_course is not None:
-                    context['active_course']=ActiveCourseSerializer(active_course).data
-                    context['result']=SUCCEED
+        log=2
+        my_form=AddActiveCourseForm(request.POST)
+        if my_form.is_valid():
+            log=3
+            cd=my_form.cleaned_data
+            title=cd['title']
+            classroom_id=cd['classroom_id']
+            course_id=cd['course_id']
+            active_course=ActiveCourseRepo(request=request).add_active_course(title=title,classroom_id=classroom_id,course_id=course_id)
+            if active_course is not None:
+                context['active_course']=ActiveCourseSerializer(active_course).data
+                context['result']=SUCCEED
+        context['log']=log
+        return JsonResponse(context)
+        
+class AddTeacherToActiveCourseApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={'result':FAILED}
+        log=1
+        log=2
+        my_form=AddTeacherToActiveCourseForm(request.POST)
+        if my_form.is_valid():
+            log=3
+            teacher=ActiveCourseRepo(request=request).add_teacher_to_active_course(**my_form.cleaned_data)
+            if teacher is not None:
+                context['teacher']=TeacherSerializer(teacher).data
+                context['result']=SUCCEED
         context['log']=log
         return JsonResponse(context)
 
-    def add_student_to_active_course(self,request,*args, **kwargs):
+    
+class AddBookToCourseApi(APIView):
+    def post(self,request,*args, **kwargs):
         context={'result':FAILED}
         log=1
-        if request.method=='POST':
-            log=2
-            my_form=AddStudentToActiveCourseForm(request.POST)
-            if my_form.is_valid():
-                log=3
-                cd=my_form.cleaned_data
-                active_course_id=cd['active_course_id']
-                profile_id=cd['profile_id']
-                student=ActiveCourseRepo(request=request).add_student_to_active_course(
-                    active_course_id=active_course_id,
-                    profile_id=profile_id
-                    )
-                if student is not None:
-                    context['student']=StudentSerializer(student).data
-                    context['result']=SUCCEED
+        log=2
+        my_form=AddBookToCourseForm(request.POST)
+        if my_form.is_valid():
+            log=3
+            book=CourseRepo(request=request).add_book_to_course(**my_form.cleaned_data)
+            if book is not None:
+                context['book']=BookSerializer(book).data
+                context['result']=SUCCEED
         context['log']=log
         return JsonResponse(context)
-    def add_teacher_to_active_course(self,request,*args, **kwargs):
-        context={'result':FAILED}
-        log=1
-        if request.method=='POST':
-            log=2
-            my_form=AddTeacherToActiveCourseForm(request.POST)
-            if my_form.is_valid():
-                log=3
-                cd=my_form.cleaned_data
-                profile_id=cd['profile_id']
-                active_course_id=cd['active_course_id']
-                teacher=ActiveCourseRepo(request=request).add_teacher_to_active_course(
-                    active_course_id=active_course_id,
-                    profile_id=profile_id
-                    )
-                if teacher is not None:
-                    context['teacher']=TeacherSerializer(teacher).data
-                    context['result']=SUCCEED
-        context['log']=log
-        return JsonResponse(context)
+
 
 class AddExamApi(APIView):
     def post(self,request,*args, **kwargs):
