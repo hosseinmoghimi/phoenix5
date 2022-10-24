@@ -1,4 +1,4 @@
-from requests import request
+from django.db.models import Q
 from core.repo import ProfileRepo
 from polls.apps import APP_NAME
 from polls.models import Vote, Option, Poll
