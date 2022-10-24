@@ -53,7 +53,7 @@ class PollRepo():
         return poll
 
 
-class OptionRepo():  
+class OptionRepo():
     def __init__(self, *args, **kwargs):
         self.request = None
         self.user = None
