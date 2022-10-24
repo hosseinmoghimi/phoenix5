@@ -50,7 +50,7 @@
                     </h4>
                 </div>
 
-               
+
 
                 {% load static %}
                 <div class="row mb-5" v-for="option in options">
@@ -58,7 +58,7 @@
                         <div style="cursor:pointer" @click="select_option(option)">
                             <div class="text-right farsi">
 
-                                <span  v-text="option.title"></span>
+                                <span v-text="option.title"></span>
                                 <div class="pull-left">
 
 
@@ -67,7 +67,7 @@
                                         رای
                                     </small>
                                 </div>
-                                
+
                             </div>
 
 
@@ -75,7 +75,7 @@
                         </div>
 
                         <div style="width: 100%;background-color: rgb(240, 214, 214);">
-                            <div :style="option_width(option)">
+                            <div :style="option_style(option)">
 
                             </div>
                         </div>
@@ -84,7 +84,10 @@
                 </div>
 
 
-                <div v-if="false" class="table-responsive">
+                {% if sadsadas %}
+
+
+                <div class="table-responsive">
 
                     <table class="table table-striped">
                         <thead>
@@ -151,6 +154,7 @@
                     </table>
 
                 </div>
+                {% endif %}
 
             </div>
             {% if add_option_form %}

@@ -118,7 +118,11 @@ class OptionRepo():
 
     def select_option(self,*args, **kwargs):
         if not self.user.has_perm(APP_NAME+".add_vote"):
-            return None
+            # return None
+            pass
+        if self.profile is None:
+            return
+        
         option=self.option(*args, **kwargs)
         if option is None:
             return
