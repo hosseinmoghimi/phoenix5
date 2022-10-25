@@ -59,6 +59,8 @@ def class_title(*args, **kwargs):
         class_title = "وسیله نقلیه"
     elif class_name == "project":
         class_title = "پروژه"
+    elif class_name == "cost":
+        class_title = "هزینه"
     elif class_name == "service":
         class_title = "سرویس"
     elif class_name=="pm_service":

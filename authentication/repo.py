@@ -301,6 +301,10 @@ class ProfileRepo():
             address=None
 
         
+        if 'enabled' in kwargs:
+            enabled=kwargs['enabled']
+        else:
+            enabled=False
 
         if 'username' in kwargs:
             username=kwargs['username']
@@ -328,7 +332,7 @@ class ProfileRepo():
             new_user=Profile.objects.filter(mobile=mobile).first()
             if new_user is not None:
                 return (FAILED,None,"شماره همراه وارد شده ، تکراری می باشد.")  
-        
+         
         new_user=User.objects.filter(first_name=first_name).filter(last_name=last_name).first()
         if new_user is not None:
             return (FAILED,None,"نام و نام خانوادگی وارد شده ، تکراری می باشد.")  
@@ -348,6 +352,7 @@ class ProfileRepo():
         if profile is None:
             profile=Profile()
         profile.user=user
+        profile.enabled=enabled
         profile.bio=bio
         profile.mobile=mobile
         profile.address=address

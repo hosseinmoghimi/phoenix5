@@ -8,6 +8,9 @@
             <th>
 
             </th>
+            <th>
+
+            </th>
         </thead>
         <tbody>
             <tr v-for="profile in profiles">
@@ -15,7 +18,7 @@
                     {% include "authentication/includes/profiles-app/media.html" %}
                 </td>
                 <td>
-                    {% if perms.projectmanager.add_employee %}
+                    {% if perms.projectmanager.add_employee and sss %}
                     <form @submit.prevent="create_employee(profile.id)" class="d-inline mx-2 my-2">
                         {% csrf_token %}
                         <button class="btn btn-warning" type="submit">
@@ -24,7 +27,7 @@
                     </form>
                     {% endif %}
 
-                    {% if perms.accounting.add_account %}
+                    {% if perms.accounting.add_account and sss%}
                     <form @submit.prevent="create_account(profile.id)" class="d-inline mx-2 my-2">
                         {% csrf_token %}
                         <button class="btn btn-warning" type="submit">
@@ -33,6 +36,10 @@
                     </form>
                     {% endif %}
 
+                </td>
+                <td>
+                <span v-if="profile.enabled" class="badge badge-success">فعال</span>
+                <span v-if="!profile.enabled" class="badge badge-danger">غیر فعال</span>
                 </td>
             </tr>
         </tbody>

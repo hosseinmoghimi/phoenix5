@@ -42,6 +42,7 @@ class AddProfileForm(forms.Form):
     bio=forms.CharField(max_length=200, required=False)
     address=forms.CharField(max_length=200, required=False)
     mobile=forms.CharField(max_length=50, required=False)
+    enabled=forms.BooleanField(required=False)
      
 
 
