@@ -5,7 +5,7 @@ from phoenix.constants import TUMAN,RIAL
 register = template.Library()
 from utility.currency import to_price as to_price_origin,separate as separate_origin
 from utility.num import to_horuf as to_horuf_num,to_tartib as to_tartib_
-
+from utility.log import leolog
 
 @register.filter
 def to_price(value,*args, **kwargs):
@@ -14,7 +14,7 @@ def to_price(value,*args, **kwargs):
 @register.filter
 def to_price_rial(value):
     if CURRENCY==TUMAN:
-        value=value*10
+        value=value*1
     return to_price_origin(value=value,unit=RIAL) 
 
  
