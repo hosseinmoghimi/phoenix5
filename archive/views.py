@@ -81,6 +81,17 @@ class FileView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
         file=FileRepo(request=request).file(*args, **kwargs)
+        pagepermissions= file.pagepermission_set.all()
+        profile=context['profile']
+        sw=False
+        for pp in pagepermissions:
+            if pp.profile==profile:
+                sw=True
+        if not sw:
+            mv=MessageView(request=request)
+            mv.title="عدم دسترسی"
+            mv.body="دسترسی ندارید"
+            return mv.response()
         if file is None:
             mv=MessageView(request=request)
             mv.title="چنین فایلی وجود ندارد."

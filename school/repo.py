@@ -547,6 +547,12 @@ class TeacherRepo():
         self.objects = Teacher.objects
         self.profile=ProfileRepo(user=self.user).me
         self.me=Teacher.objects.filter(account__profile=self.profile).first()
+        if self.request.user.has_perm(APP_NAME+".view_teacher"):
+            self.objects = Teacher.objects
+        elif self.me is not None:
+            self.objects = Teacher.objects.filter(pk=self.me.pk)
+        else:
+            self.objects=Teacher.objects.filter(pk=0)
     def list(self,*args, **kwargs):
         objects=self.objects.all()
         if 'school_id' in kwargs:
@@ -600,10 +606,17 @@ class StudentRepo():
             self.user = self.request.user
         if 'user' in kwargs:
             self.user = kwargs['user']
-        self.objects = Student.objects
         self.profile=ProfileRepo(user=self.user).me
         self.me=Student.objects.filter(account__profile=self.profile).first()
+        if self.request.user.has_perm(APP_NAME+".view_student"):
+            self.objects = Student.objects
+        elif self.me is not None:
+            self.objects = Student.objects.filter(pk=self.me.pk)
+        else:
+            self.objects=Student.objects.filter(pk=0)
+
     def list(self,*args, **kwargs):
+        
         objects=self.objects.all()
         if 'school_id' in kwargs:
             objects=objects.filter(school_id=kwargs['school_id'])
