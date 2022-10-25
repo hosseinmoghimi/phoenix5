@@ -3,6 +3,7 @@ from django.utils import timezone
 from authentication.repo import ProfileRepo
 from django.db.models import Q,Sum
 from library.apps import APP_NAME
+from phoenix.constants import FAILED, SUCCEED
 from utility.calendar import PersianCalendar
 from .models import Book, Lend, Member
 from core.repo import ParameterRepo
@@ -100,6 +101,7 @@ class MemberRepo():
         self.profile=ProfileRepo(*args, **kwargs).me
         self.objects=Member.objects.all()
     def member(self, *args, **kwargs):
+        pk=0
         
         if 'profile_id' in kwargs:
             profile_id=kwargs['profile_id']
@@ -127,21 +129,30 @@ class MemberRepo():
         return objects.all()
 
     def add_member(self, *args, **kwargs):
+        result=FAILED
+        account_id=0
+        message=""
         if not self.user.has_perm(APP_NAME+".add_member"):
             return 
         member=self.member(*args, **kwargs)
         if member is not None:
             return
         member=Member()
-        if 'profile_id' in kwargs:
-            member.profile_id=kwargs['profile_id']
+        if 'account_id' in kwargs:
+            account_id=kwargs['account_id']
+        member_old=Member.objects.filter(account_id=account_id).first()
+        if member_old is not None:
+            message="حساب تکراری"
+            return member,result,message
+        
+        member.account_id=account_id
         if 'level' in kwargs:
             member.level=kwargs['level']
 
         if 'membership_started' in kwargs:
             member.membership_started=kwargs['membership_started']
         else:
-            member.membership_started=PersianCalendar().date
+            member.membership_started=timezone.now()
 
         if 'membership_ended' in kwargs:
             member.membership_ended=kwargs['membership_ended']
@@ -150,12 +161,14 @@ class MemberRepo():
             # member.membership_ended=(PersianCalendar().date+timedelta(years=1))
             
             # from datetime import timedelta
-            from dateutil.relativedelta import relativedelta
-            member.membership_ended=(PersianCalendar().date+relativedelta(years=1))
+            from datetime import timedelta
+            member.membership_ended=(member.membership_started+timedelta(days=180))
         if 'description' in kwargs:
             member.description=kwargs['description']
         member.save()
-        return member
+        if member is not None:
+            result=SUCCEED
+        return member,result,message
 
 
 class LendRepo():

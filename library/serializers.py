@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from .models import Book, Lend, Member
 from authentication.serializers import ProfileSerializer
-
+from accounting.serializers import AccountSerializer
 
 class BookSerializer(serializers.ModelSerializer):
 
@@ -11,10 +11,10 @@ class BookSerializer(serializers.ModelSerializer):
 
 
 class MemberSerializer(serializers.ModelSerializer):
-    profile=ProfileSerializer()
+    account=AccountSerializer()
     class Meta:
         model=Member
-        fields=['id','profile','level','color','persian_membership_ended','persian_membership_started','get_edit_url','get_absolute_url']
+        fields=['id','account','level','color','persian_membership_ended','persian_membership_started','get_edit_url','get_absolute_url']
 
 
 class LendSerializer(serializers.ModelSerializer):

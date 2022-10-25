@@ -8,14 +8,36 @@
 </h3>
 <div class="row">
     <div class="col-md-12 mb-5">
-        {% include "library/includes/lends-app/template.html" %}
+        <div class="col-md-12 mb-5">
+            <div class="card">
+                <div class="card-body text-right farsi">
+
+
+                    <div class="my-3">
+                        <a href="{% url 'library:books' %}">
+                            کتاب ها
+                        </a>
+                    </div>
+
+
+                    <div class="my-3">
+                        <a href="{% url 'library:members' %}">
+                            اعضا
+                        </a>
+                    </div>
+
+                    <div class="my-3">
+                        <a href="{% url 'library:lends' %}">
+                            کتاب های امانت داده شده
+                        </a>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="col-md-12 mb-5">
-        {% include "library/includes/books-app/template.html" %}
-    </div>
-    <div class="col-md-12 mb-5">
-        {% include "library/includes/members-app/template.html" %}
-    </div>
+
 </div>
 {% endblock content %}
 

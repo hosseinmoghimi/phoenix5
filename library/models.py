@@ -51,7 +51,7 @@ class Book(LibraryPage):
         return super(Book,self).save(*args, **kwargs)
 
 class Member(models.Model,Admin_Model):
-    profile=models.ForeignKey("authentication.profile",related_name="library_member_set", verbose_name=_("profile"), on_delete=models.CASCADE)
+    account=models.ForeignKey("accounting.account", verbose_name=_("account"), on_delete=models.CASCADE)
     membership_started=models.DateTimeField(_("شروع عضویت"),null=True,blank=True, auto_now=False, auto_now_add=False)
     membership_ended=models.DateTimeField(_("پایان عضویت"),null=True,blank=True, auto_now=False, auto_now_add=False)
     level=models.CharField(_("level"),choices=MemberShipLevelEnum.choices,default=MemberShipLevelEnum.REGULAR, max_length=50)
@@ -64,7 +64,7 @@ class Member(models.Model,Admin_Model):
             return 'danger'
         return 'primary'
     def __str__(self):
-        return self.profile.name
+        return self.account.title
 
     def persian_membership_started(self):
         return PersianCalendar().from_gregorian(self.membership_started)[:10]

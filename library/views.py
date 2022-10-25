@@ -2,6 +2,7 @@ from django.shortcuts import render
 
 # Create your views here.
 from django.views import View
+from accounting.views import add_from_accounts_context
 from authentication.repo import ProfileRepo
 from core.enums import ParameterNameEnum
 
@@ -95,8 +96,8 @@ class MembersView(View):
         context['members_s']=members_s
         if request.user.has_perm(APP_NAME+".add_member"):
             context['add_member_form']=AddMemberForm()
-            context['profiles']=ProfileRepo(request=request).list()
             context['levels']=(i[0] for i in MemberShipLevelEnum.choices)
+            context.update(add_from_accounts_context(request=request))
         return render(request,TEMPLATE_ROOT+"members.html",context)
 
 
