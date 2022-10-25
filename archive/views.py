@@ -84,9 +84,12 @@ class FileView(View):
         pagepermissions= file.pagepermission_set.all()
         profile=context['profile']
         sw=False
-        for pp in pagepermissions:
-            if pp.profile==profile:
-                sw=True
+        if request.user.has_perm(APP_NAME+".view_file"):
+            sw=True
+        if sw==False:
+            for pp in pagepermissions:
+                if pp.profile==profile:
+                    sw=True
         if not sw:
             mv=MessageView(request=request)
             mv.title="عدم دسترسی"
