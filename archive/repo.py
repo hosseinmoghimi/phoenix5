@@ -26,6 +26,8 @@ class FolderRepo:
         if not self.user.has_perm(APP_NAME+".add_folder"):
             return
         folder=Folder(*args, **kwargs)
+        if self.profile is not None:
+            folder.owner=self.profile
         folder.save(*args, **kwargs)
         return folder
     def list(self, *args, **kwargs):
