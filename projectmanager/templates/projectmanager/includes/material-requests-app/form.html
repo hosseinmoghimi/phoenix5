@@ -122,16 +122,30 @@
             <tbody>
                 <tr v-for="material in materials">
                     <td>
-                        <a target="_blank" :href="material.get_absolute_url">
-                                <span class="farsi" v-text="material.title"></span>
-                           
-                        </a>
-                        <div>
-                            <small class="farsi text-muted" v-text="to_price(material.unit_price)"></small>
-                            <span class="text-muted">
-                                {{CURRENCY}}
-                            </span>
+                        <div class="media">
+                            <a target="_blank" :href="material.get_absolute_url">
+
+
+                                <img :src="material.thumbnail" class="rounded" width="48" alt="">
+                            </a>
+                            <div class="media-body">
+                                <div>
+                                    <a target="_blank" :href="material.get_absolute_url">
+                                        <span class="farsi" v-text="material.title"></span>
+
+                                    </a>
+                                </div>
+                                <div>
+                                    <small class="farsi text-muted" v-text="to_price(material.unit_price)"></small>
+                                    <span class="text-muted">
+                                        {{CURRENCY}}
+                                    </span>
+                                </div>
+
+                            </div>
                         </div>
+
+
                     </td>
                     <td>
                         <button @click="select_material(material)" class="btn btn-info">انتخاب</button>
