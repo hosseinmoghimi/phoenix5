@@ -26,12 +26,10 @@ def getContext(request, *args, **kwargs):
     context['WIDE_LAYOUT_PARENT'] = WIDE_LAYOUT_PARENT
     return context
 
+
 class HomeView(View):
     def get(self,request,*args, **kwargs):
         return FolderView().get(request=request,pk=1)
-
-
-
 
 
 class SearchView(View):
@@ -46,8 +44,6 @@ class SearchView(View):
             files=FileRepo(request=request).list(search_for=search_for)
             context['files']=files
         return render(request,TEMPLATE_ROOT+"search.html",context)
-
-
 
 
 class FolderView(View):
@@ -75,7 +71,7 @@ class FolderView(View):
         if request.user.has_perm(APP_NAME+".add_file"):
             context['create_file_form']=CreateFileForm()
         return render(request,TEMPLATE_ROOT+"folder.html",context)
-    
+
 
 class FileView(View):
     def get(self,request,*args, **kwargs):
@@ -103,7 +99,8 @@ class FileView(View):
         context['file']=file
         context.update(PageContext(request=request,page=file))
         return render(request,TEMPLATE_ROOT+"file.html",context)
- 
+
+
 class CreateFolderApi(View):
     def post(self,request,*args, **kwargs):
         context={
@@ -116,7 +113,7 @@ class CreateFolderApi(View):
             context['result']=SUCCEED
         return JsonResponse(context)
 
- 
+
 class CreateFileApi(View):
     def post(self,request,*args, **kwargs):
         context={
