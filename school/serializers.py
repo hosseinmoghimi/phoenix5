@@ -48,7 +48,7 @@ class EducationalYearSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = EducationalYear
-        fields=['id','title','get_absolute_url']
+        fields=['id','title','is_active','persian_start_date','persian_end_date','get_absolute_url','get_edit_url','get_delete_url']
 
 
 class CourseSerializer(serializers.ModelSerializer):

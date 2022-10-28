@@ -2,12 +2,30 @@ from django.http.response import JsonResponse
 from django.utils import timezone
 from core.serializers import DownloadSerializer
 from school.forms import *
-from school.repo import ActiveCourseRepo, AttendanceRepo, BookRepo, ClassRoomRepo, CourseRepo, ExamRepo, MajorRepo, SchoolRepo, SessionRepo, StudentRepo, TeacherRepo
-from school.serializers import ActiveCourseSerializer, AttendanceSerializer, BookSerializer, ClassRoomSerializer, CourseSerializer, ExamSerializer, MajorSerializer, OptionFullSerializer, OptionSerializer, QuestionSerializer, SchoolSerializer, SessionSerializer, StudentSerializer, TeacherSerializer
+from school.repo import ActiveCourseRepo, AttendanceRepo, BookRepo, ClassRoomRepo, CourseRepo, EducationalYearRepo, ExamRepo, MajorRepo, SchoolRepo, SessionRepo, StudentRepo, TeacherRepo
+from school.serializers import ActiveCourseSerializer, AttendanceSerializer, BookSerializer, ClassRoomSerializer, CourseSerializer, EducationalYearSerializer, ExamSerializer, MajorSerializer, OptionFullSerializer, OptionSerializer, QuestionSerializer, SchoolSerializer, SessionSerializer, StudentSerializer, TeacherSerializer
+from utility.calendar import PersianCalendar
 from .apps import APP_NAME
 from rest_framework.views import APIView
 from utility.log import leolog
 from core.constants import SUCCEED,FAILED
+class AddEducationalYearApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={'result':FAILED}
+        message=""
+        add_educational_year=AddEducationalYearForm(request.POST)
+        if add_educational_year.is_valid():
+            cd=add_educational_year.cleaned_data
+            cd['start_date']=PersianCalendar().to_gregorian(cd['start_date'])
+            cd['end_date']=PersianCalendar().to_gregorian(cd['end_date'])
+            educational_year,message,result=EducationalYearRepo(request=request).add(**cd)
+            if result==SUCCEED:
+                context['result']=result
+                context['educational_year']=EducationalYearSerializer(educational_year).data
+        context['message']=message
+        return JsonResponse(context)
+
+
 class SchoolApi(APIView):
     def add_school(self,request,*args, **kwargs):
         context={'result':FAILED}

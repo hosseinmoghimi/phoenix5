@@ -1,5 +1,7 @@
+from utility.calendar import to_persian_datetime_tag
 # Create your models here.
 
+from django.utils import timezone
 from tinymce.models import HTMLField
 from core.models import Page, PageLink
 from django.db import models
@@ -98,12 +100,28 @@ class Course(models.Model):
         """
 
 
-class EducationalYear(models.Model):
+class EducationalYear(models.Model,LinkHelper):
     title=models.CharField(_("title"), max_length=50)
     start_date=models.DateTimeField(_("start_date"),null=True,blank=True, auto_now=False, auto_now_add=False)
     end_date=models.DateTimeField(_("end_date"),null=True,blank=True, auto_now=False, auto_now_add=False)
-    
     class_name="educationalyear"
+    app_name=APP_NAME
+    def persian_start_date(self):
+        return to_persian_datetime_tag(self.start_date)
+    def persian_end_date(self):
+        return to_persian_datetime_tag(self.end_date)
+        
+    @property
+    def is_active(self):
+        try:
+
+        # current_date=PersianCalendar().from_gregorian(timezone.now())
+            current_date=timezone.now()
+            if current_date<=self.end_date and current_date>=self.start_date:
+                return True
+        except:
+            pass
+        return False
     class Meta:
         verbose_name = _("EducationalYear")
         verbose_name_plural = _("EducationalYears")
@@ -113,19 +131,7 @@ class EducationalYear(models.Model):
 
     def get_absolute_url(self):
         return reverse(APP_NAME+":"+self.class_name, kwargs={"pk": self.pk})
-
-    def get_edit_url(self):
-        return f"""{ADMIN_URL}{APP_NAME}/{self.class_name}/{self.pk}/change/"""
-
-    def get_edit_btn(self):
-        return f"""
-             <a href="{self.get_edit_url()}" target="_blank" title="ویرایش">
-                <i class="material-icons">
-                    edit
-                </i>
-            </a>
-        """
-
+ 
 
 class Exam(SchoolPage):
     def save(self,*args, **kwargs):
@@ -195,7 +201,7 @@ class SelectedOption(models.Model,LinkHelper):
 
 class ActiveCourse(models.Model):
     class_name="activecourse"
-    year=models.ForeignKey("EducationalYear", verbose_name=_("سال تحصیلی"), on_delete=models.CASCADE)
+    year=models.ForeignKey("educationalyear", verbose_name=_("سال تحصیلی"), on_delete=models.CASCADE)
     title=models.CharField(_("title"), max_length=200)
     course=models.ForeignKey("course", verbose_name=_("course"), on_delete=models.CASCADE)
     classroom=models.ForeignKey("classroom", verbose_name=_("classroom"), on_delete=models.CASCADE)
@@ -206,7 +212,7 @@ class ActiveCourse(models.Model):
     teachers=models.ManyToManyField("teacher", verbose_name=_("teachers"),blank=True)
     start_date=models.DateTimeField(_("start_date"), auto_now=False, auto_now_add=False)
     end_date=models.DateTimeField(_("end_date"), auto_now=False, auto_now_add=False)
-
+    # is_active=models.BooleanField(_("is_active"),default=True)
     class Meta:
         verbose_name = _("ActiveCourse")
         verbose_name_plural = _("ActiveCourses")

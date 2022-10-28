@@ -1,9 +1,11 @@
+from unittest import result
 from urllib import request
 from authentication.repo import ProfileRepo
 from phoenix.constants import FAILED, SUCCEED
 from library.repo import BookRepo
 from school.enums import AttendanceStatusEnum
 from school.forms import SelectOptionForm
+from utility.log import leolog
 from .models import ActiveCourse, Attendance, ClassRoom, Course, EducationalYear, Exam, Major, Question, School, SelectedOption, Session,Student,Teacher,Book
 from .apps import APP_NAME
 from django.db.models import Q
@@ -332,6 +334,8 @@ class ActiveCourseRepo():
         objects=self.objects.all()
         if 'school_id' in kwargs:
             objects=objects.filter(classroom__school_id=kwargs['school_id'])
+        if 'class_room_id' in kwargs:
+            objects=objects.filter(classroom_id=kwargs['class_room_id'])
         if 'year_id' in kwargs:
             objects=objects.filter(year_id=kwargs['year_id'])
         return objects
@@ -679,6 +683,32 @@ class EducationalYearRepo():
         if 'search_for' in kwargs:
             objects=objects.filter(Q(profile__user__first_name__contains=kwargs['search_for'])|Q(profile__user__last_name__contains=kwargs['search_for']))
         return objects
+    def add(self,*args, **kwargs):
+        result=FAILED
+        message=""
+        if not self.request.user.has_perm(APP_NAME+".add_educationalyear"):
+            return
+        educational_year=EducationalYear(*args, **kwargs)
+        if educational_year.start_date>=educational_year.end_date:
+            message="تاریخ شروع و پایان صحیح نیست"
+            educational_year=None
+            result=FAILED
+            return educational_year,message,result
+
+        
+        if len(EducationalYear.objects.filter(title=educational_year.title))>0:
+            message="عنوان سال تحصیلی تکراری می باشد."
+            educational_year=None
+            result=FAILED
+            return educational_year,message,result
+
+        
+        educational_year.save()
+        if educational_year is not None:
+            result=SUCCEED
+            message="سال تحصیلی جدید با موفقیت افزوده شد."
+
+        return educational_year,message,result
     def educational_year(self,*args, **kwargs):
         if 'educational_year_id' in kwargs:
             return self.objects.filter(pk=kwargs['educational_year_id']).first()

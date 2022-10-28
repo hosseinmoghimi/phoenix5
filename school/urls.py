@@ -47,7 +47,9 @@ urlpatterns = [
     path("api/add_book/",login_required(apis.BookApi().add_book),name="add_book"),
     path("book/<int:pk>/",login_required(views.BookViews.as_view()),name="book"),
     
-    path("educationalyear/<int:pk>/",login_required(views.EducationalYearViews().educational_year),name="educationalyear"),
+    path("educationalyears/",login_required(views.EducationalYearsViews.as_view()),name="educational_years"),
+    path("add_educational_year/",login_required(apis.AddEducationalYearApi().as_view()),name="add_educational_year"),
+    path("educationalyear/<int:pk>/",login_required(views.EducationalYearViews.as_view()),name="educationalyear"),
     
     path("session/<int:pk>/",login_required(views.SessionViews.as_view()),name="session"),
     path("api/add_session/",login_required(apis.SessionApi().add_session),name="add_session"),

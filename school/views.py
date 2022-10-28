@@ -2,9 +2,10 @@ from django.shortcuts import render,reverse
 from accounting.views import add_from_accounts_context
 from authentication.repo import ProfileRepo
 from core.views import CoreContext, MessageView, PageContext,ParameterNameEnum,ParameterRepo
+from phoenix.constants import SUCCEED
 from school.enums import AttendanceStatusEnum
 from school.repo import ActiveCourseRepo, AttendanceRepo, BookRepo, ClassRoomRepo, CourseRepo, EducationalYearRepo, ExamRepo, MajorRepo, SchoolRepo, SessionRepo, StudentRepo, TeacherRepo
-from school.serializers import AttendanceSerializer,ActiveCourseSerializer, CourseSerializerWithMajors, ExamSerializer, MajorSerializer, CourseSerializer, BookSerializer, ClassRoomSerializer, QuestionSerializer, SchoolSerializer, SessionSerializer, StudentSerializer, TeacherSerializer
+from school.serializers import AttendanceSerializer,ActiveCourseSerializer, CourseSerializerWithMajors, EducationalYearSerializer, ExamSerializer, MajorSerializer, CourseSerializer, BookSerializer, ClassRoomSerializer, QuestionSerializer, SchoolSerializer, SessionSerializer, StudentSerializer, TeacherSerializer
 from .apps import APP_NAME
 from django.views import View
 from .forms import *
@@ -74,41 +75,41 @@ class BasicViews(View):
         context=getContext(request=request)
 
 
-        schools=SchoolRepo(request=request).list(*args, **kwargs)
-        context['schools']=schools
-        context['schools_s']=json.dumps(SchoolSerializer(schools,many=True).data)
+        # schools=SchoolRepo(request=request).list(*args, **kwargs)
+        # context['schools']=schools
+        # context['schools_s']=json.dumps(SchoolSerializer(schools,many=True).data)
 
 
-        classrooms=ClassRoomRepo(request=request).list(*args, **kwargs)
-        context['classrooms']=classrooms
-        context['classrooms_s']=json.dumps(ClassRoomSerializer(classrooms,many=True).data)
+        # classrooms=ClassRoomRepo(request=request).list(*args, **kwargs)
+        # context['classrooms']=classrooms
+        # context['classrooms_s']=json.dumps(ClassRoomSerializer(classrooms,many=True).data)
 
 
-        majors=MajorRepo(request=request).list(*args, **kwargs)
-        context['majors']=majors
-        context['majors_s']=json.dumps(MajorSerializer(majors,many=True).data)
-
-
-
-
-        teachers=TeacherRepo(request=request).list(*args, **kwargs)
-        context['teachers']=teachers
-        context['teachers_s']=json.dumps(TeacherSerializer(teachers,many=True).data)
+        # majors=MajorRepo(request=request).list(*args, **kwargs)
+        # context['majors']=majors
+        # context['majors_s']=json.dumps(MajorSerializer(majors,many=True).data)
 
 
 
 
-
-        students=StudentRepo(request=request).list(*args, **kwargs)
-        context['students']=students
-        context['students_s']=json.dumps(StudentSerializer(students,many=True).data)
-
+        # teachers=TeacherRepo(request=request).list(*args, **kwargs)
+        # context['teachers']=teachers
+        # context['teachers_s']=json.dumps(TeacherSerializer(teachers,many=True).data)
 
 
 
-        books=BookRepo(request=request).list(*args, **kwargs)
-        context['books']=books
-        context['books_s']=json.dumps(BookSerializer(books,many=True).data)
+
+
+        # students=StudentRepo(request=request).list(*args, **kwargs)
+        # context['students']=students
+        # context['students_s']=json.dumps(StudentSerializer(students,many=True).data)
+
+
+
+
+        # books=BookRepo(request=request).list(*args, **kwargs)
+        # context['books']=books
+        # context['books_s']=json.dumps(BookSerializer(books,many=True).data)
 
 
         return render(request,TEMPLATE_ROOT+"index.html",context)
@@ -119,6 +120,10 @@ class ClassRoomViews(View):
         context=getContext(request=request)
         classroom=ClassRoomRepo(request=request).classroom(*args, **kwargs)
         context['classroom']=classroom
+        active_courses=ActiveCourseRepo(request=request).list(class_room_id=classroom.id)
+        context['active_courses']=active_courses
+        context['active_courses_s']=json.dumps(ActiveCourseSerializer(active_courses,many=True).data)
+
         return render(request,TEMPLATE_ROOT+"classroom.html",context)
 
     def classrooms(self,request,*args, **kwargs):
@@ -130,7 +135,7 @@ class ClassRoomViews(View):
 
 
 class EducationalYearViews(View):
-    def educational_year(self,request,*args, **kwargs):
+    def get(self,request,*args, **kwargs):
         context=getContext(request=request)
         educational_year=EducationalYearRepo(request=request).educational_year(*args, **kwargs)
         context['educational_year']=educational_year
@@ -141,6 +146,17 @@ class EducationalYearViews(View):
  
 
         return render(request,TEMPLATE_ROOT+"educational-year.html",context)
+
+
+class EducationalYearsViews(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        educational_years=EducationalYearRepo(request=request).list(*args, **kwargs)
+        context['educational_years']=educational_years
+        educational_years_s=json.dumps(EducationalYearSerializer(educational_years,many=True).data)
+        context['educational_years_s']=educational_years_s
+
+        return render(request,TEMPLATE_ROOT+"educational-years.html",context)
 
 
 class SchoolViews(View):

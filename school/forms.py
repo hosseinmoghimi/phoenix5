@@ -8,6 +8,12 @@ class SearchForm(forms.Form):
     search_for=forms.CharField( max_length=50, required=True)
 
 
+class AddEducationalYearForm(forms.Form):
+    title=forms.CharField( max_length=50, required=True)
+    start_date=forms.CharField( max_length=50, required=True)
+    end_date=forms.CharField( max_length=50, required=True)
+
+
 class AddSchoolForm(forms.Form):
     title=forms.CharField( max_length=50, required=True)
 
