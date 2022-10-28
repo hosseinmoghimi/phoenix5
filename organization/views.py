@@ -20,6 +20,7 @@ from projectmanager.serializers import ProjectSerializer,RequestSignatureForEmpl
 from projectmanager.enums import RequestTypeEnum
 from projectmanager.views import get_requests_context
 from projectmanager.repo import ProjectRepo,RequestSignatureRepo
+from utility.log import leolog
 
 LAYOUT_PARENT="phoenix/layout.html"
 TEMPLATE_ROOT="organization/"
@@ -195,7 +196,8 @@ class OrganizationUnitChartView(View):
             names=""
             employees=page.employee_set.all()
             for employee in employees:
-                names+=(f"""<div style="direction:rtl;"><a href="{employee.get_absolute_url()}"><img src="{employee.account.logo()}" class="rounded-circle" width="32"><small class="text-muted" >{employee.account.title}</small></a></div>""")
+                names+=(f"""<div style="direction:rtl;"><a href="{employee.get_absolute_url()}"><img src="{employee.account.logo()}" class="rounded-circle" width="48"><small class="text-muted" >{employee.account.title}</small></a></div>""")
+
             pages_s.append({
                 'title': f"""{page.title}""",
                 'parent_id': page.parent_id,
