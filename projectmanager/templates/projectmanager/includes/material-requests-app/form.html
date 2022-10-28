@@ -123,14 +123,13 @@
                 <tr v-for="material in materials">
                     <td>
                         <div class="media">
-                            <a target="_blank" :href="material.get_absolute_url">
-
+                            <a target="_blank" :href="material.get_pm_absolute_url">
 
                                 <img :src="material.thumbnail" class="rounded" width="48" alt="">
                             </a>
                             <div class="media-body mr-2">
                                 <div>
-                                    <a target="_blank" :href="material.get_absolute_url">
+                                    <a target="_blank" :href="material.get_pm_absolute_url">
                                         <span class="farsi" v-text="material.title"></span>
 
                                     </a>
