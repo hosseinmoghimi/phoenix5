@@ -12,7 +12,7 @@
         
         {% endif %}
         {% for page_link in page.pagelink_set.all %}
-        <a href="{{page_link.url}}">
+        <a href="{{page_link.url}}" target="_blank">
             <h5 class="mr-5">
 
                 {{page_link.get_icon_tag|safe}}
@@ -30,7 +30,7 @@
         {% endif %}
 
         {% for page_download in page.pagedownload_set.all %}
-        <a href="{{page_download.get_download_url}}">
+        <a href="{{page_download.get_download_url}}" target="_blank">
             <h5 class="mr-5">
 
                 {{page_download.get_icon_tag|safe}}

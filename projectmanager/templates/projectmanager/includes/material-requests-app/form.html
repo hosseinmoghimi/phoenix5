@@ -30,7 +30,7 @@
                     </option>
                     {% endfor %} -->
 
-                           
+
                     <option v-for="invoice in invoices" :value="invoice.id" v-text="invoice.id+' '+invoice.title">
                     </option>
                     <option value="-1">
@@ -80,7 +80,8 @@
 
                     <small>
                         (
-                            <span v-if="add_material_request_form_unit_price>0" class="text-primary" v-text="to_price(add_material_request_form_unit_price)"></span>
+                        <span v-if="add_material_request_form_unit_price>0" class="text-primary"
+                            v-text="to_price(add_material_request_form_unit_price)"></span>
                         {{CURRENCY}}
                         )
                     </small>
@@ -122,9 +123,13 @@
                 <tr v-for="material in materials">
                     <td>
                         <a target="_blank" :href="material.get_absolute_url">
-
-                            <span class="farsi" v-text="material.title"></span>
+                                <span class="farsi" v-text="material.title"></span>
+                           
                         </a>
+                        <div>
+                            <small class="farsi text-muted" v-text="to_price(material.unit_price)"></span>
+                            {{CURRENCY}}
+                        </div>
                     </td>
                     <td>
                         <button @click="select_material(material)" class="btn btn-info">انتخاب</button>
@@ -151,8 +156,8 @@
                             {{invoice.title}}
                         </option>
                         {% endfor %} -->
-    
-                               
+
+
                         <option v-for="invoice in invoices" :value="invoice.id" v-text="invoice.id+' '+invoice.title">
                         </option>
                         <option value="-1">
@@ -160,7 +165,7 @@
                         </option>
                     </select>
                 </div>
-    
+
             </div>
 
             <div class="col-md-4">
@@ -176,10 +181,10 @@
                     <label for=""> وضعیت</label>
                     <select v-model="add_material_request_form_status" class="form-control farsi" id="" required>
                         <option disabled selected>وضعیت درخواست را انتخاب کنید</option>
-                          
+
                         <option :value="status" v-for="status in statuses" v-text="status">
                         </option>
-                        
+
                         <option value="">
                             وضعیت درخواست مبدا
                         </option>
@@ -187,7 +192,7 @@
                     <button class="btn btn-block btn-success mt-2" type="submit">از پروژه کپی کن</button>
 
                 </div>
-    
+
             </div>
         </div>
     </form>
@@ -206,8 +211,8 @@
                             {{invoice.title}}
                         </option>
                         {% endfor %} -->
-    
-                               
+
+
                         <option v-for="invoice in invoices" :value="invoice.id" v-text="invoice.id+' '+invoice.title">
                         </option>
                         <option value="-1">
@@ -215,23 +220,23 @@
                         </option>
                     </select>
                 </div>
-    
+
             </div>
             <div class="col-md-4">
                 <div class="form-group">
                     <label for=""> وضعیت</label>
                     <select v-model="add_material_request_form_status" class="form-control farsi" id="" required>
                         <option disabled selected>وضعیت درخواست را انتخاب کنید</option>
-                          
+
                         <option :value="status" v-for="status in statuses" v-text="status">
                         </option>
-                        
+
                         <option value="">
                             وضعیت درخواست مبدا
                         </option>
                     </select>
                 </div>
-    
+
             </div>
 
             <div class="col-md-4">

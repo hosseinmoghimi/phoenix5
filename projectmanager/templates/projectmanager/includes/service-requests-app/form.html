@@ -117,7 +117,13 @@
                         <a target="_blank" :href="service.get_absolute_url">
 
                             <span class="farsi" v-text="service.title"></span>
+                          
                         </a>
+                        <div>
+                            <small class="farsi text-muted" v-text="to_price(service.unit_price)"></span>
+                            {{CURRENCY}}
+
+                        </div>
                     </td>
                     <td>
                         <button @click="select_service(service)" class="btn btn-info">انتخاب</button>

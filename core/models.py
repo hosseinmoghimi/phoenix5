@@ -515,9 +515,10 @@ class Image(models.Model, LinkHelper):
         from io import BytesIO
         import sys
         from django.core.files.uploadedfile import InMemoryUploadedFile
-
-        image = PilImage.open(self.image_main_origin)
-
+        try:
+            image = PilImage.open(self.image_main_origin)
+        except:
+            return None
         width11, height11 = image.size
         ratio11 = float(height11)/float(width11)
      
