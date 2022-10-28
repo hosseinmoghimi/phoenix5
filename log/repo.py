@@ -1,4 +1,3 @@
-from urllib import request
 from .models import Log
 from .apps import APP_NAME
 
