@@ -27,6 +27,7 @@ TEMPLATE_ROOT="organization/"
 def getContext(request,*args, **kwargs):
     context=CoreContext(request=request,app_name=APP_NAME)
     me_employee=EmployeeRepo(request=request).me
+    context['me_employee']=me_employee
     if me_employee is None and not request.user.has_perm(APP_NAME+".view_organizationunit"):
         return None
     return context
