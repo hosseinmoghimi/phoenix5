@@ -2,9 +2,17 @@
 
 
 {% block content %}
-  <div>
+<div>
+  <div class="card">
+    <div class="card-body">
       <h4 class="text-center">
-          {{log.title}}
+        {{log.title}}
       </h4>
+
+      <div>
+        {{log.description}}
+      </div>
+    </div>
   </div>
+</div>
 {% endblock content %}

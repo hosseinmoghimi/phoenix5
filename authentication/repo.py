@@ -5,6 +5,7 @@ from django.utils import timezone
 from core.constants import FAILED, SUCCEED
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.models import User
+from log.repo import LogRepo
 
 from utility.log import leolog
 from .models import Profile, ProfileContact
@@ -184,6 +185,7 @@ class ProfileRepo():
             logout(request=self.request)
 
     def login(self,request,*args, **kwargs):
+
         logout(request=request)
         if 'user' in kwargs:
             user=kwargs['user']
@@ -196,7 +198,10 @@ class ProfileRepo():
             if user is not None:
                 login(request,user)
                 if user.is_authenticated:
+                    profile=Profile.objects.filter(user=user).first()
+                    LogRepo(request=self.request).add_log(title="login",profile=profile,app_name=APP_NAME,description="login")
                     return (request,user)
+        LogRepo(request=self.request).add_log(title="try to login",app_name=APP_NAME,description="try to login username:"+kwargs['username']+" , password : "+kwargs['password'])
     
     
     def change_password(self,request,*args, **kwargs):
