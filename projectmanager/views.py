@@ -30,11 +30,21 @@ TEMPLATE_ROOT = "projectmanager/"
 LAYOUT_PARENT = "phoenix/layout.html"
 
 
+def notPersmissionView(request,*args, **kwargs):
+        mv=MessageView(request=request)
+        mv.body="اکانت شما مجوز دسترسی لازم را دارا نمی باشد."
+        mv.title="عدم دسترسی"
+        return mv.response()
+
+
 def getContext(request, *args, **kwargs):
     context = CoreContext(request=request, app_name=APP_NAME)
     context['search_form'] = SearchForm()
     context['search_action'] = reverse(APP_NAME+":search")
     context['LAYOUT_PARENT'] = LAYOUT_PARENT
+    me_employee=EmployeeRepo(request=request).me
+    if me_employee is None and not request.user.has_perm("organization.view_organizationunit"):
+        return None
     return context
 def get_requests_context(request, *args, **kwargs):
     context={}
@@ -44,6 +54,8 @@ def get_requests_context(request, *args, **kwargs):
 class HomeView(View):
     def get(self, request, *args, **kwargs):
         context = getContext(request=request)
+        if context is None:
+            return notPersmissionView(request=request)
         # pages=PageLikeRepo(request=request).list(page__app_name=APP_NAME,profile=)
         # context['pages_s']=json.dumps(PageSerializer(pages,many=True).data)
         me=context['profile']
@@ -53,11 +65,11 @@ class HomeView(View):
 
         context['expand_likes']=True
         return render(request, TEMPLATE_ROOT+"index.html", context)
-
-
 class SearchView(View):
     def get(self, request, *args, **kwargs):
         context = getContext(request=request)
+        if context is None:
+            return notPersmissionView(request=request)
 
         return render(request, TEMPLATE_ROOT+"search.html", context)
 
@@ -119,6 +131,8 @@ class SearchView(View):
 class NewProjectView(View):
     def get(self, request, *args, **kwargs):
         context = getContext(request=request)
+        if context is None:
+            return notPersmissionView(request=request)
         projects = ProjectRepo(request=request).list(*args, **kwargs)
         context['projects'] = projects
         context['expand_add_project'] = True
@@ -134,6 +148,8 @@ class NewProjectView(View):
 class ProjectsView(View):
     def get(self, request, *args, **kwargs):
         context = getContext(request=request)
+        if context is None:
+            return notPersmissionView(request=request)
         projects = ProjectRepo(request=request).list(*args, **kwargs)
         context['projects'] = projects
         context['show_all_projects'] = True
@@ -149,6 +165,8 @@ class ProjectsView(View):
 class ProjectView(View):
     def get(self, request, *args, **kwargs):
         context = getContext(request=request)
+        if context is None:
+            return notPersmissionView(request=request)
         project = ProjectRepo(request=request).project(*args, **kwargs)
         if project is None:
             mv=MessageView(request=request)
@@ -279,6 +297,8 @@ class ProjectView(View):
 class RequestView(View):
     def get(self, request, *args, **kwargs):
         context = getContext(request=request)
+        if context is None:
+            return notPersmissionView(request=request)
         context.update(getInvoiceLineContext(request=request,*args, **kwargs))
 
         my_request = MaterialRequestRepo(
@@ -334,6 +354,8 @@ class CopyProjectView(View):
 class ProjectGuanttView(View):
     def get(self, request, *args, **kwargs):
         context = getContext(request=request)
+        if context is None:
+            return notPersmissionView(request=request)
         project = ProjectRepo(request=request).project(*args, **kwargs)
         context['project'] = project
         projects=ProjectRepo(request=request).list(parent_id=project.pk)
@@ -345,6 +367,8 @@ class ProjectGuanttView(View):
 class ProjectChartView(View):
     def get(self, request, *args, **kwargs):
         context = getContext(request=request)
+        if context is None:
+            return notPersmissionView(request=request)
         project = ProjectRepo(request=request).project(*args, **kwargs)
         context.update(PageContext(request=request, page=project))
 
@@ -394,6 +418,8 @@ class MaterialInvoiceView(View):
 
     def get(self, request, *args, **kwargs):
         context = getContext(request=request)
+        if context is None:
+            return notPersmissionView(request=request)
         material_invoice = MaterialInvoiceRepo(
             request=request).material_invoice(*args, **kwargs)
         context['material_invoice'] = material_invoice
@@ -411,6 +437,8 @@ class MaterialInvoiceView(View):
 class ServiceInvoiceView(View):
     def get(self, request, *args, **kwargs):
         context = getContext(request=request)
+        if context is None:
+            return notPersmissionView(request=request)
         service_invoice = ServiceInvoiceRepo(
             request=request).service_invoice(*args, **kwargs)
         context['service_invoice'] = service_invoice
@@ -428,6 +456,8 @@ class ServiceInvoiceView(View):
 class MaterialsView(View):
     def get(self, request, *args, **kwargs):
         context = getContext(request=request)
+        if context is None:
+            return notPersmissionView(request=request)
         materials = MaterialRepo(request=request).list()
         context['materials'] = materials
         materials_s = json.dumps(MaterialSerializer(materials, many=True).data)
@@ -441,6 +471,8 @@ class MaterialsView(View):
 class MaterialView(View):
     def get(self, request, *args, **kwargs):
         context = getContext(request=request)
+        if context is None:
+            return notPersmissionView(request=request)
         material = MaterialRepo(request=request).product(*args, **kwargs)
         return redirect(material.get_absolute_url())
         context.update(get_product_context(request=request, product=material))
@@ -458,6 +490,8 @@ class MaterialView(View):
 class ServicesView(View):
     def get(self, request, *args, **kwargs):
         context = getContext(request=request)
+        if context is None:
+            return notPersmissionView(request=request)
         services = ServiceRepo(request=request).list()
         context['services'] = services
         services_s = json.dumps(ServiceSerializer(services, many=True).data)
@@ -471,6 +505,8 @@ class ServicesView(View):
 class ServiceView(View):
     def get(self, request, *args, **kwargs):
         context = getContext(request=request)
+        if context is None:
+            return notPersmissionView(request=request)
 
         service = ServiceRepo(request=request).service(*args, **kwargs)
         return redirect(service.get_absolute_url())
@@ -488,6 +524,8 @@ class ServiceView(View):
 class EventsView(View):
     def get(self, request, *args, **kwargs):
         context = getContext(request=request)
+        if context is None:
+            return notPersmissionView(request=request)
         events = EventRepo(request=request).list()
         context['events'] = events
         events_s = json.dumps(EventSerializer(events, many=True).data)
@@ -498,6 +536,8 @@ class EventsView(View):
 class EventView(View):
     def get(self, request, *args, **kwargs):
         context = getContext(request=request)
+        if context is None:
+            return notPersmissionView(request=request)
         event = EventRepo(request=request).event(*args, **kwargs)
         context.update(PageContext(request=request, page=event))
         context['event'] = event

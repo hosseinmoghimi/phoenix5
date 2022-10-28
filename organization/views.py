@@ -26,14 +26,56 @@ TEMPLATE_ROOT="organization/"
 
 def getContext(request,*args, **kwargs):
     context=CoreContext(request=request,app_name=APP_NAME)
+    me_employee=EmployeeRepo(request=request).me
+    if me_employee is None and not request.user.has_perm(APP_NAME+".view_organizationunit"):
+        return None
+    return context
+
+
+def notPersmissionView(request,*args, **kwargs):
+        mv=MessageView(request=request)
+        mv.body="اکانت شما مجوز دسترسی لازم را دارا نمی باشد."
+        mv.title="عدم دسترسی"
+        return mv.response()
+
+
+def get_add_employee_context(request,*args, **kwargs):
+    context={}
+    context['add_employee_form']=AddEmployeeForm()
+    if 'organization_unit' in kwargs:
+        organization_units=[kwargs['organization_unit']]
+        organization_units_s=json.dumps(OrganizationUnitSerializer(organization_units,many=True).data)
+        context['new_employee_organization_units']=organization_units
+        context['new_employee_organization_units_s']=organization_units_s
+    else:
+        organization_units=OrganizationUnitRepo(request=request).list()
+        organization_units_s=json.dumps(OrganizationUnitSerializer(organization_units,many=True).data)
+        context['new_employee_organization_units']=organization_units
+        context['new_employee_organization_units_s']=organization_units_s
+
+
+    accounts=AccountRepo(request=request).list()
+    accounts_s=json.dumps(AccountSerializer(accounts,many=True).data)
+    context['new_employee_accounts']=accounts
+    context['new_employee_accounts_s']=accounts_s
+    return context
+
+
+def add_letter_context(request,*args, **kwargs):
+    context={}
+    # organization_units=OrganizationUnitRepo(request=request).list()
+    # organization_units_s=json.dumps(OrganizationUnitSerializer(organization_units,many=True).data)
+    # context['organization_units']=organization_units
+    # context['organization_units_s']=organization_units_s
     return context
 
 class HomeView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
+        if context is None:
+            return notPersmissionView(request=request)
         context['org']="سنتبالنذبا سیتابسی لبیسغل"
         return render(request,TEMPLATE_ROOT+"index.html",context)
-
 
 
 class EmployeeView(View):
@@ -56,6 +98,8 @@ class EmployeeView(View):
 
     def get(self, request, *args, **kwargs):
         context = getContext(request=request)
+        if context is None:
+            return notPersmissionView(request=request)
         employee = EmployeeRepo(request=request).employee(*args, **kwargs)
         context.update(get_account_context(request=request,account=employee.account))
         context['employee'] = employee
@@ -93,30 +137,12 @@ class EmployeeView(View):
 
         return render(request, TEMPLATE_ROOT+"employee.html", context)
 
-def get_add_employee_context(request,*args, **kwargs):
-    context={}
-    context['add_employee_form']=AddEmployeeForm()
-    if 'organization_unit' in kwargs:
-        organization_units=[kwargs['organization_unit']]
-        organization_units_s=json.dumps(OrganizationUnitSerializer(organization_units,many=True).data)
-        context['new_employee_organization_units']=organization_units
-        context['new_employee_organization_units_s']=organization_units_s
-    else:
-        organization_units=OrganizationUnitRepo(request=request).list()
-        organization_units_s=json.dumps(OrganizationUnitSerializer(organization_units,many=True).data)
-        context['new_employee_organization_units']=organization_units
-        context['new_employee_organization_units_s']=organization_units_s
-
-
-    accounts=AccountRepo(request=request).list()
-    accounts_s=json.dumps(AccountSerializer(accounts,many=True).data)
-    context['new_employee_accounts']=accounts
-    context['new_employee_accounts_s']=accounts_s
-    return context
 
 class EmployeesView(View):
     def get(self, request, *args, **kwargs):
         context = getContext(request=request)
+        if context is None:
+            return notPersmissionView(request=request)
         context['expand_employees'] = True
         employees = EmployeeRepo(request=request).list(*args, **kwargs)
         context['employees'] = employees
@@ -128,9 +154,12 @@ class EmployeesView(View):
 
         return render(request, TEMPLATE_ROOT+"employees.html", context)
 
+
 class OrganizationUnitChartView(View):
     def get(self, request, *args, **kwargs):
         context = getContext(request=request)
+        if context is None:
+            return notPersmissionView(request=request)
         organization_unit = OrganizationUnitRepo(
             request=request).organization_unit(*args, **kwargs)
         if organization_unit is None:
@@ -183,6 +212,8 @@ class OrganizationUnitChartView(View):
 class OrganizationUnitView(View):
     def get(self, request, *args, **kwargs):
         context = getContext(request=request)
+        if context is None:
+            return notPersmissionView(request=request)
         organization_unit = OrganizationUnitRepo(
             request=request).organization_unit(*args, **kwargs)
         if request.user.has_perm("organization.add_letter"):
@@ -260,6 +291,8 @@ class OrganizationUnitView(View):
 class OrganizationUnitsView(View):
     def get(self, request, *args, **kwargs):
         context = getContext(request=request)
+        if context is None:
+            return notPersmissionView(request=request)
         context['expand_organization_units'] = True
         organization_units = OrganizationUnitRepo(
             request=request).list(parent_id=None, *args, **kwargs)
@@ -278,6 +311,8 @@ class OrganizationUnitsView(View):
 class LettersView(View):
     def get(self, request, *args, **kwargs):
         context = getContext(request=request)
+        if context is None:
+            return notPersmissionView(request=request)
         letters = LetterRepo(request=request).list(*args, **kwargs)
         context['letters'] = letters
         letters_s = json.dumps(LetterSerializer(letters, many=True).data)
@@ -285,9 +320,12 @@ class LettersView(View):
         context['expand__letters'] = True
         return render(request, TEMPLATE_ROOT+"letters.html", context)
 
+
 class LetterPrintView(View):
     def get(self, request, *args, **kwargs):
         context = getContext(request=request)
+        if context is None:
+            return notPersmissionView(request=request)
         letter = LetterRepo(request=request).letter(*args, **kwargs)
         context['letter'] = letter
         context.update(PageContext(request=request, page=letter))
@@ -307,6 +345,8 @@ class LetterPrintView(View):
 class LetterView(View):
     def get(self, request, *args, **kwargs):
         context = getContext(request=request)
+        if context is None:
+            return notPersmissionView(request=request)
         letter = LetterRepo(request=request).letter(*args, **kwargs)
         context['letter'] = letter
         context.update(PageContext(request=request, page=letter))
@@ -328,13 +368,7 @@ class LetterView(View):
 
         return render(request, TEMPLATE_ROOT+"letter.html", context)
 
-def add_letter_context(request,*args, **kwargs):
-    context={}
-    # organization_units=OrganizationUnitRepo(request=request).list()
-    # organization_units_s=json.dumps(OrganizationUnitSerializer(organization_units,many=True).data)
-    # context['organization_units']=organization_units
-    # context['organization_units_s']=organization_units_s
-    return context
+
 class AddLetterView(View):
     def post(self, request, *args, **kwargs):
         add_letter_form=AddLetterForm(request.POST)
@@ -346,6 +380,8 @@ class AddLetterView(View):
 
     def get(self, request, *args, **kwargs):
         context = getContext(request=request)
+        if context is None:
+            return notPersmissionView(request=request)
         employee=EmployeeRepo(request=request).me
         if employee is None:
             mv=MessageView(request=request)

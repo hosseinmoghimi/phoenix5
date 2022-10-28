@@ -64,7 +64,6 @@ class AssetRepo():
         return product
 
 
-
 class BankAccountRepo():
     def __init__(self, *args, **kwargs):
         self.request = None
@@ -173,7 +172,6 @@ class BankRepo():
 
         bank.save()
         return bank
-
 
 
 class ProductRepo():
@@ -662,7 +660,7 @@ class FinancialDocumentRepo:
         elif self.profile is not None:
             self.objects = self.objects.filter(account__profile=self.profile)
         else:
-            self.objects = self.objects.filter(pk__lte=0)
+            self.objects = self.objects.filter(pk=0)
 
     def list(self, *args, **kwargs):
         objects = self.objects.all()
@@ -741,6 +739,15 @@ class AccountRepo():
         if self.profile is not None:
             self.me=Account.objects.filter(profile=self.profile).first()
         
+        if self.request.user.has_perm(APP_NAME+".view_account"):
+            self.objects=Account.objects
+        elif self.profile is not None:
+            self.objects=Account.objects.filter(profile_id=self.profile.id)
+        else:
+            self.objects=Account.objects.filter(pk=0)
+        
+        # self.objects=Account.objects
+
     def get_misc(self,*args, **kwargs):
         misc,res=Account.objects.get_or_create(title=MISC)
         return misc
@@ -1428,8 +1435,6 @@ class SubAccountRepo():
         if 'parent_id' in kwargs:
             objects=objects.filter(parent_id=kwargs['parent_id'])
         return objects.all()
-
-   
 
 
 class DoubleTransactionRepo():
