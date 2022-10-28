@@ -12,6 +12,7 @@ from .repo import ProfileContactRepo, ProfileRepo
 from core.views import CoreContext, MessageView
 from django.views import View
 from authentication.apps import APP_NAME
+from utility.log import leolog
 TEMPLATE_ROOT="authentication/"
 LAYOUT_PARENT="phoenix/layout.html"
 
@@ -263,8 +264,10 @@ class RegisterViews(View):
     def post(self,request):
         register_form=RegisterForm(request.POST)
         if register_form.is_valid():
-            a=register_form.save()
-            a=ProfileRepo(request=request).login(request=request,user=a)
+            user=register_form.save()
+            request,user=ProfileRepo(request=request).login(request=request,user=user)
+            mobile=register_form.cleaned_data['mobile']
+            ProfileRepo(request=request,forced=True).set_attribute(user=user,mobile=mobile)
             return redirect(APP_NAME+":me")
 
 

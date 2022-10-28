@@ -5,6 +5,8 @@ from django.utils import timezone
 from core.constants import FAILED, SUCCEED
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.models import User
+
+from utility.log import leolog
 from .models import Profile, ProfileContact
 from .apps import APP_NAME
 from django.db.models import Q
@@ -38,6 +40,20 @@ class ProfileRepo():
             self.me = self.objects.filter(user=self.user).first()
             if self.user.has_perm(APP_NAME+".view_profile"):
                 self.objects = Profile.objects.all()
+    def set_attribute(self,*args, **kwargs):
+        profile=self.profile(*args, **kwargs)
+        if profile is None:
+            return
+
+        if 'mobile' in kwargs:
+            profile.mobile=kwargs['mobile']
+        if 'email' in kwargs:
+            profile.mobile=kwargs['email']
+        if 'address' in kwargs:
+            profile.mobile=kwargs['address']
+        profile.save()
+
+
     def get_default(self,*args, **kwargs):
         if 'user' in kwargs and kwargs['user'] is not None:
             objects=self.objects.filter(user=kwargs['user'])
