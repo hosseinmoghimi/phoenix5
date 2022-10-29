@@ -1512,7 +1512,7 @@ class DoubleTransactionRepo():
             account_id_1=kwargs['account_id_1']
             account_id_2=kwargs['account_id_2']
             objects = self.objects.filter(Q(pay_from_id=account_id_1)|Q(pay_from_id=account_id_2)).filter(Q(pay_to_id=account_id_1)|Q(pay_to_id=account_id_2))
-        return objects.order_by('-transaction_datetime')
+        return objects.all()
 
 
 

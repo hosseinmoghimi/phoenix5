@@ -1,0 +1,30 @@
+<script>
+    let double_transactions = JSON.parse(`{{double_transactions_s|escapejs}}`)
+    let double_transactions_app_data = {
+        double_transactions: double_transactions,
+        search_for: "",
+    }
+    let double_transactions_app_methods = {
+        
+        filter: function () {
+            this.double_transactions = double_transactions.filter(function (double_transaction) {
+                if (double_transaction.title.indexOf(double_transactions_app.search_for) > -1)
+                    return true
+               
+                return false
+
+            })
+        },
+        to_price: function (vall) {
+            return to_price(vall, "")
+        },
+
+    }
+</script>
+<script>
+    let double_transactions_app = new Vue({
+        el: "#double-transactions-app",
+        data: double_transactions_app_data,
+        methods: double_transactions_app_methods,
+    })
+</script>

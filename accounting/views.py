@@ -18,7 +18,7 @@ from utility.calendar import PersianCalendar
 from utility.excel import ReportSheet,ReportWorkBook, get_style
 from accounting.apps import APP_NAME
 from accounting.repo import BankRepo,AssetRepo, CategoryRepo, CostRepo,BankAccountRepo, DoubleTransactionRepo, InvoiceLineRepo,AccountRepo,FinancialBalanceRepo, ChequeRepo, PaymentRepo, PriceRepo,  ProductRepo,ServiceRepo,FinancialDocumentRepo,InvoiceRepo, TransactionRepo
-from accounting.serializers import ProductOrServiceUnitNameSerializer, ProductSpecificationSerializer,CategorySerializer, InvoiceLineWithInvoiceSerializer,AccountSerializer, AccountSerializerFull, AssetSerializer, BankAccountSerializer, BankSerializer, CostSerializer, FinancialBalanceSerializer, InvoiceFullSerializer,InvoiceLineSerializer,ChequeSerializer, InvoiceSerializer, PaymentSerializer, PriceSerializer,  ProductSerializer,ServiceSerializer,FinancialDocumentForAccountSerializer,FinancialDocumentSerializer, TransactionSerializer
+from accounting.serializers import DoubleTransactionSerializer,ProductOrServiceUnitNameSerializer, ProductSpecificationSerializer,CategorySerializer, InvoiceLineWithInvoiceSerializer,AccountSerializer, AccountSerializerFull, AssetSerializer, BankAccountSerializer, BankSerializer, CostSerializer, FinancialBalanceSerializer, InvoiceFullSerializer,InvoiceLineSerializer,ChequeSerializer, InvoiceSerializer, PaymentSerializer, PriceSerializer,  ProductSerializer,ServiceSerializer,FinancialDocumentForAccountSerializer,FinancialDocumentSerializer, TransactionSerializer
 from accounting.forms import *
 import json
 from utility.log import leolog
@@ -235,7 +235,7 @@ def get_transaction_context(request,*args, **kwargs):
 def get_double_transaction_context(request,*args, **kwargs):
     context={}
     if 'double_transaction' in kwargs:
-        transaction=kwargs['double_transaction']
+        double_transaction=kwargs['double_transaction']
     else:
         double_transaction=DoubleTransactionRepo(request=request).double_transaction(*args, **kwargs)
     context['double_transaction']=double_transaction
@@ -244,52 +244,35 @@ def get_double_transaction_context(request,*args, **kwargs):
     context['transactions']=transactions
     transactions_s=json.dumps(TransactionSerializer(transactions,many=True).data)
     context['transactions_s']=transactions_s
-
     context.update(PageContext(request=request,page=double_transaction))
+    
     if double_transaction.employer_transaction is not None:
-
-        financial_documents=FinancialDocumentRepo(request=request).list(transaction_id=double_transaction.employer_transaction.id)
-        financial_documents=double_transaction.employer_transaction.financialdocument_set.all()
-        context['financial_documents']=financial_documents
-        context['financial_documents_s']=json.dumps(FinancialDocumentSerializer(financial_documents,many=True).data)
-                
-
-        financial_balances=FinancialBalanceRepo(request=request).list(transaction_id=double_transaction.employer_transaction.id)
-        context['financial_balances']=financial_balances
-        financial_balances_s=json.dumps(FinancialBalanceSerializer(financial_balances,many=True).data)
-        context['financial_balances_s']=financial_balances_s
-
-
-
-        if not double_transaction.employer_transaction.editable and request.user.has_perm(APP_NAME+".change_transaction"):
-            context['roll_back_transaction_form']=RollBackTransactionForm()
-            
-            
-
-
+        financial_documents1=double_transaction.employer_transaction.financialdocument_set.all()
+        financial_balances1=FinancialBalanceRepo(request=request).list(transaction_id=double_transaction.employer_transaction.id)
 
     if double_transaction.middle_transaction is not None:
-
-        financial_documents=FinancialDocumentRepo(request=request).list(transaction_id=double_transaction.middle_transaction.id)
-        financial_documents=double_transaction.middle_transaction.financialdocument_set.all()
-        context['financial_documents']=financial_documents
-        context['financial_documents_s']=json.dumps(FinancialDocumentSerializer(financial_documents,many=True).data)
-                
-
-        financial_balances=FinancialBalanceRepo(request=request).list(transaction_id=double_transaction.middle_transaction.id)
-        context['financial_balances']=financial_balances
-        financial_balances_s=json.dumps(FinancialBalanceSerializer(financial_balances,many=True).data)
-        context['financial_balances_s']=financial_balances_s
-
-
-
-        if not double_transaction.middle_transaction.editable and request.user.has_perm(APP_NAME+".change_transaction"):
-            context['roll_back_transaction_form']=RollBackTransactionForm()
+        financial_documents2=double_transaction.middle_transaction.financialdocument_set.all()
+        financial_balances2=FinancialBalanceRepo(request=request).list(transaction_id=double_transaction.middle_transaction.id)
             
-            
+    financial_documents=[]
+    for fd in financial_documents1:
+        financial_documents.append(fd)
+    for fd in financial_documents2:
+        financial_documents.append(fd)
 
+    context['financial_documents']=financial_documents
+    context['financial_documents_s']=json.dumps(FinancialDocumentSerializer(financial_documents,many=True).data)
 
-  
+    financial_balances=[]
+    for fb in financial_balances1:
+        financial_balances.append(fb)
+    for fb in financial_balances2:
+        financial_balances.append(fb)
+
+    financial_balances_s=json.dumps(FinancialBalanceSerializer(financial_balances,many=True).data)
+    context['financial_balances']=financial_balances
+    context['financial_balances_s']=financial_balances_s
+
     return context
 
 def get_product_or_service_context(request,*args, **kwargs):
@@ -985,6 +968,13 @@ class BankAccountView(View):
         return render(request,TEMPLATE_ROOT+"bank-account.html",context)
 
 
+# class DoubleTransactionsView(View):
+#     def get(self,request,*args, **kwargs):
+#         context=getContext(request=request)
+#         double_transactions=DoubleTransactionRepo(request=request).list(*args, **kwargs)
+#         context['double_transactions']=double_transactions
+#         return render(request,TEMPLATE_ROOT+"double-transactions.html",context)
+
 
 class DoubleTransactionView(View):
     def get(self,request,*args, **kwargs):
@@ -1006,12 +996,12 @@ class DoubleTransactionsView(View):
             context['account_id_2']=kwargs['account_id_2']
         if 'account_id' in kwargs:
             context['account_id']=kwargs['account_id']
-        transactions=TransactionRepo(request=request).list(*args, **kwargs).order_by('-transaction_datetime')
-        context['transactions']=transactions
-        transactions_s=json.dumps(TransactionSerializer(transactions,many=True).data)
-        context['transactions_s']=transactions_s
-        context['expand_transactions']=True
-        return render(request,TEMPLATE_ROOT+"transactions.html",context)
+        double_transactions=DoubleTransactionRepo(request=request).list(*args, **kwargs)
+        context['double_transactions']=double_transactions
+        double_transactions_s=json.dumps(DoubleTransactionSerializer(double_transactions,many=True).data)
+        context['double_transactions_s']=double_transactions_s
+        context['expand_double_transactions']=True
+        return render(request,TEMPLATE_ROOT+"double-transactions.html",context)
 
 
 class BanksView(View):

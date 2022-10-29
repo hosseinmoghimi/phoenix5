@@ -29,6 +29,7 @@ urlpatterns = [
 
 
     path("double_transaction/<int:pk>/",login_required(views.DoubleTransactionView.as_view()),name="doubletransaction"),
+    path("double_transactions/",login_required(views.DoubleTransactionsView.as_view()),name="double_transactions"),
     
     path("transaction/<int:pk>/",login_required(views.TransactionView.as_view()),name="transaction"),
     path("transactions/<int:account_id>/",login_required(views.TransactionsView.as_view()),name="account_transactions"),

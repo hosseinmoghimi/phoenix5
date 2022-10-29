@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Account, Asset, Bank, BankAccount, Category, Cheque, Cost, FinancialBalance, FinancialDocument, Invoice, InvoiceLine, Payment, Price, Product, ProductOrService, ProductOrServiceUnitName, ProductSpecification,Service,  Transaction
+from .models import Account, Asset, Bank, BankAccount, Category, Cheque, Cost, DoubleTransaction, FinancialBalance, FinancialDocument, Invoice, InvoiceLine, Payment, Price, Product, ProductOrService, ProductOrServiceUnitName, ProductSpecification,Service,  Transaction
 from authentication.serializers import ProfileSerializer
 
  
@@ -131,6 +131,13 @@ class TransactionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Transaction
         fields = ['id','class_title', 'pay_from','pay_to','title','category','persian_transaction_datetime','amount', 'get_absolute_url','payment_method','status','payment_method_color','status_color']
+
+class DoubleTransactionSerializer(serializers.ModelSerializer):
+    employer_transaction=TransactionSerializer()
+    middle_transaction=TransactionSerializer()
+    class Meta:
+        model = DoubleTransaction
+        fields = ['id','employer_transaction','middle_transaction','title', 'get_absolute_url']
 
 
 class FinancialDocumentSerializer(serializers.ModelSerializer):
