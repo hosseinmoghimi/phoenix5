@@ -134,7 +134,13 @@
 
                 </div>
                 <div class="col-md-9">
+                    <div class="rtl text-right">
+                        {{brand.title}}
+                    </div>
+
+                    <h3 class="section-title text-right farsi">لیست کالا ها</h3>
                     <div class="row rtl">
+
 
                         {% for product in products %}
 
@@ -157,28 +163,12 @@
                             </div>
                             {% endif %}
 
-                            {% if add_category_form %}
-
-                            <div class="col-md-4">
-
-                                <form v-if="products.length==0" @submit.prevent="add_category">
-
-                                    <input type="text" v-model="new_category_title" class="form-control farsi"
-                                        placeholder="دسته بندی جدید">
-                                </form>
-                            </div>
-                            {% endif %}
 
                         </div>
 
 
 
                     </div>
-                    <div class="rtl text-right">
-                        {{brand.title}}
-                    </div>
-
-                    <h3 class="section-title text-right farsi">لیست کالا ها</h3>
 
 
                 </div>
