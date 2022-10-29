@@ -1,6 +1,7 @@
 <script>
     let attendances = JSON.parse("{{attendances_s|escapejs}}")
-
+    let attendances_app_data = {}
+    let attendances_app_components = {}
 </script>
 {% if add_attendence_form %}
 <script>
@@ -10,7 +11,7 @@
     let STATUS_DELAY = "{{STATUS_DELAY}}"
     let STATUS_TASHVIGH = "{{STATUS_TASHVIGH}}"
     let STATUS_TANBIH = "{{STATUS_TANBIH}}"
-     
+
     let session_id = parseInt("{{session.id}}")
     let url_add_attendance = "{% url 'school:add_attendance' %}"
 
@@ -35,7 +36,7 @@
                 $.post(url_add_attendance, payload).done((data) => {
                     if (data.result === 'SUCCEED') {
                         // attendances_app.attendances.push(data.attendance)
-                        attendances_app.attendances=(data.attendances)
+                        attendances_app.attendances = (data.attendances)
                     }
                 })
             },
@@ -51,7 +52,7 @@
                 $.post(url_add_attendance, payload).done((data) => {
                     if (data.result === 'SUCCEED') {
                         // attendances_app.attendances.push(data.attendance)
-                        attendances_app.attendances=(data.attendances)
+                        attendances_app.attendances = (data.attendances)
                     }
                 })
             },
@@ -67,7 +68,7 @@
                 $.post(url_add_attendance, payload).done((data) => {
                     if (data.result === 'SUCCEED') {
                         // attendances_app.attendances.push(data.attendance)
-                        attendances_app.attendances=(data.attendances)
+                        attendances_app.attendances = (data.attendances)
                     }
                 })
             },
@@ -83,7 +84,7 @@
                 $.post(url_add_attendance, payload).done((data) => {
                     if (data.result === 'SUCCEED') {
                         // attendances_app.attendances.push(data.attendance)
-                        attendances_app.attendances=(data.attendances)
+                        attendances_app.attendances = (data.attendances)
                     }
                 })
             },
@@ -99,7 +100,7 @@
                 $.post(url_add_attendance, payload).done((data) => {
                     if (data.result === 'SUCCEED') {
                         // attendances_app.attendances.push(data.attendance)
-                        attendances_app.attendances=(data.attendances)
+                        attendances_app.attendances = (data.attendances)
                     }
                 })
             },
@@ -108,14 +109,14 @@
         template: session_student_component_template,
     })
 
-    let attendances_app_data = {
+    attendances_app_data = {
         students: students,
         attendances: attendances,
         session_id: session_id,
-        show_form:false,
+        show_form: false,
     }
-    
-    let attendances_app_components = {
+
+    attendances_app_components = {
         session_student_component,
     }
 
@@ -123,10 +124,10 @@
 </script>
 {% else %}
 <script>
-    let attendances_app_data = {
+     attendances_app_data = {
         attendances: attendances,
     }
-    let attendances_app_components = {
+     attendances_app_components = {
     }
 </script>
 {% endif %}

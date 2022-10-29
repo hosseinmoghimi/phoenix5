@@ -9,8 +9,8 @@
               
             <td>
                 <a :href="attendance.student.get_absolute_url">
-                    <img :src="attendance.student.profile.image" class="rounded-circle" width="32" alt="">
-                    <span v-text="attendance.student.profile.name"></span>
+                    <img :src="attendance.student.account.logo" class="rounded-circle" width="32" alt="">
+                    <span v-text="attendance.student.account.title"></span>
                 </a>
             </td>
             {% endif %}
