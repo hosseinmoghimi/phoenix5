@@ -1,0 +1,61 @@
+{% extends "chef/layout.html" %}
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+
+
+        {% include "chef/includes/meal-app/template.html" %}
+
+    </div>
+
+    <div class="col-md-12">
+        {% include "chef/includes/served-meals-app/template.html" %}
+
+    </div>
+
+    <div class="col-md-12">
+        <div class="card farsi text-right">
+            <div class="card-header">
+                <h4 class="title">
+                    {{meal.title}}
+                </h4>
+            </div>
+
+            <div class="card-body">
+                {% for reserved_meal in meal.reservedmeal_set.all %}
+                <div>
+                    <small class="text-muted ml-3">
+                        {{forloop.counter}} -
+
+                    </small>
+                    <a href="{{reserved_meal.guest.get_absolute_url}}">
+
+                        {{reserved_meal.guest.id}}
+                        {{reserved_meal.guest.profile.name}}
+                    </a>
+
+
+                    (
+                    {{reserved_meal.quantity}}
+                    پرس
+                    )
+
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+
+{% block script %}
+<script>
+
+    let meal_id = parseInt(`{{meal.id}}`)
+    let guest_id = parseInt(`{{guest.id}}`)
+</script>
+{% include "chef/includes/meal-app/script.html" %}
+{% include "chef/includes/served-meals-app/script.html" %}
+
+{% endblock script %}

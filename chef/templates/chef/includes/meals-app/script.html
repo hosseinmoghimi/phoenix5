@@ -1,0 +1,144 @@
+{% load static %}
+{% if add_meal_form %}
+  
+<script src="{% static 'persian/moment.js' %}"></script>
+<script src="{% static 'persian/moment-jalaali.js' %}"></script>
+<script src="{% static 'persian/vue-persian-datetime-picker-browser.js' %}"></script>
+
+{% endif %}
+
+<script>
+
+let meals_app_data = {}
+let meals_app_components = {}
+let meals_app_methods = {}
+    let meals = JSON.parse(`{{meals_s|escapejs}}`)
+    
+    let url_reserve_meal = "{% url 'chef:reserve_meal' %}"
+    let url_unreserve_meal = "{% url 'chef:unreserve_meal' %}"
+
+    let meal_component_template = `
+    {% include "chef/includes/meals-app/component.html" %}
+    `
+
+
+    let meal_component = Vue.component('meal-component', {
+        data: function () {
+            return {
+                confirm_delete: false,
+                quantity:1,
+            }
+        },
+        methods: {
+            tr_style: function () {
+
+                if (this.meal.reserved) {
+                    return "background-color: #e5f5ee;"
+                }
+                else {
+                    return "background-color: #f9eef1;"
+
+                }
+            },
+            reserve_meal: function () {
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    meal_id: this.meal.id,
+                    guest_id: meals_app.guest_id,
+                    quantity: this.quantity,
+                }
+                let meal = this.meal
+                let posting = $.post(url_reserve_meal, payload)
+                posting.done((data) => {
+                    if (data.result === 'SUCCEED') {
+                        meal.reserved = data.reserved_meal.quantity
+                        meal.reserves_count = data.reserved_meal.meal.reserves_count
+
+                    }
+                })
+
+            },
+            unreserve_meal: function () {
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    meal_id: this.meal.id,
+                    guest_id: meals_app.guest_id,
+                }
+                let meal = this.meal
+                let posting = $.post(url_unreserve_meal, payload)
+                posting.done((data) => {
+                    if (data.result === 'SUCCEED') {
+                        meal.reserved = 0
+                        meal.reserves_count = data.meal.reserves_count
+                    }
+                })
+
+            },
+
+        },
+        props: ['meal'],
+        template: meal_component_template,
+    })
+
+
+</script>
+
+{% if reserve_meal_form %}
+<script>
+     meals_app_data = {
+        meals: meals,
+        guest_id: guest_id,
+        guests: guests,
+        selected_guest: null,
+
+
+
+        
+       
+
+
+    }
+     meals_app_components = {
+        meal_component,
+
+
+    }
+     meals_app_methods = {
+        change_guest: function () {
+
+        }
+
+    }
+</script>
+{% else %}
+<script>
+
+     meals_app_data = {
+        meals: meals,
+
+ 
+
+    }
+
+     meals_app_components = {
+
+    }
+     meals_app_methods = {
+
+    }
+
+
+
+</script>
+
+{% endif %}
+<script>
+
+
+    let meals_app = new Vue({
+        el: "#meals-app",
+        data: meals_app_data,
+        components: meals_app_components,
+        methods: meals_app_methods,
+    })
+</script>

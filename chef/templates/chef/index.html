@@ -10,6 +10,25 @@
             لیست غذا ها
           </h6>
         </a>
+
+        <a href="{% url 'chef:hosts' %}">
+          <h6>
+            لیست میزبان ها
+          </h6>
+        </a>
+
+        <a href="{% url 'chef:meals' guest_id=0 %}">
+          <h6>
+            لیست وعده ها
+          </h6>
+        </a>
+        <a href="{% url 'chef:guests' %}">
+          <h6>
+            لیست میهمان ها
+          </h6>
+        </a>
+
+
       </div>
     </div>
   </div>
