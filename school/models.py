@@ -110,7 +110,7 @@ class EducationalYear(models.Model,LinkHelper):
         return to_persian_datetime_tag(self.start_date)
     def persian_end_date(self):
         return to_persian_datetime_tag(self.end_date)
-        
+
     @property
     def is_active(self):
         try:
@@ -340,6 +340,8 @@ class Attendance(models.Model):
             colo="secondary"
         elif self.status==AttendanceStatusEnum.TASHVIGH:
             colo="success"
+        elif self.status==AttendanceStatusEnum.ARZYABI:
+            colo="info"
         elif self.status==AttendanceStatusEnum.TANBIH:
             colo="danger"
         return colo

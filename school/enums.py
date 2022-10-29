@@ -8,3 +8,4 @@ class AttendanceStatusEnum(TextChoices):
     DELAY="تاخیر",_("تاخیر")
     TASHVIGH="تشویق",_("تشویق")
     TANBIH="تنبیه",_("تنبیه")
+    ARZYABI="ارزیابی",_("ارزیابی")

@@ -536,6 +536,7 @@ class SessionViews(View):
             context['STATUS_ABSENT']=AttendanceStatusEnum.ABSENT
             context['STATUS_DELAY']=AttendanceStatusEnum.DELAY
             context['STATUS_TASHVIGH']=AttendanceStatusEnum.TASHVIGH
+            context['STATUS_ARZYABI']=AttendanceStatusEnum.ARZYABI
             context['STATUS_TANBIH']=AttendanceStatusEnum.TANBIH
             context['add_attendence_form']=AddAttendanceForm()
         session=SessionRepo(request=request).session(*args, **kwargs)
