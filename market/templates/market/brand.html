@@ -136,10 +136,12 @@
                 <div class="col-md-9">
                     <div class="row rtl">
 
+                        {% for product in products %}
 
-                        <div class="col-md-4 col-6" v-for="product in products">
+                        <div class="col-md-4 col-6">
                             {% include "market/includes/product-thumbnail.html" %}
                         </div>
+                        {% endfor %}
                         <div class="col-12">
                             <div class="row">
                             </div>
@@ -178,7 +180,7 @@
 
                     <h3 class="section-title text-right farsi">لیست کالا ها</h3>
 
-                    
+
                 </div>
 
             </div>
