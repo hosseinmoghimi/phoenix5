@@ -44,60 +44,83 @@
 
                 <img src="{% static 'leo/img/loading.gif' %}" width="32" v-if="waiting" alt="">
 
+                <table class="table table-striped">
+                    <thead>
+                        <th>
+                            امضا کننده
+                        </th>
+                        <th>
+                            امضا
+                        </th>
+                        <th>
+                            تاریخ
+                        </th>
+                        <th>
+                            پاراف
+                        </th>
+                        <th>
+
+                        </th>
+                    </thead>
+                    <tbody>
+                        <tr v-for="request_signature in request_signatures">
+
+                            <td>
+                                <div class="media">
+                                    <a :href="request_signature.employee.get_absolute_url">
+
+                                        <img :src="request_signature.employee.account.logo" class="rounded-circle"
+                                            width="64">
+                                    </a>
+                                    <div class="media-body farsi mr-3">
+
+                                        <div>
+                                            <a :href="request_signature.employee.get_absolute_url">
+                                                <span v-text="request_signature.employee.title"></span>
+                                            </a>
+                                        </div>
 
 
-                <div v-for="request_signature in request_signatures">
-                    {% if not my_request %}
-                    <div class="text-right farsi">
 
-                        <a :href="request_signature.request.get_absolute_url">
 
-                            <span v-text="request_signature.request.title">
-
-                            </span>
-                        </a>
-                    </div>
-                    {% endif %}
-                    <div class="media">
-                        <a :href="request_signature.employee.get_absolute_url">
-
-                            <img :src="request_signature.employee.account.logo" class="rounded-circle" width="64">
-                        </a>
-                        <div class="media-body farsi mr-3">
-
-                            <div>
-                                <a :href="request_signature.employee.get_absolute_url">
-                                    <span v-text="request_signature.employee.title"></span>
-                                </a>
-                            </div>
-                            <div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
                                 <span v-html="request_signature.get_status_tag"></span>
-                            </div>
-                            <div>
+
+                            </td>
+                            <td>
                                 <span v-html="request_signature.persian_date_added"> </span>
-                            </div>
-                            <p class="text-primary1 my-3 mx-3">
-                                <span v-text="request_signature.description"> </span>
-                            </p>
-                            <div class="text-right">
 
-                                {% if perms.projectmanager.change_requestsignature %}
-                                <a class="mx-2" title="ویرایش" target="_blank" :href="request_signature.get_edit_url">
-                                    <i class="fa fa-edit text-warning"></i>
-                                </a>
-                                {% endif %}
-                                {% if perms.projectmanager.delete_requestsignature %}
-                                <a class="mx-2" title="حذف" target="_blank" :href="request_signature.get_delete_url">
-                                    <i class="fa fa-trash text-danger"></i>
-                                </a>
-                                {% endif %}
-                            </div>
+                            </td>
+                            <td>
+                                <p class="text-primary1 my-3 mx-3">
+                                    <span v-text="request_signature.description"> </span>
+                                </p>
+                            </td>
+                            <td>
+                                <div class="text-right">
 
-                        </div>
-                    </div>
+                                    {% if perms.projectmanager.change_requestsignature %}
+                                    <a class="mx-2" title="ویرایش" target="_blank"
+                                        :href="request_signature.get_edit_url">
+                                        <i class="fa fa-edit text-warning"></i>
+                                    </a>
+                                    {% endif %}
+                                    {% if perms.projectmanager.delete_requestsignature %}
+                                    <a class="mx-2" title="حذف" target="_blank"
+                                        :href="request_signature.get_delete_url">
+                                        <i class="fa fa-trash text-danger"></i>
+                                    </a>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
 
-                    <hr>
-                </div>
+                
                 {% if add_signature_form %}
                 {% include "projectmanager/includes/request-signatures-app/add-signature-form.html" %}
                 {% endif %}
