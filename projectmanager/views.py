@@ -25,7 +25,7 @@ from projectmanager.repo import EventRepo, MaterialInvoiceRepo, MaterialRepo, Ma
 from projectmanager.serializers import EventSerializer,  MaterialSerializer, ProjectSerializerForGuantt, RequestSignatureForEmployeeSerializer, RequestSignatureSerializer, ServiceSerializer, ProjectSerializer, ServiceRequestSerializer, MaterialRequestSerializer
 from organization.repo import EmployeeRepo,OrganizationUnitRepo
 from organization.serializers import EmployeeSerializer,OrganizationUnitSerializer
-from accounting.views import getInvoiceLineContext
+from accounting.views import get_invoice_line_context
 TEMPLATE_ROOT = "projectmanager/"
 LAYOUT_PARENT = "phoenix/layout.html"
 
@@ -299,7 +299,7 @@ class RequestView(View):
         context = getContext(request=request)
         if context is None:
             return notPersmissionView(request=request)
-        context.update(getInvoiceLineContext(request=request,*args, **kwargs))
+        context.update(get_invoice_line_context(request=request,*args, **kwargs))
 
         my_request = MaterialRequestRepo(
             request=request).material_request(*args, **kwargs)

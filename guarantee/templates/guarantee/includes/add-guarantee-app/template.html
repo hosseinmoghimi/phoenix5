@@ -1,0 +1,91 @@
+{% load to_price %}
+
+<div id="accordion-add-guarantee">
+
+
+    <div class="card" id="add-guarantee-app">
+        <div class="card-header" id="heading-add-guarantee">
+            <h5 class="text-center">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-add-guarantee"
+                    aria-expanded="true" aria-controls="collapse-add-guarantee">
+                    افزودن برگه گارانتی
+
+
+
+
+                     
+
+                </button>
+            </h5>
+ 
+        </div>
+        <div id="collapse-add-guarantee" class="collapse" aria-labelledby="heading-add-guarantee"
+            data-parent="#accordion-add-guarantee">
+
+
+            <div class="card-body">
+
+                <form @submit.prevent="add_guarantee()">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="">سریال </label>
+                                <input type="text" required class="form-control" v-model="serial_no">
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="">نوع </label>
+                                      <select name="" id="" required class="form-control" v-model="type">
+
+{% for guarantee_type in guarantee_types %}
+    <option value="{{guarantee_type}}">{{guarantee_type}}</option>
+{% endfor %}
+    
+                                </select>
+                                
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="">وضعیت </label>
+                                <select name="" id="" required class="form-control" v-model="status">
+
+                                    {% for guarantee_status in guarantee_statuses %}
+                                    <option value="{{guarantee_status}}">{{guarantee_status}}</option>
+                                {% endfor %}
+                                    
+                                </select>
+                            </div>
+                        </div>
+
+    
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="">شروع</label>
+                                <date-picker v-model="start_date"></date-picker>
+                            </div>
+                        </div>
+    
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="">پایان</label>
+                                <date-picker v-model="end_date"></date-picker>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <button class="btn btn-success" type="submit">
+                                افزودن
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+
+
+    </div>
+</div>

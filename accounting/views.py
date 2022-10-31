@@ -411,7 +411,7 @@ def get_add_bank_account_context(request,*args, **kwargs):
     context['banks']=banks
     return context
 
-def getInvoiceLineContext(request,*args, **kwargs):
+def get_invoice_line_context(request,*args, **kwargs):
     context={}
     invoice_line=InvoiceLineRepo(request=request).invoice_line(*args, **kwargs)
     context['invoice_line']=invoice_line
@@ -423,6 +423,9 @@ def getInvoiceLineContext(request,*args, **kwargs):
         context['guarantees']=guarantees
         guarantees_s=json.dumps(GuaranteeSerializer(guarantees,many=True).data)
         context['guarantees_s']=guarantees_s
+        from guarantee.views import get_add_guarantee_context
+        if request.user.has_perm("guarantee.add_guarantee"):
+            context.update(get_add_guarantee_context(request=request))
 
     
     # warehouse_sheets=[]
@@ -780,7 +783,7 @@ class InvoiceLineView(View):
         return EditInvoiceApi().post(request=request,*args, **kwargs)
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
-        context.update(getInvoiceLineContext(request=request,*args, **kwargs))
+        context.update(get_invoice_line_context(request=request,*args, **kwargs))
         invoice_line=InvoiceLineRepo(request=request).invoice_line(*args, **kwargs)
         context['invoice_line']=invoice_line
 

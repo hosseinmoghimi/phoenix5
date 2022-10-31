@@ -1,7 +1,11 @@
+from email import message
+from operator import inv
+from core.constants import FAILED,SUCCEED
+from accounting.repo import InvoiceLineRepo, InvoiceRepo
 from django.db.models import Q
 from authentication.repo import ProfileRepo
 from django.utils import timezone
-
+from utility.log import leolog
 from guarantee.enums import *
 from utility.calendar import PersianCalendar
 
@@ -46,4 +50,20 @@ class GuaranteeRepo:
         if 'id' in kwargs:
             return self.objects.filter(pk= kwargs['id']).first()
 
+    def add(self,*args, **kwargs):
+        result=FAILED
+        guarantee=None
+        message=""
+        if not self.request.user.has_perm(APP_NAME+".add_guarantee"):
+            return result,message,guarantee
+        invoice_line=InvoiceLineRepo(request=self.request,*args, **kwargs)
+        if invoice_line is None:
+            result=FAILED
+            return result,message,guarantee
+
+        guarantee=Guarantee(*args, **kwargs)
+        guarantee.save()
+        result=SUCCEED
+        message="با موفقیت افزوده شد."
+        return result,message,guarantee
  

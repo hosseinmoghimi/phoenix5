@@ -4,6 +4,8 @@ from core.constants import CURRENCY, FAILED, SUCCEED
 from core.views import CoreContext, PageContext,SearchForm
 # Create your views here.
 from django.views import View
+from guarantee.enums import GuaranteeStatusEnum, GuaranteeTypeEnum
+from guarantee.forms import *
 from guarantee.repo import GuaranteeRepo
 
 from utility.calendar import PersianCalendar
@@ -23,6 +25,18 @@ def getContext(request, *args, **kwargs):
     # context['search_action'] = reverse(APP_NAME+":search")
     context['LAYOUT_PARENT'] = LAYOUT_PARENT
     return context
+
+
+def get_add_guarantee_context(request,*args, **kwargs):
+    
+    context={}
+    guarantee_types=(i[0] for i in GuaranteeTypeEnum.choices)
+    guarantee_statuses=(i[0] for i in GuaranteeStatusEnum.choices)
+    context['guarantee_statuses']=guarantee_statuses
+    context['guarantee_types']=guarantee_types
+    context['add_guarantee_form']=AddGuaranteeForm()
+    return context
+
 class HomeView(View):
     def get(self,request,*args, **kwargs):
         return GuaranteesViews().get(request=request,*args, **kwargs)

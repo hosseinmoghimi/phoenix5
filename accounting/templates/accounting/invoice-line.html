@@ -85,10 +85,10 @@
         </div>
     </div>
     <div class="col-md-4">
-     {% include "accounting/includes/invoice-line-app/thumbnail.html" %}
+        {% include "accounting/includes/invoice-line-app/thumbnail.html" %}
     </div>
     <div class="col-md-8">
-     {% include "accounting/includes/invoice-line-app/brief-card.html" %}
+        {% include "accounting/includes/invoice-line-app/brief-card.html" %}
     </div>
 
     <div class="col-md-12">
@@ -96,7 +96,13 @@
         {% include "accounting/includes/invoice-line-app/template.html" %}
     </div>
 
+    {% if add_guarantee_form %}
+    <div class="col-md-12">
+        {% include 'guarantee/includes/add-guarantee-app/template.html' %}
+    </div>
+    {% endif %}
 
+ 
     <div class="col-md-12">
 
         {% include "guarantee/includes/guarantees-app/template.html" %}
@@ -119,5 +125,8 @@
 {% include "accounting/includes/invoice-line-app/script.html" %}
 {% include "guarantee/includes/guarantees-app/script.html" %}
 {% include "warehouse/includes/warehouse-sheets-app/script.html" %}
+{% if add_guarantee_form %}
+    {% include 'guarantee/includes/add-guarantee-app/script.html' %}
+{% endif %}
 
 {% endblock script %}
