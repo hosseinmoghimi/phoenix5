@@ -6,3 +6,7 @@ class AddAppointmentForm(forms.Form):
     color=forms.CharField(max_length=50, required=True)
     date_fixed=forms.CharField(max_length=30, required=True)
     location_id=forms.IntegerField(required=True)
+
+class AddAccountToAppointmentForm(forms.Form):
+    account_id=forms.IntegerField(required=True)
+    appointment_id=forms.IntegerField(required=True)

@@ -8,4 +8,5 @@ urlpatterns = [
     path("appointment/<int:pk>/",login_required(views.AppointmentView.as_view()),name="appointment"), 
     path("appointments/",login_required(views.AppointmentsView.as_view()),name="appointments"), 
     path("add_appointment/",login_required(apis.AddAppointmentApi.as_view()),name="add_appointment"), 
+    path("add_account_to_appointment/",login_required(apis.AddAccountToAppointmentApi.as_view()),name="add_account_to_appointment"), 
 ]

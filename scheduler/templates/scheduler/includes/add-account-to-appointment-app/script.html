@@ -1,0 +1,70 @@
+{% load to_json %}
+<script>
+    let all_accounts = JSON.parse(`{{all_accounts_s|escapejs}}`)
+    let add_account_to_appointment_app = new Vue({
+        el: "#add-account-to-appointment-app",
+        data: {
+            account_id: 0,
+            accounts: all_accounts,
+            name: "",
+            search_for: '',
+            waiting: false,
+            appointment_id:parseInt("{{appointment.id}}"),
+            message: {
+                show: false
+            }
+        },
+        methods: {
+            filter: function () {
+                this.accounts = all_accounts.filter(account => account.title.indexOf(this.search_for) > -1 )
+                if (this.accounts.length > 0)
+                    this.account_id = this.accounts[0].id
+            },
+            add_account: function () {
+                let url = "{% url 'scheduler:add_account_to_appointment' %}"
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    account_id: this.account_id,
+                    appointment_id: this.appointment_id,
+                }
+                add_account_to_appointment_app.waiting = true
+                $.post(url, payload).done((data) => {
+                    add_account_to_appointment_app.waiting = false
+
+                    if (data.result === 'FAILED') {
+                        add_account_to_appointment_app.message = {
+                            color: "danger",
+                            body: data.message,
+                            show: true,
+                        }
+                        setTimeout(() => {
+                            add_account_to_appointment_app.message = {
+                                show: false,
+                            }
+                        }, 3000);
+                    }
+                    if (data.result === 'SUCCEED') {
+                        leolog(data)
+                        if (typeof accounts_app != "undefined") {
+                            accounts_app.accounts=(data.accounts)
+                        }
+
+                        add_account_to_appointment_app.message = {
+                            color: "success",
+                            body: data.message,
+                            show: true,
+                        }
+                        setTimeout(() => {
+                            add_account_to_appointment_app.message = {
+                                show: false,
+                            }
+                        }, 3000);
+                    }
+                })
+
+            }
+
+        }
+    })
+
+</script>
