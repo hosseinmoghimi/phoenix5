@@ -21,9 +21,9 @@ urlpatterns = [
     path('lend/<int:pk>/',login_required(views.LendViews().lend),name="lend"),
 
     path('lend/<int:pk>/',login_required(views.BookView.as_view()),name="lend"),
-    path('add_book/',login_required(apis.BookApi().add_book),name="add_book"),
+    path('add_book/',login_required(apis.AddBookApi.as_view()),name="add_book"),
     path('add_member/',login_required(apis.AddMemberApi.as_view()),name="add_member"),
-    path('add_lend/',login_required(apis.LendApi().lend_book),name="add_lend"),
+    path('add_lend/',login_required(apis.LendBookApi.as_view()),name="add_lend"),
 ]
 
 

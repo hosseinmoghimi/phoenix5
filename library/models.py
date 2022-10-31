@@ -1,5 +1,7 @@
 from django.db import models
 from django.db.models import Sum
+
+from utility.utils import LinkHelper
 from .apps import APP_NAME
 from .enums import *
 from core.models import Page as CoreBasicPage
@@ -31,6 +33,7 @@ class LibraryPage(CoreBasicPage):
             self.app_name = APP_NAME
         return super(LibraryPage, self).save(*args, **kwargs)
 
+
 class Book(LibraryPage):
     price=models.IntegerField(_("price"))
     year=models.IntegerField(_("year"))
@@ -50,12 +53,14 @@ class Book(LibraryPage):
             self.price=0
         return super(Book,self).save(*args, **kwargs)
 
-class Member(models.Model,Admin_Model):
+
+class Member(models.Model,LinkHelper):
     account=models.ForeignKey("accounting.account", verbose_name=_("account"), on_delete=models.CASCADE)
     membership_started=models.DateTimeField(_("شروع عضویت"),null=True,blank=True, auto_now=False, auto_now_add=False)
     membership_ended=models.DateTimeField(_("پایان عضویت"),null=True,blank=True, auto_now=False, auto_now_add=False)
     level=models.CharField(_("level"),choices=MemberShipLevelEnum.choices,default=MemberShipLevelEnum.REGULAR, max_length=50)
     class_name="member"
+    app_name=APP_NAME
     class Meta:
         verbose_name = _("Member")
         verbose_name_plural = _("Members")
@@ -75,14 +80,14 @@ class Member(models.Model,Admin_Model):
         return PersianCalendar().from_gregorian(self.membership_ended)[:10]
 
 
-
-class Lend(models.Model,Admin_Model):
+class Lend(models.Model,LinkHelper):
     member=models.ForeignKey("member", verbose_name=_("member"), on_delete=models.CASCADE)
     book=models.ForeignKey("book", verbose_name=_("book"), on_delete=models.CASCADE)
     date_lended=models.DateTimeField(_("تاریخ امانت"),null=True,blank=True, auto_now=False, auto_now_add=False)
     date_returned=models.DateTimeField(_("تاریخ برگشت"),null=True,blank=True, auto_now=False, auto_now_add=False)
     description=models.CharField(_("description"),null=True,blank=True, max_length=5000)
     class_name="lend"
+    app_name=APP_NAME
     class Meta:
         verbose_name = _("Lend")
         verbose_name_plural = _("Lends")

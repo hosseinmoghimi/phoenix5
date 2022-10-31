@@ -37,6 +37,9 @@
                         <th>
 زمان و تاریخ
                         </th>
+                        <th>
+                            
+                        </th>
                     </thead>
                     <tbody>
                         {% for log in logs %}
@@ -51,16 +54,26 @@
                             <td>
 
                                 <div class="media">
-                                    <a href="{{profile.get_absolute_url}}">
+                                    <a href="{{log.profile.get_absolute_url}}">
                                         <img src="{{profile.image}}" class="roounded-circle" width="32" alt="">
                                     </a>
                                     <div class="media-body">
-                                        <a href="{{profile.get_absolute_url}}">{{profile.name}}</a>
+                                        <a href="{{log.profile.get_absolute_url}}">{{log.profile.name}}</a>
                                     </div>
                                 </div>
                             </td>
                             <td>
                                 {{log.date_added|to_persian_datetime|safe}}
+                            </td>
+                            <td>
+                                {% if perms.accounting.change_log %}
+                                <a href="{{log.get_edit_url}}" target="_blank" title="ویرایش" class="mx-2"><i
+                                        class="fa fa-edit text-info"></i></a>
+                                {% endif %}
+                                {% if perms.accounting.delete_log %}
+                                <a href="{{log.get_delete_url}}" target="_blank" title="حذف" class="mx-2"><i
+                                        class="fa fa-trash text-danger"></i></a>
+                                {% endif %}
                             </td>
                         </tr>
                         {% endfor %}

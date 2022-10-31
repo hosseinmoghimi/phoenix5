@@ -11,7 +11,13 @@
             waiting: false,
             message: {
                 show: false
-            }
+            },
+            start_date:current_date,
+            end_date:current_date,
+        },
+        components:{
+            DatePicker: VuePersianDatetimePicker,
+
         },
         methods: {
             filter: function () {

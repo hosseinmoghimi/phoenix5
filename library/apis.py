@@ -7,8 +7,8 @@ from .repo import BookRepo, LendRepo, MemberRepo
 from .forms import *
 
 
-class BookApi(APIView):
-    def add_book(self, request):
+class AddBookApi(APIView):
+    def post(self, request):
         log = 1
         context = {}
         context['result'] = FAILED
@@ -78,8 +78,8 @@ class AddMemberApi(APIView):
 
     
 
-class LendApi(APIView):
-    def lend_book(self, request):
+class LendBookApi(APIView):
+    def post(self, request):
         log = 1
         context = {}
         context['result'] = FAILED

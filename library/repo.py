@@ -168,6 +168,7 @@ class MemberRepo():
         member.save()
         if member is not None:
             result=SUCCEED
+            message="با موفقیت اضافه شد."
         return member,result,message
 
 

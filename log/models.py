@@ -1,5 +1,8 @@
 from django.db import models
 from django.shortcuts import reverse
+from phoenix.server_settings import ADMIN_URL
+
+from utility.utils import LinkHelper
 from .apps import APP_NAME
 from django.utils.translation import gettext as _
 # from django.conf import settings
@@ -12,8 +15,17 @@ class Log(models.Model):
     description=models.CharField(_("description"),null=True,blank=True, max_length=50000)
     app_name=models.CharField(_("app_name"),null=True,blank=True, max_length=50)
     date_added=models.DateTimeField(_("date_added"), auto_now=False, auto_now_add=True)
-    # app_name=APP_NAME
     class_name="log"
+
+
+    def get_edit_url(self):
+        return f"{ADMIN_URL}{APP_NAME}/{self.class_name}/{self.pk}/change/"
+    def get_absolute_url(self):
+        return reverse(f"{APP_NAME}:{self.class_name}",kwargs={'pk':self.pk})
+    def get_delete_url(self):
+        return f"{ADMIN_URL}{APP_NAME}/{self.class_name}/{self.pk}/delete/"
+    
+
     # @property
     # def profile(self):
     #     from authentication.models import Profile
@@ -26,6 +38,4 @@ class Log(models.Model):
 
     def __str__(self):
         return self.title +(self.app_name if self.app_name else "")
-
-    def get_absolute_url(self):
-        return reverse(APP_NAME+":log", kwargs={"pk": self.pk})
+ 

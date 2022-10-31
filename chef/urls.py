@@ -20,7 +20,7 @@ urlpatterns = [
     path("meals/<int:guest_id>/",login_required(views.MealsView.as_view()),name="meals"),
     path("meal/<int:pk>/",login_required(views.MealView.as_view()),name="meal"),
     
-    path('reserve_meal/',apis.AddFoodApi.as_view(),name="reserve_meal"),
+    path('reserve_meal/',apis.ReserveMealApi.as_view(),name="reserve_meal"),
     path('add_meal/',apis.AddFoodApi.as_view(),name="add_meal"),
     path('unreserve_meal/',apis.AddFoodApi.as_view(),name="unreserve_meal"),
     path('serve_meal/',apis.AddFoodApi.as_view(),name="serve_meal"),
