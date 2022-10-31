@@ -75,8 +75,15 @@ class ProfileViews(View):
             mv.title="چنین پروفایلی پیدا نشد"
             return mv.show()
 
+        me_profile=context['profile']
         context['selected_profile']=selected_profile
-        
+        leolog(me_profile=me_profile)
+        if me_profile is None or not request.user.has_perm(APP_NAME+".view_profile") :
+            mv=MessageView(request=request)
+            mv.title="عدم دسترسی"
+            mv.body="دسترسی غیر مجاز"
+            return mv.response()
+
         if selected_profile.enabled:
             from accounting.views import AccountRepo
             accounts=AccountRepo(request=request).list(profile_id=selected_profile.id)
@@ -95,7 +102,8 @@ class ProfileViews(View):
         if not selected_profile.enabled:
             context['no_navbar']=True
             context['no_footer']=True
-        
+        if selected_profile.pk==me_profile.pk:
+            context['profile_is_me']=True
         if True:
             if request.user.has_perm(APP_NAME+".add_profilecontact"):
                 contact_type_enums=list(t[0] for t in ProfileContatcTypeEnum.choices)
@@ -109,7 +117,7 @@ class ProfileViews(View):
         page_likes=PageLikeRepo(request=request).list(profile_id=selected_profile.id)
         context['page_likes']=page_likes
 
-
+        
 
         profiles=ProfileRepo(request=request).list(user_id=selected_profile.user.id)
         if len(profiles)>1:
@@ -123,6 +131,35 @@ class ProfileViews(View):
         if 'resume_app_is_installed' in context and context['resume_app_is_installed']:
             context['resumes']=selected_profile.resumeindex_set.all()
         return render(request,TEMPLATE_ROOT+"profile.html",context)
+
+
+class SessionsViews(View):
+    def get(self,request,*args, **kwargs):
+        if not request.user.has_perm(APP_NAME+".view_profile"):
+            mv=MessageView(request=request)
+            mv.title="عدم دسترسی"
+            mv.body="دسترسی غیر مجاز"
+            return mv.response()
+        context=getContext(request=request)
+        selected_profile=ProfileRepo(request=request,forced=True).me
+        if 'pk' in kwargs:
+            selected_profile=ProfileRepo(request=request,forced=True).profile(*args, **kwargs)
+        if selected_profile is None:
+            mv=MessageView(request=request)
+            mv.has_home_link=True
+            mv.title="چنین پروفایلی پیدا نشد"
+            return mv.show()
+
+        context['selected_profile']=selected_profile
+        sessions=[]
+        for key in request.session.keys():
+            session={
+                'name':key,
+                'value':request.session[key],
+            }
+            sessions.append(session)
+        context["sessions"]=sessions
+        return render(request,TEMPLATE_ROOT+"sessions.html",context)
 
 
 class ChangeProfileImageViews(View):

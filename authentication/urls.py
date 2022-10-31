@@ -7,6 +7,7 @@ urlpatterns = [
     path('',login_required(views.HomeViews.as_view()),name="home"),
     path('search/',views.SearchViews.as_view(),name="search"),
     path('profile/<int:pk>/',views.ProfileViews.as_view(),name="profile"),
+    path('sessions/<int:pk>/',views.SessionsViews.as_view(),name="sessions"),
     path('edit_profile/<int:pk>/',views.EditProfileViews.as_view(),name="edit_profile"),
     path('change_profile_image/<int:pk>/',views.ChangeProfileImageViews.as_view(),name="change_profile_image"),
     path('me/',views.ProfileViews.as_view(),name="me"),

@@ -76,6 +76,15 @@
 
                     {% endif %}
 
+                    {% if perms.authentication.change_profile or profile_is_me %}
+
+
+                    <a href="{% url 'authentication:sessions' pk=selected_profile.id %}" title="جلسه ها"
+                        class="mx-2 text-danger"><i class="fa fa-key text-info" aria-hidden="true"></i></a>
+
+                    {% endif %}
+
+
                     <a href="{% url 'authentication:change_password' %}" title="تغییر دادن پسورد"
                     class="mx-2 text-danger"><i class="fa fa-key" aria-hidden="true"></i></a>
 
