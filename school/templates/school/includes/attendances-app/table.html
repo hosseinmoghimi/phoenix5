@@ -39,7 +39,9 @@
             </td>
             <td>
                 <span :class="'badge badge-'+attendance.color" v-text="attendance.status"></span>
-
+                <a class="mx-2" :href="attendance.get_absolute_url" title="جزئیات">
+                    <i class="material-icons">ballot</i>
+                </a>
                 <a class="mx-2" :href="attendance.get_edit_url" title="ویرایش" target="_blank">
                     <i class="fa fa-edit text-info"></i>
                 </a>

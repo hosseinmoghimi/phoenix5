@@ -52,6 +52,7 @@ urlpatterns = [
     path("educationalyear/<int:pk>/",login_required(views.EducationalYearViews.as_view()),name="educationalyear"),
     
     path("session/<int:pk>/",login_required(views.SessionViews.as_view()),name="session"),
+    path("attendance/<int:pk>/",login_required(views.AttendanceViews.as_view()),name="attendance"),
     path("api/add_session/",login_required(apis.SessionApi().add_session),name="add_session"),
     path("api/add_attendance/",login_required(apis.AttendanceApi().add_attendance),name="add_attendance"),
     

@@ -321,15 +321,16 @@ class Session(SchoolPage):
         return f"""{ADMIN_URL}{APP_NAME}/{self.class_name}/{self.pk}/delete/"""
 
 
-class Attendance(models.Model):
+class Attendance(models.Model,LinkHelper):
     student=models.ForeignKey("student", verbose_name=_("student"), on_delete=models.CASCADE)
     session=models.ForeignKey("session", verbose_name=_("session"), on_delete=models.CASCADE)
     status=models.CharField(_("status"),choices=AttendanceStatusEnum.choices, max_length=50)
     enter_time=models.DateTimeField(_("enter"),null=True,blank=True, auto_now=False, auto_now_add=False)
     exit_time=models.DateTimeField(_("exit"),null=True,blank=True, auto_now=False, auto_now_add=False)
     time_added=models.DateTimeField(_("time_added"),null=True,blank=True, auto_now=False, auto_now_add=True)
-    description=models.CharField(_("description"), max_length=500)
+    description=models.CharField(_("description"),null=True,blank=True, max_length=500)
     class_name="attendance"
+    app_name=APP_NAME
     def color(self):
         colo="primary"
         if self.status==AttendanceStatusEnum.DELAY:
@@ -350,24 +351,8 @@ class Attendance(models.Model):
         verbose_name_plural = _("Attendances")
 
     def __str__(self):
-        return self.student.profile.name
-
-    def get_absolute_url(self):
-        return reverse(APP_NAME+":"+self.class_name, kwargs={"pk": self.pk})
-
-    def get_edit_url(self):
-        return f"""{ADMIN_URL}{APP_NAME}/{self.class_name}/{self.pk}/change/"""
-    def get_delete_url(self):
-        return f"""{ADMIN_URL}{APP_NAME}/{self.class_name}/{self.pk}/delete/"""
-    def get_edit_btn(self):
-        return f"""
-             <a href="{self.get_edit_url()}" target="_blank" title="ویرایش">
-                <i class="material-icons">
-                    edit
-                </i>
-            </a>
-        """
-
+        return f"{self.student.account.title} {self.session} {self.status}"
+ 
     def persian_enter_time(self):
         return PersianCalendar().from_gregorian(self.enter_time)
     def persian_exit_time(self):

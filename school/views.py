@@ -526,7 +526,14 @@ class BooksViews(View):
         context['books']=books
         context['books_s']=json.dumps(BookSerializer(books,many=True).data)
         return render(request,TEMPLATE_ROOT+"books.html",context)
-
+ 
+class AttendanceViews(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        attendance=AttendanceRepo(request=request).attendance(*args, **kwargs) 
+        context['attendance']=attendance
+ 
+        return render(request,TEMPLATE_ROOT+"attendance.html",context)
         
 class SessionViews(View):
     def get(self,request,*args, **kwargs):
