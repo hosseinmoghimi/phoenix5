@@ -41,7 +41,7 @@ class Luggage(Page,LinkHelper):
     width=models.IntegerField(_("عرض"),default=0)
     height=models.IntegerField(_("ارتفاع"),default=0)
     def dimension(self):
-        return f"{self.length}X{self.width}X{self.height}"
+        return f"{self.length} * {self.width} * {self.height}"
     class Meta:
         verbose_name = _("Luggage")
         verbose_name_plural = _("Luggages")

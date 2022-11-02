@@ -1,5 +1,5 @@
 {% extends "transport/layout.html" %}
-
+{% load to_price %}
 {% block content %}
 {% include "core/includes/page-app/navbar.html" %}
 <div class="row">
@@ -11,9 +11,64 @@
     <div class="col-md-9">
         <div class="row">
 
+<div class="col-md-12">
+    <div class="card">
+        <div class="card-body">
+            <table class="table table-striped">
+                <tbody>
+                    <tr>
+                        <td class="text-left">
+                            ابعاد
+                        </td>
+                        <td class="text-right">
+                           {{luggage.dimension}} 
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="text-left">
+                            ارزش
+                        </td>
+                        <td class="text-right">
+                           {{luggage.price|to_price}} 
+                            
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="text-left">
+                            وزن
+                        </td>
+                        <td class="text-right">
+                           {{luggage.weight}} 
+                           {{luggage.weight_unit}} 
+                            
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="text-left">
+                            مالک
+                        </td>
+                        <td class="text-right">
+                            <div class="media">
+                                <a href="{{luggage.owner}}">
+                                     
+<img src="{{luggage.owner.logo}}" class="rounded" width="48" alt="">
+                                </a>
+                                <div class="media-body mr-2">
+                                    <a href="{{luggage.owner}}">
 
+                                        {{luggage.owner.title}} 
+                                    </a>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
             <div class="col-md-12">
-                {% include "core/includes/page-description-app/short-description.html" %}
+                  {% include "core/includes/page-description-app/short-description.html" %}
                 {% include "core/includes/page-description-app/description.html" %}
             </div>
             <div class="col-md-4">
