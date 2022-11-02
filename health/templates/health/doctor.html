@@ -2,10 +2,10 @@
 {% block content %}
 <h4 class="text-center">
     <small class="text-muted">
-        مراجعه کننده :
+        دکتر :
 
     </small>
-    {{patient.account.title}}
+    {{doctor.account.title}}
 
 </h4>
 <div class="row">
@@ -16,12 +16,12 @@
                 <div>
                     <h4>
 
-                        <a href="{{patient.account.get_absolute_url}}">
-                            <img src="{{patient.account.logo}}" class="rounded-circle" width="96" alt="">
-                            {{patient.account.title}}
+                        <a href="{{doctor.account.get_absolute_url}}">
+                            <img src="{{doctor.account.logo}}" class="rounded-circle" width="96" alt="">
+                            {{doctor.account.title}}
                         </a>
-                        {% if perms.health.change_patient %}
-                        {{patient.get_edit_btn|safe}}
+                        {% if perms.health.change_doctor %}
+                        {{doctor.get_edit_btn|safe}}
 
                         {% endif %}
                     </h4>
@@ -37,12 +37,15 @@
         {% include "health/includes/attendances-app/template.html" %}
         {% endif %}
     </div>
-    <div class="col-md-12">
-        {% include 'health/includes/visits-app/template.html' %}
-    </div>
 </div>
 {% endblock content %}
 
 {% block script %}
-{% include 'health/includes/visits-app/script.html' %}
+
+{% if adada %}
+
+
+{% include "health/includes/attendances-app/script.html" %}
+{% endif %}
+
 {% endblock script %}

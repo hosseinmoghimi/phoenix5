@@ -21,15 +21,9 @@ class LinkHelper():
         return f"{ADMIN_URL}{self.app_name}/{self.class_name}/{self.pk}/delete/"
     def get_edit_btn(self):
         return f"""
-          <a target="_blank" title="ویرایش" href="{self.get_edit_url()}">
-            <i class="fa fa-edit text-warning">
-            </i>
-          </a>
+          <a target="_blank" title="ویرایش" href="{self.get_edit_url()}"><i class="fa fa-edit text-warning"></i></a>
         """
     def get_delete_btn(self):
         return f"""
-          <a target="_blank" title="حذف" href="{self.get_delete_url()}">
-            <i class="fa fa-trash text-danger">
-            </i>
-          </a>
+          <a target="_blank" title="حذف" href="{self.get_delete_url()}"><i class="fa fa-trash text-danger"></i></a>
         """

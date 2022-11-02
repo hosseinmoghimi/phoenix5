@@ -1,0 +1,24 @@
+{% extends "health/layout.html" %}
+
+{% block content %}
+  <div class="row">
+    <div class="col-md-12">
+       {% include "health/includes/diseases-app/template.html" %}
+    </div>
+
+    {% if add_disease_form %}
+      
+    <div class="col-md-12">
+      {% include "health/includes/add-disease-app/template.html" %}
+   </div>
+    {% endif %}
+  </div>
+{% endblock content %}
+
+{% block script %}
+{% include "health/includes/diseases-app/script.html" %}
+{% if add_disease_form %}
+      
+  {% include "health/includes/add-disease-app/script.html" %}
+{% endif %}
+{% endblock script %}

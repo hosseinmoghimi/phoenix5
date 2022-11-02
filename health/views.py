@@ -1,8 +1,8 @@
 from django.shortcuts import render,reverse
 from authentication.repo import ProfileRepo
 from core.views import CoreContext, MessageView, PageContext,ParameterNameEnum,ParameterRepo
-from health.repo import DrugRepo, PatientRepo
-from health.serializers import DrugSerializer, PatientSerializer
+from health.repo import DiseaseRepo, DoctorRepo, DrugRepo, PatientRepo
+from health.serializers import DiseaseSerializer, DoctorSerializer, DrugSerializer, PatientSerializer, VisitSerializer
 from health.enums import *
 from health.apps import APP_NAME
 from django.views import View
@@ -46,7 +46,74 @@ class PatientView(View):
         context=getContext(request=request)
         patient=PatientRepo(request=request).patient(*args, **kwargs)
         context['patient']=patient
+        visits=patient.visit_set.all()
+        context['visits']=visits
+        visits_s=json.dumps(VisitSerializer(visits,many=True).data)
+        context['visits_s']=visits_s
         return render(request,TEMPLATE_ROOT+"patient.html",context)
+
+
+class DoctorsView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        doctors=DoctorRepo(request=request).list(*args, **kwargs)
+        context['doctors']=doctors
+        if request.user.has_perm(APP_NAME+".add_doctor"):
+            context.update(add_from_accounts_context(request=request))
+            context['add_doctor_form']=AddDoctorForm()
+        context['doctors_s']=json.dumps(DoctorSerializer(doctors,many=True).data)
+        return render(request,TEMPLATE_ROOT+"doctors.html",context)
+
+
+class DoctorView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        doctor=DoctorRepo(request=request).doctor(*args, **kwargs)
+        context['doctor']=doctor
+        return render(request,TEMPLATE_ROOT+"doctor.html",context)
+
+
+
+class VisitsView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        doctors=DoctorRepo(request=request).list(*args, **kwargs)
+        context['doctors']=doctors
+        if request.user.has_perm(APP_NAME+".add_doctor"):
+            context.update(add_from_accounts_context(request=request))
+            context['add_doctor_form']=AddDoctorForm()
+        context['doctors_s']=json.dumps(DoctorSerializer(doctors,many=True).data)
+        return render(request,TEMPLATE_ROOT+"visits.html",context)
+
+
+class VisitView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        doctor=DoctorRepo(request=request).doctor(*args, **kwargs)
+        context['doctor']=doctor
+        return render(request,TEMPLATE_ROOT+"visit.html",context)
+
+
+
+class DiseasesView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        diseases=DiseaseRepo(request=request).list(*args, **kwargs)
+        context['diseases']=diseases
+        context['diseases_s']=json.dumps(DiseaseSerializer(diseases,many=True).data)
+        if request.user.has_perm(APP_NAME+".add_disease"):
+            context['add_disease_form']=AddDiseaseForm()
+        return render(request,TEMPLATE_ROOT+"diseases.html",context)
+
+
+class DiseaseView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        disease=DiseaseRepo(request=request).disease(*args, **kwargs)
+        # context.update(PageContext(request=request,page=disease))
+        context['disease']=disease
+        return render(request,TEMPLATE_ROOT+"disease.html",context)
+
 
 
 
@@ -70,6 +137,13 @@ class DrugView(View):
         drug=DrugRepo(request=request).drug(*args, **kwargs)
         context.update(PageContext(request=request,page=drug))
         context['drug']=drug
+
+
+        
+        diseases=drug.disease_set.all()
+        context['diseases']=diseases
+        context['diseases_s']=json.dumps(DiseaseSerializer(diseases,many=True).data)
+        
         return render(request,TEMPLATE_ROOT+"drug.html",context)
 
 

@@ -1,0 +1,63 @@
+{% load to_json %}
+<script>
+    let add_disease_app = new Vue({
+        el: "#add-disease-app",
+        data: {
+            name: "",
+            waiting: false,
+            message: {
+                show: false
+            }
+        },
+        methods: {
+            filter: function () {
+                this.accounts = accounts.filter(account => account.title.indexOf(this.search_for) > -1 )
+                if (this.accounts.length > 0)
+                    this.account_id = this.accounts[0].id
+            },
+            add_disease: function () {
+                let url = "{% url 'health:add_disease' %}"
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    name: this.name
+                }
+                add_disease_app.waiting = true
+                $.post(url, payload).done((data) => {
+                    add_disease_app.waiting = false
+
+                    if (data.result === 'FAILED') {
+                        add_disease_app.message = {
+                            color: "danger",
+                            body: data.message,
+                            show: true,
+                        }
+                        setTimeout(() => {
+                            add_disease_app.message = {
+                                show: false,
+                            }
+                        }, 3000);
+                    }
+                    if (data.result === 'SUCCEED') {
+                        if (typeof diseases_app != "undefined") {
+                            diseases_app.diseases.push(data.disease)
+                        }
+
+                        add_disease_app.message = {
+                            color: "success",
+                            body: data.message,
+                            show: true,
+                        }
+                        setTimeout(() => {
+                            add_disease_app.message = {
+                                show: false,
+                            }
+                        }, 3000);
+                    }
+                })
+
+            }
+
+        }
+    })
+
+</script>
