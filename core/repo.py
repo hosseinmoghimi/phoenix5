@@ -567,7 +567,7 @@ class PageImageRepo:
         
         # image=Image(title=title,image_main_origin=image)
         # image.save()
-        new_page_image=PageImage(image_main_origin=image,page_id=page.id,title=title)
+        new_page_image=PageImage(image_main_origin=image,page_id=page.id,title=title,creator=self.profile)
         
         new_page_image.save()
         return new_page_image

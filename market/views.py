@@ -239,7 +239,6 @@ class CartView(View):
         return render(request, TEMPLATE_ROOT+"cart.html", context)
 
 
-
 class BrandsView(View):
     def get(self, request, *args, **kwargs):
         context = getContext(request)
@@ -287,6 +286,7 @@ class BrandView(View):
 
         return render(request, TEMPLATE_ROOT+"brand.html", context)
 
+
 class CustomersView(View):
     def get(self, request, *args, **kwargs):
         context = getContext(request)
@@ -302,7 +302,6 @@ class CustomersView(View):
             context['add_brand_form'] = AddBrandForm()
 
         return render(request, TEMPLATE_ROOT+"customers.html", context)
-
 
 
 class CustomerView(View):
@@ -321,7 +320,6 @@ class CustomerView(View):
             context['add_brand_form'] = AddBrandForm()
 
         return render(request, TEMPLATE_ROOT+"customer.html", context)
-
 
 
 class ShopsView(View):
@@ -389,6 +387,10 @@ class ProductView(View):
         context['body_class']="product-page"
         product_s=json.dumps(ProductSerializer(product).data)
         context['product_s']=product_s
+        from core.serializers import PageImageSerializer
+        images=product.pageimage_set.all()
+        images_s=json.dumps(PageImageSerializer(images,many=True).data)
+        context['images_s']=images_s
         related_pages_=product.related_pages.filter(class_name="product")
         ids=(p.id for p in related_pages_)
         related_pages=ProductRepo(request=request).list().filter(id__in=ids)

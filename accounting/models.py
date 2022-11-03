@@ -270,6 +270,9 @@ class ProductOrService(Page):
             product_or_service_unit_name.unit_name=UnitNameEnum.ADAD
             product_or_service_unit_name.save()
 
+    @property
+    def image(self):
+        return self.thumbnail
 
 class ProductOrServiceUnitName(models.Model,LinkHelper):
     product_or_service=models.ForeignKey("productorservice", verbose_name=_("productorservice"), on_delete=models.CASCADE)
@@ -298,9 +301,7 @@ class Product(ProductOrService):
     def get_pm_absolute_url(self):
         return reverse('projectmanager:material',kwargs={'pk':self.pk})
 
-
-
-
+ 
     @property
     def available(self):
         id=0         

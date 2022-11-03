@@ -197,7 +197,12 @@ class Page(models.Model, LinkHelper, ImageMixin):
         # return f"""{self.app_name or ""} {self.class_name or ""} {self.title}"""
         return f"""{self.title}"""
 
-
+    @property
+    def thumbnail(self):
+        pageimage_set=self.pageimage_set.all()
+        if not self.thumbnail_origin and len(pageimage_set)>0:
+            return pageimage_set[0].thumbnail
+        return super(Page,self).thumbnail
 class PageLike(models.Model):
     profile=models.ForeignKey("authentication.profile", verbose_name=_("profile"), on_delete=models.CASCADE)
     page=models.ForeignKey("page", verbose_name=_("page"), on_delete=models.CASCADE)
@@ -461,6 +466,8 @@ class Image(models.Model, LinkHelper):
                                           'ImageBase/Main/', height_field=None, width_field=None, max_length=None)
     image_header_origin = models.ImageField(_("تصویر سربرگ"), null=True, blank=True, upload_to=IMAGE_FOLDER +
                                             'ImageBase/Header/', height_field=None, width_field=None, max_length=None)
+    date_added=models.DateTimeField(_("date_added"), auto_now=False, auto_now_add=True)
+    creator=models.ForeignKey("authentication.profile", verbose_name=_("profile"),null=True,blank=True, on_delete=models.CASCADE)
     def __str__(self):
         return self.title
     class Meta:

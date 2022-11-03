@@ -1,4 +1,5 @@
 {% extends "core/wide-layout.html" %}
+{% load to_persian_date %}
 {% block content %}
 
 <h5 class="text-center">
@@ -42,6 +43,18 @@
     {% endif %}
 </div>
 
+<p class="text-center">
+    <span class="text-muted">
+    تاریخ ایجاد : 
+
+    </span>
+{{image.date_added|to_persian_datetime|safe}}
+ توسط
+
+ <a href="{{image.creator.get_absolute_url}}">
+    {{image.creator.name}}
+ </a>
+</p>
 {% endblock content %}
 
 
