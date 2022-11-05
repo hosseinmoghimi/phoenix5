@@ -2,7 +2,7 @@ from cgitb import reset
 from email import message
 from math import prod
 from unicodedata import category
-from accounting.enums import FinancialDocumentTypeEnum, PaymentMethodEnum, SpendTypeEnum, TransactionStatusEnum
+from accounting.enums import *
 from core.constants import FAILED, SUCCEED,MISC
 
 from core.enums import UnitNameEnum
@@ -500,9 +500,9 @@ class FinancialBalanceRepo:
         financial_balance.save()
         if 'amount' in kwargs:
 
-            if financial_balance.financial_document.direction==FinancialDocumentTypeEnum.BEDEHKAR:
+            if financial_balance.financial_document.direction==FinancialDocumentDirectionEnum.BEDEHKAR:
                 financial_balance.bedehkar=kwargs['amount']
-            if financial_balance.financial_document.direction==FinancialDocumentTypeEnum.BESTANKAR:
+            if financial_balance.financial_document.direction==FinancialDocumentDirectionEnum.BESTANKAR:
                 financial_balance.bestankar=kwargs['amount']
             financial_balance.save()
         # financial_balance.financial_document.normalize_balances()

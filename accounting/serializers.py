@@ -146,7 +146,7 @@ class FinancialDocumentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = FinancialDocument
-        fields = ['id', 'title','transaction','get_state_badge', 'account', 'get_absolute_url', 'bedehkar','rest',
+        fields = ['id', 'title','status','transaction','get_state_badge', 'account', 'get_absolute_url', 'bedehkar','rest',
                   'bestankar', 'persian_document_datetime', 'get_edit_url','get_delete_url']
 
  
@@ -170,7 +170,7 @@ class FinancialDocumentForAccountSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = FinancialDocument
-        fields = ['id', 'title','get_state_badge', 'rest','account', 'get_absolute_url', 'bedehkar',
+        fields = ['id', 'title','status','get_state_badge', 'rest','account', 'get_absolute_url', 'bedehkar',
                   'bestankar', 'persian_document_datetime', 'get_edit_url','get_delete_url']
 
 

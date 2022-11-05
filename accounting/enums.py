@@ -3,7 +3,7 @@ from django.db.models import TextChoices
 from core.enums import ColorEnum, UnitNameEnum
 
 
-class FinancialDocumentTypeEnum(TextChoices):
+class FinancialDocumentDirectionEnum(TextChoices):
     BEDEHKAR="بدهکار",_("بدهکار")
     BESTANKAR="بستانکار",_("بستانکار")
 
@@ -70,8 +70,6 @@ class PaymentMethodEnum(TextChoices):
     CARD="کارت به کارت",_("کارت به کارت")
     # FROM_PAST="مانده حساب از قبل",_("مانده حساب از قبل")
 
- 
-
 class TransactionStatusEnum(TextChoices):
     DRAFT="پیش نویس",_("پیش نویس")
     IN_PROGRESS="در جریان",_("در جریان")
@@ -83,6 +81,17 @@ class TransactionStatusEnum(TextChoices):
     PASSED="پاس شده",_("پاس شده")
     FROM_PAST="مانده حساب از قبل",_("مانده حساب از قبل")
 
+
+class FinancialDocumentStatusEnum(TextChoices):
+    DRAFT="پیش نویس",_("پیش نویس")
+    IN_PROGRESS="در جریان",_("در جریان")
+    DELIVERED="تحویل شده",_("تحویل شده")
+    APPROVED="تایید شده",_("تایید شده")
+    CANCELED="کنسل شده",_("کنسل شده")
+    ROLL_BACKED="برگشت از تحویل",_("برگشت از تحویل")
+    FINISHED="تایید نهایی شده",_("تایید نهایی شده")
+    PASSED="پاس شده",_("پاس شده")
+    FROM_PAST="مانده حساب از قبل",_("مانده حساب از قبل")
 
 class FinancialBalanceTitleEnum(TextChoices):
     REGULAR="حساب عادی",_("حساب عادی")

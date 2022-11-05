@@ -67,6 +67,9 @@
                             <th>
                                 بستانکار
                             </th>
+                            <th>
+                                وضعیت
+                            </th>
                             {% if account %}
                             <th>
                                 مانده
@@ -160,6 +163,11 @@
                                 <td>
                                     <span class="text-success" v-if="financial_document.bestankar>0"
                                         v-text="to_price(financial_document.bestankar,'')"></span>
+
+                                </td>
+                                <td>
+                                    <span class="badge badge-success" 
+                                        v-text="financial_document.status"></span>
 
                                 </td>
                                 {% if account %}

@@ -1,3 +1,4 @@
+from email.policy import default
 from authentication.models import IMAGE_FOLDER
 from core.enums import ColorEnum, UnitNameEnum,BS_ColorCode
 from core.middleware import get_request
@@ -122,19 +123,25 @@ class Transaction(Page,LinkHelper):
             self.transaction_datetime=PersianCalendar().date
         super(Transaction,self).save(*args, **kwargs)
         if self.status==TransactionStatusEnum.DRAFT or self.status==TransactionStatusEnum.CANCELED:
-            FinancialDocument.objects.filter(transaction=self).delete()
+            financial_documents=FinancialDocument.objects.filter(transaction=self)
+            for fd in financial_documents:
+                fd.status=self.status
+                fd.save()
         else:
+        # if True:
             fd_bedehkar=FinancialDocument.objects.filter(transaction=self).filter(account_id=self.pay_to.id).first()
+            FinancialDocument.objects.filter(transaction=self).exclude(account_id=self.pay_from.id).filter(bedehkar=self.amount).delete()
             if fd_bedehkar is None:
-                fd_bedehkar=FinancialDocument(transaction=self,account_id=self.pay_to.id,direction=FinancialDocumentTypeEnum.BEDEHKAR)
+                fd_bedehkar=FinancialDocument(transaction=self,account_id=self.pay_to.id,direction=FinancialDocumentDirectionEnum.BEDEHKAR)
             fd_bedehkar.account_id=self.pay_to.id
             fd_bedehkar.bestankar=0
             fd_bedehkar.bedehkar=self.amount
             fd_bedehkar.save()
 
             fd_bestankar=FinancialDocument.objects.filter(transaction=self).filter(account_id=self.pay_from.id).first()
+            FinancialDocument.objects.filter(transaction=self).exclude(account_id=self.pay_from.id).filter(bestankar=self.amount).delete()
             if fd_bestankar is None:
-                fd_bestankar=FinancialDocument(transaction=self,account_id=self.pay_from.id,direction=FinancialDocumentTypeEnum.BESTANKAR)
+                fd_bestankar=FinancialDocument(transaction=self,account_id=self.pay_from.id,direction=FinancialDocumentDirectionEnum.BESTANKAR)
             fd_bestankar.account_id=self.pay_from.id
             fd_bestankar.bestankar=self.amount
             fd_bestankar.bedehkar=0
@@ -440,8 +447,11 @@ class Account(models.Model,LinkHelper):
         bestankar=0
         bedehkar=0
         for doc in self.financialdocument_set.all():
-            bestankar+=doc.bestankar
-            bedehkar+=doc.bedehkar
+            if doc.status==FinancialDocumentStatusEnum.DRAFT or  doc.status==FinancialDocumentStatusEnum.CANCELED or  doc.status==FinancialDocumentStatusEnum:
+                pass
+            else:
+                bestankar+=doc.bestankar
+                bedehkar+=doc.bedehkar
         rest=bestankar-bedehkar
         balance['rest']=rest
         balance['bestankar']=bestankar
@@ -540,7 +550,8 @@ class FinancialDocument(models.Model,LinkHelper):
     transaction=models.ForeignKey("transaction",verbose_name=_("transaction"), on_delete=models.CASCADE)
     tags=models.ManyToManyField("FinancialDocumentTag", blank=True,verbose_name=_("tags"))
     color=models.CharField(_("color"),max_length=50,choices=ColorEnum.choices,default=ColorEnum.PRIMARY)
-    direction=models.CharField(_("direction"),max_length=50,choices=FinancialDocumentTypeEnum.choices,default=FinancialDocumentTypeEnum.BESTANKAR)
+    direction=models.CharField(_("direction"),max_length=50,choices=FinancialDocumentDirectionEnum.choices,default=FinancialDocumentDirectionEnum.BESTANKAR)
+    status=models.CharField(_("status"),choices=FinancialDocumentStatusEnum.choices,default=FinancialDocumentStatusEnum.APPROVED, max_length=50)
     app_name=APP_NAME
     class_name="financialdocument"
 
