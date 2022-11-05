@@ -564,7 +564,17 @@ class FinancialDocument(models.Model,LinkHelper):
             rest+=fd.bestankar
             rest-=fd.bedehkar
         return rest
-
+    def status_color(self):
+        color="primary"
+        if self.status==FinancialDocumentStatusEnum.DRAFT:
+            color="secondary"
+        if self.status==FinancialDocumentStatusEnum.APPROVED:
+            color="success"
+        if self.status==FinancialDocumentStatusEnum.IN_PROGRESS:
+            color="warning"
+        if self.status==FinancialDocumentStatusEnum.CANCELED:
+            color="secondary"
+        return color
     def get_state_badge(self):
         color="muted"
         state="تسویه"
