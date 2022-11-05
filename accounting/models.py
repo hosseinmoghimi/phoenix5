@@ -127,6 +127,7 @@ class Transaction(Page,LinkHelper):
             fd_bedehkar=FinancialDocument.objects.filter(transaction=self).filter(account_id=self.pay_to.id).first()
             if fd_bedehkar is None:
                 fd_bedehkar=FinancialDocument(transaction=self,account_id=self.pay_to.id,direction=FinancialDocumentTypeEnum.BEDEHKAR)
+            fd_bedehkar.account_id=self.pay_to.id
             fd_bedehkar.bestankar=0
             fd_bedehkar.bedehkar=self.amount
             fd_bedehkar.save()
@@ -134,6 +135,7 @@ class Transaction(Page,LinkHelper):
             fd_bestankar=FinancialDocument.objects.filter(transaction=self).filter(account_id=self.pay_from.id).first()
             if fd_bestankar is None:
                 fd_bestankar=FinancialDocument(transaction=self,account_id=self.pay_from.id,direction=FinancialDocumentTypeEnum.BESTANKAR)
+            fd_bestankar.account_id=self.pay_from.id
             fd_bestankar.bestankar=self.amount
             fd_bestankar.bedehkar=0
             fd_bestankar.save()
@@ -273,6 +275,7 @@ class ProductOrService(Page):
     @property
     def image(self):
         return self.thumbnail
+
 
 class ProductOrServiceUnitName(models.Model,LinkHelper):
     product_or_service=models.ForeignKey("productorservice", verbose_name=_("productorservice"), on_delete=models.CASCADE)
