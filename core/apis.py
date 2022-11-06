@@ -300,6 +300,7 @@ class DecryptApi(APIView):
             decrypt_page_form = DecryptPageForm(request.POST)
             if decrypt_page_form.is_valid():
                 log += 1
+                decrypt_page_form.cleaned_data['save']=True
                 # key = encrypt_page_form.cleaned_data['key']
                 # page_id = encrypt_page_form.cleaned_data['page_id']
                 page ,result = PageRepo(request=request).decrypt(
