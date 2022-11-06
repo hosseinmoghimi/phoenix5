@@ -58,8 +58,8 @@ class FolderView(View):
         context['folder']=folder
         folder_s=json.dumps(FolderSerializer(folder).data)
         context['folder_s']=folder_s
-        folders=FolderRepo(request=request).list(parent_id=folder.pk)
-        files=folder.files.all()
+        folders=FolderRepo(request=request).list(parent_id=folder.pk).order_by("priority")
+        files=folder.files.all().order_by("priority")
         
         context['files']=files
         context['folders']=folders

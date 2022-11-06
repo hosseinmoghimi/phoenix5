@@ -1,3 +1,4 @@
+from email.policy import default
 from django.db import models
 from django.forms import CharField
 from django.utils.translation import gettext as _
@@ -14,6 +15,7 @@ class Folder(models.Model,LinkHelper):
     date_added=models.DateTimeField(_("date_added"), auto_now=False, auto_now_add=True)
     date_updated=models.DateTimeField(_("date_updated"), auto_now=True, auto_now_add=False)
     profiles=models.ManyToManyField("authentication.profile",blank=True, verbose_name=_("profile"))
+    priority=models.IntegerField(_("ترتیب"),default=1000)
     owner=models.ForeignKey("authentication.profile", verbose_name=_("profile"),related_name="folders_owned",null=True,blank=True, on_delete=models.CASCADE)
     class_name='folder'
     app_name=APP_NAME
