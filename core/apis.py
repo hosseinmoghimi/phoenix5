@@ -263,7 +263,7 @@ class AddPageCommentApi(APIView):
 
 
 class EncryptApi(APIView):
- def post(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         log = 1
         context = {}
         log = 1
@@ -289,7 +289,7 @@ class EncryptApi(APIView):
 
 
 class DecryptApi(APIView):
- def post(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         log = 1
         context = {}
         log = 1
@@ -313,7 +313,7 @@ class DecryptApi(APIView):
 
 
 class DecryptOnceApi(APIView):
- def post(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         log = 1
         context = {}
         log = 1
