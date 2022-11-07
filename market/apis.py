@@ -8,7 +8,7 @@ from core.constants import FAILED,SUCCEED
 from market.forms import *
 from market.serializers import CartLineSerializer, CategorySerializer, CategorySerializerForApi, ProductSerializer,ProductSerializerForApi, ShopSerializer
 from market.repo import CartLineRepo, CartRepo, CategoryRepo, ShopRepo
-
+from utility.log import leolog
 class AddCategoryApi(APIView):
     def post(self,request,*args, **kwargs):
         context={}

@@ -46,6 +46,8 @@ def getContext(request, *args, **kwargs):
  
     me_supplier=SupplierRepo(request=request).me
     context['me_supplier']=me_supplier
+    
+    context['body_class'] = "ecommerce-page"
     return context
 
 def get_customer_context(request,*args, **kwargs):

@@ -85,7 +85,16 @@
 
                     <tr>
                         <td>
+                            
+                            {% if perms.accounting.change_invoice %}
                             <a href="{{market_invoice.get_absolute_url}}">{{market_invoice.title}}</a>
+                                
+                            {% else %}
+                            
+                            <a href="{{market_invoice.get_print_url}}">{{market_invoice.title}}</a>
+                                
+                            {% endif %}
+                                
                         </td>
 
                         <td>

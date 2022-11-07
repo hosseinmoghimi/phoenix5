@@ -1,4 +1,4 @@
-from accounting.models import InvoiceLine
+from accounting.models import InvoiceLine, ProductSpecification
 from accounting.repo import AccountRepo, ProductRepo as ProductRepo_origin,CategoryRepo
 from core.enums import UnitNameEnum
 from market.apps import APP_NAME
@@ -492,6 +492,7 @@ class ShopRepo():
         if 'unit_price' in kwargs:
             shop.unit_price = kwargs['unit_price'] 
 
+       
             
         if 'available' in kwargs:
             shop.available = kwargs['available'] 
@@ -501,6 +502,12 @@ class ShopRepo():
             shop.expire_datetime = kwargs['expire_datetime'] 
 
         shop.save()
+        if 'specifications' in kwargs:
+            specifications = kwargs['specifications']
+            for specification in specifications:
+                specification=ProductSpecification.objects.filter(pk=specification['id']).first()
+                if specification is not None:
+                    shop.specifications.add(specification)
         return shop
 
 

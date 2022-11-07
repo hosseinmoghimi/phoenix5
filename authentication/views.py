@@ -78,12 +78,18 @@ class ProfileViews(View):
         me_profile=context['profile']
         context['selected_profile']=selected_profile
         leolog(me_profile=me_profile)
-        if me_profile is None or not request.user.has_perm(APP_NAME+".view_profile") :
+        if me_profile is None:
+            mv=MessageView(request=request)
+            mv.title="عدم دسترسی"
+            mv.body="پروفایل وجود ندارد."
+            return mv.response()
+
+        if not request.user.has_perm(APP_NAME+".view_profile") and not me_profile.id==selected_profile.id:
             mv=MessageView(request=request)
             mv.title="عدم دسترسی"
             mv.body="دسترسی غیر مجاز"
             
-            return mv.response()
+            return mv.response() 
 
         if selected_profile.enabled:
             from accounting.views import AccountRepo
@@ -287,6 +293,7 @@ class LoginAsViews(View):
         context=getContext(request=request)
         if request.user.has_perm(APP_NAME+".change_profile"):
             selected_profile=ProfileRepo(request=request).profile(*args, **kwargs)
+            leolog(selected_profile=selected_profile)
             if selected_profile is not None:
                 ProfileRepo(request=request).login(request=request,user=selected_profile.user)
                 return redirect(APP_NAME+":me")
