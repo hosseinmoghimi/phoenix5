@@ -116,10 +116,10 @@
                                                 </a>
                                             </div>
                                             <div>
-                                                <a v-if="maintenance.service_man.account.profile" :href="maintenance.service_man.account.profile.get_absolute_url">
+                                                <a v-if="maintenance.service_man.account.title" :href="maintenance.service_man.account.get_absolute_url">
 
                                                     <small
-                                                        v-text="maintenance.service_man.account.profile.name"></small>
+                                                        v-text="maintenance.service_man.account.title"></small>
                                                 </a>
                                             </div>
                                         </div>
@@ -149,7 +149,7 @@
                                 </td>
                                 {% endif %}
                                 <td>
-                                    <span v-text="to_price(maintenance.kilometer,'')"></span>
+                                    <span v-text="to_price(maintenance.kilometer,'کیلومتر')"></span>
 
 
                                 </td>
@@ -194,11 +194,14 @@
                                 </td>
                                 <td>
                                     <div class="text-danger">
-                                        <span v-text="to_price(maintenance.amount)"></span>
-                                        <small class="text-muted mx-2">
+                                        <h4>
 
-                                            {{CURRENCY}}
-                                        </small>
+                                            <span v-text="to_price(maintenance.amount)"></span>
+                                            <small class="text-muted mx-2">
+                                                
+                                                {{CURRENCY}}
+                                            </small>
+                                        </h4>
 
                                     </div>
                                 </td>

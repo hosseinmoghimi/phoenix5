@@ -77,10 +77,17 @@ class FileView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
         file=FileRepo(request=request).file(*args, **kwargs)
+        if file is None:
+            mv=MessageView(request=request)
+            mv.title="فایل پیدا نشد"
+            mv.body="فایل مورد نظر وجود ندارد."
+            return mv.response()
         pagepermissions= file.pagepermission_set.all()
         profile=context['profile']
         sw=False
         if request.user.has_perm(APP_NAME+".view_file"):
+            sw=True
+        if file.is_public:
             sw=True
         if sw==False:
             for pp in pagepermissions:

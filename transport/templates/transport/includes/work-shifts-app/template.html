@@ -1,12 +1,8 @@
-
-
 {% load to_persian_date %}
 {% load to_price %}
 {% load to_amount_color %}
 {% load static %}
 <div id="accordion-work-shifts">
-
-
     <div class="card" id="work-shifts-app">
         <div class="card-header" id="heading-work-shifts">
             <h5 class="text-center">
@@ -123,8 +119,8 @@
                                 <td>
                                     <a :href="work_shift.driver.get_absolute_url">
             
-                                        <img :src="work_shift.driver.account.profile.image" class="rounded-circle" width="48">
-                                        <span v-text="work_shift.driver.account.profile.name"></span>
+                                        <img :src="work_shift.driver.account.logo" class="rounded-circle" width="48">
+                                        <span v-text="work_shift.driver.account.title"></span>
                                     </a>
             
                                 </td>
@@ -135,8 +131,8 @@
                                 <td>
                                     <a :href="work_shift.client.get_absolute_url">
             
-                                        <img :src="work_shift.client.account.profile.image" class="rounded-circle" width="48">
-                                        <span v-text="work_shift.client.account.profile.name"></span>
+                                        <img :src="work_shift.client.account.logo" class="rounded-circle" width="48">
+                                        <span v-text="work_shift.client.account.title"></span>
                                     </a>
             
                                 </td>

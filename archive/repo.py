@@ -89,7 +89,7 @@ class FileRepo:
         if self.user.has_perm(APP_NAME+".view_file"):
             self.objects = self.objects.all()
         elif self.profile is not None:
-            self.objects = self.objects.filter(pk__gte=0)
+            self.objects = self.objects.filter(Q(is_public=True)|Q(folder__owner_id=self.profile.pk))
         else:
             self.objects = self.objects.filter(pk=0)
 

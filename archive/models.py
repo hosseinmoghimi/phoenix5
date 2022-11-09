@@ -73,7 +73,7 @@ class Folder(models.Model,LinkHelper):
  
 class File(Page):
     folder=models.ForeignKey("folder",related_name="files", verbose_name=_("folder"), on_delete=models.CASCADE)
-
+    is_public=models.BooleanField(_("is_public?"),default=False)
 
 
     @property
