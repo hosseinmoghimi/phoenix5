@@ -127,8 +127,10 @@ class Log(models.Model,LinkHelper):
     succeed=models.BooleanField(_("succeed"),default=True)
     app_name=APP_NAME
     class_name="log"
+    def persian_date_added_tag(self):
+        from utility.calendar import to_persian_datetime_tag
+        return to_persian_datetime_tag(self.date_added)
     def persian_date_added(self):
-        
         p=PersianCalendar().from_gregorian(self.date_added)
         e=self.date_added
         return f"""

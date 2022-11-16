@@ -1,9 +1,9 @@
 import json
 from django.shortcuts import render
 from bms.apps import APP_NAME
-from bms.repo import CommandRepo, FeederRepo
+from bms.repo import CommandRepo, FeederRepo,LogRepo
 from core.views import CoreContext
-from bms.serializers import CommandSerializer, FeederFullSerializer, FeederSerializer, RelaySerializer
+from bms.serializers import CommandSerializer, FeederFullSerializer, FeederSerializer, RelaySerializer,LogSerializer
 from django.views import View
 
 TEMPLATE_ROOT="bms/"
@@ -19,6 +19,7 @@ class HomeView(View):
         context['commands']=commands
         context['commands_s']=json.dumps(CommandSerializer(commands,many=True).data)
         return render(request,TEMPLATE_ROOT+"index.html",context)
+
 class FeedersView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -27,6 +28,24 @@ class FeedersView(View):
         feeders_s=json.dumps(FeederSerializer(feeders,many=True).data)
         context['feeders_s']=feeders_s
         return render(request,TEMPLATE_ROOT+"feeders.html",context)
+
+class LogView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        feeders=FeederRepo(request=request).list()
+        context['feeders']=feeders
+        feeders_s=json.dumps(FeederSerializer(feeders,many=True).data)
+        context['feeders_s']=feeders_s
+        return render(request,TEMPLATE_ROOT+"log.html",context)
+
+class LogsView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        logs=LogRepo(request=request).list()
+        context['logs']=logs
+        logs_s=json.dumps(LogSerializer(logs,many=True).data)
+        context['logs_s']=logs_s
+        return render(request,TEMPLATE_ROOT+"logs.html",context)
 
 
         

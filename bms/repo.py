@@ -60,6 +60,39 @@ class FeederRepo():
             page_location.save()
         return location
      
+class LogRepo():
+     
+    def __init__(self, *args, **kwargs):
+        self.request = None
+        self.user = None
+        if 'request' in kwargs:
+            self.request = kwargs['request']
+            self.user = self.request.user
+        if 'user' in kwargs:
+            self.user = kwargs['user']
+        self.profile=ProfileRepo(*args, **kwargs).me
+        self.objects = Log.objects
+        
+    def list(self,*args, **kwargs):
+        objects= self.objects
+        if 'location_id' in kwargs:
+            objects=objects.filter(location_id=kwargs['location_id'])
+        if 'search_for' in kwargs:
+            objects=objects.filter(title__contains=kwargs['search_for'])
+        return objects.all()
+
+    def log(self, *args, **kwargs):
+        if 'log_id' in kwargs:
+            return self.objects.filter(pk=kwargs['log_id']).first()
+        if 'pk' in kwargs:
+            return self.objects.filter(pk=kwargs['pk']).first()
+        if 'id' in kwargs:
+            return self.objects.filter(pk=kwargs['id']).first()
+        if 'title' in kwargs:
+            return self.objects.filter(pk=kwargs['title']).first()
+            
+
+      
 class CommandRepo():
      
     def __init__(self, *args, **kwargs):
@@ -124,12 +157,13 @@ class CommandRepo():
                     relays=command.relay.feeder.relay_set.all()
                     for register in registers:
                         register_no=int(register['register'])
-                        relay=relays.get(register=register_no)
-                        if register_no==command.relay.register:
-                            pass
-                        state=int(register['state'])==1
-                        relay.current_state=state
-                        relay.save()
+                        if register is not None:
+                            relay=relays.get(register=register_no)
+                            if register_no==command.relay.register:
+                                pass
+                            state=int(register['state'])==1
+                            relay.current_state=state
+                            relay.save()
                     Log(title=command.name,feeder=command.relay.feeder,relay=command.relay,profile=self.profile,command=command,succeed=True).save()
                     return SUCCEED,registers,message
             Log(title=command.name,feeder=command.relay.feeder,relay=command.relay,profile=self.profile,command=command,succeed=False).save()
