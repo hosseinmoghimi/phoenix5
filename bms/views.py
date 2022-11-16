@@ -41,7 +41,7 @@ class LogView(View):
 class LogsView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
-        logs=LogRepo(request=request).list()
+        logs=LogRepo(request=request).list().order_by('-date_added')[:20]
         context['logs']=logs
         logs_s=json.dumps(LogSerializer(logs,many=True).data)
         context['logs_s']=logs_s
