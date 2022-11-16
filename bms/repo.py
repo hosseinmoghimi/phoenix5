@@ -72,7 +72,7 @@ class LogRepo():
             self.user = kwargs['user']
         self.profile=ProfileRepo(*args, **kwargs).me
         self.objects = Log.objects
-        
+
     def list(self,*args, **kwargs):
         objects= self.objects
         if 'location_id' in kwargs:
@@ -129,6 +129,7 @@ class CommandRepo():
             
  
     def execute_command(self,*args, **kwargs):
+        leolog(kwargs=kwargs)
         result=FAILED
         message=""
         registers=[]

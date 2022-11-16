@@ -22,20 +22,23 @@
                 console.log(url)
                 console.log(payload)
                 let posting = $.post(url, payload)
-            console.log("##### posting")
-                posting.fail((data)=>{
+                console.log("##### posting")
+                posting.fail((data) => {
                     console.log("##### fail")
                     console.log(data)
                 })
                 posting.done(data => {
                     console.log(data)
                     if (data.result === 'SUCCEED') {
-                        feeder_app.feeder.relays.forEach(relay => {
-                            data.registers.forEach(register => {
-                                if (relay.register == register.register)
-                                    relay.state = register.state
+                        if (typeof feeder_app!="undefined") {
+
+                            feeder_app.feeder.relays.forEach(relay => {
+                                data.registers.forEach(register => {
+                                    if (relay.register == register.register)
+                                        relay.state = register.state
+                                });
                             });
-                        });
+                        }
                     }
                 })
             },
