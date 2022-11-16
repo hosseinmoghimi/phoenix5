@@ -141,8 +141,9 @@ class CommandRepo():
            
             if self.profile in command.profiles.all():
                 ip=command.relay.feeder.ip
-                relay_pin= kwargs['relay_pin'] if (command.relay.is_protected and 'relay_pin' in kwargs) else command.relay.pin
+                relay_pin= kwargs['pin'] if (command.relay.is_protected and 'pin' in kwargs) else command.relay.pin
                 if relay_pin==command.relay.pin:
+                    leolog(relay_pin=relay_pin)
                     port=command.relay.feeder.port
                     register=command.relay.register
                     command_value=command.value
