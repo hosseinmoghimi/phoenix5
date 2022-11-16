@@ -20,9 +20,10 @@
                     command_id: command_id,
                 }
                 let posting = $.post(url, payload)
+            console.log("##### posting")
                 posting.fail((data)=>{
-                    leolog("##### fail")
-                    leolog(data)
+                    console.log("##### fail")
+                    console.log(data)
                 })
                 posting.done(data => {
                     console.log(data)
