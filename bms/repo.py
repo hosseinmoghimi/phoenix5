@@ -148,6 +148,7 @@ class CommandRepo():
                     register=command.relay.register
                     command_value=command.value
                     payload={'register':register,'command':command_value,'key':relay_pin,'pin':relay_pin}
+                    leolog(payload=payload)
                     from .client import handleExecuteCommand_url
                     url=f'http://{ip}:{port}/'+handleExecuteCommand_url
                     try:
