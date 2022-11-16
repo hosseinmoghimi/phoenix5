@@ -16,10 +16,8 @@
                     page_id: page_id,
                     tag_title: this.new_tag,
                 }
-                console.log(payload)
                 let posting = $.post(url_add_page_tag, payload)
                 posting.done((data) => {
-                    console.log(data)
 
                     if (data.result === 'SUCCEED') {
 

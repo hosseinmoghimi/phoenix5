@@ -21,6 +21,7 @@ from accounting.enums import *
 
 
 class Asset(Page,LinkHelper):
+
     price=models.IntegerField(_("price"),default=0)
     class Meta:
         verbose_name = _("Asset")
@@ -134,6 +135,7 @@ class Transaction(Page,LinkHelper):
             if fd_bedehkar is None:
                 fd_bedehkar=FinancialDocument(transaction=self,account_id=self.pay_to.id,direction=FinancialDocumentDirectionEnum.BEDEHKAR)
             fd_bedehkar.account_id=self.pay_to.id
+            fd_bedehkar.status=self.status
             fd_bedehkar.bestankar=0
             fd_bedehkar.bedehkar=self.amount
             fd_bedehkar.save()
@@ -143,6 +145,7 @@ class Transaction(Page,LinkHelper):
             if fd_bestankar is None:
                 fd_bestankar=FinancialDocument(transaction=self,account_id=self.pay_from.id,direction=FinancialDocumentDirectionEnum.BESTANKAR)
             fd_bestankar.account_id=self.pay_from.id
+            fd_bestankar.status=self.status
             fd_bestankar.bestankar=self.amount
             fd_bestankar.bedehkar=0
             fd_bestankar.save()
@@ -175,7 +178,7 @@ class Transaction(Page,LinkHelper):
         if old_transaction.status==TransactionStatusEnum.IN_PROGRESS:
             return True
         return False
- 
+
 
 class DoubleTransaction(Page): 
     # employer_transaction_id=models.IntegerField(_("employer_transaction_id"),default=0)
@@ -298,7 +301,7 @@ class ProductOrServiceUnitName(models.Model,LinkHelper):
 
     def __str__(self):
         return f"{self.product_or_service.title} {self.unit_name}"
- 
+
 
 class Product(ProductOrService):
     # specifications=models.ManyToManyField("ProductSpecification", verbose_name=_("ویژگی ها"))
@@ -358,7 +361,7 @@ class ProductSpecification(models.Model,LinkHelper):
     def __str__(self):
         return f"{self.product.title}:{self.name}:{self.value}"
 
-  
+
 class Account(models.Model,LinkHelper):
     logo_origin=models.ImageField(_("لوگو , تصویر"), null=True,blank=True,upload_to=IMAGE_FOLDER+"account/", height_field=None, width_field=None, max_length=None)
     title=models.CharField(_("عنوان"), null=True,blank=True,max_length=500)
@@ -524,7 +527,7 @@ class BankAccount(Account):
                 profile_name=self.profile.name 
             self.title=f"""حساب {self.bank} {profile_name}"""
         super(BankAccount,self).save(*args, **kwargs)
-  
+
 
 class FinancialYear(models.Model):
     title=models.CharField(_("عنوان"), max_length=50)
@@ -841,7 +844,7 @@ class Invoice(Transaction):
             if not invoice_line.row-i==0:
                 invoice_line.row=i
                 invoice_line.save()
-        
+
 
 class InvoiceLine(models.Model,LinkHelper):
     date_added=models.DateTimeField(_("date_added"), auto_now=False, auto_now_add=True)
@@ -894,7 +897,7 @@ class InvoiceLine(models.Model,LinkHelper):
     @property
     def service(self):
         return Service.objects.filter(pk=self.pk).first()
-  
+
 
 class Category(models.Model,LinkHelper, ImageMixin):
     thumbnail_origin = models.ImageField(_("تصویر کوچک"), upload_to=IMAGE_FOLDER+'Category/Thumbnail/',null=True, blank=True, height_field=None, width_field=None, max_length=None)
@@ -1007,7 +1010,7 @@ class Spend(Transaction,LinkHelper):
 
     def save(self,*args, **kwargs):
         super(Spend,self).save(*args, **kwargs)
-   
+
 
 class Payment(Transaction):
     class Meta:
@@ -1022,7 +1025,7 @@ class Payment(Transaction):
         if self.transaction_datetime is None:
             self.transaction_datetime=PersianCalendar().date
         super(Payment,self).save(*args, **kwargs)
-        
+
 
 class Salary(Spend,LinkHelper):    
     class_name="wage"
@@ -1047,7 +1050,7 @@ class Salary(Spend,LinkHelper):
             fb.wage=self.amount
             fb.save()
 
-            
+
 class Cost(Spend,LinkHelper):
     cost_type=models.CharField(_("cost"),choices=CostTypeEnum.choices, max_length=50)
     class_name="cost"

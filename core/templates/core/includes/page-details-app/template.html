@@ -1,0 +1,80 @@
+<div class="row" id="page-details-app">
+
+    <div class="col-md-4">
+        <!-- {1% include "core/includes/page-links-app/template.html" %1} -->
+        <button @click="show_forms=true" class="btn btn-warning">
+            افزودن جزئیات
+        </button>
+    </div>
+
+    <div>
+        <div class="row">
+            <div class="col-md-4">
+            </div>
+            <div class="col-md-4">
+            </div>
+            <div class="col-md-4">
+                <div class="card" id="">
+                    <div class="card-header" id="heading-page-tags">
+                        <h5 class="text-center">
+                            <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-page-tags"
+                                aria-expanded="true" aria-controls="collapse-page-tags">
+                                تگ ها
+
+                                <span v-if="page_tags.length>0">
+                                    <small class="text-danger mx-2">
+                                        <span v-text="page_tags.length"></span>
+                                    </small>
+                                </span>
+                            </button>
+                        </h5>
+                    </div>
+
+                    <div class="card-body farsi">
+                        <div class="text-right">
+                            <span class="h5 mb-3 mx-2" v-for="page_tag in page_tags">
+                                <span>
+
+                                    <a class="mr-2" target="_blank" :href="page_tag.get_tag_url">
+                                        <span v-text="page_tag.tag_title">
+                                        </span>
+                                    </a> ،
+                                </span>
+
+                                <!-- {% if perms.core.change_tag %}
+                                <a :href="page_tag.get_edit_url" target="_blank" title="ویرایش" class="ml-2 docs-creator">
+                                    <i class="fa fa-edit text-info"></i>
+                                </a>
+                                {% endif %}
+                                
+                                {% if perms.core.delete_tag %}
+                                <a :href="page_tag.get_delete_url" target="_blank" title="حذف" class="ml-2 docs-creator">
+                                    <i class="fa fa-trash text-danger"></i>
+                                </a>
+                                {% endif %} -->
+
+                            </span>
+                        </div>
+                    </div>
+                    {% if add_page_tag_form %}
+                    <div class="card-footer">
+                        <form @submit.prevent="add_page_tag()">
+                            <div class="row">
+                                <div class="col-12">
+                                    <input required type="text" v-model="new_tag" class=" mb-2 farsi form-control"
+                                        placeholder="عنوان تگ جدید">
+                                </div>
+                                <div class="col-12">
+                                    <button class="farsi btn btn-primary btn-block mb-2 " type="submit"> <i
+                                            class="fa fa-plus mx-1"></i>
+                                        افزودن</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

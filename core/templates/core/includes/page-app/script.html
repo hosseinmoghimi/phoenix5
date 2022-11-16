@@ -1,10 +1,19 @@
 <script>
+
+// for all sub scripts
+    let links = JSON.parse(`{{links_s|escapejs}}`)
+    let downloads = JSON.parse(`{{page_downloads_s|escapejs}}`)
+    let page_tags = JSON.parse(`{{page_tags_s|escapejs}}`)
+
+
+
+
     let page_id = parseInt("{{page.id}}")
     let page_comment_component_template = `{% include "core/includes/page-comments-app/component.html" %}`
 
     let archive = "{{page.archive}}" === "True"
 
-  
+
 </script>
 
 {% include "core/includes/page-links-app/script.html" %}
@@ -20,4 +29,5 @@
 {% include "core/includes/page-thumbnail-header-app/script.html" %}
 {% include "core/includes/encryption-app/script.html" %}
 {% include "core/includes/page-description-app/script.html" %}
+{% include "core/includes/page-details-app/script.html" %}
 {% endif %}

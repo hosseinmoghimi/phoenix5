@@ -2,6 +2,9 @@ import requests
 from bms.models import Feeder, Log,Relay,Command
 from authentication.repo import ProfileRepo
 from bms.apps import APP_NAME
+from utility.log import leolog
+from core.constants import SUCCEED,FAILED
+
 
 class FeederRepo():
      
@@ -93,10 +96,14 @@ class CommandRepo():
             
  
     def execute_command(self,*args, **kwargs):
+        result=FAILED
+        message=""
+        registers=[]
+
         command=self.command(*args, **kwargs)
-        if command is not None:                 
+        if command is not None:
             if not self.profile in command.profiles.all():
-                return FAILED,None
+                return FAILED,None,message
            
             if self.profile in command.profiles.all():
                 ip=command.relay.feeder.ip
@@ -108,12 +115,11 @@ class CommandRepo():
                     payload={'register':register,'command':command_value,'key':relay_pin,'pin':relay_pin}
                     from .client import handleExecuteCommand_url
                     url=f'http://{ip}:{port}/'+handleExecuteCommand_url
-                    from core.constants import FAILED,SUCCEED
                     try:
                         response=requests.post(url,payload)
                     except:
                         Log(title=command.name,feeder=command.relay.feeder,relay=command.relay,profile=self.profile,command=command,succeed=False).save()
-                        return FAILED,None
+                        return FAILED,None,message
                     registers=response.json()['registers']
                     relays=command.relay.feeder.relay_set.all()
                     for register in registers:
@@ -125,6 +131,6 @@ class CommandRepo():
                         relay.current_state=state
                         relay.save()
                     Log(title=command.name,feeder=command.relay.feeder,relay=command.relay,profile=self.profile,command=command,succeed=True).save()
-                    return SUCCEED,registers
+                    return SUCCEED,registers,message
             Log(title=command.name,feeder=command.relay.feeder,relay=command.relay,profile=self.profile,command=command,succeed=False).save()
-        return FAILED,None
+        return FAILED,None,message
