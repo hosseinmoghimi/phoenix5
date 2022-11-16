@@ -19,6 +19,8 @@
                     csrfmiddlewaretoken: csrfmiddlewaretoken,
                     command_id: command_id,
                 }
+                console.log(url)
+                console.log(payload)
                 let posting = $.post(url, payload)
             console.log("##### posting")
                 posting.fail((data)=>{
