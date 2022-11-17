@@ -1,17 +1,235 @@
+{% load static %}
 <div class="row" id="page-details-app">
+    <div class="col-md-12" v-if="!show_forms">
+        <div class="card">
+            <div class="card-header">
+                <h4>
+                    جزئیات صفحه
+                </h4>
+            </div>
+            <div class="card-body">
+                <h4 v-if="links.length>0">لینک ها </h4>
+                <div v-for="link in links" class="text-right farsi">
+                    <a :href="link.url" target="_blank">
+                        <span v-text="link.title"></span>
+                    </a>
+                </div>
+                <h4 v-if="downloads.length>0">دانلود ها </h4>
 
-    <div class="col-md-4">
-        <!-- {1% include "core/includes/page-links-app/template.html" %1} -->
-        <button @click="show_forms=true" class="btn btn-warning">
-            افزودن جزئیات
-        </button>
+                <div v-for="download in downloads" class="text-right farsi">
+                    <a :href="download.get_download_url" target="_blank">
+                        <span v-text="download.title"></span>
+                    </a>
+                </div>
+                <h4 v-if="page_tags.length>0">تگ ها </h4>
+
+                <div v-for="page_tag in page_tags" class="text-right farsi">
+                    <a :href="page_tag.get_tag_url">
+                        <span v-text="page_tag.tag_title"></span>
+                    </a>
+                </div>
+
+                <button @click="show_forms=true" v-if="!show_forms" class="btn btn-warning">
+                    افزودن جزئیات
+                </button>
+            </div>
+        </div>
     </div>
 
+
     <div>
-        <div class="row">
-            <div class="col-md-4">
+        <div class="row" v-if="show_forms">
+            <div class="col-md-12">
+                <button @click="show_forms=false" v-if="show_forms" class="btn btn-secondary">
+                    پایان افزودن جزئیات
+                </button>
             </div>
             <div class="col-md-4">
+
+                <div class="card" id="page-links-app">
+                    <div class="card-header" id="heading-page-links">
+                        <h5 class="text-center">
+                            <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-page-links"
+                                aria-expanded="true" aria-controls="collapse-page-links">
+                                لینک ها
+
+                                <span v-if="links.length>0">
+                                    <small class="text-danger mx-2">
+                                        <span v-text="links.length"></span>
+                                    </small>
+                                </span>
+                            </button>
+                        </h5>
+                    </div>
+
+                    <div class="card-body">
+
+
+                        <div v-for="link in links" class="mb-3">
+
+                            <h6>
+
+                                <a class="mr-2" target="_blank" :href="link.url">
+                                    <span class="ml-2" v-html="link.get_icon_tag"></span>
+                                    <span v-text="link.title">
+                                    </span>
+                                </a>
+                                <span class="mx-3">
+
+                                    {% if perms.core.change_link %}
+                                    <a :href="link.get_edit_url" target="_blank" title="ویرایش"
+                                        class="ml-2 docs-creator">
+                                        <i class="fa fa-edit text-info"></i>
+                                    </a>
+                                    {% endif %}
+
+                                    {% if perms.core.delete_link %}
+                                    <a :href="link.get_delete_url" target="_blank" title="حذف"
+                                        class="ml-2 docs-creator">
+                                        <i class="fa fa-trash text-danger"></i>
+                                    </a>
+                                    {% endif %}
+                                </span>
+
+                            </h6>
+                        </div>
+                    </div>
+                    {% if add_page_link_form %}
+                    <div class="card-footer">
+
+                        <p class="text-right" v-if="!show_add_link">
+
+                            <a style="cursor: pointer;" class="farsi a" @click="show_add_link=true">
+                                <i class="material-icons">
+                                    add
+                                </i>
+                                افزودن لینک
+                            </a>
+                        </p>
+
+
+                        <form v-if="show_add_link" @submit.prevent="add_page_link()">
+                            <div class="row">
+                                <div class="col-12">
+                                    <input required type="text" v-model="new_link_title"
+                                        class=" mb-2 farsi form-control" placeholder="عنوان لینک جدید" maxlength="300">
+                                    <input required type="text" v-model="new_link_url" class=" mb-2 farsi form-control"
+                                        placeholder="آدرس لینک جدید">
+
+                                </div>
+                                <div class="col-12">
+                                    <button class="farsi btn btn-primary btn-block mb-2 " type="submit"> <i
+                                            class="fa fa-plus mx-1"></i>
+                                        افزودن</button>
+                                    <button @click="show_add_link=!show_add_link"
+                                        class="farsi btn btn-secondary btn-block mb-2 " type="reset">انصراف</button>
+
+                                </div>
+                            </div>
+
+                        </form>
+
+                    </div>
+                    {% endif %}
+                </div>
+
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+
+                    <div class="card-header" id="heading-page-downloads">
+                        <h5 class="text-center">
+                            <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-page-downloads"
+                                aria-expanded="true" aria-controls="collapse-page-downloads">
+                                دانلود ها
+
+                                <span v-if="downloads.length>0">
+                                    <small class="text-danger mx-2">
+                                        <span v-text="downloads.length"></span>
+                                    </small>
+                                </span>
+
+                            </button>
+                        </h5>
+                    </div>
+
+
+                    <div class="card-body">
+
+                        <div v-for="download in downloads" class="mb-3">
+
+                            <h6>
+                                <a class="mr-2" target="" :href="download.get_download_url">
+                                    <span v-html="download.get_icon_tag" class=" ml-2 text-success"></span>
+                                    <span v-text="download.title"></span>
+                                </a>
+                                <span class="mx-3">
+
+                                    {% if perms.core.change_download %}
+                                    <a :href="download.get_edit_url" target="_blank" title="ویرایش"
+                                        class="ml-2 docs-creator">
+                                        <i class="fa fa-edit text-info"></i>
+                                    </a>
+                                    {% endif %}
+                                    {% if perms.core.delete_download %}
+                                    <a :href="download.get_delete_url" target="_blank" title="حذف"
+                                        class="ml-2 docs-creator">
+                                        <i class="fa fa-trash text-danger"></i>
+                                    </a>
+                                    {% endif %}
+                                </span>
+                            </h6>
+                        </div>
+                    </div>
+                    {% if add_page_download_form %}
+                    <div class="card-footer">
+
+                        <p class="text-right" v-if="!show_add_download_form">
+
+                            <a style="cursor: pointer;" class="farsi a" @click="show_add_download_form=true">
+                                <i class="material-icons">
+                                    add
+                                </i>
+                                افزودن دانلود جدید
+                            </a>
+                        </p>
+
+
+                        <form id="add-download-form" v-if="show_add_download_form" @submit.prevent="add_page_download()"
+                            enctype="multipart/form-data">
+                            <div class="row">
+                                <div class="col-12">
+                                    <input required type="text" v-model="new_download_title" class="farsi form-control"
+                                        placeholder="عنوان دانلود جدید">
+
+
+                                    <span class="btn btn-raised btn-round btn-default btn-file">
+                                        <span class="fileinput-new farsi">انتخاب فایل</span>
+
+                                        <input type="file" v-on:change="download_file=true" name="">
+                                        <div class="ripple-container"></div>
+                                    </span>
+
+
+                                </div>
+                                <div class="col-12">
+                                    <img src="{% static 'leo/img/loading.gif' %}" width="32" v-if="waiting" alt="">
+
+                                    <button class="farsi btn btn-primary btn-block" v-if="!waiting" type="submit">
+                                        <i class="fa fa-plus mx-1"></i>
+                                        افزودن</button>
+                                    <button @click="show_add_download_form=false" v-if="!waiting"
+                                        class="farsi btn btn-secondary btn-block" type="reset">انصراف</button>
+
+                                </div>
+                            </div>
+
+                        </form>
+
+                    </div>
+                    {% endif %}
+                </div>
+
             </div>
             <div class="col-md-4">
                 <div class="card" id="">

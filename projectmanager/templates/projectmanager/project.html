@@ -35,19 +35,20 @@
 
 
             </div>
+          
             <div class="col-md-4">
                 {% include "core/includes/page-downloads-app/template.html" %}
 
 
             </div>
-            
-            
+
+
             <div class="col-md-4">
                 {% include "core/includes/page-links-app/template.html" %}
 
 
             </div>
-            
+
             <div class="col-md-4">
                 {% include "core/includes/page-tags-app/template.html" %}
 
@@ -77,16 +78,16 @@
             </div>
 
             {% endif %}
-            
+
             {% if sub_projects_service_requests_s %}
 
             <div class="col-md-12">
                 {% include "projectmanager/includes/sub-projects-service-requests-app/template.html" %}
             </div>
-  
-              
+
+
             {% endif %}
-       
+
 
             <div class="col-md-12">
                 {% include "projectmanager/includes/project-edit-app/template.html" %}
@@ -143,7 +144,7 @@
     let item_prices = JSON.parse(`{{item_prices_s|escapejs}}`)
 
 </script>
-{% include "core/includes/page-app/script.html" %} 
+{% include "core/includes/page-app/script.html" %}
 
 {% include "organization/includes/organization-units-app/script.html" %}
 {% include "projectmanager/includes/material-requests-app/script.html" %}
@@ -154,10 +155,10 @@
 {% include "accounting/includes/invoices-app/script.html" %}
 {% if sub_projects_material_requests_s %}
 {% include "projectmanager/includes/sub-projects-material-requests-app/script.html" %}
-  
+
 {% endif %}
 {% if sub_projects_service_requests_s %}
-  
+
 {% include "projectmanager/includes/sub-projects-service-requests-app/script.html" %}
 {% endif %}
 
