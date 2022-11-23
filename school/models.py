@@ -163,7 +163,7 @@ class Question(models.Model,LinkHelper):
 class Option(models.Model,LinkHelper):
     question=models.ForeignKey("question", verbose_name=_("question"), on_delete=models.CASCADE)
     priority=models.IntegerField(_("number"))
-    option=HTMLField(_("question"), max_length=5000)
+    option=HTMLField(_("option"), max_length=5000)
     correct=models.BooleanField(_("correct"),default=False)
 
     app_name=APP_NAME
