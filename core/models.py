@@ -178,7 +178,7 @@ class Page(models.Model, LinkHelper, ImageMixin):
     def get_breadcrumb(self):
         return f"""
         
-                <nav aria-label="breadcrumb">
+                <nav aria-label="breadcrumb rtl">
                 <ol class="breadcrumb">
                     {self.get_breadcrumb_link()}
                 </ol>
