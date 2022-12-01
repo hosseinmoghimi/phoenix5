@@ -392,6 +392,7 @@ class ProjectChartView(View):
                 'parent': page.parent_id,
                 'get_absolute_url': page.get_absolute_url(),
                 'id': page.id,
+                'pre_title': f"""<div class="text-center"><img src="{page.thumbnail}" class="rounded1" width="32" alt=""></div>""",
                 'sub_title': names,
 
             })
@@ -403,14 +404,11 @@ class ProjectChartView(View):
                 'parent': page.parent_id,
                 'get_absolute_url': page.get_absolute_url(),
                 'id': page.id,
+                'pre_title': f"""<div class="text-center"><img src="{page.thumbnail}" class="rounded1" width="32" alt=""></div>""",
                 'sub_title': names,
 
             })
         context['pages_s'] = json.dumps(pages_s)
-     
-
-
-
         return render(request, TEMPLATE_ROOT+"project-chart.html", context)
 
 
