@@ -7,9 +7,9 @@
 </div>
 
 <form v-show="show_add_form" @submit.prevent="add_related_page()">
-    <div class="row">
+    <div class="row rtl">
         <div class="col-md-3">
-            <div class="form-group">
+            <div class="form-group farsi">
                 <label for="exampleInputEmail1">شناسه صفحه مرتبط</label>
                 <input min="0" required type="number" v-model="related_page_id" class="farsi form-control"
                     id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="شناسه صفحه">
@@ -22,7 +22,7 @@
 
 
 
-            <div class="form-check" class="my-5 mx-3">
+            <div class="form-check farsi text-right" class="my-5 mx-3">
                 افزودن
                 <label class="form-check-label">
                     <input @input="change_button_text()" v-model="add" class="form-check-input" type="checkbox">
@@ -37,7 +37,7 @@
 
         </div>
         <div class="col-md-3">
-            <div class="form-check" class="my-5 mx-3">
+            <div class="form-check farsi text-right" class="my-5 mx-3">
                 ارتباط دو طرفه
                 <label class="form-check-label">
                     <input v-model="bidirectional" class="form-check-input" type="checkbox">

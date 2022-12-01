@@ -2,10 +2,10 @@
 {% load to_price %}
 <div class="related-products" id="related-products-div">
 
-    <h3 class="title text-center">محصولات مرتبط</h3>
+    <h3 class="title text-center farsi">محصولات مرتبط</h3>
 
     <div id="related-pages-app">
-        <div class="row">
+        <div class="row rtl">
             <div class="col-md-8 ml-auto mr-auto mb-3">
                 {% if add_related_page_form %}
 
@@ -13,7 +13,7 @@
                 {% endif %}
             </div>
         </div>
-        <div class="row">
+        <div class="row rtl">
 
 
             <div class="col-lg-3 col-md-6 mr-auto ml-auto" v-for="related_page in related_pages">
