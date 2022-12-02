@@ -162,7 +162,17 @@
 
                     {% include "web/includes/page-images-app/template.html" %}
                 </div>
+<div class="col-md-12 text-right my-3 farsi">
+    <a href="{% url 'core:page_show' pk=page.pk %}" target="_blank" title="نمایش" class="mx-2 text-success"><i
+        class="fa fa-print"></i> نمایش</a>
+ 
 
+
+ 
+
+<a href="{{page.get_print_url}}" target="_blank" title="چاپ" class="mx-2 text-success"><i
+        class="fa fa-print"></i> چاپ</a>
+</div>
                 <div class="col-md-4">
 
                     {% include "web/includes/page-links-app/template.html" %}
