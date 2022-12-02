@@ -4,7 +4,7 @@
         <div class="container">
             <div class="row rtl farsi">
                 <div class="col-md-10 ml-auto mr-auto">
-                    <h2 class="title text-center">
+                    <h2 class="title text-center farsi">
                         {{pricing_title_param.value}}
                         {% if perms.core.change_parameter %}
                         {{pricing_title_param.get_edit_btn|safe}}
@@ -30,19 +30,19 @@
                                     </a>
                                 </div>
                                 <div class="card-body">
-                                    <h6 class="card-category text-info">
+                                    <h6 class="card-category text-info farsi">
                                         {% if pricing_page.sub_title %}
 
                                         {{pricing_page.sub_title}}
                                         {% endif %}
                                     </h6>
-                                    <h4 class="card-title">
+                                    <h4 class="card-title farsi">
                                         <a href="{{pricing_page.get_absolute_url}}">
                                             {{pricing_page.title}}
                                         </a>
                                     </h4>
                                    
-                                    <p>
+                                    <p class="farsi">
                                         <a href="{{pricing_page.get_absolute_url}}">
                                             ادامه مطلب
                                             <i class="material-icons">reply</i>

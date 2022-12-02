@@ -5,7 +5,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-5">
-                    <h2 class="title">
+                    <h2 class="title farsi  text-right">
 
                         {{contact_us_title.value}}
                         {% if perms.core.change_parameter %}
@@ -14,7 +14,7 @@
 
 
                     </h2>
-                    <h5 class="description">
+                    <h5 class="description farsi  text-right">
                         {{contact_us_description.value}}
                         {% if perms.core.change_parameter %}
                         {{contact_us_description.get_edit_btn|safe}}
@@ -26,12 +26,12 @@
                     <div class="info info-horizontal">
 
                         <div class="description">
-                            <h4 class="">
+                            <h4 class="farsi text-right ">
 
                                 <i class="material-icons ml-3">pin_drop</i>
                                 آدرس دفتر
                             </h4>
-                            <p class="mr-5 text-light">
+                            <p class="mr-5 text-light farsi">
                                 {{office_address.value}}
                                 {% if perms.core.change_parameter %}
                                 {{office_address.get_edit_btn|safe}}
@@ -42,13 +42,13 @@
                     <div class="info info-horizontal">
 
                         <div class="description">
-                            <h4 class="">
+                            <h4 class="farsi  text-right">
 
                                 <i class="material-icons ml-3">phone</i>
 
                                 تلفن دفتر
                             </h4>
-                            <p class="mr-5">
+                            <p class="mr-5 farsi">
                                 <a href="tel:{{office_tel.value}}" class="text-light">
 
                                     {{office_tel.value}}
@@ -63,13 +63,13 @@
                     <div class="info info-horizontal ">
 
                         <div class="description">
-                            <h4 class="text-right">
+                            <h4 class="text-right farsi">
 
                                 <i class="material-icons ml-3">phone</i>
 
                                 همراه
                             </h4>
-                            <p class="mr-5">
+                            <p class="mr-5 farsi">
                                 <a href="tel:{{office_mobile.value}}" class="text-light">
                                     <span class="ltr">
 
@@ -87,12 +87,12 @@
                     <div class="info info-horizontal">
 
                         <div class="description">
-                            <h4 class="text-right">
+                            <h4 class="text-right farsi">
 
                                 <i class="material-icons ml-3">phone</i>
                                 ایمیل
                             </h4>
-                            <p class="mr-5">
+                            <p class="mr-5 farsi">
                                 <a href="mailto:{{office_email.value}}" class="text-light">
                                     {{office_email.value}}
                                     {% if perms.core.change_parameter %}
@@ -106,7 +106,7 @@
 
                 </div>
                 <div class="col-md-5 ml-auto ltr">
-                    <div class="card card-contact">
+                    <div class="card card-contact farsi">
 
                         {% include "web/includes/contact-us-app/template.html" %}
                     </div>

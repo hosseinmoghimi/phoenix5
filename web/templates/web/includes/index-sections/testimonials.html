@@ -2,7 +2,7 @@
     <!--     *********    TESTIMONIALS 2     *********      -->
     <div class="testimonials-2 section-dark">
         <div class="container  farsi">
-                <h2 class="title text-center">
+                <h2 class="title text-center farsi">
                {{testimonial_title_param.value}}
                
                {% if perms.core.change_parameter %}
@@ -35,16 +35,16 @@
                                     <div class="card-body">
                                         <a href="{{testimonial.profile.get_absolute_url}}" class="mb-5">
 
-                                            <h4 class="card-title text-center">{{testimonial.profile.name}}</h4>
+                                            <h4 class="card-title text-center farsi">{{testimonial.profile.name}}</h4>
                                         </a>
                                         <div class="mb-5"></div>
                                         {% if testimonial.title %}
                                           
-                                        <h4 class="card-title text-center">{{testimonial.title}}</h4>
+                                        <h4 class="card-title text-center farsi">{{testimonial.title}}</h4>
                                         {% endif %}
                                         <div class="card-description text-center farsi">"{{testimonial.body|safe}}"
                                         </div>
-                                        <h6 class="card-category text-muted text-center">{{testimonial.footer}}</h6>
+                                        <h6 class="card-category text-muted text-center farsi">{{testimonial.footer}}</h6>
                                         <div class="footer">
                                             <i class="material-icons text-warning">star</i>
                                             <i class="material-icons text-warning">star</i>
