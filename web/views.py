@@ -11,7 +11,7 @@ from .apps import APP_NAME
 # from .serializers import ProductSerializer
 import json
 from .repo import BlogRepo,FeatureRepo, OurTeamRepo,OurWorkRepo,CarouselRepo, PricingItemRepo, PricingPageRepo, TestimonialRepo
-
+from utility.log import leolog
 TEMPLATE_ROOT = "web/"
 LAYOUT_PARENT = "material-kit-pro/layout.html"
 
@@ -56,23 +56,17 @@ class HomeView(View):
         context=getContext(request=request)
         context.update(get_contact_us_context(request=request))
 
-
         carousels=CarouselRepo(request=request).list()
         context['carousels']=carousels
 
-
         features=FeatureRepo(request=request).list(for_home=True)
         context['features']=features
-        
-
 
         blogs=BlogRepo(request=request).list(for_home=True,*args, **kwargs)
         context['blogs']=blogs
 
         our_works=OurWorkRepo(request=request).list(for_home=True)
         context['our_works']=our_works
-        
-
 
         our_works=OurWorkRepo(request=request).list(for_home=True,*args, **kwargs)
         context['our_works']=our_works
@@ -85,8 +79,6 @@ class HomeView(View):
 
         pricing_pages=PricingPageRepo(request=request).list()
         context['pricing_pages']=pricing_pages
-
-
 
         parameter_repo=ParameterRepo(request=request,app_name=APP_NAME)
         
