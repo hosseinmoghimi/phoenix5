@@ -3,7 +3,7 @@
     <div class="card-body">
     <div class="table-responsive">
 
-        <table class="table table-striped farsi">
+        <table class="table table-striped farsi rtl">
             <thead>
                 <th class="bordered farsi text-right">
                     ردیف
@@ -74,7 +74,7 @@
                         <a :href="invoice_line.invoice.get_absolute_url">
                             <span v-text="invoice_line.invoice.title"></span>
                         </a>
-                        <div class="row">
+                        <div class="row rtl">
                             <div class="col-6">
                                 
                                 <a :href="invoice_line.invoice.pay_from.get_absolute_url">
