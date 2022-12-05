@@ -2,18 +2,18 @@
 {% if page.pagelink_set.all or page.pagedownload_set.all or page.pagetag_set.all %}
     
     
-<div class="card">
+<div class="card rtl">
     <div class="card-body">
         {% if page.pagelink_set.all %}
           
-        <h4>
+        <h4 class="text-right">
             لینک ها
         </h4>
         
         {% endif %}
         {% for page_link in page.pagelink_set.all %}
         <a href="{{page_link.url}}" target="_blank">
-            <h5 class="mr-5">
+            <h5 class="mr-5 text-right">
 
                 {{page_link.get_icon_tag|safe}}
                 {{page_link.title}}
@@ -24,14 +24,14 @@
 
         {% if page.pagedownload_set.all %}
        
-        <h4>
+        <h4 class="text-right">
             دانلود ها
         </h4>
         {% endif %}
 
         {% for page_download in page.pagedownload_set.all %}
         <a href="{{page_download.get_download_url}}" target="_blank">
-            <h5 class="mr-5">
+            <h5 class="mr-5 text-right">
 
                 {{page_download.get_icon_tag|safe}}
                 {{page_download.title}}
@@ -40,16 +40,16 @@
         {% endfor %}
         {% if page.pagetag_set.all %}
        
-        <h4>
+        <h4 class="text-right">
             تگ ها
         </h4>
         {% endif %}
 
-        <p>
+        <p class="text-right farsi">
             {% for page_tag in page.pagetag_set.all %}
 
             <a href="{{page_tag.get_absolute_url}}">
-                <span class="h5 mr-5">
+                <span class="h5 mr-5 text-right">
 
                     {{page_tag.tag}}
                 </span>
