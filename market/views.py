@@ -372,11 +372,14 @@ class SearchView(View):
         return render(request,TEMPLATE_ROOT+"index.html",context)
     def post(self,request,*args, **kwargs):
         context=getContext(request=request)
-        products=ProductRepo(request=request).list()
-        context['products']=products
-        products_s=json.dumps(ProductSerializer(products,many=True).data)
-        context['products_s']=products_s
-        return render(request,TEMPLATE_ROOT+"index.html",context)
+        search_form=SearchForm(request.POST)
+        if search_form.is_valid():
+            search_for=search_form.cleaned_data['search_for']
+            products=ProductRepo(request=request).list(search_for=search_for)
+            context['products']=products
+            products_s=json.dumps(ProductSerializer(products,many=True).data)
+            context['products_s']=products_s
+            return render(request,TEMPLATE_ROOT+"search.html",context)
 
 
 class ProductView(View):

@@ -2,7 +2,7 @@
   
 <div class="card">
     <div class="card-body">
-        <h5>
+        <h5 class="text-right">
 
             {% if product_specifications%}
 
@@ -34,7 +34,7 @@
                 aria-labelledby="headingSpecification" data-parent="#accordion">
                 <div class="card card-collapse">
                     <div class="card-header" role="tab" id="headingSpecification">
-                        <h5 class="mb-0">
+                        <h5 class="mb-0 text-right">
                             <a data-toggle="collapse" href="#collapseSpecification" aria-expanded="true"
                                 aria-controls="collapseSpecification">
                                 ویژگی ها <i class="material-icons">keyboard_arrow_down</i>
@@ -42,7 +42,7 @@
                         </h5>
                     </div>
 
-                    <div class="card-body">
+                    <div class="card-body farsi">
 
                         {% include "market/includes/product-specifications-app/template.html" %}
 
@@ -55,7 +55,7 @@
                 aria-labelledby="headingShortDescription" data-parent="#accordion">
                 <div class="card card-collapse">
                     <div class="card-header" role="tab" id="headingShortDescription">
-                        <h5 class="mb-0">
+                        <h5 class="mb-0 text-right">
                             <a data-toggle="collapse" href="#collapseShortDescription"
                                 aria-expanded="true" aria-controls="collapseShortDescription">
                                 توضیحات کوتاه
@@ -64,7 +64,7 @@
                         </h5>
                     </div>
 
-                    <div class="card-body">
+                    <div class="card-body farsi">
 
 
                         {{product.short_description|safe}}
@@ -81,7 +81,7 @@
                 aria-labelledby="headingDescription" data-parent="#accordion">
                 <div class="card card-collapse">
                     <div class="card-header" role="tab" id="headingDescription">
-                        <h5 class="mb-0">
+                        <h5 class="mb-0 text-right">
                             <a data-toggle="collapse" href="#collapseDescription" aria-expanded="true"
                                 aria-controls="collapseShortDescription">
                                 توضیحات کامل
@@ -90,7 +90,7 @@
                         </h5>
                     </div>
 
-                    <div class="card-body">
+                    <div class="card-body farsi">
 
 
                         {{product.description|safe}}
