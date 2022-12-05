@@ -601,11 +601,25 @@ class VehicleView(View):
    
 class AddTripPathView(View):
     def get(self,request,*args, **kwargs):
-        context=getContext(request=request)
-        drivers=DriverRepo(request=request).list(*args, **kwargs)
-        context['drivers']=drivers
-        drivers_s=json.dumps(DriverSerializer(drivers,many=True).data)
-        context['drivers_s']=drivers_s
+        context=getContext(request=request) 
+
+        
+        if request.user.has_perm(APP_NAME+".add_trippath"):
+            context['add_trip_path_form']=AddTripPathForm()
+
+            locations=LocationRepo(request=request).list()
+            context['locations']=locations
+            locations_s=json.dumps(LocationSerializer(locations,many=True).data)
+            context['locations_s']=locations_s
+
+            
+            areas=AreaRepo(request=request).list()
+            context['areas']=areas
+            areas_s=json.dumps(AreaSerializer(areas,many=True).data)
+            context['areas_s']=areas_s
+
+       
+
         return render(request,TEMPLATE_ROOT+"add-trip-path.html",context)
         
 

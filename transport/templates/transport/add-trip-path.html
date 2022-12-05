@@ -1,0 +1,27 @@
+
+{% extends "transport/layout.html" %}
+
+
+{% block content %}
+
+
+  <div class="row">
+    {% if add_trip_path_form %}
+      
+    <div class="col-md-12">
+      {% include "transport/includes/add-trippath-app/template.html" %}
+    </div>
+    {% endif %}
+
+
+      
+  </div>
+{% endblock content %}
+
+
+{% block script %} 
+{% if add_trip_path_form %}
+      
+  {% include "transport/includes/add-trippath-app/script.html" %}
+{% endif %}
+{% endblock script %}

@@ -1,7 +1,7 @@
 {% extends "archive/wide-layout.html" %}
 {% block content %}
 {% include "core/includes/page-app/navbar.html" %}
-<div class="row">
+<div class="row rtl">
     <div class="col-md-12">
         <div>
             {{file.folder.get_breadcrumb|safe}}
@@ -13,7 +13,7 @@
 
     </div>
     <div class="col-md-9">
-        <div class="row">
+        <div class="row rtl">
             <div class="col-md-12">
                 {% include "core/includes/page-description-app/short-description.html" %}
                 {% include "core/includes/page-description-app/description.html" %}

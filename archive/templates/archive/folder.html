@@ -2,7 +2,7 @@
 {% load to_json %}
 {% load static %}
 {% block content %}
-<div class="row">
+<div class="row rtl">
     <div class="col-md-12" id="breadcrumb-app">
         <div v-html="breadcrumb">
         </div>
@@ -54,7 +54,7 @@
                         <img src="{% static 'icons/home.svg' %}" width="64" alt="">
                     </button>
                 </div>
-                <div class="row my-4">
+                <div class="row rtl my-4">
                     <div class="col-4" v-for="folder in folders">
                         <div class="mb-3">
                             <button @click="open_folder(folder.id)" class="btn btn-block btn-link">
