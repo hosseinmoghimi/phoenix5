@@ -1,3 +1,4 @@
+from accounting.repo import AccountRepo
 from django.shortcuts import render,reverse
 from accounting.views import add_from_accounts_context
 from authentication.repo import ProfileRepo
@@ -160,7 +161,7 @@ class EducationalYearsViews(View):
 
 
 class SchoolViews(View):
-    def school(self,request,*args, **kwargs):
+    def get(self,request,*args, **kwargs):
         context=getContext(request=request)
         school=SchoolRepo(request=request).school(*args, **kwargs)
         context['school']=school
@@ -181,14 +182,17 @@ class SchoolViews(View):
             context['years']=EducationalYearRepo(request=request).list()
 
         return render(request,TEMPLATE_ROOT+"school.html",context)
+class SchoolsViews(View):
 
-    def schools(self,request,*args, **kwargs):
+    def get(self,request,*args, **kwargs):
         context=getContext(request=request)
         schools=SchoolRepo(request=request).list(*args, **kwargs)
         context['schools_s']=json.dumps(SchoolSerializer(schools,many=True).data)
 
         if request.user.has_perm(APP_NAME+".add_school"):
             context['add_school_form']=AddSchoolForm()
+            accounts=AccountRepo(request=request).list()
+            context['accounts']=accounts
         return render(request,TEMPLATE_ROOT+"schools.html",context)
 
         

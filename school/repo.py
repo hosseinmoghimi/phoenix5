@@ -11,7 +11,7 @@ from .apps import APP_NAME
 from django.db.models import Q
 from django.utils import timezone
 from utility.calendar import PersianCalendar
-
+from accounting.models import Transaction
 
 class AttendanceRepo():
     
@@ -107,13 +107,25 @@ class SchoolRepo():
         return self.objects.filter(pk=pk).first()
 
     def add(self,*args, **kwargs):
+        school=None
+        result=FAILED
+        message=""
         if not self.request.user.has_perm(APP_NAME+".add_school"):
-            return
+            message="عدم دسترسی"
+            return school,result,message
         school=School()
+        if len(School.objects.filter(title=kwargs['title']))>0:
+            message="نام آموزشگاه تکراری می باشد"
+            return school,result,message
         if 'title' in kwargs:
             school.title=kwargs['title']
+        if 'account_id' in kwargs:
+            school.account_id=kwargs['account_id']
         school.save()
-        return school
+        if school is not None:
+            result=SUCCEED
+            message="آموزشگاه جدید با موفقیت اضافه شد."
+        return school,result,message
 
 class MajorRepo():
     
@@ -410,6 +422,11 @@ class ActiveCourseRepo():
             return
         if not student in active_course.students.all():
             active_course.students.add(student)
+            if active_course.cost>0:
+                transaction=Transaction()
+                transaction.pay_to=student.account
+                transaction.pay_from=active_course.class_room.school.account
+                transaction.save()
             return student
 
 

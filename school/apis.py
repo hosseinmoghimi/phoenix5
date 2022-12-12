@@ -29,6 +29,8 @@ class AddEducationalYearApi(APIView):
 class SchoolApi(APIView):
     def add_school(self,request,*args, **kwargs):
         context={'result':FAILED}
+        message=""
+        result=FAILED
         log=1
         if request.method=='POST':
             log=2
@@ -36,11 +38,11 @@ class SchoolApi(APIView):
             if my_form.is_valid():
                 log=3
                 cd=my_form.cleaned_data
-                title=cd['title']
-                school=SchoolRepo(request=request).add(title=title)
-                if school is not None:
+                school,result,message=SchoolRepo(request=request).add(**cd)
+                if result==SUCCEED:
                     context['school']=SchoolSerializer(school).data
-                    context['result']=SUCCEED
+        context['result']=result
+        context['message']=message
         context['log']=log
         return JsonResponse(context)
 

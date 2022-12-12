@@ -27,7 +27,7 @@ class SchoolPage(Page,LinkHelper):
 class School(models.Model):
     class_name="school"
     title=models.CharField(_("نام مدرسه"), max_length=100)
-    
+    account=models.ForeignKey("accounting.account", verbose_name=_("account"), on_delete=models.CASCADE)
 
     class Meta:
         verbose_name = _("School")
@@ -208,7 +208,7 @@ class ActiveCourse(models.Model):
     # teacher=models.ForeignKey("teacher", verbose_name=_("teacher"), on_delete=models.CASCADE)
     students=models.ManyToManyField("student", verbose_name=_("students"),blank=True)
     # book=models.ForeignKey("book", verbose_name=_("book"), on_delete=models.CASCADE)
-
+    cost=models.IntegerField(_("cost"),default=0)
     teachers=models.ManyToManyField("teacher", verbose_name=_("teachers"),blank=True)
     start_date=models.DateTimeField(_("start_date"), auto_now=False, auto_now_add=False)
     end_date=models.DateTimeField(_("end_date"), auto_now=False, auto_now_add=False)

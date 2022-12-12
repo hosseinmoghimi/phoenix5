@@ -16,7 +16,7 @@ class AddEducationalYearForm(forms.Form):
 
 class AddSchoolForm(forms.Form):
     title=forms.CharField( max_length=50, required=True)
-
+    account_id=forms.IntegerField(required=True)
 
 class AddClassRoomForm(forms.Form):
     title=forms.CharField( max_length=50, required=True)

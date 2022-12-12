@@ -10,34 +10,88 @@
     </div>
     <div class="card-body">
         <div class="mb-3">
+            <table class="table rtl farsi">
+                <thead>
 
-            <div class="mb-3" v-for="school in schools">
-                <h4>
-                    <small class="text-muted">
-                        آموزشگاه
-                    </small>
-                    <a :href="school.get_absolute_url">
-                        <span v-text="school.title"></span>
-                    </a>
-                    {% if perms.school.change_school %}
-                    <a target="_blank" title="ویرایش" :href="school.get_edit_url">
-                        <i class="material-icons">
-                            edit
-                        </i>
-                    </a>
-                    {% endif %}
-                </h4>
-            </div>
+                    <th>
+                        نام آموزشگاه
+                    </th>
+                    <th>
+                        حساب
+                    </th>
+                    <th>
+
+                    </th>
+                </thead>
+                <tbody>
+                    <tr v-for="school in schools">
+                        <td>
+                            <a :href="school.get_absolute_url">
+                                <span v-text="school.title">
+
+                                </span>
+                            </a>
+                        </td>
+                        <td>
+                            <a :href="school.account.get_absolute_url">
+                                <span v-text="school.account.title">
+
+                                </span>
+                            </a>
+                        </td>
+                        <td>
+                            {% if perm.school.change_school %}
+
+                            {% endif %}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+
         </div>
 
     </div>
     {% if add_school_form %}
     <div class="card-footer">
         <form @submit.prevent="add_school()">
+            <div class="row rtl">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="">نام آموزشگاه جدید</label>
+                        <input required type="text" v-model="title" class="form-control"
+                            placeholder="نام آموزشگاه جدید">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="">حساب</label>
+                        <select name="" v-model="account_id" class="form-control">
+                            {% for account in accounts %}
 
-            <input required type="text" v-model="title" class="form-control" placeholder="نام آموزشگاه جدید">
+                            <option value="{{account.id}}">{{account.title}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <button class="btn btn-success" type="submit">تایید</button>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="my-3 text-right" v-if="message.show">
+                        <span :class="'alert alert-'+message.color">
+                            <span class="farsi" v-html="message.body"></span>
+                        </span>
+                    </div>
+                </div>        
+               </div>
+
+
+
         </form>
     </div>
-      
+
     {% endif %}
 </div>

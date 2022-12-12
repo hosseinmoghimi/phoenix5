@@ -15,8 +15,8 @@ urlpatterns = [
     path("search/",login_required(views.BasicViews().search),name="search"),
 
 
-    path("schools/",login_required(views.SchoolViews().schools),name="schools"),
-    path("school/<int:school_id>/",login_required(views.SchoolViews().school),name="school"),
+    path("schools/",login_required(views.SchoolsViews.as_view()),name="schools"),
+    path("school/<int:school_id>/",login_required(views.SchoolViews.as_view()),name="school"),
     path("api/add_school/",login_required(apis.SchoolApi().add_school),name="add_school"),
 
     path("students/",login_required(views.StudentsViews.as_view()),name="students"),

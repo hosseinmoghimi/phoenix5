@@ -27,9 +27,10 @@ class TeacherSerializer(serializers.ModelSerializer):
         fields=['id','account','get_absolute_url','get_edit_url']
 
 class SchoolSerializer(serializers.ModelSerializer):
+    account=AccountSerializer()
     class Meta:
         model = School
-        fields=['id','title','get_absolute_url','get_edit_url']
+        fields=['id','title','account','get_absolute_url','get_edit_url']
 
 class ClassRoomSerializer(serializers.ModelSerializer):
     school=SchoolSerializer()
