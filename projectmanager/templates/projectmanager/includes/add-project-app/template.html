@@ -30,7 +30,7 @@
                 {% load static %}
                 <form @submit.prevent="add_project()">
                     <img src="{% static 'leo/img/loading.gif' %}" width="32" v-if="waiting" alt="">
-                    <div class="row">
+                    <div class="row rtl">
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="">عنوان</label>
