@@ -17,6 +17,7 @@ from market.enums import CustomerLevelEnum, ParameterMarketEnum
 from market.forms import *
 from market.repo import (BrandRepo, CartLineRepo, CategoryRepo, CustomerRepo, MarketInvoiceRepo, ProductRepo, ShopRepo,
                          SupplierRepo)
+from map.repo import AreaRepo
 from market.serializers import (BrandSerializer, CartLineSerializer,
                                 CategorySerializer, CustomerSerializer, ProductSerializer,ProductSpecificationSerializer, ShopSerializer,
                                 SupplierSerializer)
@@ -302,7 +303,11 @@ class CustomersView(View):
         context['body_class'] = "ecommerce-page"
         if request.user.has_perm(APP_NAME+".add_brand"):
             context['add_brand_form'] = AddBrandForm()
-
+        if request.user.has_perm(APP_NAME+".add_customer"):
+            from accounting.views import add_from_accounts_context
+            context['add_customer_form']=AddCustomerForm()
+            context.update(add_from_accounts_context(request=request))
+            context['regions']=AreaRepo(request=request).list()
         return render(request, TEMPLATE_ROOT+"customers.html", context)
 
 

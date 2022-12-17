@@ -93,6 +93,16 @@
     </div>
     {% endif %}
 
+
+    {% if add_customer_form %}
+    <div class="section">
+        <div class="container farsi rtl">
+            {% include 'market/includes/add-customer-app/template.html' %}
+        </div>
+    </div>
+    {% endif %}
+
+
     <!-- section -->
     <div class="section">
         <div class="container">
@@ -100,46 +110,7 @@
 
             <div class="row">
                 <div class="col-md-12">
-                    <table class="table farsi">
-                        <thead>
-                            <th>
-
-                            </th>
-                            <th>
-
-                            </th>
-                            <th>
-
-                            </th>
-                        </thead>
-                        <tbody>
-
-                            {% for customer in customers %}
-
-                            <tr>
-                                <td>
-                                    <div class="media">
-                                        <a href="{{customer.get_absolute_url}}">
-                                            <img src="{{customer.account.logo}}" class="rounded" width="48" alt="">
-                                        </a>
-                                        <div class="mr-2 media-body">
-                                            <a href="{{customer.get_absolute_url}}">
-                                                {{customer.account.title}}
-                                            </a>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>
-
-                                </td>
-                                <td>
-
-                                </td>
-                            </tr>
-                            {% endfor %}
-
-                        </tbody>
-                    </table>
+{% include 'market/includes/customers-app/template.html' %}
                 </div>
 
             </div>
@@ -157,6 +128,12 @@
 
 
 {% block script %}
+{% include 'market/includes/customers-app/script.html' %}
+
+
+{% if add_customer_form %}
+{% include 'market/includes/add-customer-app/script.html' %}
+{% endif %}
 
 
 {% endblock %}

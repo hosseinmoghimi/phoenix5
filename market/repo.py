@@ -190,7 +190,8 @@ class SupplierRepo():
         supplier=Supplier()
         supplier.title=title
         supplier.save()
-        return supplier
+        return supplier 
+
 
 
 class CustomerRepo():  
@@ -224,6 +225,34 @@ class CustomerRepo():
             pk=kwargs['id']
             return self.objects.filter(pk=pk).first()
      
+    def add_customer(self,*args, **kwargs):
+        print("kwargs")
+        print(kwargs)
+        print(100*"88")
+        result=FAILED
+        message=""
+        customer=None
+        if not self.request.user.has_perm(APP_NAME+".add_customer"):
+            return
+        account_id=kwargs['account_id']
+        region_id=kwargs['region_id']
+        customer=Customer.objects.filter(account_id=account_id).first()
+        if customer is not None:
+            result=FAILED
+            message="قبلا  مشتری با این اکانت ایجاد شده است."
+            return result,message,customer
+        customer=self.customer(*args, **kwargs)
+        if customer is None:
+            customer=Customer()
+            customer.account_id=account_id
+            customer.region_id=region_id
+            customer.save()
+        if customer is not None:
+            result=SUCCEED
+            message="مشتری جدید با موفقیت افزوده شد."
+        return result,message,customer
+
+    
     def list(self, *args, **kwargs):
         objects = self.objects
         if 'search_for' in kwargs:
@@ -235,22 +264,6 @@ class CustomerRepo():
             objects=objects.filter(parent_id=kwargs['parent_id'])
         return objects.all()
 
-    def add_customer(self,*args, **kwargs):
-        if not self.user.has_perm(APP_NAME+".add_customer"):
-            return None
-        title=None
-        customer=Customer()
-        if 'title' in kwargs:
-            customer.title = kwargs['title'] 
-        if 'account_id' in kwargs:
-            customer.account_id = kwargs['account_id'] 
-        if 'profile_id' in kwargs:
-            # profile = ProfileRepo(request=self.request).profile(pk=kwargs['profile_id'])
-            account = AccountRepo(request=self.request).account(pk=kwargs['profile_id'])
-            customer.account = account
-
-        customer.save()
-        return customer
 
 
 class MarketInvoiceRepo():  

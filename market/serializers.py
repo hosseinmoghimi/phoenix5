@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from market.models import Brand, CartLine, Category, Customer,Product, Shop, Supplier
 from accounting.serializers import AccountSerializer, ProductOrServiceSerializer, ProductSerializer as ProductSerializer_origin,ProductSpecificationSerializer
-
+from map.serializers import AreaSerializer
  
 class SupplierSerializer(serializers.ModelSerializer):
     class Meta:
@@ -37,9 +37,10 @@ class ProductSerializer(serializers.ModelSerializer):
         
 class CustomerSerializer(serializers.ModelSerializer):
     account=AccountSerializer()
+    region=AreaSerializer()
     class Meta:
         model=Customer
-        fields=['id','account','get_absolute_url']
+        fields=['id','region','account','get_absolute_url']
         
 
 

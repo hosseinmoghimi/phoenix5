@@ -7,6 +7,10 @@ class AddBrandForm(forms.Form):
     title=forms.CharField(max_length=100, required=True)
 
 
+class AddCustomerForm(forms.Form):
+    account_id=forms.IntegerField(required=True)
+    region_id=forms.IntegerField(required=True)
+    
 class CheckoutForm(forms.Form):
     customer_id=forms.IntegerField(required=True)
     cart_lines=forms.CharField(max_length=2000, required=False)

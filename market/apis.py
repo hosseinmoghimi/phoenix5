@@ -4,10 +4,11 @@ from django.http import JsonResponse
 from rest_framework.views import APIView
 from accounting.repo import ProductRepo
 from accounting.serializers import InvoiceSerializer
+
 from core.constants import FAILED,SUCCEED
 from market.forms import *
-from market.serializers import CartLineSerializer, CategorySerializer, CategorySerializerForApi, ProductSerializer,ProductSerializerForApi, ShopSerializer
-from market.repo import CartLineRepo, CartRepo, CategoryRepo, ShopRepo
+from market.serializers import CustomerSerializer,CartLineSerializer, CategorySerializer, CategorySerializerForApi, ProductSerializer,ProductSerializerForApi, ShopSerializer
+from market.repo import CartLineRepo, CartRepo, CategoryRepo, ShopRepo,CustomerRepo
 from utility.log import leolog
 class AddCategoryApi(APIView):
     def post(self,request,*args, **kwargs):
@@ -35,6 +36,20 @@ class AddToCartApi(APIView):
                 context['message']=message
         return JsonResponse(context)
 
+
+
+class AddCustomerApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        context['result']=FAILED
+        AddCustomerForm_=AddCustomerForm(request.POST)
+        if AddCustomerForm_.is_valid():
+            (result,message,customer)=CustomerRepo(request=request).add_customer(**AddCustomerForm_.cleaned_data)
+            if result==SUCCEED:
+                context['customer']=CustomerSerializer(customer).data
+            context['result']=result
+            context['message']=message
+        return JsonResponse(context)
 
 
 
