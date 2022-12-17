@@ -44,6 +44,8 @@ urlpatterns = [
     path('wallet/', include('wallet.urls')),
     path('warehouse/', include('warehouse.urls')),
     path('school/', include('school.urls')),
+    path('loyaltyclub/', include('loyaltyclub.urls')),
+    
     # path('favicon.ico', FaviconView.as_view(),name="favicon"),
     # re_path(r'^', include(web3auth_urls)),
 # web3auth_urls

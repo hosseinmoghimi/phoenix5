@@ -1,0 +1,34 @@
+{% extends "loyaltyclub/layout.html" %}
+
+
+{% block content %}
+    <div class="row rtl">
+        <div class="col-md-3"></div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h4>
+                        {{card_title.value}}
+                       
+                        <span class="my-3">
+                            
+                            {{card_title.get_edit_btn|safe}}
+                        </span>
+                        {% if perms.core.change_parameter %}
+                        {% endif %}
+                    </h4>
+                </div>
+                <div class="card-body farsi">
+<p>
+    <a href="{% url 'market:customers' %}">
+
+        لیست مشتریان
+    </a>
+</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3"></div>
+    </div>
+{% endblock content %}
+    
