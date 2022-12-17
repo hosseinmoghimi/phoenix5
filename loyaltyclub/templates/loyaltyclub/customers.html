@@ -1,0 +1,52 @@
+{% extends "loyaltyclub/layout.html" %}
+{% load to_price %}
+{% load to_persian_date %}
+{% load static %}
+
+
+{% block content %}
+<div class="row rtl">
+
+
+
+    {% if add_customer_form %}
+    <div class="col-md-6">
+
+        {% include 'market/includes/add-customer-app/template.html' %}
+    </div>
+    {% endif %}
+
+
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h4>
+
+                    لیست مشتریان
+                </h4>
+            </div>
+            <div class="card-body">
+                {% include 'loyaltyclub/includes/customers-app/template.html' %}
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
+{% block modal %}
+{% endblock %}
+
+
+
+{% block script %}
+{% include 'loyaltyclub/includes/customers-app/script.html' %}
+
+
+{% if add_customer_form %}
+{% include 'market/includes/add-customer-app/script.html' %}
+{% endif %}
+
+
+{% endblock %}

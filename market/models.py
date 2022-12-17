@@ -77,7 +77,8 @@ class Customer(models.Model,LinkHelper):
     account=models.ForeignKey("accounting.account", verbose_name=_("account"), on_delete=models.CASCADE)
     class_name="customer"
     app_name=APP_NAME
-
+    def get_loyaltyclub_absolute_url(self):
+        return reverse('loyaltyclub:customer',kwargs={'pk':self.pk})
     class Meta:
         verbose_name = _("Customer")
         verbose_name_plural = _("Customers")

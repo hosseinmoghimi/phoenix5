@@ -1,0 +1,94 @@
+<div id="customers-app">
+
+    <table class="table farsi">
+        <thead>
+            <th>
+                <div class="text-right">
+
+                    نام مشتری
+                </div>
+            </th>
+            <th>
+                <div class="text-right">
+
+                    محدوده خدمات
+                </div>
+            </th>
+            <th>
+
+            </th>
+        </thead>
+        <tbody>
+
+            {% if not no_javascript %}
+
+            <tr v-for="customer in customers">
+
+                <td>
+                    <div class="media">
+                        <a :href="customer.get_loyaltyclub_absolute_url">
+                            <img :src="customer.account.logo" class="rounded" width="48" alt="">
+                        </a>
+                        <div class="mr-2 media-body">
+                            <a :href="customer.get_loyaltyclub_absolute_url">
+                                <h4 class="text-right">
+                                    <span v-text="customer.account.title"></span>
+
+                                </h4>
+                            </a>
+
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    <h5 class="text-primary text-right">
+                        <a :href="customer.region.get_absolute_url">
+                            <span v-text="customer.region.title"></span>
+                        </a>
+                    </h5>
+                </td>
+                <td>
+
+                </td>
+            </tr>
+
+            {% endif %}
+            {% if no_javascript %}
+
+            {% for customer in customers %}
+
+            <tr>
+                <td>
+                    <div class="media">
+                        <a href="{{customer.get_absolute_url}}">
+                            <img src="{{customer.account.logo}}" class="rounded" width="48" alt="">
+                        </a>
+                        <div class="mr-2 media-body">
+                            <a href="{{customer.get_absolute_url}}">
+                                <h5 class="text-right">
+
+                                    {{customer.account.title}}
+                                </h5>
+                            </a>
+
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    <h6 class="text-primary text-right">
+                        <a href="{{customer.region.get_absolute_url}}">
+
+                            {{customer.region.title}}
+                        </a>
+                    </h6>
+                </td>
+                <td>
+
+                </td>
+            </tr>
+            {% endfor %}
+            {% endif %}
+        </tbody>
+    </table>
+
+</div>

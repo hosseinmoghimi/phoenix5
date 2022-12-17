@@ -1,0 +1,94 @@
+{% load static %}
+<div id="accordion-add-order">
+    <div class="card" id="add-order-app">
+        <div class="card-header" id="heading-add-order">
+            <h5 class="text-center">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-add-order"
+                    aria-expanded="true" aria-controls="collapse-add-order">
+                    افزودن سفارش
+                </button>
+            </h5>
+
+
+        </div>
+        <div id="collapse-add-order" class="collapse" aria-labelledby="heading-add-order"
+            data-parent="#accordion-add-order">
+
+
+            <div class="card-body rtl">
+
+                {% load static %}
+
+                <div class="row rtl">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="">تاریخ</label>
+                            <div class="row">
+                                <div class="col-8">
+                                    <date-picker v-model="date_ordered"></date-picker>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="">
+                                عنوان
+                            </label>
+                            <input placeholder="عنوان سفارش ..." v-model="title" class="form-control" type="text">
+                        </div>
+
+
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="">
+                                مبلغ
+                            </label>
+                            <input placeholder="مبلغ" v-model="sum" class="form-control" type="number">
+                        </div>
+
+                        <!-- <div class="form-group">
+                            <label for="">
+                                انتخاب مشتری
+                            </label>
+                            <select v-model="customer_id" class="form-control" id="">
+                                <option :value="customer.id" v-for="customer in customers" v-text="customer.title"></option>
+                            </select>
+                        </div> -->
+
+
+                    </div>
+                    <div class="col-md-6">
+                        <div class="text-right">
+
+                            <button @click="add_order()" class="btn btn-success">
+                                <i class="fa fa-plus"></i>
+                                افزودن
+                            </button>
+                            <img src="{% static 'leo/img/loading.gif' %}" width="32" v-if="waiting" alt="">
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="col-md-12">
+                        <div class="text-right farsi mx-3 my-3">
+
+
+                            <div v-html="message.body" v-if="message.show" :class="'alert alert-'+message.color"></div>
+                        </div>
+                    </div>
+
+
+
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+
+
+</div>

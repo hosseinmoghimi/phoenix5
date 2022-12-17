@@ -1,0 +1,127 @@
+{% load to_persian_date %}
+{% load to_price %}
+
+{% load to_persian_date %}
+{% load to_price %}
+<div id="accordion-orders">
+
+
+    <div class="card" id="orders-app">
+        <div class="card-header" id="heading-orders">
+            <h5 class="text-center">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-orders" aria-expanded="true"
+                    aria-controls="collapse-orders">
+                    سفارش ها
+
+                    {% if orders %}
+                    <small class="text-danger mx-2">
+                        {{orders|length}}
+                    </small>
+                    {% endif %}
+
+
+                </button>
+            </h5>
+
+            {% if page_pre_description %}
+
+            <h5 class="text-center">
+                {{page_pre_description}}
+            </h5>
+            {% endif %}
+            {% if page_description %}
+
+            <h4 class="text-center">
+                {{page_description}}
+            </h4>
+            {% endif %}
+        </div>
+        <div id="collapse-orders" class="collapse {% if expand_orders %} show {% endif %}"
+            aria-labelledby="heading-orders" data-parent="#accordion-orders">
+
+
+            <div class="card-body">
+                <div class="table-responsive">
+
+                    <table class="table table-striped rtl">
+                        <thead>
+                            <th>
+                                سفارش
+                            </th>
+                            <th>
+                                مبلغ
+                            </th>
+
+                            <th>
+                                خریدار
+                            </th>
+                            <th>
+                                تاریخ
+                            </th>
+                            <th>
+
+                            </th>
+                        </thead>
+                        <tbody>
+                            {% for order in orders %}
+
+                            <tr>
+                                <td>
+                                    <a href="{{order.get_absolute_url}}">
+
+                                        {{order.title}}
+                                    </a>
+
+
+
+                                </td>
+                                <td>
+                                    {{order.sum|to_price}}
+                                    <div>
+                                        <span class="badge badge-{{order.status_color}}">{{order.status}}</span>
+                                    </div>
+                                </td>
+
+
+                                <td>
+                                    <a href="{{order.customer.get_loyaltyclub_absolute_url}}">
+                                        <img src="{{order.customer.logo}}" class="rounded" width="32" alt="">
+                                        {{order.customer.account.title}}
+                                    </a>
+
+                                </td>
+
+
+                                <td>
+                                    {{order.persian_date_ordered_tag|safe}}
+
+                                </td>
+
+                                <td>
+                                    <span class="my-3">
+
+                                        {{order.get_edit_btn|safe}}
+                                    </span>
+                                    <span class="my-3">
+                                        <a href="{{order.invoice.get_absolute_url}}">
+
+                                            {{order.invoice.title}}
+                                        </a>
+                                    </span>
+
+
+                                </td>
+                            </tr>
+                            {% endfor %}
+
+
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+</div>
