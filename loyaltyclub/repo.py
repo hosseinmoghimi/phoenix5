@@ -4,6 +4,7 @@ from authentication.repo import ProfileRepo
 from .apps import APP_NAME
 from core.constants import FAILED,SUCCEED
 from django.db.models import Q
+
 class OrderRepo():  
     def __init__(self, *args, **kwargs):
         self.request = None
@@ -43,10 +44,17 @@ class OrderRepo():
         if not self.request.user.has_perm(APP_NAME+".add_order"):
             return
         customer_id=kwargs['customer_id']
+        supplier_id=kwargs['supplier_id']
         title=kwargs['title']
+        discount=0
+        ship_fee=0
         date_ordered=timezone.now()
         if 'date_ordered' in kwargs:
             date_ordered=kwargs['date_ordered']
+        if 'ship_fee' in kwargs:
+            ship_fee=kwargs['ship_fee']
+        if 'discount' in kwargs:
+            discount=kwargs['discount']
         
         invoice_id_=kwargs['invoice_id']
         invoice_id=0
@@ -56,11 +64,14 @@ class OrderRepo():
         # order=Order.objects.filter(customer_id=customer_id).first()
        
         order=Order()
+        order.supplier_id=supplier_id
         order.customer_id=customer_id
         if invoice_id>0:
             order.invoice_id=invoice_id
         order.sum=sum
         order.title=title
+        order.ship_fee=ship_fee
+        order.discount=discount
         order.date_ordered=date_ordered
         order.save()
         if order is not None:

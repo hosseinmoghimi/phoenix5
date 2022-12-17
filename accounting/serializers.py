@@ -116,6 +116,12 @@ class CategorySerializer(serializers.ModelSerializer):
         model = Category
         fields = ['id','full_title','title', 'parent_id','get_absolute_url','get_edit_url','get_delete_url']
 
+class InvoiceBriefSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Invoice
+        fields = ['id','title','payment_method','status','get_absolute_url','persian_invoice_datetime','ship_fee','discount','tax_percent']
+
+ 
 
 class InvoiceFullSerializer(serializers.ModelSerializer):
     pay_to=AccountSerializer()

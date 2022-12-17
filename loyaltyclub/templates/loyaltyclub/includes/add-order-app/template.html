@@ -43,22 +43,68 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="">
-                                مبلغ
+                                انتخاب فروشنده
                             </label>
-                            <input placeholder="مبلغ" v-model="sum" class="form-control" type="number">
+                            <select v-model="supplier_id" class="form-control" id="">
+                                <option :value="supplier.id" v-for="supplier in suppliers" v-text="supplier.title">
+                                </option>
+                            </select>
                         </div>
 
-                        <!-- <div class="form-group">
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="form-group">
                             <label for="">
                                 انتخاب مشتری
                             </label>
                             <select v-model="customer_id" class="form-control" id="">
-                                <option :value="customer.id" v-for="customer in customers" v-text="customer.title"></option>
+                                <option :value="customer.id" v-for="customer in customers" v-text="customer.account.title">
+                                </option>
                             </select>
-                        </div> -->
-
+                        </div>
 
                     </div>
+
+                    
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="">
+                                مبلغ
+                                <small class="mx-2 text-muted" v-text="to_price(sum,'{{CURRENCY}}')"></small>
+
+                            </label>
+                            <input placeholder="مبلغ" v-model="sum" class="form-control" type="number">
+                        </div>
+
+                    </div>
+
+                    
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="">
+                                هزینه حمل
+                                <small class="mx-2 text-muted" v-text="to_price(ship_fee,'{{CURRENCY}}')"></small>
+                            </label>
+                            <input placeholder="هزینه حمل" v-model="ship_fee" class="form-control" type="number">
+
+                        </div>
+
+                    </div>
+
+                    
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="">
+                                تخفیف
+                                <small class="mx-2 text-muted" v-text="to_price(discount,'{{CURRENCY}}')"></small>
+
+                            </label>
+                            <input placeholder="تخفیف" v-model="discount" class="form-control" type="number">
+                        </div>
+
+                    </div>
+                   
                     <div class="col-md-6">
                         <div class="text-right">
 

@@ -69,7 +69,8 @@ class Supplier(Page):
         if self.app_name is None or self.app_name=="":
             self.app_name=APP_NAME
         return super(Supplier,self).save(*args, **kwargs)
-
+    def get_loyaltyclub_absolute_url(self):
+        return reverse("loyaltyclub:supplier",kwargs={'pk':self.pk})
 
 class Customer(models.Model,LinkHelper):
     region=models.ForeignKey("map.area", verbose_name=_("region"), on_delete=models.CASCADE)

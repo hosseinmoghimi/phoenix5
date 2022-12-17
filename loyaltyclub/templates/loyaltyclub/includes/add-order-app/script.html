@@ -1,15 +1,23 @@
 {% load to_json %}
 <script>
+    let supplier_id=0
     customer_id=parseInt("{{customer.id}}")
-    // let customers = JSON.parse(`{{customers_s|escapejs}}`)
+    let customers = JSON.parse(`{{customers_s|escapejs}}`)
+    let suppliers = JSON.parse(`{{suppliers_s|escapejs}}`)
+    if(suppliers.length>0)
+        supplier_id=suppliers[0].id
     let add_order_app = new Vue({
         el: "#add-order-app",
         data: {
             date_ordered: current_date,
             customer_id: customer_id,
             invoice_id: 0,
-            // customers: customers,
+            customers: customers,
+            supplier_id: supplier_id,
+            suppliers: suppliers,
             sum: 0,
+            discount: 0,
+            ship_fee: 0,
             title: '',
             waiting: false,
             message: {
@@ -21,6 +29,9 @@
 
         },
         methods: {
+            to_price:function(vall,curr){
+return to_price(vall,curr)
+            },
             filter: function () {
                 this.accounts = accounts.filter(account => account.title.indexOf(this.search_for) > -1 )
                 if (this.accounts.length > 0)
@@ -30,9 +41,12 @@
                 let url = "{% url 'loyaltyclub:add_order' %}"
                 let payload = {
                     csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    supplier_id: parseInt(this.supplier_id),
                     customer_id: parseInt(this.customer_id),
                     invoice_id: parseInt(this.invoice_id),
                     sum: parseInt(this.sum),
+                    ship_fee: parseInt(this.ship_fee),
+                    discount: parseInt(this.discount),
                     title:this.title,
                     date_ordered:this.date_ordered,
                 }

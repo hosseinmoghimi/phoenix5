@@ -14,8 +14,10 @@
                     سفارش ها
 
                     {% if orders %}
-                    <small class="text-danger mx-2">
-                        {{orders|length}}
+                    <small v-if="orders.length>0" class="text-danger mx-2">
+                        <span v-text="orders.length">
+
+                        </span>
                     </small>
                     {% endif %}
 
@@ -23,18 +25,7 @@
                 </button>
             </h5>
 
-            {% if page_pre_description %}
 
-            <h5 class="text-center">
-                {{page_pre_description}}
-            </h5>
-            {% endif %}
-            {% if page_description %}
-
-            <h4 class="text-center">
-                {{page_description}}
-            </h4>
-            {% endif %}
         </div>
         <div id="collapse-orders" class="collapse {% if expand_orders %} show {% endif %}"
             aria-labelledby="heading-orders" data-parent="#accordion-orders">
@@ -53,7 +44,15 @@
                             </th>
 
                             <th>
+                                فروشنده
+                            </th>
+
+
+                            <th>
                                 خریدار
+                            </th>
+                            <th>
+                                فاکتور
                             </th>
                             <th>
                                 تاریخ
@@ -63,6 +62,86 @@
                             </th>
                         </thead>
                         <tbody>
+                            {% if not no_javascript %}
+
+                            <tr v-for="order in orders">
+                                <td>
+                                    <a :href="order.get_absolute_url">
+                                        <span v-text="order.title"></span>
+                                    </a>
+
+
+
+                                </td>
+                                <td>
+                                    <span v-text="to_price(order.sum)"></span>
+
+                                </td>
+
+
+
+                                <td>
+                                    <a :href="order.supplier.get_loyaltyclub_absolute_url">
+                                        <img :src="order.supplier.logo" class="rounded" width="32" alt="">
+                                        <span v-text="order.supplier.account.title"></span>
+
+                                    </a>
+
+                                </td>
+                                <td>
+                                    <a :href="order.customer.get_loyaltyclub_absolute_url">
+                                        <img :src="order.customer.logo" class="rounded" width="32" alt="">
+                                        <span v-text="order.customer.account.title"></span>
+
+                                    </a>
+
+                                </td>
+                                <td>
+                                    <a :href="order.invoice.get_absolute_url" :title="order.invoice.title">
+                                        <!-- <span v-text="order.invoice.title"></span> -->
+                                        فاکتور مرتبط
+                                    </a>
+                                </td>
+
+                                <td>
+                                    {{order.persian_date_ordered_tag|safe}}
+                                    <span v-html="order.persian_date_ordered_tag"></span>
+
+                                </td>
+
+
+                                <td>
+                                    {% if perms.loyaltyclub.change_order %}
+                                    <span class="my-3">
+                                        <a :href="order.get_edit_url">
+                                            <i class="fa fa-edit text-warning"></i>
+                                        </a>
+                                    </span>
+                                    {% endif %}
+
+                                    {% if perms.loyaltyclub.delete_order %}
+                                    <span class="my-3">
+                                        <a :href="order.get_delete_url">
+                                            <i class="fa fa-trash text-danger"></i>
+                                        </a>
+                                    </span>
+                                    {% endif %}
+
+
+                                    <span class="my-3" v-if="order.invoice">
+
+                                    </span>
+
+
+                                </td>
+                            </tr>
+
+
+                            {% endif %}
+
+                            {% if no_javascript %}
+
+
                             {% for order in orders %}
 
                             <tr>
@@ -113,7 +192,7 @@
                                 </td>
                             </tr>
                             {% endfor %}
-
+                            {% endif %}
 
 
                         </tbody>

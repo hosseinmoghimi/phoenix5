@@ -12,7 +12,7 @@
 <div id="edit-invoice-app">
 
 
-    <div class="row">
+    <div class="row rtl">
         <div class="col-md-12">
             <div class="card">
                 <div class="card-body">
@@ -33,10 +33,10 @@
                         {% include "accounting/includes/invoice-app/navbar.html" %}
                     </h4>
 
-                    <div class="row">
+                    <div class="row rtl">
 
                         <div class="col-md-8">
-                            <div class="row">
+                            <div class="row rtl">
                                 <div class="col-3">
                                     <span class="farsi text-left">
 
@@ -65,7 +65,7 @@
 
                             </div>
 
-                            <div class="row">
+                            <div class="row rtl">
                                 <div class="col-3">
                                     <span class="farsi text-left">
 
@@ -97,7 +97,7 @@
                         </div>
 
                         <div class="col-md-4">
-                            <div class="row">
+                            <div class="row rtl">
                                 <div class="col-6 text-left ">
                                     <span class="farsi text-left">
 
@@ -373,18 +373,18 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-body">
-                    <p class=" mx-5">
+                    <p class=" mx-5 farsi text-right">
                         واحد مبلغ ها تومان می باشد.
                     </p>
                     {% if invoice.seller.bank_account %}
-                    <p class=" mx-5">
+                    <p class=" mx-5  farsi text-right">
 
                         {{invoice.seller.bank_account|to_variz_text}}
                     </p>
                     {% endif %}
 
 
-                    <div class="row">
+                    <div class="row rtl">
 
 
                         <div class="col-md-2">
