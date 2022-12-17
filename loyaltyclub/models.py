@@ -14,6 +14,9 @@ class Order(models.Model,LinkHelper):
     def persian_date_ordered_tag(self):
         from utility.calendar import to_persian_datetime_tag
         return to_persian_datetime_tag(self.date_ordered)
+    def persian_date_ordered(self):
+        from utility.calendar import PersianCalendar
+        return PersianCalendar().from_gregorian(self.date_ordered)
     app_name=APP_NAME
     class_name="order"
 
