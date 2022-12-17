@@ -27,10 +27,8 @@
                     account_id: parseInt(this.account_id),
                     region_id: parseInt(this.region_id),
                 }
-                leolog(payload)
                 add_customer_app.waiting = true
                 $.post(url, payload).done((data) => {
-                    leolog(data)
                     add_customer_app.waiting = false
 
                     if (data.result === 'FAILED') {

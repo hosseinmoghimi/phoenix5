@@ -226,9 +226,6 @@ class CustomerRepo():
             return self.objects.filter(pk=pk).first()
      
     def add_customer(self,*args, **kwargs):
-        print("kwargs")
-        print(kwargs)
-        print(100*"88")
         result=FAILED
         message=""
         customer=None
