@@ -12,15 +12,12 @@
                 <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-orders" aria-expanded="true"
                     aria-controls="collapse-orders">
                     سفارش ها
-
-                    {% if orders %}
+ 
                     <small v-if="orders.length>0" class="text-danger mx-2">
                         <span v-text="orders.length">
 
                         </span>
-                    </small>
-                    {% endif %}
-
+                    </small> 
 
                 </button>
             </h5>

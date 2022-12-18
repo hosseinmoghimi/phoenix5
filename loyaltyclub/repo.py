@@ -1,9 +1,29 @@
 from django.utils import timezone
-from .models import Order,Coupon
+from .models import Order,Coupon,Coef
 from authentication.repo import ProfileRepo
 from .apps import APP_NAME
 from core.constants import FAILED,SUCCEED
 from django.db.models import Q
+
+def normalize_coupons(customer_id):
+    coupons=[]
+    orders=Order.objects.filter(customer_id=customer_id)
+    Coupon.objects.filter(order__customer_id=customer_id).delete()
+    orders=Order.objects.filter(customer_id=customer_id).order_by('date_ordered')
+    i=0
+    for order in orders:
+        i+=1
+        coupon=Coupon()
+        coupon.order=order
+        percentage=0
+        coef=Coef.objects.filter(number=i).first()
+        if coef is not None:
+            percentage=coef.percentage
+        coupon.amount=(int)((float)(percentage)*(float)(order.sum)*(0.01))
+        coupon.title=f"کوپن شماره {i} ({percentage} %)"
+        coupon.save()
+    coupons=Coupon.objects.filter(order__customer_id=customer_id)
+    return coupons
 
 class OrderRepo():  
     def __init__(self, *args, **kwargs):
@@ -40,10 +60,11 @@ class OrderRepo():
     def add_order(self,*args, **kwargs):
         result=FAILED
         message=""
-        order=None
-        coupon=None
+        order=None 
+        coupons=[]
+
         if not self.request.user.has_perm(APP_NAME+".add_order"):
-            return result,message,order,coupon
+            return result,message,order,coupons
             
         customer_id=kwargs['customer_id']
         supplier_id=kwargs['supplier_id']
@@ -76,16 +97,77 @@ class OrderRepo():
         order.discount=discount
         order.date_ordered=date_ordered
         order.save()
-        if 'coupon' in kwargs and kwargs['coupon'] is not None and kwargs['coupon']>0:
-            coupon=Coupon()
-            coupon.order=order
-            coupon.amount=kwargs['coupon']
-            coupon.save()
-
+        
+        coupons=normalize_coupons(customer_id=customer_id)
+           
         if order is not None:
             result=SUCCEED
             message="سفارش جدید با موفقیت افزوده شد."
-        return result,message,order,coupon
+        return result,message,order,coupons
+
+    
+    def list(self, *args, **kwargs):
+        objects = self.objects
+        if 'search_for' in kwargs:
+            search_for=kwargs['search_for']
+            objects = objects.filter(Q(title__contains=search_for)|Q(short_description__contains=search_for)|Q(description__contains=search_for))
+        if 'for_home' in kwargs:
+            objects = objects.filter(Q(for_home=kwargs['for_home']))
+        if 'parent_id' in kwargs:
+            objects=objects.filter(parent_id=kwargs['parent_id'])
+        if 'customer_id' in kwargs:
+            objects=objects.filter(customer_id=kwargs['customer_id'])
+        return objects.all()
+
+
+class CoefRepo():  
+    def __init__(self, *args, **kwargs):
+        self.request = None
+        self.user = None
+        self.me = None
+        if 'request' in kwargs:
+            self.request = kwargs['request']
+            self.user = self.request.user
+        if 'user' in kwargs:
+            self.user = kwargs['user']
+        
+        self.objects=Coef.objects.order_by('number')
+        self.profile=ProfileRepo(*args, **kwargs).me
+        # self.account=AccountRepo(request=request).me
+        if self.profile is not None:
+            # self.me=Customer.objects.filter(account__profile_id=self.profile.id).first()
+            pass
+       
+
+    def coef(self, *args, **kwargs):
+        pk=0
+        if 'coef_id' in kwargs:
+            pk= kwargs['coef_id']
+            return self.objects.filter(pk=pk).first()
+       
+        elif 'pk' in kwargs:
+            pk=kwargs['pk']
+            return self.objects.filter(pk=pk).first()
+        elif 'id' in kwargs:
+            pk=kwargs['id']
+            return self.objects.filter(pk=pk).first()
+     
+    def change_coef(self,*args, **kwargs):
+        coef=None
+        if not self.request.user.has_perm(APP_NAME+".change_coef"):
+            return None
+            
+        number=kwargs['number']
+        percentage=kwargs['percentage']
+         
+        # order=Order.objects.filter(customer_id=customer_id).first()
+        coef=Coef.objects.filter(number=number).first()
+        if coef is None:
+            coef=Coef()
+            coef.number=number
+        coef.percentage=percentage 
+        coef.save() 
+        return coef
 
     
     def list(self, *args, **kwargs):

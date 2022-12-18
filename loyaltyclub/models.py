@@ -5,6 +5,7 @@ from core.models import LinkHelper
 # Create your models here.
 
 class Coupon(models.Model,LinkHelper):
+    title=models.CharField(_("title"), max_length=50)
     order=models.ForeignKey("order", verbose_name=_("order"), on_delete=models.CASCADE)
     amount=models.IntegerField(_("amount"))
 
@@ -18,6 +19,22 @@ class Coupon(models.Model,LinkHelper):
 
     def __str__(self):
         return f"{self.order.customer} {self.amount}"
+ 
+
+class Coef(models.Model,LinkHelper):
+    number=models.IntegerField(_("number"))
+    percentage=models.IntegerField(_("percentage"))
+
+    class_name="coef"
+    app_name=APP_NAME
+    
+
+    class Meta:
+        verbose_name = _("Coef")
+        verbose_name_plural = _("Coefs")
+
+    def __str__(self):
+        return f"{self.number} {self.percentage}"
  
 
 class Order(models.Model,LinkHelper):

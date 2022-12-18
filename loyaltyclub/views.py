@@ -10,8 +10,8 @@ from .serializers import CustomerSerializer
 from market.forms import AddCustomerForm
 from .forms import *
 from map.repo import AreaRepo
-from .serializers import OrderSerializer,CouponSerializer
-from .repo import OrderRepo,CouponRepo
+from .serializers import OrderSerializer,CouponSerializer,CoefSerializer
+from .repo import OrderRepo,CouponRepo,CoefRepo
 import json
 LAYOUT_PARENT="phoenix/layout.html"
 
@@ -34,6 +34,7 @@ def getContext(request,*args, **kwargs):
     context['LAYOUT_PARENT']=LAYOUT_PARENT
     # context['APP_NAME']=APP_NAME
     return context
+    
 class IndexView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request)
@@ -68,12 +69,13 @@ class CustomerView(View):
         customer=customer_repo.customer(*args,**kwargs)
          
         context['customer'] = customer
-
         orders=OrderRepo(request=request).list(customer_id=customer.id)
         context['orders'] = orders
         orders_s=json.dumps(OrderSerializer(orders,many=True).data)
         context['orders_s'] = orders_s
          
+        # percentage=CoefRepo(request=request).coef(number=len(orders)+1).percentage
+        # context['percentage'] = percentage
 
         coupon_repo=CouponRepo(request=request)
 
@@ -182,6 +184,26 @@ class CouponsView(View):
             context.update(get_add_order_context(request=request))
 
         return render(request, TEMPLATE_ROOT+"coupons.html", context)
+
+
+
+
+class CoefsView(View):
+    def get(self, request, *args, **kwargs):
+        context = getContext(request)
+        
+ 
+        coefs=CoefRepo(request=request).list()
+        context['coefs'] = coefs
+        coefs_s=json.dumps(CoefSerializer(coefs,many=True).data)
+        context['coefs_s'] = coefs_s
+         
+        context['body_class'] = "product-page"
+        if request.user.has_perm(APP_NAME+".add_order"):
+            # context['add_brand_form'] = AddBrandForm()
+            context.update(get_add_order_context(request=request))
+
+        return render(request, TEMPLATE_ROOT+"coefs.html", context)
 
 
 

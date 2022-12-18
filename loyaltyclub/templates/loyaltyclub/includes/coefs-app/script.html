@@ -1,0 +1,58 @@
+{% load static %}
+
+<script src="{% static 'persian/moment.js' %}"></script>
+<script src="{% static 'persian/moment-jalaali.js' %}"></script>
+<script src="{% static 'persian/vue-persian-datetime-picker-browser.js' %}"></script>
+
+<script>
+    // let rest_ = parseInt("{{rest}}")
+
+
+    let coefs = JSON.parse(`{{coefs_s|escapejs}}`)
+
+
+    let coefs_app = new Vue({
+        el: "#coefs-app",
+        data: {
+            coefs: coefs,
+
+            number: coefs.length + 1,
+            percentage: 0,
+            message: { show: false },
+            waiting: false,
+        },
+        components: {
+            DatePicker: VuePersianDatetimePicker
+
+        },
+        methods: {
+            to_price: function (vall, curr) {
+                return to_price(vall, curr)
+            },
+            change_coef: function (number, percentage) {
+                leolog(number)
+                leolog(percentage)
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    number: number,
+                    percentage: percentage,
+                }
+                let url = "{% url 'loyaltyclub:change_coef' %}"
+                $.post(url, payload).done(data => {
+                    leolog(data)
+                    let sw = false
+                    coefs_app.coefs.forEach(coef => {
+                        if (coef.number == data.coef.number) {
+                            sw = true
+                            coef.percentage = data.coef.percentage
+                        }
+                    });
+                    if (!sw) {
+                        coefs_app.coefs.push(data.coef)
+                    }
+                    coefs_app.number=coefs_app.coefs.length+1
+                })
+            },
+        },
+    })
+</script>

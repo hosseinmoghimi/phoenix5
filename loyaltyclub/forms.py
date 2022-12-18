@@ -10,3 +10,8 @@ class AddOrderForm(forms.Form):
     ship_fee=forms.IntegerField(required=False)
     discount=forms.IntegerField(required=False)
     coupon=forms.IntegerField(required=False)
+
+
+class ChangeCoefForm(forms.Form):
+    number=forms.IntegerField(required=True)
+    percentage=forms.IntegerField(required=True)

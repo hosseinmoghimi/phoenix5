@@ -13,13 +13,11 @@
                     aria-controls="collapse-coupons">
                     کوپن ها
 
-                    {% if coupons %}
                     <small v-if="coupons.length>0" class="text-danger mx-2">
                         <span v-text="coupons.length">
 
                         </span>
                     </small>
-                    {% endif %}
 
 
                 </button>
@@ -72,8 +70,7 @@
                             <tr v-for="coupon in coupons">
                                 <td>
                                     <a :href="coupon.get_absolute_url">
-                                        کوپن شماره
-                                        <span v-text="coupon.id"></span>
+                                        <span v-text="coupon.title"></span>
                                     </a>
 
 

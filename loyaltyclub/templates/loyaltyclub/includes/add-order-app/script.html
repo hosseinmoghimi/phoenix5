@@ -4,6 +4,7 @@
     customer_id=parseInt("{{customer.id}}")
     let customers = JSON.parse(`{{customers_s|escapejs}}`)
     let suppliers = JSON.parse(`{{suppliers_s|escapejs}}`)
+    // let percentage=parseInt("{{percentage}}")
     if(suppliers.length>0)
         supplier_id=suppliers[0].id
     let add_order_app = new Vue({
@@ -16,7 +17,8 @@
             supplier_id: supplier_id,
             suppliers: suppliers,
             sum: 0,
-            coupon:0,
+            // coupon:0,
+            // percentage:percentage,
             discount: 0,
             ship_fee: 0,
             title: '',
@@ -47,7 +49,7 @@ return to_price(vall,curr)
                     invoice_id: parseInt(this.invoice_id),
                     sum: parseInt(this.sum),
                     ship_fee: parseInt(this.ship_fee),
-                    coupon: parseInt(this.coupon),
+                    // coupon: parseInt(this.coupon),
                     discount: parseInt(this.discount),
                     title:this.title,
                     date_ordered:this.date_ordered,
@@ -71,7 +73,11 @@ return to_price(vall,curr)
                     }
                     if (data.result === 'SUCCEED') {
                         if (typeof orders_app != "undefined") {
-                            orders_app.orders.push(data.order)
+                            orders_app.orders.push(data.order) 
+                        }
+
+                        if (typeof coupons_app != "undefined") {
+                            coupons_app.coupons=(data.coupons)
                         }
 
                         add_order_app.message = {
