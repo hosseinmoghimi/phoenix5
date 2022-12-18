@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from market.serializers import Customer,AccountSerializer,AreaSerializer,Supplier
 from accounting.serializers import InvoiceBriefSerializer
-from .models import Order
+from .models import Order,Coupon
 class CustomerSerializer(serializers.ModelSerializer):
     account=AccountSerializer()
     region=AreaSerializer()
@@ -27,4 +27,12 @@ class OrderSerializer(serializers.ModelSerializer):
         fields=['id','title','supplier','invoice','customer','sum','persian_date_ordered','persian_date_ordered_tag','get_edit_url','get_delete_url','get_absolute_url']
 
 
+       
         
+class CouponSerializer(serializers.ModelSerializer):
+    order=OrderSerializer()
+    class Meta:
+        model=Coupon
+        fields=['id','order','amount','get_edit_url','get_delete_url','get_absolute_url']
+
+ 

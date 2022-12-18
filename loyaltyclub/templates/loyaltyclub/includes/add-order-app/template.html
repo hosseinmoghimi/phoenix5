@@ -92,6 +92,18 @@
 
                     </div>
 
+
+ <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="">
+                                کوپن
+                                <small class="mx-2 text-muted" v-text="to_price(coupon,'{{CURRENCY}}')"></small>
+                            </label>
+                            <input placeholder="کوپن" v-model="coupon" class="form-control" type="number">
+
+                        </div>
+
+                    </div>
                     
                     <div class="col-md-6">
                         <div class="form-group">

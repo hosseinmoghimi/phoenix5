@@ -9,3 +9,4 @@ class AddOrderForm(forms.Form):
     sum=forms.IntegerField(required=True)
     ship_fee=forms.IntegerField(required=False)
     discount=forms.IntegerField(required=False)
+    coupon=forms.IntegerField(required=False)

@@ -4,6 +4,21 @@ from .apps import APP_NAME
 from core.models import LinkHelper
 # Create your models here.
 
+class Coupon(models.Model,LinkHelper):
+    order=models.ForeignKey("order", verbose_name=_("order"), on_delete=models.CASCADE)
+    amount=models.IntegerField(_("amount"))
+
+    class_name="coupon"
+    app_name=APP_NAME
+    
+
+    class Meta:
+        verbose_name = _("Coupon")
+        verbose_name_plural = _("Coupons")
+
+    def __str__(self):
+        return f"{self.order.customer} {self.amount}"
+ 
 
 class Order(models.Model,LinkHelper):
     supplier=models.ForeignKey("market.supplier", verbose_name=_("supplier"), on_delete=models.CASCADE)
@@ -13,7 +28,6 @@ class Order(models.Model,LinkHelper):
     sum=models.IntegerField(_("sum"),default=0)
     ship_fee=models.IntegerField(_("هزینه حمل"),default=0)
     discount=models.IntegerField(_("تخفیف"),default=0)
-    coupon=models.IntegerField(_("تخفیف"),default=0)
 
     date_ordered=models.DateTimeField(_("date_ordered"), auto_now=False, auto_now_add=False)
     def persian_date_ordered_tag(self):
@@ -31,4 +45,10 @@ class Order(models.Model,LinkHelper):
 
     def __str__(self):
         return self.title
+
+    def save(self):
+        # if self.invoice is not None:
+        #     self.customer=self.invoice.pay_to
+
+        return super(Order,self).save()
  

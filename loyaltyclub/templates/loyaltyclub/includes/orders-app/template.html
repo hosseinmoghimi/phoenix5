@@ -97,7 +97,7 @@
 
                                 </td>
                                 <td>
-                                    <a :href="order.invoice.get_absolute_url" :title="order.invoice.title">
+                                    <a v-if="order.invoice" :href="order.invoice.get_absolute_url" :title="order.invoice.title">
                                         <!-- <span v-text="order.invoice.title"></span> -->
                                         فاکتور مرتبط
                                     </a>
