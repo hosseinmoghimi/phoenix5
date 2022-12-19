@@ -24,13 +24,20 @@ class OrderSerializer(serializers.ModelSerializer):
     invoice=InvoiceBriefSerializer()
     class Meta:
         model=Order
-        fields=['id','title','supplier','invoice','customer','sum','persian_date_ordered','persian_date_ordered_tag','get_edit_url','get_delete_url','get_absolute_url']
+        fields=['id','title','paid','supplier','ship_fee','paid','invoice','customer','discount','sum','persian_date_ordered','persian_date_ordered_tag','get_edit_url','get_delete_url','get_absolute_url']
 
  
 class CoefSerializer(serializers.ModelSerializer):
     class Meta:
         model=Coef
         fields=['id','number','percentage']
+
+ 
+# class PaymentSerializer(serializers.ModelSerializer):
+#     customer=CustomerSerializer()
+#     class Meta:
+#         model=Payment
+#         fields=['id','customer','coupon_amount','cash_amount','get_edit_url','get_delete_url','get_absolute_url']
 
  
        

@@ -11,7 +11,7 @@
             <h5 class="text-center">
                 <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-coupons" aria-expanded="true"
                     aria-controls="collapse-coupons">
-                    کوپن ها
+                    تخفیف ها
 
                     <small v-if="coupons.length>0" class="text-danger mx-2">
                         <span v-text="coupons.length">
@@ -35,15 +35,16 @@
                     <table class="table table-striped rtl">
                         <thead>
                             <th>
-                                کوپن
+                                تخفیف
                             </th>
 
                             <th>
-                                مبلغ کوپن
+                                مبلغ تخفیف
                             </th>
 
                             <th>
                                 مبلغ
+                                پرداخت شده
                             </th>
 
                             <th>
@@ -85,7 +86,7 @@
                                 </td>
 
                                 <td>
-                                    <span v-text="to_price(coupon.order.sum)"></span>
+                                    <span v-text="to_price(coupon.order.paid)"></span>
 
                                 </td>
 

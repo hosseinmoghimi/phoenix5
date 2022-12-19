@@ -7,13 +7,54 @@
 {% block content %}
 <div class="row rtl">
     <div class="col-md-12">
-        <h5>
-            {{customer.account.title}}
-        </h5>
-        <h6>
-            {{coupons_sum|to_price}}
+        <div class="card">
+            <div class="card-header">
+                <h5>
+                    {{customer.account.title}}
+                </h5>
+            </div>
+            <div class="card-body rtl">
+                <h5>
+                    {{customer.account.title}}
+                </h5>
+                <h6>
+                    مجموع سفارش ها : 
+                    {{orders_sum|to_price}}
 
-        </h6>
+                </h6>
+                <h6 class="text-danger">
+                    مجموع تخفیف های اعمال شده : 
+                    {{discounts|to_price}}
+
+                </h6>
+                <h6 class="text-success">
+                    مجموع تخفیف های بدست آمده :
+                    {{coupons_sum|to_price}}
+
+                </h6>
+                <h6 class="text-warning">
+                    مجموع تخفیف های باقیمانده
+                    {{coupons_remain|to_price}}
+
+                </h6>
+
+                <h6>
+                    مجموع پرداخت ها : 
+                    {{paids|to_price}}
+
+                </h6>
+
+                <h6>
+                    مجموع هزینه های حمل : 
+                    {{ship_fees|to_price}}
+
+                </h6>
+
+
+             
+            </div>
+        </div>
+
     </div>
     <div class="col-md-12">
         {% include 'loyaltyclub/includes/add-order-app/template.html' %}
@@ -31,5 +72,5 @@
 {% include 'loyaltyclub/includes/add-order-app/script.html' %}
 {% include 'loyaltyclub/includes/orders-app/script.html' %}
 {% include 'loyaltyclub/includes/coupons-app/script.html' %}
-  
+
 {% endblock script %}

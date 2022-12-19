@@ -27,6 +27,25 @@ class AddOrderView(APIView):
 
 
 
+class AddInvoiceToOrderView(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        context['result']=FAILED
+        AddInvoiceToOrderForm_=AddInvoiceToOrderForm(request.POST)
+        if AddInvoiceToOrderForm_.is_valid():
+            cd=AddInvoiceToOrderForm_.cleaned_data
+            (result,message,order)=OrderRepo(request=request).add_invoice_to_order(**cd)
+            if result==SUCCEED:
+                context['order']=OrderSerializer(order).data
+
+                
+
+            context['result']=result
+            context['message']=message
+        return JsonResponse(context)
+
+
+
 class ChangeCoefView(APIView):
     def post(self,request,*args, **kwargs):
         context={}

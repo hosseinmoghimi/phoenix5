@@ -40,6 +40,20 @@
                                 مبلغ
                             </th>
 
+
+                            <th>
+                                تخفیف
+                            </th>
+
+                            <th>
+                                پرداخت شده
+                            </th>
+
+                            <th>
+                                هزینه حمل
+                            </th>
+
+
                             <th>
                                 فروشنده
                             </th>
@@ -72,6 +86,22 @@
                                 </td>
                                 <td>
                                     <span v-text="to_price(order.sum)"></span>
+
+                                </td>
+
+                                <td>
+                                    <span v-text="to_price(order.discount)"></span>
+
+                                </td>
+
+                                <td>
+                                    <span v-text="to_price(order.paid)"></span>
+
+                                </td>
+
+                                
+                                <td>
+                                    <span v-text="to_price(order.ship_fee)"></span>
 
                                 </td>
 

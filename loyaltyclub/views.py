@@ -67,18 +67,22 @@ class CustomerView(View):
         context = getContext(request)
         customer_repo=CustomerRepo(request=request)
         customer=customer_repo.customer(*args,**kwargs)
-         
+        from .repo import normalize_coupons
+        normalize_coupons(customer_id=customer.id)
+        
+
+        coupon_repo=CouponRepo(request=request)
+        # payment_repo=PaymentRepo(request=request)
+        order_repo=OrderRepo(request=request)
+
         context['customer'] = customer
-        orders=OrderRepo(request=request).list(customer_id=customer.id)
+        orders=order_repo.list(customer_id=customer.id)
         context['orders'] = orders
         orders_s=json.dumps(OrderSerializer(orders,many=True).data)
         context['orders_s'] = orders_s
          
         # percentage=CoefRepo(request=request).coef(number=len(orders)+1).percentage
         # context['percentage'] = percentage
-
-        coupon_repo=CouponRepo(request=request)
-
         coupons=coupon_repo.list(customer_id=customer.id)
         context['coupons'] = coupons
         coupons_s=json.dumps(CouponSerializer(coupons,many=True).data)
@@ -87,7 +91,15 @@ class CustomerView(View):
 
 
         coupons_sum=coupon_repo.sum(customer_id=customer.id)
+        orders_sum,discounts,paids,ship_fees=order_repo.sum(customer_id=customer.id)
+        context['orders_sum'] = orders_sum
+        context['paids'] = paids
+        context['ship_fees'] = ship_fees
+        context['discounts'] = discounts
         context['coupons_sum'] = coupons_sum
+
+        coupons_remain=coupons_sum-discounts
+        context['coupons_remain'] = coupons_remain
 
 
         context['body_class'] = "product-page"
@@ -230,20 +242,17 @@ class OrdersView(View):
 class OrderView(View):
     def get(self, request, *args, **kwargs):
         context = getContext(request)
-        customer_repo=CustomerRepo(request=request)
-        customer=customer_repo.customer(*args,**kwargs)
+        order_repo=OrderRepo(request=request)
+        order=order_repo.order(*args,**kwargs)
          
 
-        context['customer'] = customer
-        orders=OrderRepo(request=request).list(customer_id=customer.id)
-        context['orders'] = orders
-        orders_s=json.dumps(OrderSerializer(orders,many=True).data)
-        context['orders_s'] = orders_s
+        context['order'] = order
+ 
          
         context['body_class'] = "product-page"
-        if request.user.has_perm(APP_NAME+".add_brand"):
+        if request.user.has_perm(APP_NAME+".change_order"):
             # context['add_brand_form'] = AddBrandForm()
-            pass
+            context['add_invoice_to_order_form']=AddInvoiceToOrderForm()
 
         return render(request, TEMPLATE_ROOT+"order.html", context)
 

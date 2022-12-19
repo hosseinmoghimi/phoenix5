@@ -1,27 +1,11 @@
 {% load to_json %}
 <script>
-    let supplier_id = 0
-    customer_id = parseInt("{{customer.id}}")
-    let customers = JSON.parse(`{{customers_s|escapejs}}`)
-    let suppliers = JSON.parse(`{{suppliers_s|escapejs}}`)
-    // let percentage=parseInt("{{percentage}}")
-    if (suppliers.length > 0)
-        supplier_id = suppliers[0].id
-    let add_order_app = new Vue({
-        el: "#add-order-app",
+    order_id = parseInt("{{order.id}}")
+    let add_invoice_to_order_app = new Vue({
+        el: "#add-invoice-to-order-app",
         data: {
-            date_ordered: current_date,
-            customer_id: customer_id,
             invoice_id: 0,
-            customers: customers,
-            supplier_id: supplier_id,
-            suppliers: suppliers,
-            sum: 0,
-            // coupon:0,
-            // percentage:percentage,
-            discount: 0,
-            ship_fee: 0,
-            // title: '',
+            order_id: order_id,
             waiting: false,
             message: {
                 show: false
@@ -40,33 +24,26 @@
                 if (this.accounts.length > 0)
                     this.account_id = this.accounts[0].id
             },
-            add_order: function () {
-                let url = "{% url 'loyaltyclub:add_order' %}"
+            add_invoice_to_order: function () {
+                let url = "{% url 'loyaltyclub:add_invoice_to_order' %}"
                 let payload = {
                     csrfmiddlewaretoken: csrfmiddlewaretoken,
-                    supplier_id: parseInt(this.supplier_id),
-                    customer_id: parseInt(this.customer_id),
                     invoice_id: parseInt(this.invoice_id),
-                    sum: parseInt(this.sum),
-                    ship_fee: parseInt(this.ship_fee),
-                    // coupon: parseInt(this.coupon),
-                    discount: parseInt(this.discount),
-                    // title:this.title,
-                    date_ordered: this.date_ordered,
+                    order_id: parseInt(this.order_id),
                 }
                 leolog(payload)
-                add_order_app.waiting = true
+                add_invoice_to_order_app.waiting = true
                 $.post(url, payload).done((data) => {
-                    add_order_app.waiting = false
+                    add_invoice_to_order_app.waiting = false
 
                     if (data.result === 'FAILED') {
-                        add_order_app.message = {
+                        add_invoice_to_order_app.message = {
                             color: "danger",
                             body: data.message,
                             show: true,
                         }
                         setTimeout(() => {
-                            add_order_app.message = {
+                            add_invoice_to_order_app.message = {
                                 show: false,
                             }
                         }, 3000);
@@ -80,13 +57,13 @@
                             coupons_app.coupons = (data.coupons)
                         }
 
-                        add_order_app.message = {
+                        add_invoice_to_order_app.message = {
                             color: "success",
                             body: data.message,
                             show: true,
                         }
                         setTimeout(() => {
-                            add_order_app.message = {
+                            add_invoice_to_order_app.message = {
                                 show: false,
                             }
                         }, 3000);

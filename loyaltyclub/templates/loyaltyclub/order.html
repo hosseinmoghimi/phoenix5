@@ -1,0 +1,86 @@
+{% extends "loyaltyclub/layout.html" %}
+{% load to_price %}
+{% load to_persian_date %}
+{% load static %}
+
+
+{% block content %}
+<div class="row rtl">
+
+
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h5>
+                    {{order.title}}
+                </h5>
+                {% if order.invoice %}
+                <h4>
+
+
+
+                    <a href="{{order.invoice.get_absolute_url}}">
+                        {{order.invoice.title}}
+                    </a>
+                </h4>
+                {% endif %}
+
+                <h5>
+                    جمع سفارش :
+                    {{order.sum|to_price}}
+                </h5>
+
+                <h5>
+                    تخفیف اعمال شده
+                    {{order.discount|to_price}}
+                </h5>
+
+                <h5>
+                    پرداخت شده : 
+                    {{order.paid|to_price}}
+                </h5>
+
+                <h5>
+                     هزینه حمل :
+                    {{order.ship_fee|to_price}}
+                </h5>
+                {% for  coupon in order.coupon_set.all  %}
+                <h4>
+
+
+
+                    <a href="{{coupon.get_absolute_url}}">
+                        {{coupon.title}}
+                        {{coupon.amount|to_price}}
+                    </a>
+                </h4>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+
+
+    {% if add_invoice_to_order_form %}
+    <div class="col-md-6">
+
+        {% include 'loyaltyclub/includes/add-invoice-to-order-app/template.html' %}
+    </div>
+    {% endif %}
+</div>
+
+{% endblock %}
+{% block modal %}
+{% endblock %}
+
+
+
+{% block script %}
+{% if add_invoice_to_order_form %}
+
+{% include 'loyaltyclub/includes/add-invoice-to-order-app/script.html' %}
+
+{% endif %}
+
+
+{% endblock %}

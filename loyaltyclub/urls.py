@@ -20,5 +20,6 @@ urlpatterns = [
     path('orders/',views.OrdersView.as_view(),name="orders"),
     path('order/<int:pk>/',views.OrderView.as_view(),name="order"),
     path('add_order/',apis.AddOrderView.as_view(),name="add_order"),
+    path('add_invoice_to_order/',apis.AddInvoiceToOrderView.as_view(),name="add_invoice_to_order"),
 
 ]
