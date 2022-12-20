@@ -81,18 +81,3 @@ class Order(models.Model,LinkHelper):
  
  
 
-# class Payment(models.Model,LinkHelper):
-#     coupon_amount=models.IntegerField(_("coupon_amount"),default=0)
-#     cash_amount=models.IntegerField(_("coupon_amount"),default=0)
-#     customer=models.ForeignKey("market.customer", verbose_name=_("customer"), on_delete=models.CASCADE)
-#     date_paid=models.DateTimeField(_("date paid"), auto_now=False, auto_now_add=False)
-#     app_name=APP_NAME
-#     class_name="payment"
-#     class Meta:
-#         verbose_name = _("Payment")
-#         verbose_name_plural = _("Payments")
-
-#     def __str__(self):
-#         return f"{self.customer}"
-
-

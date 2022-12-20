@@ -49,6 +49,9 @@
                         }, 3000);
                     }
                     if (data.result === 'SUCCEED') {
+                        location.href = "{{order.get_absolute_url}}"
+
+
                         if (typeof orders_app != "undefined") {
                             orders_app.orders.push(data.order)
                         }

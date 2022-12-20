@@ -4,4 +4,3 @@ from .models import Order,Coupon,Coef
 admin.site.register(Order)
 admin.site.register(Coef)
 admin.site.register(Coupon)
-# admin.site.register(Payment)

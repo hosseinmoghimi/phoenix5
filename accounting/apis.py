@@ -32,6 +32,7 @@ class AddBankAccountApi(APIView):
         context['log']=log
         return JsonResponse(context)
 
+
 class AddBankApi(APIView):
     def post(self,request,*args, **kwargs):
         context={}

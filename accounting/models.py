@@ -561,12 +561,23 @@ class FinancialDocument(models.Model,LinkHelper):
     @property
     def rest(self):
         rest=0
+        rest_=0
         fds=FinancialDocument.objects.filter(account=self.account)
         fds=fds.filter(transaction__transaction_datetime__lte=self.transaction.transaction_datetime)
+        
         for fd in fds :
+            if self.pk==fd.pk:
+                # break
+                pass
             rest+=fd.bestankar
             rest-=fd.bedehkar
-        return rest
+            rest_=rest
+
+        # rest_+=self.bestankar
+        # rest_-=self.bedehkar
+
+        # print(self.bedehkar,self.bestankar,rest_)
+        return rest_
     def status_color(self):
         color="primary"
         if self.status==FinancialDocumentStatusEnum.DRAFT:
