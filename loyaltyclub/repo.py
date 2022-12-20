@@ -21,7 +21,7 @@ def normalize_coupons(customer_id):
             percentage=coef.percentage
         _sum=order.sum-order.discount
         coupon.amount=(int)((float)(percentage)*(float)(_sum)*(0.01))
-        coupon.title=f"کوپن شماره {i} ({percentage} %)"
+        coupon.title=f"برگه تخفیف شماره {i} ({percentage} %)"
         coupon.save()
     coupons=Coupon.objects.filter(order__customer_id=customer_id)
     return coupons
