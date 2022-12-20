@@ -15,7 +15,10 @@
             </div>
             <div class="card-body rtl">
                 <h5>
-                    {{customer.account.title}}
+                    <a href="{{customer.account.get_absolute_url}}">
+
+                        {{customer.account.title}}
+                    </a>
                 </h5>
                 <h6>
                     مجموع سفارش ها : 
