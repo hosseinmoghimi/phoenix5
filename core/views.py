@@ -548,7 +548,7 @@ class DownloadView(View):
             message_view.title = 'دانلود مورد نظر پیدا نشد.'
         else:
             message_view.links.append(Link(title='تلاش مجدد', color="warning",
-                                  icon_material="apartment", url=download.get_download_url()))
+                                  icon_material="apartment", url=download.get_download_url))
 
         return message_view.response()
         
