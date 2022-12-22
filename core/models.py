@@ -327,11 +327,13 @@ class Download(Icon):
     is_open = models.BooleanField(_("is_open?"), default=False)
     profile = models.ForeignKey("authentication.Profile", null=True,
                                 blank=True, verbose_name=_("profile"), on_delete=models.CASCADE)
+    @property
     def get_download_url(self):
         if self.mirror_link and self.mirror_link is not None:
             return self.mirror_link
         if self.file:
-            return reverse(APP_NAME+':download', kwargs={'pk': self.pk})
+            ss= reverse(APP_NAME+':download', kwargs={'pk': self.pk})
+            return FULL_SITE_URL[0:len(FULL_SITE_URL)-1]+ss
         else:
             return ''
 
@@ -345,6 +347,18 @@ class Download(Icon):
         return self.title
 
 
+    def get_qrcode_url(self):
+        if self.pk is None:
+            super(Download,self).save()
+        import os
+        file_path = QRCODE_ROOT
+        file_name=self.class_name+str(self.pk)+".svg"
+        file_address=os.path.join(QRCODE_ROOT,file_name)
+        if not os.path.exists(file_address):
+            content=self.get_download_url
+            generate_qrcode(content=content,file_name=file_name,file_address=file_address,file_path=file_path,)
+        return f"{QRCODE_URL}{file_name}"
+ 
 class Link(Icon):
     url = models.CharField(_("url"), max_length=2000)
     new_tab=models.BooleanField(_("new_tab"),default=False)
@@ -369,8 +383,19 @@ class Link(Icon):
             {self.title}
             </a>
         """
-
-
+    
+    def get_qrcode_url(self):
+        if self.pk is None:
+            super(Link,self).save()
+        import os
+        file_path = QRCODE_ROOT
+        file_name=self.class_name+str(self.pk)+".svg"
+        file_address=os.path.join(QRCODE_ROOT,file_name)
+        if not os.path.exists(file_address):
+            content=self.url
+            generate_qrcode(content=content,file_name=file_name,file_address=file_address,file_path=file_path,)
+        return f"{QRCODE_URL}{file_name}"
+ 
 class PageLink(Link, LinkHelper):
     page = models.ForeignKey("page", verbose_name=_(
         "page"), on_delete=models.CASCADE)
