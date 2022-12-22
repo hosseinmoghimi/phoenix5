@@ -333,6 +333,16 @@ class Download(Icon):
             return self.mirror_link
         if self.file:
             ss= reverse(APP_NAME+':download', kwargs={'pk': self.pk})
+            return ss
+        else:
+            return ''
+
+    @property
+    def get_full_download_url(self):
+        if self.mirror_link and self.mirror_link is not None:
+            return self.mirror_link
+        if self.file:
+            ss= reverse(APP_NAME+':download', kwargs={'pk': self.pk})
             return FULL_SITE_URL[0:len(FULL_SITE_URL)-1]+ss
         else:
             return ''
@@ -355,7 +365,7 @@ class Download(Icon):
         file_name=self.class_name+str(self.pk)+".svg"
         file_address=os.path.join(QRCODE_ROOT,file_name)
         if not os.path.exists(file_address):
-            content=self.get_download_url
+            content=self.get_full_download_url
             generate_qrcode(content=content,file_name=file_name,file_address=file_address,file_path=file_path,)
         return f"{QRCODE_URL}{file_name}"
  
