@@ -60,6 +60,30 @@ class AddPageLinkApi(APIView):
                     context['result'] = SUCCEED
         context['log'] = log
         return JsonResponse(context)
+class ChangePageMetadataApi(APIView):
+    def post(self, request, *args, **kwargs):
+        log = 1
+        context = {}
+        result=FAILED
+        message=""
+        context['result'] = FAILED
+        if request.method == 'POST':
+            log += 1
+            ChangePageMetaDataForm_ = ChangePageMetaDataForm(request.POST)
+            if ChangePageMetaDataForm_.is_valid():
+                log += 1
+                metadata,result,message = PageRepo(request=request).change_metadata(
+                    **ChangePageMetaDataForm_.cleaned_data
+                    )
+                if result==SUCCEED:
+                    context['metadata'] =metadata
+                    context['result'] = SUCCEED
+        context['log'] = log
+        context['result'] = result
+        context['message'] = message
+        return JsonResponse(context)
+
+    
 
 
 class AddPageTagApi(APIView):

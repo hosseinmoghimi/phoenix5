@@ -34,6 +34,22 @@ class ImageRepo:
 
 
 class PageRepo:
+    def change_metadata(self,*args, **kwargs):
+        metadata,result,message=("",FAILED,"")
+        if not self.request.user.has_perm("core.change_page"):
+            message="شما مجوز ویرایش متا دیتا را ندارید."
+            return metadata,result,message
+        page=self.page(*args, **kwargs)
+        if page is not None and 'metadata' in kwargs and kwargs['metadata'] is not None:
+            metadata=kwargs['metadata']
+            page.meta_data=metadata
+            page.save()
+            result=SUCCEED
+            
+            message="با موفقیت متا دیتا ویرایش شد."
+        else:
+            message="اطلاعات وارد شده صحیح نمی باشد."
+        return metadata,result,message
     def encrypt(self,*args, **kwargs):
         page=self.page(*args, **kwargs)
         key=page.encrypt(*args, **kwargs)

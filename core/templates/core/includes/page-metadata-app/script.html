@@ -1,0 +1,56 @@
+<script>
+    let url_change_page_metadata = "{% url 'core:change_page_metadata' %}"
+    let page_metadata_app = new Vue({
+        el: "#page-metadata-app",
+        data: {
+            metadata: "{{page.meta_data}}",
+            message: { show: false }
+        },
+        methods: {
+            change_page_metadata: function () {
+                let url = url_change_page_metadata
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    page_id: page_id,
+                    metadata: this.metadata,
+                }
+                let posting = $.post(url, payload)
+                posting.done((data) => {
+                    leolog(data)
+                    if (data.result === 'SUCCEED') {
+                        page_metadata_app.metadata = (data.metadata)
+
+                        page_metadata_app.message = {
+                            show: true,
+                            body: data.message,
+                            color: "success"
+                        }
+                        setTimeout(() => {
+                            page_metadata_app.message = {
+                                show: false,
+                            }
+                        }, 2000);
+
+                    }
+
+                    if (data.result != 'SUCCEED') {
+                        page_metadata_app.metadata = (data.metadata)
+
+                        page_metadata_app.message = {
+                            show: true,
+                            body: data.message,
+                            color: "success"
+                        }
+                        setTimeout(() => {
+                            page_metadata_app.message = {
+                                show: false,
+                            }
+                        }, 2000);
+
+                    }
+
+                })
+            },
+        }
+    })
+</script>

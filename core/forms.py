@@ -6,6 +6,10 @@ class SearchForm(forms.Form):
 class DownloadMediaForm(forms.Form):
     pass
 
+class ChangePageMetaDataForm(forms.Form):
+    page_id=forms.IntegerField(required=True)
+    metadata=forms.CharField(max_length=500,required=False)
+
 class DeletePageImageForm(forms.Form):
     page_id=forms.IntegerField(required=True)
     image_id=forms.IntegerField(required=True)

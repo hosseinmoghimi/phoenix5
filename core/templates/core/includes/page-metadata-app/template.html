@@ -1,0 +1,45 @@
+<div id="accordion-page-metadata">
+
+
+    <div class="card" id="page-metadata-app">
+        <div class="card-header" id="heading-page-metadata">
+            <h5 class="text-center">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-page-metadata"
+                    aria-expanded="true" aria-controls="collapse-page-metadata">
+                    متا دیتا
+
+                </button>
+            </h5>
+        </div>
+        <div id="collapse-page-metadata" class="collapse " aria-labelledby="heading-page-metadata"
+            data-parent="#accordion-page-metadata">
+            <div class="card-body farsi">
+                <div class="text-right">
+
+                        <form @submit.prevent="change_page_metadata()">
+                            <div class="row">
+                                <div class="col-12">
+                                    <input required type="text" v-model="metadata" class=" mb-2 farsi form-control"
+                                        placeholder="عنوان متا دیتای جدید">
+                                </div>
+                                <div class="col-12">
+                                    <button class="farsi btn btn-primary btn-block mb-2 " type="submit"> <i
+                                            class="fa fa-plus mx-1"></i>
+                                        ذخیره</button>
+                                </div>
+                            </div>
+                        </form>
+                </div>
+            </div>
+
+            <div v-if="message.show" class="card-footer">
+                <div class="my-3 text-right" v-if="message.show">
+                    <span :class="'alert alert-'+message.color">
+                        <span class="farsi" v-html="message.body"></span>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

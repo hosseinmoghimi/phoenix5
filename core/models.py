@@ -103,7 +103,7 @@ class Page(models.Model, LinkHelper, ImageMixin):
     date_added = models.DateTimeField(_("date_added"), auto_now=False, auto_now_add=True)
     priority = models.IntegerField(_("ترتیب"), default=1000)
     archive = models.BooleanField(_("archive?"), default=False)
-    meta_data=models.CharField(_("meta_data"),null=True,blank=True, max_length=500)
+    meta_data=models.CharField(_("meta_data"),default="",null=True,blank=True, max_length=500)
     related_pages=models.ManyToManyField("page",blank=True, verbose_name=_("related_pages"))
     def likes_count(self):
         return len(PageLike.objects.filter(page_id=self.id))

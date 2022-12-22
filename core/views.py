@@ -218,6 +218,12 @@ def PageContext(request, *args, **kwargs):
             context['add_related_page_form'] = AddRelatedPageForm()
 
 
+    #meta data
+    if request.user.has_perm("core.change_page"):
+        keywords=page.meta_data
+        context['change_page_metadata_form'] = ChangePageMetaDataForm()
+
+
 
     #keywords
     if True:
