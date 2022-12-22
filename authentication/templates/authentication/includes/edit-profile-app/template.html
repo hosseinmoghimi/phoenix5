@@ -1,7 +1,7 @@
 <div class="card mb-3" id="edit-profile-app">
     <div class="card-body">
         <form @submit.prevent="edit_profile()">
-            <div class="row">
+            <div class="row rtl">
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="">نام</label>
@@ -71,7 +71,7 @@
                     </p>
                 </div>
                 <div class="col-md-12">
-                    <p v-if="edited_successfully" class="px-3 my-3 text-center alert alert-success">
+                    <p v-if="edited_successfully" class="farsi px-3 my-3 text-center alert alert-success">
                         با موفقیت ویرایش شد.
                     </p>
                 </div>

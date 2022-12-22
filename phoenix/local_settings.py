@@ -32,6 +32,7 @@ INSTALLED_APPS = [
     'django_cleanup.apps.CleanupConfig',
     'django_social_share',
     
+    # 'django_telegram',
     'rest_framework',
     # 'rest_framework.authtoken'
     # 'web3auth.apps.Web3AuthConfig',
@@ -64,7 +65,9 @@ INSTALLED_APPS = [
     'mafia',
     'school',
     'bms',
+    'loyaltyclub',
 ]
+
 SECRET_KEY = 'django-insecure-bt+o^tb1w_vl6vj%tjn-&=v5^m*w3)5a8(i&uoo)6on&pi-x6('
 
 ALLOWED_HOSTS = ['*']
@@ -309,6 +312,15 @@ phoenix_apps=[
         'title':'وب سایت',
         'color':'success',
         'home_url':SITE_URL+'web/',
+        'has_help':False,
+        'show_on_menu':True,
+    },
+    
+    {
+        'name':'loyaltyclub',
+        'title':'باشگاه مشتریان',
+        'color':'warning',
+        'home_url':SITE_URL+'loyaltyclub/',
         'has_help':False,
         'show_on_menu':True,
     },
