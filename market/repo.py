@@ -243,6 +243,11 @@ class CustomerRepo():
             customer=Customer()
             customer.account_id=account_id
             customer.region_id=region_id
+            inviter_id=0
+            if 'inviter_id' in kwargs:
+                inviter_id=kwargs['inviter_id']
+            if inviter_id is not None and inviter_id>0:
+                customer.inviter_id=inviter_id
             customer.save()
         if customer is not None:
             result=SUCCEED

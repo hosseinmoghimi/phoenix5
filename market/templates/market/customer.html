@@ -20,6 +20,14 @@
                         <a href="{{customer.account.get_absolute_url}}">
 
                             {{customer.account.title}}
+                            
+                            {% if perms.market.change_customer %}
+                            <span class="mx-2">
+
+                                {{customer.get_edit_btn|safe}}
+                            </span>    
+                            {% endif %}
+                                
                         </a>
                     </h5>
                 </div>

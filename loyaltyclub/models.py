@@ -1,3 +1,4 @@
+from utility.num import to_tartib
 from django.db import models
 from django.utils.translation import gettext as _
 from .apps import APP_NAME
@@ -19,15 +20,17 @@ class Coupon(models.Model,LinkHelper):
 
     def __str__(self):
         return f"{self.order.customer} {self.amount}"
+
  
 
 class Coef(models.Model,LinkHelper):
     number=models.IntegerField(_("number"))
-    percentage=models.IntegerField(_("percentage"))
+    percentage=models.IntegerField(_("percentage"),default=3)
 
     class_name="coef"
     app_name=APP_NAME
-    
+    def tartib(self):
+        return to_tartib(self.number)
 
     class Meta:
         verbose_name = _("Coef")

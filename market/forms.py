@@ -10,6 +10,7 @@ class AddBrandForm(forms.Form):
 class AddCustomerForm(forms.Form):
     account_id=forms.IntegerField(required=True)
     region_id=forms.IntegerField(required=True)
+    inviter_id=forms.IntegerField(required=False)
     
 class CheckoutForm(forms.Form):
     customer_id=forms.IntegerField(required=True)

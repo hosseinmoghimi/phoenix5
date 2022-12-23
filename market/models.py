@@ -73,6 +73,7 @@ class Supplier(Page):
         return reverse("loyaltyclub:supplier",kwargs={'pk':self.pk})
 
 class Customer(models.Model,LinkHelper):
+    inviter=models.ForeignKey("customer", verbose_name=_("inviter"),null=True,blank=True, on_delete=models.SET_NULL)
     region=models.ForeignKey("map.area", verbose_name=_("region"), on_delete=models.CASCADE)
     level=models.CharField(_("level"),choices=CustomerLevelEnum.choices,default=CustomerLevelEnum.REGULAR, max_length=50)
     account=models.ForeignKey("accounting.account", verbose_name=_("account"), on_delete=models.CASCADE)

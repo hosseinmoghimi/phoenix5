@@ -36,8 +36,8 @@
                     <div v-for="coef in coefs">
                         <form @submit.prevent="change_coef(coef.number,coef.percentage)">
                             <div class="form-group">
-                                <label for="">ضریب
-                                    <span v-text="coef.number"></span>
+                                <label for="">درصد تخفیف برای خرید 
+                                    <span v-text="coef.tartib"></span>
                                 </label>
                                 <input type="number" v-model="coef.percentage" class="form-control">
                             </div>
@@ -47,7 +47,7 @@
                     <div>
                         <form @submit.prevent="change_coef(number,percentage)">
                             <div class="form-group">
-                                <label for="">ضریب
+                                <label for="">درصد تخفیف برای خرید 
                                     <span v-text="number"></span>
                                 </label>
                                 <div class="row rtl">

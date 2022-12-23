@@ -30,7 +30,7 @@ class OrderSerializer(serializers.ModelSerializer):
 class CoefSerializer(serializers.ModelSerializer):
     class Meta:
         model=Coef
-        fields=['id','number','percentage']
+        fields=['id','number','percentage','tartib']
 
  
 # class PaymentSerializer(serializers.ModelSerializer):

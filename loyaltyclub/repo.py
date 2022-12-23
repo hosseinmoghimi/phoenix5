@@ -1,3 +1,4 @@
+from accounting.repo import InvoiceRepo
 from django.utils import timezone
 from .models import Order,Coupon,Coef
 from authentication.repo import ProfileRepo
@@ -90,13 +91,18 @@ class OrderRepo():
         order=Order()
         order.supplier_id=supplier_id
         order.customer_id=customer_id
-        if invoice_id>0:
-            order.invoice_id=invoice_id
         order.sum=sum
         # order.title=title
         order.ship_fee=ship_fee
         order.discount=discount
         order.date_ordered=date_ordered
+        if invoice_id>0:
+            invoice=InvoiceRepo(request=self.request).invoice(invoice_id=invoice_id)
+            if invoice is not None:
+                order.invoice_id=invoice_id
+                order.discount=invoice.discount
+                order.ship_fee=invoice.ship_fee
+                order.sum=invoice.lines_total()
         order.save()
         
         coupons=normalize_coupons(customer_id=customer_id)

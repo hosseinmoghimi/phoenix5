@@ -99,7 +99,10 @@ def separate(price):
 
 
 def to_tartib(value):
-    a=['اول',
+    if value<1:
+        return "نامعتبر"
+    if value<10:
+        return (['اول',
         'دوم',
         'سوم',
         'چهارم',
@@ -110,5 +113,6 @@ def to_tartib(value):
         'نهم',
         'دهم',
         'یازدهم',
-        ]
-    return a[value]
+        ])[value-1]
+    return to_horuf(value-1)+"م"
+    
