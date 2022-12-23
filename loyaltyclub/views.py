@@ -2,7 +2,7 @@ from django.shortcuts import render
 from .apps import APP_NAME
 from django.http import Http404
 from django.views import View
-from core.views import CoreContext
+from core.views import CoreContext,PageContext
 from core.repo import ParameterRepo
 from market.serializers import CustomerSerializer,SupplierSerializer
 from market.repo import CustomerRepo,SupplierRepo
@@ -13,6 +13,7 @@ from map.repo import AreaRepo
 from .serializers import OrderSerializer,CouponSerializer,CoefSerializer
 from .repo import OrderRepo,CouponRepo,CoefRepo
 import json
+from accounting.views import get_transaction_context
 LAYOUT_PARENT="phoenix/layout.html"
 
 TEMPLATE_ROOT="loyaltyclub/"
@@ -164,6 +165,7 @@ class CouponView(View):
         context['customer'] = customer
         coupon=CouponRepo(request=request).coupon(*args, **kwargs)
         context['coupon'] = coupon
+        context.update(get_transaction_context(request=request,transaction=coupon))
         coupon_s=json.dumps(CouponSerializer(coupon).data)
         context['coupon_s'] = coupon_s
          

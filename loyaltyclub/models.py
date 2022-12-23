@@ -4,11 +4,26 @@ from django.utils.translation import gettext as _
 from .apps import APP_NAME
 from core.models import LinkHelper
 # Create your models here.
+from accounting.models import Transaction
+# class Coupon(models.Model):
+#     order=models.ForeignKey("order", verbose_name=_("order"), on_delete=models.CASCADE)
+#     title=models.CharField(_("title"), max_length=50)
+#     class_name="coupon"
+#     app_name=APP_NAME
+    
 
-class Coupon(models.Model,LinkHelper):
-    title=models.CharField(_("title"), max_length=50)
+#     class Meta:
+#         verbose_name = _("Coupon")
+#         verbose_name_plural = _("Coupons")
+
+#     def __str__(self):
+#         return f"{self.order.customer} {self.amount}"
+#     def save(self,*args, **kwargs):
+#         self.transaction_datetime=self.order.date_ordered
+#         return super(Coupon,self).save(*args, **kwargs)
+
+class Coupon(Transaction):
     order=models.ForeignKey("order", verbose_name=_("order"), on_delete=models.CASCADE)
-    amount=models.IntegerField(_("amount"))
 
     class_name="coupon"
     app_name=APP_NAME
@@ -20,8 +35,19 @@ class Coupon(models.Model,LinkHelper):
 
     def __str__(self):
         return f"{self.order.customer} {self.amount}"
+    def save(self,*args, **kwargs):
+        self.transaction_datetime=self.order.date_ordered
+        return super(Coupon,self).save(*args, **kwargs)
 
+
+    def save(self,*args, **kwargs):
+        if self.app_name is None:
+            self.app_name=APP_NAME
+        if self.class_name is None:
+            self.class_name='coupon'
  
+        return super(Coupon,self).save()
+
 
 class Coef(models.Model,LinkHelper):
     number=models.IntegerField(_("number"))

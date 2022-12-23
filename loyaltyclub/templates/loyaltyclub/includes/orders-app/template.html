@@ -44,6 +44,10 @@
                                 تخفیف 
                          
                             </th>
+                            <th>
+                                پرداخت شده 
+                         
+                            </th>
 
                             <th>
                                 هزینه حمل
@@ -105,7 +109,7 @@
 
                                 <td>
                                     <a :href="order.supplier.get_loyaltyclub_absolute_url">
-                                        <img :src="order.supplier.logo" class="rounded" width="32" alt="">
+                                        <img :src="order.supplier.account.logo" class="rounded" width="32" alt="">
                                         <span v-text="order.supplier.account.title"></span>
 
                                     </a>
@@ -113,7 +117,7 @@
                                 </td>
                                 <td>
                                     <a :href="order.customer.get_loyaltyclub_absolute_url">
-                                        <img :src="order.customer.logo" class="rounded" width="32" alt="">
+                                        <img :src="order.customer.account.logo" class="rounded" width="32" alt="">
                                         <span v-text="order.customer.account.title"></span>
 
                                     </a>

@@ -5,7 +5,8 @@ from authentication.repo import ProfileRepo
 from .apps import APP_NAME
 from core.constants import FAILED,SUCCEED
 from django.db.models import Q
-
+from utility.num import to_tartib
+from accounting.enums import TransactionStatusEnum,PaymentMethodEnum
 def normalize_coupons(customer_id):
     coupons=[]
     orders=Order.objects.filter(customer_id=customer_id)
@@ -16,13 +17,18 @@ def normalize_coupons(customer_id):
         i+=1
         coupon=Coupon()
         coupon.order=order
+        coupon.pay_from_id=coupon.order.customer.account.id
+        coupon.pay_to_id=coupon.order.supplier.account.id
+        coupon.status=TransactionStatusEnum.APPROVED
+        coupon.payment_method=PaymentMethodEnum.SERVICE
         percentage=0
         coef=Coef.objects.filter(number=i).first()
         if coef is not None:
             percentage=coef.percentage
         _sum=order.sum-order.discount
         coupon.amount=(int)((float)(percentage)*(float)(_sum)*(0.01))
-        coupon.title=f"برگه تخفیف شماره {i} ({percentage} %)"
+
+        coupon.title=f"تخفیف خرید {to_tartib(i)} ({percentage} %)"
         coupon.save()
     coupons=Coupon.objects.filter(order__customer_id=customer_id)
     return coupons

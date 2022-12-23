@@ -41,6 +41,8 @@ def class_title(*args, **kwargs):
         class_title = "صفحه"
     elif class_name == "appointment":
         class_title = "قرار ملاقات"
+    elif class_name == "coupon":
+        class_title = "جایزه خرید"
     elif class_name == "letter":
         class_title = "نامه"
     elif class_name == "file":
