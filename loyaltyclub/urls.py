@@ -17,6 +17,9 @@ urlpatterns = [
     path('coupons/',views.CouponsView.as_view(),name="coupons"),
     path('coupon/<int:pk>/',views.CouponView.as_view(),name="coupon"),
 
+    path('discountpays/',views.DiscountPaysView.as_view(),name="discountpays"),
+    path('discountpay/<int:pk>/',views.DiscountPayView.as_view(),name="discountpay"),
+
     path('orders/',views.OrdersView.as_view(),name="orders"),
     path('order/<int:pk>/',views.OrderView.as_view(),name="order"),
     path('add_order/',apis.AddOrderView.as_view(),name="add_order"),

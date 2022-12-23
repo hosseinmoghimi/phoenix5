@@ -49,6 +49,35 @@ class Coupon(Transaction):
         return super(Coupon,self).save()
 
 
+
+class DiscountPay(Transaction):
+    order=models.ForeignKey("order", verbose_name=_("order"), on_delete=models.CASCADE)
+
+    class_name="discountpay"
+    app_name=APP_NAME
+    
+
+    class Meta:
+        verbose_name = _("DiscountPay")
+        verbose_name_plural = _("DiscountPays")
+
+    def __str__(self):
+        return f"{self.order.customer} {self.amount}"
+    def save(self,*args, **kwargs):
+        self.transaction_datetime=self.order.date_ordered
+        return super(DiscountPay,self).save(*args, **kwargs)
+
+
+    def save(self,*args, **kwargs):
+        if self.app_name is None:
+            self.app_name=APP_NAME
+        if self.class_name is None:
+            self.class_name='coupon'
+ 
+        return super(DiscountPay,self).save()
+
+
+
 class Coef(models.Model,LinkHelper):
     number=models.IntegerField(_("number"))
     percentage=models.IntegerField(_("percentage"),default=3)

@@ -82,6 +82,30 @@
 
 {% endif %}
 {% endif %}
+{% for customer in account.customer_set.all %}
+<div class="my-2 text-center farsi">
+    <a href="{{customer.get_absolute_url}}">
+        <small class="text-primary">
+             مشتری
+        </small>
+        
+
+
+    </a> 
+
+    
+    <a href="{{customer.get_loyaltyclub_absolute_url}}">
+        <small class="text-muted">
+            باشگاه مشتریان
+        </small>
+        
+
+
+    </a> 
+
+
+</div> 
+{% endfor %}
 
 {% for acc in account.employee_set.all %}
 <div class="my-2 text-center farsi">

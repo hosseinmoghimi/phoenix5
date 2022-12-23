@@ -202,6 +202,53 @@ class CouponsView(View):
 
 
 
+class DiscountPayView(View):
+    def get(self, request, *args, **kwargs):
+        context = getContext(request)
+        customer_repo=CustomerRepo(request=request)
+        customer=customer_repo.customer(*args,**kwargs)
+         
+
+        context['customer'] = customer
+        coupon=CouponRepo(request=request).coupon(*args, **kwargs)
+        context['coupon'] = coupon
+        context.update(get_transaction_context(request=request,transaction=coupon))
+        coupon_s=json.dumps(CouponSerializer(coupon).data)
+        context['coupon_s'] = coupon_s
+         
+        context['body_class'] = "product-page"
+        if request.user.has_perm(APP_NAME+".add_order"):
+            # context['add_brand_form'] = AddBrandForm()
+            context.update(get_add_order_context(request=request))
+
+        return render(request, TEMPLATE_ROOT+"coupon.html", context)
+
+
+
+
+class DiscountPaysView(View):
+    def get(self, request, *args, **kwargs):
+        context = getContext(request)
+        customer_repo=CustomerRepo(request=request)
+        customer=customer_repo.customer(*args,**kwargs)
+         
+
+        context['customer'] = customer
+        coupons=CouponRepo(request=request).list(customer_id=customer.id)
+        context['coupons'] = coupons
+        coupons_s=json.dumps(CouponSerializer(coupons,many=True).data)
+        context['coupons_s'] = coupons_s
+         
+        context['body_class'] = "product-page"
+        if request.user.has_perm(APP_NAME+".add_order"):
+            # context['add_brand_form'] = AddBrandForm()
+            context.update(get_add_order_context(request=request))
+
+        return render(request, TEMPLATE_ROOT+"coupons.html", context)
+
+
+
+
 class CoefsView(View):
     def get(self, request, *args, **kwargs):
         context = getContext(request)

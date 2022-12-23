@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from market.serializers import Customer,AccountSerializer,AreaSerializer,Supplier
 from accounting.serializers import InvoiceBriefSerializer
-from .models import Order,Coupon,Coef
+from .models import Order,Coupon,Coef,DiscountPay
 class CustomerSerializer(serializers.ModelSerializer):
     account=AccountSerializer()
     region=AreaSerializer()
@@ -49,3 +49,9 @@ class CouponSerializer(serializers.ModelSerializer):
         fields=['id','order','title','amount','get_edit_url','get_delete_url','get_absolute_url']
 
  
+        
+class DiscountPaySerializer(serializers.ModelSerializer):
+    order=OrderSerializer()
+    class Meta:
+        model=DiscountPay
+        fields=['id','order','title','amount','get_edit_url','get_delete_url','get_absolute_url']

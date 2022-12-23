@@ -20,16 +20,27 @@
                         <a href="{{customer.account.get_absolute_url}}">
 
                             {{customer.account.title}}
-                            
+
                             {% if perms.market.change_customer %}
                             <span class="mx-2">
 
                                 {{customer.get_edit_btn|safe}}
-                            </span>    
+                            </span>
                             {% endif %}
-                                
+
                         </a>
                     </h5>
+                    <h6>
+
+                        <a href="{{customer.get_loyaltyclub_absolute_url}}">
+                            <small class="text-muted">
+                                باشگاه مشتریان
+                            </small>
+
+
+
+                        </a>
+                    </h6>
                 </div>
                 <div class="col-6">
 
@@ -93,16 +104,16 @@
 
                     <tr>
                         <td>
-                            
+
                             {% if perms.accounting.change_invoice %}
                             <a href="{{market_invoice.get_absolute_url}}">{{market_invoice.title}}</a>
-                                
+
                             {% else %}
-                            
+
                             <a href="{{market_invoice.get_print_url}}">{{market_invoice.title}}</a>
-                                
+
                             {% endif %}
-                                
+
                         </td>
 
                         <td>
