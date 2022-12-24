@@ -1115,14 +1115,20 @@ class InvoiceRepo():
 
     def invoice(self, *args, **kwargs):
         if 'invoice' in kwargs:
-            return kwargs['invoice']
+            invoice= kwargs['invoice']
         if 'invoice_id' in kwargs:
-            return self.objects.filter(pk=kwargs['invoice_id']).first()
+            invoice= self.objects.filter(pk=kwargs['invoice_id']).first()
         elif 'pk' in kwargs:
-            return self.objects.filter(pk=kwargs['pk']).first()
+            invoice= self.objects.filter(pk=kwargs['pk']).first()
         elif 'id' in kwargs:
-            return self.objects.filter(pk=kwargs['id']).first()
-     
+            invoice= self.objects.filter(pk=kwargs['id']).first()
+        if invoice is not None:
+            i=1
+            for invoice_line in invoice.invoice_lines().order_by('row'):
+                invoice_line.row=i
+                i+=1
+                invoice_line.save()
+        return invoice
     def list(self, *args, **kwargs):
         objects = self.objects
         if 'search_for' in kwargs:
