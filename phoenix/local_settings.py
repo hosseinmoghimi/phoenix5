@@ -87,9 +87,9 @@ STATICFILES_DIRS=[os.path.join(BASE_DIR,'static')]
 
 
 
-
 phoenix_apps=[
     {
+        'priority':1,
         'name':'accounting',
         'title':'حسابداری',
         'color':'danger',
@@ -98,6 +98,7 @@ phoenix_apps=[
         'show_on_menu':True,
     },
     {
+        'priority':2,
         'name':'projectmanager',
         'color':'success',
         'title':'مدیریت پروژه',
@@ -106,6 +107,7 @@ phoenix_apps=[
         'show_on_menu':True,
     },
     {
+        'priority':3,
         'name':'authentication',
         'title':'هویت',
         'color':'warning',
@@ -114,6 +116,7 @@ phoenix_apps=[
         'show_on_menu':True,
     },
     {
+        'priority':4,
         'name':'health',
         'title':'بهداشت',
         'color':'success',
@@ -122,6 +125,7 @@ phoenix_apps=[
         'show_on_menu':True,
     },
     {
+        'priority':5,
         'name':'polls',
         'title':'نظرسنجی',
         'color':'success',
@@ -130,6 +134,7 @@ phoenix_apps=[
         'show_on_menu':True,
     },
     {
+        'priority':6,
         'name':'mafia',
         'title':'مافیا',
         'color':'warning',
@@ -139,6 +144,7 @@ phoenix_apps=[
     },
 
     {
+        'priority':7,
         'name':'organization',
         'title':'سازمان',
         'color':'danger',
@@ -147,6 +153,7 @@ phoenix_apps=[
         'show_on_menu':True,
     },
     {
+        'priority':8,
         'name':'library',
         'title':'کتابخانه',
         'color':'success',
@@ -157,6 +164,7 @@ phoenix_apps=[
 
     
     {
+        'priority':9,
         'name':'bms',
         'title':'هوشمند سازی',
         'color':'info',
@@ -167,6 +175,7 @@ phoenix_apps=[
 
 
     {
+        'priority':10,
         'name':'scheduler',
         'title':'برنامه ریز',
         'color':'primary',
@@ -175,6 +184,7 @@ phoenix_apps=[
         'show_on_menu':True,
     },
     {
+        'priority':11,
         'name':'school',
         'title':'آموزشگاه',
         'color':'warning',
@@ -183,6 +193,7 @@ phoenix_apps=[
         'show_on_menu':True,
     },
     {
+        'priority':12,
         'name':'chef',
         'title':'سرآشپز',
         'color':'danger',
@@ -191,6 +202,7 @@ phoenix_apps=[
         'show_on_menu':True,
     },
     {
+        'priority':13,
         'name':'resume',
         'title':'رزومه',
         'color':'success',
@@ -199,6 +211,7 @@ phoenix_apps=[
         'show_on_menu':False,
     },
     {
+        'priority':14,
         'name':'guarantee',
         'title':'گارانتی',
         'color':'warning',
@@ -207,6 +220,7 @@ phoenix_apps=[
         'show_on_menu':True,
     },
     {
+        'priority':15,
         'name':'warehouse',
         'title':'انبار',
         'color':'warning',
@@ -215,6 +229,7 @@ phoenix_apps=[
         'show_on_menu':True,
     },
     {
+        'priority':16,
         'name':'wallet',
         'title':'کیف پول',
         'color':'warning',
@@ -223,6 +238,7 @@ phoenix_apps=[
         'show_on_menu':True,
     },
     {
+        'priority':17,
         'name':'log',
         'title':'لاگ',
         'color':'warning',
@@ -231,6 +247,7 @@ phoenix_apps=[
         'show_on_menu':True,
     },
     {
+        'priority':18,
         'name':'messenger',
         'title':'پیام رسان',
         'color':'warning',
@@ -239,6 +256,7 @@ phoenix_apps=[
         'show_on_menu':True,
     },
     {
+        'priority':19,
         'name':'archive',
         'title':'آرشیو',
         'color':'warning',
@@ -247,6 +265,7 @@ phoenix_apps=[
         'show_on_menu':True,
     },
     {
+        'priority':20,
         'name':'utility',
         'color':'danger',
         'title':'ابزار های کاربردی',
@@ -255,6 +274,7 @@ phoenix_apps=[
         'show_on_menu':True,
     },
     {
+        'priority':21,
         'name':'realestate',
         'color':'success',
         'title':'املاک',
@@ -263,6 +283,7 @@ phoenix_apps=[
         'show_on_menu':True,
     },
     {
+        'priority':22,
         'name':'core',
         'title':'core',
         'color':'danger',
@@ -273,6 +294,7 @@ phoenix_apps=[
 
     
     {
+        'priority':23,
         'name':'transport',
         'title':'حمل و نقل',
         'color':'danger',
@@ -283,6 +305,7 @@ phoenix_apps=[
 
     
     {
+        'priority':24,
         'name':'map',
         'title':'نقشه',
         'color':'danger',
@@ -291,6 +314,7 @@ phoenix_apps=[
         'show_on_menu':True,
     },
     {
+        'priority':25,
         'name':'market',
         'title':'مارکت',
         'color':'danger',
@@ -299,6 +323,7 @@ phoenix_apps=[
         'show_on_menu':True,
     },
     {
+        'priority':26,
         'name':'stock',
         'title':'سهام',
         'color':'danger',
@@ -308,6 +333,7 @@ phoenix_apps=[
     },
 
     {
+        'priority':27,
         'name':'web',
         'title':'وب سایت',
         'color':'success',
@@ -317,6 +343,7 @@ phoenix_apps=[
     },
     
     {
+        'priority':28,
         'name':'loyaltyclub',
         'title':'باشگاه مشتریان',
         'color':'warning',
@@ -325,3 +352,5 @@ phoenix_apps=[
         'show_on_menu':True,
     },
 ]    
+
+
