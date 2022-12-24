@@ -16,7 +16,7 @@ urlpatterns = [
 
     path("ware_houses/",login_required(views.HomeView.as_view()),name="ware_houses"),
     
-    path("suppliers/",login_required(views.HomeView.as_view()),name="suppliers"),
+    path("suppliers/",login_required(views.SuppliersView.as_view()),name="suppliers"),
     path("supplier/<int:pk>/",login_required(views.SupplierView.as_view()),name="supplier"),
     
     path("cart/<int:customer_id>/",(views.CartView.as_view()),name="customer_cart"),
@@ -43,6 +43,7 @@ urlpatterns = [
     path("add_to_cart/",(apis.AddToCartApi.as_view()),name="add_to_cart"),
     path("add_shop/",(apis.AddShopApi.as_view()),name="add_shop"),
     path("add_customer/",(apis.AddCustomerApi.as_view()),name="add_customer"),
+    path("add_supplier/",(apis.AddSupplierApi.as_view()),name="add_supplier"),
     path("checkout/",(apis.CheckoutApi.as_view()),name="checkout"),
     
 ]

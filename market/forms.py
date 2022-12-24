@@ -6,11 +6,17 @@ class SearchForm(forms.Form):
 class AddBrandForm(forms.Form):
     title=forms.CharField(max_length=100, required=True)
 
+class AddSupplierForm(forms.Form):
+    account_id=forms.IntegerField(required=True)
+    region_id=forms.IntegerField(required=True)
+    inviter_id=forms.IntegerField(required=False)
+    
 
 class AddCustomerForm(forms.Form):
     account_id=forms.IntegerField(required=True)
     region_id=forms.IntegerField(required=True)
     inviter_id=forms.IntegerField(required=False)
+    mobile=forms.CharField(max_length=50, required=False)
     
 class CheckoutForm(forms.Form):
     customer_id=forms.IntegerField(required=True)

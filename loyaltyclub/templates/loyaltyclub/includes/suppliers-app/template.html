@@ -1,0 +1,94 @@
+<div id="suppliers-app">
+
+    <table class="table farsi">
+        <thead>
+            <th>
+                <div class="text-right">
+
+                    نام فروشنده
+                </div>
+            </th>
+            <th>
+                <div class="text-right">
+
+                    محدوده خدمات
+                </div>
+            </th>
+            <th>
+
+            </th>
+        </thead>
+        <tbody>
+
+            {% if not no_javascript %}
+
+            <tr v-for="supplier in suppliers">
+
+                <td>
+                    <div class="media">
+                        <a :href="supplier.get_loyaltyclub_absolute_url">
+                            <img :src="supplier.account.logo" class="rounded" width="48" alt="">
+                        </a>
+                        <div class="mr-2 media-body">
+                            <a :href="supplier.get_loyaltyclub_absolute_url">
+                                <h4 class="text-right">
+                                    <span v-text="supplier.account.title"></span>
+
+                                </h4>
+                            </a>
+
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    <h5 class="text-primary text-right">
+                        <a :href="supplier.region.get_absolute_url">
+                            <span v-text="supplier.region.title"></span>
+                        </a>
+                    </h5>
+                </td>
+                <td>
+
+                </td>
+            </tr>
+
+            {% endif %}
+            {% if no_javascript %}
+
+            {% for supplier in suppliers %}
+
+            <tr>
+                <td>
+                    <div class="media">
+                        <a href="{{supplier.get_absolute_url}}">
+                            <img src="{{supplier.account.logo}}" class="rounded" width="48" alt="">
+                        </a>
+                        <div class="mr-2 media-body">
+                            <a href="{{supplier.get_absolute_url}}">
+                                <h5 class="text-right">
+
+                                    {{supplier.account.title}}
+                                </h5>
+                            </a>
+
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    <h6 class="text-primary text-right">
+                        <a href="{{supplier.region.get_absolute_url}}">
+
+                            {{supplier.region.title}}
+                        </a>
+                    </h6>
+                </td>
+                <td>
+
+                </td>
+            </tr>
+            {% endfor %}
+            {% endif %}
+        </tbody>
+    </table>
+
+</div>

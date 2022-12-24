@@ -1,13 +1,14 @@
 from django.shortcuts import render
 from .apps import APP_NAME
 from django.http import Http404
+from accounting.views import get_account_context
 from django.views import View
 from core.views import CoreContext,PageContext
 from core.repo import ParameterRepo
 from market.serializers import CustomerSerializer,SupplierSerializer
 from market.repo import CustomerRepo,SupplierRepo
 from .serializers import CustomerSerializer
-from market.forms import AddCustomerForm
+from market.forms import AddCustomerForm,AddSupplierForm
 from .forms import *
 from map.repo import AreaRepo
 from .serializers import OrderSerializer,CouponSerializer,CoefSerializer
@@ -17,6 +18,7 @@ from accounting.views import get_transaction_context
 LAYOUT_PARENT="phoenix/layout.html"
 
 TEMPLATE_ROOT="loyaltyclub/"
+from market.views import get_customer_context,get_supplier_context
 
 def get_add_order_context(request,*args, **kwargs):
     context={}
@@ -70,7 +72,7 @@ class CustomerView(View):
         customer=customer_repo.customer(*args,**kwargs)
         from .repo import normalize_coupons
         normalize_coupons(customer_id=customer.id)
-        
+        context.update(get_customer_context(request=request,customer=customer))
 
         coupon_repo=CouponRepo(request=request)
         # payment_repo=PaymentRepo(request=request)
@@ -91,13 +93,14 @@ class CustomerView(View):
 
 
 
-        coupons_sum=coupon_repo.sum(customer_id=customer.id)
+        coupons_count,coupons_sum=coupon_repo.sum(customer_id=customer.id)
         orders_sum,discounts,paids,ship_fees=order_repo.sum(customer_id=customer.id)
         context['orders_sum'] = orders_sum
         context['paids'] = paids
         context['ship_fees'] = ship_fees
         context['discounts'] = discounts
         context['coupons_sum'] = coupons_sum
+        context['coupons_count'] = coupons_count
 
         coupons_remain=coupons_sum-discounts
         context['coupons_remain'] = coupons_remain
@@ -115,17 +118,17 @@ class CustomerView(View):
 class SuppliersView(View):
     def get(self, request, *args, **kwargs):
         context = getContext(request)
-        customer_repo=CustomerRepo(request=request)
-        customers=customer_repo.list(*args,**kwargs)
+        supplier_repo=SupplierRepo(request=request)
+        suppliers=supplier_repo.list(*args,**kwargs)
          
 
-        context['customers'] = customers
-        customers_s = json.dumps(CustomerSerializer(customers,many=True).data)
-        context['customers_s'] = customers_s
+        context['suppliers'] = suppliers
+        suppliers_s = json.dumps(SupplierSerializer(suppliers,many=True).data)
+        context['suppliers_s'] = suppliers_s
         context['body_class'] = "ecommerce-page"
-        if request.user.has_perm(APP_NAME+".add_customer"):
+        if request.user.has_perm(APP_NAME+".add_supplier"):
             from accounting.views import add_from_accounts_context
-            context['add_customer_form']=AddCustomerForm()
+            context['add_supplier_form']=AddSupplierForm()
             context.update(add_from_accounts_context(request=request))
             context['regions']=AreaRepo(request=request).list()
         return render(request, TEMPLATE_ROOT+"suppliers.html", context)
@@ -134,16 +137,36 @@ class SuppliersView(View):
 class SupplierView(View):
     def get(self, request, *args, **kwargs):
         context = getContext(request)
-        customer_repo=CustomerRepo(request=request)
-        customer=customer_repo.customer(*args,**kwargs)
-         
+        supplier_repo=SupplierRepo(request=request)
+        supplier=supplier_repo.supplier(*args,**kwargs)
+        context.update(get_supplier_context(request=request,supplier=supplier))
 
-        context['customer'] = customer
-        orders=OrderRepo(request=request).list(customer_id=customer.id)
+        context['supplier'] = supplier
+        orders=OrderRepo(request=request).list(supplier_id=supplier.id)
         context['orders'] = orders
         orders_s=json.dumps(OrderSerializer(orders,many=True).data)
         context['orders_s'] = orders_s
          
+        coupon_repo=CouponRepo(request=request)
+        coupons=coupon_repo.list(supplier_id=supplier.id)
+         
+
+        context['coupons'] = coupons
+        context['coupons'] = coupons
+        coupons_s=json.dumps(CouponSerializer(coupons,many=True).data)
+        context['coupons_s'] = coupons_s
+
+
+        order_repo=OrderRepo(request=request)
+        coupons_sum=coupon_repo.sum(supplier_id=supplier.id)
+        orders_sum,discounts,paids,ship_fees=order_repo.sum(supplier_id=supplier.id)
+        context['orders_sum'] = orders_sum
+        context['paids'] = paids
+        context['ship_fees'] = ship_fees
+        context['discounts'] = discounts
+        context['coupons_sum'] = coupons_sum
+
+
         context['body_class'] = "product-page"
         if request.user.has_perm(APP_NAME+".add_order"):
             # context['add_brand_form'] = AddBrandForm()
@@ -182,12 +205,11 @@ class CouponView(View):
 class CouponsView(View):
     def get(self, request, *args, **kwargs):
         context = getContext(request)
-        customer_repo=CustomerRepo(request=request)
-        customer=customer_repo.customer(*args,**kwargs)
+        coupon_repo=CouponRepo(request=request)
+        coupons=coupon_repo.list(*args,**kwargs)
          
 
-        context['customer'] = customer
-        coupons=CouponRepo(request=request).list(customer_id=customer.id)
+        context['coupons'] = coupons
         context['coupons'] = coupons
         coupons_s=json.dumps(CouponSerializer(coupons,many=True).data)
         context['coupons_s'] = coupons_s
@@ -272,19 +294,20 @@ class CoefsView(View):
 class OrdersView(View):
     def get(self, request, *args, **kwargs):
         context = getContext(request)
-        customer_repo=CustomerRepo(request=request)
-        customers=customer_repo.list(*args,**kwargs)
+        order_repo=OrderRepo(request=request)
+        orders=order_repo.list(*args,**kwargs)
          
 
-        context['customers'] = customers
-        customers_s = json.dumps(CustomerSerializer(customers,many=True).data)
-        context['customers_s'] = customers_s
+        context['orders'] = orders
+        orders_s = json.dumps(OrderSerializer(orders,many=True).data)
+        context['orders_s'] = orders_s
+
+        
+      
+
+
         context['body_class'] = "ecommerce-page"
-        if request.user.has_perm(APP_NAME+".add_customer"):
-            from accounting.views import add_from_accounts_context
-            context['add_customer_form']=AddCustomerForm()
-            context.update(add_from_accounts_context(request=request))
-            context['regions']=AreaRepo(request=request).list()
+        
         return render(request, TEMPLATE_ROOT+"orders.html", context)
 
 

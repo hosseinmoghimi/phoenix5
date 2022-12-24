@@ -158,6 +158,10 @@ class SupplierRepo():
             self.me=None
     def supplier(self, *args, **kwargs):
         pk=0
+        if 'supplier' in kwargs:
+            supplier= kwargs['supplier']
+            return supplier
+       
         if 'supplier_id' in kwargs:
             pk= kwargs['supplier_id']
             return self.objects.filter(pk=pk).first()
@@ -176,6 +180,8 @@ class SupplierRepo():
             objects = objects.filter(Q(title__contains=search_for)|Q(short_description__contains=search_for)|Q(description__contains=search_for))
         if 'for_home' in kwargs:
             objects = objects.filter(Q(for_home=kwargs['for_home']))
+        if 'region_id' in kwargs:
+            objects=objects.filter(region_id=kwargs['region_id'])
         if 'parent_id' in kwargs:
             objects=objects.filter(parent_id=kwargs['parent_id'])
         return objects.all()
@@ -192,7 +198,37 @@ class SupplierRepo():
         supplier.save()
         return supplier 
 
+  
+    def add_supplier(self,*args, **kwargs):
+        result=FAILED
+        inviter_id=0
+        message=""
+        supplier=None
+        if not self.request.user.has_perm(APP_NAME+".add_supplier"):
+            return
+        account_id=kwargs['account_id']
+        region_id=kwargs['region_id']
+        supplier=Customer.objects.filter(account_id=account_id).first()
+        if supplier is not None:
+            result=FAILED
+            message="قبلا  مشتری با این اکانت ایجاد شده است."
+            return result,message,supplier
+        supplier=self.supplier(*args, **kwargs)
+        if supplier is None:
+            supplier=Supplier()
+            supplier.account_id=account_id
+            supplier.region_id=region_id
+            if 'inviter_id' in kwargs:
+                inviter_id=kwargs['inviter_id']
+            if inviter_id is not None and inviter_id>0:
+                supplier.inviter_id=inviter_id
+            supplier.save()
+        if supplier is not None:
+            result=SUCCEED
+            message="فروشنده جدید با موفقیت افزوده شد."
+        return result,message,supplier
 
+    
 
 class CustomerRepo():  
     def __init__(self, *args, **kwargs):
@@ -214,6 +250,9 @@ class CustomerRepo():
 
     def customer(self, *args, **kwargs):
         pk=0
+        if 'customer' in kwargs:
+            return kwargs['customer']
+       
         if 'customer_id' in kwargs:
             pk= kwargs['customer_id']
             return self.objects.filter(pk=pk).first()
@@ -228,11 +267,14 @@ class CustomerRepo():
     def add_customer(self,*args, **kwargs):
         result=FAILED
         message=""
+        mobile=""
         customer=None
         if not self.request.user.has_perm(APP_NAME+".add_customer"):
             return
         account_id=kwargs['account_id']
         region_id=kwargs['region_id']
+        if 'mobile' in kwargs:
+            mobile=kwargs['mobile']
         customer=Customer.objects.filter(account_id=account_id).first()
         if customer is not None:
             result=FAILED
@@ -247,9 +289,13 @@ class CustomerRepo():
             if 'inviter_id' in kwargs:
                 inviter_id=kwargs['inviter_id']
             if inviter_id is not None and inviter_id>0:
+            
                 customer.inviter_id=inviter_id
-            customer.save()
+        
+        customer.account.tel=mobile
         if customer is not None:
+            customer.save()
+            customer.account.save()
             result=SUCCEED
             message="مشتری جدید با موفقیت افزوده شد."
         return result,message,customer
@@ -264,6 +310,8 @@ class CustomerRepo():
             objects = objects.filter(Q(for_home=kwargs['for_home']))
         if 'parent_id' in kwargs:
             objects=objects.filter(parent_id=kwargs['parent_id'])
+        if 'region_id' in kwargs:
+            objects=objects.filter(region_id=kwargs['region_id'])
         return objects.all()
 
 

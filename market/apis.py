@@ -7,8 +7,8 @@ from accounting.serializers import InvoiceSerializer
 
 from core.constants import FAILED,SUCCEED
 from market.forms import *
-from market.serializers import CustomerSerializer,CartLineSerializer, CategorySerializer, CategorySerializerForApi, ProductSerializer,ProductSerializerForApi, ShopSerializer
-from market.repo import CartLineRepo, CartRepo, CategoryRepo, ShopRepo,CustomerRepo
+from market.serializers import CustomerSerializer,CartLineSerializer, CategorySerializer,SupplierSerializer, CategorySerializerForApi, ProductSerializer,ProductSerializerForApi, ShopSerializer
+from market.repo import CartLineRepo, CartRepo, CategoryRepo, ShopRepo,CustomerRepo,SupplierRepo
 from utility.log import leolog
 class AddCategoryApi(APIView):
     def post(self,request,*args, **kwargs):
@@ -51,6 +51,19 @@ class AddCustomerApi(APIView):
             context['message']=message
         return JsonResponse(context)
 
+
+class AddSupplierApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        context['result']=FAILED
+        AddSupplierForm_=AddSupplierForm(request.POST)
+        if AddSupplierForm_.is_valid():
+            (result,message,supplier)=SupplierRepo(request=request).add_supplier(**AddSupplierForm_.cleaned_data)
+            if result==SUCCEED:
+                context['supplier']=SupplierSerializer(supplier).data
+            context['result']=result
+            context['message']=message
+        return JsonResponse(context)
 
 
 class CheckoutApi(APIView):

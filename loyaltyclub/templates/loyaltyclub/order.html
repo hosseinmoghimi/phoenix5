@@ -14,6 +14,24 @@
                 <h5>
                     {{order.title}}
                 </h5>
+
+                
+                <h5>
+                    <small class="text-muted">
+                        خریدار
+                    </small>
+                    <a href="{{order.customer.get_absolute_url"></a>
+                    {{order.customer.title}}
+                </h5>
+                
+                <h5>
+                    <small class="text-muted">
+                        فروشنده
+                    </small>
+                    <a href="{{order.supplier.get_absolute_url"></a>
+                    {{order.supplier.title}}
+                </h5>
+
                 {% if order.invoice %}
                 <h4>
 
@@ -36,22 +54,44 @@
                 </h5>
 
                 <h5>
-                    پرداخت شده : 
+                    پرداخت شده :
                     {{order.paid|to_price}}
                 </h5>
 
                 <h5>
-                     هزینه حمل :
+                    هزینه حمل :
                     {{order.ship_fee|to_price}}
                 </h5>
-                {% for  coupon in order.coupon_set.all  %}
+                {% for coupon in order.coupon_set.all %}
                 <h4>
 
 
 
                     <a href="{{coupon.get_absolute_url}}">
                         {{coupon.title}}
-                        {{coupon.amount|to_price}}
+                        <small>
+                            (
+                            {{coupon.amount|to_price}}
+
+                            )
+                        </small>
+                    </a>
+                </h4>
+                {% endfor %}
+
+                {% for discount_pay in order.discountpay_sqt.all %}
+                <h4>
+
+
+
+                    <a href="{{discount_pay.get_absolute_url}}">
+                        {{discount_pay.title}}
+                        <small>
+                            (
+
+                            {{discount_pay.amount|to_price}}
+                            )
+                        </small>
                     </a>
                 </h4>
                 {% endfor %}

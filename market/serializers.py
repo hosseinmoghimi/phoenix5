@@ -4,9 +4,11 @@ from accounting.serializers import AccountSerializer, ProductOrServiceSerializer
 from map.serializers import AreaSerializer
  
 class SupplierSerializer(serializers.ModelSerializer):
+    account=AccountSerializer()
+    region=AreaSerializer()
     class Meta:
         model=Supplier
-        fields=['id','title','thumbnail','region','get_absolute_url']
+        fields=['id','account','title','region','thumbnail','region','get_absolute_url','get_loyaltyclub_absolute_url']
    
  
 

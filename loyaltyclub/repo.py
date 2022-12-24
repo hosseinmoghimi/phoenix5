@@ -1,3 +1,4 @@
+from utility.log import leolog
 from accounting.repo import InvoiceRepo
 from django.utils import timezone
 from .models import Order,Coupon,Coef,DiscountPay
@@ -30,15 +31,15 @@ def normalize_coupons(customer_id):
             discount.order=order
             discount.save()
 
-        payment=Payment()
-        payment.pay_from_id=order.customer.account.id
-        payment.pay_to_id=order.supplier.account.id
-        payment.title="تسویه"
-        payment.amount=order.paid+order.ship_fee
-        payment.status=TransactionStatusEnum.DELIVERED
-        payment.payment_method=PaymentMethodEnum.IN_CASH
-        payment.transaction_datetime=order.date_ordered
-        payment.save()
+        # payment=Payment()
+        # payment.pay_from_id=order.customer.account.id
+        # payment.pay_to_id=order.supplier.account.id
+        # payment.title="تسویه"
+        # payment.amount=order.paid+order.ship_fee
+        # payment.status=TransactionStatusEnum.DELIVERED
+        # payment.payment_method=PaymentMethodEnum.IN_CASH
+        # payment.transaction_datetime=order.date_ordered
+        # payment.save()
 
 
         coupon.pay_from_id=order.customer.account.id
@@ -177,21 +178,30 @@ class OrderRepo():
             objects=objects.filter(parent_id=kwargs['parent_id'])
         if 'customer_id' in kwargs:
             objects=objects.filter(customer_id=kwargs['customer_id'])
+        if 'supplier_id' in kwargs:
+            objects=objects.filter(supplier_id=kwargs['supplier_id'])
         return objects.all()
 
 
 
     def sum(self, *args, **kwargs):
         customer_id=0
+        supplier_id=0
         ship_fees=0
         discounts=0
         paids=0
         sum=0
+        orders=Order.objects.all()
+
+        if 'supplier_id' in kwargs and kwargs['supplier_id'] is not None:
+            supplier_id=kwargs['supplier_id']
+
+        if supplier_id>0:
+            orders=orders.filter(supplier_id=supplier_id)
 
         if 'customer_id' in kwargs and kwargs['customer_id'] is not None:
             customer_id=kwargs['customer_id']
 
-        orders=Order.objects.all()
         if customer_id>0:
             orders=orders.filter(customer_id=customer_id)
 
@@ -294,18 +304,30 @@ class CouponRepo():
     def sum(self, *args, **kwargs):
         coupons_sum=0
         customer_id=0
+        supplier_id=0
+        coupons=Coupon.objects.all()
 
         if 'customer_id' in kwargs and kwargs['customer_id'] is not None:
             customer_id=kwargs['customer_id']
 
-        coupons=Coupon.objects
         if customer_id>0:
             coupons=coupons.filter(order__customer_id=customer_id)
 
+
+
+        if 'supplier_id' in kwargs and kwargs['supplier_id'] is not None:
+            supplier_id=kwargs['supplier_id']
+
+
+        if supplier_id>0:
+            coupons=coupons.filter(order__supplier_id=supplier_id)
+
+        count=0
         for coupon in coupons:
             coupons_sum+=coupon.amount
+            count=count+1
 
-        return coupons_sum
+        return count,coupons_sum
 
 
     def coupon(self, *args, **kwargs):
@@ -375,6 +397,8 @@ class CouponRepo():
             objects=objects.filter(parent_id=kwargs['parent_id'])
         if 'customer_id' in kwargs:
             objects=objects.filter(order__customer_id=kwargs['customer_id'])
+        if 'supplier_id' in kwargs:
+            objects=objects.filter(order__supplier_id=kwargs['supplier_id'])
         return objects.all()
  
 

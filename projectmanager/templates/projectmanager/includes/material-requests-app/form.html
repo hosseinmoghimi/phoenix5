@@ -185,7 +185,7 @@
 
             <div class="col-md-4">
                 <div class="form-group">
-                    <label for="">کپی از </label>
+                    <label for="">کپی از پروژه </label>
                     <input type="number" required v-model="source_project_id" class="form-control">
 
                 </div>
@@ -239,6 +239,14 @@
             </div>
             <div class="col-md-4">
                 <div class="form-group">
+                    <label for="">کپی از فاکتور </label>
+                    <input type="number" required v-model="source_invoice_id" class="form-control">
+                    <button class="btn btn-block btn-success mt-2" type="submit">از فاکتور کپی کن</button>
+
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
                     <label for=""> وضعیت</label>
                     <select v-model="add_material_request_form_status" class="form-control farsi" id="" required>
                         <option disabled selected>وضعیت درخواست را انتخاب کنید</option>
@@ -254,14 +262,6 @@
 
             </div>
 
-            <div class="col-md-4">
-                <div class="form-group">
-                    <label for="">کپی از فاکتور </label>
-                    <input type="number" required v-model="source_invoice_id" class="form-control">
-                    <button class="btn btn-block btn-success mt-2" type="submit">از فاکتور کپی کن</button>
-
-                </div>
-            </div>
         </div>
     </form>
 

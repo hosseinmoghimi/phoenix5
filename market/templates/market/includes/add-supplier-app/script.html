@@ -1,13 +1,12 @@
 {% load to_json %}
 <script>
     let accounts = JSON.parse(`{{accounts_s|escapejs}}`)
-    let add_customer_app = new Vue({
-        el: "#add-customer-app",
+    let add_supplier_app = new Vue({
+        el: "#add-supplier-app",
         data: {
             account_id: 0,
             region_id: 0,
             accounts: accounts,
-            mobile: "",
             name: "",
             search_for: '',
             inviter_id:0,
@@ -22,43 +21,42 @@
                 if (this.accounts.length > 0)
                     this.account_id = this.accounts[0].id
             },
-            add_customer: function () {
-                let url = "{% url 'market:add_customer' %}"
+            add_supplier: function () {
+                let url = "{% url 'market:add_supplier' %}"
                 let payload = {
                     csrfmiddlewaretoken: csrfmiddlewaretoken,
                     account_id: parseInt(this.account_id),
                     region_id: parseInt(this.region_id),
                     inviter_id: parseInt(this.inviter_id),
-                    mobile: this.mobile,
                 }
-                add_customer_app.waiting = true
+                add_supplier_app.waiting = true
                 $.post(url, payload).done((data) => {
-                    add_customer_app.waiting = false
+                    add_supplier_app.waiting = false
 
                     if (data.result === 'FAILED') {
-                        add_customer_app.message = {
+                        add_supplier_app.message = {
                             color: "danger",
                             body: data.message,
                             show: true,
                         }
                         setTimeout(() => {
-                            add_customer_app.message = {
+                            add_supplier_app.message = {
                                 show: false,
                             }
                         }, 3000);
                     }
                     if (data.result === 'SUCCEED') {
-                        if (typeof customers_app != "undefined") {
-                            customers_app.customers.push(data.customer)
+                        if (typeof suppliers_app != "undefined") {
+                            suppliers_app.suppliers.push(data.supplier)
                         }
 
-                        add_customer_app.message = {
+                        add_supplier_app.message = {
                             color: "success",
                             body: data.message,
                             show: true,
                         }
                         setTimeout(() => {
-                            add_customer_app.message = {
+                            add_supplier_app.message = {
                                 show: false,
                             }
                         }, 3000);

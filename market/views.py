@@ -1,7 +1,7 @@
 # from .repo import ProductRepo
 # from .serializers import ProductSerializer
 import json
-from accounting.views import get_invoice_context, get_product_context
+from accounting.views import get_invoice_context, get_product_context,get_account_context,add_from_accounts_context
 
 from authentication.forms import AddMembershipRequestForm
 from core.enums import ParameterNameEnum
@@ -22,7 +22,6 @@ from market.serializers import (BrandSerializer, CartLineSerializer,
                                 CategorySerializer, CustomerSerializer, ProductSerializer,ProductSpecificationSerializer, ShopSerializer,
                                 SupplierSerializer)
 from utility.log import leolog
-
 TEMPLATE_ROOT = "market/"
 
 LAYOUT_PARENT = "phoenix/layout.html"
@@ -53,6 +52,8 @@ def getContext(request, *args, **kwargs):
 
 def get_customer_context(request,*args, **kwargs):
     context={}
+    customer=CustomerRepo(request=request).customer(*args, **kwargs)
+    context.update(get_account_context(request=request,account=customer.account))
     cart_lines=CartLineRepo(request=request).my_lines()
     context['cart_lines']=cart_lines
     context['cart_lines_s']=json.dumps(CartLineSerializer(cart_lines,many=True).data)
@@ -68,15 +69,21 @@ def get_suppliers_context(request,*args, **kwargs):
     return context
 
 
+def get_supplier_context(request,*args, **kwargs):
+    context={}
+    supplier=SupplierRepo(request=request).supplier(*args, **kwargs)
+    context.update(get_account_context(request=request,account=supplier.account))
+    
+    return context
+
 class SupplierView(View):
     def get(self, request, *args, **kwargs):
         context = getContext(request)
-        context['body_class'] = "ecommerce-page"
+        context['body_class'] = "product-page"
 
-        context.update(get_customer_context(request=request,*args, **kwargs))
-        context.update(get_suppliers_context(request=request,*args, **kwargs))
         supplier=SupplierRepo(request=request).supplier(*args, **kwargs)
         context['supplier']=supplier
+        context.update(get_supplier_context(request=request,supplier=supplier))
         shop_header_image={
             'image':supplier.header
         }
@@ -84,6 +91,26 @@ class SupplierView(View):
 
 
         return render(request, TEMPLATE_ROOT+"supplier.html", context)
+
+class SuppliersView(View):
+    def get(self, request, *args, **kwargs):
+        context = getContext(request)
+        context['body_class'] = "ecommerce-page"
+
+        suppliers=SupplierRepo(request=request).list(*args, **kwargs)
+        context['suppliers']=suppliers
+        suppliers_s=json.dumps(SupplierSerializer(suppliers,many=True).data)
+        context['suppliers_s']=suppliers_s
+        shop_header_image={
+            'image':""
+        }
+        context['shop_header_image']=shop_header_image
+        if request.user.has_perm(APP_NAME+".add_supplier"):
+            context['add_supplier_form']=AddSupplierForm()
+            context.update(add_from_accounts_context(request=request))
+            context['regions']=AreaRepo(request=request).list()
+
+        return render(request, TEMPLATE_ROOT+"suppliers.html", context)
 
 
 class HomeView(View):
@@ -131,8 +158,8 @@ class HomeView(View):
             context['parent_s']=json.dumps(CategorySerializer(None).data)
 
 
-        context.update(get_customer_context(request=request,*args, **kwargs))
-        context.update(get_suppliers_context(request=request,*args, **kwargs))
+        # context.update(get_customer_context(request=request,*args, **kwargs))
+        # context.update(get_suppliers_context(request=request,*args, **kwargs))
 
         return render(request, TEMPLATE_ROOT+"shop.html", context)
 
@@ -304,7 +331,6 @@ class CustomersView(View):
         if request.user.has_perm(APP_NAME+".add_brand"):
             context['add_brand_form'] = AddBrandForm()
         if request.user.has_perm(APP_NAME+".add_customer"):
-            from accounting.views import add_from_accounts_context
             context['add_customer_form']=AddCustomerForm()
             context.update(add_from_accounts_context(request=request))
             context['regions']=AreaRepo(request=request).list()
@@ -315,8 +341,8 @@ class CustomerView(View):
     def get(self, request, *args, **kwargs):
         context = getContext(request)
         customer_repo=CustomerRepo(request=request)
-        customer=customer_repo.customer(*args,**kwargs)
-         
+        customer=customer_repo.customer(*args,**kwargs) 
+        context.update(get_customer_context(request=request,customer=customer))
 
         context['customer'] = customer
         market_invoices=MarketInvoiceRepo(request=request).list(customer_id=customer.id)

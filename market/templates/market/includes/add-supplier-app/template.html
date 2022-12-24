@@ -1,18 +1,18 @@
 {% load static %}
-<div id="accordion-add-customer">
-    <div class="card" id="add-customer-app">
-        <div class="card-header" id="heading-add-customer">
+<div id="accordion-add-supplier">
+    <div class="card" id="add-supplier-app">
+        <div class="card-header" id="heading-add-supplier">
             <h5 class="text-center">
-                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-add-customer"
-                    aria-expanded="true" aria-controls="collapse-add-customer">
-                    افزودن مشتری
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-add-supplier"
+                    aria-expanded="true" aria-controls="collapse-add-supplier">
+                    افزودن فروشنده
                 </button>
             </h5>
 
 
         </div>
-        <div id="collapse-add-customer" class="collapse" aria-labelledby="heading-add-customer"
-            data-parent="#accordion-add-customer">
+        <div id="collapse-add-supplier" class="collapse" aria-labelledby="heading-add-supplier"
+            data-parent="#accordion-add-supplier">
 
 
             <div class="card-body">
@@ -46,13 +46,6 @@
 
                         <div class="form-group">
                             <label for="">
-                                شماره تلفن همراه
-                            </label>
-                            <input placeholder="09....." v-model="mobile" class="form-control" type="text"
-                                >
-                        </div>
-                        <div class="form-group">
-                            <label for="">
                                 انتخاب منطقه
                             </label>
                             <select v-model="region_id" class="form-control" id="" required>
@@ -64,7 +57,7 @@
 
                         <div class="text-right">
 
-                            <button @click="add_customer()" class="btn btn-success">
+                            <button @click="add_supplier()" class="btn btn-success">
                                 <i class="fa fa-plus"></i>
                                 افزودن
                             </button>

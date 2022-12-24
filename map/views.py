@@ -43,6 +43,21 @@ class AreaView(View):
         context = getContext(request)
         area = AreaRepo(request=request).area(*args, **kwargs)
         context['area'] = area
+        for installed_app in context['installed_apps']:
+            if installed_app['name']=='market':
+                from market.repo import SupplierRepo,CustomerRepo
+                from market.serializers import SupplierSerializer,CustomerSerializer
+              
+                suppliers=SupplierRepo(request=request).list(region_id=area.id)
+                context['suppliers'] = suppliers
+                suppliers_s=json.dumps(SupplierSerializer(suppliers,many=True).data)
+                context['suppliers_s']=suppliers_s
+
+                
+                customers=CustomerRepo(request=request).list(region_id=area.id)
+                context['customers'] = customers
+                customers_s=json.dumps(CustomerSerializer(customers,many=True).data)
+                context['customers_s']=customers_s
         context['area_s'] = json.dumps(AreaSerializer(area).data)
         return render(request, TEMPLATE_ROOT+"area.html", context)
 

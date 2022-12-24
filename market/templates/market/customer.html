@@ -27,18 +27,23 @@
                                 {{customer.get_edit_btn|safe}}
                             </span>
                             {% endif %}
-
+                            {% include 'accounting/includes/account-app/navbar.html' %}
                         </a>
                     </h5>
-                    <h6>
 
+                    {% if customer.inviter %}
+                    <h6>
+                        <span class="small text-muted">معرف<span>
+                        <a href="{{customer.inviter.get_absolute_url}}">
+                            {{customer.inviter}}
+                        </a>
+                    </h6>
+                    {% endif %}
+                    <h6>
                         <a href="{{customer.get_loyaltyclub_absolute_url}}">
                             <small class="text-muted">
                                 باشگاه مشتریان
                             </small>
-
-
-
                         </a>
                     </h6>
                 </div>

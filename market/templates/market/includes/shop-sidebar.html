@@ -1,31 +1,31 @@
 <div class="card card-refine card-plain card-rose farsi">
     <div class="card-body">
-        
+
         <div id="accordion" role="tablist">
-         
+
             <div class="card card-collapse">
                 <div class="card-header" role="tab" id="headingTwo">
                     <h5 class="mb-0 text-right">
                         <a class="collapsed farsi" data-toggle="collapse" href="#collapseONE" aria-expanded="false"
                             aria-controls="collapseONE">
-                           دسته بندی ها
-                            <i class="material-icons"   aria-hidden="true" >keyboard_arrow_down</i>
+                            دسته بندی ها
+                            <i class="material-icons" aria-hidden="true">keyboard_arrow_down</i>
                         </a>
                     </h5>
                 </div>
                 <div id="collapseONE" class="collapse" role="tabpanel" aria-labelledby="headingTwo">
                     <div class="card-body">
 
-                    {% for category in sidebar_categories %}
-                    <div class="text-right">
+                        {% for category in sidebar_categories %}
+                        <div class="text-right">
 
-                        <a class="farsi mx-2" href="{{category.get_market_absolute_url}}">
-                            {{category.title}}
+                            <a class="farsi mx-2" href="{{category.get_market_absolute_url}}">
+                                {{category.title}}
 
-                        </a>
-                    </div>
-                    {% endfor %}
-                        
+                            </a>
+                        </div>
+                        {% endfor %}
+
                     </div>
                 </div>
             </div>
@@ -37,22 +37,21 @@
                         <a class="collapsed farsi" data-toggle="collapse" href="#collapseThree" aria-expanded="false"
                             aria-controls="collapseTwo">
                             برند ها
-                            <i class="material-icons"   aria-hidden="true" >keyboard_arrow_down</i>
+                            <i class="material-icons" aria-hidden="true">keyboard_arrow_down</i>
                         </a>
                     </h5>
                 </div>
                 <div id="collapseThree" class="collapse" role="tabpanel" aria-labelledby="headingThree">
                     <div class="card-body">
-                        {% for  brand in sidebar_brands %}
+                        {% for brand in sidebar_brands %}
                         <div class="my-2 text-center">
 
-                            <a title="{{brand.title}}" 
-                            href="{{brand.get_absolute_url}}">
-                            <img src="{{brand.logo}}" height="48" alt="{{brand.title}}">
+                            <a title="{{brand.title}}" href="{{brand.get_absolute_url}}">
+                                <img src="{{brand.logo}}" height="48" alt="{{brand.title}}">
 
-                        </a>
-                      </div>
-                      {% endfor %}
+                            </a>
+                        </div>
+                        {% endfor %}
 
                         <!-- <div class="form-check">
                             <label class="form-check-label">
@@ -63,17 +62,61 @@
                                 </span>
                             </label>
                         </div> -->
-                    
+
                     </div>
                 </div>
             </div>
-            
-            
-            
 
- 
+            <div class="card card-collapse">
+                <div class="card-header" role="tab" id="headingLinks">
+                    <h5 class="mb-0 text-right">
+                        <a class="collapsed farsi" data-toggle="collapse" href="#collapseLinks" aria-expanded="false"
+                            aria-controls="collapseLinks">
+                            لینک ها
+                            <i class="material-icons" aria-hidden="true">keyboard_arrow_down</i>
+                        </a>
+                    </h5>
+                </div>
+                <div id="collapseLinks" class="collapse" role="tabpanel" aria-labelledby="headingLinks">
+                    <div class="card-body">
+                        <div class="my-2 text-center">
 
-            
+                            <a title=" " href="{% url 'market:customers' %}">
+                                <h6>
+                                مشتریان
+
+                                </h6>
+                            </a>
+
+                            <a title=" " href="{% url 'market:suppliers' %}">
+                                <h6>
+                                فروشنده ها
+
+                                </h6>
+                            </a>
+
+                        </div>
+
+                        <!-- <div class="form-check">
+                            <label class="form-check-label">
+                                <input class="form-check-input" type="checkbox" value="" checked="">
+                                Blazers
+                                <span class="form-check-sign">
+                                    <span class="check"></span>
+                                </span>
+                            </label>
+                        </div> -->
+
+                    </div>
+                </div>
+            </div>
+
+
+
+
+
+
+
 
         </div>
     </div>

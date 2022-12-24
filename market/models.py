@@ -55,6 +55,8 @@ class Supplier(Page):
     region=models.ForeignKey("map.area", verbose_name=_("region"), on_delete=models.CASCADE)
     account=models.ForeignKey("accounting.account", verbose_name=_("account"), on_delete=models.CASCADE)
     
+    def get_loyaltyclub_absolute_url(self):
+        return reverse('loyaltyclub:supplier',kwargs={'pk':self.pk})
 
     class Meta:
         verbose_name = _("Supplier")
