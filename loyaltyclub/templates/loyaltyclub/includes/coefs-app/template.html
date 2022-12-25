@@ -32,17 +32,13 @@
 
 
             <div class="card-body">
-                <div class="table-responsive">
-                    <div v-for="coef in coefs">
-                        <form @submit.prevent="change_coef(coef.number,coef.percentage)">
-                            <div class="form-group">
-                                <label for="">درصد تخفیف برای خرید 
-                                    <span v-text="coef.tartib"></span>
-                                </label>
-                                <input type="number" v-model="coef.percentage" class="form-control">
-                            </div>
+                <div class="">
+                    <div class="row rtl">
 
-                        </form>
+                        <div class="col-md-3" v-for="coef in coefs">
+                            
+                            <coef-component :coef="coef"></coef-component>
+                        </div>
                     </div>
                     <div>
                         <form @submit.prevent="change_coef(number,percentage)">

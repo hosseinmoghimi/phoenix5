@@ -49,15 +49,19 @@ class AddInvoiceToOrderView(APIView):
 class ChangeCoefView(APIView):
     def post(self,request,*args, **kwargs):
         context={}
+        result=FAILED
+        coef=None
+        message=""
         context['result']=FAILED
         ChangeCoefForm_=ChangeCoefForm(request.POST)
         if ChangeCoefForm_.is_valid():
             cd=ChangeCoefForm_.cleaned_data
-            coef=CoefRepo(request=request).change_coef(**cd)
+            result,coef,message=CoefRepo(request=request).change_coef(**cd)
             if coef is not None: 
                 context['coef']=CoefSerializer(coef).data
                 result=SUCCEED
             context['result']=result 
+            context['message']=message 
         return JsonResponse(context)
 
 

@@ -6,7 +6,44 @@
 
 <script>
     // let rest_ = parseInt("{{rest}}")
+    let coef_component_template=`{% include 'loyaltyclub/includes/coefs-app/component.html' %}`
+    let coef_component = Vue.component('coef-component', {
+        data: function () {
+            return {
+                message: { show: false }
+            }
+        },
+        methods: {
 
+            save: function () {
+                coef_component_me=this
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    number: this.coef.number,
+                    percentage: this.coef.percentage,
+                }
+
+                let aa = this
+                let url_change_coef = "{% url 'loyaltyclub:change_coef' %}"
+
+                let posting = $.post(url_change_coef, payload)
+                posting.done((data) => {
+                    if (data.result === 'SUCCEED') {
+                        coef_component_me.message.body = data.message
+                        coef_component_me.message.show= true
+                        coef_component_me.message.color= "success"
+                        setTimeout(() => {
+                            coef_component_me.message.show = false
+                        }, 1800);
+                    }
+                })
+            },
+
+
+        },
+        props: ['coef'],
+        template: coef_component_template,
+    })
 
     let coefs = JSON.parse(`{{coefs_s|escapejs}}`)
 
@@ -22,16 +59,15 @@
             waiting: false,
         },
         components: {
-            DatePicker: VuePersianDatetimePicker
+            DatePicker: VuePersianDatetimePicker,
+            coef_component,
 
         },
         methods: {
             to_price: function (vall, curr) {
                 return to_price(vall, curr)
             },
-            change_coef: function (number, percentage) {
-                leolog(number)
-                leolog(percentage)
+            change_coefs: function (number, percentage) {
                 let payload = {
                     csrfmiddlewaretoken: csrfmiddlewaretoken,
                     number: number,
@@ -50,7 +86,7 @@
                     if (!sw) {
                         coefs_app.coefs.push(data.coef)
                     }
-                    coefs_app.number=coefs_app.coefs.length+1
+                    coefs_app.number = coefs_app.coefs.length + 1
                 })
             },
         },

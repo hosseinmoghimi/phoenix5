@@ -37,21 +37,15 @@
                             <th>
                                 تخفیف
                             </th>
-
                             <th>
-                               پرداختی
+                                پرداختی
                             </th>
                             <th>
-جایزه
-
-</th>
-
-
+                                هدیه
+                            </th>
                             <th>
                                 فروشنده
                             </th>
-
-
                             <th>
                                 خریدار
                             </th>
@@ -94,7 +88,8 @@
 
                                 <td>
                                     <a :href="coupon.order.supplier.get_loyaltyclub_absolute_url">
-                                        <img :src="coupon.order.supplier.account.logo" class="rounded" width="32" alt="">
+                                        <img :src="coupon.order.supplier.account.logo" class="rounded" width="32"
+                                            alt="">
                                         <span v-text="coupon.order.supplier.account.title"></span>
 
                                     </a>
@@ -102,7 +97,8 @@
                                 </td>
                                 <td>
                                     <a :href="coupon.order.customer.get_loyaltyclub_absolute_url">
-                                        <img :src="coupon.order.customer.account.logo" class="rounded" width="32" alt="">
+                                        <img :src="coupon.order.customer.account.logo" class="rounded" width="32"
+                                            alt="">
                                         <span v-text="coupon.order.customer.account.title"></span>
 
                                     </a>

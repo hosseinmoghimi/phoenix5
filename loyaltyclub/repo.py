@@ -48,8 +48,10 @@ def normalize_coupons(customer_id):
         coupon.payment_method=PaymentMethodEnum.SERVICE
         percentage=0
         coef=Coef.objects.filter(number=i).first()
-        if coef is not None:
-            percentage=coef.percentage
+        if coef is None:
+            coef=Coef(number=i)
+            coef.save()
+        percentage=coef.percentage
         _sum=order.sum-order.discount
         coupon.amount=(int)((float)(percentage)*(float)(_sum)*(0.01))
 
@@ -248,9 +250,14 @@ class CoefRepo():
             return self.objects.filter(pk=pk).first()
      
     def change_coef(self,*args, **kwargs):
+        
+        result=FAILED
         coef=None
+        message=""
+
         if not self.request.user.has_perm(APP_NAME+".change_coef"):
-            return None
+            message="مجوز دسترسی ندارید"
+            return result,coef,message
             
         number=kwargs['number']
         percentage=kwargs['percentage']
@@ -261,8 +268,11 @@ class CoefRepo():
             coef=Coef()
             coef.number=number
         coef.percentage=percentage 
-        coef.save() 
-        return coef
+        coef.save()
+        if coef is not None:
+            message="ضریب با موفقیت اضافه گردید."
+            result=SUCCEED
+        return result,coef,message
 
     
     def list(self, *args, **kwargs):

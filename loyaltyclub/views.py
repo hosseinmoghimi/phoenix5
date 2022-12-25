@@ -275,6 +275,7 @@ class CoefsView(View):
     def get(self, request, *args, **kwargs):
         context = getContext(request)
         
+        context['expand_coefs'] = True
  
         coefs=CoefRepo(request=request).list()
         context['coefs'] = coefs
