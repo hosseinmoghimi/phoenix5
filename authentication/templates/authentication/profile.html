@@ -72,7 +72,7 @@
 
 
                     <a href="{% url 'authentication:login_as' pk=selected_profile.id %}" title="ورود"
-                        class="mx-2 text-info"><i class="fa fa-key text-info" aria-hidden="true"></i></a>
+                        class="mx-2 text-info"><i class="fa fa-key text-success" aria-hidden="true"></i></a>
 
                     {% endif %}
 
@@ -80,13 +80,13 @@
 
 
                     <a href="{% url 'authentication:sessions' pk=selected_profile.id %}" title="جلسه ها"
-                        class="mx-2 text-danger"><i class="fa fa-key text-info" aria-hidden="true"></i></a>
+                        class="mx-2 text-danger"><i class="fa fa-calendar text-info" aria-hidden="true"></i></a>
 
                     {% endif %}
 
 
                     <a href="{% url 'authentication:change_password' %}" title="تغییر دادن پسورد"
-                    class="mx-2 text-danger"><i class="fa fa-key" aria-hidden="true"></i></a>
+                    class="mx-2 "><i class="fa fa-key text-warning" aria-hidden="true"></i></a>
 
 
                     {% if can_edit_profile %}
