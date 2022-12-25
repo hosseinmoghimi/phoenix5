@@ -14,13 +14,24 @@
                 <div class="media-body mr-3">
 
                     <h5>
-                        <span v-text="message.title"></span>
+                        <a :href="message.get_absolute_url">
+                            <span v-text="message.title"></span>
 
+                        </a>
+                        {% if perms.messenger.change_message %}
+                        <a :href="message.get_edit_url" title="ویرایش" target="_blank"><i
+                                class="fa fa-edit text-warning mx-2"></i></a>
+                        {% endif %}
+                        {% if perms.messenger.change_message %}
+                        <a :href="message.get_delete_url" title="حذف" target="_blank"><i
+                                class="fa fa-trash text-danger mx-2"></i></a>
+                        {% endif %}
                     </h5>
-                    <p>
 
-                        <span v-text="message.body" class="text-muted mb-4"></span>
-                    </p>
+                    <div class="text-muted mb-4 text-right">
+
+                        <span v-html="message.body"></span>
+                    </div>
                     <h6 class="text-muted">
                         <a :href="message.sender.get_absolute_url">
                             <span v-text="message.sender.name"></span>
@@ -44,13 +55,26 @@
             <div class="media-body mr-3">
 
                 <h5>
-                    <span>{{message.title}}</span>
+                    <a href="{{message.get_absolute_url}}">
 
+                        <span>{{message.title}}</span>
+                    </a>
+                    {% if perms.messenger.change_message %}
+                    <a href="{{message.get_edit_url}}" title="ویرایش" target="_blank"><i
+                            class="fa fa-edit text-warning mx-2"></i></a>
+                    {% endif %}
+                    {% if perms.messenger.change_message %}
+                    <a href="{{message.get_delete_url}}" title="حذف" target="_blank"><i
+                            class="fa fa-trash text-danger mx-2"></i></a>
+                    {% endif %}
                 </h5>
                 <p>
 
-                    <span class="text-muted mb-4">{{message.body}}</span>
                 </p>
+                <div class="text-muted mb-4">
+
+                    {{message.body|safe}}
+                </div>
                 <h6 class="text-muted">
                     <a href="{{message.sender.get_absolute_url}}">
                         {{message.sender.name}}

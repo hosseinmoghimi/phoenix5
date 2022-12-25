@@ -1,6 +1,6 @@
 <script src="https://js.pusher.com/7.0/pusher.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-<script> 
+<script>
     let channel_id = parseInt("{{channel.id}}")
     // let member = JSON.parse("{{member_s|escapejs}}")
     // Enable pusher logging - don't include this in production
@@ -14,9 +14,9 @@
     channel.bind(member.event, function (data) {
         let message = JSON.stringify(data)
         message = JSON.parse(message)
-        chat_app.messages=chat_app.messages.reverse()
+        chat_app.messages = chat_app.messages.reverse()
         chat_app.messages.push(message);
-        chat_app.messages=chat_app.messages.reverse()
+        chat_app.messages = chat_app.messages.reverse()
     });
 
     // Vue application
@@ -27,7 +27,8 @@
             message_title: "",
             message_body: "",
             waiting: false,
-            profile_id:"",
+            profile_id: "",
+            message: { show: false }
         },
         methods: {
             send_message: function () {
@@ -40,14 +41,39 @@
                     channel_id: channel_id,
                     event: member.event,
                 }
-                $.post(url, payload).done((data) => {
+                let posting = $.post(url, payload)
+                posting.fail(data => {
+                    chat_app.message = { show: true, body: "خطا", color: 'danger' }
+                    setTimeout(() => {
+                        chat_app.message = { show: false }
+                    }, 3000);
+                })
+                posting.done((data) => {
                     chat_app.waiting = false
                     if (data.result === "SUCCEED") {
 
 
                         chat_app.message_title = ""
                         chat_app.message_body = ""
+
+                        chat_app.message = { show: true, body: "ارسال شد", color: 'success' }
+                        setTimeout(() => {
+                            chat_app.message = { show: false }
+                        }, 1500);
+
                     }
+
+                    else {
+
+
+
+                        chat_app.message = { show: true, body: "خطا", color: 'danger' }
+                        setTimeout(() => {
+                            chat_app.message = { show: false }
+                        }, 3000);
+
+                    }
+
                 })
             },
             send_notification: function () {
@@ -71,7 +97,7 @@
                     }
                 })
             },
-       
+
         }
     });
 </script>
