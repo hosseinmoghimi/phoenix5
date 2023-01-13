@@ -1,4 +1,3 @@
-from email.policy import default
 from authentication.models import IMAGE_FOLDER
 from core.enums import ColorEnum, UnitNameEnum,BS_ColorCode
 from core.middleware import get_request
@@ -378,7 +377,7 @@ class Account(models.Model,LinkHelper):
     class_name=models.CharField(_("class_name"),blank=True, max_length=50)
     app_name=models.CharField(_("app_name"),blank=True,max_length=50)
     def default_bank_account(self):
-        return BankAccount.default_bank_account(profile_id=self.profile.id)
+        return BankAccount.default_bank_account(account_id=self.id)
     def get_whatsapp_link(self):
         if self.tel is not None:
             from utility.share import whatsapp_link
@@ -489,19 +488,20 @@ class Bank(models.Model,LinkHelper):
         verbose_name_plural = _("Banks")
 
 
-class BankAccount(Account):
+class BankAccount(models.Model):
+    account=models.ForeignKey("account", verbose_name=_("account"), on_delete=models.CASCADE)
     bank=models.ForeignKey("bank", verbose_name=_("bank"), on_delete=models.CASCADE)
-    account_no=models.CharField(_("shomareh"),null=True,blank=True, max_length=50)
-    card_no=models.CharField(_("card"),null=True,blank=True, max_length=50)
-    shaba_no=models.CharField(_("shaba"),null=True,blank=True, max_length=50)
-    default_account=models.BooleanField(_("default"),default=False)
+    account_no=models.CharField(_("شماره حساب"),null=True,blank=True, max_length=50)
+    card_no=models.CharField(_("شماره کارت"),null=True,blank=True, max_length=50)
+    shaba_no=models.CharField(_("شماره شبا"),null=True,blank=True, max_length=50)
+    is_defult=models.BooleanField(_("default"),default=False)
     class_name='bankaccount'
 
-    def default_bank_account(profile_id):
-        if profile_id is None or profile_id<1:
+    def default_bank_account(account_id):
+        if account_id is None or account_id<1:
             return
-        all_bank_account=BankAccount.objects.filter(profile_id=profile_id)
-        bank_account=all_bank_account.filter(default_account=True).first()
+        all_bank_account=BankAccount.objects.filter(account_id=account_id)
+        bank_account=all_bank_account.filter(is_defult=True).first()
         if bank_account is not None:
             return bank_account
         return all_bank_account.first()
@@ -526,10 +526,10 @@ class BankAccount(Account):
         # from projectmanager.models import Employee
         # a=Account.objects.filter(fff="")
         if self.title is None or self.title=="":
-            profile_name=""
-            if self.profile is not None:
-                profile_name=self.profile.name 
-            self.title=f"""حساب {self.bank} {profile_name}"""
+            account_name=""
+            if self.account is not None:
+                account_name=self.profile.name 
+            self.title=f"""حساب {self.bank} {account_name}"""
         super(BankAccount,self).save(*args, **kwargs)
 
 
