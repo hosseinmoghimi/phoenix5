@@ -34,6 +34,14 @@
 
 
                     </span>
+                    <div>
+                        <a :href="cheque.bank.get_absolute_url">
+                            <small class="text-muted">
+
+                                <span v-text="cheque.bank.title"></span>
+                            </small>
+                        </a>
+                    </div>
                 </td>
 
                 <td>

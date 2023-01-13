@@ -1028,6 +1028,11 @@ class BankView(View):
         context=getContext(request=request)
         bank=BankRepo(request=request).bank(*args, **kwargs)
         context['bank']=bank
+        cheques=ChequeRepo(request=request).list(bank_id=bank.id)
+        context['cheques']=cheques
+        cheques_s=json.dumps(ChequeSerializer(cheques,many=True).data)
+        context['cheques_s']=cheques_s
+
         if bank is None:
             mv=MessageView(request=request)
             mv.title="چنین بانکی یافت نشد."

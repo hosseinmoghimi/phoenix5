@@ -473,8 +473,12 @@ class Bank(models.Model,LinkHelper):
     def logo(self):
         return ""
     
+    @property
+    def title(self):
+        return self.name
+    
     def __str__(self):
-        a=f"""بانک {self.name} """
+        a=f"""{self.name}"""
         if self.branch is not None:
             a+="شعبه "+self.branch 
         return a

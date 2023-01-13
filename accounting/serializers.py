@@ -67,9 +67,10 @@ class InvoiceSerializer(serializers.ModelSerializer):
 class ChequeSerializer(serializers.ModelSerializer):
     pay_to=AccountSerializer()
     pay_from=AccountSerializer()
+    bank=BankSerializer()
     class Meta:
         model = Cheque
-        fields = ['id','title','status','color','pay_to','pay_from','description','amount','get_absolute_url','persian_cheque_date']
+        fields = ['id','bank','title','status','color','pay_to','pay_from','description','amount','get_absolute_url','persian_cheque_date']
 
 
 class ProductOrServiceSerializer(serializers.ModelSerializer):

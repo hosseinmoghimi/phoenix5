@@ -1343,6 +1343,9 @@ class ChequeRepo():
         if 'account_id' in kwargs and kwargs['account_id'] is not None and kwargs['account_id']>0:
             objects=objects.filter(Q(pay_from_id=kwargs['account_id'])|Q(pay_to_id=kwargs['account_id']))
         
+        if 'bank_id' in kwargs and kwargs['bank_id'] is not None and kwargs['bank_id']>0:
+            objects=objects.filter(bank_id=kwargs['bank_id'])
+        
         return objects.all()
 
 
