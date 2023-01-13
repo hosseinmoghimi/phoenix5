@@ -43,7 +43,7 @@
                 if (!(parseInt(add_cheque_app.amount) > 0)) {
                     add_cheque_app.message = { show: true, body: "خطا در ذخیره سازی  . مبلغ را وارد کنید.", color: 'warning' }
                     setTimeout(() => {
-                        add_cheque_app.message = { show: false, body: "خطا در ذخیره سازی ", color: 'danger' }
+                        add_cheque_app.message = { show: false }
                     }, 2000);
                     return
                 }
@@ -69,7 +69,7 @@
                 posting.fail(data => {
                     add_cheque_app.waiting = false
                     leolog(data)
-                    add_cheque_app.message = { show: true, body: data, color: 'danger' }
+                    add_cheque_app.message = { show: true, body:"خطا "+ data, color: 'danger' }
                     setTimeout(() => {
                         add_cheque_app.message = { show: false }
 
@@ -86,10 +86,10 @@
                         if (typeof cheques_app != "undefined") {
                             cheques_app.cheques.push(data.cheque)
                         }
-                        add_cheque_app.message = { show: true, body: "با موفقیت ذخیره شد.", color: 'success' }
+                        add_cheque_app.message = { show: true, body:data.message, color: 'success' }
                     }
                     if (data.result === 'FAILED') {
-                        add_cheque_app.message = { show: true, body: "خطا در ذخیره سازی ", color: 'danger' }
+                        add_cheque_app.message = { show: true, body: data.message, color: 'danger' }
                     }
                     setTimeout(() => {
                         add_cheque_app.message = { show: false }

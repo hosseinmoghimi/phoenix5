@@ -150,7 +150,8 @@ class AddChequeApi(APIView):
     def post(self,request,*args, **kwargs):
         context={}
         log=1
-        context['result']=FAILED
+        message=""
+        result=FAILED
         if request.method=='POST':
             log=2
             add_cheque_form=AddChequeForm(request.POST)
@@ -165,10 +166,11 @@ class AddChequeApi(APIView):
                 fm['transaction_datetime']=PersianCalendar().to_gregorian(fm['transaction_datetime'])
                 fm['sarresid_datetime']=PersianCalendar().to_gregorian(fm['sarresid_datetime'])
                 title=fm['title']
-                cheque=ChequeRepo(request=request).add_cheque(**fm)
+                cheque,result,message=ChequeRepo(request=request).add_cheque(**fm)
                 if cheque is not None:
                     context['cheque']=ChequeSerializer(cheque).data
-                    context['result']=SUCCEED
+        context['message']=message
+        context['result']=result
         context['log']=log
         return JsonResponse(context)
 

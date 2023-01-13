@@ -1,8 +1,4 @@
-from utility.log import leolog
-from cgitb import reset
-from email import message
-from math import prod
-from unicodedata import category
+from utility.log import leolog 
 from accounting.enums import *
 from core.constants import FAILED, SUCCEED,MISC
 
@@ -1254,49 +1250,62 @@ class ChequeRepo():
         self.profile=ProfileRepo(*args, **kwargs).me
        
     def add_cheque(self,*args, **kwargs):
+        result=FAILED
+        message=""
+        cheque=None
         # leolog(kwargs=kwargs)
-        
-        if not self.request.user.has_perm(APP_NAME+".add_cheque"):
-            return
-        cheque=Cheque(*args, **kwargs)
-        me_acc=AccountRepo(request=self.request).me
+        error_code=1
+        try:
+            if not self.request.user.has_perm(APP_NAME+".add_cheque"):
+                return
+            cheque=Cheque(*args, **kwargs)
+            me_acc=AccountRepo(request=self.request).me
+            error_code=2
+            if 'title' in kwargs:
+                cheque.title=kwargs['title']
+            cheque.sarresid_datetime=PersianCalendar().date
+            if 'cheque_date' in kwargs:
+                cheque.sarresid_datetime=kwargs['cheque_date']
+            error_code=3
 
-        if 'title' in kwargs:
-            cheque.title=kwargs['title']
-        cheque.sarresid_datetime=PersianCalendar().date
-        if 'cheque_date' in kwargs:
-            cheque.sarresid_datetime=kwargs['cheque_date']
-
-        if 'sarresid_datetime' in kwargs:
-            cheque.sarresid_datetime=kwargs['sarresid_datetime']
+            if 'sarresid_datetime' in kwargs:
+                cheque.sarresid_datetime=kwargs['sarresid_datetime']
+            error_code=4
+                
+            if 'pay_to_id' in kwargs:
+                cheque.pay_to_id=kwargs['pay_to_id']
+            else:
+                cheque.pay_to_id=me_acc.id
+            error_code=5
             
-        if 'pay_to_id' in kwargs:
-            cheque.pay_to_id=kwargs['pay_to_id']
-        else:
-            cheque.pay_to_id=me_acc.id
-        if 'pay_from_id' in kwargs:
-            cheque.pay_from_id=kwargs['pay_from_id']
-        else:
-            cheque.pay_from_id=me_acc.id
+            if 'pay_from_id' in kwargs:
+                cheque.pay_from_id=kwargs['pay_from_id']
+            else:
+                cheque.pay_from_id=me_acc.id
 
-        cheque.payment_method=PaymentMethodEnum.CHEQUE
+            cheque.payment_method=PaymentMethodEnum.CHEQUE
 
-        cheque.creator=self.profile
+            cheque.creator=self.profile
 
 
-        if 'transaction_datetime' in kwargs:
-            cheque.transaction_datetime=kwargs['transaction_datetime']
-        else:
-            cheque.transaction_datetime=PersianCalendar().date
-            
-        if 'amount' in kwargs:
-            cheque.amount=kwargs['amount']
-        else:
-            cheque.amount=0
+            if 'transaction_datetime' in kwargs:
+                cheque.transaction_datetime=kwargs['transaction_datetime']
+            else:
+                cheque.transaction_datetime=PersianCalendar().date
+                
+            if 'amount' in kwargs:
+                cheque.amount=kwargs['amount']
+            else:
+                cheque.amount=0
 
 
-        cheque.save()
-        return cheque
+            cheque.save()
+            if cheque is not None:
+                result=SUCCEED
+                message="چک با موفقیت اضافه شد."
+        except:
+            message="خطا در افزودن چک جدید ، "+" کد خطا : "+error_code
+        return cheque,result,message
 
     def cheque(self, *args, **kwargs):
         pk=0
