@@ -1255,6 +1255,7 @@ class ChequeRepo():
        
     def add_cheque(self,*args, **kwargs):
         # leolog(kwargs=kwargs)
+        
         if not self.request.user.has_perm(APP_NAME+".add_cheque"):
             return
         cheque=Cheque(*args, **kwargs)

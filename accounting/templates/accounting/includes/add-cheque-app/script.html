@@ -21,7 +21,7 @@
             pay_to_id: me_account_id,
             pay_from_id: me_account_id,
             amount: 0,
-            status:"",
+            status: "",
             description: "",
             payment_method: "پیش نویس",
             waiting: false,
@@ -52,12 +52,12 @@
                     pay_from_id: parseInt(this.pay_from_id),
                     pay_to_id: parseInt(this.pay_to_id),
                     title: this.title,
-                    status:this.status,
+                    status: this.status,
                     description: this.description,
                     amount: parseInt(this.amount),
                     transaction_datetime: this.transaction_datetime,
                     sarresid_datetime: this.sarresid_datetime,
-                    bank_id:parseInt(this.bank_id),
+                    bank_id: parseInt(this.bank_id),
                     sayyad_no: this.sayyad_no,
                     serial_no: this.serial_no,
                     payment_method: this.payment_method,
@@ -65,7 +65,18 @@
                 console.log(payload)
                 add_cheque_app.waiting = true
                 let url = "{% url 'accounting:add_cheque' %}"
-                $.post(url, payload).done((data) => {
+                let posting = $.post(url, payload)
+                posting.fail(data => {
+                    add_cheque_app.waiting = false
+                    leolog(data)
+                    add_cheque_app.message = { show: true, body: data, color: 'danger' }
+                    setTimeout(() => {
+                        add_cheque_app.message = { show: false }
+
+                    }, 2000);
+
+                })
+                posting.done((data) => {
                     console.log(data)
                     add_cheque_app.description = ""
                     add_cheque_app.title = ""
@@ -81,7 +92,7 @@
                         add_cheque_app.message = { show: true, body: "خطا در ذخیره سازی ", color: 'danger' }
                     }
                     setTimeout(() => {
-                        add_cheque_app.message = { show: false, body: "خطا در ذخیره سازی ", color: 'danger' }
+                        add_cheque_app.message = { show: false }
 
                     }, 2000);
                 })
