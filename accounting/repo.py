@@ -1,3 +1,4 @@
+from utility.log import leolog
 from cgitb import reset
 from email import message
 from math import prod
@@ -1253,6 +1254,7 @@ class ChequeRepo():
         self.profile=ProfileRepo(*args, **kwargs).me
        
     def add_cheque(self,*args, **kwargs):
+        leolog(kwargs=kwargs)
         if not self.request.user.has_perm(APP_NAME+".add_cheque"):
             return
         cheque=Cheque(*args, **kwargs)
@@ -1260,12 +1262,12 @@ class ChequeRepo():
 
         if 'title' in kwargs:
             cheque.title=kwargs['title']
+        cheque.sarresid_datetime=PersianCalendar().date
         if 'cheque_date' in kwargs:
-            cheque.cheque_date=kwargs['cheque_date']
-        else:
-            cheque.cheque_date=PersianCalendar().date
+            cheque.sarresid_datetime=kwargs['cheque_date']
 
-
+        if 'sarresid_datetime' in kwargs:
+            cheque.sarresid_datetime=kwargs['sarresid_datetime']
             
         if 'pay_to_id' in kwargs:
             cheque.pay_to_id=kwargs['pay_to_id']

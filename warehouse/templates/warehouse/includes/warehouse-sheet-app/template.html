@@ -1,22 +1,36 @@
 {% load float_to_int %}
 <div class="card" id="warehouse-sheet-app">
     <div class="card-body">
-        <div class="row">
-            <div class="col-md-12 text-right farsi">
+        <div class="row rtl">
+            <div class="col-md-12 text-right farsi rtl">
+                {{warehouse_sheet}}
+                
+                {% if perms.warehouse.change_warehousesheet %}
+                    
+                
+                <a href="{{warehouse_sheet.get_edit_url}}" target="_blank" title="ویرایش"><i class="fa fa-edit text-warning"></i></a>
+                {% endif %}
+            </div>
+            <div class="col-md-12 text-right farsi rtl">
 
                 <span class="badge badge-{{warehouse_sheet.color}}">
                     {{warehouse_sheet.direction}}
                 </span>
+                <span>
+
+                    <small v-text="warehouse_sheet.status"></small>
+                </span>
+
             </div>
             <div class="col-md-4 text-right farsi">
-                کالا :
-                <a href="{{warehouse_sheet.product.get_absolute_url}}">{{warehouse_sheet.product.title}}</a>
+                
+                <a
+                    href="{{warehouse_sheet.invoice_line.product_or_service.get_absolute_url}}">{{warehouse_sheet.invoice_line.product_or_service.title}}</a>
 
             </div>
             <div class="col-md-4 text-right farsi">
                 انبار :
-                <a
-                    href="{{warehouse_sheet.ware_house.get_absolute_url}}">{{warehouse_sheet.ware_house.title}}</a>
+                <a href="{{warehouse_sheet.ware_house.get_absolute_url}}">{{warehouse_sheet.ware_house.title}}</a>
 
             </div>
 
@@ -40,17 +54,18 @@
 
                 <small v-text="warehouse_sheet.status"></small>
             </h4>
-
+{% if  %}
+  
+{% endif %}
             <div>
-                <button class="btn btn-sm mb-1 btn-success" @click="change_state('DONE')">تمام شده</button>
+                <button class="btn btn-sm mb-1 btn-success" @click="change_state('DONE')">تایید شده</button>
             </div>
             <div>
                 <button class="btn btn-sm mb-1 btn-warning" @click="change_state('IN_PROGRESS')">در
                     جریان</button>
             </div>
             <div>
-                <button class="btn btn-sm mb-1 btn-danger" @click="change_state('INITIAL')">تعریف
-                    اولیه</button>
+                <button class="btn btn-sm mb-1 btn-danger" @click="change_state('INITIAL')">پیش نویس</button>
             </div>
 
         </div>

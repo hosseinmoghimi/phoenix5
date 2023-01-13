@@ -21,7 +21,7 @@
 <script>
 
 
-     
+
 
     let organization_units_app = new Vue({
         el: "#organization-units-app",
@@ -76,6 +76,7 @@
                             text: "خطا در افزودن مورد جدید",
                         }
                     }
+
                     if (data.result === 'SUCCEED') {
                         organization_units_app.message = {
                             show: true,
@@ -87,6 +88,11 @@
                         }, 2000);
                         organization_units_app.organization_units.push(data.organization_unit)
                         organization_units_app.new_organization_unit_title = ""
+
+
+
+
+
                     }
                 })
             },
@@ -125,6 +131,21 @@
                         organization_units_app.new_organization_unit_title = ""
                         // if(typeof material_requests_app != 'undefined')
                         // material_requests_app.employees.push()
+
+
+                        console.log(data.organization_unit.employees)
+                        data.organization_unit.employees.forEach(employee => {
+                            console.log(employee)
+                            if (typeof material_requests_app != "undefined") {
+                                material_requests_app.employees.push(employee)
+                            }
+
+                            if (typeof service_requests_app != "undefined") {
+                                service_requests_app.employees.push(employee)
+                            }
+
+                        });
+
                     }
                 })
             },

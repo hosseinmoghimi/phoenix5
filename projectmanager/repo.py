@@ -731,7 +731,8 @@ class MaterialRequestRepo():
             new_material_request.date_delivered=material_request.date_delivered
             new_material_request.date_requested=material_request.date_requested
             new_material_request.employee_id=material_request.employee_id
-            new_material_request.status=material_request.status
+            if 'copy_status' in kwargs and kwargs['copy_status']:
+                new_material_request.status=material_request.status
             if status is not None:
                 new_material_request.status=status
             new_material_request.type=material_request.type

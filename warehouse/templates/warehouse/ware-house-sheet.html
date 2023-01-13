@@ -1,25 +1,41 @@
 {% extends "warehouse/layout.html" %}
-
+{% load to_absolute_link %}
+{% load static %}
 {% block content %}
 <h4 class="text-center">
-    {{title}}
+  {{title}}
 </h4>
 
 
 <div class="row">
-    <div class="col-md-12">
-     
-    </div>
+  <div class="col-md-12">
+
+  </div>
+
+  <div class="col-md-12 farsi text-right">
+
+    <a href="whatsapp://send?text={{warehouse_sheet}}   {{warehouse_sheet.get_absolute_url|to_absolute_link}}"
+      data-action="share/whatsapp/share" target="_blank">
+      <img src="{% static 'icons/whatsapp.png' %}" width="32" alt="">
+      واتسپ
+    </a>
+
+    <a href="https://telegram.me/share/url?url={{warehouse_sheet.get_absolute_url|to_absolute_link}}&text={{warehouse_sheet}}"
+      data-action="share/whatsapp/share" target="_blank">
+      <img src="{% static 'icons/telegram.png' %}" width="32" alt="">
+      تلگرام
+    </a>
 
 
-    <div class="col-md-12">
-        {% include "warehouse/includes/warehouse-sheet-app/template.html" %}
-          </div>
-    
+  </div>
+  <div class="col-md-12">
+    {% include "warehouse/includes/warehouse-sheet-app/template.html" %}
+  </div>
+
   <div class="col-md-12">
     {% include "warehouse/includes/ware-house-sheet-signatures-app/template.html" %}
   </div>
- 
+
 
 </div>
 </div>

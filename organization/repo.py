@@ -36,7 +36,9 @@ class OrganizationUnitRepo():
             organization_unit=self.organization_unit(pk=kwargs['organization_unit_id'])
             
         if 'is_ware_house' in kwargs and kwargs['is_ware_house']==True:
+            from warehouse.models import WareHouse
             new_organization_unit = WareHouse()
+            pass
         else:
             new_organization_unit = OrganizationUnit()
 

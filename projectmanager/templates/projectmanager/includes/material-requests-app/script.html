@@ -8,6 +8,7 @@
 <script>
 
     let all_materials = JSON.parse(`{{all_materials_s|escapejs}}`)
+    let employees=JSON.parse(`{{employees_s|escapejs}}`)
     let url_add_material_request = "{% url 'projectmanager:add_material_request' %}"
     material_requests_app_data = {
         id: 127,
@@ -31,6 +32,7 @@
         show_add_material_request_form: false,
         add_material_request_form_employee_id: "",
         filter_status: "",
+        employees:employees,
     }
 </script>
 {% else %}
