@@ -972,7 +972,7 @@ class BankAccountView(View):
         if bank_account is None:
             mv=MessageView(request=request)
             mv.title="چنین حسابی یافت نشد."
-        context.update(get_account_context(request=request,account=bank_account))
+        # context.update(get_account_context(request=request,account=bank_account))
         return render(request,TEMPLATE_ROOT+"bank-account.html",context)
 
 
