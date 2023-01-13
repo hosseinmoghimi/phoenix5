@@ -1,6 +1,6 @@
 <script>
     let bank_accounts = JSON.parse(`{{bank_accounts_s|escapejs}}`)
-    let all_profiles_=JSON.parse(`{{profiles_s|escapejs}}`)
+    let all_accounts_=JSON.parse(`{{accounts_s|escapejs}}`)
     let bank_accounts_app = new Vue({
         el: "#bank-accounts-app",
         data: {
@@ -11,12 +11,13 @@
             card_no: "",
             account_no: "",
             message:{show:false},
-            profile_id:0,
-            profiles:all_profiles_,
+            account_id:0,
+            accounts:all_accounts_,
             bank_id:0,
-            title:"",
             show_form:false,
-            profile_name:"",
+            title:"",
+            bank_account_title:"",
+            is_default:false,
         },
         methods: {
             to_card_no: function (card_no) {
@@ -27,24 +28,24 @@
                 let url = "{% url 'accounting:add_bank_account' %}"
                 let payload = {
                     csrfmiddlewaretoken: csrfmiddlewaretoken,
-                    title: this.title,
+                    title: this.bank_account_title,
                     bank_id: this.bank_id,
-                    profile_id: this.profile_id,
+                    account_id: this.account_id,
                     shaba_no: this.shaba_no,
                     card_no: this.card_no,
                     account_no: this.account_no,
-                    profile_name:"",
-                }
+                    is_default: this.is_default,
+                                    }
                 $.post(url, payload).done((data) => {
                     if (data.result === 'SUCCEED') {
                         bank_accounts_app.bank_accounts.push(data.bank_account)
                     }
                 })
             },
-            filter_profiles: function () {
-                this.profiles = all_profiles_.filter(profile => profile.name.indexOf(this.profile_name) > -1)
-                if(this.profiles.length>0){
-                    this.profile_id=this.profiles[0].id
+            filter_accounts: function () {
+                this.accounts = all_accounts_.filter(account => account.title.indexOf(this.account_title) > -1)
+                if(this.accounts.length>0){
+                    this.account_id=this.accounts[0].id
                 }
 
             },

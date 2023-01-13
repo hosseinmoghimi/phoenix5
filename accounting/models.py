@@ -479,7 +479,7 @@ class Bank(models.Model,LinkHelper):
     def __str__(self):
         a=f"""{self.name}"""
         if self.branch is not None:
-            a+="شعبه "+self.branch 
+            a+=" شعبه "+self.branch 
         return a
 
 
@@ -488,7 +488,8 @@ class Bank(models.Model,LinkHelper):
         verbose_name_plural = _("Banks")
 
 
-class BankAccount(models.Model):
+class BankAccount(models.Model,LinkHelper):
+    title=models.CharField(_("title"),blank=True, max_length=50)
     account=models.ForeignKey("account", verbose_name=_("account"), on_delete=models.CASCADE)
     bank=models.ForeignKey("bank", verbose_name=_("bank"), on_delete=models.CASCADE)
     account_no=models.CharField(_("شماره حساب"),null=True,blank=True, max_length=50)
@@ -496,6 +497,7 @@ class BankAccount(models.Model):
     shaba_no=models.CharField(_("شماره شبا"),null=True,blank=True, max_length=50)
     is_defult=models.BooleanField(_("default"),default=False)
     class_name='bankaccount'
+    app_name=APP_NAME
 
     def default_bank_account(account_id):
         if account_id is None or account_id<1:
@@ -513,22 +515,17 @@ class BankAccount(models.Model):
     # def balance(self):
     #     return 0-self.rest()
  
-
     def __str__(self):
         return self.title
 
     def save(self,*args, **kwargs):
-        if self.class_name is None or self.class_name=="":
-            self.class_name='bankaccount'
-        if self.app_name is None or self.app_name=="":
-            self.app_name=APP_NAME
-            
+         
         # from projectmanager.models import Employee
         # a=Account.objects.filter(fff="")
         if self.title is None or self.title=="":
             account_name=""
             if self.account is not None:
-                account_name=self.profile.name 
+                account_name=self.account.title 
             self.title=f"""حساب {self.bank} {account_name}"""
         super(BankAccount,self).save(*args, **kwargs)
 

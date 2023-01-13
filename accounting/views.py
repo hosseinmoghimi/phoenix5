@@ -409,10 +409,7 @@ def get_search_form_context(request,*args, **kwargs):
 
 def get_add_bank_account_context(request,*args, **kwargs):
     context={}
-    profiles=ProfileRepo(request=request).list()
-    context['profiles']=profiles
-    profiles_s=json.dumps(ProfileSerializer(profiles,many=True).data)
-    context['profiles_s']=profiles_s
+    context.update(add_from_accounts_context(request=request))
     banks=BankRepo(request=request).list()
     context['banks']=banks
     return context
@@ -962,7 +959,9 @@ class BankAccountsView(View):
         context['expand_bank_accounts']=True
         bank_accounts_s=json.dumps(BankAccountSerializer(bank_accounts,many=True).data)
         context['bank_accounts_s']=bank_accounts_s
-        context.update(get_add_bank_account_context(request=request))
+        if request.user.has_perm(APP_NAME+".add_bankaccount"):
+            context['add_bank_account_form']=AddBankAccountForm()
+            context.update(get_add_bank_account_context(request=request))
         return render(request,TEMPLATE_ROOT+"bank-accounts.html",context)
 
 class BankAccountView(View):

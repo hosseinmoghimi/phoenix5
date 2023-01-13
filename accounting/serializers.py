@@ -41,13 +41,6 @@ class BankSerializer(serializers.ModelSerializer):
         fields = ['id','logo','name','tel', 'address','branch','get_absolute_url']
 
 
-class BankAccountSerializer(serializers.ModelSerializer):
-    profile=ProfileSerializer()
-    bank=BankSerializer()
-    class Meta:
-        model = BankAccount
-        fields = ['id','logo','bank','class_title','card_no','shaba_no','account_no','balance_rest', 'title','profile', 'get_absolute_url']
-
 
 class AccountSerializer(serializers.ModelSerializer):
     profile=ProfileSerializer()
@@ -94,6 +87,14 @@ class InvoiceLineWithInvoiceSerializer(serializers.ModelSerializer):
         model = InvoiceLine
         fields = ['id', 'row','product_or_service','unit_name', 'quantity', 'unit_price','invoice',
                   'description']
+
+
+class BankAccountSerializer(serializers.ModelSerializer):
+    account=AccountSerializer()
+    bank=BankSerializer()
+    class Meta:
+        model = BankAccount
+        fields = ['id','account','bank','card_no','shaba_no','account_no', 'title', 'get_absolute_url']
 
 
 class CostSerializer(serializers.ModelSerializer):

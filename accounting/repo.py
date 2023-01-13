@@ -101,16 +101,24 @@ class BankAccountRepo():
     def add_bank_account(self,*args, **kwargs):
         if not self.user.has_perm(APP_NAME+".add_bankaccount"):
             return None
-        bank_account=BankAccount(*args, **kwargs)
+        bank_account=BankAccount()
  
         # if 'title' in kwargs:
         #     bank_account.title = kwargs['title']
-        # if 'shaba_no' in kwargs:
-        #     bank_account.shaba_no = kwargs['shaba_no']
-        # if 'card_no' in kwargs:
-        #     bank_account.card_no = kwargs['card_no']
-        # if 'account_no' in kwargs:
-        #     bank_account.account_no = kwargs['account_no']
+        if 'account_id' in kwargs:
+            bank_account.account_id = kwargs['account_id']
+        if 'shaba_no' in kwargs:
+            bank_account.shaba_no = kwargs['shaba_no']
+        if 'card_no' in kwargs:
+            bank_account.card_no = kwargs['card_no']
+        if 'account_no' in kwargs:
+            bank_account.account_no = kwargs['account_no']
+        if 'bank_id' in kwargs:
+            bank_account.bank_id = kwargs['bank_id']
+        if 'title' in kwargs:
+            bank_account.title = kwargs['title']
+        if 'is_default' in kwargs:
+            bank_account.is_default = kwargs['is_default']
 
         bank_account.save()
         return bank_account

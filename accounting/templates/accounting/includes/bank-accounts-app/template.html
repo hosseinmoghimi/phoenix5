@@ -43,7 +43,12 @@
             <div class="card-body">
 
                 {% load static %}
+                
+                {% if add_bank_account_form %}
+                    
+                
                 {% include "accounting/includes/bank-accounts-app/form.html" %}
+                {% endif %}
                 <form @submit.prevent="search()">
                     <img src="{% static 'leo/img/loading.gif' %}" width="32" v-if="waiting" alt="">
 
