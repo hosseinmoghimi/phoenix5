@@ -162,7 +162,6 @@ class AddChequeApi(APIView):
             if add_cheque_form.is_valid():
                 log=3
                 fm=add_cheque_form.cleaned_data
-                print(fm)
                 fm['transaction_datetime']=PersianCalendar().to_gregorian(fm['transaction_datetime'])
                 fm['sarresid_datetime']=PersianCalendar().to_gregorian(fm['sarresid_datetime'])
                 title=fm['title']

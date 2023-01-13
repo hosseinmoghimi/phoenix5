@@ -68,13 +68,12 @@
                 let posting = $.post(url, payload)
                 posting.fail(data => {
                     add_cheque_app.waiting = false
-                    leolog(data)
+                    console.log(data)
                     add_cheque_app.message = { show: true, body:"خطا "+ data, color: 'danger' }
                     setTimeout(() => {
                         add_cheque_app.message = { show: false }
 
                     }, 2000);
-
                 })
                 posting.done((data) => {
                     console.log(data)
@@ -93,7 +92,6 @@
                     }
                     setTimeout(() => {
                         add_cheque_app.message = { show: false }
-
                     }, 2000);
                 })
             },
