@@ -26,6 +26,7 @@ urlpatterns = [
 
     path("cheque/<int:pk>/",login_required(views.ChequeView.as_view()),name="cheque"),
     path("cheques/",login_required(views.ChequesView.as_view()),name="cheques"), 
+    path("cheques/<int:account_id>/",login_required(views.ChequesView.as_view()),name="account_cheques"),
 
 
     path("double_transaction/<int:pk>/",login_required(views.DoubleTransactionView.as_view()),name="doubletransaction"),
@@ -63,6 +64,7 @@ urlpatterns = [
     path("financial_document/<int:pk>/",login_required(views.FinancialDocumentView.as_view()),name="financialdocument"),
     path("financial_documents/",login_required(views.FinancialDocumentsView.as_view()),name="financial_documents"),
     path("financial_documents/<int:account_id>/",login_required(views.FinancialDocumentsView.as_view()),name="account_financial_documents"),
+    
     
     path("asset/<int:pk>/",login_required(views.AssetView.as_view()),name="asset"),
     path("assets/",login_required(views.AssetsView.as_view()),name="assets"),

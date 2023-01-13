@@ -184,6 +184,12 @@ def get_account_context(request,*args, **kwargs):
 
 
 
+    cheques=ChequeRepo(request=request).list(account_id=account.id)
+    context['cheques']=cheques
+    context['cheques_s']=json.dumps(ChequeSerializer(cheques,many=True).data)
+
+
+
 
 
     if request.user.has_perm(APP_NAME+".add_payment"):
