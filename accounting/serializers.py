@@ -198,7 +198,7 @@ class FinancialBalanceSerializer(serializers.ModelSerializer):
 class AssetSerializer(serializers.ModelSerializer):
     class Meta:
         model = Asset
-        fields = ['id','title','thumbnail','get_absolute_url','get_delete_url','get_edit_url']
+        fields = ['id','title','price','thumbnail','get_absolute_url','get_delete_url','get_edit_url']
 
 
 class ProductOrServiceUnitNameSerializer(serializers.ModelSerializer):
