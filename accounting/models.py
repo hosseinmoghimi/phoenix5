@@ -328,6 +328,18 @@ class Product(ProductOrService):
     def get_market_absolute_url(self):
         return reverse("market:product",kwargs={'pk':self.pk})
  
+class AccountTag(models.Model,LinkHelper):
+    account=models.ForeignKey("account", verbose_name=_("account"), on_delete=models.CASCADE)
+    tag=models.CharField(_("tag"), max_length=50)
+    app_name=APP_NAME
+    class_name="accounttag"
+    class Meta:
+        verbose_name = _("AccountTag")
+        verbose_name_plural = _("AccountTags")
+
+    def __str__(self):
+        return self.account.title +" " +self.tag
+ 
 
 class Service(ProductOrService):
 

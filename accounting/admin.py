@@ -2,11 +2,12 @@ from django.contrib import admin
 
 from accounting.models import (Account, Asset,Bank, BankAccount, Category, Cheque, Cost, DoubleTransaction, FinancialBalance, FinancialDocument, FinancialDocumentTag, 
                                Invoice, InvoiceLine, Payment, Price, Product, ProductOrServiceUnitName, ProductSpecification, Salary, Service,
-                               Transaction, TransactionCategory)
+                               Transaction, TransactionCategory,AccountTag)
 
 # Register your models here.
-admin.site.register(Asset)
+admin.site.register(AccountTag)
 admin.site.register(Account)
+admin.site.register(Asset)
 admin.site.register(DoubleTransaction)
 admin.site.register(Category)
 admin.site.register(Cost)

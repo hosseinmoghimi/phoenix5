@@ -5,10 +5,60 @@ from core.constants import FAILED, SUCCEED,MISC
 from core.enums import UnitNameEnum
 from utility.calendar import PersianCalendar
 from .apps import APP_NAME
-from .models import Account, Asset, Bank, BankAccount, Category, Cheque, Cost, DoubleTransaction, FinancialBalance, FinancialDocument, FinancialYear, Invoice, InvoiceLine, Payment, Price, Product, ProductOrService, ProductOrServiceUnitName, ProductSpecification, Service, Transaction
+from .models import Account, AccountTag,Asset, Bank, BankAccount, Category, Cheque, Cost, DoubleTransaction, FinancialBalance, FinancialDocument, FinancialYear, Invoice, InvoiceLine, Payment, Price, Product, ProductOrService, ProductOrServiceUnitName, ProductSpecification, Service, Transaction
 from django.db.models import Q
 from authentication.repo import ProfileRepo
 from django.utils import timezone
+class AccountTagRepo():
+    def __init__(self, *args, **kwargs):
+        self.request = None
+        self.user = None
+        if 'request' in kwargs:
+            self.request = kwargs['request']
+            self.user = self.request.user
+        if 'user' in kwargs:
+            self.user = kwargs['user']
+        
+        self.objects=AccountTag.objects.all()
+        self.profile=ProfileRepo(*args, **kwargs).me
+       
+
+    def account_tag(self, *args, **kwargs):
+        pk=0
+        if 'account_tag' in kwargs:
+            return kwargs['account_tag']
+        if 'account_tag_id' in kwargs:
+            pk=kwargs['account_tag_id']
+        elif 'pk' in kwargs:
+            pk=kwargs['pk']
+        elif 'id' in kwargs:
+            pk=kwargs['id']
+        return self.objects.filter(pk=pk).first()
+     
+    def list(self, *args, **kwargs):
+        objects = self.objects
+        if 'search_for' in kwargs:
+            search_for=kwargs['search_for']
+            objects = objects.filter(Q(title__contains=search_for)|Q(short_description__contains=search_for)|Q(description__contains=search_for))
+        if 'for_home' in kwargs:
+            objects = objects.filter(Q(for_home=kwargs['for_home']))
+        if 'parent_id' in kwargs:
+            objects=objects.filter(parent_id=kwargs['parent_id'])
+        return objects.all()
+
+    def add_product(self,*args, **kwargs):
+        if not self.user.has_perm(APP_NAME+".add_product"):
+            return None
+ 
+        if 'title' in kwargs:
+            title = kwargs['title']
+
+        product=Product()
+        product.title=title
+        product.save()
+        return product
+
+
 
 
 class AssetRepo():
@@ -783,6 +833,12 @@ class AccountRepo():
         if 'search_for' in kwargs:
             search_for=kwargs['search_for']
             objects = objects.filter(Q(title__contains=search_for))
+        if 'tag' in kwargs:
+            account_tags=AccountTag.objects.filter(tag=kwargs['tag'])
+            ids=[]
+            for acc in account_tags:
+                ids.append(acc.account.id)
+            objects = objects.filter(id__in=ids)
         if 'for_home' in kwargs:
             objects = objects.filter(Q(for_home=kwargs['for_home']))
         if 'search_for' in kwargs:

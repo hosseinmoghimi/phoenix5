@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     # 'web3auth.apps.Web3AuthConfig',
     'realestate',
     'market',
+    'contact',
     'health',
     'scheduler',
     'resume',
@@ -351,6 +352,17 @@ phoenix_apps=[
         'has_help':False,
         'show_on_menu':True,
     },
+
+       {
+        'priority':28,
+        'name':'contact',
+        'title':'دفترچه تلفن',
+        'color':'warning',
+        'home_url':SITE_URL+'contact/',
+        'has_help':False,
+        'show_on_menu':True,
+    },
+
 ]    
 
 

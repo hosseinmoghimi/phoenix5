@@ -17,7 +17,7 @@ from django.views import View
 from utility.calendar import PersianCalendar
 from utility.excel import ReportSheet,ReportWorkBook, get_style
 from accounting.apps import APP_NAME
-from accounting.repo import BankRepo,AssetRepo, CategoryRepo, CostRepo,BankAccountRepo, DoubleTransactionRepo, InvoiceLineRepo,AccountRepo,FinancialBalanceRepo, ChequeRepo, PaymentRepo, PriceRepo,  ProductRepo,ServiceRepo,FinancialDocumentRepo,InvoiceRepo, TransactionRepo
+from accounting.repo import BankRepo,AssetRepo,AccountTagRepo, CategoryRepo, CostRepo,BankAccountRepo, DoubleTransactionRepo, InvoiceLineRepo,AccountRepo,FinancialBalanceRepo, ChequeRepo, PaymentRepo, PriceRepo,  ProductRepo,ServiceRepo,FinancialDocumentRepo,InvoiceRepo, TransactionRepo
 from accounting.serializers import DoubleTransactionSerializer,ProductOrServiceUnitNameSerializer, ProductSpecificationSerializer,CategorySerializer, InvoiceLineWithInvoiceSerializer,AccountSerializer, AccountSerializerFull, AssetSerializer, BankAccountSerializer, BankSerializer, CostSerializer, FinancialBalanceSerializer, InvoiceFullSerializer,InvoiceLineSerializer,ChequeSerializer, InvoiceSerializer, PaymentSerializer, PriceSerializer,  ProductSerializer,ServiceSerializer,FinancialDocumentForAccountSerializer,FinancialDocumentSerializer, TransactionSerializer
 from accounting.forms import *
 import json
@@ -163,6 +163,23 @@ def get_account_context(request,*args, **kwargs):
     if account is None:
         raise Http404
     context['account']=account
+    if True:
+        account_tags=account.accounttag_set.all()
+        context['account_tags']=account_tags
+    if True:
+        from contact.serializers import ContactSerializer
+        contacts=account.contact_set.all()
+        contacts_s=json.dumps(ContactSerializer(contacts,many=True).data)
+        context['contacts']=contacts
+        context['contacts_s']=contacts_s
+
+        if request.user.has_perm("contact.add_contact"):
+            from contact.forms import AddContactForm
+            from contact.enums import ContatctNameEnum
+            context['add_contact_form']=AddContactForm()
+            contact_name_enums=list(t[0] for t in ContatctNameEnum.choices)
+            context['contact_name_enums']=contact_name_enums
+            context['contact_name_enums_s']=json.dumps(contact_name_enums)
 
     invoices=InvoiceRepo(request=request).list(account_id=account.id)
     context['invoices']=invoices
@@ -458,6 +475,21 @@ class HomeView(View):
         context['products_s']=products_s
         return render(request,TEMPLATE_ROOT+"index.html",context)
 
+class AccountTagView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        account_tag=AccountTagRepo(request=request).account_tag(*args, **kwargs) 
+        context['tag']=account_tag.tag
+
+        accounts=AccountRepo(request=request).list(tag=account_tag.tag)
+        context['accounts']=accounts
+        accounts_s=json.dumps(AccountSerializerFull(accounts,many=True).data)
+        context['accounts_s']=accounts_s
+        context['expand_accounts']=True
+
+
+        return render(request,TEMPLATE_ROOT+"account-tag.html",context)
+    
 
 class ReportView(View):
     def get(self,request,*args, **kwargs):

@@ -1,0 +1,37 @@
+<script>
+    let contact_name_enums = JSON.parse("{{contact_name_enums_s|escapejs}}")
+    let contacts = JSON.parse("{{contacts_s|escapejs}}")
+    let contacts_app = new Vue({
+        el: "#contacts-app",
+        data: {
+            contact_name_enums: contact_name_enums,
+            form_name: "",
+            form_value: "",
+            form_url: "",
+            contacts: contacts,
+            message: { show: false },
+            show_form: false,
+            waiting: false,
+        },
+        methods: {
+            add_contact: function () {
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    account_id: parseInt("{{account.id}}"),
+                    name: this.form_name,
+                    value: this.form_value,
+                    url: this.form_url,
+                }
+                console.log(payload)
+                $.post("{% url 'contact:add_contact' %}", payload).done(data => {
+                    console.log(data)
+                    if (data.result === 'SUCCEED') {
+                        console.log(data.contact)
+
+                         contacts_app.contacts.push(data.contact)
+                    }
+                })
+            },
+        }
+    })
+</script>

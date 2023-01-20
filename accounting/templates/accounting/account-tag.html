@@ -1,0 +1,25 @@
+{% extends "accounting/layout.html" %}
+
+{% block content %}
+<div class="row">
+ <div class="col-md-12">
+    <h4 class="text-center mb-3">
+        <small class="text-muted">
+تگ : 
+        </small>
+            {{tag}}
+    </h4>
+ </div>
+  
+  <div class="col-md-12">
+    {% include "accounting/includes/accounts-app/template.html" %}
+  </div>
+
+</div>
+{% endblock content %}
+
+
+{% block script %}
+    {% include "accounting/includes/accounts-app/script.html" %}
+
+{% endblock script %}

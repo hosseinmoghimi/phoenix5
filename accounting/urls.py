@@ -7,6 +7,7 @@ urlpatterns = [
     path("",login_required(views.HomeView.as_view()),name="home"),
     path("search/",login_required(views.SearchView.as_view()),name="search"),
     path("report/",login_required(views.ReportView.as_view()),name="report"),
+    path("account_tag/<int:pk>/",login_required(views.AccountTagView.as_view()),name="accounttag"),
     path("search_json/",login_required(views.SearchJsonView.as_view()),name="search_json"),
 
     path("bank_accounts/",login_required(views.BankAccountsView.as_view()),name="bank_accounts"),
