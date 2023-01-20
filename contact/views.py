@@ -22,7 +22,7 @@ class IndexView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
 
-
+        context['expand_contacts']=True
         contacts=ContactRepo(request=request).list(*args, **kwargs)
         contacts_s=json.dumps(ContactSerializer(contacts,many=True).data)
         context['contacts']=contacts
