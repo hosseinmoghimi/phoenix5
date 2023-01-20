@@ -58,6 +58,6 @@ class ContactRepo():
         if contact is not None:
             result=SUCCEED
             message="با موفقیت اضافه شد."
-        contacts=Contact.objects.filter(accout_id=contact.account_id)
+        contacts=Contact.objects.filter(account_id=contact.account_id)
         return result,message,contacts
 
