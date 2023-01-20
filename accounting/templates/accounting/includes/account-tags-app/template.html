@@ -10,10 +10,18 @@
 
             </span> 
         </a> ،
-        
-    </span>
-    <form @submit.prevent="add_account_tag()" class="d-inline">
 
+    </span>
+    
+    {% if account %}
+        
+    
+    <form @submit.prevent="add_account_tag()" class="d-inline">
+        
         <input class="d-inline" placeholder="تگ را وارد کنید ..." type="text" class="form-control" required v-model="new_tag">
     </form>
+    {% else %}
+    <input class="d-inline" placeholder="تگ را وارد کنید ..." type="text" class="form-control" required v-model="new_tag" @input="search()">
+
+    {% endif %}
 </div>

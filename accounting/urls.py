@@ -46,6 +46,8 @@ urlpatterns = [
     path("category/<int:pk>/",login_required(views.CategoryView.as_view()),name="category"),
     path("categories/",login_required(views.CategoriesView.as_view()),name="categories"),
     
+    path("account_tags/",login_required(views.AccountTagsView.as_view()),name="account_tags"),
+    
     path("account/<int:pk>/",login_required(views.AccountView.as_view()),name="account"),
     path("accounts/",login_required(views.AccountsView.as_view()),name="accounts"),
     path("add_account/",login_required(apis.AddAccountApi.as_view()),name="add_account"),

@@ -8,6 +8,9 @@
             message:{show:false}
         },
         methods: {
+            search:function(){
+                account_tags_app.account_tags=account_tags.filter(account_tag=>account_tag.tag.indexOf(account_tags_app.new_tag)>-1)
+            },
             add_account_tag: function () {
                 let payload={
                     csrfmiddlewaretoken:csrfmiddlewaretoken,

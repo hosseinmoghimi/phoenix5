@@ -491,6 +491,17 @@ class AccountTagView(View):
         return render(request,TEMPLATE_ROOT+"account-tag.html",context)
     
 
+class AccountTagsView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request) 
+
+        account_tags=AccountTagRepo(request=request).list()
+        context['account_tags']=account_tags
+        account_tags_s=json.dumps(AccountTagSerializer(account_tags,many=True).data)
+        context['account_tags_s']=account_tags_s 
+
+        return render(request,TEMPLATE_ROOT+"account-tags.html",context)
+    
 class ReportView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
