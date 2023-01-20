@@ -29,18 +29,21 @@ class Contact(models.Model,LinkHelper):
     class_name="contact"
     app_name=APP_NAME
     def generate_url(self):
+        if self.name==ContatctNameEnum.TEL or self.name==ContatctNameEnum.MOBILE or self.name==ContatctNameEnum.TELEGRAM or self.name==ContatctNameEnum.WHATSAPP:
+            if len(self.value)>2 and (self.value[0]=="0" and not self.value[1]=="0"):
+                self.value="+98"+self.value[1:]
         if self.name==ContatctNameEnum.TEL:
-            self.url="tel:"+self.value
+            self.url="tel:"+self.value 
         if self.name==ContatctNameEnum.MOBILE:
-            self.url="tel:"+self.value
+            self.url="tel:"+self.value 
         if self.name==ContatctNameEnum.EMAIL:
             self.url="mailto:"+self.value
         if self.name==ContatctNameEnum.WEBSITE:
             self.url=self.value
         if self.name==ContatctNameEnum.TELEGRAM:
-            self.url="tel:"+self.value
+            self.url="https://t.me/"+self.value 
         if self.name==ContatctNameEnum.WHATSAPP:
-            self.url="tel:"+self.value
+            self.url="https://wa.me/"+self.value 
     def save(self):
         if self.url is None or self.url=="":
             self.generate_url()
