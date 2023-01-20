@@ -14,9 +14,9 @@ class AddContactApi(APIView):
             AddContactForm_=AddContactForm(request.POST)
             if AddContactForm_.is_valid():
                 cd=AddContactForm_.cleaned_data
-                result,message,contact=ContactRepo(request=request).add_contact(**cd)
+                result,message,contacts=ContactRepo(request=request).add_contact(**cd)
                 if result==SUCCEED:
-                    context['contact']=ContactSerializer(contact).data
+                    context['contacts']=ContactSerializer(contacts,many=True).data
         context['result']=result
         context['message']=message
         context['log']=log

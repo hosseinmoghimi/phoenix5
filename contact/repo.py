@@ -3,6 +3,7 @@ from authentication.repo import ProfileRepo
 from .apps import APP_NAME
 from django.db.models import Q
 from core.constants import FAILED,SUCCEED
+from .enums import ContatctNameEnum
 
 class ContactRepo():
     def __init__(self,*args, **kwargs):
@@ -36,9 +37,9 @@ class ContactRepo():
             return self.objects.filter(pk=kwargs['title']).first()
     
     def add_contact(self,*args, **kwargs):
-        result,message,contact=FAILED,"",None
+        result,message,contacts=FAILED,"",[]
         if not self.request.user.has_perm(APP_NAME+".add_contact"):
-            return
+            return result,message,contacts
         contact=Contact()
         if 'name' in kwargs:
             contact.name=kwargs['name']
@@ -51,8 +52,12 @@ class ContactRepo():
         if 'account' in kwargs:
             contact.account=kwargs['account'] 
         contact.save()
+        if contact.name==ContatctNameEnum.MOBILE:
+            Contact(name=ContatctNameEnum.TELEGRAM,value=contact.value,account_id=contact.account_id).save()
+            Contact(name=ContatctNameEnum.WHATSAPP,value=contact.value,account_id=contact.account_id).save()
         if contact is not None:
             result=SUCCEED
             message="با موفقیت اضافه شد."
-        return result,message,contact
+        contacts=Contact.objects.filter(accout_id=contact.account_id)
+        return result,message,contacts
 

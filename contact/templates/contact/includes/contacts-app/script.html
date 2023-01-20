@@ -30,9 +30,7 @@
                 $.post("{% url 'contact:add_contact' %}", payload).done(data => {
                     console.log(data)
                     if (data.result === 'SUCCEED') {
-                        console.log(data.contact)
-
-                         contacts_app.contacts.push(data.contact)
+                        contacts_app.contacts=(data.contacts)
                     }
                 })
             },
