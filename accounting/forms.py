@@ -6,6 +6,11 @@ class SearchForm(forms.Form):
     account_id=forms.IntegerField(required=False)
     profile_id=forms.IntegerField(required=False)
 
+
+class AddAccountTagForm(forms.Form):
+    tag=forms.CharField(max_length=100, required=False)
+    account_id=forms.IntegerField(required=False)
+
 class AddBankAccountForm(forms.Form):
     title=forms.CharField(max_length=50, required=False)
     shaba_no=forms.CharField(max_length=50, required=False)

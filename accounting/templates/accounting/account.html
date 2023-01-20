@@ -14,7 +14,10 @@
      
 </h4>
 {% include "accounting/includes/account-app/navbar.html" %}
+<div class="my-3">
+{% include 'accounting/includes/account-tags-app/template.html' %}
 
+</div>
 <div class="row">
 
     <div class="col-md-12">
@@ -67,4 +70,5 @@
 {% include "accounting/includes/invoices-app/script.html"  %}
 {% include "accounting/includes/cheques-app/script.html"  %}
 {% include "contact/includes/contacts-app/script.html"  %}
+{% include 'accounting/includes/account-tags-app/script.html' %}
 {% endblock script %}

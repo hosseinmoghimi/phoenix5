@@ -899,7 +899,34 @@ class AccountRepo():
 
         return account
 
+    def add_account_tag(self,*args, **kwargs):
+        result,message,account_tags=FAILED,"",[]
+        if not self.request.user.has_perm(APP_NAME+".change_account"):
+            return result,message,account_tags
+        tag=kwargs['tag']
+        account_id=kwargs['account_id']
+        account_tags=AccountTag.objects.filter(account_id=account_id).filter(tag=tag)
+        
+        if len(account_tags)>0:
+            account_tags.delete()
+            account_tags=AccountTag.objects.filter(account_id=account_id)
+            result=SUCCEED
+            message="تگ "+tag+" حذف شد."
+            return result,message,account_tags
+        
 
+        account_tag=AccountTag()
+        account_tag.account_id=account_id
+        account_tag.tag=tag
+        account_tag.save()
+        message="تگ "+tag+" اضافه شد."
+
+        account_tags=AccountTag.objects.filter(account_id=account_id)
+        result=SUCCEED
+
+        return result,message,account_tags
+        
+       
 class InvoiceLineRepo():
     def __init__(self, *args, **kwargs):
         self.request = None

@@ -8,7 +8,7 @@ from utility.log import leolog
 from .repo import AccountRepo, BankAccountRepo, BankRepo, CategoryRepo, ChequeRepo, CostRepo, FinancialBalanceRepo,  FinancialDocumentRepo, InvoiceRepo, PaymentRepo, PriceRepo, ProductOrServiceRepo, ProductRepo, ServiceRepo, TransactionRepo
 from django.http import JsonResponse
 from .forms import *
-from .serializers import AccountSerializer, BankAccountSerializer, BankSerializer, CategorySerializer, ChequeSerializer, CostSerializer, FinancialBalanceSerializer, FinancialDocumentSerializer, InvoiceFullSerializer, InvoiceLineSerializer, PaymentSerializer, PriceSerializer, ProductOrServiceUnitNameSerializer,  ProductSerializer, ProductSpecificationSerializer, ServiceSerializer, TransactionSerializer
+from .serializers import AccountSerializer,AccountTagSerializer, BankAccountSerializer, BankSerializer, CategorySerializer, ChequeSerializer, CostSerializer, FinancialBalanceSerializer, FinancialDocumentSerializer, InvoiceFullSerializer, InvoiceLineSerializer, PaymentSerializer, PriceSerializer, ProductOrServiceUnitNameSerializer,  ProductSerializer, ProductSpecificationSerializer, ServiceSerializer, TransactionSerializer
 
 class AddBankAccountApi(APIView):
     def post(self,request,*args, **kwargs):
@@ -333,6 +333,32 @@ class AddPaymentApi(APIView):
         context['log']=log
         return JsonResponse(context)
         
+class AddAccountTagApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        log=1
+        context['result']=FAILED
+        message=""
+        result=FAILED
+        account_tags=[]
+        if request.method=='POST':
+            log=2
+            AddAccountTagForm_=AddAccountTagForm(request.POST)
+            if AddAccountTagForm_.is_valid():
+                log=3
+                fm=AddAccountTagForm_.cleaned_data
+                 
+                result,message,account_tags=AccountRepo(request=request).add_account_tag( 
+                    **AddAccountTagForm_.cleaned_data
+                )
+                if account_tags is not None:
+                    context['account_tags']=AccountTagSerializer(account_tags,many=True).data
+                    context['result']=SUCCEED
+        context['message']=message
+        context['log']=log
+        return JsonResponse(context)
+        
+
         
 class AddCategoryApi(APIView):
     def post(self,request,*args, **kwargs):
@@ -340,6 +366,7 @@ class AddCategoryApi(APIView):
         log=1
         context['result']=FAILED
         message=""
+        result=FAILED
         if request.method=='POST':
             log=2
             AddCategoryForm_=AddCategoryForm(request.POST)
@@ -347,7 +374,7 @@ class AddCategoryApi(APIView):
                 log=3
                 fm=AddCategoryForm_.cleaned_data
                  
-                SUCCEED,category,message=CategoryRepo(request=request).add_category( 
+                result,category,message=CategoryRepo(request=request).add_category( 
                     **AddCategoryForm_.cleaned_data
                 )
                 if category is not None:

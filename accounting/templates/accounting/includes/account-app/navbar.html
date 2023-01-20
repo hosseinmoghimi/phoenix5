@@ -62,11 +62,6 @@
         فاکتور فروش
     </a>
 </div>
-<div class="text-center farsi">
-    {% for account_tag in account_tags %}
-      <a href="{{account_tag.get_absolute_url}}" class="mx-2">{{account_tag.tag}}</a>
-    {% endfor %}
-</div>
 {% if perms.accounting.view_account or account_is_me %}
 
 <div class="text-center my-3">

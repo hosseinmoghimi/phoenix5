@@ -18,7 +18,7 @@ from utility.calendar import PersianCalendar
 from utility.excel import ReportSheet,ReportWorkBook, get_style
 from accounting.apps import APP_NAME
 from accounting.repo import BankRepo,AssetRepo,AccountTagRepo, CategoryRepo, CostRepo,BankAccountRepo, DoubleTransactionRepo, InvoiceLineRepo,AccountRepo,FinancialBalanceRepo, ChequeRepo, PaymentRepo, PriceRepo,  ProductRepo,ServiceRepo,FinancialDocumentRepo,InvoiceRepo, TransactionRepo
-from accounting.serializers import DoubleTransactionSerializer,ProductOrServiceUnitNameSerializer, ProductSpecificationSerializer,CategorySerializer, InvoiceLineWithInvoiceSerializer,AccountSerializer, AccountSerializerFull, AssetSerializer, BankAccountSerializer, BankSerializer, CostSerializer, FinancialBalanceSerializer, InvoiceFullSerializer,InvoiceLineSerializer,ChequeSerializer, InvoiceSerializer, PaymentSerializer, PriceSerializer,  ProductSerializer,ServiceSerializer,FinancialDocumentForAccountSerializer,FinancialDocumentSerializer, TransactionSerializer
+from accounting.serializers import AccountTagSerializer,DoubleTransactionSerializer,ProductOrServiceUnitNameSerializer, ProductSpecificationSerializer,CategorySerializer, InvoiceLineWithInvoiceSerializer,AccountSerializer, AccountSerializerFull, AssetSerializer, BankAccountSerializer, BankSerializer, CostSerializer, FinancialBalanceSerializer, InvoiceFullSerializer,InvoiceLineSerializer,ChequeSerializer, InvoiceSerializer, PaymentSerializer, PriceSerializer,  ProductSerializer,ServiceSerializer,FinancialDocumentForAccountSerializer,FinancialDocumentSerializer, TransactionSerializer
 from accounting.forms import *
 import json
 from utility.log import leolog
@@ -166,6 +166,8 @@ def get_account_context(request,*args, **kwargs):
     if True:
         account_tags=account.accounttag_set.all()
         context['account_tags']=account_tags
+        account_tags_s=json.dumps(AccountTagSerializer(account_tags,many=True).data)
+        context['account_tags_s']=account_tags_s
     if True:
         from contact.serializers import ContactSerializer
         contacts=account.contact_set.all()

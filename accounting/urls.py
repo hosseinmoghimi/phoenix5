@@ -90,6 +90,7 @@ urlpatterns = [
 
   
 
+  path("add_account_tag/",login_required(apis.AddAccountTagApi.as_view()),name="add_account_tag"),
   path("add_category/",login_required(apis.AddCategoryApi.as_view()),name="add_category"),
   path('add_item_category/',login_required(apis.AddItemCategoryApi.as_view()),name="add_item_category"),
   path('add_product/',login_required(apis.AddProductApi.as_view()),name="add_product"),

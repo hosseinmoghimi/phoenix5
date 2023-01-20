@@ -1,0 +1,18 @@
+<div class="text-center rtl farsi" id="account-tags-app">
+    <small class="text-muted">
+    تگ ها : 
+
+    </small>
+    <span v-for="account_tag in account_tags" class="mx-2" >
+
+        <a :href="account_tag.get_absolute_url" >
+            <span v-text="account_tag.tag" >
+
+            </span>
+        </a>
+    </span>
+    <form @submit.prevent="add_account_tag()" class="d-inline">
+
+        <input class="d-inline" placeholder="تگ را وارد کنید ..." type="text" class="form-control" required v-model="new_tag">
+    </form>
+</div>
