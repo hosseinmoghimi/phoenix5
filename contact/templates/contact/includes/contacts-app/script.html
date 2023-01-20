@@ -12,8 +12,12 @@
             message: { show: false },
             show_form: false,
             waiting: false,
+            search_for:"",
         },
         methods: {
+            search:function(){
+                contacts_app.contacts=contacts.filter(contact=>contact.account.title.indexOf(contacts_app.search_for)>-1||contact.name.indexOf(contacts_app.search_for)>-1||contact.value.indexOf(contacts_app.search_for)>-1)
+            },
             add_contact: function () {
                 let payload = {
                     csrfmiddlewaretoken: csrfmiddlewaretoken,

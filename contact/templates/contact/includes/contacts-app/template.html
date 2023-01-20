@@ -32,7 +32,9 @@
         <div id="collapse-contacts" class="collapse" aria-labelledby="heading-contacts" data-parent="#accordion-contacts">
 
             <div class="card-body">
-
+<div>
+    <input type="text" class="form-control" v-model="search_for" @input="search()">
+</div>
                 <div class="table-responsive">
                     <table class="table rtl">
                         <thead>

@@ -52,6 +52,7 @@ def add_transaction_context(request,*args, **kwargs):
         context['payment_methods']=(u[0] for u in PaymentMethodEnum.choices)
         context['accounts']=accounts
     return context
+
 def get_add_payment_context(request,*args, **kwargs):
     context={}
     if request.user.has_perm(APP_NAME+".add_payment"):
@@ -69,12 +70,11 @@ def get_add_cost_context(request,*args, **kwargs):
     
 def add_from_accounts_context(request):
     context={}
-    accounts=AccountRepo(request=request).list()
+    accounts=AccountRepo(request=request).list().order_by('title')
     accounts_s=json.dumps(AccountSerializer(accounts,many=True).data)
     context['accounts']=accounts
     context['accounts_s']=accounts_s
     return context
-
 
 def get_edit_invoice_context(request,*args, **kwargs):
     context={}
@@ -102,7 +102,6 @@ def get_edit_invoice_context(request,*args, **kwargs):
     
     return context
     
-
 def get_invoice_context(request,*args, **kwargs):
     context={}
     invoice=InvoiceRepo(request=request).invoice(*args, **kwargs)
@@ -424,7 +423,6 @@ def get_search_form_context(request,*args, **kwargs):
     context['search_form']=SearchForm()
 
     return context
-
 
 def get_add_bank_account_context(request,*args, **kwargs):
     context={}
