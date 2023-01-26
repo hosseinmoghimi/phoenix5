@@ -418,7 +418,6 @@ class ProductView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
         product=ProductRepo(request=request).product(*args, **kwargs)
-        context.update(PageContext(request=request,page=product))
         context.update(get_product_context(request=request,product=product))
         context['product']=product
         context['body_class']="product-page"
@@ -434,6 +433,13 @@ class ProductView(View):
         related_pages_s=json.dumps(ProductSerializer(related_pages,many=True).data)
         context['related_pages_s']=related_pages_s
         context['related_pages']=related_pages
+
+
+        product_shops=ShopRepo(request=request).list(product_id=product.id,)
+        product_shops_s=json.dumps(ShopSerializer(product_shops,many=True).data)
+        context['product_shops_s']=product_shops_s
+        context['product_shops']=product_shops
+
 
         # shops=product.shop_set.all()
         # shops_s=json.dumps(ShopSerializer(shops,many=True).data)

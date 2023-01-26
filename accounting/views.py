@@ -361,6 +361,8 @@ def get_product_context(request,*args, **kwargs):
         mv=MessageView(request=request)
         mv.title="چنین کالایی یافت نشد."
         return mv.response()
+
+        
     context=get_product_or_service_context(request=request,item=product,*args, **kwargs)
     product_specifications=product.productspecification_set.all()
     product_specifications_s=json.dumps(ProductSpecificationSerializer(product_specifications,many=True).data)
