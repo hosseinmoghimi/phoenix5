@@ -435,10 +435,10 @@ class ProductView(View):
         context['related_pages']=related_pages
 
 
-        product_shops=ShopRepo(request=request).list(product_id=product.id,)
-        product_shops_s=json.dumps(ShopSerializer(product_shops,many=True).data)
-        context['product_shops_s']=product_shops_s
-        context['product_shops']=product_shops
+        shops_for_suppliers=ShopRepo(request=request).list(product_id=product.id,)
+        shops_for_suppliers_s=json.dumps(ShopSerializer(shops_for_suppliers,many=True).data)
+        context['shops_for_suppliers_s']=shops_for_suppliers_s
+        context['shops_for_suppliers']=shops_for_suppliers
 
 
         # shops=product.shop_set.all()

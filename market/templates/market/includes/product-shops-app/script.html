@@ -3,7 +3,7 @@
 
 
     let url_add_shop = "{% url 'market:add_shop' %}"
-    let shops = JSON.parse(`{{product_shops_s|escapejs}}`)
+    let shops_for_suppliers = JSON.parse(`{{shops_for_suppliers_s|escapejs}}`)
     let shops_app = new Vue({
         el: "#shops-app",
         mounted: function () {
@@ -16,7 +16,7 @@
             available: 3,
             old_price:"",
             level: "{{level}}",
-            shops: shops,
+            shops: shops_for_suppliers,
             specifications: specifications,
             selected_specifications: []
         },
