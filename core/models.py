@@ -237,7 +237,8 @@ class PageComment(models.Model):
     date_added=models.DateTimeField(_("date_added"), auto_now=False, auto_now_add=True)
     def persian_date_added(self):
         return PersianCalendar().from_gregorian(self.date_added)
-    
+    def __str__(self):
+        return f"{self.profile.name} - {self.page.title} "
     class Meta:
         verbose_name = _("PageComment")
         verbose_name_plural = _("PageComments")
