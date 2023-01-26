@@ -53,10 +53,11 @@ def getContext(request, *args, **kwargs):
 def get_customer_context(request,*args, **kwargs):
     context={}
     customer=CustomerRepo(request=request).customer(*args, **kwargs)
-    context.update(get_account_context(request=request,account=customer.account))
-    cart_lines=CartLineRepo(request=request).my_lines()
-    context['cart_lines']=cart_lines
-    context['cart_lines_s']=json.dumps(CartLineSerializer(cart_lines,many=True).data)
+    if customer is not None:
+        context.update(get_account_context(request=request,account=customer.account))
+        cart_lines=CartLineRepo(request=request).my_lines()
+        context['cart_lines']=cart_lines
+        context['cart_lines_s']=json.dumps(CartLineSerializer(cart_lines,many=True).data)
     return context
 
 def get_suppliers_context(request,*args, **kwargs):
