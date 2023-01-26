@@ -3,9 +3,9 @@
 
 
     let url_add_shop = "{% url 'market:add_shop' %}"
-    let shops_for_suppliers = JSON.parse(`{{shops_for_suppliers_s|escapejs}}`)
-    let shops_app = new Vue({
-        el: "#shops-app",
+    let supplier_shops = JSON.parse(`{{supplier_shops_s|escapejs}}`)
+    let supplier_shops_app = new Vue({
+        el: "#supplier-shops-app",
         mounted: function () {
 
         },
@@ -16,7 +16,7 @@
             available: 3,
             old_price:"",
             level: "{{level}}",
-            shops: shops_for_suppliers,
+            supplier_shops: supplier_shops,
             specifications: specifications,
             selected_specifications: []
         },
@@ -58,7 +58,7 @@
                 let posting = $.post(url_add_shop, payload)
                 posting.done((data) => {
                     // add_to_cart_app.shops=data.shops
-                    shops_app.shops.push(data.shop)
+                    supplier_shops_app.supplier_shops.push(data.shop)
                     add_to_cart_app.shops.push(data.shop)
                 })
             },

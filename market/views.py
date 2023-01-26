@@ -444,29 +444,37 @@ class ProductView(View):
         # shops=product.shop_set.all()
         # shops_s=json.dumps(ShopSerializer(shops,many=True).data)
         # context["shops_s"]=shops_s
-
-
+        
+        supplier_shops=[]
+        customer_shops=[]
         me_supplier=context["me_supplier"]
         me_customer=context["me_customer"]
-        
-        if me_supplier is not None:
+        if request.user.has_perm(APP_NAME+".view_shop"):
+            supplier_shops=ShopRepo(request=request).list(product_id=product.id)    
+            supplier_shops_s=json.dumps(ShopSerializer(supplier_shops,many=True).data)
+            context["supplier_shops_s"]=supplier_shops_s
+            context["supplier_shops"]=supplier_shops
+        elif me_supplier is not None:
             supplier_shops=ShopRepo(request=request).list(product_id=product.id,supplier_id=me_supplier.id)
-            context['add_shop_form']=AddShopForm()
+            supplier_shops=ShopRepo(request=request).list(product_id=product.id,supplier_id=me_supplier.id)
+            supplier_shops_s=json.dumps(ShopSerializer(supplier_shops,many=True).data)
+            context["supplier_shops_s"]=supplier_shops_s
+            context["supplier_shops"]=supplier_shops
+            
+        if me_supplier is not None:
             context['shop_levels'] = (i[0] for i in CustomerLevelEnum.choices)
-            shops=ShopRepo(request=request).list(product_id=product.id,supplier_id=me_supplier.id)
-            shops_s=json.dumps(ShopSerializer(shops,many=True).data)
-            context["supplier_shops_s"]=shops_s
-            context["supplier_shops"]=shops
-        else:
-            supplier_shops=[]
+            context['add_shop_form']=AddShopForm()
         
         if me_customer is not None:
             in_cart,in_cart_unit=CartLineRepo(request=request).in_cart(product_or_service_id=product.pk,customer_id=me_customer.pk)
             context.update(get_customer_context(request=request,customer=me_customer))
             context['in_cart']=in_cart
             context['in_cart_unit']=in_cart_unit
-            shops=ShopRepo(request=request).list(product_id=product.id,level=me_customer.level)
-            shops_s=json.dumps(ShopSerializer(shops,many=True).data)
-            context["customer_shops_s"]=shops_s
-            context["customer_shops"]=shops
+            customer_shops=ShopRepo(request=request).list(product_id=product.id,level=me_customer.level)
+            customer_shops_s=json.dumps(ShopSerializer(customer_shops,many=True).data)
+            context["customer_shops"]=customer_shops
+            context["customer_shops_s"]=customer_shops_s
+        
+        
+
         return render(request,TEMPLATE_ROOT+"product.html",context)
