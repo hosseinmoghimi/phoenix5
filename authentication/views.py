@@ -77,7 +77,7 @@ class ProfileViews(View):
 
         me_profile=context['profile']
         context['selected_profile']=selected_profile
-        leolog(me_profile=me_profile)
+        # leolog(me_profile=me_profile)
         if me_profile is None:
             mv=MessageView(request=request)
             mv.title="عدم دسترسی"
