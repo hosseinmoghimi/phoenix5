@@ -99,14 +99,14 @@
 
                             <span v-text="to_price({{invoice.ship_fee}})">
                             </span> {{CURRENCY}}
- 
+
                         </td>
 
                     </tr>
                     {% endif %}
 
                     {% if invoice.tax_percent > 0 %}
-                    
+
                     <tr>
                         <td colspan="4">
                             <div class="text-left">
@@ -141,7 +141,7 @@
 
                             <span v-text="to_price({{invoice.discount}})">
                             </span> {{CURRENCY}}
-                            
+
                         </td>
 
                     </tr>
@@ -149,30 +149,67 @@
                     <tr>
                         <td colspan="4">
 
+                            {% if RIAL %}
                             <div class="text-left">
 
-                                
+
                                 <span class="h6">
-                                  {{invoice.sum_total|to_horuf_rial}} ریال
+                                    {{invoice.sum_total|to_horuf_tuman}} تومان
                                 </span>
                             </div>
                             <div class="text-left">
 
-                                
+
                                 <span class="h5">
-                                  {{invoice.sum_total|to_horuf}} تومان
+                                    {{invoice.sum_total|to_horuf_rial}} ریال
                                 </span>
                             </div>
+                            {% endif %}
+
+                            {% if TUMAN %}
+                            <div class="text-left">
+
+
+                                <span class="h6">
+                                    {{invoice.sum_total|to_horuf_rial}} ریال
+                                </span>
+                            </div>
+                            <div class="text-left">
+
+
+                                <span class="h5">
+                                    {{invoice.sum_total|to_horuf_tuman}} تومان
+                                </span>
+                            </div>
+                            {% endif %}
+
+
+
 
                         </td>
 
                         <td class="bordered ">
+                            {% if RIAL %}
+
+                            <h6>
+                                {{invoice.sum_total|to_price_tuman}}
+                            </h6>
+                            <h5>
+                                {{invoice.sum_total|to_price_rial}}
+                            </h5>
+                            {% endif %}
+
+
+                            {% if TUMAN %}
+
                             <h6>
                                 {{invoice.sum_total|to_price_rial}}
                             </h6>
                             <h5>
-                                {{invoice.sum_total|to_price}}
+                                {{invoice.sum_total|to_price_tuman}}
                             </h5>
+                            {% endif %}
+
                         </td>
 
                     </tr>

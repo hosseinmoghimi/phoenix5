@@ -29,7 +29,7 @@
     $(document).ready(function () {
         // Javascript method's body can be found in assets/js/demos.js
         csrfmiddlewaretoken = $("input[name='csrfmiddlewaretoken']").val()
-        
+
         $(".notification-divider:last").addClass("d-none")
     })
 </script>
@@ -57,3 +57,11 @@
 {% if PUSHER_IS_ENABLE %}
 {% include "phoenix/includes/pusher-script.html" %}
 {% endif %}
+
+<script>
+    function leolog(data) {
+        {% if DEBUG %}
+        console.log(data)
+        {% endif %}
+    }
+</script>

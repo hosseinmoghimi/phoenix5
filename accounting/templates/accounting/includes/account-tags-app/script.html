@@ -1,0 +1,33 @@
+<script>
+    var account_tags = JSON.parse(`{{account_tags_s|escapejs}}`)
+    var account_tags_app = new Vue({
+        el: "#account-tags-app",
+        data: {
+            account_tags: account_tags,
+            new_tag: "",
+            message:{show:false}
+        },
+        methods: {
+            search:function(){
+                account_tags_app.account_tags=account_tags.filter(account_tag=>account_tag.tag.indexOf(account_tags_app.new_tag)>-1)
+            },
+            add_account_tag: function () {
+                let payload={
+                    csrfmiddlewaretoken:csrfmiddlewaretoken,
+                    tag:this.new_tag,
+                    account_id:account_id,
+                }
+                let url="{% url 'accounting:add_account_tag' %}"
+                let posting=$.post(url,payload)
+                posting.done(data=>{
+                    console.log(data)
+                    console.log(data.message)
+                    if(data.result==='SUCCEED'){
+                        account_tags_app.account_tags=data.account_tags
+                        account_tags_app.new_tag=""
+                    }
+                })
+            }
+        }
+    })
+</script>

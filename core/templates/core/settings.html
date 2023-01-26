@@ -7,7 +7,7 @@
 
         <div class="card">
             <div class="card-body">
-                <ul class="nav">
+                <ul class="nav rtl text-right">
 
                     {% if perms.core.change_parameter %}
                     <li class="nav-item my-auto mx-2">
@@ -20,9 +20,31 @@
 
                     {% if perms.core.change_parameter %}
                     <li class="nav-item my-auto mx-2">
+                        <a target="_blank" href="{% url 'core:download_media' %}" class="nav-link farsi">
+                            <i class="material-icons" aria-hidden="true">settings</i>
+                            دانلود مدیا
+                        </a>
+                    </li>
+                    {% endif %}
+
+                    {% if perms.core.change_parameter %}
+                    <li class="nav-item my-auto mx-2">
+
+                        <a target="_blank" href="{% url 'core:download_uploads' %}" class="nav-link farsi">
+                            <i class="material-icons" aria-hidden="true">settings</i>
+                            دانلود فایل های آپلود شده
+                        </a>
+
+
+                    </li>
+                    {% endif %}
+
+
+                    {% if perms.core.change_parameter %}
+                    <li class="nav-item my-auto mx-2">
                         <a target="_blank" class="nav-link farsi " href="{% url 'core:backup' %}">
                             <i class="material-icons" aria-hidden="true">settings</i>
-                            دانلود بکاپ
+                            دانلود بکاپ داده ها
                         </a>
                     </li>
                     {% endif %}

@@ -1,4 +1,4 @@
-<div class="row mb-5">
+<div class="row mb-5 rtl">
     <div class="col-md-4">
 
         <a href="{{page.get_absolute_url}}">
@@ -9,16 +9,16 @@
             <span class="farsi text-muted small">
                 {{page.class_title}}
             </span>
-        <a href="{{our_work.get_absolute_url}}">
+        <a href="{{page.get_absolute_url}}">
             
-            <h4>
+            <h4 class="farsi">
               {{page.title}}
 
             </h4>
 
         </a>
         {% if page.short_description %}
-        <div class="text-muted small mt-2">
+        <div class="text-muted small mt-2 farsi">
 
             {{page.short_description|safe}}
         </div>

@@ -7,7 +7,14 @@
 
 
 <div class="row">
-  
+  {% if add_cheque_form %}
+  <div class="col-md-12">
+    {% include "accounting/includes/add-cheque-app/template.html" %}
+ 
+   
+     
+  </div> 
+  {% endif %}
   <div class="col-md-12">
     {% include "accounting/includes/cheques-app/template.html" %}
  
@@ -19,5 +26,10 @@
 
 {% block script %}
 {% include "accounting/includes/cheques-app/script.html" %}
+{% if add_cheque_form %}
+  {% include "accounting/includes/add-cheque-app/script.html" %}
 
+ 
+   
+{% endif %}
 {% endblock script %}

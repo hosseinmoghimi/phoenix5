@@ -4,7 +4,7 @@
 
 {% include "accounting/includes/transaction-app/navbar.html" %}
 
-<div class="row">
+<div class="row rtl">
     <div class="col-md-4">
         {% include "core/includes/page-app/brief-card.html" %}
 
@@ -13,6 +13,32 @@
         {% include "accounting/includes/transaction-app/brief.html" %}
 
     </div>
+
+    
+    {% if page.short_description %}
+      
+    <div class="col-md-12">
+        {% include "core/includes/page-description-app/short-description.html" %}
+        
+    </div>
+    {% endif %}
+
+    {% if page.short_description %}
+      
+    <div class="col-md-12">
+        {% include "core/includes/page-description-app/short-description.html" %}
+        
+    </div>
+    {% endif %}
+    
+    {% if page.description %}
+      
+    <div class="col-md-12">
+        {% include "core/includes/page-description-app/description.html" %}
+        
+    </div>
+    {% endif %}
+    
     <div class="col-md-4">
         {% include "core/includes/page-links-app/template.html" %}
     </div>
@@ -25,6 +51,20 @@
 
     </div>
 
+    {% if roll_back_transaction_form %}
+
+    <div class="col-md-12">
+    
+        {% include "accounting/includes/roll-back-transaction-app/template.html" %}
+    </div>
+    
+    {% endif %}
+
+
+    <div class="col-md-12">
+        {% include "core/includes/page-images-app/template.html" %}
+
+    </div>
     <div class="col-md-12">
         {% include "accounting/includes/financial-documents-app/template.html" %}
 
@@ -42,5 +82,10 @@
 
 {% block script %}
 {% include "accounting/includes/transaction-app/script.html" %}
+  {% if roll_back_transaction_form %}
 
+    
+        {% include "accounting/includes/roll-back-transaction-app/script.html" %}
+    
+    {% endif %}
 {% endblock script %}

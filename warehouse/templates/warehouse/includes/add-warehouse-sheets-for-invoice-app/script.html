@@ -3,6 +3,7 @@
         warehouse_sheets: warehouse_sheets,
         direction: "",
         ware_house_id: 0,
+        status:"",
     }
     let add_warehouse_sheets_for_invoice_app_methods = {
         to_price: function (vall) {
@@ -15,6 +16,7 @@
                 invoice_id: parseInt("{{invoice.id}}"),
                 direction: add_warehouse_sheets_for_invoice_app.direction,
                 ware_house_id: parseInt(add_warehouse_sheets_for_invoice_app.ware_house_id),
+                status:this.status,
             }
             $.post(url, payload).done(data => {
                 if (data.result === 'SUCCEED') {

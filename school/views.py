@@ -1,9 +1,12 @@
+from accounting.repo import AccountRepo
 from django.shortcuts import render,reverse
+from accounting.views import add_from_accounts_context
 from authentication.repo import ProfileRepo
 from core.views import CoreContext, MessageView, PageContext,ParameterNameEnum,ParameterRepo
+from phoenix.constants import SUCCEED
 from school.enums import AttendanceStatusEnum
-from school.repo import ActiveCourseRepo, AttendanceRepo, BookRepo, ClassRoomRepo, CourseRepo, EducationalYearRepo, MajorRepo, SchoolRepo, SessionRepo, StudentRepo, TeacherRepo
-from school.serializers import AttendanceSerializer,ActiveCourseSerializer, CourseSerializerWithMajors, MajorSerializer, CourseSerializer, BookSerializer, ClassRoomSerializer, SchoolSerializer, SessionSerializer, StudentSerializer, TeacherSerializer
+from school.repo import ActiveCourseRepo, AttendanceRepo, BookRepo, ClassRoomRepo, CourseRepo, EducationalYearRepo, ExamRepo, MajorRepo, SchoolRepo, SessionRepo, StudentRepo, TeacherRepo
+from school.serializers import AttendanceSerializer,ActiveCourseSerializer, CourseSerializerWithMajors, EducationalYearSerializer, ExamSerializer, MajorSerializer, CourseSerializer, BookSerializer, ClassRoomSerializer, QuestionSerializer, SchoolSerializer, SessionSerializer, StudentSerializer, TeacherSerializer
 from .apps import APP_NAME
 from django.views import View
 from .forms import *
@@ -20,6 +23,7 @@ def getContext(request,*args, **kwargs):
     context['search_action'] = reverse(APP_NAME+":search")
  
     return context
+
 
 class BasicViews(View):
     def search(self, request, *args, **kwargs):
@@ -72,41 +76,41 @@ class BasicViews(View):
         context=getContext(request=request)
 
 
-        schools=SchoolRepo(request=request).list(*args, **kwargs)
-        context['schools']=schools
-        context['schools_s']=json.dumps(SchoolSerializer(schools,many=True).data)
+        # schools=SchoolRepo(request=request).list(*args, **kwargs)
+        # context['schools']=schools
+        # context['schools_s']=json.dumps(SchoolSerializer(schools,many=True).data)
 
 
-        classrooms=ClassRoomRepo(request=request).list(*args, **kwargs)
-        context['classrooms']=classrooms
-        context['classrooms_s']=json.dumps(ClassRoomSerializer(classrooms,many=True).data)
+        # classrooms=ClassRoomRepo(request=request).list(*args, **kwargs)
+        # context['classrooms']=classrooms
+        # context['classrooms_s']=json.dumps(ClassRoomSerializer(classrooms,many=True).data)
 
 
-        majors=MajorRepo(request=request).list(*args, **kwargs)
-        context['majors']=majors
-        context['majors_s']=json.dumps(MajorSerializer(majors,many=True).data)
-
-
-
-
-        teachers=TeacherRepo(request=request).list(*args, **kwargs)
-        context['teachers']=teachers
-        context['teachers_s']=json.dumps(TeacherSerializer(teachers,many=True).data)
+        # majors=MajorRepo(request=request).list(*args, **kwargs)
+        # context['majors']=majors
+        # context['majors_s']=json.dumps(MajorSerializer(majors,many=True).data)
 
 
 
 
-
-        students=StudentRepo(request=request).list(*args, **kwargs)
-        context['students']=students
-        context['students_s']=json.dumps(StudentSerializer(students,many=True).data)
-
+        # teachers=TeacherRepo(request=request).list(*args, **kwargs)
+        # context['teachers']=teachers
+        # context['teachers_s']=json.dumps(TeacherSerializer(teachers,many=True).data)
 
 
 
-        books=BookRepo(request=request).list(*args, **kwargs)
-        context['books']=books
-        context['books_s']=json.dumps(BookSerializer(books,many=True).data)
+
+
+        # students=StudentRepo(request=request).list(*args, **kwargs)
+        # context['students']=students
+        # context['students_s']=json.dumps(StudentSerializer(students,many=True).data)
+
+
+
+
+        # books=BookRepo(request=request).list(*args, **kwargs)
+        # context['books']=books
+        # context['books_s']=json.dumps(BookSerializer(books,many=True).data)
 
 
         return render(request,TEMPLATE_ROOT+"index.html",context)
@@ -117,6 +121,10 @@ class ClassRoomViews(View):
         context=getContext(request=request)
         classroom=ClassRoomRepo(request=request).classroom(*args, **kwargs)
         context['classroom']=classroom
+        active_courses=ActiveCourseRepo(request=request).list(class_room_id=classroom.id)
+        context['active_courses']=active_courses
+        context['active_courses_s']=json.dumps(ActiveCourseSerializer(active_courses,many=True).data)
+
         return render(request,TEMPLATE_ROOT+"classroom.html",context)
 
     def classrooms(self,request,*args, **kwargs):
@@ -126,8 +134,9 @@ class ClassRoomViews(View):
         context['classrooms_s']=json.dumps(ClassRoomSerializer(classrooms,many=True).data)
         return render(request,TEMPLATE_ROOT+"classrooms.html",context)
 
+
 class EducationalYearViews(View):
-    def educational_year(self,request,*args, **kwargs):
+    def get(self,request,*args, **kwargs):
         context=getContext(request=request)
         educational_year=EducationalYearRepo(request=request).educational_year(*args, **kwargs)
         context['educational_year']=educational_year
@@ -139,8 +148,20 @@ class EducationalYearViews(View):
 
         return render(request,TEMPLATE_ROOT+"educational-year.html",context)
 
+
+class EducationalYearsViews(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        educational_years=EducationalYearRepo(request=request).list(*args, **kwargs)
+        context['educational_years']=educational_years
+        educational_years_s=json.dumps(EducationalYearSerializer(educational_years,many=True).data)
+        context['educational_years_s']=educational_years_s
+
+        return render(request,TEMPLATE_ROOT+"educational-years.html",context)
+
+
 class SchoolViews(View):
-    def school(self,request,*args, **kwargs):
+    def get(self,request,*args, **kwargs):
         context=getContext(request=request)
         school=SchoolRepo(request=request).school(*args, **kwargs)
         context['school']=school
@@ -161,21 +182,22 @@ class SchoolViews(View):
             context['years']=EducationalYearRepo(request=request).list()
 
         return render(request,TEMPLATE_ROOT+"school.html",context)
+class SchoolsViews(View):
 
-    def schools(self,request,*args, **kwargs):
+    def get(self,request,*args, **kwargs):
         context=getContext(request=request)
         schools=SchoolRepo(request=request).list(*args, **kwargs)
         context['schools_s']=json.dumps(SchoolSerializer(schools,many=True).data)
 
         if request.user.has_perm(APP_NAME+".add_school"):
             context['add_school_form']=AddSchoolForm()
+            accounts=AccountRepo(request=request).list()
+            context['accounts']=accounts
         return render(request,TEMPLATE_ROOT+"schools.html",context)
-
 
         
 class StudentViews(View):
-    
-    def student(self,request,*args, **kwargs):
+    def get(self,request,*args, **kwargs):
         context=getContext(request=request)
         student=StudentRepo(request=request).student(*args, **kwargs)
         context['student']=student
@@ -208,20 +230,21 @@ class StudentViews(View):
 
         return render(request,TEMPLATE_ROOT+"student.html",context)
 
-    def students(self,request,*args, **kwargs):
+     
+class StudentsViews(View):
+    def get(self,request,*args, **kwargs):
         context=getContext(request=request)
         students=StudentRepo(request=request).list(*args, **kwargs)
         context['students']=students
         context['students_s']=json.dumps(StudentSerializer(students,many=True).data)
-        if request.user.has_perm(APP_NAME+".add_teacher"):
+        if request.user.has_perm(APP_NAME+".add_student"):
             context['add_student_form']=AddStudentForm()
-            profiles=ProfileRepo(request=request).list()
-            context['profiles']=profiles
+            context.update(add_from_accounts_context(request=request))
         return render(request,TEMPLATE_ROOT+"students.html",context)
 
 
 class CourseViews(View):
-    def course(self,request,*args, **kwargs):
+    def get(self,request,*args, **kwargs):
         context=getContext(request=request)
         course=CourseRepo(request=request).course(*args, **kwargs)
         context['course']=course
@@ -229,11 +252,17 @@ class CourseViews(View):
 
 
         
-        books=BookRepo(request=request).list(course_id=course.id)
+        books=course.books.all()
         context['books']=books
         context['books_s']=json.dumps(BookSerializer(books,many=True).data)
         if request.user.has_perm(APP_NAME+".add_book"):
-            context['add_book_form']=AddBookForm()
+            # context['add_book_form']=AddBookForm()
+
+            context['add_book_to_course_form']=AddBookToCourseForm()
+            all_books=BookRepo(request=request).list()
+            context['all_books']=all_books
+            context['all_books_s']=json.dumps(BookSerializer(all_books,many=True).data)
+
 
         
         active_courses=course.activecourse_set.all()
@@ -242,7 +271,8 @@ class CourseViews(View):
 
         return render(request,TEMPLATE_ROOT+"course.html",context)
 
-    def courses(self,request,*args, **kwargs):
+class CoursesViews(View):
+    def get(self,request,*args, **kwargs):
         context=getContext(request=request)
         courses=CourseRepo(request=request).list(*args, **kwargs)
         context['courses']=courses
@@ -255,9 +285,10 @@ class CourseViews(View):
 
         return render(request,TEMPLATE_ROOT+"courses.html",context)
 
+
 class ActiveCourseViews(View):
 
-    def active_course(self,request,*args, **kwargs):
+    def get(self,request,*args, **kwargs):
         context=getContext(request=request)
         active_course=ActiveCourseRepo(request=request).active_course(*args, **kwargs)
         context['books']=active_course.course.books.all()
@@ -298,11 +329,15 @@ class ActiveCourseViews(View):
             context['all_teachers_s']=json.dumps(TeacherSerializer(all_teachers,many=True).data)
 
 
+
         if request.user.has_perm(APP_NAME+".add_session"):
             context['add_session_form']=AddSessionForm()
         return render(request,TEMPLATE_ROOT+"active-course.html",context)
 
-    def active_courses(self,request,*args, **kwargs):
+
+class ActiveCoursesViews(View):
+
+    def get(self,request,*args, **kwargs):
         context=getContext(request=request)
         active_courses=ActiveCourseRepo(request=request).list()
         context['active_courses']=active_courses
@@ -310,10 +345,9 @@ class ActiveCourseViews(View):
  
         return render(request,TEMPLATE_ROOT+"active-courses.html",context)
 
-
         
-class TeacherViews(View):
-    def teacher(self,request,*args, **kwargs):
+class TeacherView(View):
+    def get(self,request,*args, **kwargs):
         context=getContext(request=request)
         teacher=TeacherRepo(request=request).teacher(*args, **kwargs)
         context['teacher']=teacher
@@ -348,7 +382,8 @@ class TeacherViews(View):
         return render(request,TEMPLATE_ROOT+"teacher.html",context)
 
 
-    def teachers(self,request,*args, **kwargs):
+class TeachersView(View):
+    def get(self,request,*args, **kwargs):
         context=getContext(request=request)
         teachers=TeacherRepo(request=request).list(*args, **kwargs)
         context['teachers']=teachers
@@ -356,9 +391,98 @@ class TeacherViews(View):
         if request.user.has_perm(APP_NAME+".add_teacher"):
             context['add_teacher_form']=AddTeacherForm()
             profiles=ProfileRepo(request=request).list()
-            context['profiles']=profiles
+            context['profiles']=profiles 
+        if request.user.has_perm(APP_NAME+".add_teacher"):
+            context['add_teacher_form']=AddTeacherForm()
+            context.update(add_from_accounts_context(request=request))
+      
         return render(request,TEMPLATE_ROOT+"teachers.html",context)
 
+        
+class ExamView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        exam=ExamRepo(request=request).exam(*args, **kwargs)
+        context.update(PageContext(request=request,page=exam))
+        context['exam']=exam
+        if request.user.has_perm(APP_NAME+'.add_question'):
+            context['add_question_form']=AddQuestionForm()
+        questions=exam.question_set.all()
+        context['questions']=questions
+        context['questions_s']=json.dumps(QuestionSerializer(questions,many=True).data)
+        if exam is None:
+            mv=MessageView(request=request)
+            mv.links = []
+            mv.message_text_html = None
+            mv.message_color = 'warning'
+            mv.has_home_link = True
+            mv.header_color = "rose"
+            mv.message_icon = ''
+            mv.header_icon = '<i class="fa fa-exclamation-triangle" aria-hidden="true"></i>'
+            mv.message_text = "شما مجوز مشاهده این صفحه را ندارید."
+            mv.header_text = "دسترسی غیر مجاز"
+            mv.message_html = ""
+
+            return mv.response()
+
+
+         
+        return render(request,TEMPLATE_ROOT+"exam.html",context)
+
+
+class ExamsView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        exams=ExamRepo(request=request).list(*args, **kwargs)
+        context['expand_exams']=True
+        context['exams']=exams
+        context['exams_s']=json.dumps(ExamSerializer(exams,many=True).data)
+        if request.user.has_perm(APP_NAME+".add_exam"):
+            context['add_exam_form']=AddExamForm()
+        return render(request,TEMPLATE_ROOT+"exams.html",context)
+
+
+class QuestionView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        exam=ExamRepo(request=request).exam(*args, **kwargs)
+        context.update(PageContext(request=request,page=exam))
+        context['exam']=exam
+        if request.user.has_perm(APP_NAME+'.add_question'):
+            context['add_question_form']=AddQuestionForm()
+        questions=exam.question_set.all()
+        context['questions']=questions
+        context['questions_s']=json.dumps(QuestionSerializer(questions,many=True).data)
+        if exam is None:
+            mv=MessageView(request=request)
+            mv.links = []
+            mv.message_text_html = None
+            mv.message_color = 'warning'
+            mv.has_home_link = True
+            mv.header_color = "rose"
+            mv.message_icon = ''
+            mv.header_icon = '<i class="fa fa-exclamation-triangle" aria-hidden="true"></i>'
+            mv.message_text = "شما مجوز مشاهده این صفحه را ندارید."
+            mv.header_text = "دسترسی غیر مجاز"
+            mv.message_html = ""
+
+            return mv.response()
+
+
+         
+        return render(request,TEMPLATE_ROOT+"exam.html",context)
+
+
+class QuestionsView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        exams=ExamRepo(request=request).list(*args, **kwargs)
+        context['expand_exams']=True
+        context['exams']=exams
+        context['exams_s']=json.dumps(ExamSerializer(exams,many=True).data)
+        if request.user.has_perm(APP_NAME+".add_exam"):
+            context['add_exam_form']=AddExamForm()
+        return render(request,TEMPLATE_ROOT+"exams.html",context)
 
         
 class MajorViews(View):
@@ -389,7 +513,6 @@ class MajorViews(View):
 
         return render(request,TEMPLATE_ROOT+"majors.html",context)
 
-
         
 class BookViews(View):
     def get(self,request,*args, **kwargs):
@@ -399,6 +522,7 @@ class BookViews(View):
         context['book']=book
         return render(request,TEMPLATE_ROOT+"book.html",context)
 
+
 class BooksViews(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -406,7 +530,14 @@ class BooksViews(View):
         context['books']=books
         context['books_s']=json.dumps(BookSerializer(books,many=True).data)
         return render(request,TEMPLATE_ROOT+"books.html",context)
-
+ 
+class AttendanceViews(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        attendance=AttendanceRepo(request=request).attendance(*args, **kwargs) 
+        context['attendance']=attendance
+ 
+        return render(request,TEMPLATE_ROOT+"attendance.html",context)
         
 class SessionViews(View):
     def get(self,request,*args, **kwargs):
@@ -416,6 +547,7 @@ class SessionViews(View):
             context['STATUS_ABSENT']=AttendanceStatusEnum.ABSENT
             context['STATUS_DELAY']=AttendanceStatusEnum.DELAY
             context['STATUS_TASHVIGH']=AttendanceStatusEnum.TASHVIGH
+            context['STATUS_ARZYABI']=AttendanceStatusEnum.ARZYABI
             context['STATUS_TANBIH']=AttendanceStatusEnum.TANBIH
             context['add_attendence_form']=AddAttendanceForm()
         session=SessionRepo(request=request).session(*args, **kwargs)

@@ -1,76 +1,31 @@
 <div class="card card-refine card-plain card-rose farsi">
     <div class="card-body">
-        <h4 class="card-title text-right">
-            فیلتر کن
-            <button class="btn btn-default btn-fab btn-fab-mini btn-link pull-right" rel="tooltip" title=""
-                data-original-title="فیلتر کن">
-                <i class="material-icons"   aria-hidden="true" >cached</i>
-            </button>
-        </h4>
+
         <div id="accordion" role="tablist">
-            <div class="card card-collapse">
-                <div class="card-header" role="tab" id="headingOne">
-                    <h5 class="mb-0 text-right">
-                        <a data-toggle="collapse" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                            محدوده قیمت
-                            <i class="material-icons"   aria-hidden="true" >keyboard_arrow_down</i>
-                        </a>
-                    </h5>
-                </div>
-                <div id="collapseOne" class="collapse" role="tabpanel" aria-labelledby="headingOne">
-                    <div class="card-body card-refine">
-                        <span id="price-left" class="price-left pull-left" data-currency="€">€101</span>
-                        <span id="price-right" class="price-right pull-right" data-currency="€">€790</span>
-                        <div class="clearfix"></div>
-                        <div id="sliderRefine" class="slider slider-rose noUi-target noUi-ltr noUi-horizontal">
-                            <div class="noUi-base">
-                                <div class="noUi-connects">
-                                    <div class="noUi-connect"
-                                        style="transform: translate(8.16092%, 0px) scale(0.791954, 1);">
-                                    </div>
-                                </div>
-                                <div class="noUi-origin" style="transform: translate(-918.391%, 0px); z-index: 5;">
-                                    <div class="noUi-handle noUi-handle-lower" data-handle="0" tabindex="0"
-                                        role="slider" aria-orientation="horizontal" aria-valuemin="30.0"
-                                        aria-valuemax="790.0" aria-valuenow="101.0" aria-valuetext="101.00">
-                                        <div class="noUi-touch-area"></div>
-                                    </div>
-                                </div>
-                                <div class="noUi-origin" style="transform: translate(-126.437%, 0px); z-index: 4;">
-                                    <div class="noUi-handle noUi-handle-upper" data-handle="1" tabindex="0"
-                                        role="slider" aria-orientation="horizontal" aria-valuemin="101.0"
-                                        aria-valuemax="900.0" aria-valuenow="790.0" aria-valuetext="790.00">
-                                        <div class="noUi-touch-area"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+
             <div class="card card-collapse">
                 <div class="card-header" role="tab" id="headingTwo">
                     <h5 class="mb-0 text-right">
-                        <a class="collapsed" data-toggle="collapse" href="#collapseTwo" aria-expanded="false"
-                            aria-controls="collapseTwo">
-                           دسته بندی ها
-                            <i class="material-icons"   aria-hidden="true" >keyboard_arrow_down</i>
+                        <a class="collapsed farsi" data-toggle="collapse" href="#collapseONE" aria-expanded="false"
+                            aria-controls="collapseONE">
+                            دسته بندی ها
+                            <i class="material-icons" aria-hidden="true">keyboard_arrow_down</i>
                         </a>
                     </h5>
                 </div>
-                <div id="collapseTwo" class="collapse" role="tabpanel" aria-labelledby="headingTwo">
+                <div id="collapseONE" class="collapse" role="tabpanel" aria-labelledby="headingTwo">
                     <div class="card-body">
 
-                    {% for category in sidebar_categories %}
-                    <div class="text-center">
+                        {% for category in sidebar_categories %}
+                        <div class="text-right">
 
-                        <a class="" href="{{category.get_absolute_url}}">
-                            {{category.title}}
+                            <a class="farsi mx-2" href="{{category.get_market_absolute_url}}">
+                                {{category.title}}
 
-                        </a>
-                    </div>
-                    {% endfor %}
-                        
+                            </a>
+                        </div>
+                        {% endfor %}
+
                     </div>
                 </div>
             </div>
@@ -79,25 +34,24 @@
             <div class="card card-collapse">
                 <div class="card-header" role="tab" id="headingThree">
                     <h5 class="mb-0 text-right">
-                        <a class="collapsed" data-toggle="collapse" href="#collapseThree" aria-expanded="false"
+                        <a class="collapsed farsi" data-toggle="collapse" href="#collapseThree" aria-expanded="false"
                             aria-controls="collapseTwo">
                             برند ها
-                            <i class="material-icons"   aria-hidden="true" >keyboard_arrow_down</i>
+                            <i class="material-icons" aria-hidden="true">keyboard_arrow_down</i>
                         </a>
                     </h5>
                 </div>
                 <div id="collapseThree" class="collapse" role="tabpanel" aria-labelledby="headingThree">
                     <div class="card-body">
-                        {% for  brand in sidebar_brands %}
+                        {% for brand in sidebar_brands %}
                         <div class="my-2 text-center">
 
-                            <a title="{{brand.title}}" 
-                            href="{{brand.get_absolute_url}}">
-                            <img src="{{brand.logo}}" height="48" alt="{{brand.title}}">
+                            <a title="{{brand.title}}" href="{{brand.get_absolute_url}}">
+                                <img src="{{brand.logo}}" height="48" alt="{{brand.title}}">
 
-                        </a>
-                      </div>
-                      {% endfor %}
+                            </a>
+                        </div>
+                        {% endfor %}
 
                         <!-- <div class="form-check">
                             <label class="form-check-label">
@@ -108,52 +62,50 @@
                                 </span>
                             </label>
                         </div> -->
-                    
+
                     </div>
                 </div>
             </div>
-            
-            
-            
-
 
             <div class="card card-collapse">
-                <div class="card-header" role="tab" id="headingFour">
+                <div class="card-header" role="tab" id="headingLinks">
                     <h5 class="mb-0 text-right">
-                        <a class="collapsed" data-toggle="collapse" href="#collapseFour" aria-expanded="false"
-                            aria-controls="collapseFour">
-                            فروشنده ها
-                            <i class="material-icons"   aria-hidden="true" >keyboard_arrow_down</i>
+                        <a class="collapsed farsi" data-toggle="collapse" href="#collapseLinks" aria-expanded="false"
+                            aria-controls="collapseLinks">
+                            لینک ها
+                            <i class="material-icons" aria-hidden="true">keyboard_arrow_down</i>
                         </a>
                     </h5>
                 </div>
-                <div id="collapseFour" class="collapse" role="tabpanel" aria-labelledby="headingFour">
+                <div id="collapseLinks" class="collapse" role="tabpanel" aria-labelledby="headingLinks">
                     <div class="card-body">
-                        {% for supplier in sidebar_suppliers %}
-                        <div class="text-right">
+                        <div class="my-2 text-center">
 
-                            <a class="" href="{{supplier.get_absolute_url}}">
-                                <img src="{{supplier.thumbnail}}" width="32" class="rounded ml-2" alt="">
-                                <span class="farsi">
+                            <a title=" " href="{% url 'market:customers' %}">
+                                <h6>
+                                مشتریان
 
-                                    {{supplier.title}}
+                                </h6>
+                            </a>
+
+                            <a title=" " href="{% url 'market:suppliers' %}">
+                                <h6>
+                                فروشنده ها
+
+                                </h6>
+                            </a>
+
+                        </div>
+
+                        <!-- <div class="form-check">
+                            <label class="form-check-label">
+                                <input class="form-check-input" type="checkbox" value="" checked="">
+                                Blazers
+                                <span class="form-check-sign">
+                                    <span class="check"></span>
                                 </span>
-
-                            </a>
-                        </div>
-                        {% endfor %}
-                        <div class="text-right">
-
-                            <a class="" href="{% url 'market:suppliers' %}">
-                                <img src="{{supplier.thumbnail}}" width="32" class="rounded ml-2" alt="">
-                                <span class="farsi">
-
-                                    همه ی فروشنده ها
-                                </span>
-
-                            </a>
-                        </div>
- 
+                            </label>
+                        </div> -->
 
                     </div>
                 </div>
@@ -161,63 +113,10 @@
 
 
 
-            <div class="card card-collapse">
-                <div class="card-header" role="tab" id="headingFive">
-                    <h5 class="mb-0 text-right">
-                        <a class="collapsed" data-toggle="collapse" href="#collapseFive" aria-expanded="false"
-                            aria-controls="collapseFive">
-                            پیک ها
-                            <i class="material-icons"   aria-hidden="true" >keyboard_arrow_down</i>
-                        </a>
-                    </h5>
-                </div>
-                <div id="collapseFive" class="collapse" role="tabpanel" aria-labelledby="headingFive">
-                    <div class="card-body">
-                        {% for  shipper in sidebar_shippers%}
-                          <div class="text-center">
-
-                            <a class="" href="{{shipper.get_absolute_url}}">
-                                {{shipper.title}}
-
-                            </a>
-                        </div>
-                        {% endfor %}
-                        
-                      
-
-                    </div>
-                </div>
-            </div>
 
 
 
-            <div class="card card-collapse">
-                <div class="card-header" role="tab" id="headingSix6">
-                    <h5 class="mb-0 text-right">
-                        <a class="collapsed" data-toggle="collapse" href="#collapseSix6" aria-expanded="false"
-                            aria-controls="collapseSix6">
-                            انبار ها
-                            <i class="material-icons"   aria-hidden="true" >keyboard_arrow_down</i>
-                        </a>
-                    </h5>
-                </div>
-                <div id="collapseSix6" class="collapse" role="tabpanel" aria-labelledby="headingSix6">
-                    <div class="card-body">
-                        {% for  ware_house in ware_houses %}
-                          <div class="text-center">
 
-                            <a class="" href="{{ware_house.get_absolute_url}}">
-                                {{ware_house.name}}
-
-                            </a>
-                        </div>
-                        {% endfor %}
-                        
-                      
-
-                    </div>
-                </div>
-            </div>
 
         </div>
     </div>

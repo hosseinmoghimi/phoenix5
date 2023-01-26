@@ -68,6 +68,7 @@
                                     <a href="{{invoice_line.invoice.get_absolute_url}}">
                                         {{invoice_line.invoice.title}}
                                     </a>
+                                    <span class="badge badge-{{invoice_line.invoice.status_color}}">{{invoice_line.invoice.status}}</span>
                                     <div class="row">
                                         <div class="col-6">
                                             <small class="text-muted">

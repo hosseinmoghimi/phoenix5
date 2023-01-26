@@ -12,12 +12,20 @@ class OrganizationUnitSerializer(serializers.ModelSerializer):
 
 
 
+
 class EmployeeSerializer(serializers.ModelSerializer):
     account=AccountSerializer()
     organization_unit=OrganizationUnitSerializer()
     class Meta:
         model=Employee
         fields=['id','organization_unit','job_title','get_absolute_url','get_delete_url','get_edit_url','account','title']
+
+class OrganizationUnitWithEmployeesSerializer(serializers.ModelSerializer):
+    account=AccountSerializer()
+    employees=EmployeeSerializer(many=True)
+    class Meta:
+        model=OrganizationUnit
+        fields=['id','title','employees','full_title','account','image','logo','full_title','pre_title','get_edit_url','get_absolute_url']
 
 
 class LetterSerializer(serializers.ModelSerializer):

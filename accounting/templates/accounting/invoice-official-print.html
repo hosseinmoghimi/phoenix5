@@ -7,20 +7,20 @@
 {% block content %}
 
 
-<div class="row">
+<div class="row rtl">
     <div class="col-4"></div>
     <div class="col-4">
         <h5 class="text-center">
             صورتحساب فروش کالا و خدمات
-        
-        
+
+
         </h5>
     </div>
     <div class="col-4">
         <h6 class="text-left mx-5">شماره فاکتور :
             <span>{{invoice.pk}}</span>
         </h6>
-        
+
         <h6 class="text-left mx-5">تاریخ :
             <span>{{invoice.transaction_datetime|to_persian_date|safe}}</span>
         </h6>
@@ -38,7 +38,7 @@
 
     </div>
     <div class="card-body">
-        <div class="row">
+        <div class="row rtl">
             {% if invoice.pay_from.title %}
             <div class="col-md-4">
                 <div class="farsi text-right">
@@ -108,7 +108,7 @@
 
     </div>
     <div class="card-body">
-        <div class="row">
+        <div class="row rtl">
             {% if invoice.pay_to.title %}
             <div class="col-md-4">
                 <div class="farsi text-right">
@@ -169,284 +169,295 @@
 </div>
 
 {% load to_price %}
+<div id="invoice-lines-app">
 
-<div class="card" id="invoice-lines-app">
-    <div class="card-header">
-        <h6 class="text-center">
-            شرح کالا و خدمات
-        </h6>
-    </div>
-    <div class="card-body">
-        <div class="table-responsive">
-
-            <table class="table table-striped my-0">
-                <thead>
-                    <th class="bordered">
-                        ردیف
-                    </th>
-
-                    <th class="bordered">
-                        شرح
-                    </th>
-                    <th class="bordered">
-                        تعداد
-                    </th>
-
-                    <th class="bordered">
-                        فی
-                        <small class="text-muted">
-
-                            (&nbsp;{{CURRENCY}}&nbsp;)
-                        </small>
-                    </th>
-
-                    <th class="bordered">
-                        جمع
-                        <small class="text-muted">
-
-                            (&nbsp;{{CURRENCY}}&nbsp;)
-                        </small>
-                    </th>
-
-                    <th class="bordered">
-                        تخفیف
-                        <small class="text-muted">
-
-                            (&nbsp;{{CURRENCY}}&nbsp;)
-                        </small>
-                    </th>
-
-                    <th class="bordered">
-                        مبلغ کل پس از تخفیف
-                        <small class="text-muted">
-
-                            (&nbsp;{{CURRENCY}}&nbsp;)
-                        </small>
-                    </th>
-
-
-
-                    <th class="bordered">
-                        مالیات و عوارض
-                        <small class="text-muted">
-
-                            (&nbsp;{{CURRENCY}}&nbsp;)
-                        </small>
-                    </th>
-
-
-                    <th class="bordered">
-                        مبلغ قابل پرداخت
-                        <small class="text-muted">
-
-                            (&nbsp;{{CURRENCY}}&nbsp;)
-                        </small>
-                    </th>
-
-
-
-
-                </thead>
-                <tbody>
-                    <tr v-for="invoice_line in invoice_lines">
-                        <td class="bordered">
-                            <span v-text="invoice_line.row"></span>
-                        </td>
-
-                        <td class="bordered">
-                            <span v-text="invoice_line.product_or_service.title"></span>
-                        </td>
-
-
-                        <td class="bordered">
-                            <span v-text="invoice_line.quantity"></span>
-                            <span v-text="invoice_line.unit_name"></span>
-                        </td>
-
-                        <td class="bordered">
-                            <span v-text="to_price(invoice_line.unit_price)"></span>
-                        </td>
-
-                        <td class="bordered">
-                            <span v-text="to_price(invoice_line.unit_price*invoice_line.quantity)"></span>
-                        </td>
-
-
-
-                        <td class="bordered">
-                            0
-                        </td>
-
-
-                        <td class="bordered">
-                            <span v-text="to_price(invoice_line.unit_price*invoice_line.quantity)"></span>
-                        </td>
-
-
-
-                        <td class="bordered">
-                            <span
-                                v-text="to_price(tax_percent*invoice_line.unit_price*invoice_line.quantity/100)"></span>
-                        </td>
-
-
-
-                        <td class="bordered">
-                            <span
-                                v-text="to_price((100+tax_percent)*invoice_line.unit_price*invoice_line.quantity/100)"></span>
-                        </td>
-
-                    </tr>
-
-
-
-                    <tr>
-                        <td class="bordered">
-                        </td>
-
-                        <td class="bordered">
-                        </td>
-                        <td class="bordered">
-                            <!-- <span v-text="invoice_line.quantity"></span>
-                                    <span v-text="invoice_line.unit_name"></span> -->
-                        </td>
-                        <td class="bordered">
-                            <!-- <span v-text="to_price(invoice_line.unit_price)"></span> -->
-                        </td>
-                        <td class="bordered">
-                            <!-- <span v-text="to_price(invoice_line.unit_price*invoice_line.quantity)"></span> -->
-                            {{invoice.lines_total|to_price_rial}}
-
-                        </td>
-                        <td class="bordered">
-                            0
-                        </td>
-                        <td class="bordered">
-                            {{invoice.lines_total|to_price_rial}}
-                            <!-- <span v-text="to_price(invoice_line.unit_price*invoice_line.quantity)"></span> -->
-                        </td>
-                        <td class="bordered">
-                            <span v-text="to_price({{invoice.tax_amount}})">
-                            </span>  
-                        </td>
-                        <td class="bordered">
-                            {{invoice.sum_total|to_price_rial}}
-                            </span>
-
-                        </td>
-
-                    </tr>
-
-
-
-                    <tr class="d-none">
-                        <td colspan="8">
-
-                            <div class="text-left">
-
-
-                                <span class="h5">
-                                    {{invoice.sum_total|to_horuf_rial}} ریال
-                                </span>
-                            </div>
-                            <div class="text-left">
-
-
-                                <span class="h6">
-                                    {{invoice.sum_total|to_horuf}} تومان
-                                </span>
-                            </div>
-
-                        </td>
-
-                        <td class="bordered ">
-                            <h5>
-                                {{invoice.sum_total|to_price_rial}}
-                            </h5>
-                            <h6>
-                                {{invoice.sum_total|to_price}}
-                            </h6>
-                        </td>
-
-                    </tr>
-                </tbody>
-            </table>
+    <div class="card">
+        <div class="card-header">
+            <h6 class="text-center">
+                شرح کالا و خدمات
+            </h6>
         </div>
+        <div class="card-body">
+            <div class="table-responsive">
 
+                <table class="table table-striped my-0">
+                    <thead>
+                        <th class="bordered">
+                            ردیف
+                        </th>
+
+                        <th class="bordered">
+                            شرح
+                        </th>
+                        <th class="bordered">
+                            تعداد
+                        </th>
+
+                        <th class="bordered">
+                            فی
+                            <small class="text-muted">
+
+                                (&nbsp;{{CURRENCY}}&nbsp;)
+                            </small>
+                        </th>
+
+                        <th class="bordered">
+                            جمع
+                            <small class="text-muted">
+
+                                (&nbsp;{{CURRENCY}}&nbsp;)
+                            </small>
+                        </th>
+
+                        <th class="bordered">
+                            تخفیف
+                            <small class="text-muted">
+
+                                (&nbsp;{{CURRENCY}}&nbsp;)
+                            </small>
+                        </th>
+
+                        <th class="bordered">
+                            مبلغ کل پس از تخفیف
+                            <small class="text-muted">
+
+                                (&nbsp;{{CURRENCY}}&nbsp;)
+                            </small>
+                        </th>
+
+
+
+                        <th class="bordered">
+                            مالیات و عوارض
+                            <small class="text-muted">
+
+                                (&nbsp;{{CURRENCY}}&nbsp;)
+                            </small>
+                        </th>
+
+
+                        <th class="bordered">
+                            مبلغ قابل پرداخت
+                            <small class="text-muted">
+
+                                (&nbsp;{{CURRENCY}}&nbsp;)
+                            </small>
+                        </th>
+
+
+
+
+                    </thead>
+                    <tbody>
+                        <tr v-for="invoice_line in invoice_lines">
+                            <td class="bordered">
+                                <span v-text="invoice_line.row"></span>
+                            </td>
+
+                            <td class="bordered">
+                                <span v-text="invoice_line.product_or_service.title"></span>
+                            </td>
+
+
+                            <td class="bordered">
+                                <span v-text="invoice_line.quantity"></span>
+                                <span v-text="invoice_line.unit_name"></span>
+                            </td>
+
+                            <td class="bordered">
+                                <span v-text="to_price(invoice_line.unit_price)"></span>
+                            </td>
+
+                            <td class="bordered">
+                                <span v-text="to_price(invoice_line.unit_price*invoice_line.quantity)"></span>
+                            </td>
+
+
+
+                            <td class="bordered">
+                                0
+                            </td>
+
+
+                            <td class="bordered">
+                                <span v-text="to_price(invoice_line.unit_price*invoice_line.quantity)"></span>
+                            </td>
+
+
+
+                            <td class="bordered">
+                                <span
+                                    v-text="to_price(tax_percent*invoice_line.unit_price*invoice_line.quantity/100)"></span>
+                            </td>
+
+
+
+                            <td class="bordered">
+                                <span
+                                    v-text="to_price((100+tax_percent)*invoice_line.unit_price*invoice_line.quantity/100)"></span>
+                            </td>
+
+                        </tr>
+
+
+
+                        <tr>
+                            <td class="bordered">
+                            </td>
+
+                            <td class="bordered">
+                            </td>
+                            <td class="bordered">
+                                <!-- <span v-text="invoice_line.quantity"></span>
+                                    <span v-text="invoice_line.unit_name"></span> -->
+                            </td>
+                            <td class="bordered">
+                                <!-- <span v-text="to_price(invoice_line.unit_price)"></span> -->
+                            </td>
+                            <td class="bordered">
+                                <!-- <span v-text="to_price(invoice_line.unit_price*invoice_line.quantity)"></span> -->
+                                <span v-text="to_price({{invoice.lines_total}})"></span>
+                                ریال
+                            </td>
+                            <td class="bordered">
+                                0
+                            </td>
+                            <td class="bordered">
+                                <span v-text="to_price({{invoice.lines_total}})"></span>
+                                ریال
+                            </td>
+                            <td class="bordered">
+                                <span v-text="to_price({{invoice.tax_amount}})">
+                                </span>
+                            </td>
+                            <td class="bordered">
+                                <span v-text="to_price({{invoice.sum_total}})"></span>
+                                ریال
+
+                            </td>
+
+                        </tr>
+
+
+
+                        <tr class="d-none">
+                            <td colspan="8">
+
+                                <div class="text-left">
+
+
+                                    <span class="h5">
+                                        {{invoice.sum_total|to_horuf_rial}} ریال
+                                    </span>
+                                </div>
+                                <div class="text-left">
+
+
+                                    <span class="h6">
+                                        {{invoice.sum_total|to_horuf}} تومان
+                                    </span>
+                                </div>
+
+                            </td>
+
+                            <td class="bordered ">
+                                <h5>
+                                    {{invoice.sum_total|to_price_rial}}
+                                </h5>
+                                <h6>
+                                    {{invoice.sum_total|to_price}}
+                                </h6>
+                            </td>
+
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
     </div>
-</div>
 
 
-<div class="card">
-    <div class="card-header">
-        <h6 class="text-center">
-            توضیحات ، شرایط و نحوه فروش
-        </h6>
-    </div>
-    <div class="card-body px-5 farsi text-right">
-        <!-- <div>
+    <div class="card">
+        <div class="card-header">
+            <h6 class="text-center">
+                توضیحات ، شرایط و نحوه فروش
+            </h6>
+        </div>
+        <div class="card-body px-5 farsi text-right">
+            <!-- <div>
             واحد مبلغ ها
             {{CURRENCY}}
             می باشد.
         </div> -->
-        <div>
-            <p class="farsi">
-                جمع کل به حروف : 
-                {{invoice.sum_total|to_horuf_rial}} ریال
-            </p>
-        </div>
-        {% if invoice.pay_from and invoice.pay_from.default_bank_account %}
-        <div>
-            {{invoice.pay_from.default_bank_account|to_variz_text}}
-        </div>
-        {% endif %}
-        
-        {% if invoice.description %}
-        <div class=" ">
-            {{invoice.description|safe}}
-        </div>
-        {% endif %}
-    </div>
-</div>
-
-<div class="row">
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-body">
-                <p class="text-center">
-                    فروشنده : {{invoice.pay_from.title}}
+            <div>
+                <p class="farsi">
+                    جمع کل به حروف :
+                    {{invoice.sum_total|to_horuf_rial}} ریال
                 </p>
-                <div class="mb-5">&nbsp;</div>
+                <p class="farsi">
+                    مالیات به حروف :
+                    <span v-text="to_price({{invoice.tax_amount}})"></span>
+                    ریال
+                </p>
+            </div>
+            {% if invoice.pay_from and invoice.pay_from.default_bank_account %}
+            <div>
+                {{invoice.pay_from.default_bank_account|to_variz_text|safe}}
+            </div>
+            {% endif %}
+
+            {% if invoice.description %}
+            <div class=" ">
+                {{invoice.description|safe}}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="row rtl farsi">
+        <div class="col-6">
+            <div class="card">
+                <div class="card-body">
+                    <p class="text-center">
+                        فروشنده : {{invoice.pay_from.title}}
+                    </p>
+                    <div class="mb-5">&nbsp;</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="card">
+                <div class="card-body">
+
+
+                    <p class="text-center">
+                        خریدار : {{invoice.pay_to.title}}
+                    </p>
+
+
+
+                    <div class="mb-5">&nbsp;</div>
+
+                </div>
             </div>
         </div>
     </div>
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-body">
-
-
-                <p class="text-center">
-                    خریدار : {{invoice.pay_to.title}}
-                </p>
 
 
 
-                <div class="mb-5">&nbsp;</div>
-
-            </div>
-        </div>
-    </div>
 </div>
-
-
 {% endblock content %}
 
 
 {% block script %}
 <script>
+
     let page_id = parseInt("{{page.id}}")
     let invoice_lines = JSON.parse(`{{invoice_lines_s|escapejs}}`)
 </script>
+
+
 {% include "accounting/includes/invoice-lines-app/script.html" %}
 
 {% endblock script %}

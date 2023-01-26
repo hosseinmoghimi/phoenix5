@@ -21,8 +21,8 @@
 
 
         </div>
-        <div id="collapse-add-project" class="collapse" aria-labelledby="heading-add-project"
-            data-parent="#accordion-add-project">
+        <div id="collapse-add-project" class="collapse {% if expand_add_project %} show {% endif %}"
+            aria-labelledby="heading-add-project" data-parent="#accordion-add-project">
 
 
             <div class="card-body">
@@ -30,18 +30,18 @@
                 {% load static %}
                 <form @submit.prevent="add_project()">
                     <img src="{% static 'leo/img/loading.gif' %}" width="32" v-if="waiting" alt="">
-                    <div class="row">
+                    <div class="row rtl">
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="">عنوان</label>
-                                <input type="text" v-model="title" class="form-control" placeholder="عنوان"
+                                <input type="text" required v-model="title" class="form-control" placeholder="عنوان"
                                     @input="filter()">
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label for="">وضعیت</label>
-                                <select v-model="status" class="form-control" id="">
+                                <select  required v-model="status" class="form-control" id="">
                                     {% for status in statuses %}
                                     <option value="{{status}}">
                                         {{status}}
@@ -57,7 +57,7 @@
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label for="">کارفرما</label>
-                                <select v-model="employer_id" class="form-control" id="">
+                                <select  required v-model="employer_id" class="form-control" id="">
                                     {% for employer in employers %}
                                     <option value="{{employer.id}}">
                                         {{employer.title}}
@@ -73,7 +73,7 @@
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label for="">پیمانکار</label>
-                                <select v-model="contractor_id" class="form-control" id="">
+                                <select  required v-model="contractor_id" class="form-control" id="">
                                     {% for contractor in employers %}
                                     <option value="{{contractor.id}}">
                                         {{contractor.title}}
@@ -88,7 +88,7 @@
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label for="">درصد پیشرفت پروژه</label>
-                                <input v-model="percentage_completed" class="form-control" type="number">
+                                <input required  v-model="percentage_completed" class="form-control" type="number">
                             </div>
 
                         </div>
@@ -116,6 +116,16 @@
                                 </button>
                             </div>
                         </div>
+
+
+                        <div class="col-md-12 text-right">
+                            <div class="my-3 text-right" v-if="message.show">
+                                <span :class="'alert alert-'+message.color">
+                                    <span class="farsi" v-html="message.body"></span>
+                                </span>
+                            </div>
+                        </div>
+
                     </div>
 
                 </form>

@@ -1,0 +1,90 @@
+<script>
+
+    let add_payment_app_account_id = 0
+    let add_payment_me_account_id = 0
+</script>
+{% if account %}
+<script>
+    add_payment_app_account_id = parseInt("{{account.id}}")
+</script>
+{% endif %}
+{% if me_account %}
+<script>
+    let add_payment_app_me_account_id = parseInt("{{me_account.id}}")
+</script>
+{% endif %}
+<script>
+    let add_payment_app = new Vue({
+        el: "#add-payment-app",
+        data: {
+            payment_datetime: current_date,
+            title: "",
+            status: "",
+            pay_to_id: add_payment_app_account_id,
+            pay_from_id: add_payment_app_me_account_id,
+            amount: 0,
+            description: "",
+            payment_method: "",
+            waiting: false,
+            message: {
+                show: false,
+                color: "success",
+                body: "",
+            }
+        },
+        components: {
+            DatePicker: VuePersianDatetimePicker,
+
+        },
+        methods: {
+            to_price: function (vall) {
+                return to_price(vall, "{{CURRENCY}}")
+            },
+            exchange: function () {
+                let pay_to_id = this.pay_to_id
+                this.pay_to_id = this.pay_from_id
+                this.pay_from_id = pay_to_id
+            },
+            add_payment: function () {
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    pay_to_id: parseInt(this.pay_to_id),
+                    pay_from_id: parseInt(this.pay_from_id),
+                    title: this.title,
+                    status: this.status,
+                    description: this.description,
+                    amount: parseInt(this.amount),
+                    payment_datetime: this.payment_datetime,
+                    payment_method: this.payment_method,
+
+                }
+                add_payment_app.waiting = true
+                let url = "{% url 'accounting:add_payment' %}"
+                $.post(url, payload).done((data) => {
+                    console.log(data)
+                    add_payment_app.waiting = false
+                    if (data.result === 'SUCCEED') {
+
+                        // if (typeof payments_app != 'undefined') {
+                            payments_app.payments.push(data.payment)
+                        // }
+                        add_payment_app.message = { show: true, body: "با موفقیت ذخیره شد.", color: 'success' }
+                        add_payment_app.title = ""
+                        add_payment_app.amount = ""
+                        setTimeout(() => {
+                            add_payment_app.message = { show: false }
+                        }, 3000);
+                    }
+                    if (data.result === 'FAILED') {
+                        this.message = { show: true, body: "خطا در ذخیره سازی ", color: 'danger' }
+                        setTimeout(() => {
+                            add_payment_app.message = { show: false }
+                        }, 3000);
+                    }
+
+                })
+
+            }
+        }
+    })
+</script>

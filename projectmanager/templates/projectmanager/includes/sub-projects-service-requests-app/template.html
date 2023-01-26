@@ -1,0 +1,87 @@
+{% load static %}
+{% load to_persian_date %}
+{% load to_price %}
+<div id="accordion-sub-projects-service-requests">
+
+
+    <div class="card" id="sub-projects-service-requests-app">
+        <div class="card-header" id="heading-sub-projects-service-requeststs">
+
+            <h5 class="card-title text-center farsi">
+                <button class="btn btn-link" data-toggle="collapse"
+                    data-target="#collapse-sub-projects-service-requests" aria-expanded="true"
+                    aria-controls="collapse-sub-projects-service-requests">
+                    همه ی درخواست های سرویس زیر پروژه ها
+                    <span v-if="sub_projects_service_requests.length>0">
+                        <small class="text-danger mx-2">
+                            <span v-text="sub_projects_service_requests.length"></span>
+                        </small>
+                    </span>
+
+
+
+                </button>
+            </h5>
+
+
+        </div>
+        <div id="collapse-sub-projects-service-requests" class="collapse "
+            aria-labelledby="heading-sub-projects-service-requests"
+            data-parent="#accordion-sub-projects-service-requests">
+
+            <div class="card-body">
+
+                {% include "projectmanager/includes/sub-projects-service-requests-app/filter-form.html" %}
+                {% include "projectmanager/includes/sub-projects-service-requests-app/table.html" %}
+
+
+
+            </div>
+            <div class="card-footer ">
+                {% if project %}
+                <p>
+
+                    <span class="small text-secondary">
+                        مجموع قیمت متریال ها :
+                    </span>
+                    <span v-text="to_price(sum_service_requests,'{{CURRENCY}}')">
+
+                    </span>
+                    <a title="چاپ فاکتور" target="_blank" class="mx-3" href="{{project.get_services_order_url}}">
+                        <i class="material-icons">print</i>
+                    </a>
+
+
+                </p>
+
+                {% endif %}
+
+                {% if service %}
+                <p>
+
+                    <span>
+                        <span class="text-secondary">
+
+                            تعداد کل درخواست شده :
+                        </span>
+                        <span v-text="to_price(count_service_requests)">
+                        </span>
+                    </span>
+
+
+
+                    <span class="mr-4">
+                        <span class="text-secondary">
+
+                            مبلغ کل درخواست شده :
+                        </span>
+                        <span v-text="to_price(sum_service_requests,'{{CURRENCY}}')"></span>
+                    </span>
+
+                </p>
+                {% endif %}
+
+            </div>
+        </div>
+    </div>
+</div>

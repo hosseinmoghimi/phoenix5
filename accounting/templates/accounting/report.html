@@ -4,7 +4,7 @@
 {% include "core/includes/page-app/navbar.html" %}
 
 
-<div class="row">
+<div class="row rtl">
     <div class="col-md-3">
 
     </div>
@@ -21,7 +21,7 @@
 
     <form @submit.prevent="get_report()">
 
-        <div class="row">
+        <div class="row rtl">
 
             <div class="col-md-12">
                 <div class="form-group">
@@ -42,6 +42,8 @@
                 <div class="form-group">
                     <label for="">حساب مالی مربوطه</label>
                     <select class="form-control" v-model="account_id" name="" id="">
+                        <option value="0">همه حساب ها</option>
+                       
                         {% for account in accounts %}
                         <option value="{{account.id}}">{{account.title}}</option>
                         {% endfor %}
@@ -55,7 +57,7 @@
                 <div class="form-group">
                     <label for="">تاریخ شروع</label>
 
-                    <div class="row">
+                    <div class="row rtl">
 
                         <div class="col-8">
 
@@ -72,7 +74,7 @@
                 <div class="form-group">
                     <label for="">تاریخ پایان</label>
 
-                    <div class="row">
+                    <div class="row rtl">
 
                         <div class="col-8">
 
@@ -108,8 +110,26 @@
 
 
                     <select v-model="payment_method" class="form-control">
+                        <option value="">همه</option>
                         {% for payment_method in payment_methods %}
                         <option value="{{payment_method}}">{{payment_method}}</option>
+
+                        {% endfor %}
+                    </select>
+
+                </div>
+
+
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="">وضعیت</label>
+
+
+                    <select v-model="status" class="form-control">
+                        <option value="">همه</option>
+                        {% for status in transaction_statuses %}
+                        <option value="{{status}}">{{status}}</option>
 
                         {% endfor %}
                     </select>
@@ -146,7 +166,7 @@
     </form>
 
 </div>
-<div class="row">
+<div class="row rtl">
     <div class="col-md-12">
         {% include "accounting/includes/transactions-app/template.html" %}
     </div>
@@ -180,6 +200,7 @@
             start_date: current_date,
             end_date: current_date,
             amount: 0,
+            status:"",
             search_for: "",
             waiting: false,
             payment_method: "",
@@ -190,12 +211,13 @@
         },
         methods: {
             get_report: function () {
-                transactions_app.search_for = "ssssssssssss"
+                // transactions_app.search_for = ""
                 let payload = {
                     csrfmiddlewaretoken: csrfmiddlewaretoken,
                     account_id: this.account_id,
                     start_date: this.start_date,
                     end_date: this.end_date,
+                    status: this.status,
                     amount: this.amount,
                     search_for: this.search_for,
                     payment_method: this.payment_method,

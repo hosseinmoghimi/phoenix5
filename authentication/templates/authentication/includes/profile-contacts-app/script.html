@@ -1,0 +1,36 @@
+<script>
+    let contact_type_enums = JSON.parse("{{contact_type_enums_s|escapejs}}")
+    let profile_contacts_app = new Vue({
+        el: "#profile-contacts-app",
+        data: {
+            contact_type_enums: contact_type_enums,
+            form_name: "s",
+            form_value: "g",
+            form_url: "w",
+            profile_contacts: [],
+            message: { show: false },
+            show_form: false,
+            waiting: false,
+        },
+        methods: {
+            add_profile_contact: function () {
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    profile_id: parseInt("{{selected_profile.id}}"),
+                    name: this.form_name,
+                    value: this.form_value,
+                    url: this.form_url,
+                }
+                console.log(payload)
+                $.post("{% url 'authentication:add_profile_contact' %}", payload).done(data => {
+                    console.log(data)
+                    if (data.result === 'SUCCEED') {
+                        console.log(data.profile_contact)
+
+                         profile_contacts_app.profile_contacts.push(data.profile_contact)
+                    }
+                })
+            },
+        }
+    })
+</script>

@@ -1,10 +1,11 @@
 {% extends "core/wide-layout.html" %}
+{% load to_persian_date %}
 {% block content %}
 
 <h5 class="text-center">
     {{image.title}}
 </h5>
-<p class="text-center">
+<p class="text-center farsi rtl">
     <a class="mx-3 text-success" href="{{image.get_download_url}}">
         <i class="material-icons text-success">
             get_app
@@ -42,6 +43,18 @@
     {% endif %}
 </div>
 
+<p class="text-center farsi my-4 rtl">
+    <span class="text-muted">
+    تاریخ ایجاد : 
+
+    </span>
+{{image.date_added|to_persian_datetime|safe}}
+ توسط
+
+ <a href="{{image.creator.get_absolute_url}}">
+    {{image.creator.name}}
+ </a>
+</p>
 {% endblock content %}
 
 

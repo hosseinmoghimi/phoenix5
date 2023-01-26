@@ -1,9 +1,11 @@
 import json
+from re import A
 from django.shortcuts import render
 from django.views import View
 from core.enums import ColorEnum
+from scheduler.apis import AddAccountToAppointmentApi
 from scheduler.enums import *
-from scheduler.forms import AddAppointmentForm
+from scheduler.forms import AddAccountToAppointmentForm, AddAppointmentForm
 from scheduler.repo import AppointmentRepo
 from scheduler.apps import APP_NAME
 from core.views import CoreContext,PageContext
@@ -73,4 +75,14 @@ class AppointmentView(View):
         context.update(PageContext(request=request,page=appointment))
         appointment_s=json.dumps(AppointmentSerializer(appointment).data)
         context['appointment_s']=appointment_s
+
+        accounts=appointment.accounts.all()
+        accounts_s=json.dumps(AccountSerializer(accounts,many=True).data)
+        context['accounts_s']=accounts_s
+        context['accounts']=accounts
+        if request.user.has_perm(APP_NAME+".change_appointment"):
+            context['add_account_to_appointment_form']=AddAccountToAppointmentForm()
+            all_accounts=AccountRepo(request=request).list()
+            all_accounts_s=json.dumps(AccountSerializer(all_accounts,many=True).data)
+            context['all_accounts_s']=all_accounts_s
         return render(request,TEMPLATE_ROOT+"appointment.html",context)

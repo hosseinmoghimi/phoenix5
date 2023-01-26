@@ -12,10 +12,9 @@ from messenger.enums import *
 from utility.utils import LinkHelper
 IMAGE_FOLDER=APP_NAME+"/images/"
  
-
 class Message(models.Model,LinkHelper):
     title=models.CharField(_("title"), max_length=50)
-    body=models.CharField(_("body"), max_length=50)
+    body=HTMLField(_("body"))
     channel=models.ForeignKey("channel", verbose_name=_("channel"), on_delete=models.CASCADE)
     event=models.CharField(_("event"), max_length=50)
     # read=models.BooleanField(_("read?"),default=False)
@@ -29,7 +28,10 @@ class Message(models.Model,LinkHelper):
         verbose_name_plural = _("Messages")
     def perisan_date_send(self):
         return PersianCalendar().from_gregorian(self.date_send)
-     
+    def save(self):
+        if self.title is None or self.title=="":
+            self.title="پیام بدون عنوان" 
+        super(Message,self).save()
     def __str__(self):
         return self.title
     # def save(self,*args, **kwargs):

@@ -5,7 +5,7 @@ from authentication.repo import ProfileRepo
 from core.enums import  LanguageEnum
 from .enums import *
 from core.repo import ParameterRepo
-from resume.repo import PortfolioRepo, ResumeCategoryRepo, ResumeIndexRepo
+from resume.repo import PortfolioRepo, ResumeCategoryRepo, ResumeIndexRepo, ResumeServiceRepo
 from resume.serializers import ResumeFactSerializer, ResumeSkillSerializer
 # Create your views here.
 from django.shortcuts import render,reverse
@@ -99,7 +99,7 @@ class ResumeIndexView(View):
         context['title'] = resume_index.title
         context['resume_skills'] = resume_index.resumeskill_set.all()
         me=context['profile']
-        if request.user.has_perm(APP_NAME+".change_resumeindex") or me.id==resume_index.profile_id:
+        if me is not None and (request.user.has_perm(APP_NAME+".change_resumeindex") or me.id==resume_index.profile_id):
             context['edit_resume_form']=EditResumeForm()
 
         services=resume_index.resumeservice_set.all().order_by('priority')
@@ -148,13 +148,13 @@ class PortfolioViews(View):
         return render(request, TEMPLATE_ROOT+"portfolio.html", context)
 class ServiceViews(View):
     def service(self,request,*args, **kwargs):
-        service=ServiceRepo(request=request).service(*args, **kwargs)
+        service=ResumeServiceRepo(request=request).resume_service(*args, **kwargs)
         context = getContext(request=request,language=service.resume_index.language)
         context['service']=service
         if str(service.resume_index.language)==str(LanguageEnum.FARSI):
-            TEMPLATE_ROOT="my_resume_fa/" 
+            TEMPLATE_ROOT="resume/fa/" 
         if str(service.resume_index.language)==str(LanguageEnum.ENGLISH):
-            TEMPLATE_ROOT="my_resume_en/" 
+            TEMPLATE_ROOT="resume/en/" 
         context['layout_parent']='material-kit-pro/layout.html'
         context.update(PageContext(request=request,page=service))
         return render(request, TEMPLATE_ROOT+"service.html", context)

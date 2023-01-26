@@ -19,42 +19,46 @@
             </div>
             <div>
 
+                {% if profile %}
+
+
                 <a v-if="page_comment.profile.id=={{profile.id}} && !confirm_delete" style="cursor:pointer"
                     class="small text-danger mr-auto1 mx-2" @click="confirm_delete=true">
                     <i class="fa fa-trash text-danger"></i>
                     حذف
-    
+
                 </a>
-    
+
                 <span v-if="page_comment.profile.id=={{profile.id}} && confirm_delete" style="cursor:pointer"
                     class="small text-danger mr-auto1 mx-2">
                     این نظر حذف شود ؟
-    
+
                 </span>
-    
+
                 <a v-if="page_comment.profile.id=={{profile.id}} && confirm_delete" style="cursor:pointer"
                     class="small text-secondary mr-auto1 mx-2" @click="confirm_delete=false">
                     <i class="fa fa-ban" aria-hidden="true"></i>
 
                     خیر
-    
+
                 </a>
-    
+
                 <a v-if="page_comment.profile.id=={{profile.id}} && confirm_delete" style="cursor:pointer"
                     class="small text-danger mr-auto1 mx-2" @click="delete_comment(page_comment.id)">
                     <i class="fa fa-trash text-danger"></i>
 
                     حذف کن
-    
+
                 </a>
-    
-    
-    
-    
+
+                {% endif %}
+
+
+
             </div>
-    
+
         </div>
-      
+
 
 
 

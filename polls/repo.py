@@ -1,4 +1,4 @@
-from requests import request
+from django.db.models import Q
 from core.repo import ProfileRepo
 from polls.apps import APP_NAME
 from polls.models import Vote, Option, Poll
@@ -53,7 +53,7 @@ class PollRepo():
         return poll
 
 
-class OptionRepo():  
+class OptionRepo():
     def __init__(self, *args, **kwargs):
         self.request = None
         self.user = None
@@ -118,7 +118,11 @@ class OptionRepo():
 
     def select_option(self,*args, **kwargs):
         if not self.user.has_perm(APP_NAME+".add_vote"):
-            return None
+            # return None
+            pass
+        if self.profile is None:
+            return
+        
         option=self.option(*args, **kwargs)
         if option is None:
             return

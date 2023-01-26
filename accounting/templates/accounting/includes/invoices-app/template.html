@@ -43,7 +43,7 @@
             <div class="card-body">
                 <div class="table-responsive">
 
-                    <table class="table table-striped">
+                    <table class="table table-striped rtl">
                         <thead>
                             <th>
                                 فاکتور
@@ -82,10 +82,15 @@
                                         </span>
                                     </a>
                                     {% endfor %}
+                                    <div>
+                                     <span class="badge badge-{{invoice.payment_method_color}}">{{invoice.payment_method}}</span>   
+                                    </div>
                                 </td>
                                 <td>
                                     {{invoice.amount|to_price}}
-
+                                    <div>
+                                        <span class="badge badge-{{invoice.status_color}}">{{invoice.status}}</span>
+                                    </div>
                                 </td>
 
 

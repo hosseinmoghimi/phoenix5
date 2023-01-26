@@ -1,9 +1,10 @@
 {% load to_variz_text %}
+{% load to_persian_date %}
 {% load to_price %}
 <div class="card">
     <div class="card-body px-5 farsi text-right">
         <h5>
-             توضیحات 
+            توضیحات
         </h5>
         <div>
             واحد مبلغ ها
@@ -17,18 +18,42 @@
         {% endif %}
         {% if invoice.pay_from and invoice.pay_from.default_bank_account %}
         <div>
-            {{invoice.pay_from.default_bank_account|to_variz_text}}
+            {{invoice.pay_from.default_bank_account|to_variz_text|safe}}
         </div>
         {% endif %}
+
+        {% if not TRANSACTION_PRINTING %}
         <div class="text-right farsi">
             {{invoice.status}}
             /
             {{invoice.payment_method}}
         </div>
+        {% endif %}
+
         {% if invoice.description %}
         <div class=" ">
             {{invoice.description|safe}}
         </div>
         {% endif %}
+        {% if not TRANSACTION_PRINTING and invoice.print_datetime %}
+        <div>
+            <p class="text-right">
+                تاریخ چاپ : {{invoice.invoice_datetime|to_persian_datetime|safe}}
+            </p>
+
+        </div>
+        {% endif %}
+
+        <div>
+            <p>
+
+                امضای این برگه توسط کارفرما به معنای
+                <strong>
+
+                    تحویل کامل
+                </strong>
+                کالاها و خدمات لیست فوق می باشد.
+            </p>
+        </div>
     </div>
 </div>

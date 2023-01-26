@@ -1,11 +1,16 @@
-from accounting.models import Invoice,Product as AccountingProduct
+import datetime
+from email.policy import default
+from accounting.models import Invoice, InvoiceLine,Product as AccountingProduct
 from core.constants import CURRENCY
 from core.enums import UnitNameEnum
+from market.enums import *
+from django.utils import timezone
 from core.models import ImageMixin, _,LinkHelper,models,reverse,Page
 from market.apps import APP_NAME
-from accounting.models import Product
+from accounting.models import Product,Category
 # Create your models here.
 IMAGE_FOLDER = APP_NAME+"/images/"
+
 
 class Brand(Page):
     products=models.ManyToManyField("accounting.product", blank=True,verbose_name=_("products"))
@@ -45,52 +50,13 @@ class Order(Invoice):
             self.app_name=APP_NAME
         return super(Order,self).save(*args, **kwargs)
  
- 
-class Category(models.Model,LinkHelper, ImageMixin):
-    thumbnail_origin = models.ImageField(_("تصویر کوچک"), upload_to=IMAGE_FOLDER+'Category/Thumbnail/',null=True, blank=True, height_field=None, width_field=None, max_length=None)
-    parent=models.ForeignKey("category",blank=True,null=True, verbose_name=_("parent"),related_name="childs", on_delete=models.SET_NULL)
-    title=models.CharField(_("title"), max_length=50)
-    for_home=models.BooleanField(_("for_home"),default=False)
-    products=models.ManyToManyField("accounting.product", blank=True,verbose_name=_("products"))
-    class_name='category'
-    app_name=APP_NAME
-    def __str__(self):
-        return self.title
-    class Meta:
-        verbose_name = 'Category'
-        verbose_name_plural = 'Categories'
-
-    def get_products_list_url(self):
-        return reverse(APP_NAME+":api_category_products",kwargs={'category_id':self.pk})
-    def get_breadcrumb_tag_temp(self):
-        breadcrumb_tag=""
-
-        return breadcrumb_tag
-    def get_breadcrumb_link(self):
-        aaa=""
-        if self.parent is not None:
-            aaa+="/"
-        aaa+=f"""
-                    <a href="{self.get_absolute_url()}">
-                    <span class="farsi">
-                    {self.title}
-                    </span>
-                    </a> 
-                    """
-        if self.parent is None:
-            return aaa
-        return self.parent.get_breadcrumb_link()+aaa
-    def get_breadcrumb_tag(self):
-        return f"""
-        
-                
-                    {self.get_breadcrumb_link()}
-               
-        """
-       
+  
 class Supplier(Page):
+    region=models.ForeignKey("map.area", verbose_name=_("region"), on_delete=models.CASCADE)
     account=models.ForeignKey("accounting.account", verbose_name=_("account"), on_delete=models.CASCADE)
     
+    def get_loyaltyclub_absolute_url(self):
+        return reverse('loyaltyclub:supplier',kwargs={'pk':self.pk})
 
     class Meta:
         verbose_name = _("Supplier")
@@ -105,19 +71,24 @@ class Supplier(Page):
         if self.app_name is None or self.app_name=="":
             self.app_name=APP_NAME
         return super(Supplier,self).save(*args, **kwargs)
-
+    def get_loyaltyclub_absolute_url(self):
+        return reverse("loyaltyclub:supplier",kwargs={'pk':self.pk})
 
 class Customer(models.Model,LinkHelper):
+    inviter=models.ForeignKey("customer", verbose_name=_("inviter"),null=True,blank=True, on_delete=models.SET_NULL)
+    region=models.ForeignKey("map.area", verbose_name=_("region"), on_delete=models.CASCADE)
+    level=models.CharField(_("level"),choices=CustomerLevelEnum.choices,default=CustomerLevelEnum.REGULAR, max_length=50)
     account=models.ForeignKey("accounting.account", verbose_name=_("account"), on_delete=models.CASCADE)
     class_name="customer"
     app_name=APP_NAME
-
+    def get_loyaltyclub_absolute_url(self):
+        return reverse('loyaltyclub:customer',kwargs={'pk':self.pk})
     class Meta:
         verbose_name = _("Customer")
         verbose_name_plural = _("Customers")
 
     def __str__(self):
-        return self.title
+        return self.account.title
  
     def save(self,*args, **kwargs):
         if self.class_name is None or self.class_name=="":
@@ -126,7 +97,21 @@ class Customer(models.Model,LinkHelper):
             self.app_name=APP_NAME
         return super(Customer,self).save(*args, **kwargs)
 
+class MarketInvoice(Invoice):
 
+    
+
+    class Meta:
+        verbose_name = _("MarketInvoice")
+        verbose_name_plural = _("MarketInvoices")
+ 
+    def save(self, *args, **kwargs):
+        if self.title is None or self.title == "":
+            self.title = "فاکتور فروش"
+        self.class_name = "marketinvoice"
+        self.app_name = APP_NAME
+
+        return super(MarketInvoice, self).save(*args, **kwargs)
 
  
 class Cart(Invoice):
@@ -143,21 +128,64 @@ class Cart(Invoice):
             self.app_name=APP_NAME
         return super(Cart,self).save(*args, **kwargs)
 
+class CartLine(models.Model,LinkHelper):
+    date_added=models.DateTimeField(_("date_added"), auto_now=False, auto_now_add=True)
+    customer=models.ForeignKey("customer",blank=True, verbose_name=_("مشتری"), on_delete=models.CASCADE)
+    row=models.IntegerField(_("row"),default=1,blank=True)
+    quantity=models.FloatField(_("تعداد"))
+    discount=models.IntegerField(_("تخفیف"),default=0)
+    shop=models.ForeignKey("shop", verbose_name=_("shop"), on_delete=models.CASCADE)
+    description=models.CharField(_("توضیحات"),null=True,blank=True, max_length=50)
+    class_name="cartline"
+    app_name=APP_NAME
+    class Meta:
+        verbose_name = _("CartLine")
+        verbose_name_plural = _("CartLines")
+
+    def __str__(self):
+        return f"{self.customer} ^ {self.quantity} {self.shop.unit_name} * {self.shop.product_or_service.title} "
+    def save(self,*args, **kwargs):
+        old_ones=CartLine.objects.filter(customer_id=self.customer_id).filter(shop_id=self.shop_id)
+        old_ones.delete()
+        if len(old_ones)>0:
+            old_ones.exclude(pk=old_ones.first().id).delete()
+        super(CartLine,self).save()
+
 class Shop(models.Model,LinkHelper):
+    # region=models.ForeignKey("map.area", verbose_name=_("region"), on_delete=models.CASCADE)
     supplier=models.ForeignKey("supplier", verbose_name=_("supplier"), on_delete=models.CASCADE)
     product_or_service=models.ForeignKey("accounting.productorservice", verbose_name=_("product_or_service"), on_delete=models.CASCADE)
     available=models.IntegerField(_("available"))
+    expire_datetime=models.DateTimeField(_("تاریخ اعتبار تا"), auto_now=False, auto_now_add=False)
+    specifications=models.ManyToManyField("accounting.ProductSpecification",blank=True, verbose_name=_("ویژگی ها"))
+    level=models.CharField(_("level"),choices=CustomerLevelEnum.choices,default=CustomerLevelEnum.REGULAR, max_length=50)
     unit_name=models.CharField(_("unit_name"),choices=UnitNameEnum.choices,default=UnitNameEnum.ADAD, max_length=50)
+    old_price=models.IntegerField(_("old_price"))
+    buy_price=models.IntegerField(_("buy_price"))
     unit_price=models.IntegerField(_("unit_price"))
+
     class_name="shop"
     app_name=APP_NAME
+
+    @property
+    def product(self):
+        return Product.objects.filter(pk=self.product_or_service.pk).first()
+        
     @property
     def in_carts(self):
         counter=0
-        for cart_line in CartLine.objects.filter(product_or_service=self.product_or_service):
+        for cart_line in CartLine.objects.filter(shop__product_or_service=self.product_or_service):
             counter+=cart_line.quantity
         return counter
     
+    def save(self, *args, **kwargs):
+        if self.expire_datetime is None:
+            self.expire_datetime =timezone.now()
+
+        # if self.region is None:
+        #     self.region=self.supplier.region
+
+        return super(Shop, self).save(*args, **kwargs)
 
     class Meta:
         verbose_name = _("Shop")
@@ -167,14 +195,4 @@ class Shop(models.Model,LinkHelper):
         return f"{self.supplier.title} /{self.product_or_service.title} / هر {self.unit_name}:{self.unit_price} {CURRENCY}"
  
 
-class CartLine(models.Model,LinkHelper):
-    customer=models.ForeignKey("customer", verbose_name=_("customer"), on_delete=models.CASCADE)
-    shop=models.ForeignKey("shop", verbose_name=_("shop"), on_delete=models.CASCADE)
-    quantity=models.IntegerField(_("quantity"))
-    class Meta:
-        verbose_name = _("CartLine")
-        verbose_name_plural = _("CartLines")
-  
-    def __str__(self):
-        return f"{self.shop.supplier.title} /{self.shop.product_or_service.title} / {self.customer.title} / {self.quantity}"
  

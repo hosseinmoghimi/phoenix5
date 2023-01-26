@@ -23,9 +23,11 @@ class AddWarehouseSheetsForInvoiceForm(forms.Form):
     invoice_id=forms.IntegerField(required=True)
     ware_house_id=forms.IntegerField(required=True)
     direction=forms.CharField(max_length=50, required=False)
+    status=forms.CharField(max_length=50,required=False)
 
     
 class AddWarehouseSheetForm(forms.Form):
     invoice_line_id=forms.IntegerField(required=True)
     ware_house_id=forms.IntegerField(required=True)
     direction=forms.CharField(max_length=50, required=False)
+    status=forms.CharField(max_length=50,required=False)

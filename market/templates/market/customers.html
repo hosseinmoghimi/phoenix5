@@ -1,0 +1,139 @@
+{% extends "market/layout.html" %}
+{% load to_price %}
+{% load to_persian_date %}
+{% load static %}
+
+
+{% block content %}
+<div class="page-header header-filter header-small" data-parallax="true"
+    style="background-image: url(&quot;{{category.header}}&quot;); transform: translate3d(0px, 0px, 0px);">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8 ml-auto mr-auto text-center">
+                <div class="brand">
+                    {% if perms.market.change_category %}
+                    <a title="ویرایش" href="{{category.get_edit_url}}" target="_blank">
+                        <i class="fa fa-edit text-warning"></i>
+                    </a>
+
+                    <a title="مارکت" href="{{category.get_absolute_url}}" target="_blank">
+                        <i class="fa fa-edit text-info"></i>
+                    </a>
+
+                    {% endif %}
+
+
+
+                    <h1 class="title farsi text-center">{{category.title}}</h1>
+
+                    {% if category.description %}
+
+                    <h4 class="farsi text-center">
+                        {{category.description}}
+                    </h4>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="main main-raised">
+    {% if category.suggestions.all %}
+
+    <div class="section">
+        <div class="container">
+            <h2 class="section-title farsi text-center">
+                پیشنهاد ما برای شما
+            </h2>
+            <div class="row rtl">
+
+                {% for product in category.suggestions.all %}
+                <div class="col-md-4">
+                    <div class="card card-product card-plain">
+                        <div class="card-header card-header-image">
+                            <a href="{{product.get_absolute_url}}">
+                                <img src="{{product.thumbnail}}" alt="">
+                            </a>
+                            <div class="colored-shadow"
+                                style="background-image: url(&quot;{{product.thumbnail}}&quot;); opacity: 1;">
+                            </div>
+                        </div>
+                        <div class="card-body text-center">
+                            <h4 class="card-title">
+                                <a href="{{product.get_absolute_url}}">{{product.title}}</a>
+                            </h4>
+                            <p class="card-description">
+                                {{product.short_description}}
+
+                            </p>
+                        </div>
+                        <div class="card-footer">
+                            <div class="price-container">
+                                <span class="price price-old"> €1,430</span>
+                                <span class="price price-new"> €743</span>
+                            </div>
+                            <div class="stats ml-auto">
+                                <button type="button" rel="tooltip" title="" class="btn btn-just-icon btn-link btn-rose"
+                                    data-original-title="Saved to Wishlist">
+                                    <i class="material-icons" aria-hidden="true">favorite</i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {% endfor %}
+
+
+
+
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+
+    {% if add_customer_form %}
+    <div class="section">
+        <div class="container farsi rtl">
+            {% include 'market/includes/add-customer-app/template.html' %}
+        </div>
+    </div>
+    {% endif %}
+
+
+    <!-- section -->
+    <div class="section">
+        <div class="container">
+            <h3 class="section-title text-center farsi">لیست مشتریان</h3>
+
+            <div class="row">
+                <div class="col-md-12">
+{% include 'market/includes/customers-app/template.html' %}
+                </div>
+
+            </div>
+
+            <br>
+
+        </div>
+    </div><!-- section -->
+</div>
+
+{% endblock %}
+{% block modal %}
+{% endblock %}
+
+
+
+{% block script %}
+{% include 'market/includes/customers-app/script.html' %}
+
+
+{% if add_customer_form %}
+{% include 'market/includes/add-customer-app/script.html' %}
+{% endif %}
+
+
+{% endblock %}

@@ -2,14 +2,14 @@
 
 {% block content %}
 {% include "core/includes/page-app/navbar.html" %}
-<div class="row">
+<div class="row rtl">
     <div class="col-md-3">
         {% include "core/includes/page-app/thumbnail-card.html" %}
         {% include "core/includes/page-app/brief-card.html" %}
 
     </div>
     <div class="col-md-9">
-        <div class="row">
+        <div class="row rtl">
 
 
             <div class="col-md-12">
@@ -22,6 +22,7 @@
             </div>
             <div class="col-md-4">
                 {% include "core/includes/page-links-app/template.html" %}
+                {% include "core/includes/page-metadata-app/template.html" %}
 
             </div>
             <div class="col-md-4">

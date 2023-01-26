@@ -3,7 +3,7 @@ from django.db.models import TextChoices
 from core.enums import ColorEnum, UnitNameEnum
 
 
-class FinancialDocumentTypeEnum(TextChoices):
+class FinancialDocumentDirectionEnum(TextChoices):
     BEDEHKAR="بدهکار",_("بدهکار")
     BESTANKAR="بستانکار",_("بستانکار")
 
@@ -47,25 +47,28 @@ class SpendTypeEnum(TextChoices):
 
 class CostTypeEnum(TextChoices):
     WATER="هزینه آب",_("هزینه آب")
-    FOOD="هزینه خوراک",_("هزینه خوراک")
-    TELEPHONE="هزینه تلفن",_("هزینه تلفن")
-    ELECTRICITY="هزینه برق",_("هزینه برق")
-    INTERNET="هزینه اینترنت",_("هزینه اینترنت")
-    GAS="هزینه گاز",_("هزینه گاز")
-    TRANSPORT="هزینه حمل ونقل",_("هزینه حمل ونقل")
     RENT="هزینه اجاره",_("هزینه اجاره")
+    INTERNET="هزینه اینترنت",_("هزینه اینترنت")
+    ELECTRICITY="هزینه برق",_("هزینه برق")
+    TELEPHONE="هزینه تلفن",_("هزینه تلفن")
+    TRANSPORT="هزینه حمل ونقل",_("هزینه حمل ونقل")
+    FOOD="هزینه خوراک",_("هزینه خوراک")
+    MEDICAL="هزینه دارو و سلامت",_("هزینه دارو و سلامت")
+    GAS="هزینه گاز",_("هزینه گاز")
+    MOBILE="هزینه موبایل",_("هزینه موبایل")
 
 
 class PaymentMethodEnum(TextChoices):
     DRAFT="پیش نویس",_("پیش نویس")
-    NO_PAYMENT="پرداخت نشده",_("پرداخت نشده")
+    # NO_PAYMENT="پرداخت نشده",_("پرداخت نشده")
     MOBILE_BANK="همراه بانک",_("همراه بانک")
+    PRODUCT="فروش کالا",_("فروش کالا")
+    SERVICE="فروش خدمات",_("فروش خدمات")
     IN_CASH="نقدی",_("نقدی")
     CHEQUE="چک",_("چک")
     POS="کارتخوان",_("کارتخوان")
     CARD="کارت به کارت",_("کارت به کارت")
-    FROM_PAST="مانده حساب از قبل",_("مانده حساب از قبل")
-
+    # FROM_PAST="مانده حساب از قبل",_("مانده حساب از قبل")
 
 class TransactionStatusEnum(TextChoices):
     DRAFT="پیش نویس",_("پیش نویس")
@@ -73,10 +76,22 @@ class TransactionStatusEnum(TextChoices):
     DELIVERED="تحویل شده",_("تحویل شده")
     APPROVED="تایید شده",_("تایید شده")
     CANCELED="کنسل شده",_("کنسل شده")
+    ROLL_BACKED="برگشت از تحویل",_("برگشت از تحویل")
     FINISHED="تایید نهایی شده",_("تایید نهایی شده")
     PASSED="پاس شده",_("پاس شده")
     FROM_PAST="مانده حساب از قبل",_("مانده حساب از قبل")
 
+
+class FinancialDocumentStatusEnum(TextChoices):
+    DRAFT="پیش نویس",_("پیش نویس")
+    IN_PROGRESS="در جریان",_("در جریان")
+    DELIVERED="تحویل شده",_("تحویل شده")
+    APPROVED="تایید شده",_("تایید شده")
+    CANCELED="کنسل شده",_("کنسل شده")
+    ROLL_BACKED="برگشت از تحویل",_("برگشت از تحویل")
+    FINISHED="تایید نهایی شده",_("تایید نهایی شده")
+    PASSED="پاس شده",_("پاس شده")
+    FROM_PAST="مانده حساب از قبل",_("مانده حساب از قبل")
 
 class FinancialBalanceTitleEnum(TextChoices):
     REGULAR="حساب عادی",_("حساب عادی")

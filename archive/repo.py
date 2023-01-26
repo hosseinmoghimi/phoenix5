@@ -18,7 +18,7 @@ class FolderRepo:
         if self.user.has_perm(APP_NAME+".view_folder"):
             self.objects = self.objects.all()
         elif self.profile is not None:
-            self.objects = self.objects.filter(pk__gte=0)
+            self.objects = self.profile.folder_set.all()
         else:
             self.objects = self.objects.filter(pk=0)
 
@@ -26,6 +26,8 @@ class FolderRepo:
         if not self.user.has_perm(APP_NAME+".add_folder"):
             return
         folder=Folder(*args, **kwargs)
+        if self.profile is not None:
+            folder.owner=self.profile
         folder.save(*args, **kwargs)
         return folder
     def list(self, *args, **kwargs):
@@ -62,9 +64,15 @@ class FolderRepo:
         
         if pk==1:
             folder=self.get_root(*args, **kwargs)
+            return folder
         else:
             folder=self.objects.filter(pk=pk).first()
-        return folder 
+        if self.profile is None or folder is None:
+            return
+        if self.request.user.has_perm(APP_NAME+".view_fodler"):
+            return folder
+        if self.profile in folder.profiles.all() or self.profile.pk==folder.owner.pk:
+            return folder 
    
 
 class FileRepo:
@@ -81,7 +89,7 @@ class FileRepo:
         if self.user.has_perm(APP_NAME+".view_file"):
             self.objects = self.objects.all()
         elif self.profile is not None:
-            self.objects = self.objects.filter(pk__gte=0)
+            self.objects = self.objects.filter(Q(is_public=True)|Q(folder__owner_id=self.profile.pk))
         else:
             self.objects = self.objects.filter(pk=0)
 

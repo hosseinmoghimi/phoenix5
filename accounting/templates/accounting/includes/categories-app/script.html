@@ -1,0 +1,82 @@
+<script>
+
+    let categories_app_parent_id = 0
+</script>
+{% if category %}
+<script>
+    categories_app_parent_id = parseInt("{{category.id}}")
+
+</script>
+{% endif %}
+<script>
+    let categories_app_categories = JSON.parse(`{{categories_s|escapejs}}`)
+    let categories_app = new Vue({
+        el: "#categories-app",
+        data: {
+            categories: categories_app_categories,
+            search_for: '',
+            parent_id: categories_app_parent_id,
+            waiting: false,
+            message: {
+                color: '',
+                show: false,
+                body: "",
+            }
+        },
+        methods: {
+            filter: function () {
+                this.categories = categories_app_categories.filter(category => category.title.indexOf(this.search_for) > -1)
+            },
+            to_price: function (vall) {
+                let color = 'primary'
+                if (vall < 0)
+                    color = 'danger'
+                if (vall > 0)
+                    color = 'success'
+                vall = to_price(vall, "{{CURRENCY}}")
+                return `
+                    <span class="text-${color}">${vall}</span>
+                    `
+            },
+            add_category: function () {
+                let url = "{% url 'accounting:add_category' %}"
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    title: this.search_for,
+                    parent_id: this.parent_id,
+                }
+                $.post(url, payload).done((data) => {
+                    if (data.result === 'SUCCEED') {
+                        categories_app.categories.push(data.category)
+                        categories_app_categories.push(data.category)
+                        categories_app.search_for=""
+                        categories_app.message = {
+                            color: 'success',
+                            body: "با موفقیت اضافه شد.",
+                            show: true,
+                        }
+                        setTimeout(() => {
+                            categories_app.message = {
+                                show: false,
+                            }
+                        }, 2000);
+
+                    }
+                    else {
+                        categories_app.message = {
+                            color: 'danger',
+                            body: data.message,
+                            show: true,
+                        }
+                        setTimeout(() => {
+                            categories_app.message = {
+                                show: false,
+                            }
+                        }, 2000);
+                    }
+
+                })
+            },
+        }
+    })
+</script>

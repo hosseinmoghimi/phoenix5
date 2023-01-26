@@ -6,19 +6,7 @@
     margin-bottom: 1.5em;
   }
 </style>
-<div class="row mbb">
-  <div class="col-lg-2 col-md-3 col-4">
-    <div class="text-center">
-
-      <a href="{% url 'accounting:product_or_service_categories' %}">
-        <img src="{% static 'accounting/img/pages/thumbnail/product.png' %}" class="rounded" width="80%" alt="">
-        <h6 class="text-center my-3">
-          لیست دسته بندی ها
-        </h6>
-      </a>
-    </div>
-  </div>
-
+<div class="row rtl mbb">
   <div class="col-lg-2 col-md-3 col-4">
     <div class="text-center">
 
@@ -30,7 +18,6 @@
       </a>
     </div>
   </div>
-
   <div class="col-lg-2 col-md-3 col-4">
     <div class="text-center">
       <a href="{% url 'accounting:services' %}">
@@ -42,6 +29,21 @@
 
     </div>
   </div>
+
+
+  <div class="col-lg-2 col-md-3 col-4">
+    <div class="text-center">
+
+      <a href="{% url 'accounting:categories' %}">
+        <img src="{% static 'accounting/img/pages/thumbnail/product.png' %}" class="rounded" width="80%" alt="">
+        <h6 class="text-center my-3">
+          دسته بندی ها
+        </h6>
+      </a>
+    </div>
+  </div>
+
+
 
   <div class="col-lg-2 col-md-3 col-4">
     <div class="text-center">
@@ -73,7 +75,7 @@
   </div>
 
 
-  
+
 
   <div class="col-lg-2 col-md-3 col-4">
     <div class="text-center">
@@ -134,6 +136,21 @@
       </a>
     </div>
   </div>
+
+
+  <div class="col-lg-2 col-md-3 col-4">
+    <div class="text-center">
+
+      <a href="{% url 'accounting:double_transactions' %}">
+
+        <img src="{% static 'accounting/img/double_transactions.png' %}" class="rounded" width="80%" alt="">
+        <h6 class="text-center my-3">
+          تراکنش های دوبل
+        </h6>
+      </a>
+    </div>
+  </div>
+
 
   <div class="col-lg-2 col-md-3 col-4">
     <div class="text-center">
@@ -198,6 +215,21 @@
         <h6 class="text-center my-3">
           اموال و دارایی ها
         </h6>
+      </a>
+    </div>
+
+  </div>
+
+
+
+  <div class="col-lg-2 col-md-3 col-4">
+    <div class="text-center">
+      <a href="{% url 'accounting:account_tags' %}">
+
+
+        <img src="{% static 'accounting/img/tag.png' %}" class="rounded" width="80%" alt="">
+        <h6 class="text-center my-3">
+          تگ ها </h6>
       </a>
     </div>
 

@@ -1,0 +1,79 @@
+<script>
+
+    let questions = JSON.parse("{{questions_s|escapejs}}")
+
+    let questions_app_data = {
+        questions: questions,
+        search_for: "",
+        title: "",
+    }
+    let questions_app_methods = {
+        add_question: function () {
+            let payload = {
+                csrfmiddlewaretoken: csrfmiddlewaretoken,
+                exam_id: parseInt("{{exam.id}}"),
+                question: this.title,
+            }
+            console.log(payload)
+            let url = "{% url 'school:add_question' %}"
+            $.post(url, payload).done((data) => {
+                console.log(data)
+                questions_app.questions.push(data.question)
+                questions_app.title = ""
+            })
+        },
+        color: function (color) {
+            a = "light"
+            if (color === "success")
+                a = "success"
+            if (color === "danger")
+                a = "danger"
+            console.log(color)
+            console.log(a)
+            return a
+        },
+        select_option: function (option_id) {
+            let payload = {
+                csrfmiddlewaretoken: csrfmiddlewaretoken,
+                option_id: option_id,
+            }
+            console.log(payload)
+            let url = "{% url 'school:select_option' %}"
+            $.post(url, payload).done((data) => {
+                console.log(data.option)
+                questions_app.questions.forEach(question => {
+                    question.options.forEach(option => {
+                        if (option.id == data.option.id) {
+                            option = data.option
+                        }
+                    })
+                })
+                let a = "btn-" + data.option.id
+                if (data.option.correct) {
+                    $("#" + a).removeClass("btn-light")
+                    $("#" + a).addClass("btn-success")
+                } else {
+                    $("#" + a).removeClass("btn-light")
+                    $("#" + a).addClass("btn-danger")
+
+                }
+                console.log(a)
+            })
+        },
+
+        filter: function () {
+            this.questions = questions.filter((question) => {
+                if (question.title.indexOf(questions_app.search_for) > -1)
+                    return true
+
+            })
+        },
+    }
+</script>
+<script>
+    let questions_app = new Vue({
+        el: "#questions-app",
+        data: questions_app_data,
+        methods: questions_app_methods,
+    })
+</script>

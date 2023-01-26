@@ -1,0 +1,84 @@
+{% load to_persian_date %}
+{% load to_price %}
+
+
+
+<div id="accordion-double-transactions">
+
+
+    <div class="card" id="double-transactions-app">
+        <div class="card-header" id="heading-double-transactions">
+            <h5 class="text-center">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-double-transactions"
+                    aria-expanded="true" aria-controls="collapse-double-transactions">
+                    تراکنش ها
+
+                    <span v-if="double_transactions.length>0">
+                        <small class="text-danger mx-2">
+                            <span v-text="double_transactions.length"></span>
+                        </small>
+                    </span>
+
+                </button>
+            </h5>
+
+            {% if page_pre_description %}
+
+            <h5 class="text-center">
+                {{page_pre_description}}
+            </h5>
+            {% endif %}
+            {% if page_description %}
+
+            <h4 class="text-center">
+                {{page_description}}
+            </h4>
+            {% endif %}
+        </div>
+        <div id="collapse-double-transactions" class="collapse {% if expand_double_transactions %} show {% endif %}"
+            aria-labelledby="heading-double-transactions" data-parent="#accordion-double-transactions">
+
+
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                           
+                            <th>
+                                عنوان
+                            </th>
+
+                           
+
+ 
+
+                        </thead>
+                        <tbody>
+
+                            <tr v-for="double_transaction in double_transactions">
+                                
+                                <td>
+
+
+                                    <a :href="double_transaction.get_absolute_url">
+                                        <span class="h5" v-text="double_transaction.title">
+
+                                        </span>
+                                    </a>
+                                     
+                                </td>
+                               
+
+                            </tr>
+
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+            <div class="card-footer">
+
+            </div>
+        </div>
+    </div>
+</div>

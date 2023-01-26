@@ -1,0 +1,180 @@
+{% extends "accounting/layout.html" %}
+
+{% load to_persian_date %}
+{% load to_price %}
+
+{% load to_variz_text %}
+{% block content %}
+<div class="row rtl">
+    <div class="col-md-12">
+
+        <div class="card">
+            <div class="card-body">
+
+                <div class="text-center">
+                    <img src="{{invoice.pay_from.logo}}" height="96" class="my-3" alt="">
+
+                </div>
+
+
+                <h4 class="text-center my-3">
+
+                    {{invoice.pay_from.title}}
+
+                </h4>
+                <h4 class="text-right">
+                    {{invoice.title}}
+                </h4>
+                {% for materialinvoice in invoice.materialinvoice_set.all %}
+                <a href="{{materialinvoice.project.get_absolute_url}}">
+                    <h4>
+                        {{materialinvoice.project.title}}
+                    </h4>
+                </a>
+                {% endfor %}
+
+                {% for serviceinvoice in invoice.serviceinvoice_set.all %}
+                <a href="{{serviceinvoice.project.get_absolute_url}}">
+                    <h4>
+                        {{serviceinvoice.project.title}}
+                    </h4>
+                </a>
+                {% endfor %}
+
+                <h4 class="text-center my-3">
+                    {% include "accounting/includes/invoice-app/navbar.html" %}
+                </h4>
+                <div class="row rtl farsi">
+                    <div class="col-md-6">
+                        <p class="text-right mx-5">
+                            خریدار : <a href="{{invoice.pay_to.get_absolute_url}}">
+                                <img src="{{invoice.pay_to.logo}}" width="32" class="rounded ml-2" alt="">
+                                
+                                {{invoice.pay_to.title}}
+                            </a>
+                        </p>
+                    </div>
+                    <div class="col-md-6">
+                        <p class="text-left mx-5">
+                            تاریخ : {{invoice.invoice_datetime|to_persian_datetime|safe}}
+                        </p>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="col-md-12">
+
+        {% include "accounting/includes/invoice-lines-app/template.html" %}
+    </div>
+
+
+    <div class="col-md-12">
+        {% include "accounting/includes/invoice-app/description.html" %}
+    </div>
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+
+                <div class="mb-5"></div>
+
+                <div class="row rtl farsi">
+                    <div class="col-md-6">
+                        <p class="text-center">
+                            فروشنده : <a href="{{invoice.pay_from.get_absolute_url}}">
+                                {{invoice.pay_from.title}}
+                            </a>
+                        </p>
+                    </div>
+                    <div class="col-md-6">
+                        <p class="text-center">
+                            خریدار : <a href="{{invoice.pay_to.get_absolute_url}}">
+                                {{invoice.pay_to.title}}
+                            </a>
+                        </p>
+                    </div>
+
+                </div>
+
+
+                <div class="mb-5"></div>
+                <div class="mb-5"></div>
+                <div class="mb-5"></div>
+                <div class="mb-5"></div>
+                <div class="mb-5"></div>
+            </div>
+        </div>
+    </div>
+    {% if roll_back_transaction_form %}
+
+    <div class="col-md-12">
+    
+        {% include "accounting/includes/roll-back-transaction-app/template.html" %}
+    </div>
+    
+    {% endif %}
+    <div class="col-md-4">
+        {% include "core/includes/page-links-app/template.html" %}
+    </div>
+    <div class="col-md-4">
+        {% include "core/includes/page-downloads-app/template.html" %}
+
+    </div>
+    <div class="col-md-4">
+        {% include "core/includes/page-tags-app/template.html" %}
+
+    </div>
+    <div class="col-md-12">
+        {% include "core/includes/page-images-app/template.html" %}
+
+    </div>
+    <div class="col-md-12">
+        {% include "core/includes/page-comments-app/template.html" %}
+
+    </div>
+    <div class="col-md-12">
+        {% include "accounting/includes/financial-documents-app/template.html" %}
+
+    </div>
+
+    <div class="col-md-12">
+        {% include "accounting/includes/financial-balances-app/template.html" %}
+
+    </div>
+    <div class="col-md-12">
+
+        {% include "guarantee/includes/guarantees-app/template.html" %}
+    </div>
+    <div class="col-md-12">
+        {% include "warehouse/includes/add-warehouse-sheets-for-invoice-app/template.html" %}
+    </div>
+
+    <div class="col-md-12">
+        {% include "warehouse/includes/warehouse-sheets-app/template.html" %}
+
+    </div>
+</div>
+
+{% endblock content %}
+
+
+{% block script %}
+<script>
+    let invoice_lines = JSON.parse(`{{invoice_lines_s|escapejs}}`)
+
+
+</script>
+{% include "accounting/includes/transaction-app/script.html" %}
+{% include "accounting/includes/invoice-lines-app/script.html" %}
+{% include "guarantee/includes/guarantees-app/script.html" %}
+{% include "warehouse/includes/warehouse-sheets-app/script.html" %}
+
+{% include "warehouse/includes/add-warehouse-sheets-for-invoice-app/script.html" %}
+{% if roll_back_transaction_form %}
+{% include "accounting/includes/roll-back-transaction-app/script.html" %}
+  
+{% endif %}
+{% endblock script %}

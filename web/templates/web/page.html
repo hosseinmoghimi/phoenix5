@@ -7,7 +7,7 @@
     <div class="container">
         <div class="row">
             <div class="col-md-8 ml-auto mr-auto text-center">
-                <h2 class="title text-center">{{page.title}}</h2>
+                <h2 class="title text-center farsi">{{page.title}}</h2>
                 {% if page.panel %}
                 {{page.panel|safe}}
                 {% endif %}
@@ -32,9 +32,9 @@
                 <div class="col-md-9 ml-auto mr-auto pt-4">
                     {% if page.sub_title %}
 
-                    <h4 class="mb-0 mt-4 text-right">{{page.sub_title}}</h4>
+                    <h4 class="mb-0 mt-4 text-right farsi">{{page.sub_title}}</h4>
                     {% endif %}
-                    <h3 class="mt-0 title text-right">
+                    <h3 class="mt-0 title text-right farsi">
                         {{page.title}}
                         {% if perms.web.change_page %}
 
@@ -85,7 +85,7 @@
 
 
                 {% if page.short_description %}
-                <div class="col-md-9 ml-auto mr-auto farsi">
+                <div class="col-md-9 ml-auto mr-auto ltr">
 
                     {{page.short_description|safe}}
 
@@ -96,7 +96,7 @@
 
 
                 {% if page.description %}
-                <div class="col-md-9 ml-auto mr-auto farsi">
+                <div class="col-md-9 ml-auto mr-auto ltr farsi">
 
                     {{page.description|safe}}
 
@@ -115,7 +115,7 @@
                         <a href="{{tag.get_absolute_url}}">
 
                             <span class="badge badge-primary badge-pill">
-                                {{tag.title}}
+                                {{tag.tag_title}}
                             </span>
                         </a>
 
@@ -139,9 +139,9 @@
                             </div>
                             <div class="col-md-8">
                                 <a href="{{page.author.get_absolute_url}}">
-                                    <h4 class="card-title">{{page.author.profile.name}}</h4>
+                                    <h4 class="card-title farsi">{{page.author.profile.name}}</h4>
                                 </a>
-                                <p class="description">
+                                <p class="description farsi">
                                     {{page.author.job}}
 
                                 </p>
@@ -158,21 +158,60 @@
         </div>
         <div class="section section-comments">
             <div class="row">
+                <div class="col-md-12 rtl farsi text-right">
+                    {% if page.page_set.all %}
+                    <div class="my-3">
 
-                {% include "web/includes/page-images-app/template.html" %}
+                        <h4 class=" farsi text-right">
+                            صفحات مرتبط
+                        </h4>
+                        {% for page in page.page_set.all  %}
+                        <a href="{{page.get_absolute_url}}">
+                            <h5 class=" farsi text-right">
+                                
+                                {{page.title}}
+                            </h5>
+                        </a>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="col-md-12 text-right my-3 farsi">
+                    <a href="{% url 'core:page_show' pk=page.pk %}" target="_blank" title="نمایش"
+                        class="mx-2 text-success"><i class="fa fa-print"></i> نمایش</a>
+                    <a href="{{page.get_print_url}}" target="_blank" title="چاپ" class="mx-2 text-success"><i
+                            class="fa fa-print"></i> چاپ</a>
+                </div>
+                <div class="col-md-12">
+
+                    {% include "web/includes/page-images-app/template.html" %}
+                </div>
+                <div class="col-md-4">
+
+                    {% include "web/includes/page-links-app/template.html" %}
+
+                </div>
+
+                <div class="col-md-4">
 
 
-                {% include "web/includes/page-links-app/template.html" %}
+
+                    {% include "web/includes/page-downloads-app/template.html" %}
 
 
+                </div>
+
+                <div class="col-md-4">
+
+                    {% include "web/includes/page-tags-app/template.html" %}
+
+                    {% if change_page_metadata_form %}
 
 
-                {% include "web/includes/page-downloads-app/template.html" %}
+                    {% include "core/includes/page-metadata-app/template.html" %}
+                    {% endif %}
 
-
-
-                {% include "web/includes/page-tags-app/template.html" %}
-
+                </div>
 
 
 

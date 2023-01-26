@@ -1,0 +1,45 @@
+<script>
+    let educational_years = JSON.parse(`{{educational_years_s|escapejs}}`)
+    let educational_years_app = new Vue({
+        el: "#educational-years-app",
+        data: {
+            title: "",
+            start_date: current_date,
+            end_date: current_date,
+            educational_years: educational_years,
+            message: { show: false },
+        },
+        components: {
+            DatePicker: VuePersianDatetimePicker,
+        },
+        methods: {
+            add_educational_year: function () {
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    title: this.title,
+                    start_date: this.start_date,
+                    end_date: this.end_date,
+                }
+                let url = "{% url 'school:add_educational_year' %}"
+                $.post(url, payload).done(data => {
+                    if (data.result === 'SUCCEED') {
+                        educational_years_app.educational_years.push(data.educational_year)
+                        educational_years_app.message = { show: true, body:data.message, color: 'success' }
+                        setTimeout(() => {
+                            educational_years_app.message = { show: false }
+
+                        }, 3000);
+                    }
+                    else {
+                        educational_years_app.message = { show: true, body: data.message, color: 'danger' }
+
+                        setTimeout(() => {
+                            educational_years_app.message = { show: false }
+
+                        }, 3000);
+                    }
+                })
+            }
+        }
+    })
+</script>

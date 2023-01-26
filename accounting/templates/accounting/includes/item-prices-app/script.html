@@ -1,11 +1,22 @@
 <script>
+    let account_id=0
+</script>
+
+
+{% if me_account %}
+    <script>
+        account_id=parseInt("{{me_account.id}}")
+    </script>
+{% endif %}
+    
+<script>
     let item_prices_app = new Vue({
         el: "#item-prices-app",
         data: {
             product_or_service_id: page_id,
             buy_price: 0,
             sell_price: 0,
-            account_id: 0,
+            account_id: account_id,
             unit_name:"عدد",
             prices: JSON.parse("{{prices_s|escapejs}}"),
             message: {

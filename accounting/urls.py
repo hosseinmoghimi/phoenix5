@@ -7,6 +7,7 @@ urlpatterns = [
     path("",login_required(views.HomeView.as_view()),name="home"),
     path("search/",login_required(views.SearchView.as_view()),name="search"),
     path("report/",login_required(views.ReportView.as_view()),name="report"),
+    path("account_tag/<int:pk>/",login_required(views.AccountTagView.as_view()),name="accounttag"),
     path("search_json/",login_required(views.SearchJsonView.as_view()),name="search_json"),
 
     path("bank_accounts/",login_required(views.BankAccountsView.as_view()),name="bank_accounts"),
@@ -18,7 +19,7 @@ urlpatterns = [
     path("add_bank/",login_required(apis.AddBankApi.as_view()),name="add_bank"),
 
     path("products/",login_required(views.ProductsView.as_view()),name="products"),
-    path("product/<int:pk>/",login_required(views.ProductView.as_view()),name="product"),
+    path("product/<int:pk>/",(views.ProductView.as_view()),name="product"),
 
     path("service/<int:pk>/",login_required(views.ServiceView.as_view()),name="service"),
     path("services/",login_required(views.ServicesView.as_view()),name="services"),
@@ -26,8 +27,14 @@ urlpatterns = [
 
     path("cheque/<int:pk>/",login_required(views.ChequeView.as_view()),name="cheque"),
     path("cheques/",login_required(views.ChequesView.as_view()),name="cheques"), 
+    path("cheques/<int:account_id>/",login_required(views.ChequesView.as_view()),name="account_cheques"),
+
+
+    path("double_transaction/<int:pk>/",login_required(views.DoubleTransactionView.as_view()),name="doubletransaction"),
+    path("double_transactions/",login_required(views.DoubleTransactionsView.as_view()),name="double_transactions"),
     
     path("transaction/<int:pk>/",login_required(views.TransactionView.as_view()),name="transaction"),
+    path("transactions/<int:account_id>/",login_required(views.TransactionsView.as_view()),name="account_transactions"),
     path("transactions/",login_required(views.TransactionsView.as_view()),name="transactions"),
     path("transactions/<int:account_id>/",login_required(views.TransactionsView.as_view()),name="transactions1"),
     path("transactions/<int:account_id_1>/<int:account_id_2>/",login_required(views.TransactionsView.as_view()),name="transactions2"),
@@ -35,8 +42,11 @@ urlpatterns = [
     path("transactions_excel/<int:account_id_1>/<int:account_id_2>/",login_required(views.TransactionsExcelView.as_view()),name="transactions2_excel"),
     path("transactions_print/",login_required(views.TransactionsPrintView.as_view()),name="transactions_print"),
     
-    path("product_or_service_category/<int:pk>/",login_required(views.ProductOrServiceCategoryView.as_view()),name="product_or_service_category"),
-    path("product_or_service_categories/",login_required(views.ProductOrServiceCategoriesView.as_view()),name="product_or_service_categories"),
+    
+    path("category/<int:pk>/",login_required(views.CategoryView.as_view()),name="category"),
+    path("categories/",login_required(views.CategoriesView.as_view()),name="categories"),
+    
+    path("account_tags/",login_required(views.AccountTagsView.as_view()),name="account_tags"),
     
     path("account/<int:pk>/",login_required(views.AccountView.as_view()),name="account"),
     path("accounts/",login_required(views.AccountsView.as_view()),name="accounts"),
@@ -44,6 +54,7 @@ urlpatterns = [
 
     path("invoice_line/<int:pk>/",login_required(views.InvoiceLineView.as_view()),name="invoiceline"),
     path("invoice/edit/<int:pk>/",login_required(views.InvoiceEditView.as_view()),name="edit_invoice"),
+    path("invoices/<int:account_id>/",login_required(views.InvoicesView.as_view()),name="account_invoices"),
     path("invoices/",login_required(views.InvoicesView.as_view()),name="invoices"),
     path("invoice/excel/<int:pk>/",login_required(views.InvoiceExcelView.as_view()),name="invoice_excel"),
     path("invoice/<int:pk>/",login_required(views.InvoiceView.as_view()),name="invoice"),
@@ -55,6 +66,8 @@ urlpatterns = [
 
     path("financial_document/<int:pk>/",login_required(views.FinancialDocumentView.as_view()),name="financialdocument"),
     path("financial_documents/",login_required(views.FinancialDocumentsView.as_view()),name="financial_documents"),
+    path("financial_documents/<int:account_id>/",login_required(views.FinancialDocumentsView.as_view()),name="account_financial_documents"),
+    
     
     path("asset/<int:pk>/",login_required(views.AssetView.as_view()),name="asset"),
     path("assets/",login_required(views.AssetsView.as_view()),name="assets"),
@@ -78,11 +91,16 @@ urlpatterns = [
   path("add_price/",login_required(apis.AddPriceApi.as_view()),name="add_price"),
 
   
-  path('add_product_or_service_category/',login_required(apis.AddProductApi.as_view()),name="add_product_or_service_category"),
-  path('change_product_or_service_category/',login_required(apis.ChangeProductOrServiceCategoryApi.as_view()),name="change_product_or_service_category"),
 
+  path("add_account_tag/",login_required(apis.AddAccountTagApi.as_view()),name="add_account_tag"),
+  path("add_category/",login_required(apis.AddCategoryApi.as_view()),name="add_category"),
+  path('add_item_category/',login_required(apis.AddItemCategoryApi.as_view()),name="add_item_category"),
   path('add_product/',login_required(apis.AddProductApi.as_view()),name="add_product"),
   path('add_service/',login_required(apis.AddServiceApi.as_view()),name="add_service"),
+  path('print_transaction/',login_required(apis.PrintTransactionApi.as_view()),name="print_transaction"),
+  path('roll_back_transaction/',login_required(apis.RollBackTransactionApi.as_view()),name="roll_back_transaction"),
+  path('add_product_specification/',login_required(apis.AddProductSpecificationApi.as_view()),name="add_product_specification"),
+  path('add_product_or_service_unit_name/',login_required(apis.AddProductOrServiceUnitNameApi.as_view()),name="add_product_or_service_unit_name"),
 
 
 

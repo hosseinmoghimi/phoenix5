@@ -1,0 +1,17 @@
+{% extends "loyaltyclub/layout.html" %}
+{% load to_price %}
+{% load to_persian_date %}
+{% load static %}
+
+{% block content %}
+<div class="row rtl">
+    <div class="col-md-12"> 
+                {% include 'loyaltyclub/includes/coefs-app/template.html' %}
+           
+    </div>
+</div>
+{% endblock %} 
+
+{% block script %}
+{% include 'loyaltyclub/includes/coefs-app/script.html' %}
+{% endblock %}

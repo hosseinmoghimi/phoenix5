@@ -1,0 +1,40 @@
+<script>
+    let add_guarantee_app = new Vue({
+        el: "#add-guarantee-app",
+        data: {
+            start_date: current_date,
+            end_date: current_date,
+            serial_no: "",
+            status: "",
+            type: "",
+            invoice_line_id:parseInt("{{invoice_line.id}}")
+        },
+        components: {
+            DatePicker: VuePersianDatetimePicker,
+
+        },
+        methods: {
+            add_guarantee:function(){
+                let payload={
+                    csrfmiddlewaretoken:csrfmiddlewaretoken,
+                    start_date:this.start_date,
+                    end_date:this.end_date,
+                    serial_no:this.serial_no,
+                    type:this.type,
+                    status:this.status,
+                    invoice_line_id:this.invoice_line_id,
+                }
+                leolog(payload)
+                let url_add_guarantee="{% url 'guarantee:add_guarantee' %}"
+                $.post(url_add_guarantee,payload).done(data=>{
+                    leolog(data)
+                    if(data.result==='SUCCEED'){
+                        if(typeof guarantees_app != "undefined"){
+                            guarantees_app.guarantees.push(data.guarantee)
+                        }
+                    }
+                })
+            }
+        },
+    })
+</script>

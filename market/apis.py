@@ -1,12 +1,15 @@
+import json
 from unicodedata import category
 from django.http import JsonResponse
 from rest_framework.views import APIView
 from accounting.repo import ProductRepo
+from accounting.serializers import InvoiceSerializer
+
 from core.constants import FAILED,SUCCEED
 from market.forms import *
-from market.serializers import CategorySerializer, CategorySerializerForApi, ProductSerializer,ProductSerializerForApi
-from market.repo import CategoryRepo
-
+from market.serializers import CustomerSerializer,CartLineSerializer, CategorySerializer,SupplierSerializer, CategorySerializerForApi, ProductSerializer,ProductSerializerForApi, ShopSerializer
+from market.repo import CartLineRepo, CartRepo, CategoryRepo, ShopRepo,CustomerRepo,SupplierRepo
+from utility.log import leolog
 class AddCategoryApi(APIView):
     def post(self,request,*args, **kwargs):
         context={}
@@ -17,6 +20,97 @@ class AddCategoryApi(APIView):
             if category is not None:
                 context['category']=CategorySerializer(category).data
                 context['result']=SUCCEED
+        return JsonResponse(context)
+
+class AddToCartApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        context['result']=FAILED
+        AddToCartForm_=AddToCartForm(request.POST)
+        if AddToCartForm_.is_valid():
+            (result,cart_line,message)=CartRepo(request=request).add_to_cart(**AddToCartForm_.cleaned_data)
+            if result==SUCCEED:
+                context['cart_line']=CartLineSerializer(cart_line).data
+                context['result']=SUCCEED
+            else:
+                context['message']=message
+        return JsonResponse(context)
+
+
+
+class AddCustomerApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        context['result']=FAILED
+        AddCustomerForm_=AddCustomerForm(request.POST)
+        if AddCustomerForm_.is_valid():
+            (result,message,customer)=CustomerRepo(request=request).add_customer(**AddCustomerForm_.cleaned_data)
+            if result==SUCCEED:
+                context['customer']=CustomerSerializer(customer).data
+            context['result']=result
+            context['message']=message
+        return JsonResponse(context)
+
+
+class AddSupplierApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        context['result']=FAILED
+        AddSupplierForm_=AddSupplierForm(request.POST)
+        if AddSupplierForm_.is_valid():
+            (result,message,supplier)=SupplierRepo(request=request).add_supplier(**AddSupplierForm_.cleaned_data)
+            if result==SUCCEED:
+                context['supplier']=SupplierSerializer(supplier).data
+            context['result']=result
+            context['message']=message
+        return JsonResponse(context)
+
+
+class CheckoutApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        context['result']=FAILED
+        log=1
+        log=2
+        checkout_form=CheckoutForm(request.POST)
+        if checkout_form.is_valid():
+            log=3
+            cd=checkout_form.cleaned_data
+            cd['cart_lines']=json.loads(cd['cart_lines'])
+            market_invoices,result,message=CartRepo(request=request).checkout(
+                **cd
+            )
+            if result ==SUCCEED:
+                # shops=ProductRepo(request=request).product(pk=product_id).shop_set.all()
+                context['market_invoices']=InvoiceSerializer(market_invoices,many=True).data
+                context['result']=SUCCEED
+        context['log']=log
+        return JsonResponse(context)
+
+
+
+ 
+
+
+class AddShopApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        context['result']=FAILED
+        log=1
+        log=2
+        add_shop_form=AddShopForm(request.POST)
+        if add_shop_form.is_valid():
+            log=3
+            cd=add_shop_form.cleaned_data
+            cd['specifications']=json.loads(cd['specifications'])
+            shop=ShopRepo(request=request).add_shop(
+                **cd
+            )
+            if shop is not None:
+                # shops=ProductRepo(request=request).product(pk=product_id).shop_set.all()
+                context['shop']=ShopSerializer(shop).data
+                context['result']=SUCCEED
+        context['log']=log
         return JsonResponse(context)
 
 

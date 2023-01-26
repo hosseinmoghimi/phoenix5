@@ -7,6 +7,7 @@ urlpatterns = [
     path('',login_required(views.HomeViews.as_view()),name="home"),
     path('search/',views.SearchViews.as_view(),name="search"),
     path('profile/<int:pk>/',views.ProfileViews.as_view(),name="profile"),
+    path('sessions/<int:pk>/',views.SessionsViews.as_view(),name="sessions"),
     path('edit_profile/<int:pk>/',views.EditProfileViews.as_view(),name="edit_profile"),
     path('change_profile_image/<int:pk>/',views.ChangeProfileImageViews.as_view(),name="change_profile_image"),
     path('me/',views.ProfileViews.as_view(),name="me"),
@@ -22,6 +23,7 @@ urlpatterns = [
     path('membership_requests_app/<app_name>/',views.AddMembershipRequestViews.as_view(),name="membership_requests_app"),
     path('add_membership_request/',views.AddMembershipRequestViews.as_view(),name="add_membership_request"),
     path('add_profile/',apis.AddProfileApi.as_view(),name="add_profile"),
+    path('add_profile_contact/',apis.AddProfileContactApi.as_view(),name="add_profile_contact"),
     # path('api/login/',apis.LoginApi.as_view(),name="api_login"),
     path('apk/api/login/',apk_apis.CustomAuthToken.as_view(),name="api_login"),
 ]

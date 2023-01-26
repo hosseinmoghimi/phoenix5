@@ -1,0 +1,116 @@
+<script>
+
+
+    let page_details_app = new Vue({
+        el: "#page-details-app",
+        data: {
+            show_forms: false,
+
+            new_link_title: "",
+            new_link_url: "",
+            links: links,
+            show_add_link:false,
+
+
+            new_download_title: "",
+            downloads: downloads,
+            new_download_file: '',
+            show_add_download_form:false,
+            download_file:"",
+
+
+            new_tag: "",
+            page_tags: page_tags,
+
+
+            waiting: false,
+        },
+        methods: {
+            add_page_link: function () {
+                let url = "{% url 'core:add_page_link' %}"
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    page_id: page_id,
+                    title: this.new_link_title,
+                    url: this.new_link_url,
+                }
+                let posting = $.post(url, payload)
+                posting.done((data) => {
+                    if (data.result === 'SUCCEED') {
+
+                        page_links_app.links.push(data.page_link)
+                        page_links_app.new_link_title = ""
+                        page_links_app.new_link_url = ""
+
+                        page_details_app.links.push(data.page_link)
+                        page_details_app.new_link_title = ""
+                        page_details_app.new_link_url = ""
+                    }
+                })
+            },
+
+            add_page_download: function () {
+                page_downloads_app.waiting = true
+                let title = this.new_download_title
+                let formData = new FormData();
+                let file1 = $('#add-download-form')[0].elements[1].files[0]
+                formData.append("file1", file1);
+                formData.append("title", title);
+                formData.append("csrfmiddlewaretoken", csrfmiddlewaretoken);
+                formData.append("page_id", page_id);
+                let url_add_download = "{% url 'core:add_page_download' %}"
+
+                $.ajax({
+                    url: url_add_download,
+                    type: 'post',
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function (data) {
+                        page_downloads_app.waiting = false
+
+                        if (data != 0) {
+                            // //console.log(data)
+                            if (data.result === 'SUCCEED') {
+                                page_downloads_app.downloads.push(data.page_download)
+                                page_downloads_app.new_download_title = ''
+                                page_downloads_app.new_download_file = ''
+
+
+                                // page_details_app.downloads.push(data.page_download)
+                                // page_details_app.new_download_title = ''
+                                // page_details_app.new_download_file = ''
+                            }
+                        }
+                        else {
+                        }
+                    },
+                });
+
+            },
+
+            add_page_tag: function () {
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    page_id: page_id,
+                    tag_title: this.new_tag,
+                }
+                let url_add_page_tag = "{% url 'core:add_page_tag' %}"
+
+                let posting = $.post(url_add_page_tag, payload)
+                posting.done((data) => {
+
+                    if (data.result === 'SUCCEED') {
+                        page_details_app.new_tag = ""
+                        page_details_app.page_tags = data.page_tags
+
+                        page_tags_app.new_tag = ""
+                        page_tags_app.page_tags = data.page_tags
+                    }
+                })
+            },
+
+        }
+
+    })
+</script>

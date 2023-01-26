@@ -5,6 +5,7 @@
         direction: "",
         ware_house_id: 0,
         waiting: false,
+        status:"",
         message: { show: false },
     }
     let warehouse_sheets_app_methods = {
@@ -17,6 +18,7 @@
                 csrfmiddlewaretoken: csrfmiddlewaretoken,
                 invoice_line_id: parseInt("{{invoice_line.id}}"),
                 direction: this.direction,
+                status: this.status,
                 ware_house_id: parseInt(this.ware_house_id),
             }
             console.log(payload)

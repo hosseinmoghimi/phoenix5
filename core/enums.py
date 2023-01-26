@@ -1,6 +1,6 @@
 from django.utils.translation import gettext as _
 from django.db.models import TextChoices
-
+from phoenix.enums import *
 from phoenix.settings import SITE_URL
 
 class AppNameEnum(TextChoices):
@@ -16,10 +16,6 @@ class AppNameEnum(TextChoices):
     dashboard='dashboard',_('dashboard')
     polls='polls',_('polls')
 
-class CurrencyEnum(TextChoices):
-    TUMAN="تومان",_("تومان")
-    RIAL="ریال",_("ریال")
-    DOLLAR="دلار",_("دلار")
 
 
 def class_title(*args, **kwargs):
@@ -31,6 +27,8 @@ def class_title(*args, **kwargs):
         app_name=kwargs['app_name']
 
     class_title = "صفحه"
+    if class_name == "exam":
+        class_title = "آزمون"
     if class_name == "poll":
         class_title = "پرسش"
     if class_name == "payment":
@@ -43,6 +41,8 @@ def class_title(*args, **kwargs):
         class_title = "صفحه"
     elif class_name == "appointment":
         class_title = "قرار ملاقات"
+    elif class_name == "coupon":
+        class_title = "جایزه خرید"
     elif class_name == "letter":
         class_title = "نامه"
     elif class_name == "file":
@@ -61,6 +61,8 @@ def class_title(*args, **kwargs):
         class_title = "وسیله نقلیه"
     elif class_name == "project":
         class_title = "پروژه"
+    elif class_name == "cost":
+        class_title = "هزینه"
     elif class_name == "service":
         class_title = "سرویس"
     elif class_name=="pm_service":
@@ -151,17 +153,17 @@ def BS_ColorCode(bs_color):
 
 class UnitNameEnum(TextChoices):
     ADAD="عدد",_("عدد")
-    GERAM="گرم",_("گرم")
     KILOGERAM="کیلوگرم",_("کیلوگرم")
+    METER="متر",_("متر")
+    SHAKHEH="شاخه",_("شاخه")
+    GERAM="گرم",_("گرم")
     TON="تن",_("تن")
     LINE="خط",_("خط")
-    METER="متر",_("متر")
     METER2="متر مربع",_("متر مربع")
     METER3="متر مکعب",_("متر مکعب")
     PART="قطعه",_("قطعه")
     Roll="رول",_("رول")
     LINK="لینک",_("لینک")
-    SHAKHEH="شاخه",_("شاخه")
     DASTGAH="دستگاه",_("دستگاه")
     SERVICE="سرویس",_("سرویس")
     PACK="بسته",_("بسته")
@@ -171,6 +173,10 @@ class UnitNameEnum(TextChoices):
     CUP="فنجان",_("فنجان")
     JOFT="جفت",_("جفت")
     DAST="دست",_("دست")
+    CARTON="کارتن",_("کارتن")
+    JABE="جعبه",_("جعبه")
+    SABAD="سبد",_("سبد")
+    RAS="راس",_("راس")
 
 
 class IconsEnum(TextChoices):

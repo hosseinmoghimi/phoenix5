@@ -1,0 +1,111 @@
+{% extends "loyaltyclub/layout.html" %}
+
+
+{% block content %}
+
+{% include "accounting/includes/transaction-app/navbar.html" %}
+
+<div class="row rtl">
+    <div class="col-md-4">
+        {% include "core/includes/page-app/brief-card.html" %}
+
+    </div>
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h4>
+                    سفارش و فاکتور مرتبط
+                </h4>
+            </div>
+            <div class="card-body">
+                <a href="{{coupon.order.get_absolute_url}}">
+                    <h5>
+                        سفارش
+                        {{coupon.order.title}}
+
+                    </h5>
+                </a>
+                {% if coupon.order.invoice %}
+
+                <a href="{{coupon.order.invoice.get_absolute_url}}">
+                    <h5>
+                        فاکتور
+                        {{coupon.order.invoice.title}}
+
+                    </h5>
+                </a>
+                {% endif %}
+            </div>
+        </div>
+        {% include "accounting/includes/transaction-app/brief.html" %}
+
+    </div>
+
+
+    {% if page.short_description %}
+
+    <div class="col-md-12">
+        {% include "core/includes/page-description-app/short-description.html" %}
+
+    </div>
+    {% endif %}
+
+
+    {% if page.description %}
+
+    <div class="col-md-12">
+        {% include "core/includes/page-description-app/description.html" %}
+
+    </div>
+    {% endif %}
+
+    <div class="col-md-4">
+        {% include "core/includes/page-links-app/template.html" %}
+    </div>
+    <div class="col-md-4">
+        {% include "core/includes/page-downloads-app/template.html" %}
+
+    </div>
+    <div class="col-md-4">
+        {% include "core/includes/page-tags-app/template.html" %}
+
+    </div>
+
+    {% if roll_back_transaction_form %}
+
+    <div class="col-md-12">
+
+        {% include "accounting/includes/roll-back-transaction-app/template.html" %}
+    </div>
+
+    {% endif %}
+
+
+    <div class="col-md-12">
+        {% include "core/includes/page-images-app/template.html" %}
+
+    </div>
+    <div class="col-md-12">
+        {% include "accounting/includes/financial-documents-app/template.html" %}
+    </div>
+    <div class="col-md-12">
+        {% include "accounting/includes/financial-balances-app/template.html" %}
+    </div>
+</div>
+{% endblock content %}
+
+
+
+{% block script %}
+{% include "accounting/includes/transaction-app/script.html" %}
+
+
+{% if roll_back_transaction_form %}
+
+
+{% include "accounting/includes/roll-back-transaction-app/script.html" %}
+
+
+{% endif %}
+
+{% endblock script %}

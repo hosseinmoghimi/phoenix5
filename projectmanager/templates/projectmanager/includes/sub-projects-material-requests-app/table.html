@@ -1,0 +1,145 @@
+<div class="table-responsive">
+
+    <table class="table table-striped">
+        <thead>
+            <th>
+
+            </th>
+            <th>
+                تاریخ درخواست
+            </th>
+            <!-- <th>
+            مسئول خرید
+        </th> -->
+            {% if not project %}
+            <th>
+                پروژه
+            </th>
+            {% endif %}
+            {% if not material %}
+            <th>
+                متریال
+            </th>
+            {% endif %}
+            <th>
+                تعداد
+            </th>
+            <th>
+                قیمت واحد
+            </th>
+            <th>
+                جمع
+            </th>
+            <th>
+                وضعیت
+            </th>
+            <th>
+
+            </th>
+        </thead>
+        <tbody>
+            <tr v-for="material_request in sub_projects_material_requests">
+                <td>
+                    <a target="_blank" :href="material_request.get_absolute_url" title="نمایش کامل">
+                        <i class="material-icons">
+                            ballot
+                        </i>
+                    </a>
+                </td>
+                <td>
+                  
+                    <div>
+
+                        <div class="media">
+                            <a :href="material_request.employee.get_absolute_url">
+                                <small>
+                                   
+                                    <img :src="material_request.employee.account.logo" class="rounded-circle" width="32" alt="">
+                                </small>
+                            </a>
+                            <div class="media-body mr-2">
+                                <div>
+
+                                    <a :href="material_request.employee.get_absolute_url">
+                                        <small>
+                                            <span v-text="material_request.employee.title"></span>
+                                        </small>
+                                    </a>
+                                </div>
+                                <div>
+                                    <small v-text="material_request.persian_date_requested">
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                       
+                    </div>
+                </td>
+                {% if not project %}
+                <td>
+                    <div>
+
+                        <a target="_blank" :href="material_request.project.get_absolute_url"
+                            v-text="material_request.project.title">
+                        </a>
+                    </div>
+                </td>
+                {% endif %}
+                {% if not material %}
+                <td>
+                    <div>
+                        <div class="media">
+                            <a target="_blank" :href="material_request.material.get_pm_absolute_url">
+                                <img :src="material_request.material.thumbnail" class="ml-2 rounded" width="32" alt="">
+                            </a>
+                            <div class="media-body mr-2">
+                                <a target="_blank" :href="material_request.material.get_pm_absolute_url">
+
+                                    <span v-text="material_request.material.title"></span>
+                                </a>
+                                <div v-if="material_request.invoice">
+                                    <a target="_blank" :href="material_request.invoice.pay_from.get_absolute_url">
+                                        <small class="text-muted"
+                                            v-text="material_request.invoice.pay_from.title"></small>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+
+                </td>
+                {% endif %}
+                <td>
+                    <span v-text="material_request.quantity"></span>
+                    <small v-text="material_request.unit_name">
+                    </small>
+                </td>
+                <td>
+                    <span v-text="to_price(material_request.unit_price,'')"></span> {{CURRENCY}}
+                </td>
+                <td>
+                    <span
+                        v-text="to_price(material_request.unit_price*material_request.quantity,'{{CURRENCY}}')"></span>
+                </td>
+                <td>
+                    <span v-html="material_request.get_status_tag"></span>
+                </td>
+                <td>
+                    {% if perms.projectmanager.change_materialrequest %}
+                    <a title="ویرایش" target="_blank" :href="material_request.get_edit_url">
+                        <i class="fa fa-edit"></i>
+                    </a>
+                    {% endif %}
+                    {% if perms.projectmanager.delete_materialrequest %}
+                    <a title="حذف" target="_blank" :href="material_request.get_delete_url">
+                        <i class="fa fa-trash text-danger">
+                        </i>
+                    </a>
+                    {% endif %}
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>

@@ -1,0 +1,32 @@
+<script>
+    let visits = JSON.parse(`{{visits_s|escapejs}}`)
+    let visits_app = new Vue({
+        el:"#visits-app",
+        data: {
+            visits: visits,
+            search_for:'',
+            waiting:false,
+        },
+        methods: {
+            filter:function(){
+                this.visits = visits.filter(visit => visit.title.indexOf(this.search_for) > -1)
+         
+            },
+            to_price: function (vall) {
+                return to_price(vall,"{{CURRENCY}}")
+            },
+            create_employee: function (account_id) {
+                let url = "{% url 'organization:employee' pk=0 %}"
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    account_id: account_id
+                }
+                $.post(url, payload).done((data) => {
+                    console.log(data)
+                })
+            },
+           
+        }
+    })
+
+</script>

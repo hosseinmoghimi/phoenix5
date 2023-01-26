@@ -3,7 +3,7 @@
 
 
 {% block content %}
-<div class="row">
+<div class="row rtl">
     <div class="col-md-4">
         <div class="card">
             <div class="farsi card-body">
@@ -29,6 +29,36 @@
                     </h6>
                 </a>
 
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card">
+            <div class="farsi card-body">
+                <div class="media">
+                    <a href="{{me_employee.get_absolute_url}}">
+                        <img src="{{me_employee.account.logo}}" class="rounded" width="48" alt="">
+                    </a>
+                    <div class="media-body mr-2">
+                        <div>
+                            <a href="{{me_employee.get_absolute_url}}">
+                                {{me_employee.account.title}}
+                            </a>
+                        </div>
+                        <div>
+                                {{me_employee.job_title}}
+                        </div>
+
+                        <div>
+                            <a href="{{me_employee.organization_unit.get_absolute_url}}">
+                                {{me_employee.organization_unit.full_title}}
+                            </a>
+                        </div>
+
+                         
+                    </div>
+                </div>
             </div>
         </div>
     </div>

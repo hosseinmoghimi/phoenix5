@@ -4,16 +4,16 @@
     <!--     *********    PROJECTS 3     *********      -->
     <div class="projects-3 section-dark" id="projects-3">
         <div class="container">
-            <div class="row">
+            <div class="row rtl farsi">
                 <div class="col-md-8 ml-auto mr-auto text-center">
-                    <h6 class="category text-muted text-center">
+                    <h6 class="category text-muted text-center farsi">
                         {{ourwork_pretitle_param.value}}
                         {% if perms.core.change_parameter %}
                         {{ourwork_pretitle_param.get_edit_btn|safe}}
 
                         {% endif %}
                     </h6>
-                    <h2 class="title text-center">
+                    <h2 class="title text-center farsi">
                         {{ourwork_title_param.value}}
 
                         {% if perms.core.change_parameter %}
@@ -22,7 +22,7 @@
                         {% endif %}
                     </h2>
                     {% if perms.web.add_ourwork %}
-                    <div class="text-center">
+                    <div class="text-center ">
                         <a target="_blank" href="{{ADMIN_URL}}{{APP_NAME}}/ourwork/add/?for_home=1" title="افزودن">
                             <i class="fa fa-plus text-success"></i>
                         </a>
@@ -41,7 +41,7 @@
                             </div>
                         </a>
                         <div class="card-body ">
-                            <h6 class="card-category">
+                            <h6 class="card-category farsi">
 
                                 {% if our_work.sub_title %}
 
@@ -49,9 +49,9 @@
                                 {% endif %}
                             </h6>
                             <a href="{{our_work.get_absolute_url}}">
-                                <h4 class="card-title">{{our_work.title}}</h4>
+                                <h4 class="card-title farsi">{{our_work.title}}</h4>
                             </a>
-                            <div class="card-description">
+                            <div class="card-description farsi">
                                 {% if our_work.short_description %}
                                 {{our_work.short_description|safe}}
                                 {% endif %}

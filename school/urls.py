@@ -15,17 +15,28 @@ urlpatterns = [
     path("search/",login_required(views.BasicViews().search),name="search"),
 
 
-    path("schools/",login_required(views.SchoolViews().schools),name="schools"),
-    path("school/<int:school_id>/",login_required(views.SchoolViews().school),name="school"),
+    path("schools/",login_required(views.SchoolsViews.as_view()),name="schools"),
+    path("school/<int:school_id>/",login_required(views.SchoolViews.as_view()),name="school"),
     path("api/add_school/",login_required(apis.SchoolApi().add_school),name="add_school"),
 
-    path("students/",login_required(views.StudentViews().students),name="students"),
-    path("student/<int:pk>/",login_required(views.StudentViews().student),name="student"),
-    path("api/add_student/",login_required(apis.StudentApi().add_student),name="add_student"),
+    path("students/",login_required(views.StudentsViews.as_view()),name="students"),
+    path("student/<int:pk>/",login_required(views.StudentViews.as_view()),name="student"),
+    path("add_student/",login_required(apis.AddStudentApi.as_view()),name="add_student"),
 
-    path("teachers/",login_required(views.TeacherViews().teachers),name="teachers"),
-    path("teacher/<int:pk>/",login_required(views.TeacherViews().teacher),name="teacher"),
-    path("api/add_teacher/",login_required(apis.TeacherApi().add_teacher),name="add_teacher"),
+    path("exams/",login_required(views.ExamsView.as_view()),name="exams"),
+    path("exam/<int:pk>/",login_required(views.ExamView.as_view()),name="exam"),
+    path("add_exam/",login_required(apis.AddExamApi.as_view()),name="add_exam"),
+    
+    path("questions/",login_required(views.QuestionsView.as_view()),name="questions"),
+    path("question/<int:pk>/",login_required(views.QuestionView.as_view()),name="question"),
+    path("add_question/",login_required(apis.AddQuestionApi.as_view()),name="add_question"),
+    
+    path("select_option/",login_required(apis.SelectOptionApi.as_view()),name="select_option"),
+
+
+    path("teachers/",login_required(views.TeachersView.as_view()),name="teachers"),
+    path("teacher/<int:pk>/",login_required(views.TeacherView.as_view()),name="teacher"),
+    path("add_teacher/",login_required(apis.AddTeacherApi.as_view()),name="add_teacher"),
 
     path("majors/",login_required(views.MajorViews().majors),name="majors"),
     path("major/<int:pk>/",login_required(views.MajorViews().major),name="major"),
@@ -36,9 +47,12 @@ urlpatterns = [
     path("api/add_book/",login_required(apis.BookApi().add_book),name="add_book"),
     path("book/<int:pk>/",login_required(views.BookViews.as_view()),name="book"),
     
-    path("educationalyear/<int:pk>/",login_required(views.EducationalYearViews().educational_year),name="educationalyear"),
+    path("educationalyears/",login_required(views.EducationalYearsViews.as_view()),name="educational_years"),
+    path("add_educational_year/",login_required(apis.AddEducationalYearApi().as_view()),name="add_educational_year"),
+    path("educationalyear/<int:pk>/",login_required(views.EducationalYearViews.as_view()),name="educationalyear"),
     
     path("session/<int:pk>/",login_required(views.SessionViews.as_view()),name="session"),
+    path("attendance/<int:pk>/",login_required(views.AttendanceViews.as_view()),name="attendance"),
     path("api/add_session/",login_required(apis.SessionApi().add_session),name="add_session"),
     path("api/add_attendance/",login_required(apis.AttendanceApi().add_attendance),name="add_attendance"),
     
@@ -46,12 +60,13 @@ urlpatterns = [
     path("classroom/<int:pk>/",login_required(views.ClassRoomViews().classroom),name="classroom"),
     path("api/add_classroom/",login_required(apis.ClassRoomApi().add_classroom),name="add_classroom"),
     path("api/add_course/",login_required(apis.CourseApi().add_course),name="add_course"),
-    path("api/add_active_course/",login_required(apis.ActiveCourseApi().add_active_course),name="add_active_course"),
+    path("api/add_active_course/",login_required(apis.AddActiveCourseApi.as_view()),name="add_active_course"),
+    path("add_book_to_course/",login_required(apis.AddBookToCourseApi.as_view()),name="add_book_to_course"),
     
-    path('api/add_student_to_active_course/',login_required(apis.ActiveCourseApi().add_student_to_active_course),name="add_student_to_active_course"),
-    path('api/add_teacher_to_active_course/',login_required(apis.ActiveCourseApi().add_teacher_to_active_course),name="add_teacher_to_active_course"),
-    path("activecourses/",login_required(views.ActiveCourseViews().active_courses),name="active_courses"),
-    path("activecourse/<int:pk>/",login_required(views.ActiveCourseViews().active_course),name="activecourse"),
-    path("course/<int:pk>/",login_required(views.CourseViews().course),name="course"),
-    path("courses/",login_required(views.CourseViews().courses),name="courses"),
+    path('api/add_student_to_active_course/',login_required(apis.AddStudentToActiveCourseApi.as_view()),name="add_student_to_active_course"),
+    path('api/add_teacher_to_active_course/',login_required(apis.AddTeacherToActiveCourseApi.as_view()),name="add_teacher_to_active_course"),
+    path("activecourses/",login_required(views.ActiveCoursesViews.as_view()),name="active_courses"),
+    path("activecourse/<int:pk>/",login_required(views.ActiveCourseViews.as_view()),name="activecourse"),
+    path("course/<int:pk>/",login_required(views.CourseViews.as_view()),name="course"),
+    path("courses/",login_required(views.CoursesViews.as_view()),name="courses"),
 ]

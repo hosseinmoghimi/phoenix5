@@ -1,10 +1,9 @@
 {% if add_page_link_form %}
-<div class="col-md-4">
-
+ 
 
     <div class="card mb-3" id="page-links-app">
         <div class="card-header" id="headinglinks">
-            <h5 class="text-center">
+            <h5 class="text-center farsi">
                 لینک ها
 
                 <span v-if="links.length>0">
@@ -20,7 +19,7 @@
 
             <div v-for="link in links">
 
-                <h6>
+                <h6 class="farsi text-right">
                     <i class=" text-primary fa fa-tag"></i>
                     <a class="mr-2" target="_blank" :href="link.url" v-text="link.title">
 
@@ -71,10 +70,9 @@
 
         </div>
     </div>
-</div>
-{% elif links %}
-<div class="col-md-4">  
+ 
+{% elif links %} 
 
     {% include "web/includes/page-links-app/template-simple.html" %}
-</div>
+ 
 {% endif %}

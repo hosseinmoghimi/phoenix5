@@ -1,0 +1,31 @@
+{% load to_json %}
+<script>
+    let add_food_app = new Vue({
+        el:"#add-food-app",
+        data: {
+            title: "",
+            search_for:'',
+            waiting:false,
+        },
+        methods: {
+             
+            add_food: function (account_id) {
+                let url = "{% url 'chef:add_food' %}"
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    title: this.title
+                }
+                $.post(url, payload).done((data) => {
+                    console.log(data)
+                    if(data.result==="SUCCEED"){
+                        if(typeof foods_app!="undefined"){
+                            foods_app.foods.push(data.food)
+                        }
+                    }
+                })
+            },
+           
+        }
+    })
+
+</script>

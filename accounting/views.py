@@ -2,6 +2,7 @@ from django.http import Http404, HttpResponse, JsonResponse
 from django.shortcuts import redirect, render,reverse
 from authentication.repo import ProfileRepo
 from authentication.serializers import ProfileSerializer
+from phoenix.constants import TUMAN
 from warehouse.serializers import WareHouseSheetSerializer
 from accounting import apis
 from accounting.apis import EditInvoiceApi
@@ -16,10 +17,11 @@ from django.views import View
 from utility.calendar import PersianCalendar
 from utility.excel import ReportSheet,ReportWorkBook, get_style
 from accounting.apps import APP_NAME
-from accounting.repo import BankRepo,AssetRepo, CostRepo,BankAccountRepo, InvoiceLineRepo,AccountRepo,FinancialBalanceRepo, ChequeRepo, PaymentRepo, PriceRepo, ProductOrServiceCategoryRepo, ProductRepo,ServiceRepo,FinancialDocumentRepo,InvoiceRepo, TransactionRepo
-from accounting.serializers import InvoiceLineWithInvoiceSerializer,AccountSerializer, AccountSerializerFull, AssetSerializer, BankAccountSerializer, BankSerializer, CostSerializer, FinancialBalanceSerializer, InvoiceFullSerializer,InvoiceLineSerializer,ChequeSerializer, InvoiceSerializer, PaymentSerializer, PriceSerializer, ProductOrServiceCategorySerializer, ProductSerializer,ServiceSerializer,FinancialDocumentForAccountSerializer,FinancialDocumentSerializer, TransactionSerializer
+from accounting.repo import BankRepo,AssetRepo,AccountTagRepo, CategoryRepo, CostRepo,BankAccountRepo, DoubleTransactionRepo, InvoiceLineRepo,AccountRepo,FinancialBalanceRepo, ChequeRepo, PaymentRepo, PriceRepo,  ProductRepo,ServiceRepo,FinancialDocumentRepo,InvoiceRepo, TransactionRepo
+from accounting.serializers import AccountTagSerializer,DoubleTransactionSerializer,ProductOrServiceUnitNameSerializer, ProductSpecificationSerializer,CategorySerializer, InvoiceLineWithInvoiceSerializer,AccountSerializer, AccountSerializerFull, AssetSerializer, BankAccountSerializer, BankSerializer, CostSerializer, FinancialBalanceSerializer, InvoiceFullSerializer,InvoiceLineSerializer,ChequeSerializer, InvoiceSerializer, PaymentSerializer, PriceSerializer,  ProductSerializer,ServiceSerializer,FinancialDocumentForAccountSerializer,FinancialDocumentSerializer, TransactionSerializer
 from accounting.forms import *
 import json
+from utility.log import leolog
 from phoenix.server_settings import phoenix_apps
 from core.repo import ParameterRepo
 from accounting.enums import ParameterAccountingEnum
@@ -50,6 +52,7 @@ def add_transaction_context(request,*args, **kwargs):
         context['payment_methods']=(u[0] for u in PaymentMethodEnum.choices)
         context['accounts']=accounts
     return context
+
 def get_add_payment_context(request,*args, **kwargs):
     context={}
     if request.user.has_perm(APP_NAME+".add_payment"):
@@ -67,12 +70,11 @@ def get_add_cost_context(request,*args, **kwargs):
     
 def add_from_accounts_context(request):
     context={}
-    accounts=AccountRepo(request=request).list()
+    accounts=AccountRepo(request=request).list().order_by('title')
     accounts_s=json.dumps(AccountSerializer(accounts,many=True).data)
     context['accounts']=accounts
     context['accounts_s']=accounts_s
     return context
-
 
 def get_edit_invoice_context(request,*args, **kwargs):
     context={}
@@ -100,7 +102,6 @@ def get_edit_invoice_context(request,*args, **kwargs):
     
     return context
     
-
 def get_invoice_context(request,*args, **kwargs):
     context={}
     invoice=InvoiceRepo(request=request).invoice(*args, **kwargs)
@@ -161,13 +162,32 @@ def get_account_context(request,*args, **kwargs):
     if account is None:
         raise Http404
     context['account']=account
+    if True:
+        account_tags=account.accounttag_set.all()
+        context['account_tags']=account_tags
+        account_tags_s=json.dumps(AccountTagSerializer(account_tags,many=True).data)
+        context['account_tags_s']=account_tags_s
+    if True:
+        from contact.serializers import ContactSerializer
+        contacts=account.contact_set.all()
+        contacts_s=json.dumps(ContactSerializer(contacts,many=True).data)
+        context['contacts']=contacts
+        context['contacts_s']=contacts_s
 
-    invoices=account.invoices()
+        if request.user.has_perm("contact.add_contact"):
+            from contact.forms import AddContactForm
+            from contact.enums import ContatctNameEnum
+            context['add_contact_form']=AddContactForm()
+            contact_name_enums=list(t[0] for t in ContatctNameEnum.choices)
+            context['contact_name_enums']=contact_name_enums
+            context['contact_name_enums_s']=json.dumps(contact_name_enums)
+
+    invoices=InvoiceRepo(request=request).list(account_id=account.id)
     context['invoices']=invoices
     context['invoices_s']=json.dumps(InvoiceSerializer(invoices,many=True).data)
     count=int(ParameterRepo(request=request,app_name=APP_NAME).parameter(name=ParameterAccountingEnum.COUNT_OF_ITEM_PER_PAGE,default=100).value)
     count=kwargs['count'] if 'count' in kwargs else count
-    financial_documents=FinancialDocumentRepo(request=request).list(account_id=account.id)[:count]
+    financial_documents=FinancialDocumentRepo(request=request).list(account_id=account.id).order_by('transaction__transaction_datetime')[:count]
     context['financial_documents']=financial_documents
     context['financial_documents_s']=json.dumps(FinancialDocumentForAccountSerializer(financial_documents,many=True).data)
 
@@ -179,6 +199,12 @@ def get_account_context(request,*args, **kwargs):
     costs=CostRepo(request=request).list(account_id=account.id)
     context['costs']=costs
     context['costs_s']=json.dumps(CostSerializer(costs,many=True).data)
+
+
+
+    cheques=ChequeRepo(request=request).list(account_id=account.id)
+    context['cheques']=cheques
+    context['cheques_s']=json.dumps(ChequeSerializer(cheques,many=True).data)
 
 
 
@@ -223,6 +249,54 @@ def get_transaction_context(request,*args, **kwargs):
     financial_balances_s=json.dumps(FinancialBalanceSerializer(financial_balances,many=True).data)
     context['financial_balances_s']=financial_balances_s
 
+
+
+    if not transaction.editable and request.user.has_perm(APP_NAME+".change_transaction"):
+        context['roll_back_transaction_form']=RollBackTransactionForm()
+        
+    return context
+
+def get_double_transaction_context(request,*args, **kwargs):
+    context={}
+    if 'double_transaction' in kwargs:
+        double_transaction=kwargs['double_transaction']
+    else:
+        double_transaction=DoubleTransactionRepo(request=request).double_transaction(*args, **kwargs)
+    context['double_transaction']=double_transaction
+    
+    transactions=[double_transaction.employer_transaction,double_transaction.middle_transaction]
+    context['transactions']=transactions
+    transactions_s=json.dumps(TransactionSerializer(transactions,many=True).data)
+    context['transactions_s']=transactions_s
+    context.update(PageContext(request=request,page=double_transaction))
+    
+    if double_transaction.employer_transaction is not None:
+        financial_documents1=double_transaction.employer_transaction.financialdocument_set.all()
+        financial_balances1=FinancialBalanceRepo(request=request).list(transaction_id=double_transaction.employer_transaction.id)
+
+    if double_transaction.middle_transaction is not None:
+        financial_documents2=double_transaction.middle_transaction.financialdocument_set.all()
+        financial_balances2=FinancialBalanceRepo(request=request).list(transaction_id=double_transaction.middle_transaction.id)
+            
+    financial_documents=[]
+    for fd in financial_documents1:
+        financial_documents.append(fd)
+    for fd in financial_documents2:
+        financial_documents.append(fd)
+
+    context['financial_documents']=financial_documents
+    context['financial_documents_s']=json.dumps(FinancialDocumentSerializer(financial_documents,many=True).data)
+
+    financial_balances=[]
+    for fb in financial_balances1:
+        financial_balances.append(fb)
+    for fb in financial_balances2:
+        financial_balances.append(fb)
+
+    financial_balances_s=json.dumps(FinancialBalanceSerializer(financial_balances,many=True).data)
+    context['financial_balances']=financial_balances
+    context['financial_balances_s']=financial_balances_s
+
     return context
 
 def get_product_or_service_context(request,*args, **kwargs):
@@ -237,12 +311,31 @@ def get_product_or_service_context(request,*args, **kwargs):
     if 'service' in kwargs:
         product_or_service=kwargs['service']
         context['service']=product_or_service
-    product_or_service_categories=ProductOrServiceCategoryRepo(request=request).list()
-    context['product_or_service_categories']=product_or_service_categories
     context['product_or_service']=product_or_service
-    context['product_or_service_category_s']=json.dumps(ProductOrServiceCategorySerializer(product_or_service.product_or_service_category).data)
     context.update(PageContext(request=request,page=product_or_service))
     context.update(get_price_app_context(request=request,items=[product_or_service]))
+    
+    product_or_service_unit_names=product_or_service.unit_names()
+    context['product_or_service_unit_names']=product_or_service_unit_names
+    product_or_service_unit_names_s=json.dumps(ProductOrServiceUnitNameSerializer(product_or_service_unit_names,many=True).data)
+    context['product_or_service_unit_names_s']=product_or_service_unit_names_s
+
+    # invoices
+    invoices=[]
+    invoice_lines=[]
+
+    if request.user.has_perm(APP_NAME+".view_invoice"):
+        invoices=InvoiceRepo(request=request).list(product_or_service_id=product_or_service.id)
+        invoice_lines=InvoiceLineRepo(request=request).list(product_or_service_id=product_or_service.pk)
+    else:    
+        me_account=AccountRepo(request=request).me
+        if me_account is not None:
+            invoices=InvoiceRepo(request=request).list(product_or_service_id=product_or_service.id,account_id=me_account.id)
+            invoice_lines=InvoiceLineRepo(request=request).list(product_or_service_id=product_or_service.pk,account_id=me_account.id)
+        
+    context['invoices']=invoices
+    invoices_s=json.dumps(InvoiceSerializer(invoices,many=True).data)
+    context['invoices_s']=invoices_s
 
     # invoice_lines
     invoice_lines=InvoiceLineRepo(request=request).list(product_or_service_id=product_or_service.pk)
@@ -250,7 +343,20 @@ def get_product_or_service_context(request,*args, **kwargs):
     # invoice_lines_s=json.dumps(InvoiceLineWithInvoiceSerializer(invoice_lines,many=True).data)
     # context['invoice_lines_s']=invoice_lines_s
 
-    
+
+    #item_categories
+    item_categories=product_or_service.category_set.all()
+    context['item_categories']=item_categories
+    context['item_categories_s']=json.dumps(CategorySerializer(item_categories,many=True).data)
+    if request.user.has_perm(APP_NAME+".change_productorservice"):
+        all_categories=CategoryRepo(request=request).list().order_by('title')
+        context['all_categories']=all_categories
+        context['all_categories_s']=json.dumps(CategorySerializer(all_categories,many=True).data)
+        context['add_item_category_form']=AddItemCategoryForm()
+
+        # for adding unit name
+        context['all_unit_names_for_add_product_or_service_form']=(u[0] for u in UnitNameEnum.choices)
+        context['add_product_or_service_unit_name_form']=AddProductOrServiceUnitNameForm()
     return context
 
 def get_product_context(request,*args, **kwargs):
@@ -259,15 +365,17 @@ def get_product_context(request,*args, **kwargs):
         mv=MessageView(request=request)
         mv.title="چنین کالایی یافت نشد."
         return mv.response()
-    
+
+        
     context=get_product_or_service_context(request=request,item=product,*args, **kwargs)
+    product_specifications=product.productspecification_set.all()
+    product_specifications_s=json.dumps(ProductSpecificationSerializer(product_specifications,many=True).data)
+    context['product_specifications_s']=product_specifications_s
+    context['product_specifications']=product_specifications
+    if request.user.has_perm(APP_NAME+".add_productspecification"):
+        context['add_product_specification_form']=AddProductSpecificationForm()
     
     
-    # invoices
-    invoices=InvoiceRepo(request=request).list(product_id=product.id)
-    context['invoices']=invoices
-    invoices_s=json.dumps(InvoiceSerializer(invoices,many=True).data)
-    context['invoices_s']=invoices_s
 
 
     if app_is_installed('guarantee'):
@@ -322,18 +430,14 @@ def get_search_form_context(request,*args, **kwargs):
 
     return context
 
-
 def get_add_bank_account_context(request,*args, **kwargs):
     context={}
-    profiles=ProfileRepo(request=request).list()
-    context['profiles']=profiles
-    profiles_s=json.dumps(ProfileSerializer(profiles,many=True).data)
-    context['profiles_s']=profiles_s
+    context.update(add_from_accounts_context(request=request))
     banks=BankRepo(request=request).list()
     context['banks']=banks
     return context
 
-def getInvoiceLineContext(request,*args, **kwargs):
+def get_invoice_line_context(request,*args, **kwargs):
     context={}
     invoice_line=InvoiceLineRepo(request=request).invoice_line(*args, **kwargs)
     context['invoice_line']=invoice_line
@@ -345,11 +449,14 @@ def getInvoiceLineContext(request,*args, **kwargs):
         context['guarantees']=guarantees
         guarantees_s=json.dumps(GuaranteeSerializer(guarantees,many=True).data)
         context['guarantees_s']=guarantees_s
+        from guarantee.views import get_add_guarantee_context
+        if request.user.has_perm("guarantee.add_guarantee"):
+            context.update(get_add_guarantee_context(request=request))
 
     
     # warehouse_sheets=[]
     if app_is_installed('warehouse'):
-        from warehouse.enums import WareHouseSheetDirectionEnum
+        from warehouse.enums import WareHouseSheetDirectionEnum,WareHouseSheetStatusEnum
         from warehouse.repo import WareHouseSheetRepo,WareHouseRepo
         from warehouse.forms import AddWarehouseSheetForm
         warehouse_sheets=WareHouseSheetRepo(request=request).list(invoice_line_id=invoice_line.id)
@@ -360,6 +467,8 @@ def getInvoiceLineContext(request,*args, **kwargs):
             ware_houses=WareHouseRepo(request=request).list()
             context['directions']=(direction[0] for direction in WareHouseSheetDirectionEnum.choices)
             context['ware_houses']=ware_houses
+            context['ware_house_sheet_statuses']=(a[0] for a in WareHouseSheetStatusEnum.choices)
+
 
     # context['add_ware_house_sheet_form']=AddWarehouseSheetForm()
 
@@ -374,7 +483,33 @@ class HomeView(View):
         context['products_s']=products_s
         return render(request,TEMPLATE_ROOT+"index.html",context)
 
+class AccountTagView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        account_tag=AccountTagRepo(request=request).account_tag(*args, **kwargs) 
+        context['tag']=account_tag.tag
 
+        accounts=AccountRepo(request=request).list(tag=account_tag.tag)
+        context['accounts']=accounts
+        accounts_s=json.dumps(AccountSerializerFull(accounts,many=True).data)
+        context['accounts_s']=accounts_s
+        context['expand_accounts']=True
+
+
+        return render(request,TEMPLATE_ROOT+"account-tag.html",context)
+    
+
+class AccountTagsView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request) 
+
+        account_tags=AccountTagRepo(request=request).list()
+        context['account_tags']=account_tags
+        account_tags_s=json.dumps(AccountTagSerializer(account_tags,many=True).data)
+        context['account_tags_s']=account_tags_s 
+
+        return render(request,TEMPLATE_ROOT+"account-tags.html",context)
+    
 class ReportView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -384,6 +519,7 @@ class ReportView(View):
         
         context['payment_methods']=(u[0] for u in PaymentMethodEnum.choices)
 
+        context['transaction_statuses']=(u[0] for u in TransactionStatusEnum.choices)
         context['financial_documents_s']='[]'
         context['transactions_s']='[]'
         context['transactions_s']='[]'
@@ -546,9 +682,19 @@ class InvoiceExcelView(View):
 
 class NewInvoiceView(View):
     def get(self,request,*args, **kwargs):
-        invoice=InvoiceRepo(request=request).create_invoice(*args, **kwargs)
-        url=reverse(APP_NAME+":edit_invoice",kwargs={'pk':invoice.pk})
-        return redirect(url)
+        invoice,result,message=InvoiceRepo(request=request).create_invoice(*args, **kwargs)
+        if invoice is not None:
+            url=reverse(APP_NAME+":edit_invoice",kwargs={'pk':invoice.pk})
+            return redirect(url)
+        else:
+            back_url=reverse(APP_NAME+":home")
+            back_url=request.META.get('HTTP_REFERER')
+            mv=MessageView(request=request)
+            mv.title=message
+            mv.body=message
+            mv.message=message
+            mv.back_url=back_url
+            return mv.response()
 
 
 class InvoiceLetterOfIntentView(View):
@@ -610,6 +756,7 @@ class InvoiceView(View):
         context=getContext(request=request)
         invoice=InvoiceRepo(request=request).invoice(*args, **kwargs)
         
+        context['COEF_PRICE']=1
         if invoice is None:
             mv=MessageView(request=request)
             mv.title="چنین فاکتوری یافت نشد."
@@ -629,13 +776,16 @@ class InvoiceView(View):
             context['ware_houses']=ware_houses
             
         return render(request,TEMPLATE_ROOT+"invoice.html",context)
+
 class InvoicePrintView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
         context.update(get_invoice_context(request=request,*args, **kwargs))
         currency=CURRENCY
+        context['TRANSACTION_PRINTING']=True
         context['TUMAN']=True
         context['RIAL']=False
+        context['COEF_PRICE']=1
         if 'currency' in kwargs:
             currency=kwargs['currency']
             if currency=='r':
@@ -643,7 +793,8 @@ class InvoicePrintView(View):
                 context['RIAL']=True
                 from core.constants import RIAL
                 context['CURRENCY']=RIAL
-
+                if CURRENCY==TUMAN:
+                    context['COEF_PRICE']=10
         context['no_footer']=True
         context['no_navbar']=True
         return render(request,TEMPLATE_ROOT+"invoice-print.html",context)
@@ -652,6 +803,7 @@ class InvoiceOfficialPrintView(View):
         context=getContext(request=request)
         context.update(get_invoice_context(request=request,*args, **kwargs))
 
+        context['COEF_PRICE']=10
         context['TUMAN']=False
         context['RIAL']=True
         from core.constants import RIAL
@@ -685,7 +837,7 @@ class InvoiceLineView(View):
         return EditInvoiceApi().post(request=request,*args, **kwargs)
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
-        context.update(getInvoiceLineContext(request=request,*args, **kwargs))
+        context.update(get_invoice_line_context(request=request,*args, **kwargs))
         invoice_line=InvoiceLineRepo(request=request).invoice_line(*args, **kwargs)
         context['invoice_line']=invoice_line
 
@@ -710,7 +862,7 @@ class TransactionsView(View):
             context['account_id_2']=kwargs['account_id_2']
         if 'account_id' in kwargs:
             context['account_id']=kwargs['account_id']
-        transactions=TransactionRepo(request=request).list(*args, **kwargs)
+        transactions=TransactionRepo(request=request).list(*args, **kwargs).order_by('-transaction_datetime')
         context['transactions']=transactions
         transactions_s=json.dumps(TransactionSerializer(transactions,many=True).data)
         context['transactions_s']=transactions_s
@@ -774,44 +926,59 @@ class TransactionsPrintView(View):
             context['no_navbar']=True
             return render(request,TEMPLATE_ROOT+"transactions-print.html",context)
 
-class ProductOrServiceCategoriesView(View):
+ 
+class CategoriesView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
-        product_or_service_categories=ProductOrServiceCategoryRepo(request=request).list(*args, **kwargs)
-        context['product_or_service_categories']=product_or_service_categories
-        product_or_service_categories_s=json.dumps(ProductOrServiceCategorySerializer(product_or_service_categories,many=True).data)
-        context['product_or_service_categories_s']=product_or_service_categories_s
-        context['expand_product_or_service_categories']=True
-        if request.user.has_perm(APP_NAME+".add_productorservicecategory"):
-            context['add_account_form']=AddAccountForm()
-        return render(request,TEMPLATE_ROOT+"product-or-service-categories.html",context)
+        categories=CategoryRepo(request=request).list(parent_id=0,*args, **kwargs)
+        context['categories']=categories
+        categories_s=json.dumps(CategorySerializer(categories,many=True).data)
+        context['categories_s']=categories_s
+        context['expand_categories']=True
+        if request.user.has_perm(APP_NAME+".add_category"):
+            context['add_category_form']=AddCategoryForm()
+        return render(request,TEMPLATE_ROOT+"categories.html",context)
 
 
-class ProductOrServiceCategoryView(View):
+class CategoryView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
-        product_or_service_category_repo=ProductOrServiceCategoryRepo(request=request)
-        product_or_service_category=product_or_service_category_repo.product_or_service_category(*args, **kwargs)
-        if product_or_service_category is None:
+        context['expand_categories']=True
+        category_repo=CategoryRepo(request=request)
+        category=category_repo.category(*args, **kwargs)
+        if category is None:
             mv=MessageView(request=request)
-            mv.title="چنین کالایی یافت نشد."
+            mv.title="دسته بندی مورد نظر یافت نشد."
         # context['expand_products']=True
         # context['expand_services']=True
-        
-        products=ProductRepo(request=request).list(product_or_service_category_id=product_or_service_category.pk)
+        products_or_services=category.products_or_services.all()
+
+        products=products_or_services.filter(class_name='product')
         context['products']=products
         products_s=json.dumps(ProductSerializer(products,many=True).data)
         context['products_s']=products_s
         
 
-        services=ServiceRepo(request=request).list(product_or_service_category_id=product_or_service_category.pk)
+        services=products_or_services.filter(class_name='service')
         context['services']=services
         services_s=json.dumps(ServiceSerializer(services,many=True).data)
         context['services_s']=services_s
-        context['product_or_service_category']=product_or_service_category
-        product_or_service_categories=product_or_service_category_repo.list(super_category=None)
-        context['product_or_service_categories']=product_or_service_categories
-        return render(request,TEMPLATE_ROOT+"product-or-service-category.html",context)
+
+
+
+        context['category']=category
+        categories=category_repo.list(parent_id=category.id)
+        context['categories']=categories
+        context['categories_s']=json.dumps(CategorySerializer(categories,many=True).data)
+
+        if request.user.has_perm(APP_NAME+".add_category"):
+            context['add_category_form']=AddCategoryForm()
+
+
+        if request.user.has_perm(APP_NAME+".add_product"):
+            context['add_product_form']=AddProductForm()
+            context['unit_names']=(i[0] for i in UnitNameEnum.choices)
+        return render(request,TEMPLATE_ROOT+"category.html",context)
 
 
 class ProductsView(View):
@@ -843,7 +1010,9 @@ class BankAccountsView(View):
         context['expand_bank_accounts']=True
         bank_accounts_s=json.dumps(BankAccountSerializer(bank_accounts,many=True).data)
         context['bank_accounts_s']=bank_accounts_s
-        context.update(get_add_bank_account_context(request=request))
+        if request.user.has_perm(APP_NAME+".add_bankaccount"):
+            context['add_bank_account_form']=AddBankAccountForm()
+            context.update(get_add_bank_account_context(request=request))
         return render(request,TEMPLATE_ROOT+"bank-accounts.html",context)
 
 class BankAccountView(View):
@@ -854,10 +1023,44 @@ class BankAccountView(View):
         if bank_account is None:
             mv=MessageView(request=request)
             mv.title="چنین حسابی یافت نشد."
-        context.update(get_account_context(request=request,account=bank_account))
+        # context.update(get_account_context(request=request,account=bank_account))
         return render(request,TEMPLATE_ROOT+"bank-account.html",context)
 
 
+# class DoubleTransactionsView(View):
+#     def get(self,request,*args, **kwargs):
+#         context=getContext(request=request)
+#         double_transactions=DoubleTransactionRepo(request=request).list(*args, **kwargs)
+#         context['double_transactions']=double_transactions
+#         return render(request,TEMPLATE_ROOT+"double-transactions.html",context)
+
+
+class DoubleTransactionView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        # double_transaction=DoubleTransactionRepo(request=request).double_transaction(*args, **kwargs)
+        # context['double_transaction']=double_transaction
+        context.update(get_double_transaction_context(request=request,*args, **kwargs))
+        if context['double_transaction'] is None:
+            mv=MessageView(request=request)
+            mv.title="چنین تراکنشی یافت نشد."
+        return render(request,TEMPLATE_ROOT+"double-transaction.html",context)
+
+class DoubleTransactionsView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        if 'account_id_1' in kwargs:
+            context['account_id_1']=kwargs['account_id_1']
+        if 'account_id_2' in kwargs:
+            context['account_id_2']=kwargs['account_id_2']
+        if 'account_id' in kwargs:
+            context['account_id']=kwargs['account_id']
+        double_transactions=DoubleTransactionRepo(request=request).list(*args, **kwargs)
+        context['double_transactions']=double_transactions
+        double_transactions_s=json.dumps(DoubleTransactionSerializer(double_transactions,many=True).data)
+        context['double_transactions_s']=double_transactions_s
+        context['expand_double_transactions']=True
+        return render(request,TEMPLATE_ROOT+"double-transactions.html",context)
 
 
 class BanksView(View):
@@ -875,6 +1078,11 @@ class BankView(View):
         context=getContext(request=request)
         bank=BankRepo(request=request).bank(*args, **kwargs)
         context['bank']=bank
+        cheques=ChequeRepo(request=request).list(bank_id=bank.id)
+        context['cheques']=cheques
+        cheques_s=json.dumps(ChequeSerializer(cheques,many=True).data)
+        context['cheques_s']=cheques_s
+
         if bank is None:
             mv=MessageView(request=request)
             mv.title="چنین بانکی یافت نشد."
@@ -909,7 +1117,9 @@ class ChequesView(View):
         cheques_s=json.dumps(ChequeSerializer(cheques,many=True).data)
         context['cheques_s']=cheques_s
         if request.user.has_perm(APP_NAME+".add_cheque"):
+            context.update(add_transaction_context(request=request))
             context['add_cheque_form']=AddChequeForm()
+            context['banks']=BankRepo(request=request).list()
         return render(request,TEMPLATE_ROOT+"cheques.html",context)
 class ChequeView(View):
     def get(self,request,*args, **kwargs):
@@ -942,7 +1152,9 @@ class AccountView(View):
         context=getContext(request=request)
         account=AccountRepo(request=request).account(*args, **kwargs)
         context['account']=account
-
+        me_account=context['me_account']
+        if account==me_account:
+            context['account_is_me']=True
         context.update(get_account_context(request=request,account=account))
         return render(request,TEMPLATE_ROOT+"account.html",context)      
 class AccountsView(View):
@@ -962,7 +1174,7 @@ class AccountsView(View):
 class PaymentsView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
-        payments=PaymentRepo(request=request).list(*args, **kwargs)
+        payments=PaymentRepo(request=request).list(*args, **kwargs).order_by('-transaction_datetime')
         context['payments']=payments
         context['expand_payments']=True
 

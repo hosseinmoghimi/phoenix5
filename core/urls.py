@@ -10,6 +10,8 @@ urlpatterns = [
     path('settings/',views.SettingsView.as_view(),name="settings"),
     path('backup/',views.BackupView.as_view(),name="backup"),
     path('page/<int:pk>/',views.PageView.as_view(),name="page"),
+    path('page_downloads/',views.PageDownloadsView.as_view(),name="page_downloads"),
+    path('page_links/',views.PageLinksView.as_view(),name="page_links"),
     path('pages_permissions/<int:pk>/',views.PagePermissionsView.as_view(),name="pages_permissions"),
     path('change_parameter/',apis.ChangeParameterApi.as_view(),name="change_parameter"),
     path('add_page_link/',apis.AddPageLinkApi.as_view(),name="add_page_link"),
@@ -22,18 +24,28 @@ urlpatterns = [
     path("page_edit/<int:pk>/",views.PageEditView.as_view(),name='page_edit'),
     path("image_download/<int:pk>/",views.ImageDownloadView.as_view(),name='image_download'),
     path("pageimage/<int:pk>/",views.PageImageView.as_view(),name='pageimage'),
+
+    
+    path('download_media/',views.DownloadMediaApi.as_view(),name="download_media"),
+    path('download_uploads/',views.DownloadUploadsApi.as_view(),name="download_uploads"),
+  
+  
     path('add_page_download/',apis.AddPageDownloadApi.as_view(),name="add_page_download"),
     path('add_page_image/',apis.AddPageImageApi.as_view(),name="add_page_image"),
 
     path('encrypt/',apis.EncryptApi.as_view(),name="encrypt"),
     path('decrypt/',apis.DecryptApi.as_view(),name="decrypt"),
+    path('decrypt_once/',apis.DecryptOnceApi.as_view(),name="decrypt_once"),
     path('delete_page_comment/',apis.DeletePageCommentApi.as_view(),name="delete_page_comment"),
     path('add_page_comment/',apis.AddPageCommentApi.as_view(),name="add_page_comment"),
     path('add_contact_message/',apis.AddContactMessageApi.as_view(),name="add_contact_message"),
     path('add_related_page/',apis.AddRelatedPageApi.as_view(),name="add_related_page"),
     path('toggle_like/',apis.TogglePageLikeApi.as_view(),name="toggle_like"),
     path('add_page_tag/',apis.AddPageTagApi.as_view(),name="add_page_tag"),
+
     path('add_page_permission/',apis.AddPagePermissionApi.as_view(),name="add_page_permission"),
     path('set_thumbnail_header/',apis.SetThumbnailHeaderApi.as_view(),name="set_thumbnail_header"),
+    path('delete_page_image/',apis.DeletePageImageApi.as_view(),name="delete_page_image"),
+    path('change_page_metadata/',apis.ChangePageMetadataApi.as_view(),name="change_page_metadata"),
 
 ]

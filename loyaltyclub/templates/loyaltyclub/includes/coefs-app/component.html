@@ -1,0 +1,16 @@
+<div>
+    <form @submit.prevent="save()">
+        <div class="form-group">
+            <label for="">درصد تخفیف برای خرید
+                <span v-text="coef.tartib"></span>
+            </label>
+            <input type="number" v-model="coef.percentage" class="form-control">
+        </div>
+
+    </form>
+    <div class="my-3 text-right" v-if="message.show">
+        <span :class="'alert alert-'+message.color">
+            <span class="farsi" v-html="message.body"></span>
+        </span>
+    </div>
+</div>

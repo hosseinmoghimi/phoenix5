@@ -12,35 +12,31 @@
 <div id="edit-invoice-app">
 
 
-    <div class="row">
+    <div class="row rtl">
         <div class="col-md-12">
             <div class="card">
                 <div class="card-body">
 
                     <div class="text-center">
-                        <img src="{{invoice.seller.logo}}" height="96" class="my-3" alt="">
+                        <img src="{{invoice.pay_from.logo}}" height="96" class="my-3" alt="">
 
                     </div>
                     <h4 class="text-center my-3">
 
-                        {{invoice.seller.title}}
+                        {{invoice.pay_from.title}}
                     </h4>
-
-                    <h4 class="text-right">
-                        {{invoice.title}}
-
-
-                    </h4>
+ 
+                    <input type="text" v-model="title" class="form-control">
 
                     <h4 class="text-center my-3">
 
                         {% include "accounting/includes/invoice-app/navbar.html" %}
                     </h4>
 
-                    <div class="row">
+                    <div class="row rtl">
 
-                        <div class="col-md-6">
-                            <div class="row">
+                        <div class="col-md-8">
+                            <div class="row rtl">
                                 <div class="col-3">
                                     <span class="farsi text-left">
 
@@ -48,7 +44,7 @@
                                     </span>
 
                                 </div>
-                                <div class="col-6">
+                                <div class="col-4">
                                     <select class="form-control" v-model="invoice.pay_from.id">
                                         {% for store in stores %}
                                         <option value="{{store.id}}">{{store.title}}</option>
@@ -56,9 +52,20 @@
                                         {% endfor %}
                                     </select>
                                 </div>
+                                <div class="col-5 farsi text-right">
+                                    <span class="">
+                                        <a href="{{invoice.pay_from.get_absolute_url}}">
+                                            <img src="{{invoice.pay_from.logo}}" width="32" class="rounded ml-2" alt="">
+                                          
+                                            {{invoice.pay_from.title}}
+                                        </a>
+                                    </span>
+
+                                </div>
+
                             </div>
 
-                            <div class="row">
+                            <div class="row rtl">
                                 <div class="col-3">
                                     <span class="farsi text-left">
 
@@ -66,7 +73,7 @@
                                     </span>
 
                                 </div>
-                                <div class="col-6">
+                                <div class="col-4">
                                     <select class="form-control" v-model="invoice.pay_to.id">
                                         {% for customer in customers %}
                                         <option value="{{customer.id}}">{{customer.title}}</option>
@@ -74,13 +81,23 @@
                                         {% endfor %}
                                     </select>
                                 </div>
+                                <div class="col-5 farsi text-right">
+                                    <span class="">
+                                        <a href="{{invoice.pay_to.get_absolute_url}}">
+                                            <img src="{{invoice.pay_to.logo}}" width="32" class="rounded ml-2" alt="">
+                                            {{invoice.pay_to.title}}
+                                        </a>
+                                    </span>
+
+                                </div>
+
                             </div>
 
 
                         </div>
 
-                        <div class="col-md-6">
-                            <div class="row">
+                        <div class="col-md-4">
+                            <div class="row rtl">
                                 <div class="col-6 text-left ">
                                     <span class="farsi text-left">
 
@@ -89,9 +106,9 @@
                                 </div>
                                 <div class="col-6 text-right farsi">
 
-                                  <span>
-                                      {{invoice.pk}}
-                                  </span>
+                                    <span>
+                                        {{invoice.pk}}
+                                    </span>
                                 </div>
 
 
@@ -340,25 +357,34 @@
                             </td>
                         </tr>
                     </table>
+                    <div>
+                        <h6>
 
+                            <a href="{% url 'accounting:products' %}" target="_blank">لیست کالا ها </a>
+                        </h6>
+                        <h6>
+
+                            <a href="{% url 'accounting:services' %}" target="_blank">لیست سرویس ها </a>
+                        </h6>
+                    </div>
                 </div>
             </div>
         </div>
         <div class="col-md-12">
             <div class="card">
                 <div class="card-body">
-                    <p class=" mx-5">
+                    <p class=" mx-5 farsi text-right">
                         واحد مبلغ ها تومان می باشد.
                     </p>
                     {% if invoice.seller.bank_account %}
-                    <p class=" mx-5">
+                    <p class=" mx-5  farsi text-right">
 
                         {{invoice.seller.bank_account|to_variz_text}}
                     </p>
                     {% endif %}
 
 
-                    <div class="row">
+                    <div class="row rtl">
 
 
                         <div class="col-md-2">
@@ -420,9 +446,13 @@
                     <div class="text-right fars">
 
 
+                        {% if transaction.editable %}
+
+
                         <button class="btn btn-success" @click="save()">
                             ذخیره کن
                         </button>
+                        {% endif %}
                         <div class="my-3" v-if="message.show">
                             <span :class="'alert alert-'+message.color">
                                 <span class="farsi" v-text="message.body"></span>
@@ -439,13 +469,24 @@
 
     </div>
 </div>
+{% if roll_back_transaction_form %}
+
+<div class="col-md-12">
+
+    {% include "accounting/includes/roll-back-transaction-app/template.html" %}
+</div>
+
+{% endif %}
 
 {% endblock content %}
 
 
 {% block script %}
-<script>
-</script>
+
 {% include "accounting/invoice-edit-script.html" %}
+
+{% if roll_back_transaction_form %}
+{% include "accounting/includes/roll-back-transaction-app/script.html" %}
+{% endif %}
 
 {% endblock script %}

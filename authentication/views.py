@@ -1,17 +1,18 @@
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import redirect, render,reverse
 import json
-from authentication.serializers import ProfileSerializer
+from authentication.serializers import ProfileContactSerializer, ProfileSerializer
 from authentication.enums import *
 from core.constants import FAILED, SUCCEED
 from core.enums import *
 from core.utils import app_is_installed
 from .forms import *
 from core.repo import ImageRepo, PageLikeRepo, ParameterRepo, PictureRepo
-from .repo import ProfileRepo
+from .repo import ProfileContactRepo, ProfileRepo
 from core.views import CoreContext, MessageView
 from django.views import View
 from authentication.apps import APP_NAME
+from utility.log import leolog
 TEMPLATE_ROOT="authentication/"
 LAYOUT_PARENT="phoenix/layout.html"
 
@@ -74,8 +75,22 @@ class ProfileViews(View):
             mv.title="چنین پروفایلی پیدا نشد"
             return mv.show()
 
+        me_profile=context['profile']
         context['selected_profile']=selected_profile
-        
+        # leolog(me_profile=me_profile)
+        if me_profile is None:
+            mv=MessageView(request=request)
+            mv.title="عدم دسترسی"
+            mv.body="پروفایل وجود ندارد."
+            return mv.response()
+
+        if not request.user.has_perm(APP_NAME+".view_profile") and not me_profile.id==selected_profile.id:
+            mv=MessageView(request=request)
+            mv.title="عدم دسترسی"
+            mv.body="دسترسی غیر مجاز"
+            
+            return mv.response() 
+
         if selected_profile.enabled:
             from accounting.views import AccountRepo
             accounts=AccountRepo(request=request).list(profile_id=selected_profile.id)
@@ -94,12 +109,22 @@ class ProfileViews(View):
         if not selected_profile.enabled:
             context['no_navbar']=True
             context['no_footer']=True
-
-
+        if selected_profile.pk==me_profile.pk:
+            context['profile_is_me']=True
+        if True:
+            if request.user.has_perm(APP_NAME+".add_profilecontact"):
+                contact_type_enums=list(t[0] for t in ProfileContatcTypeEnum.choices)
+                context['contact_type_enums_s']=json.dumps(contact_type_enums)
+                context['contact_type_enums']=contact_type_enums
+                context['add_profile_contact_form']=AddProfileContactForm()
+            profile_contacts=ProfileContactRepo(request=request).list(profile_id=selected_profile.id).order_by('priority')
+            context['profile_contacts']=profile_contacts
+            profile_contacts_s=json.dumps(ProfileContactSerializer(profile_contacts,many=True).data)
+            context['profile_contacts_s']=profile_contacts_s
         page_likes=PageLikeRepo(request=request).list(profile_id=selected_profile.id)
         context['page_likes']=page_likes
 
-
+        
 
         profiles=ProfileRepo(request=request).list(user_id=selected_profile.user.id)
         if len(profiles)>1:
@@ -113,6 +138,35 @@ class ProfileViews(View):
         if 'resume_app_is_installed' in context and context['resume_app_is_installed']:
             context['resumes']=selected_profile.resumeindex_set.all()
         return render(request,TEMPLATE_ROOT+"profile.html",context)
+
+
+class SessionsViews(View):
+    def get(self,request,*args, **kwargs):
+        if not request.user.has_perm(APP_NAME+".view_profile"):
+            mv=MessageView(request=request)
+            mv.title="عدم دسترسی"
+            mv.body="دسترسی غیر مجاز"
+            return mv.response()
+        context=getContext(request=request)
+        selected_profile=ProfileRepo(request=request,forced=True).me
+        if 'pk' in kwargs:
+            selected_profile=ProfileRepo(request=request,forced=True).profile(*args, **kwargs)
+        if selected_profile is None:
+            mv=MessageView(request=request)
+            mv.has_home_link=True
+            mv.title="چنین پروفایلی پیدا نشد"
+            return mv.show()
+
+        context['selected_profile']=selected_profile
+        sessions=[]
+        for key in request.session.keys():
+            session={
+                'name':key,
+                'value':request.session[key],
+            }
+            sessions.append(session)
+        context["sessions"]=sessions
+        return render(request,TEMPLATE_ROOT+"sessions.html",context)
 
 
 class ChangeProfileImageViews(View):
@@ -239,6 +293,7 @@ class LoginAsViews(View):
         context=getContext(request=request)
         if request.user.has_perm(APP_NAME+".change_profile"):
             selected_profile=ProfileRepo(request=request).profile(*args, **kwargs)
+            leolog(selected_profile=selected_profile)
             if selected_profile is not None:
                 ProfileRepo(request=request).login(request=request,user=selected_profile.user)
                 return redirect(APP_NAME+":me")
@@ -254,8 +309,10 @@ class RegisterViews(View):
     def post(self,request):
         register_form=RegisterForm(request.POST)
         if register_form.is_valid():
-            a=register_form.save()
-            a=ProfileRepo(request=request).login(request=request,user=a)
+            user=register_form.save()
+            request,user=ProfileRepo(request=request).login(request=request,user=user)
+            mobile=register_form.cleaned_data['mobile']
+            ProfileRepo(request=request,forced=True).set_attribute(user=user,mobile=mobile)
             return redirect(APP_NAME+":me")
 
 

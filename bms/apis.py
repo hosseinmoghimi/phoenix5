@@ -1,4 +1,6 @@
 from rest_framework.views import APIView
+
+from utility.log import leolog
 from .serializers import FeederSerializer
 from core.constants import FAILED, SUCCEED
 from .repo import CommandRepo
@@ -32,8 +34,7 @@ class ExecuteCommandApi(APIView):
             if form1.is_valid():
                 log=3
                 cd=form1.cleaned_data
-                result,registers=CommandRepo(request=request).execute_command(**cd)
-                
+                result,registers,message=CommandRepo(request=request).execute_command(**cd)
                 if result is not None:
                     return JsonResponse({'result':SUCCEED,'registers':registers})
         return JsonResponse({'result':FAILED,'log':log})

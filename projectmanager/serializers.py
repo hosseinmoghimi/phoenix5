@@ -55,17 +55,15 @@ class RequestSignatureForEmployeeSerializer(serializers.ModelSerializer):
 
 
 class MaterialSerializer(serializers.ModelSerializer):
-    product_or_service_category=ProductOrServiceSerializer()
     class Meta:
         model = Material
-        fields = ['id', 'title','product_or_service_category', 'get_pm_absolute_url','full_title','buy_price','available','unit_price','unit_name','thumbnail']
+        fields = ['id', 'title','get_pm_absolute_url','full_title','buy_price','available','unit_price','unit_name','thumbnail']
 
 
 class ServiceSerializer(serializers.ModelSerializer):
-    product_or_service_category=ProductOrServiceSerializer()
     class Meta:
         model = Service
-        fields = ['id', 'title','product_or_service_category',  'get_pm_absolute_url','get_absolute_url','full_title','buy_price','unit_price','unit_name','thumbnail','get_edit_url','get_delete_url']
+        fields = ['id', 'title','get_pm_absolute_url','get_absolute_url','full_title','buy_price','unit_price','unit_name','thumbnail','get_edit_url','get_delete_url']
 
 
 class ProjectSerializer(serializers.ModelSerializer):
@@ -90,7 +88,7 @@ class ServiceRequestSerializer(serializers.ModelSerializer):
         model=ServiceRequest
         fields=['id','total','invoice','service','persian_date_requested',
         'quantity','persian_date_added','get_edit_url','get_delete_url',
-        'get_status_tag','project','employee','unit_name','unit_price','status',
+        'get_status_tag','project','employee','unit_name','unit_price','status','row',
         'get_absolute_url']
 
 
@@ -103,7 +101,7 @@ class ServiceRequestFullSerializer(serializers.ModelSerializer):
         model=ServiceRequest
         fields=['id','total','invoice','service','status','persian_date_requested',
         'quantity','persian_date_added','get_edit_url','get_delete_url',
-        'get_status_tag','project','employee','unit_name','unit_price',
+        'get_status_tag','project','employee','unit_name','unit_price','row',
         'get_absolute_url']
 
 
@@ -116,7 +114,7 @@ class MaterialRequestSerializer(serializers.ModelSerializer):
         model=Request
         fields=['id','invoice','total','material','persian_date_requested','status',
         'quantity','persian_date_added','get_edit_url','get_delete_url',
-        'get_status_tag','project','employee','unit_name','unit_price',
+        'get_status_tag','project','employee','unit_name','unit_price','row',
         'get_absolute_url']
 
 
@@ -129,5 +127,5 @@ class MaterialRequestFullSerializer(serializers.ModelSerializer):
         model=Request
         fields=['id','invoice','total','material','persian_date_requested','status',
         'quantity','persian_date_added','get_edit_url','get_delete_url',
-        'get_status_tag','project','employee','unit_name','unit_price',
+        'get_status_tag','project','employee','unit_name','unit_price','row',
         'get_absolute_url']

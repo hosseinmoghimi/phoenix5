@@ -625,6 +625,10 @@ class MaintenanceRepo():
             maintenance.pay_to_id=Client.objects.filter(pk=kwargs['client_id']).first().account_id
         if 'vehicle_id' in kwargs:
             maintenance.vehicle_id=kwargs['vehicle_id']
+        if 'status' in kwargs:
+            maintenance.status=kwargs['status']
+        if 'payment_method' in kwargs:
+            maintenance.payment_method=kwargs['payment_method']
         maintenance.save()
         return maintenance
 

@@ -1,12 +1,14 @@
 import json
+from unicodedata import category
 from core.constants import FAILED,SUCCEED
 from rest_framework.views import APIView
 
 from utility.calendar import PersianCalendar
-from .repo import AccountRepo, BankAccountRepo, BankRepo, ChequeRepo, CostRepo, FinancialBalanceRepo,  FinancialDocumentRepo, InvoiceRepo, PaymentRepo, PriceRepo, ProductOrServiceRepo, ProductRepo, ServiceRepo, TransactionRepo
+from utility.log import leolog
+from .repo import AccountRepo, BankAccountRepo, BankRepo, CategoryRepo, ChequeRepo, CostRepo, FinancialBalanceRepo,  FinancialDocumentRepo, InvoiceRepo, PaymentRepo, PriceRepo, ProductOrServiceRepo, ProductRepo, ServiceRepo, TransactionRepo
 from django.http import JsonResponse
 from .forms import *
-from .serializers import AccountSerializer, BankAccountSerializer, BankSerializer, ChequeSerializer, CostSerializer, FinancialBalanceSerializer, FinancialDocumentSerializer, InvoiceFullSerializer, InvoiceLineSerializer, PaymentSerializer, PriceSerializer, ProductOrServiceCategorySerializer, ProductSerializer, ServiceSerializer, TransactionSerializer
+from .serializers import AccountSerializer,AccountTagSerializer, BankAccountSerializer, BankSerializer, CategorySerializer, ChequeSerializer, CostSerializer, FinancialBalanceSerializer, FinancialDocumentSerializer, InvoiceFullSerializer, InvoiceLineSerializer, PaymentSerializer, PriceSerializer, ProductOrServiceUnitNameSerializer,  ProductSerializer, ProductSpecificationSerializer, ServiceSerializer, TransactionSerializer
 
 class AddBankAccountApi(APIView):
     def post(self,request,*args, **kwargs):
@@ -30,6 +32,7 @@ class AddBankAccountApi(APIView):
         context['log']=log
         return JsonResponse(context)
 
+
 class AddBankApi(APIView):
     def post(self,request,*args, **kwargs):
         context={}
@@ -51,11 +54,104 @@ class AddBankApi(APIView):
         context['log']=log
         return JsonResponse(context)
 
-class AddChequeApi(APIView):
+
+class RollBackTransactionApi(APIView):
     def post(self,request,*args, **kwargs):
         context={}
         log=1
         context['result']=FAILED
+        if request.method=='POST':
+            log=2
+            RollBackTransactionForm_=RollBackTransactionForm(request.POST)
+
+
+
+            
+            if RollBackTransactionForm_.is_valid():
+                log=3
+                transaction=TransactionRepo(request=request).roll_back(**RollBackTransactionForm_.cleaned_data)
+                if transaction is not None:
+                    context['transaction']=TransactionSerializer(transaction).data
+                    context['result']=SUCCEED
+        context['log']=log
+        return JsonResponse(context)
+
+
+class AddProductSpecificationApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        log=1
+        context['result']=FAILED
+        if request.method=='POST':
+            log=2
+            AddProductSpecificationForm_=AddProductSpecificationForm(request.POST)
+
+
+
+            
+            if AddProductSpecificationForm_.is_valid():
+                log=3
+                cd=AddProductSpecificationForm_.cleaned_data
+                product_specification=ProductRepo(request=request).add_product_specification(**cd)
+                if product_specification is not None:
+                    context['product_specification']=ProductSpecificationSerializer(product_specification).data
+                    context['result']=SUCCEED
+        context['log']=log
+        return JsonResponse(context)
+
+
+class AddProductOrServiceUnitNameApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        log=1
+        context['result']=FAILED
+        if request.method=='POST':
+            log=2
+            AddProductSpecificationForm_=AddProductOrServiceUnitNameForm(request.POST)
+
+
+
+            
+            if AddProductSpecificationForm_.is_valid():
+                cd=AddProductSpecificationForm_.cleaned_data
+                log=3
+                cd=AddProductSpecificationForm_.cleaned_data
+                product_or_service_unit_name=ProductOrServiceRepo(request=request).add_product_or_service_unit_name(**cd)
+                if product_or_service_unit_name is not None:
+                    context['product_or_service_unit_name']=ProductOrServiceUnitNameSerializer(product_or_service_unit_name).data
+                    context['result']=SUCCEED
+        context['log']=log
+        return JsonResponse(context)
+
+
+class PrintTransactionApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        log=1
+        context['result']=FAILED
+        if request.method=='POST':
+            log=2
+            PrintTransactionForm_=PrintTransactionForm(request.POST)
+
+
+
+            
+            if PrintTransactionForm_.is_valid():
+                log=3
+                transaction=TransactionRepo(request=request).print(**PrintTransactionForm_.cleaned_data)
+                if transaction is not None:
+                    context['transaction']=TransactionSerializer(transaction).data
+                    context['result']=SUCCEED
+        context['log']=log
+        return JsonResponse(context)
+
+
+class AddChequeApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        log=1
+        message=""
+        result=FAILED
         if request.method=='POST':
             log=2
             add_cheque_form=AddChequeForm(request.POST)
@@ -66,15 +162,17 @@ class AddChequeApi(APIView):
             if add_cheque_form.is_valid():
                 log=3
                 fm=add_cheque_form.cleaned_data
+                fm['transaction_datetime']=PersianCalendar().to_gregorian(fm['transaction_datetime'])
+                fm['sarresid_datetime']=PersianCalendar().to_gregorian(fm['sarresid_datetime'])
                 title=fm['title']
-                cheque=ChequeRepo(request=request).add_cheque(
-                    title=title,
-                )
+                cheque,result,message=ChequeRepo(request=request).add_cheque(**fm)
                 if cheque is not None:
                     context['cheque']=ChequeSerializer(cheque).data
-                    context['result']=SUCCEED
+        context['message']=message
+        context['result']=result
         context['log']=log
         return JsonResponse(context)
+
 
 class GetReportApi(APIView):
     def post(self,request,*args, **kwargs):
@@ -93,11 +191,19 @@ class GetReportApi(APIView):
                 
                 # context['cheques']=ChequeSerializer(ChequeRepo(request=request).list(**cd),many=True).data
                 # context['payments']=PaymentSerializer(PaymentRepo(request=request).list(**cd),many=True).data
-                context['transactions']=TransactionSerializer(TransactionRepo(request=request).list(**cd),many=True).data
-                context['financial_documents']=FinancialDocumentSerializer(FinancialDocumentRepo(request=request).list(**cd),many=True).data
+                transactions=TransactionRepo(request=request).list(**cd)
+                # print(100*"#")
+                # print("GetReportForm_")
+                # print(cd)
+                # print(100*"#")
+                # financial_documents=FinancialDocumentRepo(request=request).list(transactions=transactions)
+                financial_documents=FinancialDocumentRepo(request=request).list(**cd)
+                context['transactions']=TransactionSerializer(transactions,many=True).data
+                context['financial_documents']=FinancialDocumentSerializer(financial_documents,many=True).data
                 context['result']=SUCCEED
         context['log']=log
         return JsonResponse(context)
+
 
 class EditInvoiceApi(APIView):
     def post(self,request,*args, **kwargs):
@@ -124,13 +230,15 @@ class EditInvoiceApi(APIView):
                 description=fm['description']
                 discount=fm['discount']
                 invoice_id=fm['invoice_id']
+                title=fm['title']
                 payment_method=fm['payment_method']
                 status=fm['status']
                 invoice_datetime=PersianCalendar().to_gregorian(invoice_datetime)
-                invoice=InvoiceRepo(request=request).edit_invoice(
+                (result,invoice,message)=InvoiceRepo(request=request).edit_invoice(
                     invoice_id=invoice_id,
                     lines=lines,
                     status=status,
+                    title=title,
                     payment_method=payment_method,
                     description=description,
                     discount=discount,
@@ -143,7 +251,8 @@ class EditInvoiceApi(APIView):
                 if invoice is not None:
                     context['invoice']=InvoiceFullSerializer(invoice).data
                     context['invoice_lines']=InvoiceLineSerializer(invoice.invoice_lines(),many=True).data
-                    context['result']=SUCCEED
+                    context['result']=result
+                    context['message']=message
         context['log']=log
         return JsonResponse(context)
 
@@ -224,6 +333,79 @@ class AddPaymentApi(APIView):
         context['log']=log
         return JsonResponse(context)
         
+class AddAccountTagApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        log=1
+        context['result']=FAILED
+        message=""
+        result=FAILED
+        account_tags=[]
+        if request.method=='POST':
+            log=2
+            AddAccountTagForm_=AddAccountTagForm(request.POST)
+            if AddAccountTagForm_.is_valid():
+                log=3
+                fm=AddAccountTagForm_.cleaned_data
+                 
+                result,message,account_tags=AccountRepo(request=request).add_account_tag( 
+                    **AddAccountTagForm_.cleaned_data
+                )
+                if account_tags is not None:
+                    context['account_tags']=AccountTagSerializer(account_tags,many=True).data
+                    context['result']=SUCCEED
+        context['message']=message
+        context['log']=log
+        return JsonResponse(context)
+        
+
+        
+class AddCategoryApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        log=1
+        context['result']=FAILED
+        message=""
+        result=FAILED
+        if request.method=='POST':
+            log=2
+            AddCategoryForm_=AddCategoryForm(request.POST)
+            if AddCategoryForm_.is_valid():
+                log=3
+                fm=AddCategoryForm_.cleaned_data
+                 
+                result,category,message=CategoryRepo(request=request).add_category( 
+                    **AddCategoryForm_.cleaned_data
+                )
+                if category is not None:
+                    context['category']=CategorySerializer(category).data
+                    context['result']=SUCCEED
+        context['message']=message
+        context['log']=log
+        return JsonResponse(context)
+        
+
+class AddItemCategoryApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        log=1
+        context['result']=FAILED
+        message="1111"
+        if request.method=='POST':
+            log=2
+            AddItemCategoryForm_=AddItemCategoryForm(request.POST)
+            if AddItemCategoryForm_.is_valid():
+                log=3
+                result,item_categories,message=CategoryRepo(request=request).add_item_category( 
+                    **AddItemCategoryForm_.cleaned_data
+                )
+                if result ==SUCCEED:
+                    context['item_categories']=CategorySerializer(item_categories,many=True).data
+                    context['result']=SUCCEED
+        context['message']=message
+        context['log']=log
+        return JsonResponse(context)
+        
 
 class AddPriceApi(APIView):
     def post(self,request,*args, **kwargs):
@@ -292,31 +474,7 @@ class AddAccountApi(APIView):
         context['log']=log
         return JsonResponse(context)
 
-class ChangeProductOrServiceCategoryApi(APIView):
-    def post(self,request,*args, **kwargs):
-        context={}
-        log=11
-        context['result']=FAILED
-        context['message']=""
-        if request.method=='POST':
-            log=22
-            ChangeProductOrServiceCategoryTitleForm_=ChangeProductOrServiceCategoryTitleForm(request.POST)
-            if ChangeProductOrServiceCategoryTitleForm_.is_valid():
-                log=33
-                cd=ChangeProductOrServiceCategoryTitleForm_.cleaned_data
-            
-                result,product_or_service_category,message=ProductOrServiceRepo(request=request).change_category(**cd)
-                context['message']=message
-                context['result']=result
-                if result ==SUCCEED:
-                    # context['product_or_service_category_title']=product_or_service_category.title
-                    # context['product_or_service_category_id']=product_or_service_category.pk
-                    context['product_or_service_category']=ProductOrServiceCategorySerializer(product_or_service_category).data
-        context['log']=log
-        return JsonResponse(context)
-
-    
-     
+ 
 class AddProductApi(APIView):
     def post(self,request,*args, **kwargs):
         context={}

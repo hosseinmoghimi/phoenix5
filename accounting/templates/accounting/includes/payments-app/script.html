@@ -8,7 +8,7 @@
 </script>
 {% endif %}
 <script>
-
+    let me_account_id = parseInt("{{me_account.id}}")
     let payments = JSON.parse("{{payments_s|escapejs}}")
     let payments_app = new Vue({
         el: "#payments-app",
@@ -18,7 +18,7 @@
             title: "",
             status:"",
             pay_to_id: account_id,
-            pay_from_id: account_id,
+            pay_from_id: me_account_id,
             amount: 0,
             description: "",
             payment_method: "پیش نویس",
@@ -55,13 +55,23 @@
                 let url = "{% url 'accounting:add_payment' %}"
                 $.post(url, payload).done((data) => {
                     payments_app.waiting = false
-                    payments_app.payments.push(data.payment)
                     if (data.result === 'SUCCEED') {
+                        if(typeof payments_app!="undefined"){
+                            payments_app.payments.push(data.payment)
+                        }
+
                         this.message = { show: true, body: "با موفقیت ذخیره شد.", color: 'success' }
                         payments_app.title = ""
+                        setTimeout(() => {
+                            payments_app.message = { show: false } 
+                        }, 3000);
+
                     }
                     if (data.result === 'FAILED') {
                         this.message = { show: true, body: "خطا در ذخیره سازی ", color: 'danger' }
+                        setTimeout(() => {
+                            payments_app.message = { show: false } 
+                        }, 3000);
                     }
 
                 })
@@ -70,3 +80,8 @@
         }
     })
 </script>
+
+{% if perms.accounting.add_payment %}
+  
+{% include "accounting/includes/add-payment-app/script.html" %}
+{% endif %}

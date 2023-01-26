@@ -60,6 +60,30 @@ class AddPageLinkApi(APIView):
                     context['result'] = SUCCEED
         context['log'] = log
         return JsonResponse(context)
+class ChangePageMetadataApi(APIView):
+    def post(self, request, *args, **kwargs):
+        log = 1
+        context = {}
+        result=FAILED
+        message=""
+        context['result'] = FAILED
+        if request.method == 'POST':
+            log += 1
+            ChangePageMetaDataForm_ = ChangePageMetaDataForm(request.POST)
+            if ChangePageMetaDataForm_.is_valid():
+                log += 1
+                metadata,result,message = PageRepo(request=request).change_metadata(
+                    **ChangePageMetaDataForm_.cleaned_data
+                    )
+                if result==SUCCEED:
+                    context['metadata'] =metadata
+                    context['result'] = SUCCEED
+        context['log'] = log
+        context['result'] = result
+        context['message'] = message
+        return JsonResponse(context)
+
+    
 
 
 class AddPageTagApi(APIView):
@@ -114,7 +138,6 @@ class AddPagePermissionApi(APIView):
         return JsonResponse(context)
 
     
-    
 class SetThumbnailHeaderApi(APIView):
     def post(self, request, *args, **kwargs):
         log = 1
@@ -123,6 +146,41 @@ class SetThumbnailHeaderApi(APIView):
         if request.method == 'POST':
             log += 1
             SetThumbnailHeaderForm_ = SetThumbnailHeaderForm(request.POST, request.FILES)
+            if SetThumbnailHeaderForm_.is_valid():
+                log += 1
+                cd=SetThumbnailHeaderForm_.cleaned_data
+                page_id = cd['page_id']
+                clear_thumbnail = cd['clear_thumbnail']
+                clear_header = cd['clear_header']
+                thumbnail = None
+                header = None
+                if 'thumbnail' in request.FILES:
+                    thumbnail = request.FILES['thumbnail']
+                if 'header' in request.FILES:
+                    header = request.FILES['header']
+                
+                page = PageRepo(request=request).set_thumbnail_header(
+                    clear_thumbnail=clear_thumbnail,
+                    clear_header=clear_header,
+                    page_id=page_id,
+                    thumbnail=thumbnail,
+                    header=header
+                    )
+                if page is not None:
+                    context['page'] = PageSerializer(page).data
+                    context['result'] = SUCCEED
+        context['log'] = log
+        return JsonResponse(context)
+
+    
+class DeletePageImageApi(APIView):
+    def post(self, request, *args, **kwargs):
+        log = 1
+        context = {}
+        context['result'] = FAILED
+        if request.method == 'POST':
+            log += 1
+            SetThumbnailHeaderForm_ = DeletePageImageForm(request.POST, request.FILES)
             if SetThumbnailHeaderForm_.is_valid():
                 log += 1
                 cd=SetThumbnailHeaderForm_.cleaned_data
@@ -227,8 +285,9 @@ class AddPageCommentApi(APIView):
         context['log'] = log
         return JsonResponse(context)
 
+
 class EncryptApi(APIView):
- def post(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         log = 1
         context = {}
         log = 1
@@ -244,15 +303,41 @@ class EncryptApi(APIView):
                 page,key = PageRepo(request=request).encrypt(
                     **encrypt_page_form.cleaned_data)
                 if page:
-                    context['page'] = PageSerializer(page).data
-                    context['key'] = key.decode("utf-8")
+                    context['page'] = PageDecodeSerializer(page).data
+                    # context['key'] = key.decode("utf-8")
+                    # context['description'] = page.description
+                    # context['short_description'] = page.short_description
                     context['result'] = SUCCEED
         context['log'] = log
         return JsonResponse(context)
 
 
 class DecryptApi(APIView):
- def post(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
+        log = 1
+        context = {}
+        log = 1
+        context = {}
+        context['result'] = FAILED
+        if request.method == 'POST':
+            log += 1
+            decrypt_page_form = DecryptPageForm(request.POST)
+            if decrypt_page_form.is_valid():
+                log += 1
+                decrypt_page_form.cleaned_data['save']=True
+                # key = encrypt_page_form.cleaned_data['key']
+                # page_id = encrypt_page_form.cleaned_data['page_id']
+                page ,result = PageRepo(request=request).decrypt(
+                    **decrypt_page_form.cleaned_data)
+                if page:
+                    context['page'] = PageDecodeSerializer(page).data
+                    context['result'] = result
+        context['log'] = log
+        return JsonResponse(context)
+
+
+class DecryptOnceApi(APIView):
+    def post(self, request, *args, **kwargs):
         log = 1
         context = {}
         log = 1
@@ -265,11 +350,11 @@ class DecryptApi(APIView):
                 log += 1
                 # key = encrypt_page_form.cleaned_data['key']
                 # page_id = encrypt_page_form.cleaned_data['page_id']
-                page = PageRepo(request=request).decrypt(
+                page ,result = PageRepo(request=request).decrypt(save=False,
                     **decrypt_page_form.cleaned_data)
                 if page:
                     context['page'] = PageDecodeSerializer(page).data
-                    context['result'] = SUCCEED
+                    context['result'] = result
         context['log'] = log
         return JsonResponse(context)
 

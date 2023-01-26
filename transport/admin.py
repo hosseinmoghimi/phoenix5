@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from transport.models import Client, Driver, Luggage, Maintenance,Passenger, ServiceMan, Trip, TripCategory, TripPath, Vehicle, VehicleEvent, VehicleWorkEvent, WorkShift
+from transport.models import Client, Driver, Luggage, Maintenance,Passenger, ServiceMan, Transport, Trip, TripCategory, TripPath, Vehicle, VehicleEvent, VehicleWorkEvent, WorkShift
 
 # Register your models here.
 admin.site.register(Client)
@@ -9,6 +9,7 @@ admin.site.register(Luggage)
 admin.site.register(Maintenance)
 admin.site.register(Passenger)
 admin.site.register(ServiceMan)
+admin.site.register(Transport)
 admin.site.register(TripPath)
 admin.site.register(Trip)
 admin.site.register(TripCategory)

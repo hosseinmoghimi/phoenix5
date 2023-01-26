@@ -5,18 +5,18 @@
 
 
         <!-- Carousel Card -->
-        <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+        <div id="WebIndexCarouselIndicators" class="carousel slide" data-ride="carousel">
             <ol class="carousel-indicators">
                 {% for carousel in carousels %}
 
-                <li data-target="#carouselExampleIndicators" id="slider_link{{forloop.counter0}}"
+                <li data-target="#WebIndexCarouselIndicators" id="slider_link{{forloop.counter0}}"
                     data-slide-to="{{forloop.counter0}}"></li>
                 {% endfor %}
 
             </ol>
             <div class="carousel-inner">
                 {% for carousel in carousels %}
-                <div class="carousel-item" id="my-carousel-item{{forloop.counter0}}">
+                <div class="carousel-item" id="web-index-carousel-item{{forloop.counter0}}">
                     <div class="page-header header-filter1" style="background-image: url('{{carousel.image}}');">
                         <div class="container">
                             {% if carousel.title %}
@@ -46,8 +46,9 @@
                             </div>
                             {% if perms.web.change_carousel %}
                             <div class="text-center">
- 
-                                <a target="_blank" class=" text-warning farsi" href="{{carousel.get_edit_url}}" title="ویرایش اسلایدر">
+
+                                <a target="_blank" class=" text-warning farsi" href="{{carousel.get_edit_url}}"
+                                    title="ویرایش اسلایدر">
                                     <i class="fa fa-edit"></i>
                                     ویرایش
                                 </a>
@@ -57,16 +58,16 @@
                         </div>
                     </div>
                 </div>
+                {% endfor %}
             </div>
 
-            {% endfor %}
 
         </div>
-        <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+        <a class="carousel-control-prev" href="#WebIndexCarouselIndicators" role="button" data-slide="prev">
             <i class="material-icons">keyboard_arrow_left</i>
             <span class="sr-only">Previous</span>
         </a>
-        <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+        <a class="carousel-control-next" href="#WebIndexCarouselIndicators" role="button" data-slide="next">
             <i class="material-icons">keyboard_arrow_right</i>
             <span class="sr-only">Next</span>
         </a>

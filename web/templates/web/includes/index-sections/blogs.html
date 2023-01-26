@@ -2,9 +2,9 @@
     <!--     *********     BLOGS 2      *********      -->
     <div class="blogs-2" id="blogs-2" >
         <div class="container">
-            <div class="row">
+            <div class="row rtl farsi">
                 <div class="col-md-10 ml-auto mr-auto">
-                    <h2 class="title text-center">
+                    <h2 class="title text-center farsi">
                         {{blog_title_param.value}}
                         {% if perms.core.change_parameter %}
                         {{blog_title_param.get_edit_btn|safe}}
@@ -30,19 +30,19 @@
                                     </a>
                                 </div>
                                 <div class="card-body">
-                                    <h6 class="card-category text-info">
+                                    <h6 class="card-category text-info farsi text-right rtl">
                                         {% if blog.sub_title %}
 
                                         {{blog.sub_title}}
                                         {% endif %}
                                     </h6>
-                                    <h4 class="card-title">
+                                    <h4 class="card-title farsi text-right rtl">
                                         <a href="{{blog.get_absolute_url}}">
                                             {{blog.title}}
                                         </a>
                                     </h4>
                                    
-                                    <p>
+                                    <p class=" farsi text-right rtl">
                                         <a href="{{blog.get_absolute_url}}">
                                             ادامه مطلب
                                             <i class="material-icons">reply</i>

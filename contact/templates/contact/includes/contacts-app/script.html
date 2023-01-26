@@ -1,0 +1,39 @@
+<script>
+    let contact_name_enums = JSON.parse("{{contact_name_enums_s|escapejs}}")
+    let contacts = JSON.parse("{{contacts_s|escapejs}}")
+    let contacts_app = new Vue({
+        el: "#contacts-app",
+        data: {
+            contact_name_enums: contact_name_enums,
+            form_name: "موبایل",
+            form_value: "",
+            form_url: "",
+            contacts: contacts,
+            message: { show: false },
+            show_form: false,
+            waiting: false,
+            search_for:"",
+        },
+        methods: {
+            search:function(){
+                contacts_app.contacts=contacts.filter(contact=>contact.account.title.indexOf(contacts_app.search_for)>-1||contact.name.indexOf(contacts_app.search_for)>-1||contact.value.indexOf(contacts_app.search_for)>-1)
+            },
+            add_contact: function () {
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    account_id: parseInt("{{account.id}}"),
+                    name: this.form_name,
+                    value: this.form_value,
+                    url: this.form_url,
+                }
+                console.log(payload)
+                $.post("{% url 'contact:add_contact' %}", payload).done(data => {
+                    console.log(data)
+                    if (data.result === 'SUCCEED') {
+                        contacts_app.contacts=(data.contacts)
+                    }
+                })
+            },
+        }
+    })
+</script>

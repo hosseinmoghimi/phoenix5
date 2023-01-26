@@ -1,0 +1,161 @@
+{% load to_persian_date %}
+{% load to_price %}
+
+{% load to_persian_date %}
+{% load to_price %}
+<div id="accordion-coupons">
+
+
+    <div class="card" id="coupons-app">
+        <div class="card-header" id="heading-coupons">
+            <h5 class="text-center">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-coupons" aria-expanded="true"
+                    aria-controls="collapse-coupons">
+                    تخفیف های بدست آمده
+
+                    <small v-if="coupons.length>0" class="text-danger mx-2">
+                        <span v-text="coupons.length">
+
+                        </span>
+                    </small>
+
+
+                </button>
+            </h5>
+
+
+        </div>
+        <div id="collapse-coupons" class="collapse {% if expand_coupons %} show {% endif %}"
+            aria-labelledby="heading-coupons" data-parent="#accordion-coupons">
+
+
+            <div class="card-body">
+                <div class="table-responsive">
+
+                    <table class="table table-striped rtl">
+                        <thead>
+                            <th>
+                                تخفیف
+                            </th>
+                            <th>
+                                پرداختی
+                            </th>
+                            <th>
+                                هدیه
+                            </th>
+                            <th>
+                                فروشنده
+                            </th>
+                            <th>
+                                خریدار
+                            </th>
+                            <th>
+                                فاکتور
+                            </th>
+                            <th>
+                                تاریخ
+                            </th>
+                            <th>
+
+                            </th>
+                        </thead>
+                        <tbody>
+                            {% if not no_javascript %}
+
+                            <tr v-for="coupon in coupons">
+                                <td>
+                                    <a :href="coupon.get_absolute_url">
+                                        <span v-text="coupon.title"></span>
+                                    </a>
+
+
+
+                                </td>
+
+
+                                <td>
+                                    <span v-text="to_price(coupon.order.paid)"></span>
+
+                                </td>
+
+                                <td>
+                                    <span v-text="to_price(coupon.amount)"></span>
+
+
+
+                                </td>
+
+
+                                <td>
+                                    <a :href="coupon.order.supplier.get_loyaltyclub_absolute_url">
+                                        <img :src="coupon.order.supplier.account.logo" class="rounded" width="32"
+                                            alt="">
+                                        <span v-text="coupon.order.supplier.account.title"></span>
+
+                                    </a>
+
+                                </td>
+                                <td>
+                                    <a :href="coupon.order.customer.get_loyaltyclub_absolute_url">
+                                        <img :src="coupon.order.customer.account.logo" class="rounded" width="32"
+                                            alt="">
+                                        <span v-text="coupon.order.customer.account.title"></span>
+
+                                    </a>
+
+                                </td>
+                                <td>
+                                    <a v-if="coupon.order.invoice" :href="coupon.order.invoice.get_absolute_url"
+                                        :title="coupon.order.invoice.title">
+                                        <!-- <span v-text="coupon.invoice.title"></span> -->
+                                        فاکتور مرتبط
+                                    </a>
+                                </td>
+
+                                <td>
+                                    <span v-html="coupon.order.persian_date_ordered_tag"></span>
+
+                                </td>
+
+
+                                <td>
+                                    {% if perms.loyaltyclub.change_coupon %}
+                                    <span class="my-3">
+                                        <a :href="coupon.get_edit_url">
+                                            <i class="fa fa-edit text-warning"></i>
+                                        </a>
+                                    </span>
+                                    {% endif %}
+
+                                    {% if perms.loyaltyclub.delete_coupon %}
+                                    <span class="my-3">
+                                        <a :href="coupon.get_delete_url">
+                                            <i class="fa fa-trash text-danger"></i>
+                                        </a>
+                                    </span>
+                                    {% endif %}
+
+
+                                    <span class="my-3" v-if="coupon.order.invoice">
+
+                                    </span>
+
+
+                                </td>
+                            </tr>
+
+
+                            {% endif %}
+
+
+
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+</div>

@@ -1,38 +1,25 @@
-
-
 from pathlib import Path
 import os
+
+CURRENCY="ریال"
+CURRENCY="تومان"
 BASE_DIR = Path(__file__).resolve().parent.parent
 HOME_APP_URLS='projectmanager.urls'
 ALLOW_REGISTER_ONLINE=False
 UPLOAD_ROOT="d:\\phoenix5\\uploads"
+TEMPORARY_ROOT="d:\\phoenix5\\temp"
 PUBLIC_ROOT=os.path.join(BASE_DIR,'public_html')
 FULL_SITE_URL="http://127.0.0.1:8000/"
 FULL_SITE_URL="https://cryptalx.com/"
 QRCODE_ROOT=os.path.join(PUBLIC_ROOT,'qrcode')
 DEBUG=True
 
-ALLOWED_HOSTS = ['*']
-SECRET_KEY = 'django-insecure-bt+o^tb1w_vl6vj%tjn-&=v5^m*w3)5a8(i&uoo)6on&pi-x6('
-
-TIME_ZONE = 'Asia/Tehran'
-
-SITE_URL='/'
-
-STATIC_ROOT=os.path.join(PUBLIC_ROOT,'static')
-MEDIA_ROOT=os.path.join(PUBLIC_ROOT,'media')
-STATIC_URL = SITE_URL+'static/'
-MEDIA_URL =  SITE_URL+'media/'
-ADMIN_URL=SITE_URL+"admin/"
-QRCODE_URL=SITE_URL+"qrcode/"
-
-STATICFILES_DIRS=[os.path.join(BASE_DIR,'static')]
-
-
+DB_FILE_NAME="db_20220823_13_29_18.sqlite3"
+DB_FILE_PATH=os.path.join(BASE_DIR,DB_FILE_NAME)
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db20220804.sqlite3',
+        'NAME': DB_FILE_PATH,
     }
 }
 INSTALLED_APPS = [
@@ -45,11 +32,13 @@ INSTALLED_APPS = [
     'django_cleanup.apps.CleanupConfig',
     'django_social_share',
     
+    # 'django_telegram',
     'rest_framework',
     # 'rest_framework.authtoken'
     # 'web3auth.apps.Web3AuthConfig',
     'realestate',
     'market',
+    'contact',
     'health',
     'scheduler',
     'resume',
@@ -77,12 +66,31 @@ INSTALLED_APPS = [
     'mafia',
     'school',
     'bms',
+    'loyaltyclub',
 ]
+
+SECRET_KEY = 'django-insecure-bt+o^tb1w_vl6vj%tjn-&=v5^m*w3)5a8(i&uoo)6on&pi-x6('
+
+ALLOWED_HOSTS = ['*']
+# TIME_ZONE = 'Asia/Tehran'
+TIME_ZONE = 'UTC'
+
+SITE_URL='/'
+
+STATIC_ROOT=os.path.join(PUBLIC_ROOT,'static')
+MEDIA_ROOT=os.path.join(PUBLIC_ROOT,'media')
+STATIC_URL = SITE_URL+'static/'
+MEDIA_URL =  SITE_URL+'media/'
+ADMIN_URL=SITE_URL+"admin/"
+QRCODE_URL=SITE_URL+"qrcode/"
+
+STATICFILES_DIRS=[os.path.join(BASE_DIR,'static')]
 
 
 
 phoenix_apps=[
     {
+        'priority':1,
         'name':'accounting',
         'title':'حسابداری',
         'color':'danger',
@@ -91,6 +99,7 @@ phoenix_apps=[
         'show_on_menu':True,
     },
     {
+        'priority':2,
         'name':'projectmanager',
         'color':'success',
         'title':'مدیریت پروژه',
@@ -99,6 +108,7 @@ phoenix_apps=[
         'show_on_menu':True,
     },
     {
+        'priority':3,
         'name':'authentication',
         'title':'هویت',
         'color':'warning',
@@ -107,6 +117,7 @@ phoenix_apps=[
         'show_on_menu':True,
     },
     {
+        'priority':4,
         'name':'health',
         'title':'بهداشت',
         'color':'success',
@@ -115,6 +126,7 @@ phoenix_apps=[
         'show_on_menu':True,
     },
     {
+        'priority':5,
         'name':'polls',
         'title':'نظرسنجی',
         'color':'success',
@@ -123,6 +135,7 @@ phoenix_apps=[
         'show_on_menu':True,
     },
     {
+        'priority':6,
         'name':'mafia',
         'title':'مافیا',
         'color':'warning',
@@ -132,6 +145,7 @@ phoenix_apps=[
     },
 
     {
+        'priority':7,
         'name':'organization',
         'title':'سازمان',
         'color':'danger',
@@ -140,6 +154,7 @@ phoenix_apps=[
         'show_on_menu':True,
     },
     {
+        'priority':8,
         'name':'library',
         'title':'کتابخانه',
         'color':'success',
@@ -150,6 +165,7 @@ phoenix_apps=[
 
     
     {
+        'priority':9,
         'name':'bms',
         'title':'هوشمند سازی',
         'color':'info',
@@ -160,6 +176,7 @@ phoenix_apps=[
 
 
     {
+        'priority':10,
         'name':'scheduler',
         'title':'برنامه ریز',
         'color':'primary',
@@ -168,6 +185,7 @@ phoenix_apps=[
         'show_on_menu':True,
     },
     {
+        'priority':11,
         'name':'school',
         'title':'آموزشگاه',
         'color':'warning',
@@ -176,6 +194,7 @@ phoenix_apps=[
         'show_on_menu':True,
     },
     {
+        'priority':12,
         'name':'chef',
         'title':'سرآشپز',
         'color':'danger',
@@ -184,6 +203,7 @@ phoenix_apps=[
         'show_on_menu':True,
     },
     {
+        'priority':13,
         'name':'resume',
         'title':'رزومه',
         'color':'success',
@@ -192,6 +212,7 @@ phoenix_apps=[
         'show_on_menu':False,
     },
     {
+        'priority':14,
         'name':'guarantee',
         'title':'گارانتی',
         'color':'warning',
@@ -200,6 +221,7 @@ phoenix_apps=[
         'show_on_menu':True,
     },
     {
+        'priority':15,
         'name':'warehouse',
         'title':'انبار',
         'color':'warning',
@@ -208,6 +230,7 @@ phoenix_apps=[
         'show_on_menu':True,
     },
     {
+        'priority':16,
         'name':'wallet',
         'title':'کیف پول',
         'color':'warning',
@@ -216,6 +239,7 @@ phoenix_apps=[
         'show_on_menu':True,
     },
     {
+        'priority':17,
         'name':'log',
         'title':'لاگ',
         'color':'warning',
@@ -224,6 +248,7 @@ phoenix_apps=[
         'show_on_menu':True,
     },
     {
+        'priority':18,
         'name':'messenger',
         'title':'پیام رسان',
         'color':'warning',
@@ -232,6 +257,7 @@ phoenix_apps=[
         'show_on_menu':True,
     },
     {
+        'priority':19,
         'name':'archive',
         'title':'آرشیو',
         'color':'warning',
@@ -240,6 +266,7 @@ phoenix_apps=[
         'show_on_menu':True,
     },
     {
+        'priority':20,
         'name':'utility',
         'color':'danger',
         'title':'ابزار های کاربردی',
@@ -248,6 +275,7 @@ phoenix_apps=[
         'show_on_menu':True,
     },
     {
+        'priority':21,
         'name':'realestate',
         'color':'success',
         'title':'املاک',
@@ -256,6 +284,7 @@ phoenix_apps=[
         'show_on_menu':True,
     },
     {
+        'priority':22,
         'name':'core',
         'title':'core',
         'color':'danger',
@@ -266,6 +295,7 @@ phoenix_apps=[
 
     
     {
+        'priority':23,
         'name':'transport',
         'title':'حمل و نقل',
         'color':'danger',
@@ -276,6 +306,7 @@ phoenix_apps=[
 
     
     {
+        'priority':24,
         'name':'map',
         'title':'نقشه',
         'color':'danger',
@@ -284,6 +315,7 @@ phoenix_apps=[
         'show_on_menu':True,
     },
     {
+        'priority':25,
         'name':'market',
         'title':'مارکت',
         'color':'danger',
@@ -292,6 +324,7 @@ phoenix_apps=[
         'show_on_menu':True,
     },
     {
+        'priority':26,
         'name':'stock',
         'title':'سهام',
         'color':'danger',
@@ -301,6 +334,7 @@ phoenix_apps=[
     },
 
     {
+        'priority':27,
         'name':'web',
         'title':'وب سایت',
         'color':'success',
@@ -308,4 +342,27 @@ phoenix_apps=[
         'has_help':False,
         'show_on_menu':True,
     },
+    
+    {
+        'priority':28,
+        'name':'loyaltyclub',
+        'title':'باشگاه مشتریان',
+        'color':'warning',
+        'home_url':SITE_URL+'loyaltyclub/',
+        'has_help':False,
+        'show_on_menu':True,
+    },
+
+       {
+        'priority':28,
+        'name':'contact',
+        'title':'دفترچه تلفن',
+        'color':'warning',
+        'home_url':SITE_URL+'contact/',
+        'has_help':False,
+        'show_on_menu':True,
+    },
+
 ]    
+
+

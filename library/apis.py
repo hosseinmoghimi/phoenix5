@@ -7,8 +7,8 @@ from .repo import BookRepo, LendRepo, MemberRepo
 from .forms import *
 
 
-class BookApi(APIView):
-    def add_book(self, request):
+class AddBookApi(APIView):
+    def post(self, request):
         log = 1
         context = {}
         context['result'] = FAILED
@@ -45,9 +45,11 @@ class BookApi(APIView):
 
     
 
-class MemberApi(APIView):
-    def add_member(self, request):
+class AddMemberApi(APIView):
+    def post(self, request,*args, **kwargs):
         log = 1
+        result=FAILED
+        message=""
         context = {}
         context['result'] = FAILED
         user = request.user
@@ -56,27 +58,28 @@ class MemberApi(APIView):
             add_member_form = AddMemberForm(request.POST)
             if add_member_form.is_valid():
                 log = 3 
-                profile_id = add_member_form.cleaned_data['profile_id']
-                description = add_member_form.cleaned_data['description'] 
-                level = add_member_form.cleaned_data['level'] 
-                member = MemberRepo(request=request).add_member(
-                    profile_id=profile_id,
-                    level=level,
-                    description=description,
+                # profile_id = add_member_form.cleaned_data['profile_id']
+                # description = add_member_form.cleaned_data['description'] 
+                # level = add_member_form.cleaned_data['level'] 
+                member,result,message = MemberRepo(request=request).add_member(**add_member_form.cleaned_data
+                    # profile_id=profile_id,
+                    # level=level,
+                    # description=description,
                 )
 
-                if member is not None:
+                if result==SUCCEED:
                     log = 4
                     member = MemberSerializer(member).data
                     context['member'] = member
-                    context['result'] = SUCCEED
+        context['result'] = result
+        context['message'] = message
         context['log'] = log
         return JsonResponse(context)
 
     
 
-class LendApi(APIView):
-    def lend_book(self, request):
+class LendBookApi(APIView):
+    def post(self, request):
         log = 1
         context = {}
         context['result'] = FAILED

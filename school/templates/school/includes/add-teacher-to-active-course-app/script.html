@@ -2,14 +2,21 @@
     let add_teacher_to_active_course_app=new Vue({
         el:"#add-teacher-to-active-course-app",
         data:{
-            profile_id:"",
+            search_for:"",
+            teacher_id:0,
             all_teachers:JSON.parse("{{all_teachers_s|escapejs}}")
         },
-        methods:{
+        methods:{  
+            filter: function () {
+                this.all_teachers = all_teachers.filter(teacher => teacher.account.title.indexOf(add_teacher_to_active_course_app.search_for) > -1)
+                if (this.all_teachers.length > 0) {
+                    this.teacher_id = this.all_teachers[0].id
+                }
+            },
             add_teacher:function(){
                 let payload = {
                     active_course_id: active_course_id,
-                    profile_id: this.profile_id,
+                    teacher_id: this.teacher_id,
                     csrfmiddlewaretoken: csrfmiddlewaretoken
                 }
                 console.log(payload)

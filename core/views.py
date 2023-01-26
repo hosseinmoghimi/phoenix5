@@ -2,7 +2,11 @@ import json
 from django.http import Http404,HttpResponse
 from django.shortcuts import render,reverse
 from django.utils import timezone 
-
+from utility.compress import Compress
+from django.utils import timezone
+from django.http import HttpResponse
+import os
+from phoenix.server_settings import DEBUG, MEDIA_ROOT,TEMPORARY_ROOT,DB_FILE_PATH,ADMIN_URL, MEDIA_URL, STATIC_URL, SITE_URL,phoenix_apps
 from utility.calendar import PersianCalendar
 from core.apps import APP_NAME
 from log.repo import LogRepo
@@ -10,23 +14,22 @@ from core.enums import ColorEnum, IconsEnum, ParameterNameEnum, PictureNameEnum
 from core.models import Download, Link
 from core.repo import DownloadRepo, ImageRepo, LinkRepo, PageDownloadRepo, PageImageRepo, PageLikeRepo, PageLinkRepo, PagePermissionRepo, PageRepo, PageTagRepo, ParameterRepo, PictureRepo, TagRepo
 from core.serializers import PagePermissionSerializer,PageBriefSerializer, PageCommentSerializer, PageImageSerializer, PageDownloadSerializer, PageLinkSerializer, PageSerializer, PageTagSerializer, TagSerializer
-from phoenix.settings import ADMIN_URL, MEDIA_URL, STATIC_URL, SITE_URL
-from phoenix.server_settings import DB_FILE_PATH
 from django.shortcuts import render
 from authentication.repo import ProfileRepo
 from core.constants import CURRENCY
 
-from phoenix.server_settings import phoenix_apps
 from django.views import View
 from core.forms import *
 # Create your views here.
 TEMPLATE_ROOT = "core/"
 LAYOUT_PARENT='phoenix/layout.html'
+WIDE_LAYOUT_PARENT='phoenix/wide-layout.html'
 
 
 def CoreContext(request, *args, **kwargs):
     context = {}
     context['LAYOUT_PARENT'] = LAYOUT_PARENT
+    context['WIDE_LAYOUT_PARENT'] = WIDE_LAYOUT_PARENT
 
     from phoenix.server_settings import phoenix_apps
     PictureRepo_=PictureRepo(request=request,app_name=APP_NAME)
@@ -65,6 +68,7 @@ def CoreContext(request, *args, **kwargs):
    
     context['APP_NAME'] = app_name
     context['ADMIN_URL'] = ADMIN_URL
+    context['DEBUG'] = DEBUG
     context['STATIC_URL'] = STATIC_URL
     context['MEDIA_URL'] = MEDIA_URL
     context['SITE_URL'] = SITE_URL
@@ -110,6 +114,8 @@ def PageContext(request, *args, **kwargs):
         raise Http404
     context = {}
     context['page'] = page
+    if page.class_name=="product":
+        context['page_is_product']=True
     profile=ProfileRepo(request=request).me
 
     can_read=False
@@ -144,7 +150,8 @@ def PageContext(request, *args, **kwargs):
         can_add_location=True
         can_add_related_page=True
 
-
+    if profile is not None:
+        can_add_comment=True
     
     # links
     if True:
@@ -209,6 +216,12 @@ def PageContext(request, *args, **kwargs):
             PageBriefSerializer(related_pages, many=True).data)
         if can_add_related_page:
             context['add_related_page_form'] = AddRelatedPageForm()
+
+
+    #meta data
+    if request.user.has_perm("core.change_page"):
+        keywords=page.meta_data
+        context['change_page_metadata_form'] = ChangePageMetaDataForm()
 
 
 
@@ -395,6 +408,98 @@ class BackupView(View):
         return render(request, TEMPLATE_ROOT+"search.html", context)
 
 
+ 
+    
+class DownloadMediaApi(View):
+    def get(self, request, *args, **kwargs):
+       
+            
+        if not request.user.has_perm(APP_NAME+".add_parameter"):
+            mv=MessageView(request=request)
+            mv.title="عدم دسترسی مجاز"
+            return mv.response()
+
+        media_zip_file = Compress(folder=MEDIA_ROOT,output_folder=TEMPORARY_ROOT,output_file_name="media").get_output_archive
+        # print(10*" media_zip_file")
+        # print(media_zip_file)
+        
+        if media_zip_file is not None:
+            # file_path = str(UPLOAD_ROOT)
+            # file_path=os.path.join(file_path,"uploads.zip")
+            filename="media_"+timezone.now().strftime("%Y%m%d_%H_%M_%S")+".zip"
+            # print(10*" file_path")
+            # print(file_path)
+            file_path=media_zip_file
+            if os.path.exists(file_path):
+                with open(file_path, 'rb') as fh:
+                    response = HttpResponse(
+                        fh.read(), content_type="application/force-download")
+                    response['Content-Disposition'] = 'inline; filename=' + filename
+                    return response
+                        
+        mv=MessageView(request=request)
+        mv.title="عدم دسترسی مجاز"
+        return mv.response()
+    
+class DownloadUploadsApi(View):
+    def get(self, request, *args, **kwargs):
+         
+        if not request.user.has_perm("core.change_download"):
+            mv=MessageView(request=request)
+            mv.title="عدم دسترسی مجاز"
+            return mv.response()   
+        from utility.compress import Compress
+        from django.utils import timezone
+        from django.http import HttpResponse
+        import os
+        from phoenix.server_settings import UPLOAD_ROOT,TEMPORARY_ROOT
+        uploads_zip_file = Compress(folder=UPLOAD_ROOT,output_folder=TEMPORARY_ROOT,output_file_name="uploads").get_output_archive
+        
+        # print(10*" media_zip_file")
+        # print(media_zip_file)
+        
+        if uploads_zip_file is not None:
+            # file_path = str(UPLOAD_ROOT)
+            # file_path=os.path.join(file_path,"uploads.zip")
+            filename="uploads_"+timezone.now().strftime("%Y%m%d_%H_%M_%S")+".zip"
+            # print(10*" file_path")
+            # print(file_path)
+            file_path=uploads_zip_file
+            if os.path.exists(file_path):
+                with open(file_path, 'rb') as fh:
+                    response = HttpResponse(
+                        fh.read(), content_type="application/force-download")
+                    response['Content-Disposition'] = 'inline; filename=' + filename
+                    return response
+                
+        mv=MessageView(request=request)
+        mv.title="عدم دسترسی مجاز"
+        return mv.response()
+   
+class PageDownloadsView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        if not request.user.has_perm(APP_NAME+".view_pagedownload"):
+            mv=MessageView(request=request)
+            mv.title="صفحه مورد نظر پیدا نشد."
+            return mv.response()
+        page_downloads=PageDownloadRepo(request=request).list(*args, **kwargs)
+        context['page_downloads']=page_downloads
+        return render(request,TEMPLATE_ROOT+"page-downloads.html",context)
+
+class PageLinksView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        if not request.user.has_perm(APP_NAME+".view_pagelink"):
+            mv=MessageView(request=request)
+            mv.title="صفحه مورد نظر پیدا نشد."
+            return mv.response()
+        page_links=PageLinkRepo(request=request).list(*args, **kwargs)
+        context['page_links']=page_links
+        return render(request,TEMPLATE_ROOT+"page-links.html",context) 
+
+
+
 class PageView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -443,7 +548,7 @@ class DownloadView(View):
             message_view.title = 'دانلود مورد نظر پیدا نشد.'
         else:
             message_view.links.append(Link(title='تلاش مجدد', color="warning",
-                                  icon_material="apartment", url=download.get_download_url()))
+                                  icon_material="apartment", url=download.get_download_url))
 
         return message_view.response()
         
@@ -560,6 +665,7 @@ class ImageView(View):
         
 class MessageView(View):
     def __init__(self, request, *args, **kwargs):
+        self.back_url = request.META.get('HTTP_REFERER')
         self.request = request
         self.links = []
         self.title = None
@@ -607,6 +713,11 @@ class MessageView(View):
             self.header_text = 'خطا'
         if self.message_text is None:
             self.message_text = 'متاسفانه خطایی رخ داده است.'
+        back_link=Link(url=(self.back_url),
+                        color=ColorEnum.PRIMARY+' btn-round',
+                        icon_material=IconsEnum.home,
+                        title='بازگشت', new_tab=False)
+        self.links.append(back_link)
         if self.has_home_link:
             btn_home = Link(url=(SITE_URL),
                             color=ColorEnum.PRIMARY+' btn-round',
@@ -615,6 +726,7 @@ class MessageView(View):
             self.links.append(btn_home)
         context['links'] = self.links
 
+        context['back_url'] = self.back_url
         context['header_text'] = self.header_text
         context['header_color'] = self.header_color
         context['header_icon'] = self.header_icon

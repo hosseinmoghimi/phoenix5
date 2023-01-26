@@ -202,6 +202,22 @@
                             <i class="material-icons ml-2">vpn_key</i>
                             کلمه عبور
                         </a>
+                        
+                        {% if me_customer %}
+                        <a href="{{me_customer.get_absolute_url}}" class="dropdown-item  text-primary text-right">
+                            <i class="material-icons ml-2">person</i>
+                            {{me_customer.account.title}}
+                        </a>
+                        {% endif %}
+
+                        {% if me_supplier %}
+                        <a href="{{me_supplier.get_absolute_url}}" class="dropdown-item  text-primary text-right">
+                            <i class="material-icons ml-2">person</i>
+                            {{me_supplier.account.title}}
+                        </a>
+                        {% endif %}
+
+                            
                         <div class="dropdown-divider"></div>
                         <a href="{% url 'authentication:logout' %}" class="dropdown-item text-danger  text-right">
                             <i class="material-icons ml-2">logout</i> خروج

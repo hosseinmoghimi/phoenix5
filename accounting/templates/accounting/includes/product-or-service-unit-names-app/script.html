@@ -1,0 +1,43 @@
+<script>
+    let url_add_product_or_service_unit_name = "{% url 'accounting:add_product_or_service_unit_name' %}"
+    let product_or_service_unit_names = JSON.parse(`{{product_or_service_unit_names_s|escapejs}}`)
+
+    let product_or_service_unit_names_app = new Vue({
+        el: "#product-or-service-unit-names-app",
+        data: {
+
+            product_or_service_unit_names: product_or_service_unit_names,
+            unit_name: '',
+            coef: 1,
+        },
+        mounted: function () {
+
+        },
+        methods: {
+            add_product_or_service_unit_name: function () {
+
+                let url = url_add_product_or_service_unit_name
+                let payload = {
+                    unit_name: product_or_service_unit_names_app.unit_name,
+                    coef: product_or_service_unit_names_app.coef,
+                    product_or_service_id: page_id,
+                    csrfmiddlewaretoken: csrfmiddlewaretoken
+
+                }
+                let posting = $.post(url, payload)
+                posting.done(function (data) {
+                    leolog(data)
+                    if (data.result === 'SUCCEED') {
+
+                        product_or_service_unit_names_app.product_or_service_unit_names.push(data.product_or_service_unit_name)
+                        // product_or_service_unit_names_app.new_spec_name = ''
+                        product_or_service_unit_names_app.unit_name = ''
+                        product_or_service_unit_names_app.coef = 1
+                    }
+                })
+
+            },
+        },
+
+    })
+</script>

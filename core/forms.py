@@ -3,6 +3,16 @@ class SearchForm(forms.Form):
     # app_name=forms.CharField(max_length=50,required=False)
     search_for=forms.CharField(max_length=500,required=True)
 
+class DownloadMediaForm(forms.Form):
+    pass
+
+class ChangePageMetaDataForm(forms.Form):
+    page_id=forms.IntegerField(required=True)
+    metadata=forms.CharField(max_length=500,required=False)
+
+class DeletePageImageForm(forms.Form):
+    page_id=forms.IntegerField(required=True)
+    image_id=forms.IntegerField(required=True)
 
 class SetThumbnailHeaderForm(forms.Form):
     page_id=forms.IntegerField(required=True)
@@ -13,7 +23,7 @@ class SetThumbnailHeaderForm(forms.Form):
 
 class EncryptPageForm(forms.Form):
     page_id=forms.IntegerField(required=True)
-    key=forms.CharField(max_length=200,required=False)
+    key=forms.CharField(max_length=32,required=False)
 
 class DecryptPageForm(forms.Form):
     page_id=forms.IntegerField(required=True)

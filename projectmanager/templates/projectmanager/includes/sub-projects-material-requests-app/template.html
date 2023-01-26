@@ -1,0 +1,86 @@
+{% load static %}
+{% load to_persian_date %}
+{% load to_price %}
+<div id="accordion-sub-projects-material-requests">
+
+
+    <div class="card" id="sub-projects-material-requests-app">
+        <div class="card-header" id="heading-sub-projects-material-requests">
+
+            <h5 class="card-title text-center farsi">
+                <button class="btn btn-link" data-toggle="collapse"
+                    data-target="#collapse-sub-projects-material-requests" aria-expanded="true"
+                    aria-controls="collapse-sub-projects-material-requests">
+                    همه ی درخواست های متریال های زیر پروژه ها
+
+                    <span v-if="sub_projects_material_requests.length>0">
+                        <small class="text-danger mx-2">
+                            <span v-text="sub_projects_material_requests.length"></span>
+                        </small>
+                    </span>
+
+
+
+                </button>
+            </h5>
+
+
+        </div>
+        <div id="collapse-sub-projects-material-requests" class="collapse"
+            aria-labelledby="heading-sub-projects-material-requests"
+            data-parent="#accordion-sub-projects-material-requests">
+
+            <div class="card-body">
+                {% include "projectmanager/includes/sub-projects-material-requests-app/filter-form.html" %}
+                {% include "projectmanager/includes/sub-projects-material-requests-app/table.html" %}
+
+
+ 
+            </div>
+            <div class="card-footer ">
+                {% if project %}
+                <p>
+
+                    <span class="small text-secondary">
+                        مجموع قیمت متریال ها :
+                    </span>
+                    <span v-text="to_price(sum_material_requests,'{{CURRENCY}}')">
+
+                    </span>
+                  
+
+
+                </p>
+
+                {% endif %}
+
+                {% if material %}
+                <p>
+
+                    <span>
+                        <span class="text-secondary">
+
+                            تعداد کل درخواست شده :
+                        </span>
+                        <span v-text="to_price(count_material_requests)">
+
+                        </span>
+                    </span>
+
+
+
+                    <span class="mr-4">
+                        <span class="text-secondary">
+
+                            مبلغ کل درخواست شده :
+                        </span>
+                        <span v-text="to_price(sum_material_requests,'{{CURRENCY}}')"></span>
+                    </span>
+
+                </p>
+                {% endif %}
+
+            </div>
+        </div>
+    </div>
+</div>

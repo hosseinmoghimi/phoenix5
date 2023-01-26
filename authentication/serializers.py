@@ -1,10 +1,15 @@
-from .models import MembershipRequest, Profile
+from .models import MembershipRequest, Profile, ProfileContact
 from rest_framework import serializers
 
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model=Profile
-        fields=['id','name','default','first_name','last_name','mobile','address','email','image','get_absolute_url','bio']
+        fields=['id','name','default','first_name','enabled','last_name','mobile','address','email','image','get_absolute_url','bio']
+
+class ProfileContactSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=ProfileContact
+        fields=['id','name','value','url']
 
 class MembershipRequestSerializer(serializers.ModelSerializer):
     handled_by=ProfileSerializer()

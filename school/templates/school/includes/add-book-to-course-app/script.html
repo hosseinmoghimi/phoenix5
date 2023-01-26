@@ -1,0 +1,33 @@
+<script>
+    all_books = JSON.parse("{{all_books_s|escapejs}}")
+    let add_book_to_active_course_app = new Vue({
+        el: "#add-book-to-course-app",
+        data: {
+            book_id: 0,
+            all_books: all_books,
+            search_for: "",
+        },
+        methods: {
+            filter: function () {
+                this.all_books = all_books.filter(book => book.title.indexOf(add_book_to_active_course_app.search_for) > -1)
+                if (this.all_books.length > 0) {
+                    this.book_id = this.all_books[0].id
+                }
+            },
+            add_book: function () {
+                let payload = {
+                    course_id: course_id,
+                    book_id: this.book_id,
+                    csrfmiddlewaretoken: csrfmiddlewaretoken
+                }
+                console.log(payload)
+
+                $.post("{% url 'school:add_book_to_course' %}", payload).done((data) => {
+                    if (data.result === 'SUCCEED') {
+                        books_app.books.push(data.book)
+                    }
+                })
+            }
+        }
+    })
+</script>

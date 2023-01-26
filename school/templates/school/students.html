@@ -6,20 +6,32 @@
 <div class="row">
 
 
- 
+
 
   <div class="col-md-4">
     {% include "school/includes/students-app/template.html" %}
 
   </div>
- 
 
+  {% if add_student_form %}
+
+  <div class="col-md-4">
+    {% include "school/includes/add-student-app/template.html" %}
+
+  </div>
+  {% endif %}
 </div>
 {% endblock content %}
 
 
 {% block script %}
 <script src="{% static 'vendor/js/vue.min.js' %}"></script>
-{% include "school/includes/students-app/script.html" %} 
+{% include "school/includes/students-app/script.html" %}
 
+
+{% if add_student_form %}
+
+{% include "school/includes/add-student-app/script.html" %}
+
+{% endif %}
 {% endblock script %}

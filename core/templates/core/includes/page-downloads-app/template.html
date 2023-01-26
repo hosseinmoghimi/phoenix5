@@ -81,7 +81,9 @@
                         <div class="col-12">
                             <img src="{% static 'leo/img/loading.gif' %}" width="32" v-if="waiting" alt="">
 
-                            <button class="farsi btn btn-primary btn-block" v-if="!waiting" type="submit">تایید</button>
+                            <button class="farsi btn btn-primary btn-block" v-if="!waiting" type="submit">
+                                <i class="fa fa-plus mx-1"></i>
+                                افزودن</button>
                             <button @click="show_add_download_form=false" v-if="!waiting"
                                 class="farsi btn btn-secondary btn-block" type="reset">انصراف</button>
 

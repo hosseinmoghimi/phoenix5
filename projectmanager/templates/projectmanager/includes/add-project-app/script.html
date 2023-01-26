@@ -4,13 +4,14 @@
         data: {
             title: "",
             waiting: false,
-            contractor_id:0,
-            employer_id:0,
-            percentage_completed:0,
-            start_date:current_date,
-            end_date:current_date,
-            status:"",
-            parent_id:0,
+            contractor_id: 0,
+            employer_id: 0,
+            percentage_completed: 0,
+            start_date: current_date,
+            end_date: current_date,
+            status: "",
+            parent_id: 0,
+            message: { show: false }
 
         },
         components: {
@@ -39,7 +40,20 @@
 
                 $.post(url, payload).done(data => {
                     console.log(data)
+
                     if (data.result === 'SUCCEED') {
+                        add_project_app.message = { show: true, body: "پروژه با موفقیت اضافه شد.  ", color: 'success' }
+                    }
+                    if (data.result === 'FAILED') {
+                        add_project_app.message = { show: true, body: "خطا در ذخیره سازی ", color: 'danger' }
+                    }
+                    setTimeout(() => {
+                        add_project_app.message = { show: false }
+
+                    }, 2000);
+
+                    if (data.result === 'SUCCEED') {
+                        add_project_app.title = ""
                         if (typeof projects_app != 'undefined') {
                             projects_app.projects.push(data.project)
                         }
@@ -49,6 +63,9 @@
                         if (typeof projects_list_app != 'undefined') {
                             projects_list_app.projects.push(data.project)
                         }
+
+
+
                     }
                 })
             },

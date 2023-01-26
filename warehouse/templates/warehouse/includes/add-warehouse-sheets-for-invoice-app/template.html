@@ -21,7 +21,7 @@
 
 
                 <form @submit.prevent="add_ware_house_sheets_for_invoice()">
-                    <div class="row">
+                    <div class="row rtl">
                         <div class="col-md-4">
                             <select v-model="direction" class="form-control" id="">
                                 <option disabled>انتخاب جهت </option>
@@ -30,6 +30,15 @@
                                 {% endfor %}
                             </select>
                         </div>
+                        <div class="col-md-4">
+                            <select v-model="status" class="form-control" id="">
+                                <option disabled>وضعیت  </option>
+                                {% for status in ware_house_sheet_statuses %}
+                                <option value="{{status}}">{{status}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
                         <div class="col-md-4">
                             <select v-model="ware_house_id" class="form-control" id="">
                                 <option disabled>انتخاب انبار</option>

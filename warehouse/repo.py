@@ -4,6 +4,7 @@ from requests import request
 from accounting.repo import AccountRepo, InvoiceRepo
 from authentication.repo import ProfileRepo
 from django.utils import timezone
+from utility.log import leolog
 
 from warehouse.enums import *
 from utility.calendar import PersianCalendar
@@ -125,11 +126,10 @@ class WareHouseSheetRepo:
             self.user = kwargs['user']
         self.objects = WareHouseSheet.objects.order_by('-date_registered')
         self.profile = ProfileRepo(user=self.user).me
-
         if self.user.has_perm(APP_NAME+".view_warehousesheet"):
             self.objects = WareHouseSheet.objects.order_by('-date_registered')
         elif self.profile is not None:
-            self.objects = WareHouseSheet.objects.filter(ware_house__owner__profile=self.profile).order_by('-date_registered')
+            self.objects = WareHouseSheet.objects.filter(ware_house__account__profile_id=self.profile.id).order_by('-date_registered')
             # self.objects = WareHouseSheet.objects.filter(pk__gte=0).order_by('-date_registered')
         else:
             self.objects = WareHouseSheet.objects.filter(pk__lte=0).order_by('-date_registered')
@@ -172,6 +172,9 @@ class WareHouseSheetRepo:
                 warehouse_sheet.ware_house_id=kwargs['ware_house_id']
             if 'direction' in kwargs:
                 warehouse_sheet.direction=kwargs['direction']
+                
+            if 'status' in kwargs:
+                warehouse_sheet.status=kwargs['status']
             employee=EmployeeRepo(request=self.request).me
             warehouse_sheet.creator=employee.account.profile
             warehouse_sheet.date_registered=now

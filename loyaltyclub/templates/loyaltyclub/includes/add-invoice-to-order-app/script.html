@@ -1,0 +1,81 @@
+{% load to_json %}
+<script>
+    order_id = parseInt("{{order.id}}")
+    let add_invoice_to_order_app = new Vue({
+        el: "#add-invoice-to-order-app",
+        data: {
+            invoice_id: 0,
+            order_id: order_id,
+            waiting: false,
+            message: {
+                show: false
+            }
+        },
+        components: {
+            DatePicker: VuePersianDatetimePicker,
+
+        },
+        methods: {
+            to_price: function (vall, curr) {
+                return to_price(vall, curr)
+            },
+            filter: function () {
+                this.accounts = accounts.filter(account => account.title.indexOf(this.search_for) > -1)
+                if (this.accounts.length > 0)
+                    this.account_id = this.accounts[0].id
+            },
+            add_invoice_to_order: function () {
+                let url = "{% url 'loyaltyclub:add_invoice_to_order' %}"
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    invoice_id: parseInt(this.invoice_id),
+                    order_id: parseInt(this.order_id),
+                }
+                leolog(payload)
+                add_invoice_to_order_app.waiting = true
+                $.post(url, payload).done((data) => {
+                    add_invoice_to_order_app.waiting = false
+
+                    if (data.result === 'FAILED') {
+                        add_invoice_to_order_app.message = {
+                            color: "danger",
+                            body: data.message,
+                            show: true,
+                        }
+                        setTimeout(() => {
+                            add_invoice_to_order_app.message = {
+                                show: false,
+                            }
+                        }, 3000);
+                    }
+                    if (data.result === 'SUCCEED') {
+                        location.href = "{{order.get_absolute_url}}"
+
+
+                        if (typeof orders_app != "undefined") {
+                            orders_app.orders.push(data.order)
+                        }
+
+                        if (typeof coupons_app != "undefined") {
+                            coupons_app.coupons = (data.coupons)
+                        }
+
+                        add_invoice_to_order_app.message = {
+                            color: "success",
+                            body: data.message,
+                            show: true,
+                        }
+                        setTimeout(() => {
+                            add_invoice_to_order_app.message = {
+                                show: false,
+                            }
+                        }, 3000);
+                    }
+                })
+
+            }
+
+        }
+    })
+
+</script>

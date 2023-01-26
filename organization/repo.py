@@ -16,13 +16,18 @@ class OrganizationUnitRepo():
             self.user = self.request.user
         if 'user' in kwargs:
             self.user = kwargs['user']
-        
-        self.objects=OrganizationUnit.objects 
-        show_archive_projects=ParameterRepo(request=self.request,app_name=APP_NAME).parameter(name=OrganizationParameterEnum.SHOW_ARCHIVE_PAGES,default="0").boolean_value
-        if not show_archive_projects:
-            self.objects=self.objects.filter(archive=False)
         self.profile=ProfileRepo(*args, **kwargs).me
-       
+        if self.request.user.has_perm(APP_NAME+".view_organizationunit"):
+            self.objects=OrganizationUnit.objects
+        elif self.profile is not None:
+            me_employee=EmployeeRepo(request=self.request).me
+            self.objects=OrganizationUnit.objects.filter(pk=me_employee.organization_unit.id)
+        else:
+            self.objects=OrganizationUnit.objects.filter(pk=0)
+        show_archive_orgs=ParameterRepo(request=self.request,app_name=APP_NAME).parameter(name=OrganizationParameterEnum.SHOW_ARCHIVE_PAGES,default="0").boolean_value
+        if not show_archive_orgs:
+            self.objects=self.objects.filter(archive=False)
+
     def add_organization_unit(self,*args, **kwargs):
         if not self.user.has_perm(APP_NAME+".add_organizationunit"):
             return None
@@ -31,7 +36,9 @@ class OrganizationUnitRepo():
             organization_unit=self.organization_unit(pk=kwargs['organization_unit_id'])
             
         if 'is_ware_house' in kwargs and kwargs['is_ware_house']==True:
+            from warehouse.models import WareHouse
             new_organization_unit = WareHouse()
+            pass
         else:
             new_organization_unit = OrganizationUnit()
 
@@ -74,7 +81,12 @@ class OrganizationUnitRepo():
             pk=kwargs['pk']
         elif 'id' in kwargs:
             pk=kwargs['id']
-        return self.objects.filter(pk=pk).first()
+        organization_unit= self.objects.filter(pk=pk).first()
+        if self.request.user.has_perm(APP_NAME+".view_organizationunit"):
+            return organization_unit
+        me_employee=EmployeeRepo(request=self.request).me
+        if me_employee is not None and me_employee in organization_unit.employees.all():
+            return organization_unit
      
     def list(self, *args, **kwargs):
         objects = self.objects

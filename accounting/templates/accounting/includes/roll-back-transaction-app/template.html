@@ -1,0 +1,61 @@
+<div id="roll-back-transaction-app">
+
+
+    <div id="accordion-roll-back-transaction" v-if="can_roll_back">
+
+
+        <div class="card farsi" >
+            <div class="card-header">
+                <h5 class="text-center">
+                    <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-roll-back-transaction"
+                        aria-expanded="true" aria-controls="collapse-roll-back-transaction">
+                        برگشت دادن تراکنش از حالت نهایی شده
+
+
+
+                    </button>
+                </h5>
+
+            </div>
+            <div id="collapse-roll-back-transaction" class="collapse " aria-labelledby="heading-roll-back-transaction"
+                data-parent="#accordion-roll-back-transaction">
+
+
+                <div class="card-body">
+                    <div class="text-right">
+                        <button v-if="!rolling_back" class="btn btn-warning" @click="rolling_back=true">
+                            از حالت غیر قابل ویرایش خارج شود؟
+                        </button>
+
+                        <div v-if="rolling_back"  >
+                            <p>
+
+                                از حالت غیر قابل ویرایش خارج شود؟
+                            </p>
+                            <div class="mt-5">
+
+                                <button class="btn btn-danger" @click="roll_back()">
+                                    Yes
+
+                                </button>
+
+
+                                <button class="btn btn-secondary" @click="rolling_back=false">
+                                    No
+                                </button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+
+                <div class="card-footer">
+                </div>
+
+            </div>
+
+
+        </div>
+    </div>
+</div>

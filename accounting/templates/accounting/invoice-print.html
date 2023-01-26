@@ -4,7 +4,7 @@
 
 {% load to_variz_text %}
 {% block content %}
-<div class="row">
+<div class="row rtl" id="invoice-print-app">
     <div class="col-md-12">
 
         <div class="card">
@@ -23,8 +23,8 @@
 
 
 
-                <div class="row">
-                    <div class="col-md-6">
+                <div class="row rtl farsi">
+                    <div class="col-8">
                         <!-- <p class="text-right mx-5">
                             فروشنده :
                             {{invoice.pay_from.title}}
@@ -40,14 +40,11 @@
                         </p>
                     </div>
 
-                    <div class="col-md-6">
-                        <div class="row">
-                            <div class="col-8  farsi text-left">تاریخ</div>
-                            <div class="col-4  farsi text-right">{{invoice.invoice_datetime|to_persian_date|safe}}</div>
+                    <div class="col-4"> 
+                            <div class="  farsi text-left" style="text-align: left;">تاریخ : {{invoice.invoice_datetime|to_persian_date|safe}}</div>
 
-                            <div class="col-8  farsi text-left">شماره</div>
-                            <div class="col-4  farsi text-right">{{invoice.pk}}</div>
-                        </div>
+                            <div class="  farsi text-left" style="text-align: left;">شماره : {{invoice.pk}}</div>
+                         
 
                     </div>
 
@@ -60,12 +57,14 @@
             {% include "accounting/includes/invoice-lines-app/print.html" %}
         </div>
     </div>
+    {% if not invoice.editable %}
+      
     <div class="col-md-12">
-        <div class="row">
-            <div class="col-md-6">
-                <div class="card">
+        <div class="row rtl farsi">
+            <div class="col-6">
+                <div class="card farsi">
                     <div class="card-body">
- 
+
 
                         <p class="text-center">
                             خریدار : {{invoice.pay_to.title}}
@@ -79,10 +78,10 @@
                 </div>
             </div>
 
-            <div class="col-md-6">
+            <div class="col-6">
                 <div class="card">
                     <div class="card-body">
- 
+
 
 
                         <p class="text-center">
@@ -102,9 +101,19 @@
     <div class="col-md-12">
         {% include "accounting/includes/invoice-app/description.html" %}
     </div>
+    <div class="col-md-12">
+        <div class="text-right" v-show="printing">
+            <button @click="print()" class="btn btn-info">
+                <i class="fa fa-print"></i>
+                چاپ
+            </button>
 
-
-
+            <a href="{{invoice.get_absolute_url}}" class="farsi mx-3">
+                {{invoice.title}}
+            </a>
+        </div>
+    </div>
+    {% endif %}
 </div>
 
 {% endblock content %}
@@ -116,5 +125,33 @@
     let invoice_lines = JSON.parse(`{{invoice_lines_s|escapejs}}`)
 </script>
 {% include "accounting/includes/invoice-lines-app/script.html" %}
+<script>
+    let invoice_print_app = new Vue({
+        el: "#invoice-print-app",
+        data: {
+            printing: true
+        },
+        methods: {
+            print: function () {
+                let url = "{% url 'accounting:print_transaction' %}"
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    transaction_id: parseInt("{{transaction.id}}")
+                }
+                $.post(url, payload).done(data => {
 
+                })
+
+                this.printing = false
+                setTimeout(() => {
+                    window.print()
+                    invoice_print_app.printing = true
+                }, 200);
+                setTimeout(() => {
+                    invoice_print_app.printing = true
+                }, 5000);
+            }
+        }
+    })
+</script>
 {% endblock script %}

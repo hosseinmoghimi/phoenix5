@@ -28,7 +28,10 @@ def getContext(request, *args, **kwargs):
     # context['search_action'] = reverse(APP_NAME+":search")
     context['LAYOUT_PARENT'] = LAYOUT_PARENT
     return context
-
+def get_add_ware_house_sheet_context(request,*args, **kwargs):
+    context={}
+    context['ware_house_sheet_statuses']=(a[0] for a in WareHouseSheetStatusEnum.choices)
+    return context
 
 class HomeView(View):
     def get(self, request, *args, **kwargs):

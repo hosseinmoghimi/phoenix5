@@ -16,6 +16,7 @@ urlpatterns = [
     path("ware_houses/",login_required(views.ProjectsView.as_view()),name="ware_houses"),
     path("ware_house/<int:pk>/",login_required(views.ProjectView.as_view()),name="ware_house"),
 
+    path("new_project/",login_required(views.NewProjectView.as_view()),name="new_project"),
     path("projects/",login_required(views.ProjectsListView.as_view()),name="projects"),
     path("project/<int:pk>/",login_required(views.ProjectView.as_view()),name="project"),
     path("copy_project/",login_required(views.CopyProjectView.as_view()),name="copy_project"),
@@ -44,5 +45,7 @@ urlpatterns = [
     path('add_service/',login_required(apis.AddServiceApi.as_view()),name="add_service"), 
     path('copy_service_requests/',login_required(apis.CopyServiceRequestsApi.as_view()),name="copy_service_requests"), 
     path('copy_material_requests/',login_required(apis.CopyMaterialRequestsApi.as_view()),name="copy_material_requests"), 
+    path('copy_service_requests_from_invoice/',login_required(apis.CopyServiceRequestsFromInvoiceApi.as_view()),name="copy_service_requests_from_invoice"), 
+    path('copy_material_requests_from_invoice/',login_required(apis.CopyMaterialRequestsFromInvoiceApi.as_view()),name="copy_material_requests_from_invoice"), 
 
 ]

@@ -113,9 +113,6 @@ class Request(InvoiceLine, LinkHelper):
             self.row = len(self.invoice.lines.all())+1
         except:
             self.row=1
-        # print(100*"#")
-        # print(self.invoice_id)
-        # print("request")
         # if self.invoice_id is None:
         #     if self.type==RequestTypeEnum.MATERIAL_REQUEST:
         #         invoice=MaterialInvoice()
@@ -235,7 +232,6 @@ class WareHouse(OrganizationUnit):
         verbose_name_plural = 'WareHouses'
 
 
-
 class Project(Page):
     parent = models.ForeignKey("project", verbose_name=_(
         "parent"),related_name="childs", null=True, blank=True, on_delete=models.CASCADE)
@@ -269,6 +265,43 @@ class Project(Page):
         return Project.objects.order_by('priority').filter(id__in=self.all_childs_ids())
 
 
+    def sub_projects_material_requests(self):
+        sub_projects_material_requests=[]
+        ids=self.all_childs_ids()
+        sub_projects_material_requests=MaterialRequest.objects.filter(project_id__in=ids)
+        
+        sub_projects_material_requests_=[]
+        for sub_projects_material_request in sub_projects_material_requests:
+            if not sub_projects_material_request.project.status == ProjectStatusEnum.DRAFT:
+                sw=False
+                for sub_projects_material_request_ in sub_projects_material_requests_:
+                    if sub_projects_material_request.product_or_service.id == sub_projects_material_request_.product_or_service.id:
+                        sub_projects_material_request_.quantity+=sub_projects_material_request.quantity
+                        sw=True
+                if not sw:
+                    sub_projects_material_requests_.append(sub_projects_material_request)
+                    
+        return sub_projects_material_requests_
+
+    def sub_projects_service_requests(self):
+        sub_projects_service_requests=[]
+        ids=self.all_childs_ids()
+        sub_projects_service_requests=ServiceRequest.objects.filter(project_id__in=ids)
+
+    
+        sub_projects_service_requests_=[]
+        for sub_projects_service_request in sub_projects_service_requests:
+            if not sub_projects_service_request.project.status == ProjectStatusEnum.DRAFT:
+                sw=False
+                for sub_projects_service_request_ in sub_projects_service_requests_:
+                    if sub_projects_service_request.product_or_service.id == sub_projects_service_request_.product_or_service.id:
+                        sub_projects_service_request_.quantity+=sub_projects_service_request.quantity
+                        sw=True
+                if not sw:
+                    sub_projects_service_requests_.append(sub_projects_service_request)
+                    
+        return sub_projects_service_requests_
+        
     def material_requests(self):
         return Request.objects.filter(project=self).filter(type=RequestTypeEnum.MATERIAL_REQUEST)
 
@@ -391,13 +424,16 @@ class Project(Page):
 
     def get_sub_chart_url(self):
         return reverse(APP_NAME+":project_chart",kwargs={'pk':self.pk})
+    
     def get_full_description_for_chart(self):
         return f"""
-        <div class="text-center"><img src="{self.thumbnail}" class="rounded" width="32" alt=""></div>
+        
         <div><small class="text-muted">{to_price(self.sum_total())}</small></div>
         <div>{self.percentage_completed} %</div>
         """
 
+    def __str__(self):
+        return self.full_title
 class SampleForm(Page):
 
     class Meta:

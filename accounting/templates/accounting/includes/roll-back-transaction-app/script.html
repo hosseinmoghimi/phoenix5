@@ -1,0 +1,32 @@
+<script>
+    let roll_back_transaction_app = new Vue({
+        el: "#roll-back-transaction-app",
+        data: {
+            rolling_back: false,
+            can_roll_back:true,
+        },
+        methods: {
+            roll_back: function () {
+                this.rolling_back = false
+                console.log("rolling_back")
+
+                let url = "{% url 'accounting:roll_back_transaction' %}"
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    transaction_id: parseInt("{{transaction.id}}")
+                }
+                $.post(url, payload).done(data => {
+                    console.log(data)
+                    if(data.result==='SUCCEED'){
+                        roll_back_transaction_app.can_roll_back=false
+                        
+                        location.href = "{{transaction.get_absolute_url}}"
+                    }
+                })
+
+
+
+            },
+        }
+    })
+</script>

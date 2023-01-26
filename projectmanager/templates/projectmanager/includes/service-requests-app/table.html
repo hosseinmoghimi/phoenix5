@@ -40,9 +40,10 @@
             <tr v-for="service_request in service_requests">
                 <td>
                     <a target="_blank" :href="service_request.get_absolute_url" title="نمایش کامل">
-                        <i class="material-icons">
+                        # <small class="text-muted" v-text="service_request.row"></small>
+                        <!-- <i class="material-icons">
                             ballot
-                        </i>
+                        </i> -->
                     </a>
                 </td>
                 <td>
@@ -72,8 +73,8 @@
                 </td>
                 {% if not project %}
                 <td>
-                    <a target="_blank" :href="service_request.project.get_absolute_url"
-                        v-text="service_request.project.title">
+                    <a target="_blank" :href="service_request.project.get_absolute_url">
+                        <span v-text="service_request.project.title"></span>
                     </a>
                 </td>
                 {% endif %}
@@ -86,14 +87,20 @@
 
                         <div class="media-body mr-2">
                             <div>
-                                <a target="_blank" :href="service_request.service.get_pm_absolute_url"
-                                    v-text="service_request.service.title">
+                                <a target="_blank" :href="service_request.service.get_pm_absolute_url">
+
+                                    <span v-text="service_request.service.title"></span>
+
                                 </a>
                             </div>
                             <div>
                                 <a target="_blank" :href="service_request.invoice.pay_from.get_absolute_url">
+                                    <small class="text-muted" v-text="service_request.invoice.id">
+                                    </small>
+                                    -
                                     <small class="text-muted" v-text="service_request.invoice.pay_from.title">
                                     </small>
+
                                 </a>
                             </div>
                         </div>

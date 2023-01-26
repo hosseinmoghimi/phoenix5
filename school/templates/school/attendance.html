@@ -1,0 +1,48 @@
+{% extends "school/layout.html" %}
+{% block content %}
+<h3 class="text-center">
+    وضعیت دانش آموز در جلسه کلاسی
+</h3>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="title">
+                     {{attendance.session.active_course.title}}
+                </h4>
+            </div>
+
+            <div class="card-body farsi">
+                <div class="mb-3">
+                    <a href="{{attendance.student.get_absolute_url}}">
+                        <img src="{{attendance.student.account.logo}}" class="rounded-circle" width="32" alt="">
+                        {{attendance.student.account.title}}
+                    </a>
+                </div>
+
+                <div class="mb-3">
+                     
+            
+
+
+                </div>
+
+
+
+            </div>
+
+        </div>
+    </div>
+   
+    
+</div>
+
+
+{% endblock content %}
+
+
+{% block script %}
+ 
+{% endblock script %}
+    

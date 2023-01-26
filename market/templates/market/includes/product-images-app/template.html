@@ -1,0 +1,14 @@
+<div id="product-images-app">
+    <div class="tab-content">
+        <a  :title="selected_image.title" target="_blank" :href="selected_image.get_absolute_url">
+            <img class="w-100" :src="selected_image.image">
+        </a>
+    </div>
+    <div class="row">
+        <div class="col-2" v-for="product_image in product_images">
+            <!-- <div class="nav-link"> -->
+            <img :title="product_image.title" style="cursor: pointer;" :src="product_image.thumbnail" class="w-100" @click="select_image(product_image)">
+            <!-- </div> -->
+        </div>
+    </div>
+</div>

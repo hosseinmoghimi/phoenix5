@@ -1,0 +1,20 @@
+<div class="farsi">
+    <table class="rtl mx-3 table table-striped">
+
+        {% for product_specification in product_specifications %}
+        <tr>
+            <td class="text-left text-muted">
+                {{product_specification.name}}
+            </td>
+            <td class="text-right">
+                {{product_specification.value}}
+            </td>
+
+        </tr>
+
+        {% endfor %}
+
+
+    </table>
+
+</div>

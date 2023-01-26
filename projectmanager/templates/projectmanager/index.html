@@ -1,7 +1,7 @@
 {% extends "projectmanager/layout.html" %}
 
 {% block content %}
-<div class="row">
+<div class="row rtl">
   <div class="col-md-4">
     <div class="card">
       <div class="farsi card-body">
@@ -28,6 +28,12 @@
           </h6>
         </a>
 
+
+        <a href="{% url 'projectmanager:new_project' %}">
+          <h6>
+             پروژه جدید
+          </h6>
+        </a>
 
         <a href="{% url 'projectmanager:projects' %}">
           <h6>

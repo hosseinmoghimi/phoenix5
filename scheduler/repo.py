@@ -1,10 +1,10 @@
-from requests import request
 from map.models import PageLocation
 from map.repo import LocationRepo
+from phoenix.constants import FAILED,SUCCEED
 from scheduler.models import Appointment,APP_NAME
 from authentication.repo import ProfileRepo
 from django.utils import timezone
-
+from accounting.repo import AccountRepo
 
 class AppointmentRepo():
     def __init__(self, *args, **kwargs):
@@ -39,6 +39,32 @@ class AppointmentRepo():
         if 'parent_id' in kwargs:
             objects=objects.filter(parent_id=kwargs['parent_id'])
         return objects.all()
+
+    def add_account_to_appointment(self,*args, **kwargs):
+        result=FAILED
+        message=""
+        appointment=None
+
+        if not self.user.has_perm(APP_NAME+".change_appointment"):
+            return
+        appointment=self.appointment(*args, **kwargs)
+        account=AccountRepo(request=self.request).account(*args, **kwargs)
+        if account is None or appointment is None:
+            result=FAILED
+            message="اطلاعات وارد شده ناصحیح می باشد."
+            return result,appointment,message
+        
+        if account in appointment.accounts.all():
+            result=FAILED
+            message="قبلا این اکانت به قرار ملاقات اضافه شده است."
+            return result,appointment,message
+        else:
+            appointment.accounts.add(account)
+            appointment.save()
+            result=SUCCEED
+            message="با موفقیت اضافه شد."
+        return result,appointment,message
+
 
     def add_appointment(self,*args, **kwargs):
         if not self.user.has_perm(APP_NAME+".add_appointment"):

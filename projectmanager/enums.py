@@ -27,6 +27,7 @@ class RequestStatusEnum(TextChoices):
     DEFAULT='DEFAULT',_('DEFAULT')
     INITIAL='تعریف اولیه در سیستم',_('تعریف اولیه در سیستم')
     DELIVERED='تحویل شده',_('تحویل شده')
+    PRICE_ASKED='استعلام قیمت شده',_('استعلام قیمت شده')
     TESTING='در حال تست',_('در حال تست')
     IN_PROGRESS='در حال انجام',_('در حال انجام')
     DENIED='رد شده',_('رد شده')

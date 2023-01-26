@@ -1,5 +1,11 @@
 <tr>
     <td>
+
+        <a :href="warehouse_sheet.get_absolute_url"><i class="material-icons">ballot</i></a>
+        <a :href="warehouse_sheet.get_edit_url"><i class="fa fa-edit text-warning"></i></a>
+    </td>
+
+    <td>
         <span v-text="warehouse_sheet.persian_date_registered"></span>
         <div>
 
@@ -82,29 +88,28 @@
 
             <small v-text="warehouse_sheet.status"></small>
         </h4>
+        <div class="d-none">
 
-        <div>
-            <button class="btn btn-sm mb-1 btn-success" @click="change_state('DONE')">
-                <span v-text="WareHouseSheetStatusEnumDone"></span>
+            <div>
+                <button class="btn btn-sm mb-1 btn-success" @click="change_state('DONE')">
+                    <span v-text="WareHouseSheetStatusEnumDone"></span>
 
-            </button>
-        </div>
-        <div>
-            <button class="btn btn-sm mb-1 btn-warning" @click="change_state('IN_PROGRESS')">
-                <span v-text="WareHouseSheetStatusEnumInProgress"></span>
-            </button>
-        </div>
-        <div>
-            <button class="btn btn-sm mb-1 btn-danger" @click="change_state('INITIAL')">
-                <span v-text="WareHouseSheetStatusEnumInitial"></span>
+                </button>
+            </div>
+            <div>
+                <button class="btn btn-sm mb-1 btn-warning" @click="change_state('IN_PROGRESS')">
+                    <span v-text="WareHouseSheetStatusEnumInProgress"></span>
+                </button>
+            </div>
+            <div>
+                <button class="btn btn-sm mb-1 btn-danger" @click="change_state('INITIAL')">
+                    <span v-text="WareHouseSheetStatusEnumInitial"></span>
 
-            </button>
+                </button>
+            </div>
+
         </div>
     </td>
 
-    <td>
 
-        <a :href="warehouse_sheet.get_absolute_url"><i class="material-icons">ballot</i></a>
-        <a :href="warehouse_sheet.get_edit_url"><i class="fa fa-edit text-warning"></i></a>
-    </td>
 </tr>

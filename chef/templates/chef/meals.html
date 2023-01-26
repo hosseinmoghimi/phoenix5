@@ -1,0 +1,22 @@
+{% extends "chef/layout.html" %}
+{% block content %}
+<h3 class="text-center">
+    رستوران
+</h3>
+ 
+<div class="row">
+    <div class="col-md-12">
+        {% include "chef/includes/meals-app/template.html" %}
+    </div>
+    
+</div>
+{% endblock content %}
+
+{% block script %}
+<script>
+    let guest_id="{{me_guest.id}}"
+    let guests=JSON.parse(`{{guests_s|escapejs}}`)
+    let me_guest=JSON.parse(`{{me_guest_s|escapejs}}`)
+</script>
+{% include "chef/includes/meals-app/script.html" %}
+{% endblock script %}

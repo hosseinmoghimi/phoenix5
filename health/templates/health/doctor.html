@@ -1,0 +1,51 @@
+{% extends "health/layout.html" %}
+{% block content %}
+<h4 class="text-center">
+    <small class="text-muted">
+        دکتر :
+
+    </small>
+    {{doctor.account.title}}
+
+</h4>
+<div class="row">
+    <div class="col-md-6">
+
+        <div class="card">
+            <div class="card-body">
+                <div>
+                    <h4>
+
+                        <a href="{{doctor.account.get_absolute_url}}">
+                            <img src="{{doctor.account.logo}}" class="rounded-circle" width="96" alt="">
+                            {{doctor.account.title}}
+                        </a>
+                        {% if perms.health.change_doctor %}
+                        {{doctor.get_edit_btn|safe}}
+
+                        {% endif %}
+                    </h4>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-12">
+
+        {% if sdsadsa %}
+
+
+        {% include "health/includes/attendances-app/template.html" %}
+        {% endif %}
+    </div>
+</div>
+{% endblock content %}
+
+{% block script %}
+
+{% if adada %}
+
+
+{% include "health/includes/attendances-app/script.html" %}
+{% endif %}
+
+{% endblock script %}

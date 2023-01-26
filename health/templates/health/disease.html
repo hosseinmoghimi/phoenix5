@@ -1,0 +1,57 @@
+{% extends "health/layout.html" %}
+
+{% block content %}
+{% include "core/includes/page-app/navbar.html" %}
+<div class="mt-5">
+    <h4 class="text-center">
+
+        {{disease.name}}
+    </h4>
+    <h5 class="text-center">
+        {% if perms.health.change_disease %}
+        {{disease.get_edit_btn|safe}}
+
+        {% endif %}
+
+        {% if perms.health.delete_disease %}
+        {{disease.get_delete_btn|safe}}
+
+        {% endif %}
+    </h5>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+
+                {% for drug in disease.drugs.all %}
+                <div>
+
+                    <div class="media">
+                        <a href="{{drug.get_absolute_url}}">
+                            <img src="{{drug.thumbnail}}" class="rounded" width="48" alt="">
+                        </a>
+                        <div class="media-body mr-2">
+                            <a href="{{drug.get_absolute_url}}">
+                                {{drug.title}}
+                            </a>
+
+                        </div>
+                    </div>
+                </div>
+
+                {% endfor %}
+
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+{% endblock content %}
+
+
+{% block script %}
+
+{% endblock script %}

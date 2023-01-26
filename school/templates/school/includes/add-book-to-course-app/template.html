@@ -1,0 +1,21 @@
+<div class="card" id="add-book-to-course-app">
+    <div class="card-body">
+        <h5>
+            افزودن کتاب
+        </h5>
+        <form @submit.prevent="add_book()">
+
+            <div class="form-group">
+                <label for="">شناسه </label>
+                <input type="text" class="form-control" v-model="search_for" @input="filter()">
+                <select name="" v-model="book_id" class="form-control">
+
+                    <option v-for="book in all_books" :value="book.id" v-text="book.title"></option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-success">
+                افزودن
+            </button>
+        </form>
+    </div>
+</div>

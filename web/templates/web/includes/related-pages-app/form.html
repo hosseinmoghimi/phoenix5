@@ -7,7 +7,7 @@
 </div>
 
 <form v-show="show_add_form" @submit.prevent="add_related_page()">
-    <div class="row">
+    <div class="row farsi rtl">
         <div class="col-md-3">
             <div class="form-group">
                 <label for="exampleInputEmail1">شناسه صفحه مرتبط</label>
@@ -54,8 +54,13 @@
 
         <div class="col-md-3">
             <button @click="show_add_form=false" class="btn btn-outline-secondary farsi">انصراف</button>
-            <button type="submit" class="btn btn-primary farsi">تایید</button>
+            <button type="submit"  class="btn btn-primary farsi">
+                
+            <span v-if="add">افزودن</span>
+            <span v-if="!add">حذف</span>
+            </button>
 
+            
         </div>
     </div>
 

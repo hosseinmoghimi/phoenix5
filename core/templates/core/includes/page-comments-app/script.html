@@ -6,7 +6,7 @@
     let url_add_page_comment = "{% url 'core:add_page_comment' %}"
     let page_comments = JSON.parse(`{{page_comments_s|escapejs}}`)
     let url_delete_page_comment = "{% url 'core:delete_page_comment' %}"
-
+    
     let page_comment_component = Vue.component('page-comment-component', {
         data: function () {
             return {

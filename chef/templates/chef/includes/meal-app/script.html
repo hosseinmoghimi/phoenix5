@@ -1,0 +1,31 @@
+<script>
+    let url_reserve_meal="{% url 'chef:reserve_meal' %}"
+    let meal_app_data = {
+        guest_id: guest_id,
+        quantity:1,
+        served_count:parseInt(`{{meal.served_count}}`),
+
+    }
+    let meal_app = new Vue({
+        el: "#meal-app",
+        data: meal_app_data,
+        methods: {
+            reserve_meal: function () {
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    meal_id: meal_id,
+                    quantity: this.quantity,
+                    guest_id: guest_id,
+                }
+
+                let posting = $.post(url_reserve_meal, payload)
+                posting.done((data) => {
+                })
+            },
+
+
+            
+
+        }
+    })
+</script>

@@ -13,7 +13,7 @@ from core.views import CoreContext, PageContext,SearchForm
 from django.views import View
 from map.repo import AreaRepo, LocationRepo
 from map.serializers import AreaSerializer, LocationSerializer
-from accounting.views import add_from_accounts_context
+from accounting.views import add_from_accounts_context, add_transaction_context
 from transport.enums import MaintenanceEnum, VehicleBrandEnum, VehicleColorEnum, VehicleTypeEnum, WeightUnitEnum
 from transport.forms import *
 from utility.calendar import PersianCalendar 
@@ -171,11 +171,11 @@ def get_maintenances_context(request,*args, **kwargs):
         context['clients_s']=json.dumps(ClientSerializer(clients,many=True).data)
 
         context['maintenance_types']=(maintenance_type[0] for maintenance_type in MaintenanceEnum.choices)
-
+        context.update(get_add_maintenance_context(request=request))
     return context
 
 def get_add_maintenance_context(request,*args, **kwargs):
-    context={}
+    context=add_transaction_context(request=request)
 
      #vehicles
     vehicles=VehicleRepo(request=request).list(*args, **kwargs)
@@ -489,6 +489,28 @@ class DriversView(View):
         return render(request,TEMPLATE_ROOT+"drivers.html",context)
 
 
+class TransportView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        luggage=LuggageRepo(request=request).luggage(*args, **kwargs)
+        context.update(PageContext(request=request,page=luggage))
+        context['luggage']=luggage
+        context['luggage_s']=json.dumps(LuggageSerializer(luggage).data)
+        return render(request,TEMPLATE_ROOT+"transport.html",context)
+
+class TransportsView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        luggages=LuggageRepo(request=request).list(*args, **kwargs)
+        context['luggages']=luggages
+        luggages_s=json.dumps(LuggageSerializer(luggages,many=True).data)
+        context['luggages_s']=luggages_s
+        if request.user.has_perm(APP_NAME+".add_luggage"):
+            context['add_luggage_form']=AddLuggageForm()
+            context.update(add_luggage_context(request=request))
+        return render(request,TEMPLATE_ROOT+"transports.html",context)
+
+
 class LuggageView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -579,11 +601,25 @@ class VehicleView(View):
    
 class AddTripPathView(View):
     def get(self,request,*args, **kwargs):
-        context=getContext(request=request)
-        drivers=DriverRepo(request=request).list(*args, **kwargs)
-        context['drivers']=drivers
-        drivers_s=json.dumps(DriverSerializer(drivers,many=True).data)
-        context['drivers_s']=drivers_s
+        context=getContext(request=request) 
+
+        
+        if request.user.has_perm(APP_NAME+".add_trippath"):
+            context['add_trip_path_form']=AddTripPathForm()
+
+            locations=LocationRepo(request=request).list()
+            context['locations']=locations
+            locations_s=json.dumps(LocationSerializer(locations,many=True).data)
+            context['locations_s']=locations_s
+
+            
+            areas=AreaRepo(request=request).list()
+            context['areas']=areas
+            areas_s=json.dumps(AreaSerializer(areas,many=True).data)
+            context['areas_s']=areas_s
+
+       
+
         return render(request,TEMPLATE_ROOT+"add-trip-path.html",context)
         
 

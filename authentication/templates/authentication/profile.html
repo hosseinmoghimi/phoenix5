@@ -2,7 +2,7 @@
 
 {% block content %}
  
-<div class="row">
+<div class="row rtl">
     <div class="col-md-4">
         <div class="card">
             <div class="card-body">
@@ -72,12 +72,21 @@
 
 
                     <a href="{% url 'authentication:login_as' pk=selected_profile.id %}" title="ورود"
-                        class="mx-2 text-info"><i class="fa fa-key text-info" aria-hidden="true"></i></a>
+                        class="mx-2 text-info"><i class="fa fa-key text-success" aria-hidden="true"></i></a>
 
                     {% endif %}
 
+                    {% if perms.authentication.change_profile or profile_is_me %}
+
+
+                    <a href="{% url 'authentication:sessions' pk=selected_profile.id %}" title="جلسه ها"
+                        class="mx-2 text-danger"><i class="fa fa-calendar text-info" aria-hidden="true"></i></a>
+
+                    {% endif %}
+
+
                     <a href="{% url 'authentication:change_password' %}" title="تغییر دادن پسورد"
-                    class="mx-2 text-danger"><i class="fa fa-key" aria-hidden="true"></i></a>
+                    class="mx-2 "><i class="fa fa-key text-warning" aria-hidden="true"></i></a>
 
 
                     {% if can_edit_profile %}
@@ -142,6 +151,15 @@
     </div>
     {% endif %}
 
+    {% if profile_contacts %}
+
+    <div class="col-md-4">
+        {% include "authentication/includes/profile-contacts-app/template.html" %}
+
+    </div>
+    {% endif %}
+
+
     {% if aaa and transport_app_is_installed and perms.authentication.change_profile%}
 
 
@@ -201,6 +219,8 @@
 {% endblock content %}
 
 {% block script %}
+{% include "authentication/includes/profile-contacts-app/script.html" %}
+
 {% include "accounting/includes/accounts-app/script.html" %}
 {% include "organization/includes/employees-app/script.html" %}
 {% if profiles %}

@@ -5,7 +5,10 @@ from django.utils import timezone
 from core.constants import FAILED, SUCCEED
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.models import User
-from .models import Profile
+from log.repo import LogRepo
+
+from utility.log import leolog
+from .models import Profile, ProfileContact
 from .apps import APP_NAME
 from django.db.models import Q
 
@@ -38,6 +41,20 @@ class ProfileRepo():
             self.me = self.objects.filter(user=self.user).first()
             if self.user.has_perm(APP_NAME+".view_profile"):
                 self.objects = Profile.objects.all()
+    def set_attribute(self,*args, **kwargs):
+        profile=self.profile(*args, **kwargs)
+        if profile is None:
+            return
+
+        if 'mobile' in kwargs:
+            profile.mobile=kwargs['mobile']
+        if 'email' in kwargs:
+            profile.mobile=kwargs['email']
+        if 'address' in kwargs:
+            profile.mobile=kwargs['address']
+        profile.save()
+
+
     def get_default(self,*args, **kwargs):
         if 'user' in kwargs and kwargs['user'] is not None:
             objects=self.objects.filter(user=kwargs['user'])
@@ -168,6 +185,7 @@ class ProfileRepo():
             logout(request=self.request)
 
     def login(self,request,*args, **kwargs):
+
         logout(request=request)
         if 'user' in kwargs:
             user=kwargs['user']
@@ -180,7 +198,10 @@ class ProfileRepo():
             if user is not None:
                 login(request,user)
                 if user.is_authenticated:
+                    profile=Profile.objects.filter(user=user).first()
+                    LogRepo(request=self.request).add_log(title="login",profile=profile,app_name=APP_NAME,description="login")
                     return (request,user)
+        LogRepo(request=self.request).add_log(title="try to login",app_name=APP_NAME,description="try to login username:"+kwargs['username']+" , password : "+kwargs['password'])
     
     
     def change_password(self,request,*args, **kwargs):
@@ -301,6 +322,10 @@ class ProfileRepo():
             address=None
 
         
+        if 'enabled' in kwargs:
+            enabled=kwargs['enabled']
+        else:
+            enabled=False
 
         if 'username' in kwargs:
             username=kwargs['username']
@@ -328,7 +353,7 @@ class ProfileRepo():
             new_user=Profile.objects.filter(mobile=mobile).first()
             if new_user is not None:
                 return (FAILED,None,"شماره همراه وارد شده ، تکراری می باشد.")  
-        
+         
         new_user=User.objects.filter(first_name=first_name).filter(last_name=last_name).first()
         if new_user is not None:
             return (FAILED,None,"نام و نام خانوادگی وارد شده ، تکراری می باشد.")  
@@ -348,6 +373,7 @@ class ProfileRepo():
         if profile is None:
             profile=Profile()
         profile.user=user
+        profile.enabled=enabled
         profile.bio=bio
         profile.mobile=mobile
         profile.address=address
@@ -401,3 +427,55 @@ class ProfileRepo():
         result=SUCCEED
         message="successfully!"
         return (result,profile,message)
+
+
+
+ 
+class ProfileContactRepo:
+    def __init__(self, *args, **kwargs):
+        self.request = None
+        self.user = None
+        if 'request' in kwargs:
+            self.request = kwargs['request']
+            self.user = self.request.user
+        if 'user' in kwargs:
+            self.user = kwargs['user']
+        self.objects = ProfileContact.objects
+        self.profile = ProfileRepo(user=self.user).me
+        # self.me=Store.objects.filter(profile=self.profile).first()
+
+    def list(self, *args, **kwargs):
+        objects = self.objects.all()
+        if 'for_home' in kwargs:
+            objects = objects.filter(for_home=kwargs['for_home'])
+        if 'profile_id' in kwargs:
+            objects = objects.filter(profile_id=kwargs['profile_id'])
+        if 'product_id' in kwargs:
+            objects = objects.filter(invoice_line__product_or_service_id=kwargs['product_id'])
+        if 'invoice_id' in kwargs:
+            objects = objects.filter(invoice_line__invoice_id=kwargs['invoice_id'])
+        if 'search_for' in kwargs:
+            search_for=kwargs['search_for']
+            objects = objects.filter(title__contains=search_for) 
+        return objects
+
+    def profile_contact(self, *args, **kwargs):
+        if 'profile_contact_id' in kwargs:
+            return self.objects.filter(pk= kwargs['profile_contact_id']).first()
+        if 'pk' in kwargs:
+            return self.objects.filter(pk= kwargs['pk']).first()
+        if 'id' in kwargs:
+            return self.objects.filter(pk= kwargs['id']).first()
+ 
+    def add_profile_contact(self,*args, **kwargs):
+        result=FAILED
+        message="sdfsdfsdf"
+        profile_contact=None
+        if not self.request.user.has_perm(APP_NAME+".change_profile"):
+            return (result,profile_contact,message)
+        profile_contact=ProfileContact(*args, **kwargs)
+        profile_contact.save()
+        result=SUCCEED
+        message="با موفقیت افزوده شد."
+
+        return (result,profile_contact,message)

@@ -1,6 +1,6 @@
 {% load static %}
 <form @submit.prevent="add_profile()">
-    <div class="row">
+    <div class="row rtl">
         <div class="col-md-4">
             <div class="form-group">
                 <label for="">نام</label>
@@ -22,7 +22,7 @@
     </div>
 
 
-    <div class="row">
+    <div class="row rtl">
 
         <div class="col-md-4">
 
@@ -47,7 +47,7 @@
     </div>
 
 
-    <div class="row">
+    <div class="row rtl">
 
         <div class="col-md-4">
 
@@ -67,6 +67,22 @@
             </div>
 
         </div>
+
+        <div class="col-md-4">
+
+
+            <div class="form-group">
+                <label for="">&nbsp;</label>
+                <div class="form-check">
+                    <input style="float: right;" class="form-check-input" v-model="enabled"  type="checkbox" value="" id="flexCheckDefault">
+                    <label style="padding-right:1.5em;" class="form-check-label" for="flexCheckDefault">
+                        فعال باشد؟
+                    </label>
+                </div>
+            </div>
+
+        </div>
+
         <div class="col-md-12">
 
 
@@ -85,7 +101,7 @@
 
         </div>
     </div>
-    <div class="row">
+    <div class="row rtl">
 
         <div class="col-md-12">
             <div class="text-right">
@@ -97,7 +113,7 @@
                     افزودن
 
                 </button>
-                
+
                 <img src="{% static 'leo/img/loading.gif' %}" width="32" v-if="waiting" alt="">
             </div>
 

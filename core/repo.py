@@ -1,3 +1,4 @@
+from unittest import result
 from requests import request
 from .models import ContactMessage, Download, Image, Link, Page, PageComment, PageDownload, PageImage, PageLike, PageLink, PagePermission, PageTag, Parameter,Picture, Tag
 from .constants import *
@@ -33,6 +34,22 @@ class ImageRepo:
 
 
 class PageRepo:
+    def change_metadata(self,*args, **kwargs):
+        metadata,result,message=("",FAILED,"")
+        if not self.request.user.has_perm("core.change_page"):
+            message="شما مجوز ویرایش متا دیتا را ندارید."
+            return metadata,result,message
+        page=self.page(*args, **kwargs)
+        if page is not None and 'metadata' in kwargs and kwargs['metadata'] is not None:
+            metadata=kwargs['metadata']
+            page.meta_data=metadata
+            page.save()
+            result=SUCCEED
+            
+            message="با موفقیت متا دیتا ویرایش شد."
+        else:
+            message="اطلاعات وارد شده صحیح نمی باشد."
+        return metadata,result,message
     def encrypt(self,*args, **kwargs):
         page=self.page(*args, **kwargs)
         key=page.encrypt(*args, **kwargs)
@@ -40,8 +57,8 @@ class PageRepo:
 
     def decrypt(self,key,*args, **kwargs):
         page=self.page(*args, **kwargs)
-        page.decrypt(key)
-        return page
+        result=page.decrypt(key,*args, **kwargs)
+        return page,result
 
     def __init__(self,*args, **kwargs):
         self.request=None
@@ -317,11 +334,13 @@ class PageCommentRepo:
             self.request=kwargs['request']
             self.user=self.request.user
         self.objects=PageComment.objects
+        self.profile=ProfileRepo(request=self.request).me
+
     def add_comment(self,*args, **kwargs):
         
         can_write=False
         page=PageRepo(request=self.request).page(*args, **kwargs)
-        if self.user.has_perm(APP_NAME+".change_page"):
+        if self.user.has_perm(APP_NAME+".change_page") or self.profile is not None:
             can_write=True
         if not can_write:
             self.profile=ProfileRepo(request=self.request).me
@@ -564,7 +583,7 @@ class PageImageRepo:
         
         # image=Image(title=title,image_main_origin=image)
         # image.save()
-        new_page_image=PageImage(image_main_origin=image,page_id=page.id,title=title)
+        new_page_image=PageImage(image_main_origin=image,page_id=page.id,title=title,creator=self.profile)
         
         new_page_image.save()
         return new_page_image

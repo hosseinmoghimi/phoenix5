@@ -1,9 +1,10 @@
 <script>
     let members = JSON.parse(`{{members_s|escapejs}}`)
+    let members_app_data={}
 </script>
 {% if add_member_form %}
 <script>
-    let members_app_data = {
+    members_app_data = {
         members: members,
         new_member_price: "",
         new_member_title: "",
@@ -21,7 +22,7 @@
 </script>
 {% else %}
 <script>
-    let members_app_data = {
+    members_app_data = {
         members: members,
         search_for: "",
     }

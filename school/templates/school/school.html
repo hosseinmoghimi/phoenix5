@@ -4,14 +4,14 @@
 <h3 class="text-center">
     مدرسه
 </h3>
-<div class="row">
+<div class="row rtl">
     <div class="col-md-6">
         {% include "school/includes/classrooms-app/template.html" %}
     </div>
 
 
     <div class="col-md-12">
-        {% include "school/includes/active-course-app/template.html" %}
+        {% include "school/includes/active-courses-app/template.html" %}
     </div>
     {% if add_active_course_form %}
     <div>
@@ -66,7 +66,7 @@
 
 <script src="{% static 'vendor/js/vue.min.js' %}"></script>
 {% include "school/includes/classrooms-app/script.html" %}
-{% include "school/includes/active-course-app/script.html" %}
+{% include "school/includes/active-courses-app/script.html" %}
 {% if add_active_course_form %}
 <script>
     let major_id = parseInt("{{major.id}}")

@@ -1,14 +1,64 @@
-from datetime import timedelta
-from accounting.enums import FinancialDocumentTypeEnum, PaymentMethodEnum, SpendTypeEnum, TransactionStatusEnum
+from utility.log import leolog 
+from accounting.enums import *
 from core.constants import FAILED, SUCCEED,MISC
 
 from core.enums import UnitNameEnum
 from utility.calendar import PersianCalendar
 from .apps import APP_NAME
-from .models import Account, Asset, Bank, BankAccount, Cheque, Cost, FinancialBalance, FinancialDocument, FinancialYear, Invoice, InvoiceLine, Payment, Price, Product, ProductOrService, ProductOrServiceCategory,Service, Transaction
+from .models import Account, AccountTag,Asset, Bank, BankAccount, Category, Cheque, Cost, DoubleTransaction, FinancialBalance, FinancialDocument, FinancialYear, Invoice, InvoiceLine, Payment, Price, Product, ProductOrService, ProductOrServiceUnitName, ProductSpecification, Service, Transaction
 from django.db.models import Q
 from authentication.repo import ProfileRepo
 from django.utils import timezone
+class AccountTagRepo():
+    def __init__(self, *args, **kwargs):
+        self.request = None
+        self.user = None
+        if 'request' in kwargs:
+            self.request = kwargs['request']
+            self.user = self.request.user
+        if 'user' in kwargs:
+            self.user = kwargs['user']
+        
+        self.objects=AccountTag.objects.all()
+        self.profile=ProfileRepo(*args, **kwargs).me
+       
+
+    def account_tag(self, *args, **kwargs):
+        pk=0
+        if 'account_tag' in kwargs:
+            return kwargs['account_tag']
+        if 'account_tag_id' in kwargs:
+            pk=kwargs['account_tag_id']
+        elif 'pk' in kwargs:
+            pk=kwargs['pk']
+        elif 'id' in kwargs:
+            pk=kwargs['id']
+        return self.objects.filter(pk=pk).first()
+     
+    def list(self, *args, **kwargs):
+        objects = self.objects
+        if 'search_for' in kwargs:
+            search_for=kwargs['search_for']
+            objects = objects.filter(Q(title__contains=search_for)|Q(short_description__contains=search_for)|Q(description__contains=search_for))
+        if 'for_home' in kwargs:
+            objects = objects.filter(Q(for_home=kwargs['for_home']))
+        if 'parent_id' in kwargs:
+            objects=objects.filter(parent_id=kwargs['parent_id'])
+        return objects.all()
+
+    def add_product(self,*args, **kwargs):
+        if not self.user.has_perm(APP_NAME+".add_product"):
+            return None
+ 
+        if 'title' in kwargs:
+            title = kwargs['title']
+
+        product=Product()
+        product.title=title
+        product.save()
+        return product
+
+
 
 
 class AssetRepo():
@@ -61,7 +111,6 @@ class AssetRepo():
         return product
 
 
-
 class BankAccountRepo():
     def __init__(self, *args, **kwargs):
         self.request = None
@@ -102,16 +151,24 @@ class BankAccountRepo():
     def add_bank_account(self,*args, **kwargs):
         if not self.user.has_perm(APP_NAME+".add_bankaccount"):
             return None
-        bank_account=BankAccount(*args, **kwargs)
+        bank_account=BankAccount()
  
         # if 'title' in kwargs:
         #     bank_account.title = kwargs['title']
-        # if 'shaba_no' in kwargs:
-        #     bank_account.shaba_no = kwargs['shaba_no']
-        # if 'card_no' in kwargs:
-        #     bank_account.card_no = kwargs['card_no']
-        # if 'account_no' in kwargs:
-        #     bank_account.account_no = kwargs['account_no']
+        if 'account_id' in kwargs:
+            bank_account.account_id = kwargs['account_id']
+        if 'shaba_no' in kwargs:
+            bank_account.shaba_no = kwargs['shaba_no']
+        if 'card_no' in kwargs:
+            bank_account.card_no = kwargs['card_no']
+        if 'account_no' in kwargs:
+            bank_account.account_no = kwargs['account_no']
+        if 'bank_id' in kwargs:
+            bank_account.bank_id = kwargs['bank_id']
+        if 'title' in kwargs:
+            bank_account.title = kwargs['title']
+        if 'is_default' in kwargs:
+            bank_account.is_default = kwargs['is_default']
 
         bank_account.save()
         return bank_account
@@ -172,7 +229,6 @@ class BankRepo():
         return bank
 
 
-
 class ProductRepo():
     def __init__(self, *args, **kwargs):
         self.request = None
@@ -208,8 +264,6 @@ class ProductRepo():
             objects = objects.filter(Q(for_home=kwargs['for_home']))
         if 'parent_id' in kwargs:
             objects=objects.filter(parent_id=kwargs['parent_id'])
-        if 'product_or_service_category_id' in kwargs:
-            objects=objects.filter(product_or_service_category_id=kwargs['product_or_service_category_id'])
         return objects.all()
 
     def add_product(self,*args, **kwargs):
@@ -222,10 +276,28 @@ class ProductRepo():
         if len(Product.objects.filter(title=product.title))>0:
             message="کالای وارد شده تکراری می باشد."
             return FAILED,None,message
-
         product.save()
+        if 'category_id' in kwargs:
+            category=Category.objects.filter(pk=kwargs['category_id']).first()
+            if category is not None:
+                category.products_or_services.add(product)
         message=product.title +" با موفقیت افزوده شد."
         return SUCCEED,product,message
+
+
+    def add_product_specification(self,*args, **kwargs):
+        if not self.user.has_perm(APP_NAME+".add_productspecification"):
+            return None
+        product=self.product(*args, **kwargs)
+        if product is not None:
+            product_specification=ProductSpecification(product=product)
+            if 'name' in kwargs:
+                product_specification.name = kwargs['name']
+
+            if 'value' in kwargs:
+                product_specification.value = kwargs['value']
+            product_specification.save()
+            return product_specification 
 
 
 class ProductOrServiceRepo():
@@ -266,27 +338,19 @@ class ProductOrServiceRepo():
         if 'category_title' in kwargs:
             objects=objects.filter(category_title=kwargs['category_title'])
         return objects.all()
-
-    def change_category(self,*args, **kwargs):
-        result=FAILED
-        product_or_service_category=None
-        message=""
-        if not self.user.has_perm(APP_NAME+".change_productorservice"):
-            return (result,product_or_service_category,message)
-        product_or_service=self.product_or_service(*args, **kwargs)
-        product_or_service_category=ProductOrServiceCategoryRepo(request=self.request).product_or_service_category(*args, **kwargs)
-        if product_or_service is None or product_or_service_category is None:
-            return (result,product_or_service_category,message) 
+ 
+    def add_product_or_service_unit_name(self,*args, **kwargs):
+        if not self.user.has_perm(APP_NAME+".add_productorserviceunitname"):
+            return None
         
-        product_or_service.product_or_service_category_id = product_or_service_category.id
-        product_or_service.save()
-        result=SUCCEED
-        message="با موفقیت تغییر یافت."
-        return (result,product_or_service_category,message)
+        productorserviceunitnames=ProductOrServiceUnitName.objects.filter(product_or_service_id=kwargs['product_or_service_id']).filter(unit_name=kwargs['unit_name'])
+        if len(productorserviceunitnames)==0:
+            productorserviceunitname=ProductOrServiceUnitName( **kwargs)
+            productorserviceunitname.save()
+            return productorserviceunitname
 
 
-
-class ProductOrServiceCategoryRepo():
+class CategoryRepo():
     def __init__(self, *args, **kwargs):
         self.request = None
         self.user = None
@@ -296,16 +360,18 @@ class ProductOrServiceCategoryRepo():
         if 'user' in kwargs:
             self.user = kwargs['user']
         
-        self.objects=ProductOrServiceCategory.objects.all()
+        self.objects=Category.objects.all()
         self.profile=ProfileRepo(*args, **kwargs).me
-       
+        if len(self.objects)<1:
+            Category(title="خانه").save()
+            self.objects=Category.objects.all()
 
-    def product_or_service_category(self, *args, **kwargs):
+    def category(self, *args, **kwargs):
         pk=0
-        if 'product_or_service_category' in kwargs:
-            return kwargs['product_or_service_category']
-        if 'product_or_service_category_id' in kwargs:
-            pk=kwargs['product_or_service_category_id']
+        if 'category' in kwargs:
+            return kwargs['category']
+        if 'category_id' in kwargs:
+            pk=kwargs['category_id']
         elif 'pk' in kwargs:
             pk=kwargs['pk']
         elif 'id' in kwargs:
@@ -320,31 +386,73 @@ class ProductOrServiceCategoryRepo():
         if 'for_home' in kwargs:
             objects = objects.filter(Q(for_home=kwargs['for_home']))
         if 'parent' in kwargs and kwargs['parent'] is None:
-            objects=objects.filter(super_category=None)
+            objects=self.list_home()
         if 'super_category' in kwargs and kwargs['super_category'] is None:
             objects=objects.filter(super_category=None)
         if 'parent_id' in kwargs:
-            objects=objects.filter(super_category_id=kwargs['parent_id'])
+            parent_id=kwargs['parent_id']
+            if parent_id==0:
+                objects=self.list_home()
+            else:
+                objects=objects.filter(parent_id=kwargs['parent_id'])
         if 'super_category_id' in kwargs:
-            objects=objects.filter(super_category_id=kwargs['super_category_id'])
+            objects=objects.filter(parent_id=kwargs['super_category_id'])
         if 'category_title' in kwargs:
             objects=objects.filter(category_title=kwargs['category_title'])
-        return objects.all()
+        return objects.order_by("priority")
 
-    def add_product_or_service_category(self,*args, **kwargs):
-        if not self.user.has_perm(APP_NAME+".add_productorservicecategory"):
+    def add_category(self,*args, **kwargs):
+        if not self.user.has_perm(APP_NAME+".add_category"):
             return None
-        product_or_service_category=ProductOrServiceCategory()
+        category=Category()
   
+        if 'parent_id' in kwargs and kwargs['parent_id'] is not None and kwargs['parent_id']>0:
+            category.parent_id = kwargs['parent_id']
         if 'title' in kwargs:
-            product_or_service_category.title = kwargs['title']
-        if len(Product.objects.filter(title=product_or_service_category.title))>0:
+            category.title = kwargs['title']
+        if len(Category.objects.filter(title=category.title))>0:
             message="دسته بندی وارد شده تکراری می باشد."
             return FAILED,None,message
 
-        product_or_service_category.save()
-        message=product_or_service_category.title +" با موفقیت افزوده شد."
-        return SUCCEED,product_or_service_category,message
+        category.save()
+        message=category.title +" با موفقیت افزوده شد."
+        return SUCCEED,category,message
+
+
+    def list_home(self, *args, **kwargs):
+        home=self.objects.filter(parent=None).first()
+        if home is None:
+            return []
+        return self.objects.filter(parent_id=home.id).order_by("priority")
+         
+
+    def add_item_category(self,*args, **kwargs):
+        result=FAILED
+        categories=[]
+        message=""
+        if not self.user.has_perm(APP_NAME+".add_category"):
+            return None
+        category=self.category(*args, **kwargs)
+        if category is None:
+            message="دسته بندی مورد نظر پیدا نشد."
+            return result,categories,message
+        
+        product_or_service=ProductOrService.objects.filter(pk=kwargs['product_or_service_id']).first()
+        if product_or_service is None:
+            message="آیتم مورد نظر پیدا نشد."
+            return result,categories,message
+         
+        if product_or_service in category.products_or_services.all():
+            category.products_or_services.remove(product_or_service.id)
+            message= " با موفقیت حذف شد."
+            result=SUCCEED
+        else:
+            category.products_or_services.add(product_or_service.id)
+            message= " با موفقیت افزوده شد."
+            result=SUCCEED
+        
+        categories=product_or_service.category_set.all()
+        return result,categories,message
 
 
 class ServiceRepo():
@@ -380,9 +488,7 @@ class ServiceRepo():
             objects = objects.filter(Q(for_home=kwargs['for_home']))
         if 'parent_id' in kwargs:
             objects=objects.filter(parent_id=kwargs['parent_id'])
-        if 'product_or_service_category_id' in kwargs:
-            objects=objects.filter(product_or_service_category_id=kwargs['product_or_service_category_id'])
-        
+         
         return objects.all()
 
     def add_service(self,*args, **kwargs):
@@ -451,9 +557,9 @@ class FinancialBalanceRepo:
         financial_balance.save()
         if 'amount' in kwargs:
 
-            if financial_balance.financial_document.direction==FinancialDocumentTypeEnum.BEDEHKAR:
+            if financial_balance.financial_document.direction==FinancialDocumentDirectionEnum.BEDEHKAR:
                 financial_balance.bedehkar=kwargs['amount']
-            if financial_balance.financial_document.direction==FinancialDocumentTypeEnum.BESTANKAR:
+            if financial_balance.financial_document.direction==FinancialDocumentDirectionEnum.BESTANKAR:
                 financial_balance.bestankar=kwargs['amount']
             financial_balance.save()
         # financial_balance.financial_document.normalize_balances()
@@ -479,14 +585,15 @@ class PriceRepo:
         if 'user' in kwargs:
             self.user = kwargs['user']
         self.profile = ProfileRepo(user=self.user).me
-        self.objects = Price.objects.order_by('-date_added')
-        if self.user.has_perm(APP_NAME+".view_price"):
-            self.objects = self.objects.all()
-        elif self.profile is not None:
-            self.objects = self.objects.filter(account__profile_id=self.profile.id)
-        else:
-            self.objects = self.objects.filter(pk=0)
+        if self.profile is None:
+            self.objects = Price.objects.filter(id=0)
 
+        elif self.request.user.has_perm(APP_NAME+".view_price"):
+            self.objects = Price.objects.order_by('-date_added')
+        else:
+            self.objects =Price.objects.filter(account__profile_id=self.profile.id)
+        self.objects = self.objects.order_by('-date_added')
+ 
 
     def list(self, *args, **kwargs):
         objects = self.objects.all()
@@ -610,18 +717,23 @@ class FinancialDocumentRepo:
         elif self.profile is not None:
             self.objects = self.objects.filter(account__profile=self.profile)
         else:
-            self.objects = self.objects.filter(pk__lte=0)
+            self.objects = self.objects.filter(pk=0)
 
     def list(self, *args, **kwargs):
         objects = self.objects.all()
         if 'category_id' in kwargs:
             objects = objects.filter(category_id=kwargs['category_id'])
+        if 'transactions' in kwargs:
+            transaction_ids=(transaction.id for transaction in kwargs['transactions'])
+            objects=objects.filter(transaction_id__in=transaction_ids)
         if 'for_home' in kwargs:
             objects = objects.filter(for_home=kwargs['for_home'])
         if 'start_date' in kwargs and kwargs['start_date'] is not None:
             objects = objects.filter(transaction__transaction_datetime__gte=kwargs['start_date'])
         if 'end_date' in kwargs and kwargs['end_date'] is not None:
             objects = objects.filter(transaction__transaction_datetime__lte=kwargs['end_date'])
+        if 'amount' in kwargs and kwargs['amount'] is not None and kwargs['amount']>0:
+            objects = objects.filter(transaction__amount=kwargs['amount'])
         if 'profile_id' in kwargs and kwargs['profile_id'] is not None is not None and kwargs['profile_id']>0:
             objects = objects.filter(account__profile_id=kwargs['profile_id'])
         if 'search_for' in kwargs and kwargs['search_for'] is not None:
@@ -684,6 +796,15 @@ class AccountRepo():
         if self.profile is not None:
             self.me=Account.objects.filter(profile=self.profile).first()
         
+        if self.request.user.has_perm(APP_NAME+".view_account"):
+            self.objects=Account.objects
+        elif self.profile is not None:
+            self.objects=Account.objects.filter(profile_id=self.profile.id)
+        else:
+            self.objects=Account.objects.filter(pk=0)
+        
+        # self.objects=Account.objects
+
     def get_misc(self,*args, **kwargs):
         misc,res=Account.objects.get_or_create(title=MISC)
         return misc
@@ -714,6 +835,12 @@ class AccountRepo():
         if 'search_for' in kwargs:
             search_for=kwargs['search_for']
             objects = objects.filter(Q(title__contains=search_for))
+        if 'tag' in kwargs:
+            account_tags=AccountTag.objects.filter(tag=kwargs['tag'])
+            ids=[]
+            for acc in account_tags:
+                ids.append(acc.account.id)
+            objects = objects.filter(id__in=ids)
         if 'for_home' in kwargs:
             objects = objects.filter(Q(for_home=kwargs['for_home']))
         if 'search_for' in kwargs:
@@ -774,7 +901,34 @@ class AccountRepo():
 
         return account
 
+    def add_account_tag(self,*args, **kwargs):
+        result,message,account_tags=FAILED,"",[]
+        if not self.request.user.has_perm(APP_NAME+".change_account"):
+            return result,message,account_tags
+        tag=kwargs['tag']
+        account_id=kwargs['account_id']
+        account_tags=AccountTag.objects.filter(account_id=account_id).filter(tag=tag)
+        
+        if len(account_tags)>0:
+            account_tags.delete()
+            account_tags=AccountTag.objects.filter(account_id=account_id)
+            result=SUCCEED
+            message="تگ "+tag+" حذف شد."
+            return result,message,account_tags
+        
 
+        account_tag=AccountTag()
+        account_tag.account_id=account_id
+        account_tag.tag=tag
+        account_tag.save()
+        message="تگ "+tag+" اضافه شد."
+
+        account_tags=AccountTag.objects.filter(account_id=account_id)
+        result=SUCCEED
+
+        return result,message,account_tags
+        
+       
 class InvoiceLineRepo():
     def __init__(self, *args, **kwargs):
         self.request = None
@@ -785,12 +939,13 @@ class InvoiceLineRepo():
             self.user = self.request.user
         if 'user' in kwargs:
             self.user = kwargs['user']
-        
-        self.objects=InvoiceLine.objects.all()
         self.profile=ProfileRepo(*args, **kwargs).me
-        if self.profile is not None:
-            self.me=Account.objects.filter(profile=self.profile).first()
-        
+        if self.user.has_perm(APP_NAME+".view_invoice"):
+            self.objects=InvoiceLine.objects.all()
+        elif self.profile is not None:
+            self.objects=InvoiceLine.objects.filter(Q(invoice__pay_from__profile_id=self.profile.id)|Q(invoice__pay_to__profile_id=self.profile.id))
+        else:
+            self.objects=InvoiceLine.objects.filter(id=0)
 
     def invoice_line(self, *args, **kwargs):
         pk=0
@@ -816,8 +971,8 @@ class InvoiceLineRepo():
             objects=objects.filter(title__contains=kwargs['search_for'])
         if 'profile_id' in kwargs:
             objects=objects.filter(profile_id=kwargs['profile_id'])
-        if 'profile_id' in kwargs:
-            objects=objects.filter(profile_id=kwargs['profile_id'])
+        if 'account_id' in kwargs:
+            objects=objects.filter(Q(invoice__pay_from_id=kwargs['account_id'])|Q(invoice__pay_to_id=kwargs['account_id']))
         if 'product_or_service_id' in kwargs:
             objects=objects.filter(product_or_service_id=kwargs['product_or_service_id'])
         return objects.all()
@@ -839,7 +994,7 @@ class PaymentRepo():
         if 'user' in kwargs:
             self.user = kwargs['user']
         
-        self.objects=Payment.objects
+        self.objects=Payment.objects.order_by('-transaction_datetime')
         self.profile=ProfileRepo(*args, **kwargs).me
         if self.user.has_perm(APP_NAME+".view_payment"):
             self.objects=self.objects
@@ -876,7 +1031,7 @@ class PaymentRepo():
             objects=objects.filter(Q(pay_to_id=kwargs['account_id'])|Q(pay_from_id=kwargs['account_id']))
         if 'profile_id' in kwargs:
             objects=objects.filter(account__profile_id=kwargs['profile_id'])
-        return objects.order_by('transaction_datetime')
+        return objects.order_by('-transaction_datetime')
 
     def add_payment(self,*args, **kwargs):
         if not self.request.user.has_perm(APP_NAME+".add_payment"):
@@ -926,7 +1081,7 @@ class CostRepo():
         if 'user' in kwargs:
             self.user = kwargs['user']
         
-        self.objects=Cost.objects
+        self.objects=Cost.objects.order_by('-transaction_datetime')
         self.profile=ProfileRepo(*args, **kwargs).me
         if self.user.has_perm(APP_NAME+".view_payment"):
             self.objects=self.objects
@@ -966,7 +1121,7 @@ class CostRepo():
             objects=objects.filter(Q(pay_to_id=kwargs['account_id'])|Q(pay_from_id=kwargs['account_id']))
         if 'profile_id' in kwargs:
             objects=objects.filter(account__profile_id=kwargs['profile_id'])
-        return objects.order_by('transaction_datetime')
+        return objects.order_by('-transaction_datetime')
 
     def add_cost(self,*args, **kwargs):
         if not self.request.user.has_perm(APP_NAME+".add_cost"):
@@ -1011,13 +1166,24 @@ class InvoiceRepo():
         if 'user' in kwargs:
             self.user = kwargs['user']
         
-        self.objects=Invoice.objects.all()
+        self.objects=Invoice.objects.order_by('-transaction_datetime')
         self.profile=ProfileRepo(*args, **kwargs).me
 
+        self.profile=ProfileRepo(*args, **kwargs).me
+        if self.user.has_perm(APP_NAME+".view_invoice"):
+            self.objects=Invoice.objects.all()
+        elif self.profile is not None:
+            self.objects=Invoice.objects.filter(Q(pay_from__profile_id=self.profile.id)|Q(pay_to__profile_id=self.profile.id))
+        else:
+            self.objects=Invoice.objects.filter(id=0)
     def create_invoice(self,*args, **kwargs):
+        message=""
+        invoice=None
+        result=FAILED
         if not self.user.has_perm(APP_NAME+".add_invoice"):
+            message="شما مجوز لازم برای ایجاد فاکتور جدید ندارید."
 
-            return
+            return invoice,result,message
         me_account=AccountRepo(request=self.request).me
         if me_account is None:
             return
@@ -1035,18 +1201,24 @@ class InvoiceRepo():
         invoice.save()
         invoice.title=f"فاکتور شماره {invoice.pk}"
         invoice.save()
-        return invoice
+        return invoice,result,message
 
     def invoice(self, *args, **kwargs):
         if 'invoice' in kwargs:
-            return kwargs['invoice']
+            invoice= kwargs['invoice']
         if 'invoice_id' in kwargs:
-            return self.objects.filter(pk=kwargs['invoice_id']).first()
+            invoice= self.objects.filter(pk=kwargs['invoice_id']).first()
         elif 'pk' in kwargs:
-            return self.objects.filter(pk=kwargs['pk']).first()
+            invoice= self.objects.filter(pk=kwargs['pk']).first()
         elif 'id' in kwargs:
-            return self.objects.filter(pk=kwargs['id']).first()
-     
+            invoice= self.objects.filter(pk=kwargs['id']).first()
+        if invoice is not None:
+            i=1
+            for invoice_line in invoice.invoice_lines().order_by('row'):
+                invoice_line.row=i
+                i+=1
+                invoice_line.save()
+        return invoice
     def list(self, *args, **kwargs):
         objects = self.objects
         if 'search_for' in kwargs:
@@ -1054,17 +1226,26 @@ class InvoiceRepo():
             objects = objects.filter(Q(title__contains=search_for)|Q(short_description__contains=search_for)|Q(description__contains=search_for))
         if 'for_home' in kwargs:
             objects = objects.filter(Q(for_home=kwargs['for_home']))
+        if 'account_id' in kwargs:
+            objects = objects.filter(Q(pay_to_id=kwargs['account_id'])|Q(pay_from_id=kwargs['account_id']))
         if 'product_id' in kwargs:
             product_id=kwargs['product_id']
             invoice_lines=InvoiceLine.objects.filter(product_or_service_id=product_id)
             ids=(invoice_line.invoice_id for invoice_line in invoice_lines)
             objects= objects.filter(id__in=ids)
-        return objects.all()
+
+        if 'product_or_service_id' in kwargs:
+            product_or_service_id=kwargs['product_or_service_id']
+            invoice_lines=InvoiceLine.objects.filter(product_or_service_id=product_or_service_id)
+            ids=(invoice_line.invoice_id for invoice_line in invoice_lines)
+            objects= objects.filter(id__in=ids)
+        return objects.order_by("-transaction_datetime")
 
    
     def edit_invoice(self,*args, **kwargs):
-        
         invoice=self.invoice(*args, **kwargs)
+        if not invoice.editable:
+            return (FAILED,invoice,"این سند قابل ویرایش نمی باشد")
         if invoice is None:
             return
         if self.user.has_perm(APP_NAME+".change_invoice"):
@@ -1077,6 +1258,7 @@ class InvoiceRepo():
             return None
         if 'title' in kwargs:
             invoice.title=kwargs['title']
+        
         if 'pay_from_id' in kwargs:
             invoice.pay_from_id=kwargs['pay_from_id']
 
@@ -1085,6 +1267,9 @@ class InvoiceRepo():
 
         if 'status' in kwargs:
             invoice.status=kwargs['status']
+
+        if 'title' in kwargs:
+            invoice.title=kwargs['title']
 
         if 'pay_to_id' in kwargs:
             invoice.pay_to_id=kwargs['pay_to_id']
@@ -1106,6 +1291,8 @@ class InvoiceRepo():
             invoice.tax_percent=kwargs['tax_percent']
 
         invoice.save()
+
+
         if 'lines' in kwargs:
             lines=kwargs['lines']
             for line in lines: 
@@ -1119,6 +1306,7 @@ class InvoiceRepo():
                             line_origin.quantity=int(line['quantity'])
                             line_origin.unit_price=int(line['unit_price'])
                             line_origin.unit_name=line['unit_name']
+                            line_origin.row=line['row']
                             line_origin.save()
                         else:
                             line_origin.delete()
@@ -1135,7 +1323,10 @@ class InvoiceRepo():
                         invoice_line.save()
                     
         invoice.save()
-        return invoice
+        invoice.normalize_rows()
+        result=SUCCEED
+        message="فاکتور با موفقیت ویرایش شد."
+        return (result,invoice,message)
 
 
 class ChequeRepo():
@@ -1152,46 +1343,63 @@ class ChequeRepo():
         self.profile=ProfileRepo(*args, **kwargs).me
        
     def add_cheque(self,*args, **kwargs):
-        if not self.request.user.has_perm(APP_NAME+".add_cheque"):
-            return
-        cheque=Cheque()
-        me_acc=AccountRepo(request=self.request).me
+        result=FAILED
+        message=""
+        cheque=None
+        leolog(kwargs=kwargs)
+        error_code=1
+        try:
+            if not self.request.user.has_perm(APP_NAME+".add_cheque"):
+                return
+            cheque=Cheque(*args, **kwargs)
+            me_acc=AccountRepo(request=self.request).me
+            error_code=2
+            if 'title' in kwargs:
+                cheque.title=kwargs['title']
+            cheque.sarresid_datetime=PersianCalendar().date
+            if 'cheque_date' in kwargs:
+                cheque.sarresid_datetime=kwargs['cheque_date']
+            error_code=3
 
-        if 'title' in kwargs:
-            cheque.title=kwargs['title']
-        if 'cheque_date' in kwargs:
-            cheque.cheque_date=kwargs['cheque_date']
-        else:
-            cheque.cheque_date=PersianCalendar().date
-
-
+            if 'sarresid_datetime' in kwargs:
+                cheque.sarresid_datetime=kwargs['sarresid_datetime']
+            error_code=4
+                
+            if 'pay_to_id' in kwargs:
+                cheque.pay_to_id=kwargs['pay_to_id']
+            else:
+                cheque.pay_to_id=me_acc.id
+            error_code=5
             
-        if 'pay_to_id' in kwargs:
-            cheque.pay_to_id=kwargs['pay_to_id']
-        else:
-            cheque.pay_to_id=me_acc.id
-        if 'pay_from_id' in kwargs:
-            cheque.pay_from_id=kwargs['pay_from_id']
-        else:
-            cheque.pay_from_id=me_acc.id
+            if 'pay_from_id' in kwargs:
+                cheque.pay_from_id=kwargs['pay_from_id']
+            else:
+                cheque.pay_from_id=me_acc.id
+
+            cheque.payment_method=PaymentMethodEnum.CHEQUE
+
+            cheque.creator=self.profile
 
 
-        cheque.creator=self.profile
+            if 'transaction_datetime' in kwargs:
+                cheque.transaction_datetime=kwargs['transaction_datetime']
+            else:
+                cheque.transaction_datetime=PersianCalendar().date
+                
+            if 'amount' in kwargs:
+                cheque.amount=kwargs['amount']
+            else:
+                cheque.amount=0
 
 
-        if 'transaction_datetime' in kwargs:
-            cheque.transaction_datetime=kwargs['transaction_datetime']
-        else:
-            cheque.transaction_datetime=PersianCalendar().date
-            
-        if 'amount' in kwargs:
-            cheque.amount=kwargs['amount']
-        else:
-            cheque.amount=0
-
-
-        cheque.save()
-        return cheque
+            cheque.save()
+            if cheque is not None:
+                result=SUCCEED
+                message="چک با موفقیت اضافه شد."
+        except:
+            result=FAILED
+            message="خطا در افزودن چک جدید ، "+" کد خطا : "+error_code
+        return cheque,result,message
 
     def cheque(self, *args, **kwargs):
         pk=0
@@ -1224,6 +1432,13 @@ class ChequeRepo():
             objects = objects.filter(Q(for_home=kwargs['for_home']))
         if 'parent_id' in kwargs:
             objects=objects.filter(parent_id=kwargs['parent_id'])
+        
+        if 'account_id' in kwargs and kwargs['account_id'] is not None and kwargs['account_id']>0:
+            objects=objects.filter(Q(pay_from_id=kwargs['account_id'])|Q(pay_to_id=kwargs['account_id']))
+        
+        if 'bank_id' in kwargs and kwargs['bank_id'] is not None and kwargs['bank_id']>0:
+            objects=objects.filter(bank_id=kwargs['bank_id'])
+        
         return objects.all()
 
 
@@ -1237,7 +1452,7 @@ class TransactionRepo():
         if 'user' in kwargs:
             self.user = kwargs['user']
         
-        self.objects=Transaction.objects
+        self.objects=Transaction.objects.order_by('-transaction_datetime')
         self.profile=ProfileRepo(*args, **kwargs).me
        
         if self.user.has_perm(APP_NAME+".view_transaction"):
@@ -1259,12 +1474,31 @@ class TransactionRepo():
             pk=kwargs['id']
         return self.objects.filter(pk=pk).first()
      
+     
+    def roll_back(self,*args, **kwargs):
+        transaction=self.transaction(*args, **kwargs)
+        if transaction is not None:
+            transaction.roll_back()
+            return transaction
+
+
+    def print(self,*args, **kwargs):
+        transaction=self.transaction(*args, **kwargs)
+        if transaction is not None:
+            transaction.add_print_event()
+            return transaction
+
+
     def list(self, *args, **kwargs):
         
 
         objects = self.objects
+        if 'amount' in kwargs and not kwargs['amount']is None and not kwargs['amount']==0 :
+            objects=objects.filter(Q(amount=kwargs['amount']))
         if 'payment_method' in kwargs and not kwargs['payment_method']=="" and not kwargs['payment_method']is None:
             objects=objects.filter(Q(payment_method=kwargs['payment_method']))
+        if 'status' in kwargs and not kwargs['status']=="" and not kwargs['status']is None:
+            objects=objects.filter(Q(status=kwargs['status']))
         if 'start_date' in kwargs:
             objects=objects.filter(Q(transaction_datetime__gte=kwargs['start_date']))
         if 'end_date' in kwargs:
@@ -1277,12 +1511,13 @@ class TransactionRepo():
         if 'parent_id' in kwargs:
             objects=objects.filter(parent_id=kwargs['parent_id'])
         if 'account_id' in kwargs:
-            objects=objects.filter(Q(pay_from_id=kwargs['account_id'])|Q(pay_to_id=kwargs['account_id']))
+            if kwargs['account_id']>0:
+                objects=objects.filter(Q(pay_from_id=kwargs['account_id'])|Q(pay_to_id=kwargs['account_id']))
         if 'account_id_1' in kwargs and 'account_id_2' in kwargs:
             account_id_1=kwargs['account_id_1']
             account_id_2=kwargs['account_id_2']
             objects = self.objects.filter(Q(pay_from_id=account_id_1)|Q(pay_from_id=account_id_2)).filter(Q(pay_to_id=account_id_1)|Q(pay_to_id=account_id_2))
-        return objects.order_by('transaction_datetime')
+        return objects.order_by('-transaction_datetime')
 
 
 class SubAccountRepo():
@@ -1320,7 +1555,83 @@ class SubAccountRepo():
             objects=objects.filter(parent_id=kwargs['parent_id'])
         return objects.all()
 
-   
+
+class DoubleTransactionRepo():
+    def __init__(self, *args, **kwargs):
+        self.request = None
+        self.user = None
+        if 'request' in kwargs:
+            self.request = kwargs['request']
+            self.user = self.request.user
+        if 'user' in kwargs:
+            self.user = kwargs['user']
+        
+        self.objects=DoubleTransaction.objects
+        self.profile=ProfileRepo(*args, **kwargs).me
+       
+        if self.user.has_perm(APP_NAME+".view_transaction"):
+            self.objects = self.objects
+        elif self.profile is not None:
+            self.objects = self.objects.filter(Q(pay_from__profile=self.profile)|Q(pay_to__profile=self.profile))
+        else:
+            self.objects = self.objects.filter(pk=0)
+
+    def double_transaction(self, *args, **kwargs):
+        pk=0
+        if 'double_transaction' in kwargs:
+            return kwargs['double_transaction']
+        if 'double_transaction_id' in kwargs:
+            pk=kwargs['double_transaction_id']
+        elif 'pk' in kwargs:
+            pk=kwargs['pk']
+        elif 'id' in kwargs:
+            pk=kwargs['id']
+        return self.objects.filter(pk=pk).first()
+     
+     
+    def roll_back(self,*args, **kwargs):
+        transaction=self.transaction(*args, **kwargs)
+        if transaction is not None:
+            transaction.roll_back()
+            return transaction
+
+
+    def print(self,*args, **kwargs):
+        transaction=self.transaction(*args, **kwargs)
+        if transaction is not None:
+            transaction.add_print_event()
+            return transaction
+
+
+    def list(self, *args, **kwargs):
+        
+
+        objects = self.objects
+        if 'amount' in kwargs and not kwargs['amount']is None and not kwargs['amount']==0 :
+            objects=objects.filter(Q(amount=kwargs['amount']))
+        if 'payment_method' in kwargs and not kwargs['payment_method']=="" and not kwargs['payment_method']is None:
+            objects=objects.filter(Q(payment_method=kwargs['payment_method']))
+        if 'status' in kwargs and not kwargs['status']=="" and not kwargs['status']is None:
+            objects=objects.filter(Q(status=kwargs['status']))
+        if 'start_date' in kwargs:
+            objects=objects.filter(Q(transaction_datetime__gte=kwargs['start_date']))
+        if 'end_date' in kwargs:
+            objects=objects.filter(Q(transaction_datetime__lte=kwargs['end_date']))
+        if 'search_for' in kwargs:
+            search_for=kwargs['search_for']
+            objects = objects.filter(Q(title__contains=search_for)|Q(short_description__contains=search_for)|Q(description__contains=search_for))
+        if 'for_home' in kwargs:
+            objects = objects.filter(Q(for_home=kwargs['for_home']))
+        if 'parent_id' in kwargs:
+            objects=objects.filter(parent_id=kwargs['parent_id'])
+        if 'account_id' in kwargs:
+            if kwargs['account_id']>0:
+                objects=objects.filter(Q(pay_from_id=kwargs['account_id'])|Q(pay_to_id=kwargs['account_id']))
+        if 'account_id_1' in kwargs and 'account_id_2' in kwargs:
+            account_id_1=kwargs['account_id_1']
+            account_id_2=kwargs['account_id_2']
+            objects = self.objects.filter(Q(pay_from_id=account_id_1)|Q(pay_from_id=account_id_2)).filter(Q(pay_to_id=account_id_1)|Q(pay_to_id=account_id_2))
+        return objects.all()
 
 
 

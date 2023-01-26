@@ -2,16 +2,16 @@
     <!--     *********    TEAM 1     *********      -->
     <div class="team-1" id="team-1">
         <div class="container">
-            <div class="row">
+            <div class="row rtl farsi">
                 <div class="col-md-8 ml-auto mr-auto text-center">
-                    <h2 class="title text-center">
+                    <h2 class="title text-center farsi">
                         {{ourteam_title_param.value}}
                         {% if perms.core.change_parameter %}
                         {{ourteam_title_param.get_edit_btn|safe}}
                           
                         {% endif %}
                     </h2>
-                    <h5 class="description text-center">
+                    <h5 class="description text-center farsi">
                         {{ourteam_description_param.value}}
                         {% if perms.core.change_parameter %}
                         {{ourteam_description_param.get_edit_btn|safe}}
@@ -42,11 +42,11 @@
                         </div>
                         <div class="card-body ">
                             <a href="{{our_team.get_absolute_url}}">
-                                <h4 class="card-title text-center">{{our_team.profile.name}}</h4>
+                                <h4 class="card-title text-center farsi">{{our_team.profile.name}}</h4>
                             </a>
                             
-                            <h6 class="card-category text-muted text-center">{{our_team.job}}</h6>
-                            <p class="card-description text-center">
+                            <h6 class="card-category text-muted text-center farsi">{{our_team.job}}</h6>
+                            <p class="card-description text-center farsi">
                                 {% if our_team.short_description %}
 
                                 {{our_team.short_description}}

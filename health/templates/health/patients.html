@@ -5,10 +5,20 @@
     <div class="col-md-12">
        {% include "health/includes/patients-app/template.html" %}
     </div>
+
+    {% if add_patient_form %}
+      
+    <div class="col-md-12">
+      {% include "health/includes/add-patient-app/template.html" %}
+   </div>
+    {% endif %}
   </div>
 {% endblock content %}
 
 {% block script %}
 {% include "health/includes/patients-app/script.html" %}
-  
+{% if add_patient_form %}
+      
+  {% include "health/includes/add-patient-app/script.html" %}
+{% endif %}
 {% endblock script %}

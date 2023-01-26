@@ -1,0 +1,73 @@
+{% load to_json %}
+<script>
+    let accounts = JSON.parse(`{{accounts_s|escapejs}}`)
+    let add_member_app = new Vue({
+        el: "#add-member-app",
+        data: {
+            account_id: 0,
+            accounts: accounts,
+            name: "",
+            search_for: '',
+            waiting: false,
+            message: {
+                show: false
+            },
+            start_date:current_date,
+            end_date:current_date,
+        },
+        components:{
+            DatePicker: VuePersianDatetimePicker,
+
+        },
+        methods: {
+            filter: function () {
+                this.accounts = accounts.filter(account => account.title.indexOf(this.search_for) > -1 )
+                if (this.accounts.length > 0)
+                    this.account_id = this.accounts[0].id
+            },
+            add_member: function () {
+                let url = "{% url 'library:add_member' %}"
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    account_id: this.account_id
+                }
+                add_member_app.waiting = true
+                $.post(url, payload).done((data) => {
+                    add_member_app.waiting = false
+
+                    if (data.result === 'FAILED') {
+                        add_member_app.message = {
+                            color: "danger",
+                            body: data.message,
+                            show: true,
+                        }
+                        setTimeout(() => {
+                            add_member_app.message = {
+                                show: false,
+                            }
+                        }, 3000);
+                    }
+                    if (data.result === 'SUCCEED') {
+                        if (typeof members_app != "undefined") {
+                            members_app.members.push(data.member)
+                        }
+
+                        add_member_app.message = {
+                            color: "success",
+                            body: data.message,
+                            show: true,
+                        }
+                        setTimeout(() => {
+                            add_member_app.message = {
+                                show: false,
+                            }
+                        }, 3000);
+                    }
+                })
+
+            }
+
+        }
+    })
+
+</script>

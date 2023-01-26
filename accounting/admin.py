@@ -1,12 +1,15 @@
 from django.contrib import admin
 
-from accounting.models import (Account, Asset, Bank, BankAccount, Cheque, Cost, FinancialBalance, FinancialDocument, FinancialDocumentTag, 
-                               Invoice, InvoiceLine, Payment, Price, Product, ProductOrServiceCategory, Salary, Service,
-                               Transaction, TransactionCategory)
+from accounting.models import (Account, Asset,Bank, BankAccount, Category, Cheque, Cost, DoubleTransaction, FinancialBalance, FinancialDocument, FinancialDocumentTag, 
+                               Invoice, InvoiceLine, Payment, Price, Product, ProductOrServiceUnitName, ProductSpecification, Salary, Service,
+                               Transaction, TransactionCategory,AccountTag)
 
 # Register your models here.
-admin.site.register(Asset)
+admin.site.register(AccountTag)
 admin.site.register(Account)
+admin.site.register(Asset)
+admin.site.register(DoubleTransaction)
+admin.site.register(Category)
 admin.site.register(Cost)
 admin.site.register(Cheque)
 admin.site.register(FinancialDocumentTag)
@@ -16,8 +19,9 @@ admin.site.register(Invoice)
 admin.site.register(InvoiceLine)
 admin.site.register(Price)
 admin.site.register(Payment)
+admin.site.register(ProductOrServiceUnitName)
 admin.site.register(Product)
-admin.site.register(ProductOrServiceCategory)
+admin.site.register(ProductSpecification)
 admin.site.register(Service)
 admin.site.register(Salary)
 admin.site.register(TransactionCategory)

@@ -1,9 +1,21 @@
 <script>
+    let category_id_ = 0
+</script>
+{% if category %}
+<script>
+    category_id_ = parseInt("{{category.id}}")
+
+
+</script>
+{% endif %}
+
+<script>
     let products = JSON.parse(`{{products_s|escapejs}}`)
     let products_app_data = {
         products: products,
         show_sell_prices: false,
         search_for: "",
+        category_id:category_id_,
         waiting: false,
         message: { show: false }
     }
@@ -14,6 +26,7 @@
             let payload = {
                 csrfmiddlewaretoken: csrfmiddlewaretoken,
                 title: this.search_for,
+                category_id:this.category_id,
 
             }
             console.log(payload)

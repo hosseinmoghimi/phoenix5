@@ -1,0 +1,32 @@
+<script>
+    let diseases = JSON.parse(`{{diseases_s|escapejs}}`)
+    let diseases_app = new Vue({
+        el:"#diseases-app",
+        data: {
+            diseases: diseases,
+            search_for:'',
+            waiting:false,
+        },
+        methods: {
+            filter:function(){
+                this.diseases = diseases.filter(disease => disease.name.indexOf(this.search_for) > -1)
+         
+            },
+            to_price: function (vall) {
+                return to_price(vall,"{{CURRENCY}}")
+            },
+            create_employee: function (account_id) {
+                let url = "{% url 'organization:employee' pk=0 %}"
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    account_id: account_id
+                }
+                $.post(url, payload).done((data) => {
+                    console.log(data)
+                })
+            },
+           
+        }
+    })
+
+</script>

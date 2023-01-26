@@ -26,12 +26,10 @@ def getContext(request, *args, **kwargs):
     context['WIDE_LAYOUT_PARENT'] = WIDE_LAYOUT_PARENT
     return context
 
+
 class HomeView(View):
     def get(self,request,*args, **kwargs):
         return FolderView().get(request=request,pk=1)
-
-
-
 
 
 class SearchView(View):
@@ -48,8 +46,6 @@ class SearchView(View):
         return render(request,TEMPLATE_ROOT+"search.html",context)
 
 
-
-
 class FolderView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -62,8 +58,8 @@ class FolderView(View):
         context['folder']=folder
         folder_s=json.dumps(FolderSerializer(folder).data)
         context['folder_s']=folder_s
-        folders=FolderRepo(request=request).list(parent_id=folder.pk)
-        files=folder.files.all()
+        folders=FolderRepo(request=request).list(parent_id=folder.pk).order_by("priority")
+        files=folder.files.all().order_by("priority")
         
         context['files']=files
         context['folders']=folders
@@ -75,12 +71,33 @@ class FolderView(View):
         if request.user.has_perm(APP_NAME+".add_file"):
             context['create_file_form']=CreateFileForm()
         return render(request,TEMPLATE_ROOT+"folder.html",context)
-    
+
 
 class FileView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
         file=FileRepo(request=request).file(*args, **kwargs)
+        if file is None:
+            mv=MessageView(request=request)
+            mv.title="فایل پیدا نشد"
+            mv.body="فایل مورد نظر وجود ندارد."
+            return mv.response()
+        pagepermissions= file.pagepermission_set.all()
+        profile=context['profile']
+        sw=False
+        if request.user.has_perm(APP_NAME+".view_file"):
+            sw=True
+        if file.is_public:
+            sw=True
+        if sw==False:
+            for pp in pagepermissions:
+                if pp.profile==profile:
+                    sw=True
+        if not sw:
+            mv=MessageView(request=request)
+            mv.title="عدم دسترسی"
+            mv.body="دسترسی ندارید"
+            return mv.response()
         if file is None:
             mv=MessageView(request=request)
             mv.title="چنین فایلی وجود ندارد."
@@ -89,7 +106,8 @@ class FileView(View):
         context['file']=file
         context.update(PageContext(request=request,page=file))
         return render(request,TEMPLATE_ROOT+"file.html",context)
- 
+
+
 class CreateFolderApi(View):
     def post(self,request,*args, **kwargs):
         context={
@@ -102,7 +120,7 @@ class CreateFolderApi(View):
             context['result']=SUCCEED
         return JsonResponse(context)
 
- 
+
 class CreateFileApi(View):
     def post(self,request,*args, **kwargs):
         context={

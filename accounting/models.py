@@ -1,7 +1,7 @@
 from authentication.models import IMAGE_FOLDER
 from core.enums import ColorEnum, UnitNameEnum,BS_ColorCode
 from core.middleware import get_request
-from core.models import Color, Page
+from core.models import Color, ImageMixin, Page
 from django.db import models
 from django.shortcuts import reverse
 from django.utils import timezone
@@ -18,7 +18,9 @@ from utility.utils import LinkHelper
 from accounting.apps import APP_NAME
 from accounting.enums import *
 
+
 class Asset(Page,LinkHelper):
+
     price=models.IntegerField(_("price"),default=0)
     class Meta:
         verbose_name = _("Asset")
@@ -60,14 +62,20 @@ class Price(models.Model,LinkHelper):
 
 
 class Transaction(Page,LinkHelper):
-    pay_from=models.ForeignKey("account",related_name="transactions_from", verbose_name=_("پرداخت کننده"), on_delete=models.CASCADE)
-    pay_to=models.ForeignKey("account", related_name="transactions_to",verbose_name=_("دریافت کننده"), on_delete=models.CASCADE)
+    pay_from=models.ForeignKey("account",related_name="transactions_from", verbose_name=_("پرداخت کننده"), on_delete=models.PROTECT)
+    pay_to=models.ForeignKey("account", related_name="transactions_to",verbose_name=_("دریافت کننده"), on_delete=models.PROTECT)
     creator=models.ForeignKey("authentication.profile",null=True,blank=True, verbose_name=_("ثبت شده توسط"), on_delete=models.SET_NULL)
     status=models.CharField(_("وضعیت"),choices=TransactionStatusEnum.choices,default=TransactionStatusEnum.DRAFT, max_length=50)
     category=models.ForeignKey("transactioncategory",null=True,blank=True, verbose_name=_("دسته بندی"), on_delete=models.SET_NULL)
     amount=models.IntegerField(_("مبلغ"),default=0)
     payment_method=models.CharField(_("نوع پرداخت"),choices=PaymentMethodEnum.choices,default=PaymentMethodEnum.DRAFT, max_length=50)
     transaction_datetime=models.DateTimeField(_("تاریخ تراکنش"), auto_now=False, auto_now_add=False)
+    print_datetime=models.DateTimeField(_("تاریخ چاپ"),null=True,blank=True, auto_now=False, auto_now_add=False)
+    def add_print_event(self,*args, **kwargs):
+        from django.utils import timezone
+        self.print_datetime=timezone.now()
+        super(Transaction,self).save()
+
     def status_color(self):
         return self.color()
     def color(self):
@@ -81,6 +89,23 @@ class Transaction(Page,LinkHelper):
         if self.status==TransactionStatusEnum.CANCELED:
             color="secondary"
         return color
+    def payment_method_color(self):
+        color="primary"
+        if self.payment_method==PaymentMethodEnum.CARD:
+            color="primary"
+        if self.payment_method==PaymentMethodEnum.PRODUCT:
+            color="danger"
+        if self.payment_method==PaymentMethodEnum.SERVICE:
+            color="success"
+        if self.payment_method==PaymentMethodEnum.MOBILE_BANK:
+            color="warning"
+        if self.payment_method==PaymentMethodEnum.IN_CASH:
+            color="warning"
+        if self.payment_method==PaymentMethodEnum.POS:
+            color="warning"
+        if self.payment_method==PaymentMethodEnum.CARD:
+            color="secondary"
+        return color
     class Meta:
         verbose_name = _("Transaction")
         verbose_name_plural = _("Transactions")
@@ -88,24 +113,38 @@ class Transaction(Page,LinkHelper):
     def __str__(self):
         return f"{self.title} ({self.status})"
 
+    def roll_back(self,*args, **kwargs):
+        self.status=TransactionStatusEnum.ROLL_BACKED
+        super(Transaction,self).save(*args, **kwargs)
+
 
     def save(self,*args, **kwargs):
         if self.transaction_datetime is None:
             self.transaction_datetime=PersianCalendar().date
         super(Transaction,self).save(*args, **kwargs)
         if self.status==TransactionStatusEnum.DRAFT or self.status==TransactionStatusEnum.CANCELED:
-            FinancialDocument.objects.filter(transaction=self).delete()
+            financial_documents=FinancialDocument.objects.filter(transaction=self)
+            for fd in financial_documents:
+                fd.status=self.status
+                fd.save()
         else:
+        # if True:
             fd_bedehkar=FinancialDocument.objects.filter(transaction=self).filter(account_id=self.pay_to.id).first()
+            FinancialDocument.objects.filter(transaction=self).exclude(account_id=self.pay_from.id).filter(bedehkar=self.amount).delete()
             if fd_bedehkar is None:
-                fd_bedehkar=FinancialDocument(transaction=self,account_id=self.pay_to.id,direction=FinancialDocumentTypeEnum.BEDEHKAR)
+                fd_bedehkar=FinancialDocument(transaction=self,account_id=self.pay_to.id,direction=FinancialDocumentDirectionEnum.BEDEHKAR)
+            fd_bedehkar.account_id=self.pay_to.id
+            fd_bedehkar.status=self.status
             fd_bedehkar.bestankar=0
             fd_bedehkar.bedehkar=self.amount
             fd_bedehkar.save()
 
             fd_bestankar=FinancialDocument.objects.filter(transaction=self).filter(account_id=self.pay_from.id).first()
+            FinancialDocument.objects.filter(transaction=self).exclude(account_id=self.pay_from.id).filter(bestankar=self.amount).delete()
             if fd_bestankar is None:
-                fd_bestankar=FinancialDocument(transaction=self,account_id=self.pay_from.id,direction=FinancialDocumentTypeEnum.BESTANKAR)
+                fd_bestankar=FinancialDocument(transaction=self,account_id=self.pay_from.id,direction=FinancialDocumentDirectionEnum.BESTANKAR)
+            fd_bestankar.account_id=self.pay_from.id
+            fd_bestankar.status=self.status
             fd_bestankar.bestankar=self.amount
             fd_bestankar.bedehkar=0
             fd_bestankar.save()
@@ -116,59 +155,79 @@ class Transaction(Page,LinkHelper):
             return PersianCalendar().from_gregorian(self.transaction_datetime)
         return to_persian_datetime_tag(self.transaction_datetime)
 
+    @property
+    def editable(self):
+        old_transaction=Transaction.objects.filter(pk=self.pk).first()
+        if old_transaction is None:
+            return True
+        if old_transaction.status==TransactionStatusEnum.ROLL_BACKED:
+            return True
+        if old_transaction.status==TransactionStatusEnum.FROM_PAST:
+            return True
+        if old_transaction.status==TransactionStatusEnum.CANCELED:
+            return True
+        if old_transaction.status==TransactionStatusEnum.FINISHED:
+            return False
+        if old_transaction.status==TransactionStatusEnum.PASSED:
+            return False
+        if old_transaction.status==TransactionStatusEnum.DELIVERED:
+            return False
+        if old_transaction.status==TransactionStatusEnum.DRAFT:
+            return True
+        if old_transaction.status==TransactionStatusEnum.IN_PROGRESS:
+            return True
+        return False
 
-class ProductOrServiceCategory(models.Model):
-    super_category=models.ForeignKey("productorservicecategory",related_name="sub_categories",blank=True,null=True, verbose_name=_("parent"), on_delete=models.SET_NULL)
-    title=models.CharField(_("عنوان"), max_length=50)
-    
-    def get_breadcrumb_link(self):
-        aaa=f"""
-                    <li class="breadcrumb-item"><a href="{self.get_absolute_url()}">
-                    <span class="farsi">
-                    {self.title}
-                    </span>
-                    </a></li> 
-                    
-                    
-                    """
-        if self.super_category is None:
-            return aaa
-        return self.super_category.get_breadcrumb_link()+aaa
-    def get_breadcrumb(self):
-        return f"""
-        
-                <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{reverse(APP_NAME+":product_or_service_categories")}">
-                    <span class="farsi">
-                    <i class="fa fa-home"></i>
-                    </span>
-                    </a></li> 
 
-                    {self.get_breadcrumb_link()}
-                </ol>
-                </nav>
-        """
-    def thumbnail(self):
-        return STATIC_URL+'archive/img/pages/thumbnail/folder.png'
-
+class DoubleTransaction(Page): 
+    # employer_transaction_id=models.IntegerField(_("employer_transaction_id"),default=0)
+    # middle_transaction_id=models.IntegerField(_("middle_transaction_id"),default=0)
+    employer_transaction=models.ForeignKey("transaction", related_name="employer_transaction_set",verbose_name=_("employer_transaction"),null=True,blank=True, on_delete=models.SET_NULL)
+    middle_transaction=models.ForeignKey("transaction", related_name="middle_transaction_set",verbose_name=_("middle_transaction"),null=True,blank=True, on_delete=models.SET_NULL)
+    # employer=models.ForeignKey("account", related_name="double_transaction_employer_set",verbose_name=_("employer"), on_delete=models.CASCADE)
+    # middle=models.ForeignKey("account", related_name="double_transaction_middle_set",verbose_name=_("middle"), on_delete=models.CASCADE)
+    # contractor=models.ForeignKey("account", related_name="double_transaction_contractor_set",verbose_name=_("contractor"), on_delete=models.CASCADE)
+    # employer_paid=models.IntegerField(_("employer_paid"))
+    # middle_paid=models.IntegerField(_("middle_paid"))
+    # date_added=models.DateTimeField(_("date_added"), auto_now=False, auto_now_add=True)
+    # employer_transaction_date_time=models.DateTimeField(_("date_added"), auto_now=False, auto_now_add=False)
+    # middle_transaction_date_time=models.DateTimeField(_("date_added"), auto_now=False, auto_now_add=False)
+    # @property
+    # def employer_transaction(self):
+        # return Transaction.objects.filter(pk=self.employer_transaction_id).first()
+    # @property
+    # def middle_transaction(self):
+        # return Transaction.objects.filter(pk=self.middle_transaction_id).first()
 
     class Meta:
-        verbose_name = _("ProductOrServiceCategory")
-        verbose_name_plural = _("ProductOrServiceCategories")
+        verbose_name = _("DoubleTransaction")
+        verbose_name_plural = _("DoubleTransactions")
 
-    def __str__(self):
-        return self.title
+    def save(self,*args, **kwargs):
+        if self.app_name is None or self.app_name=="":
+            self.app_name=APP_NAME
+        if self.class_name is None or self.class_name=="":
+            self.class_name="doubletransaction"
 
-    def get_absolute_url(self):
-        return reverse(APP_NAME+":product_or_service_category", kwargs={"pk": self.pk})
+
+        # if self.employer_transaction is None:
+            # employer_transaction=Transaction()
+        super(DoubleTransaction,self).save()
 
 
 class ProductOrService(Page):
-    product_or_service_category=models.ForeignKey("productorservicecategory", null=True,blank=True,verbose_name=_("دسته بندی"), on_delete=models.CASCADE)
     barcode=models.CharField(_("بارکد"),null=True,blank=True, max_length=100)
 
-    
+    def unit_names(self):
+        unit_names=ProductOrServiceUnitName.objects.filter(product_or_service_id=self.pk)
+        if len(unit_names)==0:
+            product_or_service_unit_name=ProductOrServiceUnitName()
+            product_or_service_unit_name.product_or_service_id=self.pk
+            product_or_service_unit_name.unit_name=UnitNameEnum.ADAD
+            product_or_service_unit_name.save()
+            return [product_or_service_unit_name]
+        return unit_names
+
     @property
     def unit_price(self):
         request=get_request()
@@ -209,8 +268,42 @@ class ProductOrService(Page):
         verbose_name = _("ProductOrService")
         verbose_name_plural = _("ProductOrServices")
 
+    @property
+    def category(self):
+        return self.category_set.first()
+
+    def save(self,*args, **kwargs):
+        super(ProductOrService,self).save()
+        unit_names=ProductOrServiceUnitName.objects.filter(product_or_service_id=self.pk)
+        if len(unit_names)==0:
+            product_or_service_unit_name=ProductOrServiceUnitName()
+            product_or_service_unit_name.product_or_service_id=self.pk
+            product_or_service_unit_name.unit_name=UnitNameEnum.ADAD
+            product_or_service_unit_name.save()
+
+    @property
+    def image(self):
+        return self.thumbnail
+
+
+class ProductOrServiceUnitName(models.Model,LinkHelper):
+    product_or_service=models.ForeignKey("productorservice", verbose_name=_("productorservice"), on_delete=models.CASCADE)
+    unit_name=models.CharField(_("unit_name"),max_length=50,choices=UnitNameEnum.choices,default=UnitNameEnum.ADAD)
+    coef=models.IntegerField(_("coef"),default=1)
+    app_name=APP_NAME
+    class_name="productorserviceunitname"
+    
+
+    class Meta:
+        verbose_name = _("ProductOrServiceUnitName")
+        verbose_name_plural = _("ProductOrServiceUnitNames")
+
+    def __str__(self):
+        return f"{self.product_or_service.title} {self.unit_name}"
+
 
 class Product(ProductOrService):
+    # specifications=models.ManyToManyField("ProductSpecification", verbose_name=_("ویژگی ها"))
 
     class Meta:
         verbose_name = _("Product")
@@ -220,9 +313,7 @@ class Product(ProductOrService):
     def get_pm_absolute_url(self):
         return reverse('projectmanager:material',kwargs={'pk':self.pk})
 
-
-
-
+ 
     @property
     def available(self):
         id=0         
@@ -234,8 +325,22 @@ class Product(ProductOrService):
         if self.app_name is None or self.app_name=="":
             self.app_name=APP_NAME
         return super(Product,self).save(*args, **kwargs)
-
+    def get_market_absolute_url(self):
+        return reverse("market:product",kwargs={'pk':self.pk})
  
+class AccountTag(models.Model,LinkHelper):
+    account=models.ForeignKey("account", verbose_name=_("account"), on_delete=models.CASCADE)
+    tag=models.CharField(_("tag"), max_length=50)
+    app_name=APP_NAME
+    class_name="accounttag"
+    class Meta:
+        verbose_name = _("AccountTag")
+        verbose_name_plural = _("AccountTags")
+
+    def __str__(self):
+        return self.account.title +" " +self.tag
+ 
+
 class Service(ProductOrService):
 
     class Meta:
@@ -251,6 +356,21 @@ class Service(ProductOrService):
         if self.app_name is None or self.app_name=="":
             self.app_name=APP_NAME
         return super(Service,self).save(*args, **kwargs)
+
+
+class ProductSpecification(models.Model,LinkHelper):
+    product=models.ForeignKey("product", verbose_name=_("product"), on_delete=models.CASCADE)
+    name=models.CharField(_("name"), max_length=200)
+    value=models.CharField(_("value"), max_length=200)
+    app_name=APP_NAME
+    class_name="productspecification"
+    
+    class Meta:
+        verbose_name = _("ProductSpecification")
+        verbose_name_plural = _("ProductSpecifications")
+
+    def __str__(self):
+        return f"{self.product.title}:{self.name}:{self.value}"
 
 
 class Account(models.Model,LinkHelper):
@@ -269,7 +389,7 @@ class Account(models.Model,LinkHelper):
     class_name=models.CharField(_("class_name"),blank=True, max_length=50)
     app_name=models.CharField(_("app_name"),blank=True,max_length=50)
     def default_bank_account(self):
-        return BankAccount.default_bank_account(profile_id=self.profile.id)
+        return BankAccount.default_bank_account(account_id=self.id)
     def get_whatsapp_link(self):
         if self.tel is not None:
             from utility.share import whatsapp_link
@@ -341,8 +461,11 @@ class Account(models.Model,LinkHelper):
         bestankar=0
         bedehkar=0
         for doc in self.financialdocument_set.all():
-            bestankar+=doc.bestankar
-            bedehkar+=doc.bedehkar
+            if doc.status==FinancialDocumentStatusEnum.DRAFT or  doc.status==FinancialDocumentStatusEnum.CANCELED or  doc.status==FinancialDocumentStatusEnum:
+                pass
+            else:
+                bestankar+=doc.bestankar
+                bedehkar+=doc.bedehkar
         rest=bestankar-bedehkar
         balance['rest']=rest
         balance['bestankar']=bestankar
@@ -361,10 +484,14 @@ class Bank(models.Model,LinkHelper):
     def logo(self):
         return ""
     
+    @property
+    def title(self):
+        return self.name
+    
     def __str__(self):
-        a=f"""بانک {self.name} """
+        a=f"""{self.name}"""
         if self.branch is not None:
-            a+="شعبه "+self.branch 
+            a+=" شعبه "+self.branch 
         return a
 
 
@@ -373,19 +500,22 @@ class Bank(models.Model,LinkHelper):
         verbose_name_plural = _("Banks")
 
 
-class BankAccount(Account):
+class BankAccount(models.Model,LinkHelper):
+    title=models.CharField(_("title"),blank=True, max_length=50)
+    account=models.ForeignKey("account", verbose_name=_("account"), on_delete=models.CASCADE)
     bank=models.ForeignKey("bank", verbose_name=_("bank"), on_delete=models.CASCADE)
-    account_no=models.CharField(_("shomareh"),null=True,blank=True, max_length=50)
-    card_no=models.CharField(_("card"),null=True,blank=True, max_length=50)
-    shaba_no=models.CharField(_("shaba"),null=True,blank=True, max_length=50)
-    default_account=models.BooleanField(_("default"),default=False)
+    account_no=models.CharField(_("شماره حساب"),null=True,blank=True, max_length=50)
+    card_no=models.CharField(_("شماره کارت"),null=True,blank=True, max_length=50)
+    shaba_no=models.CharField(_("شماره شبا"),null=True,blank=True, max_length=50)
+    is_defult=models.BooleanField(_("default"),default=False)
     class_name='bankaccount'
+    app_name=APP_NAME
 
-    def default_bank_account(profile_id):
-        if profile_id is None or profile_id<1:
+    def default_bank_account(account_id):
+        if account_id is None or account_id<1:
             return
-        all_bank_account=BankAccount.objects.filter(profile_id=profile_id)
-        bank_account=all_bank_account.filter(default_account=True).first()
+        all_bank_account=BankAccount.objects.filter(account_id=account_id)
+        bank_account=all_bank_account.filter(is_defult=True).first()
         if bank_account is not None:
             return bank_account
         return all_bank_account.first()
@@ -397,25 +527,20 @@ class BankAccount(Account):
     # def balance(self):
     #     return 0-self.rest()
  
-
     def __str__(self):
         return self.title
 
     def save(self,*args, **kwargs):
-        if self.class_name is None or self.class_name=="":
-            self.class_name='bankaccount'
-        if self.app_name is None or self.app_name=="":
-            self.app_name=APP_NAME
-            
+         
         # from projectmanager.models import Employee
         # a=Account.objects.filter(fff="")
         if self.title is None or self.title=="":
-            profile_name=""
-            if self.profile is not None:
-                profile_name=self.profile.name 
-            self.title=f"""حساب {self.bank} {profile_name}"""
+            account_name=""
+            if self.account is not None:
+                account_name=self.account.title 
+            self.title=f"""حساب {self.bank} {account_name}"""
         super(BankAccount,self).save(*args, **kwargs)
-  
+
 
 class FinancialYear(models.Model):
     title=models.CharField(_("عنوان"), max_length=50)
@@ -435,26 +560,48 @@ class FinancialYear(models.Model):
 
 
 class FinancialDocument(models.Model,LinkHelper):
-    account=models.ForeignKey("account", verbose_name=_("account"), on_delete=models.CASCADE)
+    account=models.ForeignKey("account", verbose_name=_("account"), on_delete=models.PROTECT)
     bedehkar=models.IntegerField(_("bedehkar"),default=0)
     bestankar=models.IntegerField(_("bestankar"),default=0)
     transaction=models.ForeignKey("transaction",verbose_name=_("transaction"), on_delete=models.CASCADE)
     tags=models.ManyToManyField("FinancialDocumentTag", blank=True,verbose_name=_("tags"))
     color=models.CharField(_("color"),max_length=50,choices=ColorEnum.choices,default=ColorEnum.PRIMARY)
-    direction=models.CharField(_("direction"),max_length=50,choices=FinancialDocumentTypeEnum.choices,default=FinancialDocumentTypeEnum.BESTANKAR)
+    direction=models.CharField(_("direction"),max_length=50,choices=FinancialDocumentDirectionEnum.choices,default=FinancialDocumentDirectionEnum.BESTANKAR)
+    status=models.CharField(_("status"),choices=FinancialDocumentStatusEnum.choices,default=FinancialDocumentStatusEnum.APPROVED, max_length=50)
     app_name=APP_NAME
     class_name="financialdocument"
 
     @property
     def rest(self):
         rest=0
+        rest_=0
         fds=FinancialDocument.objects.filter(account=self.account)
         fds=fds.filter(transaction__transaction_datetime__lte=self.transaction.transaction_datetime)
+        
         for fd in fds :
+            if self.pk==fd.pk:
+                # break
+                pass
             rest+=fd.bestankar
             rest-=fd.bedehkar
-        return rest
+            rest_=rest
 
+        # rest_+=self.bestankar
+        # rest_-=self.bedehkar
+
+        # print(self.bedehkar,self.bestankar,rest_)
+        return rest_
+    def status_color(self):
+        color="primary"
+        if self.status==FinancialDocumentStatusEnum.DRAFT:
+            color="secondary"
+        if self.status==FinancialDocumentStatusEnum.APPROVED:
+            color="success"
+        if self.status==FinancialDocumentStatusEnum.IN_PROGRESS:
+            color="warning"
+        if self.status==FinancialDocumentStatusEnum.CANCELED:
+            color="secondary"
+        return color
     def get_state_badge(self):
         color="muted"
         state="تسویه"
@@ -582,12 +729,18 @@ class FinancialDocumentTag(models.Model):
 
 
 class Cheque(Transaction,LinkHelper):
-    cheque_date=models.DateField(_("تاریخ چک"), auto_now=False, auto_now_add=False)
+    bank=models.ForeignKey("bank", verbose_name=_("bank"), on_delete=models.PROTECT)
+    sayyad_no=models.CharField(_("شماره صیاد"), max_length=50)
+    sarresid_datetime=models.DateTimeField(_("تاریخ سررسید"), auto_now=False, auto_now_add=False)
+    serial_no=models.CharField(_("شماره سری و سریال چک"), max_length=50)
+    @property
+    def cheque_date(self):
+        return self.sarresid_datetime
     
     def persian_cheque_date(self,no_tag=False):
         if no_tag:
-            return PersianCalendar().from_gregorian(self.cheque_date)
-        return to_persian_datetime_tag(self.cheque_date)
+            return PersianCalendar().from_gregorian(self.sarresid_datetime)
+        return to_persian_datetime_tag(self.sarresid_datetime)
     class Meta:
         verbose_name = _("چک")
         verbose_name_plural = _("چک ها")
@@ -654,12 +807,7 @@ class Invoice(Transaction):
         return reverse(APP_NAME+":invoice_print_currency",kwargs={'pk':self.pk,'currency':'r'})
     def get_excel_url(self):
         return reverse(APP_NAME+":invoice_excel",kwargs={'pk':self.pk})
-    def editable(self):
-        if self.status==TransactionStatusEnum.DRAFT:
-            return True
-        if self.status==TransactionStatusEnum.IN_PROGRESS:
-            return True
-        return False
+    
     def get_title(self):
         return self.title or f"فاکتور شماره {self.pk}"
   
@@ -713,11 +861,19 @@ class Invoice(Transaction):
     def get_edit_url2(self):
         return reverse(APP_NAME+":edit_invoice",kwargs={'pk':self.pk})
 
+    def normalize_rows(self):
+        i=0
+        for invoice_line in self.invoice_lines().order_by('row'):
+            i+=1
+            if not invoice_line.row-i==0:
+                invoice_line.row=i
+                invoice_line.save()
+
 
 class InvoiceLine(models.Model,LinkHelper):
     date_added=models.DateTimeField(_("date_added"), auto_now=False, auto_now_add=True)
     invoice=models.ForeignKey("invoice",blank=True, verbose_name=_("invoice"),related_name="lines", on_delete=models.CASCADE)
-    row=models.IntegerField(_("row"),blank=True)
+    row=models.IntegerField(_("row"),default=1,blank=True)
     product_or_service=models.ForeignKey("productorservice", verbose_name=_("productorservice"), on_delete=models.CASCADE)
     quantity=models.FloatField(_("quantity"))
     discount=models.IntegerField(_("discount"),default=0)
@@ -726,16 +882,20 @@ class InvoiceLine(models.Model,LinkHelper):
     description=models.CharField(_("description"),null=True,blank=True, max_length=50)
     class_name="invoiceline"
     app_name=APP_NAME
+
     def save(self,*args, **kwargs):
+        if not self.invoice.editable:
+            return None
         super(InvoiceLine,self).save(*args, **kwargs)
         self.invoice.save()
-        i=0
-        for invoice_line in self.invoice.invoice_lines().order_by('row'):
-            i+=1
-            if not invoice_line.row-i==0:
-                invoice_line.row=i
-                invoice_line.save()
+        # for invoice_line in self.invoice.invoice_lines().order_by('row'):
+        #     i+=1
+        #     if not invoice_line.row-i==0:
+        #         invoice_line.row=i
+        #         invoice_line.save()
     def delete(self,*args, **kwargs):
+        if not self.invoice.editable:
+            return None
         invoice=self.invoice
         super(InvoiceLine,self).delete()
         i=0
@@ -761,7 +921,101 @@ class InvoiceLine(models.Model,LinkHelper):
     @property
     def service(self):
         return Service.objects.filter(pk=self.pk).first()
-  
+
+
+class Category(models.Model,LinkHelper, ImageMixin):
+    thumbnail_origin = models.ImageField(_("تصویر کوچک"), upload_to=IMAGE_FOLDER+'Category/Thumbnail/',null=True, blank=True, height_field=None, width_field=None, max_length=None)
+    header_origin = models.ImageField(_("تصویر سربرگ"), upload_to=IMAGE_FOLDER+'Category/Header/',null=True, blank=True, height_field=None, width_field=None, max_length=None)
+    parent=models.ForeignKey("category",blank=True,null=True, verbose_name=_("parent"),related_name="childs", on_delete=models.SET_NULL)
+    title=models.CharField(_("title"), max_length=200)
+    for_home=models.BooleanField(_("for_home"),default=False)
+    priority=models.IntegerField(_("اولویت / ترتیب"),default="1000")
+    products_or_services=models.ManyToManyField("accounting.productorservice", blank=True,verbose_name=_("products or services"))
+    class_name='category'
+    app_name=APP_NAME
+    
+    @property
+    def products(self):
+        ids=[]
+        for products_or_service in self.products_or_services.all():
+            ids.append(products_or_service.id)
+        products=Product.objects.filter(id__in=ids)
+        return products
+
+    @property
+    def services(self):
+        ids=[]
+        for products_or_service in self.products_or_services.all():
+            ids.append(products_or_service.id)
+        services=Service.objects.filter(id__in=ids)
+        return services
+    
+    def __str__(self):
+        return self.title
+    
+    class Meta:
+        verbose_name = 'Category'
+        verbose_name_plural = 'Categories'
+ 
+    def get_breadcrumb_link(self,*args, **kwargs):
+        if "app_name" in kwargs:
+            get_absolute_url=reverse(kwargs['app_name']+":category",kwargs={'pk':self.pk})
+        else:
+            get_absolute_url=self.get_absolute_url()
+        aaa=""
+        if self.parent is not None:
+            aaa+="/"
+        aaa+=f"""
+                    <a href="{get_absolute_url}">
+                    <span class="farsi">
+                    {self.title}
+                    </span>
+                    </a> 
+                    """
+        if self.parent is None:
+            return aaa
+        return self.parent.get_breadcrumb_link(*args, **kwargs)+aaa
+    
+    def get_market_breadcrumb_link(self,*args, **kwargs):
+        return self.get_breadcrumb_link(app_name="market")
+    def get_market_breadcrumb_link1(self,*args, **kwargs):
+        get_absolute_url=reverse("market:category",kwargs={'pk':self.pk})
+        aaa=""
+        if self.parent is not None:
+            aaa+="/"
+        aaa+=f"""
+                    <a href="{get_absolute_url}">
+                    <span class="farsi">
+                    {self.title}
+                    </span>
+                    </a> 
+                    """
+        if self.parent is None:
+            return aaa
+        return self.parent.get_market_breadcrumb_link(*args, **kwargs)+aaa
+     
+    def get_breadcrumb_tag(self):
+        return f"""
+        
+                
+                    {self.get_breadcrumb_link()}
+               
+        """
+    
+    def get_market_breadcrumb_tag(self):
+        return f"""
+                    {self.get_market_breadcrumb_link()}
+        """
+    
+    @property
+    def full_title(self):
+        if self.parent is not None:
+            return self.parent.full_title+" / " +self.title
+        return self.title
+
+    def get_market_absolute_url(self):
+        return reverse("market:category",kwargs={'pk':self.pk})
+
 
 class Spend(Transaction,LinkHelper):    
     spend_type=models.CharField(_("spend_type"),choices=SpendTypeEnum.choices, max_length=50)
@@ -780,7 +1034,7 @@ class Spend(Transaction,LinkHelper):
 
     def save(self,*args, **kwargs):
         super(Spend,self).save(*args, **kwargs)
-   
+
 
 class Payment(Transaction):
     class Meta:
@@ -795,7 +1049,6 @@ class Payment(Transaction):
         if self.transaction_datetime is None:
             self.transaction_datetime=PersianCalendar().date
         super(Payment,self).save(*args, **kwargs)
-        
 
 
 class Salary(Spend,LinkHelper):    
@@ -821,7 +1074,7 @@ class Salary(Spend,LinkHelper):
             fb.wage=self.amount
             fb.save()
 
-            
+
 class Cost(Spend,LinkHelper):
     cost_type=models.CharField(_("cost"),choices=CostTypeEnum.choices, max_length=50)
     class_name="cost"

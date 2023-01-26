@@ -3,14 +3,15 @@ from core.serializers import DownloadSerializer, PageLinkSerializer
 from school.repo import EducationalYearRepo
 from .apps import APP_NAME
 from rest_framework import serializers
+from library.serializers import BookSerializer
 from authentication.serializers import ProfileSerializer
-from .models import ActiveCourse, Attendance, Book, ClassRoom, Course, EducationalYear, Major, School, Session, Student, Teacher
-
+from .models import ActiveCourse, Attendance, Book, ClassRoom, Course, EducationalYear, Exam, Major, Option, Question, School, Session, Student, Teacher
+from accounting.serializers import AccountSerializer
 class StudentSerializer(serializers.ModelSerializer):
-    profile=ProfileSerializer()
+    account=AccountSerializer()
     class Meta:
         model = Student
-        fields=['id','profile','get_absolute_url','get_edit_url']
+        fields=['id','account','get_absolute_url','get_edit_url']
 
 
 class SessionSerializer(serializers.ModelSerializer):
@@ -20,15 +21,16 @@ class SessionSerializer(serializers.ModelSerializer):
 
 
 class TeacherSerializer(serializers.ModelSerializer):
-    profile=ProfileSerializer()
+    account=AccountSerializer()
     class Meta:
         model = Teacher
-        fields=['id','profile','get_absolute_url','get_edit_url']
+        fields=['id','account','get_absolute_url','get_edit_url']
 
 class SchoolSerializer(serializers.ModelSerializer):
+    account=AccountSerializer()
     class Meta:
         model = School
-        fields=['id','title','get_absolute_url','get_edit_url']
+        fields=['id','title','account','get_absolute_url','get_edit_url']
 
 class ClassRoomSerializer(serializers.ModelSerializer):
     school=SchoolSerializer()
@@ -47,7 +49,7 @@ class EducationalYearSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = EducationalYear
-        fields=['id','title','get_absolute_url']
+        fields=['id','title','is_active','persian_start_date','persian_end_date','get_absolute_url','get_edit_url','get_delete_url']
 
 
 class CourseSerializer(serializers.ModelSerializer):
@@ -75,13 +77,33 @@ class AttendanceSerializer(serializers.ModelSerializer):
     student=StudentSerializer()
     class Meta:
         model = Attendance
-        fields=['id','session','status','color','student','get_delete_url','description','persian_time_added','persian_enter_time','persian_exit_time','get_edit_url']
+        fields=['id','session','get_absolute_url','status','color','student','get_delete_url','description','persian_time_added','persian_enter_time','persian_exit_time','get_edit_url']
 
 
+ 
 
-class BookSerializer(serializers.ModelSerializer): 
-    courses=CourseSerializer(many=True)
+
+class ExamSerializer(serializers.ModelSerializer): 
     class Meta:
-        model = Book
-        fields=['id','title','courses','get_absolute_url','get_edit_url','get_delete_url']
+        model = Exam
+        fields=['id','title','get_absolute_url','get_edit_url','get_delete_url']
+
+
+class OptionSerializer(serializers.ModelSerializer): 
+    class Meta:
+        model = Option
+        fields=['id','option','priority','get_edit_url','get_delete_url']
+
+class OptionFullSerializer(serializers.ModelSerializer): 
+    class Meta:
+        model = Option
+        fields=['id','option','priority','correct','get_edit_url','get_delete_url']
+
+
+
+class QuestionSerializer(serializers.ModelSerializer): 
+    options=OptionSerializer(many=True)
+    class Meta:
+        model = Question
+        fields=['id','question','options','get_absolute_url','get_edit_url','get_delete_url']
 

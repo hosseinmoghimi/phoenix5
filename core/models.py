@@ -1,3 +1,4 @@
+from phoenix.constants import SUCCEED
 from utility.encryption import Encrptor
 from django.core.files.storage import FileSystemStorage
 from django.db import models
@@ -8,6 +9,7 @@ from phoenix.server_settings import QRCODE_ROOT, QRCODE_URL, FULL_SITE_URL
 from phoenix.settings import ADMIN_URL, MEDIA_URL, STATIC_URL, UPLOAD_ROOT
 from tinymce.models import HTMLField
 from utility.calendar import PersianCalendar
+from utility.log import leolog
 from utility.utils import LinkHelper
 
 from .apps import APP_NAME
@@ -27,9 +29,12 @@ class ImageMixin():
 
     @property
     def image(self):
-        if self.image_main_origin:
-            return MEDIA_URL+str(self.image_main_origin)
+        try:
 
+            if self.image_main_origin:
+                return MEDIA_URL+str(self.image_main_origin)
+        except:
+            return self.thumbnail
     @property
     def thumbnail(self):
         if self.thumbnail_origin:
@@ -98,7 +103,7 @@ class Page(models.Model, LinkHelper, ImageMixin):
     date_added = models.DateTimeField(_("date_added"), auto_now=False, auto_now_add=True)
     priority = models.IntegerField(_("ترتیب"), default=1000)
     archive = models.BooleanField(_("archive?"), default=False)
-    meta_data=models.CharField(_("meta_data"),null=True,blank=True, max_length=500)
+    meta_data=models.CharField(_("meta_data"),default="",null=True,blank=True, max_length=500)
     related_pages=models.ManyToManyField("page",blank=True, verbose_name=_("related_pages"))
     def likes_count(self):
         return len(PageLike.objects.filter(page_id=self.id))
@@ -122,15 +127,19 @@ class Page(models.Model, LinkHelper, ImageMixin):
 
     def encrypt(self,*args, **kwargs):
         encryptor=Encrptor(*args, **kwargs)
-        aa=encryptor.encrypt(plain=self.short_description)
-        self.short_description=aa.decode()
-        # self.save()
+        self.short_description=encryptor.encrypt(plain=self.short_description).decode()
+        self.description=encryptor.encrypt(plain=self.description).decode()
+        self.save()
         return encryptor.key
+
     def decrypt(self,key,*args, **kwargs):
-        encryptor=Encrptor()
-        aa=encryptor.decrypt(cypher=self.short_description,key=key)
-        self.short_description=aa.decode()
+        encryptor=Encrptor(key=key)
         
+        result,self.short_description=encryptor.decrypt(cypher=self.short_description)
+        result,self.description=encryptor.decrypt(cypher=self.description)
+        if result==SUCCEED and 'save' in kwargs and kwargs['save']:
+            self.save()
+        return result
 
 
     def get_qrcode_url(self):
@@ -140,11 +149,6 @@ class Page(models.Model, LinkHelper, ImageMixin):
         file_path = QRCODE_ROOT
         file_name=self.class_name+str(self.pk)+".svg"
         file_address=os.path.join(QRCODE_ROOT,file_name)
-        # print(content)
-        # print(file_address)
-        # print(file_name)
-        # print(file_path)
-        # print(100*"$")
         if not os.path.exists(file_address):
             content=FULL_SITE_URL[0:-1]+self.get_absolute_url()
             generate_qrcode(content=content,file_name=file_name,file_address=file_address,file_path=file_path,)
@@ -174,7 +178,7 @@ class Page(models.Model, LinkHelper, ImageMixin):
     def get_breadcrumb(self):
         return f"""
         
-                <nav aria-label="breadcrumb">
+                <nav aria-label="breadcrumb rtl">
                 <ol class="breadcrumb">
                     {self.get_breadcrumb_link()}
                 </ol>
@@ -193,7 +197,12 @@ class Page(models.Model, LinkHelper, ImageMixin):
         # return f"""{self.app_name or ""} {self.class_name or ""} {self.title}"""
         return f"""{self.title}"""
 
-
+    @property
+    def thumbnail(self):
+        pageimage_set=self.pageimage_set.all()
+        if not self.thumbnail_origin and len(pageimage_set)>0:
+            return pageimage_set[0].thumbnail
+        return super(Page,self).thumbnail
 class PageLike(models.Model):
     profile=models.ForeignKey("authentication.profile", verbose_name=_("profile"), on_delete=models.CASCADE)
     page=models.ForeignKey("page", verbose_name=_("page"), on_delete=models.CASCADE)
@@ -228,7 +237,8 @@ class PageComment(models.Model):
     date_added=models.DateTimeField(_("date_added"), auto_now=False, auto_now_add=True)
     def persian_date_added(self):
         return PersianCalendar().from_gregorian(self.date_added)
-    
+    def __str__(self):
+        return f"{self.profile.name} - {self.page.title} "
     class Meta:
         verbose_name = _("PageComment")
         verbose_name_plural = _("PageComments")
@@ -318,11 +328,23 @@ class Download(Icon):
     is_open = models.BooleanField(_("is_open?"), default=False)
     profile = models.ForeignKey("authentication.Profile", null=True,
                                 blank=True, verbose_name=_("profile"), on_delete=models.CASCADE)
+    @property
     def get_download_url(self):
         if self.mirror_link and self.mirror_link is not None:
             return self.mirror_link
         if self.file:
-            return reverse(APP_NAME+':download', kwargs={'pk': self.pk})
+            ss= reverse(APP_NAME+':download', kwargs={'pk': self.pk})
+            return ss
+        else:
+            return ''
+
+    @property
+    def get_full_download_url(self):
+        if self.mirror_link and self.mirror_link is not None:
+            return self.mirror_link
+        if self.file:
+            ss= reverse(APP_NAME+':download', kwargs={'pk': self.pk})
+            return FULL_SITE_URL[0:len(FULL_SITE_URL)-1]+ss
         else:
             return ''
 
@@ -336,6 +358,18 @@ class Download(Icon):
         return self.title
 
 
+    def get_qrcode_url(self):
+        if self.pk is None:
+            super(Download,self).save()
+        import os
+        file_path = QRCODE_ROOT
+        file_name=self.class_name+str(self.pk)+".svg"
+        file_address=os.path.join(QRCODE_ROOT,file_name)
+        if not os.path.exists(file_address):
+            content=self.get_full_download_url
+            generate_qrcode(content=content,file_name=file_name,file_address=file_address,file_path=file_path,)
+        return f"{QRCODE_URL}{file_name}"
+ 
 class Link(Icon):
     url = models.CharField(_("url"), max_length=2000)
     new_tab=models.BooleanField(_("new_tab"),default=False)
@@ -360,8 +394,19 @@ class Link(Icon):
             {self.title}
             </a>
         """
-
-
+    
+    def get_qrcode_url(self):
+        if self.pk is None:
+            super(Link,self).save()
+        import os
+        file_path = QRCODE_ROOT
+        file_name=self.class_name+str(self.pk)+".svg"
+        file_address=os.path.join(QRCODE_ROOT,file_name)
+        if not os.path.exists(file_address):
+            content=self.url
+            generate_qrcode(content=content,file_name=file_name,file_address=file_address,file_path=file_path,)
+        return f"{QRCODE_URL}{file_name}"
+ 
 class PageLink(Link, LinkHelper):
     page = models.ForeignKey("page", verbose_name=_(
         "page"), on_delete=models.CASCADE)
@@ -457,6 +502,8 @@ class Image(models.Model, LinkHelper):
                                           'ImageBase/Main/', height_field=None, width_field=None, max_length=None)
     image_header_origin = models.ImageField(_("تصویر سربرگ"), null=True, blank=True, upload_to=IMAGE_FOLDER +
                                             'ImageBase/Header/', height_field=None, width_field=None, max_length=None)
+    date_added=models.DateTimeField(_("date_added"), auto_now=False, auto_now_add=True)
+    creator=models.ForeignKey("authentication.profile", verbose_name=_("profile"),null=True,blank=True, on_delete=models.CASCADE)
     def __str__(self):
         return self.title
     class Meta:
@@ -511,9 +558,10 @@ class Image(models.Model, LinkHelper):
         from io import BytesIO
         import sys
         from django.core.files.uploadedfile import InMemoryUploadedFile
-
-        image = PilImage.open(self.image_main_origin)
-
+        try:
+            image = PilImage.open(self.image_main_origin)
+        except:
+            return None
         width11, height11 = image.size
         ratio11 = float(height11)/float(width11)
      

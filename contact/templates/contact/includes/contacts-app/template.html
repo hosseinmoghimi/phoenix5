@@ -1,0 +1,133 @@
+<div id="accordion-contacts">
+
+    <div class="card mb-3" id="contacts-app">
+        <div class="card-header" id="heading-contacts">
+            <h5 class="text-center">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-contacts" aria-expanded="true"
+                    aria-controls="collapse-contacts">
+                    اطلاعات تماس
+                    <span v-if="contacts.length>0">
+                        <small class="text-danger mx-2">
+                            <span v-text="contacts.length"></span>
+                        </small>
+                    </span>
+
+
+                </button>
+            </h5>
+
+            {% if page_pre_description %}
+
+            <h5 class="text-center">
+                {{page_pre_description}}
+            </h5>
+            {% endif %}
+            {% if page_description %}
+
+            <h4 class="text-center">
+                {{page_description}}
+            </h4>
+            {% endif %}
+        </div>
+        <div id="collapse-contacts" class="collapse{% if expand_contacts %} show {% endif %}" aria-labelledby="heading-contacts" data-parent="#accordion-contacts">
+
+            <div class="card-body">
+<div>
+    <input type="text" class="form-control" v-model="search_for" @input="search()">
+</div>
+                <div class="table-responsive">
+                    <table class="table rtl">
+                        <thead>
+                            
+                            {% if not account %}
+                                
+                            
+                            <th>
+                                حساب
+                            </th>
+                            {% endif %}
+                            <th>
+                                نوع
+                            </th>
+                            <th>
+                                لینک
+                            </th>
+                            <th>
+                                به اشتراک گذاری
+                            </th>
+                        </thead>
+                        <tbody>
+                            <tr v-for="contact in contacts">
+                            {% if not account %}
+                              
+                                <td>
+                                    <div class="media">
+                                        <a :href="contact.account.get_absolute_url">
+                                            <img :src="contact.account.logo" class="rounded" width="48" alt="">
+                                        </a>
+                                        <div class="media-body mr-2">
+                                            <div>
+                                                <a class=" " :href="contact.account.get_absolute_url">
+                                                    <span class="farsi">
+                                                        <span v-text="contact.account.title"></span>
+                                                    </span>
+                                                </a>
+                                            </div>
+                                            <div>
+                                                <small class="text-muted" v-text="contact.account.class_title"></small>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                
+                                
+                            {% endif %}
+                                <td>
+                                    <span v-text="contact.name"></span>
+
+                                </td>
+                                <td>
+                                    <a class="btn btn-primary btn-block" :href="contact.url">
+                                        <span class="farsi ltr text-left">
+                                            <span v-text="contact.value"></span>
+
+                                        </span>
+                                    </a>
+                                </td>
+                                <td>
+                                    <a title="واتسپ" :href="'whatsapp://send?text='+contact.account.title+'   '+contact.value" data-action="share/whatsapp/share" target="_blank">
+                                        <img src="/static/icons/whatsapp.png" width="32" alt="">
+                                        
+                                    </a>
+
+                                    <a title="تلگرام" :href="'https://telegram.me/share/url?url='+contact.account.title+'&amp;text='+contact.value" data-action="share/whatsapp/share" target="_blank">
+                                        <img src="/static/icons/telegram.png" width="32" alt="">
+                                        
+                                    </a>
+                                    <a title="ویرایش" :href="contact.get_edit_url" target="_blank">
+                                        <i class="fa fa-edit text-warning"></i>
+                                        
+                                    </a>
+                                    <a title="حذف" :href="contact.get_delete_url" target="_blank">
+                                        <i class="fa fa-trash text-danger"></i>
+                                    </a>
+
+                                </td>
+
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+
+            </div>
+            <div class="card-footer">
+                {% if add_contact_form %}
+
+                {% include "contact/includes/contacts-app/form.html" %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>

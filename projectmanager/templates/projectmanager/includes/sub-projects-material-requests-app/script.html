@@ -1,0 +1,59 @@
+<script>
+    let sub_projects_material_requests = JSON.parse(`{{sub_projects_material_requests_s|escapejs}}`)
+
+
+
+    let sub_prjects_material_requests_app = new Vue({
+        el: "#sub-projects-material-requests-app",
+        data: {
+            sub_projects_material_requests: sub_projects_material_requests,
+            waiting: false,
+            sum_material_requests: 0,
+            filter_status: "",
+        },
+        mounted: function () {
+            this.sum_material_requests = 0
+            this.sub_projects_material_requests.forEach(material_request => {
+                this.sum_material_requests += material_request.total
+                this.count_material_requests += material_request.quantity
+
+            })
+        },
+        methods: {
+            // sum_price_requested: () => {
+            //     let sum_material_requests = 0
+            //     this.material_requests.forEach(material_request => {
+            //         sum_material_requests += material_request.unit_price*material_request.quantity
+
+            //     })
+
+            //     return to_price(sum_material_requests,'')
+            // },
+            filter: function () {
+                this.material_requests = material_requests
+
+                if (this.filter_status != "") {
+                    this.material_requests = this.material_requests.filter(item => item.status === material_requests_app.filter_status)
+                }
+            },
+
+            to_price: function (value, CURRENCY) {
+                return to_price(value, CURRENCY)
+            },
+
+            filter_list: function () {
+                if (this.add_material_request_form_title.length > 2) {
+
+                    this.materials = all_materials.filter(item => item.full_title.toUpperCase().includes(this.add_material_request_form_title.toUpperCase())).slice(0, 6);
+                    try {
+                        this.add_material_request_form_unit_price = this.selected_material().unit_price
+                        this.add_material_request_form_unit_name = this.selected_material().unit_name
+                    } catch (error) {
+
+                    }
+                }
+
+            },
+        }
+    })
+</script>

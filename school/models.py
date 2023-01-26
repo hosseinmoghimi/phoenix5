@@ -1,5 +1,7 @@
+from utility.calendar import to_persian_datetime_tag
 # Create your models here.
 
+from django.utils import timezone
 from tinymce.models import HTMLField
 from core.models import Page, PageLink
 from django.db import models
@@ -10,19 +12,22 @@ from school.apps import APP_NAME
 from django.utils.translation import gettext as _
 from school.settings import *
 from school.enums import *
+from library.models import Book
+from utility.utils import LinkHelper
 
 
-class SchoolPage(Page):
+class SchoolPage(Page,LinkHelper):
 
     def save(self,*args, **kwargs):
-        self.app_name=APP_NAME
+        if self.app_name is None:
+            self.app_name=APP_NAME
         return super(SchoolPage,self).save(*args, **kwargs)
 
 
 class School(models.Model):
     class_name="school"
     title=models.CharField(_("نام مدرسه"), max_length=100)
-    
+    account=models.ForeignKey("accounting.account", verbose_name=_("account"), on_delete=models.CASCADE)
 
     class Meta:
         verbose_name = _("School")
@@ -65,7 +70,7 @@ class Course(models.Model):
     class_name="course"
     title=models.CharField(_("نام واحد درسی "), max_length=100)
     level=models.IntegerField(_("level"))
-    books=models.ManyToManyField("book", verbose_name=_("books"),blank=True)
+    books=models.ManyToManyField("library.book", verbose_name=_("books"),blank=True)
     course_count=models.IntegerField(_("تعداد واحد"))
     def majors(self):
         return self.major_set.all()
@@ -95,12 +100,28 @@ class Course(models.Model):
         """
 
 
-class EducationalYear(models.Model):
+class EducationalYear(models.Model,LinkHelper):
     title=models.CharField(_("title"), max_length=50)
     start_date=models.DateTimeField(_("start_date"),null=True,blank=True, auto_now=False, auto_now_add=False)
     end_date=models.DateTimeField(_("end_date"),null=True,blank=True, auto_now=False, auto_now_add=False)
-    
     class_name="educationalyear"
+    app_name=APP_NAME
+    def persian_start_date(self):
+        return to_persian_datetime_tag(self.start_date)
+    def persian_end_date(self):
+        return to_persian_datetime_tag(self.end_date)
+
+    @property
+    def is_active(self):
+        try:
+
+        # current_date=PersianCalendar().from_gregorian(timezone.now())
+            current_date=timezone.now()
+            if current_date<=self.end_date and current_date>=self.start_date:
+                return True
+        except:
+            pass
+        return False
     class Meta:
         verbose_name = _("EducationalYear")
         verbose_name_plural = _("EducationalYears")
@@ -110,34 +131,88 @@ class EducationalYear(models.Model):
 
     def get_absolute_url(self):
         return reverse(APP_NAME+":"+self.class_name, kwargs={"pk": self.pk})
+ 
 
-    def get_edit_url(self):
-        return f"""{ADMIN_URL}{APP_NAME}/{self.class_name}/{self.pk}/change/"""
+class Exam(SchoolPage):
+    def save(self,*args, **kwargs):
+        if self.class_name is None:
+            self.class_name='exam'
+        super(Exam,self).save(*args, **kwargs)
+    
 
-    def get_edit_btn(self):
-        return f"""
-             <a href="{self.get_edit_url()}" target="_blank" title="ویرایش">
-                <i class="material-icons">
-                    edit
-                </i>
-            </a>
-        """
+    class Meta:
+        verbose_name = _("Exam")
+        verbose_name_plural = _("Exams")
+ 
+ 
+class Question(models.Model,LinkHelper):
+    exam=models.ForeignKey("exam", verbose_name=_("exam"), on_delete=models.CASCADE)
+    question=HTMLField(_("question"), max_length=5000)
+    app_name=APP_NAME
+    class_name="question"
+    def options(self):
+        return self.option_set.all().order_by('priority')
+    class Meta:
+        verbose_name = _("Question")
+        verbose_name_plural = _("Questions")
+
+    def __str__(self):
+        return self.question
+ 
+
+class Option(models.Model,LinkHelper):
+    question=models.ForeignKey("question", verbose_name=_("question"), on_delete=models.CASCADE)
+    priority=models.IntegerField(_("number"))
+    option=HTMLField(_("option"), max_length=5000)
+    correct=models.BooleanField(_("correct"),default=False)
+
+    app_name=APP_NAME
+    class_name="option"
+
+    class Meta:
+        verbose_name = _("Option")
+        verbose_name_plural = _("Options")
+ 
+
+    def __str__(self):
+        return self.option
+ 
+
+class SelectedOption(models.Model,LinkHelper):
+    option=models.ForeignKey("option", verbose_name=_("option"), on_delete=models.CASCADE)
+    student=models.ForeignKey("student", verbose_name=_("student"), on_delete=models.CASCADE)
+    date_added=models.DateTimeField(_("date_added"), auto_now=False, auto_now_add=True)
+    
+    app_name=APP_NAME
+    class_name="selectedoption"
+
+    class Meta:
+        verbose_name = _("SelectedOption")
+        verbose_name_plural = _("SelectedOptions")
+ 
+
+    def __str__(self):
+        return f"{self.student} :{self.option.question} : {self.option}"
+ 
+    def save(self,*args, **kwargs):
+        SelectedOption.objects.filter(student_id=self.student.id).filter(option__question_id=self.option.question.id).delete()
+        super(SelectedOption,self).save()
 
 
 class ActiveCourse(models.Model):
     class_name="activecourse"
-    year=models.ForeignKey("EducationalYear", verbose_name=_("سال تحصیلی"), on_delete=models.CASCADE)
+    year=models.ForeignKey("educationalyear", verbose_name=_("سال تحصیلی"), on_delete=models.CASCADE)
     title=models.CharField(_("title"), max_length=200)
     course=models.ForeignKey("course", verbose_name=_("course"), on_delete=models.CASCADE)
     classroom=models.ForeignKey("classroom", verbose_name=_("classroom"), on_delete=models.CASCADE)
     # teacher=models.ForeignKey("teacher", verbose_name=_("teacher"), on_delete=models.CASCADE)
     students=models.ManyToManyField("student", verbose_name=_("students"),blank=True)
     # book=models.ForeignKey("book", verbose_name=_("book"), on_delete=models.CASCADE)
-
+    cost=models.IntegerField(_("cost"),default=0)
     teachers=models.ManyToManyField("teacher", verbose_name=_("teachers"),blank=True)
     start_date=models.DateTimeField(_("start_date"), auto_now=False, auto_now_add=False)
     end_date=models.DateTimeField(_("end_date"), auto_now=False, auto_now_add=False)
-
+    # is_active=models.BooleanField(_("is_active"),default=True)
     class Meta:
         verbose_name = _("ActiveCourse")
         verbose_name_plural = _("ActiveCourses")
@@ -197,7 +272,8 @@ class ClassRoom(models.Model):
 
 class Teacher(models.Model):
     class_name="teacher"
-    profile=models.ForeignKey("authentication.profile", verbose_name=_("profile"), on_delete=models.CASCADE)
+    account=models.ForeignKey("accounting.account", verbose_name=_("account"), on_delete=models.CASCADE)
+    # profile=models.ForeignKey("authentication.profile", verbose_name=_("profile"), on_delete=models.CASCADE)
     
 
     class Meta:
@@ -205,7 +281,7 @@ class Teacher(models.Model):
         verbose_name_plural = _("Teachers")
 
     def __str__(self):
-        return self.profile.name
+        return self.account.title
 
     def get_absolute_url(self):
         return reverse(APP_NAME+":"+self.class_name, kwargs={"pk": self.pk})
@@ -245,15 +321,16 @@ class Session(SchoolPage):
         return f"""{ADMIN_URL}{APP_NAME}/{self.class_name}/{self.pk}/delete/"""
 
 
-class Attendance(models.Model):
+class Attendance(models.Model,LinkHelper):
     student=models.ForeignKey("student", verbose_name=_("student"), on_delete=models.CASCADE)
     session=models.ForeignKey("session", verbose_name=_("session"), on_delete=models.CASCADE)
     status=models.CharField(_("status"),choices=AttendanceStatusEnum.choices, max_length=50)
     enter_time=models.DateTimeField(_("enter"),null=True,blank=True, auto_now=False, auto_now_add=False)
     exit_time=models.DateTimeField(_("exit"),null=True,blank=True, auto_now=False, auto_now_add=False)
     time_added=models.DateTimeField(_("time_added"),null=True,blank=True, auto_now=False, auto_now_add=True)
-    description=models.CharField(_("description"), max_length=500)
+    description=models.CharField(_("description"),null=True,blank=True, max_length=500)
     class_name="attendance"
+    app_name=APP_NAME
     def color(self):
         colo="primary"
         if self.status==AttendanceStatusEnum.DELAY:
@@ -264,6 +341,8 @@ class Attendance(models.Model):
             colo="secondary"
         elif self.status==AttendanceStatusEnum.TASHVIGH:
             colo="success"
+        elif self.status==AttendanceStatusEnum.ARZYABI:
+            colo="info"
         elif self.status==AttendanceStatusEnum.TANBIH:
             colo="danger"
         return colo
@@ -272,24 +351,8 @@ class Attendance(models.Model):
         verbose_name_plural = _("Attendances")
 
     def __str__(self):
-        return self.student.profile.name
-
-    def get_absolute_url(self):
-        return reverse(APP_NAME+":"+self.class_name, kwargs={"pk": self.pk})
-
-    def get_edit_url(self):
-        return f"""{ADMIN_URL}{APP_NAME}/{self.class_name}/{self.pk}/change/"""
-    def get_delete_url(self):
-        return f"""{ADMIN_URL}{APP_NAME}/{self.class_name}/{self.pk}/delete/"""
-    def get_edit_btn(self):
-        return f"""
-             <a href="{self.get_edit_url()}" target="_blank" title="ویرایش">
-                <i class="material-icons">
-                    edit
-                </i>
-            </a>
-        """
-
+        return f"{self.student.account.title} {self.session} {self.status}"
+ 
     def persian_enter_time(self):
         return PersianCalendar().from_gregorian(self.enter_time)
     def persian_exit_time(self):
@@ -298,32 +361,34 @@ class Attendance(models.Model):
         return PersianCalendar().from_gregorian(self.time_added)
 
 
-class Book(SchoolPage): 
-    class Meta:
-        verbose_name = _("Book")
-        verbose_name_plural = _("Books")
+# class Book(LibraryBook): 
+#     class Meta:
+#         verbose_name = _("Book")
+#         verbose_name_plural = _("Books")
  
-    def courses(self):
-        return self.course_set.all()
+#     def courses(self):
+#         return self.course_set.all()
 
-    def save(self,*args, **kwargs):
-        self.class_name='book'
-        return super(Book,self).save(*args, **kwargs)
+#     def save(self,*args, **kwargs):
+#         self.class_name='book'
+#         self.app_name=APP_NAME
+#         return super(Book,self).save(*args, **kwargs)
 
 
 class Student(models.Model):
     class_name="student"
-    profile=models.ForeignKey("authentication.profile", verbose_name=_("profile"), on_delete=models.CASCADE)
+    account=models.ForeignKey("accounting.account", verbose_name=_("account"), on_delete=models.CASCADE)
+    # profile=models.ForeignKey("authentication.profile", verbose_name=_("profile"), on_delete=models.CASCADE)
     
     @property
     def name(self):
-        return self.profile.name
+        return self.account.title
     class Meta:
         verbose_name = _("Student")
         verbose_name_plural = _("Students")
 
     def __str__(self):
-        return self.profile.name
+        return self.account.title
 
     def get_absolute_url(self):
         return reverse(APP_NAME+":"+self.class_name, kwargs={"pk": self.pk})

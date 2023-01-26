@@ -2,6 +2,7 @@ from django.shortcuts import render
 
 # Create your views here.
 from django.views import View
+from accounting.views import add_from_accounts_context
 from authentication.repo import ProfileRepo
 from core.enums import ParameterNameEnum
 
@@ -60,30 +61,34 @@ class BasicViews(View):
         return render(request,TEMPLATE_ROOT+"index.html",context)
 
 
-class BookViews(View):
-    def book(self,request,*args, **kwargs):
+class BookView(View):
+    def get(self,request,*args, **kwargs):
         context=getContext(request=request)
         book=BookRepo(request=request).book(*args, **kwargs)
         context.update(PageContext(request=request,page=book))
         context['book']=book
         return render(request,TEMPLATE_ROOT+"book.html",context)
+class BooksView(View):
 
-    def books(self,request,*args, **kwargs):
+    def get(self,request,*args, **kwargs):
         context=getContext(request=request)
         books=BookRepo(request=request).list(*args, **kwargs)
         context['books']=books
         books_s=json.dumps(BookSerializer(books,many=True).data)
         context['books_s']=books_s
+        if request.user.has_perm(APP_NAME+".add_book"):
+            context['add_book_form']=AddBookForm()
         return render(request,TEMPLATE_ROOT+"books.html",context)
 
 
-class MemberViews(View):
-    def member(self,request,*args, **kwargs):
+class MemberView(View):
+    def get(self,request,*args, **kwargs):
         context=getContext(request=request)
         member=MemberRepo(request=request).member(*args, **kwargs)
         context['member']=member
         return render(request,TEMPLATE_ROOT+"member.html",context)
-    def members(self,request,*args, **kwargs):
+class MembersView(View):
+    def get(self,request,*args, **kwargs):
         context=getContext(request=request)
         members=MemberRepo(request=request).list(*args, **kwargs)
         context['members']=members
@@ -91,8 +96,8 @@ class MemberViews(View):
         context['members_s']=members_s
         if request.user.has_perm(APP_NAME+".add_member"):
             context['add_member_form']=AddMemberForm()
-            context['profiles']=ProfileRepo(request=request).list()
             context['levels']=(i[0] for i in MemberShipLevelEnum.choices)
+            context.update(add_from_accounts_context(request=request))
         return render(request,TEMPLATE_ROOT+"members.html",context)
 
 

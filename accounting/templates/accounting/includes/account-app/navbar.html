@@ -34,6 +34,10 @@
     </a>
 </div>
 {% endif %}
+
+{% if perms.accounting.view_account or account_is_me %}
+
+
 <h4 class="text-center">
     <span class="text-{{account.balance.rest|to_amount_color}}">
         مانده :
@@ -45,17 +49,67 @@
         {{account.balance.rest|to_horuf}} {{CURRENCY}}
     </span>
 </h4>
-{% if not bank_account and account %}
+{% endif %}
+{% if not bank_account and account and me_account %}
 
 <div class="text-center my-3">
-    <a class=" farsi btn btn-danger" href="{% url 'accounting:new_invoice' pay_from_id=account.id pay_to_id=0 %}">
+    <a class=" farsi btn btn-danger"
+        href="{% url 'accounting:new_invoice' pay_from_id=account.id pay_to_id=me_account.id %}">
         فاکتور خرید
     </a>
-    <a class=" farsi btn btn-success" href="{% url 'accounting:new_invoice' pay_from_id=0 pay_to_id=account.id %}">
+    <a class=" farsi btn btn-success"
+        href="{% url 'accounting:new_invoice' pay_from_id=me_account.id pay_to_id=account.id %}">
         فاکتور فروش
     </a>
 </div>
+{% if perms.accounting.view_account or account_is_me %}
+
+<div class="text-center my-3">
+    <a class=" farsi btn btn-link" href="{% url 'accounting:account_invoices' account_id=account.id %}">
+        فاکتور ها
+    </a>
+
+    <a class=" farsi btn btn-link" href="{% url 'accounting:account_financial_documents' account_id=account.id %}">
+        سند ها
+    </a>
+
+
+    <a class=" farsi btn btn-link" href="{% url 'accounting:account_cheques' account_id=account.id %}">
+        چک ها
+    </a>
+
+    <a class=" farsi btn btn-link" href="{% url 'accounting:account_transactions' account_id=account.id %}">
+        تراکنش ها
+    </a>
+
+</div>
+
 {% endif %}
+{% endif %}
+{% for customer in account.customer_set.all %}
+<div class="my-2 text-center farsi">
+    <a href="{{customer.get_absolute_url}}">
+        <small class="text-primary">
+             مشتری
+        </small>
+        
+
+
+    </a> 
+
+    
+    <a href="{{customer.get_loyaltyclub_absolute_url}}">
+        <small class="text-muted">
+            باشگاه مشتریان
+        </small>
+        
+
+
+    </a> 
+
+
+</div> 
+{% endfor %}
 
 {% for acc in account.employee_set.all %}
 <div class="my-2 text-center farsi">
@@ -138,4 +192,3 @@
     </a>
 </div>
 {% endfor %}
-    

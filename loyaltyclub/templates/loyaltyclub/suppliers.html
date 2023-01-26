@@ -1,0 +1,52 @@
+{% extends "loyaltyclub/layout.html" %}
+{% load to_price %}
+{% load to_persian_date %}
+{% load static %}
+
+
+{% block content %}
+<div class="row rtl">
+
+
+
+    {% if add_supplier_form %}
+    <div class="col-md-6">
+
+        {% include 'market/includes/add-supplier-app/template.html' %}
+    </div>
+    {% endif %}
+
+
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h4>
+
+                    لیست فروشنده ها
+                </h4>
+            </div>
+            <div class="card-body">
+                {% include 'loyaltyclub/includes/suppliers-app/template.html' %}
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
+{% block modal %}
+{% endblock %}
+
+
+
+{% block script %}
+{% include 'loyaltyclub/includes/suppliers-app/script.html' %}
+
+
+{% if add_supplier_form %}
+{% include 'market/includes/add-supplier-app/script.html' %}
+{% endif %}
+
+
+{% endblock %}

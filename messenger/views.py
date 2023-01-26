@@ -53,6 +53,7 @@ class HomeViews(View):
 
         
         return render(request,TEMPLATE_ROOT+"index.html",context)
+
 class MessageViews(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)

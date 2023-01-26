@@ -1,6 +1,7 @@
 <script>
     let attendances = JSON.parse("{{attendances_s|escapejs}}")
-
+    let attendances_app_data = {}
+    let attendances_app_components = {}
 </script>
 {% if add_attendence_form %}
 <script>
@@ -9,8 +10,9 @@
     let STATUS_ABSENT = "{{STATUS_ABSENT}}"
     let STATUS_DELAY = "{{STATUS_DELAY}}"
     let STATUS_TASHVIGH = "{{STATUS_TASHVIGH}}"
+    let STATUS_ARZYABI = "{{STATUS_ARZYABI}}"
     let STATUS_TANBIH = "{{STATUS_TANBIH}}"
-     
+
     let session_id = parseInt("{{session.id}}")
     let url_add_attendance = "{% url 'school:add_attendance' %}"
 
@@ -24,98 +26,61 @@
         methods: {
 
             absent: function () {
+                this.add_status(STATUS_ABSENT)
 
-                let payload = {
-                    student_id: this.student.id,
-                    session_id: session_id,
-                    status: STATUS_ABSENT,
-                    description: this.description,
-                    csrfmiddlewaretoken: csrfmiddlewaretoken
-                }
-                $.post(url_add_attendance, payload).done((data) => {
-                    if (data.result === 'SUCCEED') {
-                        // attendances_app.attendances.push(data.attendance)
-                        attendances_app.attendances=(data.attendances)
-                    }
-                })
+
             },
             present: function () {
 
-                let payload = {
-                    student_id: this.student.id,
-                    session_id: session_id,
-                    status: STATUS_PRESENT,
-                    description: this.description,
-                    csrfmiddlewaretoken: csrfmiddlewaretoken
-                }
-                $.post(url_add_attendance, payload).done((data) => {
-                    if (data.result === 'SUCCEED') {
-                        // attendances_app.attendances.push(data.attendance)
-                        attendances_app.attendances=(data.attendances)
-                    }
-                })
+
+                this.add_status(STATUS_PRESENT)
+
             },
             delay: function () {
 
-                let payload = {
-                    student_id: this.student.id,
-                    session_id: session_id,
-                    status: STATUS_DELAY,
-                    description: this.description,
-                    csrfmiddlewaretoken: csrfmiddlewaretoken
-                }
-                $.post(url_add_attendance, payload).done((data) => {
-                    if (data.result === 'SUCCEED') {
-                        // attendances_app.attendances.push(data.attendance)
-                        attendances_app.attendances=(data.attendances)
-                    }
-                })
+                this.add_status(STATUS_DELAY)
+
             },
             tanbih: function () {
+                this.add_status(STATUS_TANBIH)
 
+            },
+            tashvigh: function () {
+                this.add_status(STATUS_TASHVIGH)
+
+            },
+            add_status: function (status) {
                 let payload = {
                     student_id: this.student.id,
                     session_id: session_id,
-                    status: STATUS_TANBIH,
+                    status: status,
                     description: this.description,
                     csrfmiddlewaretoken: csrfmiddlewaretoken
                 }
                 $.post(url_add_attendance, payload).done((data) => {
                     if (data.result === 'SUCCEED') {
                         // attendances_app.attendances.push(data.attendance)
-                        attendances_app.attendances=(data.attendances)
+                        attendances_app.attendances = (data.attendances)
                     }
                 })
             },
-            tashvigh: function () {
+            arzyabi: function () {
+                this.add_status(STATUS_ARZYABI)
 
-                let payload = {
-                    student_id: this.student.id,
-                    session_id: session_id,
-                    status: STATUS_TASHVIGH,
-                    description: this.description,
-                    csrfmiddlewaretoken: csrfmiddlewaretoken
-                }
-                $.post(url_add_attendance, payload).done((data) => {
-                    if (data.result === 'SUCCEED') {
-                        // attendances_app.attendances.push(data.attendance)
-                        attendances_app.attendances=(data.attendances)
-                    }
-                })
             },
         },
         props: ['student'],
         template: session_student_component_template,
     })
 
-    let attendances_app_data = {
+    attendances_app_data = {
         students: students,
         attendances: attendances,
         session_id: session_id,
-        show_form:false,
+        show_form: false,
     }
-    
-    let attendances_app_components = {
+
+    attendances_app_components = {
         session_student_component,
     }
 
@@ -123,10 +88,10 @@
 </script>
 {% else %}
 <script>
-    let attendances_app_data = {
+    attendances_app_data = {
         attendances: attendances,
     }
-    let attendances_app_components = {
+    attendances_app_components = {
     }
 </script>
 {% endif %}

@@ -1,0 +1,136 @@
+{% load to_persian_date %}
+<div id="educational-years-app">
+
+    <div class="card">
+        <div class="card-header">
+            <h4 class="text-right">
+                سال های تحصیلی
+            </h4>
+        </div>
+        <div class="card-body">
+            <table class="table rtl">
+                <thead>
+                    <th>
+                        سال تحصیلی
+                    </th>
+                    <th>
+                        شروع
+                    </th>
+                    <th>
+                        پایان
+                    </th>
+                    <th>
+                        فعال؟
+                    </th>
+                    <th>
+
+                    </th>
+                </thead>
+                <tbody>
+                    <!-- {1% for educational_year in educational_years %1}
+                    <tr>
+                        <td>
+                            <a href="{{educational_year.get_absolute_url}}">{{educational_year.title}}</a>
+                        </td>
+                        <td>
+                            {{educational_year.start_date|to_persian_datetime|safe}}
+                        </td>
+                        <td>
+                            {{educational_year.end_date|to_persian_datetime|safe}}
+                        </td>
+                        <td>
+                            {{educational_year.is_active}}
+                        </td>
+                        <td>
+
+                            {% if perms.school.change_educationalyear %}
+                            <a href="{{educational_year.get_edit_url}}" target="_blank" title="ویرایش" class="mx-2"><i
+                                    class="fa fa-edit text-warning"></i></a>
+                            {% endif %}
+                            {% if perms.school.delete_educationalyear %}
+                            <a href="{{educational_year.get_delete_url}}" target="_blank" title="حذف" class="mx-2"><i
+                                    class="fa fa-trash text-danger"></i></a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {1% endfor %1} -->
+
+                    <tr v-for="educational_year in educational_years">
+                        <td>
+                            <a :href="educational_year.get_absolute_url">
+                                <span v-text="educational_year.title"></span>
+                            </a>
+                        </td>
+                        <td>
+                            <div v-html="educational_year.persian_start_date"></div>
+
+                        </td>
+                        <td>
+                            <div v-html="educational_year.persian_end_date"></div>
+
+                        </td>
+                        <td>
+                            <span v-text="educational_year.is_active"></span>
+
+                        </td>
+                        <td>
+
+                            {% if perms.school.change_educationalyear %}
+                            <a :href="educational_year.get_edit_url" target="_blank" title="ویرایش" class="mx-2"><i
+                                    class="fa fa-edit text-warning"></i></a>
+                            {% endif %}
+                            {% if perms.school.delete_educationalyear %}
+                            <a :href="educational_year.get_delete_url" target="_blank" title="حذف" class="mx-2"><i
+                                    class="fa fa-trash text-danger"></i></a>
+                            {% endif %}
+                        </td>
+                    </tr>
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    {% if perms.school.add_educationalyear %}
+
+    <div class="card">
+        <div class="card-body">
+            <h5>
+                افزودن سال تحصیلی جدید
+            </h5>
+            <form @submit.prevent="add_educational_year()">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="">عنوان</label>
+                            <input type="text" v-model="title" placeholder="عنوان سال تحصیلی جدید" required
+                                class="form-control">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="">شروع</label>
+                            <date-picker v-model="start_date"></date-picker>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="">پایان</label>
+                            <date-picker v-model="end_date"></date-picker>
+                        </div>
+                    </div>
+                </div>
+                <div class="my-2">
+                    <button class="btn btn-success farsi" type="submit"> افزودن</button>
+                </div>
+            </form>
+            <div class="my-3 text-right" v-if="message.show">
+                <span :class="'alert alert-'+message.color">
+                    <span class="farsi" v-html="message.body"></span>
+                </span>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>

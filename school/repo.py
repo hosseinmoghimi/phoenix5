@@ -1,12 +1,17 @@
+from unittest import result
+from urllib import request
 from authentication.repo import ProfileRepo
-import school
+from phoenix.constants import FAILED, SUCCEED
+from library.repo import BookRepo
 from school.enums import AttendanceStatusEnum
-from .models import ActiveCourse, Attendance, ClassRoom, Course, EducationalYear, Major, School, Session,Student,Teacher,Book
+from school.forms import SelectOptionForm
+from utility.log import leolog
+from .models import ActiveCourse, Attendance, ClassRoom, Course, EducationalYear, Exam, Major, Question, School, SelectedOption, Session,Student,Teacher,Book
 from .apps import APP_NAME
 from django.db.models import Q
 from django.utils import timezone
 from utility.calendar import PersianCalendar
-
+from accounting.models import Transaction
 
 class AttendanceRepo():
     
@@ -102,13 +107,25 @@ class SchoolRepo():
         return self.objects.filter(pk=pk).first()
 
     def add(self,*args, **kwargs):
+        school=None
+        result=FAILED
+        message=""
         if not self.request.user.has_perm(APP_NAME+".add_school"):
-            return
+            message="عدم دسترسی"
+            return school,result,message
         school=School()
+        if len(School.objects.filter(title=kwargs['title']))>0:
+            message="نام آموزشگاه تکراری می باشد"
+            return school,result,message
         if 'title' in kwargs:
             school.title=kwargs['title']
+        if 'account_id' in kwargs:
+            school.account_id=kwargs['account_id']
         school.save()
-        return school
+        if school is not None:
+            result=SUCCEED
+            message="آموزشگاه جدید با موفقیت اضافه شد."
+        return school,result,message
 
 class MajorRepo():
     
@@ -149,7 +166,65 @@ class MajorRepo():
         major.save()
         return major
     
-class BookRepo():
+class ExamRepo():
+    
+    def __init__(self,*args, **kwargs):
+        self.request = None
+        self.user = None
+        if 'request' in kwargs:
+            self.request = kwargs['request']
+            self.user = self.request.user
+        if 'user' in kwargs:
+            self.user = kwargs['user']
+        self.objects = Exam.objects
+        self.profile=ProfileRepo(user=self.user).me
+    
+    def list(self,*args, **kwargs):
+        objects=self.objects.all()
+        if 'school_id' in kwargs:
+            objects=objects.filter(school_id=kwargs['school_id'])
+        if 'course_id' in kwargs:
+            course=CourseRepo(request=self.request).course(pk=kwargs['course_id'])
+            if course is not None:
+                return course.books.all()
+            return
+        if 'search_for' in kwargs:
+            objects=objects.filter(title__contains=kwargs['search_for'])
+        return objects
+    
+    def exam(self,*args, **kwargs):
+        if 'exam_id' in kwargs:
+            pk=kwargs['exam_id']
+        elif 'pk' in kwargs:
+            pk=kwargs['pk']
+        elif 'id' in kwargs:
+            pk=kwargs['id']
+        return self.objects.filter(pk=pk).first()
+
+    def add_exam(self,*args, **kwargs):
+        if not self.request.user.has_perm(APP_NAME+".add_exam"):
+            return
+        exam=Exam(*args, **kwargs)
+        exam.save() 
+        return exam
+ 
+
+    def add_question(self,*args, **kwargs):
+        if not self.request.user.has_perm(APP_NAME+".add_question"):
+            return
+        question=Question(*args, **kwargs)
+        question.save() 
+        return question
+ 
+    def select_option(self,*args, **kwargs):
+        if not self.request.user.has_perm(APP_NAME+".add_selectedoption"):
+            return
+        select_option=SelectedOption(*args, **kwargs)
+        select_option.student=StudentRepo(request=self.request).me
+        select_option.save() 
+        return select_option.option
+
+class BookRepo2():
     
     def __init__(self,*args, **kwargs):
         self.request = None
@@ -211,6 +286,8 @@ class BookRepo():
             return
         course.books.add(book)
         return book
+
+
 class ClassRoomRepo():
    
     def __init__(self,*args, **kwargs):
@@ -269,6 +346,8 @@ class ActiveCourseRepo():
         objects=self.objects.all()
         if 'school_id' in kwargs:
             objects=objects.filter(classroom__school_id=kwargs['school_id'])
+        if 'class_room_id' in kwargs:
+            objects=objects.filter(classroom_id=kwargs['class_room_id'])
         if 'year_id' in kwargs:
             objects=objects.filter(year_id=kwargs['year_id'])
         return objects
@@ -317,7 +396,11 @@ class ActiveCourseRepo():
         if not self.request.user.has_perm(APP_NAME+".change_activecourse"):
             return
         active_course=self.active_course(*args, **kwargs)
-        teacher=Teacher.objects.filter(profile_id=kwargs['profile_id']).first()
+        teacher=Teacher.objects.filter(pk=kwargs['teacher_id']).first()
+        if teacher is None:
+            result=FAILED
+            return
+
         if active_course is None or teacher is None:
             return
         if not teacher in active_course.teachers.all():
@@ -330,12 +413,23 @@ class ActiveCourseRepo():
         if not self.request.user.has_perm(APP_NAME+".change_activecourse"):
             return
         active_course=self.active_course(*args, **kwargs)
-        student=Student.objects.filter(profile_id=kwargs['profile_id']).first()
+        student=Student.objects.filter(pk=kwargs['student_id']).first()
+        if student is None:
+            result=FAILED
+            return
+
         if active_course is None or student is None:
             return
         if not student in active_course.students.all():
             active_course.students.add(student)
+            if active_course.cost>0:
+                transaction=Transaction()
+                transaction.pay_to=student.account
+                transaction.pay_from=active_course.class_room.school.account
+                transaction.save()
             return student
+
+
 
 class CourseRepo():
     def __init__(self,*args, **kwargs):
@@ -364,6 +458,19 @@ class CourseRepo():
             pk=kwargs['id']
         return self.objects.filter(pk=pk).first()
 
+    def add_book_to_course(self,*args, **kwargs):
+        if not self.request.user.has_perm(APP_NAME+".change_activecourse"):
+            return
+        course=self.course(*args, **kwargs)
+        book=BookRepo(request=self.request).book(*args, **kwargs)
+       
+
+        if course is None or book is None:
+            result=FAILED
+            return
+        if not book in course.books.all():
+            course.books.add(book)
+            return book
 
     def add_course(self,*args, **kwargs):
         if not self.request.user.has_perm(APP_NAME+".add_course"):
@@ -460,7 +567,13 @@ class TeacherRepo():
             self.user = kwargs['user']
         self.objects = Teacher.objects
         self.profile=ProfileRepo(user=self.user).me
-        self.me=Teacher.objects.filter(profile=self.profile).first()
+        self.me=Teacher.objects.filter(account__profile=self.profile).first()
+        if self.request.user.has_perm(APP_NAME+".view_teacher"):
+            self.objects = Teacher.objects
+        elif self.me is not None:
+            self.objects = Teacher.objects.filter(pk=self.me.pk)
+        else:
+            self.objects=Teacher.objects.filter(pk=0)
     def list(self,*args, **kwargs):
         objects=self.objects.all()
         if 'school_id' in kwargs:
@@ -478,18 +591,31 @@ class TeacherRepo():
         if 'id' in kwargs:
             return self.objects.filter(pk=kwargs['id']).first()
          
+ 
 
     def add_teacher(self,*args, **kwargs):
+        result=FAILED
+        message=""
+        teacher=None
         if not self.request.user.has_perm(APP_NAME+".add_teacher"):
             return
-
+        account_id=kwargs['account_id']
+        teacher=Teacher.objects.filter(account_id=account_id).first()
+        if teacher is not None:
+            result=FAILED
+            message="قبلا دبیری با این اکانت ایجاد شده است."
+            return result,message,teacher
         teacher=self.teacher(*args, **kwargs)
         if teacher is None:
             teacher=Teacher()
-            teacher.profile_id=kwargs['profile_id']
+            teacher.account_id=account_id
             teacher.save()
-            return teacher
+        if teacher is not None:
+            result=SUCCEED
+            message="دبیر جدید با موفقیت افزوده شد."
+        return result,message,teacher
 
+    
 
     
 class StudentRepo():
@@ -501,10 +627,17 @@ class StudentRepo():
             self.user = self.request.user
         if 'user' in kwargs:
             self.user = kwargs['user']
-        self.objects = Student.objects
         self.profile=ProfileRepo(user=self.user).me
-        self.me=Student.objects.filter(profile=self.profile).first()
+        self.me=Student.objects.filter(account__profile=self.profile).first()
+        if self.request.user.has_perm(APP_NAME+".view_student"):
+            self.objects = Student.objects
+        elif self.me is not None:
+            self.objects = Student.objects.filter(pk=self.me.pk)
+        else:
+            self.objects=Student.objects.filter(pk=0)
+
     def list(self,*args, **kwargs):
+        
         objects=self.objects.all()
         if 'school_id' in kwargs:
             objects=objects.filter(school_id=kwargs['school_id'])
@@ -512,6 +645,7 @@ class StudentRepo():
             objects=objects.filter(Q(profile__user__first_name__contains=kwargs['search_for'])|Q(profile__user__last_name__contains=kwargs['search_for']))
         return objects
     def student(self,*args, **kwargs):
+        pk=0
         if 'profile_id' in kwargs:
             return self.objects.filter(profile_id=kwargs['profile_id']).first()
         if 'student_id' in kwargs:
@@ -525,16 +659,26 @@ class StudentRepo():
     
 
     def add_student(self,*args, **kwargs):
+        result=FAILED
+        message=""
+        student=None
         if not self.request.user.has_perm(APP_NAME+".add_student"):
             return
-
+        account_id=kwargs['account_id']
+        student=Student.objects.filter(account_id=account_id).first()
+        if student is not None:
+            result=FAILED
+            message="قبلا دانش آموزی با این اکانت ایجاد شده است."
+            return result,message,student
         student=self.student(*args, **kwargs)
         if student is None:
             student=Student()
-            student.profile_id=kwargs['profile_id']
+            student.account_id=account_id
             student.save()
-            return student
-
+        if student is not None:
+            result=SUCCEED
+            message="دانش آموز جدید با موفقیت افزوده شد."
+        return result,message,student
 
     
 class EducationalYearRepo():
@@ -548,7 +692,7 @@ class EducationalYearRepo():
             self.user = kwargs['user']
         self.objects = EducationalYear.objects
         self.profile=ProfileRepo(user=self.user).me
-        self.me=Student.objects.filter(profile=self.profile).first()
+        self.me=Student.objects.filter(account__profile=self.profile).first()
     def list(self,*args, **kwargs):
         objects=self.objects.all()
         if 'school_id' in kwargs:
@@ -556,6 +700,32 @@ class EducationalYearRepo():
         if 'search_for' in kwargs:
             objects=objects.filter(Q(profile__user__first_name__contains=kwargs['search_for'])|Q(profile__user__last_name__contains=kwargs['search_for']))
         return objects
+    def add(self,*args, **kwargs):
+        result=FAILED
+        message=""
+        if not self.request.user.has_perm(APP_NAME+".add_educationalyear"):
+            return
+        educational_year=EducationalYear(*args, **kwargs)
+        if educational_year.start_date>=educational_year.end_date:
+            message="تاریخ شروع و پایان صحیح نیست"
+            educational_year=None
+            result=FAILED
+            return educational_year,message,result
+
+        
+        if len(EducationalYear.objects.filter(title=educational_year.title))>0:
+            message="عنوان سال تحصیلی تکراری می باشد."
+            educational_year=None
+            result=FAILED
+            return educational_year,message,result
+
+        
+        educational_year.save()
+        if educational_year is not None:
+            result=SUCCEED
+            message="سال تحصیلی جدید با موفقیت افزوده شد."
+
+        return educational_year,message,result
     def educational_year(self,*args, **kwargs):
         if 'educational_year_id' in kwargs:
             return self.objects.filter(pk=kwargs['educational_year_id']).first()

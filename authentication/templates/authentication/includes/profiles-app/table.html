@@ -1,7 +1,10 @@
 <div class="table-responsive">
-    <table class="table table-striped">
+    <table class="table table-striped rtl">
         <thead>
 
+            <th>
+
+            </th>
             <th>
 
             </th>
@@ -33,6 +36,10 @@
                     </form>
                     {% endif %}
 
+                </td>
+                <td>
+                <span v-if="profile.enabled" class="badge badge-success">فعال</span>
+                <span v-if="!profile.enabled" class="badge badge-danger">غیر فعال</span>
                 </td>
             </tr>
         </tbody>

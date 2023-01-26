@@ -1,0 +1,18 @@
+<script>
+    let product_images = JSON.parse(`{{images_s|escapejs}}`)
+    let product_images_app = new Vue({
+        el: "#product-images-app",
+        data: {
+            selected_image: {
+                image: "{{page.image}}",
+                thumbnail: "{{page.thumbnail}}"
+            },
+            product_images: product_images,
+        },
+        methods: {
+            select_image: function (image) {
+                this.selected_image = image
+            },
+        }
+    })
+</script>

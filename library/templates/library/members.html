@@ -10,6 +10,13 @@
     <div class="col-md-12">
         {% include "library/includes/members-app/template.html" %}
     </div>
+
+    {% if add_member_form %}
+      
+    <div class="col-md-12">
+        {% include "library/includes/add-member-app/template.html" %}
+    </div>
+    {% endif %}
 </div>
 {% endblock content %}
 
@@ -18,4 +25,8 @@
 <script src="{% static 'vendor/js/vue.min.js' %}"></script>
  
 {% include "library/includes/members-app/script.html" %}
+{% if add_member_form %}
+      
+    {% include "library/includes/add-member-app/script.html" %}
+{% endif %}
 {% endblock script %}

@@ -12,7 +12,7 @@
           {{parent.get_edit_btn|safe}}
           {% endif %}
 
-          
+
 
           <h1 class="title farsi text-center">{{parent.title}}</h1>
 
@@ -115,56 +115,45 @@
   <!-- section -->
   <div class="section">
     <div class="container">
-      <h2 class="section-title text-center farsi">دسته بندی را انتخاب کنید</h2>
       <div class="row">
         <div class="col-lg-3"></div>
         <div class="col-lg-6">
           <div class="rtl text-center">
-            {{parent.get_breadcrumb_tag|safe}}
+            {{parent.get_market_breadcrumb_tag|safe}}
           </div>
         </div>
         <div class="col-lg-3"></div>
       </div>
-      <div class="row">
+      <div class="row ">
+        <div class="col-md-3">
+
+          {% include "market/includes/shop-sidebar.html" %}
+
+        </div>
+
         <div class="col-md-9">
+          <h3 class="section-title text-center farsi">دسته بندی را انتخاب کنید</h3>
+
           <div class="row rtl">
-            <div v-for="category in categories" class="col-md-4 col-6">
-              {% include "market/includes/category-thumbnail.html" %}
+
+            {% for category in categories %}
+
+            <div class="col-md-4 col-6">
+                {% include "market/includes/category-thumbnail.html" %}
             </div>
+            {% endfor %}
 
 
-
-
-            <div class="col-md-4 col-6" v-for="product in products">
-              {% include "market/includes/product-thumbnail.html" %}
+            {% for product in products %}
+            <div class="col-md-4 col-6">
+                {% include "market/includes/product-thumbnail.html" %}
             </div>
-            <div class="col-12">
-              <div class="row">
-              </div>
-              {% if add_product_form %}
+            {% endfor %}
 
-              <div class="col-md-4">
 
-                <form v-if="categories.length==0" @submit.prevent="add_product">
 
-                  <input type="text" v-model="new_product_title" class="form-control farsi" placeholder="محصول جدید">
-                </form>
-              </div>
-              {% endif %}
 
-              {% if add_category_form %}
-
-              <div class="col-md-4">
-
-                <form v-if="products.length==0" @submit.prevent="add_category">
-
-                  <input type="text" v-model="new_category_title" class="form-control farsi"
-                    placeholder="دسته بندی جدید">
-                </form>
-              </div>
-              {% endif %}
-
-            </div>
+           
 
 
 
@@ -175,12 +164,6 @@
             </div>
           </div>
         </div>
-        <div class="col-md-3">
-
-          {% include "market/includes/shop-sidebar.html" %}
-
-        </div>
-
       </div>
       <br>
 

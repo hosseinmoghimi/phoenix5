@@ -1,5 +1,4 @@
 from .models import Log
-from authentication.repo import ProfileRepo
 from .apps import APP_NAME
 
 class LogRepo():
@@ -11,13 +10,15 @@ class LogRepo():
             self.user = self.request.user
         if 'user' in kwargs:
             self.user = kwargs['user']
-        self.objects = Log.objects.order_by('-date_added')
-        self.profile = ProfileRepo(user=self.user).me
-
+        self.objects = Log.objects.order_by('-date_added') 
+        from authentication.repo import ProfileRepo
+        self.profile=ProfileRepo(request=self.request).me
         if self.user.has_perm(APP_NAME+".view_log"):
-            self.objects = self.objects
+            self.objects = Log.objects
+        elif self.profile is not None:
+            self.objects=Log.objects.filter(profile_id=self.profile.id)
         else:
-            self.objects = self.objects.filter(pk__lte=0)
+            self.objects = Log.objects.filter(pk=0)
 
 
     def list(self, *args, **kwargs):
@@ -43,6 +44,10 @@ class LogRepo():
             log.title=kwargs['title']
         if 'app_name' in kwargs:     
             log.app_name=kwargs['app_name']
+        if 'profile' in kwargs:            
+            log.profile=kwargs['profile']
+        if 'profile_id' in kwargs:            
+            log.profile_id=kwargs['profile_id']
         if 'description' in kwargs:            
             log.description=kwargs['description']
         log.save()

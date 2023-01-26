@@ -1,15 +1,15 @@
 from core.errors import LEO_ERRORS
-from core.constants import CURRENCY
-from core.enums import CurrencyEnum
+from core.constants import TUMAN,RIAL,CURRENCY
+
 
 def to_price(value,unit=CURRENCY):
     # from core.repo import Parameter,ParameterNameEnum
     # (parameter,i)=Parameter.objects.get_or_create(name=ParameterNameEnum.CURRENCY)
     # unit=parameter.value
     # CURRENCY=parameter.value
-    if CURRENCY==CurrencyEnum.TUMAN:
+    if unit==TUMAN:
         pass
-    elif CURRENCY==CurrencyEnum.RIAL:
+    if unit==RIAL and CURRENCY==TUMAN:
         value=value*10
     """converts int to string"""  
     try:

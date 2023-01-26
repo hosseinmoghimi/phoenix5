@@ -1,0 +1,103 @@
+{% extends "loyaltyclub/layout.html" %}
+{% load to_price %}
+{% load to_persian_date %}
+{% load static %}
+
+
+{% block content %}
+<div class="row rtl">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5>
+                    {{supplier.account.title}}
+
+                    {% if perms.loyaltyclub.change_supplier %}
+                    <a href="{{supplier.get_edit_url}}" target="_blank" title="ویرایش" class="mx-2"><i
+                            class="fa fa-edit text-info"></i></a>
+                    {% endif %}
+                    {% if perms.loyaltyclub.delete_supplier %}
+                    <a href="{{supplier.get_delete_url}}" target="_blank" title="حذف" class="mx-2"><i
+                            class="fa fa-trash text-danger"></i></a>
+                    {% endif %}
+
+                </h5>
+            </div>
+            <div class="card-body rtl">
+                <h5>
+                    <a href="{{supplier.account.get_absolute_url}}">
+
+                        {{supplier.account.title}}
+                    </a>
+                    {% if perms.market.change_supplier %}
+                    <span class="mx-2">
+
+                        {{supplier.get_edit_btn|safe}}
+                    </span>
+                    {% endif %}
+
+                    {% if perms.market.delete_supplier %}
+                    <span class="mx-2">
+
+                        {{supplier.get_delete_btn|safe}}
+                    </span>
+                    {% endif %}
+
+                </h5>
+                <h6>
+                    مجموع سفارش ها : 
+                    {{orders_sum|to_price}}
+
+                </h6>
+                <h6 class="text-danger">
+                    مجموع تخفیف های اعمال شده : 
+                    {{discounts|to_price}}
+
+                </h6>
+                <h6 class="text-success">
+                    مجموع تخفیف های برنده شده توسط خریداران :
+                    {{coupons_sum|to_price}}
+
+                </h6>
+                <h6 class="text-warning">
+                    مجموع تخفیف های باقیمانده
+                    {{coupons_remain|to_price}}
+
+                </h6>
+
+                <h6>
+                    مجموع پرداخت ها : 
+                    {{paids|to_price}}
+
+                </h6>
+
+                <h6>
+                    مجموع هزینه های حمل : 
+                    {{ship_fees|to_price}}
+
+                </h6>
+
+
+             
+            </div>
+        </div>
+
+    </div>
+    <div class="col-md-12">
+        {% include 'loyaltyclub/includes/add-order-app/template.html' %}
+
+    </div>
+    <div class="col-md-12">
+        {% include 'loyaltyclub/includes/orders-app/template.html' %}
+    </div>
+    <div class="col-md-12">
+        {% include 'loyaltyclub/includes/coupons-app/template.html' %}
+    </div>
+</div>
+{% endblock content %}
+{% block script %}
+{% include 'loyaltyclub/includes/add-order-app/script.html' %}
+{% include 'loyaltyclub/includes/orders-app/script.html' %}
+{% include 'loyaltyclub/includes/coupons-app/script.html' %}
+
+{% endblock script %}

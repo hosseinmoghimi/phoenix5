@@ -2,7 +2,7 @@
 {% block content %}
 <h4 class="text-center">
   دبیر :
-  {{teacher.profile.name}}...
+  {{teacher.account.title}}
 </h4>
 <div class="row">
   <div class="col-md-12">
@@ -12,10 +12,10 @@
         <div>
           <h4>
 
-            <a href="{{teacher.profile.get_absolute_url}}">
-              <img src="{{teacher.profile.image}}" class="rounded-circle" width="96" alt="">
+            <a href="{{teacher.account.get_absolute_url}}">
+              <img src="{{teacher.account.image}}" class="rounded-circle" width="96" alt="">
             
-              {{teacher.profile.name}}
+              {{teacher.account.title}}
             </a>
             {% if perms.school.change_teacher %}
             {{teacher.get_edit_btn|safe}}
