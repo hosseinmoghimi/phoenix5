@@ -49,6 +49,25 @@
                 </td>
                 <td>
 
+                    {% if perms.loyaltyclub.change_supplier %}
+                    <a class="mx-2" :href="supplier.get_edit_url" target="_blank" title="ویرایش">
+                        <i class="fa fa-edit text-warning"></i>
+                    </a>
+                    {% endif %}
+
+                    {% if perms.loyaltyclub.change_supplier %}
+                    <a class="mx-2" :href="supplier.get_edit_url" target="_blank" title="حذف">
+                        <i class="fa fa-trash text-danger"></i>
+                    </a>
+                    {% endif %}
+
+
+
+                    {% if perms.loyaltyclub.delete_supplier %}
+                    {{supplier.get_delete_btn|safe}}
+                    {% endif %}
+
+
                 </td>
             </tr>
 

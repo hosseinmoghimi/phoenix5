@@ -48,7 +48,17 @@
                     </h5>
                 </td>
                 <td>
+                    {% if perms.loyaltyclub.change_customer %}
+                    <a class="mx-2" :href="customer.get_edit_url" target="_blank" title="ویرایش">
+                        <i class="fa fa-edit text-warning"></i>
+                    </a>
+                    {% endif %}
 
+                    {% if perms.loyaltyclub.delete_customer %}
+                    <a class="mx-2" :href="customer.get_edit_url" target="_blank" title="حذف">
+                        <i class="fa fa-trash text-danger"></i>
+                    </a>
+                    {% endif %}
                 </td>
             </tr>
 

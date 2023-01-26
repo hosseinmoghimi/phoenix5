@@ -12,7 +12,7 @@
                 <h5>
                     {{customer.account.title}}
                   
-
+                 
                 </h5>
 
                 
@@ -28,6 +28,12 @@
                     <span class="mx-2">
 
                         {{customer.get_edit_btn|safe}}
+                    </span>
+                    {% endif %}
+                    {% if perms.market.delete_customer %}
+                    <span class="mx-2">
+
+                        {{customer.get_delete_btn|safe}}
                     </span>
                     {% endif %}
 

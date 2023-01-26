@@ -7,7 +7,7 @@ class CustomerSerializer(serializers.ModelSerializer):
     region=AreaSerializer()
     class Meta:
         model=Customer
-        fields=['id','region','account','get_absolute_url','get_loyaltyclub_absolute_url']
+        fields=['id','region','account','get_absolute_url','get_delete_url','get_edit_url','get_loyaltyclub_absolute_url']
 
         
 class SupplierSerializer(serializers.ModelSerializer):
@@ -15,7 +15,7 @@ class SupplierSerializer(serializers.ModelSerializer):
     region=AreaSerializer()
     class Meta:
         model=Supplier
-        fields=['id','region','account','get_absolute_url','get_loyaltyclub_absolute_url']
+        fields=['id','region','account','get_absolute_url','get_delete_url','get_edit_url','get_loyaltyclub_absolute_url']
 
         
 class OrderSerializer(serializers.ModelSerializer):
