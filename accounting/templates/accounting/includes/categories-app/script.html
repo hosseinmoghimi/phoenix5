@@ -46,10 +46,10 @@
                     parent_id: this.parent_id,
                 }
                 $.post(url, payload).done((data) => {
-                    console.log(data)
                     if (data.result === 'SUCCEED') {
                         categories_app.categories.push(data.category)
                         categories_app_categories.push(data.category)
+                        categories_app.search_for=""
                         categories_app.message = {
                             color: 'success',
                             body: "با موفقیت اضافه شد.",

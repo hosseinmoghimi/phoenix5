@@ -362,7 +362,9 @@ class CategoryRepo():
         
         self.objects=Category.objects.all()
         self.profile=ProfileRepo(*args, **kwargs).me
-       
+        if len(self.objects)<1:
+            Category(title="خانه").save()
+            self.objects=Category.objects.all()
 
     def category(self, *args, **kwargs):
         pk=0
