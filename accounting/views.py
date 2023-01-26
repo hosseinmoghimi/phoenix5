@@ -456,7 +456,7 @@ def get_invoice_line_context(request,*args, **kwargs):
     
     # warehouse_sheets=[]
     if app_is_installed('warehouse'):
-        from warehouse.enums import WareHouseSheetDirectionEnum
+        from warehouse.enums import WareHouseSheetDirectionEnum,WareHouseSheetStatusEnum
         from warehouse.repo import WareHouseSheetRepo,WareHouseRepo
         from warehouse.forms import AddWarehouseSheetForm
         warehouse_sheets=WareHouseSheetRepo(request=request).list(invoice_line_id=invoice_line.id)
@@ -467,6 +467,8 @@ def get_invoice_line_context(request,*args, **kwargs):
             ware_houses=WareHouseRepo(request=request).list()
             context['directions']=(direction[0] for direction in WareHouseSheetDirectionEnum.choices)
             context['ware_houses']=ware_houses
+            context['ware_house_sheet_statuses']=(a[0] for a in WareHouseSheetStatusEnum.choices)
+
 
     # context['add_ware_house_sheet_form']=AddWarehouseSheetForm()
 
