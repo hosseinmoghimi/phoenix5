@@ -13,6 +13,7 @@ from utility.calendar import (PERSIAN_MONTH_NAMES, PersianCalendar,
                               to_persian_datetime_tag)
 from utility.currency import to_price
 from utility.excel import get_excel_report
+from utility.log import leolog
 from utility.utils import LinkHelper
 
 from accounting.apps import APP_NAME
@@ -838,6 +839,9 @@ class Invoice(Transaction):
         sum+=self.tax_amount()
         sum-=self.discount
         return sum
+    def calculate_sum(self):
+        self.amount=self.sum_total()
+
     def save(self,*args, **kwargs):
         if self.class_name is None:
             self.class_name='invoice' 
@@ -845,7 +849,7 @@ class Invoice(Transaction):
             self.app_name=APP_NAME
         if self.title is None or self.title=="":
             self.title=f"فاکتور شماره {self.pk}"
-        self.amount=self.sum_total()
+        self.calculate_sum()
         super(Invoice,self).save(*args, **kwargs)
       
     class Meta:
@@ -881,8 +885,7 @@ class InvoiceLine(models.Model,LinkHelper):
     unit_name=models.CharField(_("unit_name"),max_length=50,choices=UnitNameEnum.choices,default=UnitNameEnum.ADAD)
     description=models.CharField(_("description"),null=True,blank=True, max_length=50)
     class_name="invoiceline"
-    app_name=APP_NAME
-
+    app_name=APP_NAME 
     def save(self,*args, **kwargs):
         if not self.invoice.editable:
             return None
@@ -897,13 +900,18 @@ class InvoiceLine(models.Model,LinkHelper):
         if not self.invoice.editable:
             return None
         invoice=self.invoice
+        invoice=self.invoice
         super(InvoiceLine,self).delete()
-        i=0
-        for invoice_line in invoice.invoice_lines().order_by('row'):
-            i+=1
-            if not invoice_line.row-i==0:
-                invoice_line.row=i
-                invoice_line.save()
+        
+        invoice.calculate_sum()
+        invoice.save()
+        invoice.normalize_rows()
+        # i=0
+        # for invoice_line in invoice.invoice_lines().order_by('row'):
+        #     i+=1
+        #     if not invoice_line.row-i==0:
+        #         invoice_line.row=i
+        #         invoice_line.save()
 
     class Meta:
         verbose_name = _("InvoiceLine")
