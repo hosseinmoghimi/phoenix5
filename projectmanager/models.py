@@ -430,6 +430,7 @@ class Project(Page):
         
         <div><small class="text-muted">{to_price(self.sum_total())}</small></div>
         <div>{self.percentage_completed} %</div>
+        <div class="text-warning">{self.status}</div>
         """
 
     def __str__(self):
