@@ -60,6 +60,15 @@
             })
 
         },
+        fetch_services:function(){
+                var getting = $.get("{% url 'projectmanager:fetch_services' %}", {});
+                getting.done((data) => {
+                    console.log(data)
+                    if (data.result === 'SUCCEED') {
+                        all_services = data.services
+                    }
+                })
+        },
         copy_from_invoice: function () {
             console.log(this.source_invoice_id)
 

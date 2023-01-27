@@ -11,6 +11,31 @@ from organization.repo import OrganizationUnitRepo,EmployeeRepo
 from projectmanager.forms import *
 from projectmanager.serializers import EventSerializer, MaterialRequestFullSerializer, MaterialRequestSerializer, MaterialSerializer, OrganizationUnitSerializer, ProjectSerializer, RequestSerializer, RequestSignatureSerializer, ServiceRequestFullSerializer, ServiceRequestSerializer, ServiceSerializer
 
+class FetchMaterialsApi(APIView):
+    def get(self,request,*args, **kwargs):
+        context={}
+        log=1
+        context['result']=FAILED
+        materials=MaterialRepo(request=request).list()
+        if materials is not None:
+            context['materials']=MaterialSerializer(materials,many=True).data
+            context['result']=SUCCEED
+        context['log']=log
+        return JsonResponse(context)
+        
+class FetchServicesApi(APIView):
+    def get(self,request,*args, **kwargs):
+        context={}
+        log=1
+        context['result']=FAILED
+        services=ServiceRepo(request=request).list()
+        if services is not None:
+            context['services']=ServiceSerializer(services,many=True).data
+            context['result']=SUCCEED
+        context['log']=log
+        return JsonResponse(context)
+        
+       
 
 class AddProjectApi(APIView):
     def post(self,request,*args, **kwargs):

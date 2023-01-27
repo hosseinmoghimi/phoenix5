@@ -80,6 +80,15 @@
                     this.material_requests = this.material_requests.filter(item => item.status === material_requests_app.filter_status)
                 }
             },
+            fetch_materials:function(){
+                var getting = $.get("{% url 'projectmanager:fetch_materials' %}", {});
+                getting.done((data) => {
+                    console.log(data)
+                    if (data.result === 'SUCCEED') {
+                        all_materials = data.materials
+                    }
+                })
+            },
             copy_from_project: function () {
                 console.log(this.source_project_id)
 

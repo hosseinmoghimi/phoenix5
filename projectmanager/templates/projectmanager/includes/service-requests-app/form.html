@@ -240,11 +240,16 @@
 
         </div>
     </form>
+<div>
 
-
+    
     <a href="{% url 'accounting:services' %}" target="_blank">
         <h6>
             همه سرویس ها
         </h6>
     </a>
+    <span class="my-2">
+        <button class="btn btn-info" @click="fetch_services()">بازیابی لیست سرویس ها</button>
+     </span>
+</div>
 </div>
