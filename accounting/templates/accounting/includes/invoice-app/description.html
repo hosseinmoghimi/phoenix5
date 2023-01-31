@@ -18,7 +18,7 @@
         {% endif %}
         {% if invoice.pay_from and invoice.pay_from.default_bank_account %}
         <div>
-            {{invoice.pay_from.default_bank_account|to_variz_text|safe}}
+            {{invoice.pay_from.default_bank_account.to_variz_text|safe}}
         </div>
         {% endif %}
 

@@ -529,7 +529,7 @@ class BankAccount(models.Model,LinkHelper):
     #     return 0-self.rest()
  
     def __str__(self):
-        return f"{self.account} : {self.title}"
+        return f"حساب {self.bank} {self.account} {self.account} : {self.title}"
 
     def save(self,*args, **kwargs):
          

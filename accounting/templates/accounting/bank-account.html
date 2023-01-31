@@ -10,7 +10,9 @@
 </div>
 
 <h4 class="text-center">
-    {{bank_account.title}}
+    حساب
+    {{bank_account.bank.name}}
+    {{bank_account.account.title}}
     {% if perms.banking.change_bankaccount %}
     <a href="{{bank_account.get_edit_url}}" target="_blank" title="ویرایش" class="mx-2"><i class="fa fa-edit text-info"></i></a>
     {% endif %}
@@ -54,7 +56,7 @@
 
 </div>
 <div class="text-center rtl farsi">
-    <a href="{{bank_account.account.get_edit_url}}" target="_blank" title="اکانت" class="mx-2">
+    <a href="{{bank_account.account.get_absolute_url}}" target="_blank" title="اکانت" class="mx-2">
         {{bank_account.account.title}}   
     </a>
 
