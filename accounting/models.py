@@ -529,7 +529,7 @@ class BankAccount(models.Model,LinkHelper):
     #     return 0-self.rest()
  
     def __str__(self):
-        return self.title
+        return f"{self.account} : {self.title}"
 
     def save(self,*args, **kwargs):
          
@@ -541,7 +541,24 @@ class BankAccount(models.Model,LinkHelper):
                 account_name=self.account.title 
             self.title=f"""حساب {self.bank} {account_name}"""
         super(BankAccount,self).save(*args, **kwargs)
-
+    
+    def to_variz_text(bank_account):
+        if bank_account is None:
+            return ""
+        text=" جهت واریز : "
+        if bank_account.account_no:
+            text+="""<small class="text-muted"> شماره حساب : </small>"""
+            text+=bank_account.account_no
+        if bank_account.card_no:
+            text+="""<small class="text-muted"> شماره کارت :</small> """
+            text+=bank_account.card_no
+        if bank_account.shaba_no:
+            text+="""<small class="text-muted"> شماره شبا :</small>"""
+            text+=bank_account.shaba_no
+        if bank_account.account:
+            text+="""<small class="text-muted"> به نام  : </small>"""
+            text+= bank_account.title
+        return text
 
 class FinancialYear(models.Model):
     title=models.CharField(_("عنوان"), max_length=50)

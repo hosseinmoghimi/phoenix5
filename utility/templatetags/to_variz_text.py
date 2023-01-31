@@ -16,5 +16,5 @@ def to_variz_text(bank_account):
         text+=bank_account.shaba_no
     if bank_account.account:
         text+="""<small class="text-muted"> به نام  : </small>"""
-        text+= bank_account.account.title
+        text+= bank_account.title
     return text
