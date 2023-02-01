@@ -1,0 +1,38 @@
+<script>
+    pointer = "salaries-app"
+    let salaries = JSON.parse(`{{salaries_s|escapejs}}`)
+    let salaries_app_data = {
+        salaries: salaries,
+        waiting: false,
+
+    }
+</script>
+
+
+<script>
+    let salaries_app = new Vue({
+        el: "#salaries-app",
+        data: salaries_app_data,
+        methods: {
+            to_price: function (vall) {
+                return to_price(vall)
+            },
+            sum_total: function () {
+                let sum = 0
+                this.salaries.forEach(salary => {
+                    if (salary.color == "success")
+                        sum += salary.amount
+                    if (salary.color == "danger")
+                        sum -= salary.amount
+                });
+                return sum
+
+            },
+            filter: function () {
+                salaries_app.profiles = all_profiles.filter((profile) => {
+                    return (profile.first_name.indexOf(salaries_app.add_employee_form_first_name) > -1) && (profile.last_name.indexOf(salaries_app.add_employee_form_last_name) > -1)
+                })
+            },
+        }
+    })
+</script>

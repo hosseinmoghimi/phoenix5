@@ -26,6 +26,7 @@ urlpatterns = [
     path('pm/', include('projectmanager.urls')),
     path('utility/', include('utility.urls')),
     path('web/', include('web.urls')),
+    path('salary/', include('salary.urls')),
     path('contact/', include('contact.urls')),
     path('transport/', include('transport.urls')),
     path('polls/', include('polls.urls')),

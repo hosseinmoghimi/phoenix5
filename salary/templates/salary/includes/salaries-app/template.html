@@ -1,0 +1,134 @@
+{% load static %}
+
+<div id="accordion-salaries">
+    <div class="card mb-3" id="salaries-app">
+        <div class="card-header" id="heading-salaries">
+
+            <h5 class="card-title text-center farsi">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-salaries"
+                    aria-expanded="true" aria-controls="collapse-salaries">
+                    حقوق
+                    <span v-if="salaries.length>0">
+                        <small class="text-danger mx-2">
+                            <span v-text="salaries.length"></span>
+                        </small>
+                    </span>
+
+
+                </button>
+
+            </h5>
+
+
+        </div>
+        <div id="collapse-salaries" class="collapse {% if expand_salaries %}show{% endif %}"
+            aria-labelledby="heading-salaries" data-parent="#accordion-salaries">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped rtl">
+                        <thead>
+                            {% if not employee %}
+
+                            <th>
+                                نام پرسنل
+                            </th>
+                            {% endif %}
+
+                            <th>
+                                سال
+                            </th>
+
+                            <th>
+                                ماه
+                            </th>
+                            <th>
+                                مزایا / کسورات
+                            </th>
+
+                            <th>
+                                عنوان
+                            </th>
+                            <th>
+                                مبلغ
+                            </th>
+                            <th>
+
+                            </th>
+                        </thead>
+                        <tbody>
+                            <tr v-for="salary in salaries">
+
+                                {% if not employee %}
+
+
+                                <td>
+                                    <div class="media">
+                                        <img class="rounded-circle mr-3 " width="64" :src="salary.account.logo" alt="">
+                                        <div class="media-body mr-2 farsi">
+
+                                            <a :href="salary.employee.get_salary_url">
+                                                <h5 v-text="salary.employee.account.title">
+
+                                                </h5>
+                                            </a>
+
+
+                                        </div>
+                                    </div>
+                                </td>
+                                {% endif %}
+
+
+                                <td :class="'text-'+salary.color">
+                                    <span v-text=salary.year></span>
+
+                                </td>
+
+
+                                <td :class="'text-'+salary.color">
+                                    <span v-text=salary.month_name></span>
+                                </td>
+                                <td>
+                                    <span v-text=salary.direction></span>
+
+                                </td>
+
+                                <td :class="'text-'+salary.color">
+                                    <span v-text=salary.title></span>
+                                </td>
+                                <td :class="'text-'+salary.color">
+                                    <span v-text=to_price(salary.amount)></span>
+
+                                </td>
+                                <td>
+                                    {% if perms.salary.change_salary %}
+                                    <a title="ویرایش" :href="salary.get_edit_url" target="_blank">
+                                        <i class="fa fa-edit text-warning"></i>
+
+                                    </a>
+                                    {% endif %}
+                                    {% if perms.salary.delete_salary %}
+                                    <a title="حذف" :href="salary.get_delete_url" target="_blank">
+                                        <i class="fa fa-trash text-danger"></i>
+                                    </a>
+                                    {% endif %}
+
+
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+
+
+
+            </div>
+            <div class="card-footer">
+                <p class="farsi text-right rtl">
+                    خالص : <span v-text="to_price(sum_total())"></span> {{CURRENCY}}
+                </p>
+            </div>
+        </div>
+    </div>
+</div>

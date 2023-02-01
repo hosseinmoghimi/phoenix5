@@ -64,6 +64,7 @@ INSTALLED_APPS = [
     'organization',
     'library',
     'mafia',
+    'salary',
     'school',
     'bms',
     'loyaltyclub',
@@ -352,13 +353,21 @@ phoenix_apps=[
         'has_help':False,
         'show_on_menu':True,
     },
-
-       {
-        'priority':28,
+    {
+        'priority':29,
         'name':'contact',
         'title':'دفترچه تلفن',
         'color':'warning',
         'home_url':SITE_URL+'contact/',
+        'has_help':False,
+        'show_on_menu':True,
+    },
+    {
+        'priority':30,
+        'name':'salary',
+        'title':'حقوق و دستمزد',
+        'color':'warning',
+        'home_url':SITE_URL+'salary/',
         'has_help':False,
         'show_on_menu':True,
     },

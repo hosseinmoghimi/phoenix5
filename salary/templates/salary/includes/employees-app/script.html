@@ -1,0 +1,31 @@
+<!-- employees-app  -->
+<!-- #################################################################################### -->
+
+
+
+
+<script>
+    pointer="employees-app"
+    let employees = JSON.parse(`{{employees_s|escapejs}}`)
+    let all_profiles = []
+    let employees_app_data = {
+        employees: employees,
+        waiting: false,
+
+    }
+</script>
+
+
+<script>
+    let employees_app = new Vue({
+        el: "#employees-app",
+        data: employees_app_data,
+        methods: {
+            filter: function () {
+                employees_app.profiles = all_profiles.filter((profile) => {
+                    return (profile.first_name.indexOf(employees_app.add_employee_form_first_name) > -1) && (profile.last_name.indexOf(employees_app.add_employee_form_last_name) > -1)
+                })
+            },
+        }
+    })
+</script>

@@ -1,0 +1,87 @@
+{% load static %}
+
+<div id="accordion-employees">
+    <div class="card mb-3" id="employees-app">
+        <div class="card-header" id="heading-employees">
+
+            <h5 class="card-title text-center farsi">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-employees"
+                    aria-expanded="true" aria-controls="collapse-employees">
+                    پرسنل
+                    <span v-if="employees.length>0">
+                        <small class="text-danger mx-2">
+                            <span v-text="employees.length"></span>
+                        </small>
+                    </span>
+
+
+                </button>
+
+            </h5>
+
+
+        </div>
+        <div id="collapse-employees" class="collapse {% if expand_employees %}show{% endif %}"
+            aria-labelledby="heading-employees" data-parent="#accordion-employees">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped rtl">
+                        <thead>
+                            <th>
+                                نام پرسنل
+                            </th>
+
+                            <th>
+                                واحد سازمانی
+                            </th>
+
+                            <th>
+                                سمت
+                            </th>
+                            <th>
+
+                            </th>
+                        </thead>
+                        <tbody>
+                            <tr v-for="employee in employees">
+                                <td>
+                                    <div class="media">
+                                        <img class="rounded-circle mr-3 " width="64" :src="employee.account.logo"
+                                            alt="">
+                                        <div class="media-body mr-2 farsi">
+
+                                            <a :href="employee.get_salary_url">
+                                                <h5 v-text="employee.account.title">
+
+                                                </h5>
+                                            </a>
+
+
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <a v-if="employee.organization_unit"
+                                        :href="employee.organization_unit.get_absolute_url">
+                                        <span v-text=employee.organization_unit.title></span>
+                                    </a>
+                                </td>
+                                <td>
+                                    <span v-text=employee.job_title></span>
+                                </td>
+                                <td>
+
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+
+
+
+            </div>
+
+        </div>
+    </div>
+</div>

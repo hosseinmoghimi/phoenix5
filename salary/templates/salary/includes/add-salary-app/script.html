@@ -1,0 +1,56 @@
+<script>
+    let add_salary_app = new Vue({
+        el: "#add-salary-app",
+        data: {
+            employee_id: employee_id,
+            title: "",
+            description: "",
+            amount: 0,
+            month: 0,
+            year: 0,
+            message: { show: false },
+            direction: "",
+            waiting: false
+        },
+        methods: {
+            add_salary: function () {
+                add_salary_app.waiting = true
+                let url = "{% url 'salary:add_salary' %}"
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    employee_id: parseInt(this.employee_id),
+                    amount: parseInt(this.amount),
+                    month: parseInt(this.month),
+                    year: parseInt(this.year),
+                    title: (this.title),
+                    description: (this.description),
+                    direction: (this.direction),
+                }
+                console.log(payload)
+                let posting = $.post(url, payload)
+                posting.done(data => {
+                    add_salary_app.waiting = false
+
+                    console.log(data)
+                    if (data.result === 'SUCCEED') {
+                        if (typeof salaries_app != "undefined") {
+                            salaries_app.salaries.push(data.salary)
+                        }
+                        add_salary_app.message = { show: true, body: data.message, color: "success" }
+                        setTimeout(() => {
+                            add_salary_app.message = { show: false }
+
+                        }, 3000);
+                    }
+                    else {
+                        add_salary_app.message = { show: true, body: data.message, color: "danger" }
+                        setTimeout(() => {
+                            add_salary_app.message = { show: false }
+
+                        }, 3000);
+                    }
+                })
+            },
+        }
+    })
+</script>

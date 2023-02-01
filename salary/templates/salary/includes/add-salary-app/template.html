@@ -1,0 +1,92 @@
+{% load static %}
+<div id="add-salary-app">
+    <div class="card">
+        <div class="card-body">
+            <form @submit.prevent="add_salary()">
+                <div class="row rtl">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="">عنوان</label>
+                            <input type="text" v-model="title" class="form-control" required>
+                        </div>
+                    </div>
+
+
+
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="">مبلغ</label>
+                            <input type="number" v-model="amount" class="form-control" required>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="">ماه</label>
+                            <select v-model="month" class="form-control" required>
+                                <option value="1">فروردین</option>
+                                <option value="2">اردیبهشت</option>
+                                <option value="3">خرداد</option>
+                                <option value="4">تیر</option>
+                                <option value="5">مرداد</option>
+                                <option value="6">شهریور</option>
+                                <option value="7">مهر</option>
+                                <option value="8">آبان</option>
+                                <option value="9">آذر</option>
+                                <option value="10">دی</option>
+                                <option value="11">بهمن</option>
+                                <option value="12">اسفند</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="">سال</label>
+                            <select v-model="year" class="form-control" required>
+                                <option value="1401">1401</option>
+                                <option value="1402">1402</option>
+                                <option value="1403">1403</option>
+                                <option value="1404">1404</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="">جهت</label>
+                            <select v-model="direction" class="form-control" required>
+                                <option value="{{MAZAYA}}">{{MAZAYA}}</option>
+                                <option value="{{KOSURAT}}">{{KOSURAT}}</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="">توضیحات</label>
+                            <input type="text" v-model="description" class="form-control">
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 text-right">
+                        <button type="submit" class="btn btn-block btn-success">
+                            افزودن
+                        </button>
+                        <img v-if="waiting" width="32" src="{% static 'leo/img/loading.gif' %}" alt="">
+
+                    </div>
+                    <div class="col-md-12 pt-3">
+                        <div class="my-3 text-right" v-if="message.show">
+                            <span :class="'alert alert-'+message.color">
+                                <span class="farsi" v-html="message.body"></span>
+                            </span>
+                        </div>
+                    </div>
+
+                </div>
+        </div>
+        </form>
+    </div>
+</div>
+</div>
