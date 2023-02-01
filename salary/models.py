@@ -33,7 +33,7 @@ class Attendance(models.Model,LinkHelper):
 class Group(models.Model,LinkHelper):
     title=models.CharField(_("title"),max_length=100)
     type=models.CharField(_("type"),max_length=100,choices=GroupTypeEnum.choices,default=GroupTypeEnum.EMPLOYEE,)
-    description=models.CharField(_("description"),max_length=100)
+    description=models.CharField(_("description"),null=True,blank=True,max_length=100)
     employees=models.ManyToManyField("organization.employee",blank=True, verbose_name=_("employees"))
     rows=models.ManyToManyField("salaryitem",blank=True, verbose_name=_("item"))
     class_name="group"
