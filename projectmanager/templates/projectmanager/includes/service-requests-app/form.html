@@ -104,18 +104,18 @@
             </div>
         </div>
 
-        <div class="col-md-12 text-right">
+        <div class="col-md-12 text-right rtl">
             <img v-if="waiting" width="32" src="{% static 'leo/img/loading.gif' %}" alt="">
 
 
-
-            <button class="btn btn-outline-secondary" @click="show_add_service_request_form=false"
-                type="reset">Cancel</button>
 
             <button @click="add_service_request()" v-if="!waiting" class="btn btn-primary">
                 <i class="fa fa-plus" aria-hidden="true"></i>
                 افزودن
             </button>
+
+            <button class="btn btn-outline-secondary" @click="show_add_service_request_form=false"
+                type="reset">انصراف</button>
 
         </div>
     </div>
