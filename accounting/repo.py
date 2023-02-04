@@ -1265,8 +1265,6 @@ class InvoiceRepo():
         if 'payment_method' in kwargs:
             invoice.payment_method=kwargs['payment_method']
 
-        if 'status' in kwargs:
-            invoice.status=kwargs['status']
 
         if 'title' in kwargs:
             invoice.title=kwargs['title']
@@ -1322,6 +1320,8 @@ class InvoiceRepo():
                         invoice_line.save()
                     
                 
+        if 'status' in kwargs:
+            invoice.status=kwargs['status']
         invoice.save()    
         invoice.normalize_rows()
         
