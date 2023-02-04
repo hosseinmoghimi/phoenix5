@@ -9,9 +9,9 @@
     let url_add_service_request = "{% url 'projectmanager:add_service_request' %}"
 
     service_requests_app_data = {
-        
-        id:125,
-      
+
+        id: 125,
+
         employees: JSON.parse(`{{employees_s|escapejs}}`),
         new_service_request_service_id: 1,
         add_service_request_form_title: "",
@@ -19,8 +19,8 @@
         invoices: JSON.parse("{{service_invoices_s|escapejs}}"),
         source_project_id: 0,
         statuses: JSON.parse(`{{statuses_s|escapejs}}`),
-        source_invoice_id:0,
-        add_service_request_form_status:"",
+        source_invoice_id: 0,
+        add_service_request_form_status: "",
         add_service_request_form_invoice_id: 0,
         add_service_request_form_unit_price: 0,
         add_service_request_form_unit_name: "",
@@ -30,15 +30,27 @@
         waiting: false,
         sum_service_requests: 0,
         show_add_service_request_form: false,
+        show_copy_service_request_form: false,
         add_service_request_form_employee_id: "",
 
-        filter_status:"",
+        filter_status: "",
 
     }
 
 
 
     service_requests_app_methods = {
+        show_copy: function () {
+            this.show_copy_service_request_form = true
+            this.show_add_service_request_form = false
+        },
+
+        
+        show_add: function () {
+            this.show_copy_service_request_form = false
+            this.show_add_service_request_form = true
+        },
+
         copy_from_project: function () {
             console.log(this.source_project_id)
 
@@ -47,7 +59,7 @@
                 destination_project_id: project_id,
                 status: this.add_service_request_form_status,
                 csrfmiddlewaretoken: csrfmiddlewaretoken,
-                invoice_id:parseInt(this.add_service_request_form_invoice_id),
+                invoice_id: parseInt(this.add_service_request_form_invoice_id),
             }
             console.log(payload)
             let url_copy_service_requests = "{% url 'projectmanager:copy_service_requests' %}"
@@ -60,14 +72,14 @@
             })
 
         },
-        fetch_services:function(){
-                var getting = $.get("{% url 'projectmanager:fetch_services' %}", {});
-                getting.done((data) => {
-                    console.log(data)
-                    if (data.result === 'SUCCEED') {
-                        all_services = data.services
-                    }
-                })
+        fetch_services: function () {
+            var getting = $.get("{% url 'projectmanager:fetch_services' %}", {});
+            getting.done((data) => {
+                console.log(data)
+                if (data.result === 'SUCCEED') {
+                    all_services = data.services
+                }
+            })
         },
         copy_from_invoice: function () {
             console.log(this.source_invoice_id)
@@ -76,9 +88,9 @@
                 source_invoice_id: parseInt(this.source_invoice_id),
                 destination_project_id: project_id,
                 csrfmiddlewaretoken: csrfmiddlewaretoken,
-                
+
                 status: this.add_service_request_form_status,
-                invoice_id:parseInt(this.add_service_request_form_invoice_id),
+                invoice_id: parseInt(this.add_service_request_form_invoice_id),
             }
             console.log(payload)
             let url_copy_service_requests = "{% url 'projectmanager:copy_service_requests_from_invoice' %}"
@@ -102,14 +114,14 @@
                 return this.services[0]
             return {}
         },
-        
-        filter:function(){
-                this.service_requests=service_requests
 
-                if(this.filter_status!=""){
-                    this.service_requests=this.service_requests.filter(item=>item.status===service_requests_app.filter_status)
-                }
-            },
+        filter: function () {
+            this.service_requests = service_requests
+
+            if (this.filter_status != "") {
+                this.service_requests = this.service_requests.filter(item => item.status === service_requests_app.filter_status)
+            }
+        },
 
         add_service_request: function () {
 
@@ -197,14 +209,14 @@
 <script>
     service_requests_app_data = {
         service_requests: service_requests,
-        
-        id:125,
+
+        id: 125,
         waiting: false,
         sum_service_requests: 0,
         count_service_requests: 0,
         show_add_service_request_form: false,
 
-        filter_status:"",
+        filter_status: "",
     }
 
 

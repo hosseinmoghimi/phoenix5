@@ -1,9 +1,22 @@
 {% load static %}
 <div class="text-right">
 
-    <button @click="show_add_service_request_form=true" v-if="!show_add_service_request_form" class="btn btn-primary">
+    <button @click="show_add()" v-if="!show_add_service_request_form && !show_copy_service_request_form"
+        class="btn btn-success">
         <i class="fa fa-plus" aria-hidden="true"></i>
-        افزودن
+        افزودن درخواست سرویس جدید
+    </button>
+
+
+    <button @click="show_copy()" v-if="!show_copy_service_request_form && !show_add_service_request_form"
+        class="btn btn-info">
+        <i class="fa fa-copy" aria-hidden="true"></i>
+        کپی
+    </button>
+    <button @click="show_copy_service_request_form=show_add_service_request_form=false"
+        v-if="show_copy_service_request_form || show_add_service_request_form" class="btn btn-secondary">
+        <i class="fa fa-cancel" aria-hidden="true"></i>
+        انصراف
     </button>
 </div>
 <div v-if="show_add_service_request_form">
@@ -109,38 +122,70 @@
 
     <div class="table-responsive">
 
-        <table class="table table-striped my-3">
+        <table class="table table-striped my-3 rtl">
 
             <tbody>
                 <tr v-for="service in services">
                     <td>
-                        <a target="_blank" :href="service.get_absolute_url">
+                        <div class="media">
+                            <button @click="select_service(service)" class="btn btn-info">انتخاب</button>
 
-                            <span class="farsi" v-text="service.title"></span>
+                            <div class="media-body mr-2">
+                                <a target="_blank" :href="service.get_absolute_url">
 
-                        </a>
-                        <div>
-                            <small class="farsi text-muted" v-text="to_price(service.unit_price)"></small>
-                            <span class="text-muted">
-                                {{CURRENCY}}
-                            </span>
+                                    <span class="farsi" v-text="service.title"></span>
+
+                                </a>
+                                <div>
+
+                                    <small class="farsi text-muted">
+                                        هر یک
+                                    </small>
+                                    <small class="farsi text-muted" v-text="service.unit_name"></small>
+                                    <small class="farsi text-muted" v-text="to_price(service.unit_price)"></small>
+                                    <span class="text-muted">
+                                        {{CURRENCY}}
+                                    </span>
+                                </div>
+                            </div>
                         </div>
-                    </td>
-                    <td>
-                        <button @click="select_service(service)" class="btn btn-info">انتخاب</button>
-                    </td>
-                    <td>
+
+
 
                     </td>
                 </tr>
             </tbody>
         </table>
     </div>
+
+    <div class="text-right rtl my-2">
+
+
+        <a href="{% url 'accounting:services' %}" target="_blank">
+            <span class="farsi">
+                همه سرویس ها
+
+            </span>
+        </a>
+        <span class="mx-2">
+
+            <button class="btn btn-info btn-sm" @click="fetch_services()">
+
+                <i class="fa fa-refresh"></i>
+
+                بروز رسانی لیست سرویس ها
+            </button>
+        </span>
+    </div>
+
+</div>
+<div v-show="show_copy_service_request_form">
+
     <form @submit.prevent="copy_from_project()">
 
         <div class="row">
 
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <div class="form-group">
                     <label for="">فاکتور</label>
                     <select v-model="add_service_request_form_invoice_id" class="form-control farsi" id="" required>
@@ -163,14 +208,14 @@
 
             </div>
 
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <div class="form-group">
                     <label for="">کپی از پروژه </label>
                     <input type="number" required v-model="source_project_id" class="form-control">
 
                 </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <div class="form-group">
                     <label for=""> وضعیت</label>
                     <select v-model="add_service_request_form_status" class="form-control farsi" id="" required>
@@ -183,10 +228,17 @@
                             وضعیت درخواست مبدا
                         </option>
                     </select>
-                    <button class="btn btn-block btn-success mt-2" type="submit">از پروژه کپی کن</button>
 
                 </div>
 
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for=""> &nbsp;</label>
+                    <button class="btn btn-block btn-success mt-2" type="submit">از پروژه کپی کن</button>
+
+
+                </div>
             </div>
         </div>
     </form>
@@ -194,7 +246,7 @@
     <form @submit.prevent="copy_from_invoice()">
 
         <div class="row">
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <div class="form-group">
                     <label for=""> فاکتور</label>
                     <select v-model="add_service_request_form_invoice_id" class="form-control farsi" id="" required>
@@ -211,7 +263,14 @@
                 </div>
 
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="">کپی از فاکتور </label>
+                    <input type="number" required v-model="source_invoice_id" class="form-control">
+
+                </div>
+            </div>
+            <div class="col-md-3">
                 <div class="form-group">
                     <label for=""> وضعیت</label>
                     <select v-model="add_service_request_form_status" class="form-control farsi" id="" required>
@@ -224,32 +283,28 @@
                             وضعیت درخواست مبدا
                         </option>
                     </select>
-                    <button class="btn btn-block btn-success mt-2" type="submit">از فاکتور کپی کن</button>
 
                 </div>
 
             </div>
 
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <div class="form-group">
-                    <label for="">کپی از فاکتور </label>
-                    <input type="number" required v-model="source_invoice_id" class="form-control">
+                    <label for=""> &nbsp;</label>
+
+                    <button class="btn btn-block btn-success mt-2" type="submit">از فاکتور کپی کن</button>
 
                 </div>
             </div>
 
         </div>
     </form>
-<div>
-
-    
-    <a href="{% url 'accounting:services' %}" target="_blank">
-        <h6>
-            همه سرویس ها
-        </h6>
-    </a>
-    <span class="my-2">
-        <button class="btn btn-info" @click="fetch_services()">بازیابی لیست سرویس ها</button>
-     </span>
 </div>
+
+<div class="text-right">
+    <button @click="show_copy_service_request_form=show_add_service_request_form=false"
+        v-if="show_copy_service_request_form || show_add_service_request_form" class="btn btn-secondary">
+        <i class="fa fa-cancel" aria-hidden="true"></i>
+        انصراف
+    </button>
 </div>
