@@ -20,7 +20,7 @@
                     if(data.result==='SUCCEED'){
                         roll_back_transaction_app.can_roll_back=false
                         
-                        location.href = "{{transaction.get_absolute_url}}"
+                        location.href = "{{transaction.get_edit_url2}}"
                     }
                 })
 

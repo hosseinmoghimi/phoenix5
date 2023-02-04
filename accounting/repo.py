@@ -1290,7 +1290,6 @@ class InvoiceRepo():
         if 'tax_percent' in kwargs:
             invoice.tax_percent=kwargs['tax_percent']
 
-        invoice.save()
 
 
         if 'lines' in kwargs:
@@ -1322,8 +1321,11 @@ class InvoiceRepo():
                         invoice_line.unit_name=line['unit_name']
                         invoice_line.save()
                     
-        invoice.save()
+                
+        invoice.save()    
         invoice.normalize_rows()
+        
+        invoice.save()
         result=SUCCEED
         message="فاکتور با موفقیت ویرایش شد."
         return (result,invoice,message)

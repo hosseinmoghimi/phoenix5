@@ -26,6 +26,30 @@ class AddOrganizationUnitApi(APIView):
         return JsonResponse(context)
         
 
+class SelectOrganizationUnitApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        log=1
+        message=""
+        result=FAILED
+        context['result']=FAILED
+        if request.method=='POST':
+            log=2
+            AddOrganizationUnitForm_=AddOrganizationUnitForm(request.POST)
+            if AddOrganizationUnitForm_.is_valid():
+                log=3
+                fm=AddOrganizationUnitForm_.cleaned_data
+
+                
+                organization_units,message,result=OrganizationUnitRepo(request=request).select_organization_unit(**fm)
+                if organization_units is not None:
+                    context['organization_units']=OrganizationUnitWithEmployeesSerializer(organization_units,many=True).data
+        context['result']=SUCCEED
+        context['message']=message
+        context['log']=log
+        return JsonResponse(context)
+        
+
 class AddEmployeeApi(APIView):
     def post(self,request,*args, **kwargs):
         context={}

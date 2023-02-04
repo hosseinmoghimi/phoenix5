@@ -222,6 +222,11 @@ class PageRepo:
             
 
             objects=objects1.filter(title__contains=kwargs['search_for'])
+            # tag=Tag.objects.filter(title=kwargs['search_for'])
+            # if tag is not None:
+            #     pages_tag=tag.page_set.all()
+            #     for page_tag in pages_tag:
+            #         ids.append(page_tag.id)
             for obj in objects:
                 ids.append(obj.id)
 
@@ -230,13 +235,14 @@ class PageRepo:
             page_tags=PageTag.objects.filter(tag__title=kwargs['search_for'])
             for page_tag in page_tags:
                 ids.append(page_tag.page.pk)
+                pass
 
 
             objects=objects1.filter(id__in=ids)
 
 
 
-        return objects.all()
+        return objects.all().order_by("class_name").order_by("app_name")
 
     
 class PageTagRepo():
