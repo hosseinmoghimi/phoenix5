@@ -329,6 +329,7 @@ class Product(ProductOrService):
     def get_market_absolute_url(self):
         return reverse("market:product",kwargs={'pk':self.pk})
  
+
 class AccountTag(models.Model,LinkHelper):
     account=models.ForeignKey("account", verbose_name=_("account"), on_delete=models.CASCADE)
     tag=models.CharField(_("tag"), max_length=50)
@@ -559,6 +560,7 @@ class BankAccount(models.Model,LinkHelper):
             text+="""<small class="text-muted"> به نام  : </small>"""
             text+= bank_account.title
         return text
+
 
 class FinancialYear(models.Model):
     title=models.CharField(_("عنوان"), max_length=50)
@@ -956,9 +958,12 @@ class Category(models.Model,LinkHelper, ImageMixin):
     for_home=models.BooleanField(_("for_home"),default=False)
     priority=models.IntegerField(_("اولویت / ترتیب"),default="1000")
     products_or_services=models.ManyToManyField("accounting.productorservice", blank=True,verbose_name=_("products or services"))
+    full_title=models.CharField(_("full_title"),null=True,blank=True, max_length=500)
     class_name='category'
     app_name=APP_NAME
-    
+    def save(self):
+        self.full_title=self.full_title_
+        super(Category,self).save()
     @property
     def products(self):
         ids=[]
@@ -1033,10 +1038,13 @@ class Category(models.Model,LinkHelper, ImageMixin):
         """
     
     @property
-    def full_title(self):
-        if self.parent is not None:
-            return self.parent.full_title+" / " +self.title
-        return self.title
+    def full_title_(self):
+        if self.parent is None:
+            if self.title is None:
+                return ""
+            return self.title
+        else:
+            return self.parent.full_title_+" / " +self.title
 
     def get_market_absolute_url(self):
         return reverse("market:category",kwargs={'pk':self.pk})

@@ -399,7 +399,7 @@ class CategoryRepo():
             objects=objects.filter(parent_id=kwargs['super_category_id'])
         if 'category_title' in kwargs:
             objects=objects.filter(category_title=kwargs['category_title'])
-        return objects.order_by("priority")
+        return objects.order_by("full_title").order_by("priority")
 
     def add_category(self,*args, **kwargs):
         if not self.user.has_perm(APP_NAME+".add_category"):

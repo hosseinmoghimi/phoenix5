@@ -28,7 +28,7 @@
                 <img src="{% static 'leo/img/loading.gif' %}" width="32" v-if="waiting" alt="">
                 <select v-model="category_id" class="form-control">
 
-                    <option v-for="category in all_categories" :value="category.id" v-text="category.full_title"></option>
+                    <option v-for="category in all_categories" :title="category.full_title" :value="category.id" v-text="category.full_title"></option>
                 </select>
                 <button type="submit" class="btn btn-block btn-success">تایید</button>
             </form>
