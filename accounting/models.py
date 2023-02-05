@@ -559,7 +559,7 @@ class BankAccount(models.Model,LinkHelper):
         if bank_account.account:
             text+="""<small class="text-muted"> به نام  : </small>"""
             text+= bank_account.title
-        return text
+        return f"""<span class="rtl farsi">{text}</span>"""
 
 
 class FinancialYear(models.Model):
