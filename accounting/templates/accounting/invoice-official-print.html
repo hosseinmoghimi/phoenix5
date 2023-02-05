@@ -402,8 +402,8 @@
                 </p>
             </div>
             {% if invoice.pay_from and invoice.pay_from.default_bank_account %}
-            <div>
-                {{invoice.pay_from.default_bank_account|to_variz_text|safe}}
+            <div class="rtl text-right">
+                {{invoice.pay_from.default_bank_account.to_variz_text|safe}}
             </div>
             {% endif %}
 
