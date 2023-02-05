@@ -165,6 +165,8 @@ class Transaction(Page,LinkHelper):
             return True
         if old_transaction.status==TransactionStatusEnum.FROM_PAST:
             return True
+        if old_transaction.status==TransactionStatusEnum.READY:
+            return False
         if old_transaction.status==TransactionStatusEnum.CANCELED:
             return True
         if old_transaction.status==TransactionStatusEnum.FINISHED:
