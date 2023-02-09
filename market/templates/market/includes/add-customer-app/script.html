@@ -1,10 +1,12 @@
 {% load to_json %}
 <script>
     let accounts = JSON.parse(`{{accounts_s|escapejs}}`)
+    // let customers = JSON.parse(`{{customers_s|escapejs}}`)
     let add_customer_app = new Vue({
         el: "#add-customer-app",
         data: {
             account_id: 0,
+            customers:customers,
             region_id: 0,
             accounts: accounts,
             mobile: "",

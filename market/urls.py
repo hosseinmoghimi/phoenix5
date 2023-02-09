@@ -33,6 +33,7 @@ urlpatterns = [
     path("customer/<int:pk>/",(views.CustomerView.as_view()),name="customer"),
 
     path("invoices/",login_required(views.InvoicesView.as_view()),name="marketinvoices"),
+    path("invoices/<int:supplier_id>/<int:customer_id>/",login_required(views.InvoicesView.as_view()),name="marketinvoices_"),
     path("invoice/<int:pk>/",login_required(views.InvoiceView.as_view()),name="marketinvoice"),
 
     path("api/categories/",(apis.CategoriesApi.as_view()),name="api_categories"),

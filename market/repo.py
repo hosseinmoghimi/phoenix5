@@ -474,7 +474,10 @@ class CartRepo():
             market_invoice_line.save()
             result=SUCCEED
 
-            message="با موفقیت خرید شد."
+            message="""با موفقیت خرید شد."""
+            for market_invoice in market_invoices:
+
+                message+=f"""<a class="mx-2" href="{market_invoice.get_absolute_url()}">{market_invoice.title}</a>"""
             if result==SUCCEED:
                 cart_line.delete()
         leolog(market_invoices=market_invoices,message=message,result=result)

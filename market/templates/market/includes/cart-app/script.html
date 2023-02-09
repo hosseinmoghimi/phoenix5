@@ -63,6 +63,8 @@
             cart_lines: cart_lines,
             total: 0,
             save_done: false,
+            message:{show:false},
+            waiting:false,
         },
         mounted: function () {
             this.total = 0
@@ -88,9 +90,14 @@
                 leolog(payload)
                 let posting = $.post(url_checkout, payload)
                 posting.done(function (data) {
+                    console.log(data)
                     if (data.result === 'SUCCEED') {
                         cart_app.cart_lines = data.cart_lines
                         cart_app.save_done = true
+                        cart_app.message={show:true,body:data.message,color:"success"}
+                        // setTimeout(() => {
+                        // cart_app.message={show:false}
+                        // }, 5000);
                     }
                 })
             },

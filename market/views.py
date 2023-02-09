@@ -217,7 +217,24 @@ class CategoryView(View):
 
 class InvoicesView(View):
     def get(self, request, *args, **kwargs):
-        pass
+        supplier_id=0
+        customer_id=0
+        title="سفارشات"
+        if 'customer_id' in kwargs:
+            customer_id=kwargs['customer_id']
+            customer=CustomerRepo(request=request).customer(*args, **kwargs)
+            if customer is not None:
+                title=title+" مشتری "+customer.title
+        if 'supplier_id' in kwargs:
+            supplier_id=kwargs['supplier_id']
+            supplier=SupplierRepo(request=request).supplier(*args, **kwargs)
+            if supplier is not None:
+                title=title+" فروشنده "+supplier.title
+        invoices=MarketInvoiceRepo(request=request).list(*args, **kwargs)
+        context=getContext(request=request)
+        context['invoices']=invoices
+        context['expand_invoices']=True
+        return render(request,TEMPLATE_ROOT+"invoices.html",context)
 
 
 class InvoiceView(View):

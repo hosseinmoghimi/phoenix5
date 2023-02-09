@@ -71,6 +71,8 @@ class CheckoutApi(APIView):
         context={}
         context['result']=FAILED
         log=1
+        message=""
+        result=FAILED
         log=2
         checkout_form=CheckoutForm(request.POST)
         if checkout_form.is_valid():
@@ -83,7 +85,8 @@ class CheckoutApi(APIView):
             if result ==SUCCEED:
                 # shops=ProductRepo(request=request).product(pk=product_id).shop_set.all()
                 context['market_invoices']=InvoiceSerializer(market_invoices,many=True).data
-                context['result']=SUCCEED
+        context['result']=result
+        context['message']=message
         context['log']=log
         return JsonResponse(context)
 

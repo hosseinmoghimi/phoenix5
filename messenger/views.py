@@ -61,6 +61,19 @@ class MessageViews(View):
         context['message']=message
         return render(request,TEMPLATE_ROOT+"message.html",context)
 
+class TicketsView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        message=MessageRepo(request=request).message(*args, **kwargs)
+        context['message']=message
+        return render(request,TEMPLATE_ROOT+"tickets.html",context)
+class TicketView(View):
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        message=MessageRepo(request=request).message(*args, **kwargs)
+        context['message']=message
+        return render(request,TEMPLATE_ROOT+"ticket.html",context)
+
 def get_member_context(request,*args, **kwargs):
     context={}
     if 'member' in kwargs:

@@ -26,6 +26,9 @@
                                 کد معرف
                             </label>
                             <input placeholder="کد معرف" v-model="inviter_id" class="form-control" type="number">
+                            <select v-model="inviter_id" class="form-control" id="">
+                                <option :value="customer.id" v-for="customer in customers" v-text="customer.account.title"></option>
+                            </select>
                         </div>
                         <div class="form-group">
                             <label for="">
