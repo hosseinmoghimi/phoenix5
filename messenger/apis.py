@@ -1,10 +1,30 @@
-from messenger.forms import SendMessageForm, SendNotificationForm
+from messenger.forms import *
 from django.http import JsonResponse
 from messenger.serializers import MessageSerializer, NotificationSerializer
 from rest_framework.views import APIView
 from core.constants import FAILED,SUCCEED
 from messenger.repo import MessageRepo, NotificationRepo
+from messenger.sms import send_sms,send_sms_
+class SendSMSApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message_back=""
 
+        log=1
+        if request.method=='POST':
+            log=2
+            SendSMSForm_=SendSMSForm(request.POST)
+            if SendSMSForm_.is_valid():
+                log=3 
+                result,message_back,status_code,line_number=send_sms(**SendSMSForm_.cleaned_data)
+        context['message_back']=message_back
+        context['result']=result
+        context['line_number']=line_number
+        context['status_code']=status_code
+        context['log']=log
+        return JsonResponse(context)
+    
 
 
 class SendMessageApi(APIView):

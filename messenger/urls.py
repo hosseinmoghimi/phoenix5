@@ -10,6 +10,9 @@ urlpatterns = [
     path("channel/<int:pk>/",login_required(views.ChannelViews.as_view()),name="channel"),
     # path("event/<int:pk>/",views.EventViews().event,name="event"),
     path("member/<int:pk>/",login_required(views.MemberView.as_view()),name="member"),
+    
+    
+    path("send_sms/",login_required(views.SendSMSView.as_view()),name="send_sms"),
 
     path("ticket/<int:pk>/",login_required(views.TicketView.as_view()),name="ticket"),
     path("tickets/",login_required(views.TicketsView.as_view()),name="tickets"),

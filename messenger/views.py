@@ -1,3 +1,4 @@
+from messenger.apis import SendSMSApi
 from authentication.repo import ProfileRepo
 from messenger.enums import ParameterNameEnum,ParameterEnum
 from messenger.serializers import MemberSerializer,NotificationSerializer
@@ -61,6 +62,18 @@ class MessageViews(View):
         context['message']=message
         return render(request,TEMPLATE_ROOT+"message.html",context)
 
+
+class SendSMSView(View):
+    def post(self,request,*args, **kwargs):
+        return SendSMSApi().post(request=request)
+    
+    def get(self,request,*args, **kwargs):
+        context=getContext(request=request)
+        return render(request,TEMPLATE_ROOT+"send-sms.html",context)
+
+
+
+        
 class TicketsView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
