@@ -9,7 +9,7 @@
         },
         methods: {
             filter:function(){
-                this.accounts = accounts_app_accounts.filter(account => account.title.indexOf(this.search_for) > -1)
+                this.accounts = accounts_app_accounts.filter(account=> account.title.indexOf(this.search_for) > -1 )
             },
             to_price: function (vall) {
                 let color='primary'

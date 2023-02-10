@@ -13,7 +13,8 @@ FULL_SITE_URL="http://127.0.0.1:8000/"
 FULL_SITE_URL="https://cryptalx.com/"
 QRCODE_ROOT=os.path.join(PUBLIC_ROOT,'qrcode')
 DEBUG=True
-
+SMS_API_KEY="wwwwwwwwww"
+SMS_LINE_NUMBER="1111"
 DB_FILE_NAME="db_20220823_13_29_18.sqlite3"
 DB_FILE_PATH=os.path.join(BASE_DIR,DB_FILE_NAME)
 DATABASES = {

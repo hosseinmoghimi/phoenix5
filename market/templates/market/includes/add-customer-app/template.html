@@ -35,7 +35,7 @@
                     <div class="col-md-6">
 
                         <div class="form-group">
-                          
+
                             <label for="">
                                 انتخاب حساب
                             </label>
@@ -44,11 +44,17 @@
                             <select v-model="account_id" class="form-control" id="">
                                 <option :value="account.id" v-for="account in accounts" v-text="account.title"></option>
                             </select>
-                            
+                            <a href="{% url 'accounting:accounts' %}" target="_blank">
+                                <small class="farsi">
+                                    همه حساب های مالی
+                                </small>
+
+                            </a>
+
                         </div>
 
                     </div>
-                 
+
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="">
@@ -56,7 +62,7 @@
                             </label>
                             <input placeholder="09....." v-model="mobile" class="form-control" type="text">
                         </div>
-                        
+
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">

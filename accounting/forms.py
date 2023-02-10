@@ -36,6 +36,7 @@ class AddAccountForm(forms.Form):
     balance=forms.IntegerField(required=False)
     address=forms.CharField(max_length=100,required=False)
     tel=forms.CharField(max_length=50,required=False)
+    mobile=forms.CharField(max_length=50,required=False)
     description=forms.CharField(max_length=500, required=False)
     
 class AddFinancialBalanceForm(forms.Form):

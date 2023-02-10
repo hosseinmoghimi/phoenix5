@@ -857,8 +857,14 @@ class AccountRepo():
             return self.objects.filter(profile=self.profile)
    
     def add_account(self,*args, **kwargs):
+        account,message,result=(None,"",FAILED)
         if not self.request.user.has_perm(APP_NAME+".add_account"):
-            return
+            message="دسترسی غیر مجاز"
+            return account,message,result
+        if len(Account.objects.filter(title=kwargs['title']))>0:
+            message="از قبل حسابی با همین عنوان ثبت شده است."
+            return account,message,result
+
         account=Account()
 
         if 'title' in kwargs:
@@ -871,6 +877,8 @@ class AccountRepo():
             account.address=kwargs['address']
         if 'tel' in kwargs:
             account.tel=kwargs['tel']
+        if 'mobile' in kwargs:
+            account.mobile=kwargs['mobile']
        
         
         # if 'financial_year_id' in kwargs:
@@ -879,6 +887,8 @@ class AccountRepo():
         #     payment.financial_year_id=FinancialYear.get_by_date(date=payment.transaction_datetime).id
 
         account.save()
+        result=SUCCEED
+        message="با موفقیت اضافه گردید."
         
         if 'balance' in kwargs and kwargs['balance'] is not None and not kwargs['balance']==0:
             me_account=self.me
@@ -899,7 +909,7 @@ class AccountRepo():
                     payment.pay_to_id=account.id
                 payment.save()
 
-        return account
+        return account,message,result
 
     def add_account_tag(self,*args, **kwargs):
         result,message,account_tags=FAILED,"",[]

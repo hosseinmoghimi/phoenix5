@@ -291,8 +291,8 @@ class CustomerRepo():
             if inviter_id is not None and inviter_id>0:
             
                 customer.inviter_id=inviter_id
-        
-        customer.account.mobile=mobile
+        if mobile is not None and not mobile=="":
+            customer.account.mobile=mobile
         if customer is not None:
             customer.save()
             customer.account.save()
