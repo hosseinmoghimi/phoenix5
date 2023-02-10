@@ -292,7 +292,7 @@ class CustomerRepo():
             
                 customer.inviter_id=inviter_id
         
-        customer.account.tel=mobile
+        customer.account.mobile=mobile
         if customer is not None:
             customer.save()
             customer.account.save()

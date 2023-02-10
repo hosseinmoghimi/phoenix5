@@ -8,6 +8,7 @@ from core.constants import FAILED,SUCCEED
 from django.db.models import Q
 from utility.num import to_tartib
 from accounting.models import Payment,TransactionStatusEnum,PaymentMethodEnum
+from core.repo import ParameterRepo
 def normalize_coupons(customer_id):
     coupons=[]
     orders=Order.objects.filter(customer_id=customer_id)
@@ -136,9 +137,15 @@ class OrderRepo():
                 order.discount=invoice.discount
                 order.ship_fee=invoice.ship_fee
                 order.sum=invoice.lines_total()
+                
         order.save()
-        
         coupons=normalize_coupons(customer_id=customer_id)
+        send_sms_param=ParameterRepo(request=self.request,app_name=APP_NAME).parameter(name="ارسال پیامک برای مشتریان ",default="0")
+        if send_sms_param.boolean_value and order.customer.account.mobile is not None:
+            from messenger.sms import send_sms 
+            message=order.get_sms_text()
+            send_sms(receptor=order.customer.account.mobile,message=message)
+        
            
         if order is not None:
             result=SUCCEED

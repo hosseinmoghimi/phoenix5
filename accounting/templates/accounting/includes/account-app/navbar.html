@@ -35,6 +35,17 @@
 </div>
 {% endif %}
 
+
+{% if account.mobile %}
+<div class="text-center farsi my-3">
+    <a href="tel:{{account.mobile}}">
+        <i class="fa fa-phone text-success"></i>
+        {{account.mobile}}
+    </a>
+</div>
+{% endif %}
+
+
 {% if perms.accounting.view_account or account_is_me %}
 
 

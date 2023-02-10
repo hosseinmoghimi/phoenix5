@@ -1,8 +1,10 @@
 from utility.num import to_tartib
 from django.db import models
+from utility.currency import to_price
 from django.utils.translation import gettext as _
 from .apps import APP_NAME
 from core.models import LinkHelper
+from utility.calendar import PersianCalendar
 # Create your models here.
 from accounting.models import Transaction
 # class Coupon(models.Model):
@@ -107,6 +109,32 @@ class Order(models.Model,LinkHelper):
     date_ordered=models.DateTimeField(_("date_ordered"), auto_now=False, auto_now_add=False)
     def save(self):
         super(Order,self).save()
+    def get_sms_text(self):
+        coupon=self.coupon_set.first()
+        coupon_amount=0
+        rest=self.customer.account.balance_rest
+        # if coupon is not None:
+        #     coupon_amount=coupon.amount
+        row=1
+        sw=True
+        for coupon in Coupon.objects.filter(order__customer=self.customer):
+            if not coupon.order_id==self.id and sw:
+                row+=1
+            else:
+                sw=False
+
+        return f"""
+{self.supplier.title} خرید شما را گرامی می دارد.
+
+خرید {to_tartib(row)}
+مبلغ کل : {to_price(self.sum)} 
+هدیه : {to_price(coupon.amount)}
+تاریخ : {PersianCalendar().from_gregorian(self.date_ordered)[:11]} 
+
+مانده حساب شما : {to_price(self.customer.account.balance['rest'])}
+"""
+# فاکتور شماره {self.id} 
+# {("مانده حساب شما : "+to_price(rest)) if not rest==0 else "" }
     @property
     def paid(self):
         return self.sum-self.discount

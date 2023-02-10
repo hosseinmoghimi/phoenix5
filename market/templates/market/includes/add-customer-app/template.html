@@ -19,52 +19,59 @@
 
                 {% load static %}
 
-                <div class="row">
-                    <div class="col-md-6"> 
+                <div class="row rtl">
+                    <div class="col-md-6">
                         <div class="form-group">
                             <label for="">
                                 کد معرف
                             </label>
                             <input placeholder="کد معرف" v-model="inviter_id" class="form-control" type="number">
                             <select v-model="inviter_id" class="form-control" id="">
-                                <option :value="customer.id" v-for="customer in customers" v-text="customer.account.title"></option>
+                                <option :value="customer.id" v-for="customer in customers"
+                                    v-text="customer.account.title"></option>
                             </select>
                         </div>
+                    </div>
+                    <div class="col-md-6">
+
                         <div class="form-group">
-                            <label for="">
-                                نام
-                            </label>
-                            <input placeholder="جستجو ..." v-model="search_for" class="form-control" type="text"
-                                @input="filter()">
-                        </div>
-             
-                        <div class="form-group">
+                          
                             <label for="">
                                 انتخاب حساب
                             </label>
+                            <input placeholder="جستجو ..." v-model="search_for" class="form-control" type="text"
+                                @input="filter()">
                             <select v-model="account_id" class="form-control" id="">
                                 <option :value="account.id" v-for="account in accounts" v-text="account.title"></option>
                             </select>
+                            
                         </div>
 
+                    </div>
+                 
+                    <div class="col-md-6">
                         <div class="form-group">
                             <label for="">
                                 شماره تلفن همراه
                             </label>
-                            <input placeholder="09....." v-model="mobile" class="form-control" type="text"
-                                >
+                            <input placeholder="09....." v-model="mobile" class="form-control" type="text">
                         </div>
+                        
+                    </div>
+                    <div class="col-md-6">
                         <div class="form-group">
                             <label for="">
                                 انتخاب منطقه
                             </label>
                             <select v-model="region_id" class="form-control" id="" required>
                                 {% for region in regions %}
-                                  <option value="{{region.id}}">{{region.title}}</option>
+                                <option value="{{region.id}}">{{region.title}}</option>
                                 {% endfor %}
                             </select>
                         </div>
 
+                    </div>
+                    <div class="col-md-12">
                         <div class="text-right">
 
                             <button @click="add_customer()" class="btn btn-success">

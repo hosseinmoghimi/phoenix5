@@ -383,6 +383,7 @@ class Account(models.Model,LinkHelper):
     profile=models.ForeignKey("authentication.profile", verbose_name=_("profile"),null=True,blank=True, on_delete=models.CASCADE)
     address=models.CharField(_("آدرس"),null=True,blank=True, max_length=200)
     tel=models.CharField(_("تلفن"),null=True,blank=True, max_length=50)
+    mobile=models.CharField(_("موبایل"),null=True,blank=True, max_length=50)
     description=models.CharField(_("توضیحات"),blank=True,max_length=5000)
     economic_no=models.CharField(_("شماره اقتصادی"),max_length=50,null=True,blank=True)
     melli_id=models.CharField(_("شناسه ملی"),max_length=50,null=True,blank=True)
