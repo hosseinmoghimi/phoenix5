@@ -19,7 +19,6 @@ def to_persian_datetime_tag(value,*args, **kwargs):
     except:
         return ""
 
-
 PERSIAN_MONTH_NAMES=[
 'فروردین',
 'اردیبهشت',
@@ -34,6 +33,13 @@ PERSIAN_MONTH_NAMES=[
  'بهمن',
  'اسفند'
 ]
+
+def to_persian_month_name(month):
+    # return PERSIAN_MONTH_NAMES[month]
+    if month>-1 and month<12:
+        return PERSIAN_MONTH_NAMES[month]
+    return "نامعتبر"
+
 def days_in_month(year,month,day=1):
     nn=JalaliDate(year=year,month=month,day=day)
     return nn.daysinmonth

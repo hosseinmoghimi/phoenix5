@@ -40,7 +40,16 @@
                                 class="material-icons">keyboard_arrow_left</i></button>
                     </td>
                 </tr>
+                <tr>
+                    <td colspan="7" >
+                        <div class="farsi">
 
+                            <div v-show="message.show" :class="'alert alert-'+message.color">
+                                <span v-html="message.body"></span>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
             </tbody>
         </table>
     </div>
@@ -48,6 +57,7 @@
     {% for order in cart.orders %}
 
     <form v-if="save_done" action="{% url 'market:confirm_cart' %}" method="POST">
+        <h5>dfdfdsfsdfsd</h5>
         <h4>
             آدرس تحویل بسته را برای سفارش از
             {{order.supplier.title}}
@@ -84,7 +94,7 @@
 
         </button>
 
-     
+
     </form>
 
     {% endfor %}

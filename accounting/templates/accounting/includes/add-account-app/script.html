@@ -10,6 +10,7 @@
             description:"",
             address:"",
             tel:"",
+            mobile:"",
             balance_direction: BEDEHKAR,
             message: {
                 show: false,
@@ -29,6 +30,7 @@
                     title: this.title,
                     address: this.address,
                     tel: this.tel,
+                    mobile: this.mobile,
                     description: this.description,
                 }
                 add_account_app.waiting = true
@@ -42,14 +44,15 @@
                             add_account_app.address = ""
                             add_account_app.description = ""
                             add_account_app.tel = ""
+                            add_account_app.mobile = ""
                             add_account_app.title = ""
                             add_account_app.balance = 0
                             accounts_app.accounts.push(data.account)
                         }
-                        this.message = { show: true, body: "با موفقیت اضافه گردید.", color: 'success' }
+                        this.message = { show: true, body: data.message, color: 'success' }
                     }
                     if (data.result === 'FAILED') {
-                        this.message = { show: true, body: "خطا در افزودن حساب ", color: 'danger' }
+                        this.message = { show: true, body:data.message, color: 'danger' }
                     }
 
                 })

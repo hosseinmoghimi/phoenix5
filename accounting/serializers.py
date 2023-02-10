@@ -32,7 +32,7 @@ class AccountSerializerFull(serializers.ModelSerializer):
     profile=ProfileSerializer()
     class Meta:
         model = Account
-        fields = ['id','logo','class_title','get_whatsapp_link','tel','balance_rest', 'title','profile', 'get_absolute_url']
+        fields = ['id','logo','mobile','class_title','get_whatsapp_link','tel','balance_rest', 'title','profile', 'get_absolute_url']
 
 
 class BankSerializer(serializers.ModelSerializer):

@@ -73,14 +73,14 @@ class PaymentMethodEnum(TextChoices):
 class TransactionStatusEnum(TextChoices):
     DRAFT="پیش نویس",_("پیش نویس")
     IN_PROGRESS="در جریان",_("در جریان")
-    DELIVERED="تحویل شده",_("تحویل شده")
+    READY="آماده تحویل",_("آماده تحویل")
     APPROVED="تایید شده",_("تایید شده")
+    DELIVERED="تحویل شده",_("تحویل شده")
     CANCELED="کنسل شده",_("کنسل شده")
     ROLL_BACKED="برگشت از تحویل",_("برگشت از تحویل")
     FINISHED="تایید نهایی شده",_("تایید نهایی شده")
     PASSED="پاس شده",_("پاس شده")
     FROM_PAST="مانده حساب از قبل",_("مانده حساب از قبل")
-
 
 class FinancialDocumentStatusEnum(TextChoices):
     DRAFT="پیش نویس",_("پیش نویس")

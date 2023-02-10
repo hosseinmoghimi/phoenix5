@@ -1,0 +1,38 @@
+<script>
+    let group_type_enums = JSON.parse("{{group_type_enums_s|escapejs}}")
+    let groups = JSON.parse("{{groups_s|escapejs}}")
+    let groups_app = new Vue({
+        el: "#groups-app",
+        data: {
+            title: "",
+            type:"",
+            groups: groups,
+            group_type_enums:group_type_enums,
+            message: { show: false },
+            show_form: false,
+            waiting: false,
+            search_for:"",
+        },
+        methods: {
+            search:function(){
+                groups_app.groups=groups.filter(group=>group.title.indexOf(groups_app.search_for)>-1)
+            },
+            add_group: function () {
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    // account_id: parseInt("{{account.id}}"),
+                    title: this.title,
+                    type: this.type,
+                }
+                console.log(payload)
+                $.post("{% url 'salary:add_group' %}", payload).done(data => {
+                    console.log(data)
+                    if (data.result === 'SUCCEED') {
+                        groups_app.groups.push(data.group)
+                        groups_app.title=""
+                    }
+                })
+            },
+        }
+    })
+</script>

@@ -106,3 +106,20 @@ class Notification(Message,LinkHelper):
     read=models.BooleanField(_("read"),default=False) 
     app_name=APP_NAME
     class_name="notification"
+
+
+# class Ticket(models.Model,LinkHelper):
+
+#     title=models.CharField(_("title"), max_length=50)
+#     description=HTMLField(_("description"), max_length=5000)
+#     class_name="ticket"
+#     app_name=APP_NAME
+    
+
+#     class Meta:
+#         verbose_name = _("Ticket")
+#         verbose_name_plural = _("Tickets")
+
+#     def __str__(self):
+#         return self.name
+ 

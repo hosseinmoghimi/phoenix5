@@ -180,7 +180,7 @@
         <div class="card-body">
             <div class="table-responsive">
 
-                <table class="table table-striped my-0">
+                <table class="table table-striped my-0 rtl">
                     <thead>
                         <th class="bordered">
                             ردیف
@@ -396,14 +396,14 @@
                     {{invoice.sum_total|to_horuf_rial}} ریال
                 </p>
                 <p class="farsi">
-                    مالیات به حروف :
+                    مالیات  :
                     <span v-text="to_price({{invoice.tax_amount}})"></span>
                     ریال
                 </p>
             </div>
             {% if invoice.pay_from and invoice.pay_from.default_bank_account %}
-            <div>
-                {{invoice.pay_from.default_bank_account|to_variz_text|safe}}
+            <div class="rtl text-right">
+                {{invoice.pay_from.default_bank_account.to_variz_text|safe}}
             </div>
             {% endif %}
 

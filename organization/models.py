@@ -74,6 +74,8 @@ class Employee(models.Model,LinkHelper):
     @property
     def title(self):
         return self.account.title
+    def get_salary_url(self):
+        return reverse('salary:employee',kwargs={'pk':self.pk})
 
     @property
     def image(self):

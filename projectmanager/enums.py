@@ -98,6 +98,8 @@ def StatusColor(status):
         color= 'success'
     elif status==SignatureStatusEnum.PAID:
         color= 'success'
+    elif status==ProjectStatusEnum.DRAFT:
+        color= 'secondary'
     return color
 
 

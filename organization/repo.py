@@ -2,7 +2,7 @@ from django.utils import timezone
 from requests import request
 from organization.models import Letter, OrganizationUnit,Employee,LetterSent
 from django.db.models import Q
-from core.repo import ParameterRepo
+from core.repo import ParameterRepo,FAILED,SUCCEED
 from organization.enums import *
 from organization.apps import APP_NAME
 from authentication.repo import ProfileRepo
@@ -72,6 +72,44 @@ class OrganizationUnitRepo():
       
         new_organization_unit.save()
         return new_organization_unit
+
+   
+    def select_organization_unit(self,*args, **kwargs):
+        if not self.user.has_perm(APP_NAME+".add_organizationunit"):
+            return None
+
+        if 'organization_unit_id' in kwargs and kwargs['organization_unit_id'] is not None:
+            organization_unit=self.organization_unit(pk=kwargs['organization_unit_id'])
+        
+         
+        if 'page_id' in kwargs and kwargs['page_id'] is not None : 
+            organization_units,message,result=None,"",FAILED
+            new_organization_unit=organization_unit
+
+            project_id=kwargs['page_id']
+            from projectmanager.repo import ProjectRepo
+            project=ProjectRepo(request=self.request).project(pk=project_id)
+            if project is not None:
+                already_available=False
+                for org_unit in project.organization_units.all():
+                    if org_unit.id==organization_unit.id:
+                        already_available=True
+                if already_available:
+                        project.organization_units.remove(organization_unit)
+                        result=SUCCEED
+                        message="با موفقیت حذف شد."
+                if not already_available:
+                    project.organization_units.add(organization_unit)
+                    result=SUCCEED
+                    message="با موفقیت افزوده شد."
+                    
+                    
+                organization_units =project.organization_units.all()
+                return organization_units,message,result
+                    
+      
+        return organization_units,message,result
+ 
 
     def organization_unit(self, *args, **kwargs):
         pk=0

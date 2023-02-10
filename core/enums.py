@@ -166,6 +166,8 @@ class UnitNameEnum(TextChoices):
     LINK="لینک",_("لینک")
     DASTGAH="دستگاه",_("دستگاه")
     SERVICE="سرویس",_("سرویس")
+    INSTANCE="مورد",_("مورد")
+    PERSON="نفر",_("نفر")
     PACK="بسته",_("بسته")
     POCKET="کیسه",_("کیسه")
     SHOT="شات",_("شات")

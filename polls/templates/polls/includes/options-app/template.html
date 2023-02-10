@@ -41,13 +41,16 @@
             <div class="card-body">
                 <div class="text-right farsi">
                     <h4 v-if="options.length>0">
-
+                    {{poll.title}}
+                      
+                    </h4>
+                    <h6>
                         <small>
 
                             تعداد کل رای ها :
                         </small>
                         <span class="mx-2" v-text="to_price(options[0].poll.votes_count)"></span>
-                    </h4>
+                    </h6>
                 </div>
 
 
@@ -155,6 +158,18 @@
 
                 </div>
                 {% endif %}
+
+                <div class="text-right farsi">
+                   
+                    <h6>
+                        <small>
+
+                            تعداد کل رای ها :
+                        </small>
+                        <span class="mx-2" v-text="to_price(options[0].poll.votes_count)"></span>
+                    </h6>
+                </div>
+
 
             </div>
             {% if add_option_form %}

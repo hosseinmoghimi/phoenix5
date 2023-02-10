@@ -349,7 +349,7 @@ def get_product_or_service_context(request,*args, **kwargs):
     context['item_categories']=item_categories
     context['item_categories_s']=json.dumps(CategorySerializer(item_categories,many=True).data)
     if request.user.has_perm(APP_NAME+".change_productorservice"):
-        all_categories=CategoryRepo(request=request).list().order_by('title')
+        all_categories=CategoryRepo(request=request).list().order_by('full_title')
         context['all_categories']=all_categories
         context['all_categories_s']=json.dumps(CategorySerializer(all_categories,many=True).data)
         context['add_item_category_form']=AddItemCategoryForm()

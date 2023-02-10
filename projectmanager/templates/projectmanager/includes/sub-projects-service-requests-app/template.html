@@ -38,8 +38,7 @@
 
             </div>
             <div class="card-footer ">
-                {% if project %}
-                <p>
+                <p class="text-right farsi rtl">
 
                     <span class="small text-secondary">
                         مجموع قیمت متریال ها :
@@ -54,32 +53,7 @@
 
                 </p>
 
-                {% endif %}
-
-                {% if service %}
-                <p>
-
-                    <span>
-                        <span class="text-secondary">
-
-                            تعداد کل درخواست شده :
-                        </span>
-                        <span v-text="to_price(count_service_requests)">
-                        </span>
-                    </span>
-
-
-
-                    <span class="mr-4">
-                        <span class="text-secondary">
-
-                            مبلغ کل درخواست شده :
-                        </span>
-                        <span v-text="to_price(sum_service_requests,'{{CURRENCY}}')"></span>
-                    </span>
-
-                </p>
-                {% endif %}
+              
 
             </div>
         </div>

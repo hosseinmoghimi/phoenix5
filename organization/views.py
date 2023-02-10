@@ -205,7 +205,6 @@ class OrganizationUnitChartView(View):
                 'get_absolute_url': page.get_absolute_url(),
                 'id': page.id,
                 'sub_title': names,
-
             })
         context['pages_s'] = json.dumps(pages_s)
      

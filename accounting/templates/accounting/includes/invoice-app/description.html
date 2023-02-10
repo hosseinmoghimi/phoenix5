@@ -3,57 +3,82 @@
 {% load to_price %}
 <div class="card">
     <div class="card-body px-5 farsi text-right">
-        <h5>
-            توضیحات
-        </h5>
-        <div>
-            واحد مبلغ ها
-            {{CURRENCY}}
-            می باشد.
+
+
+        <div class="media">
+            <a href="{{invoice.get_absolute_url}}">
+
+                <img src="{{invoice.get_qrcode_url}}" width="128" alt="">
+            </a>
+            <div class="media-body mr-2">
+
+                <div>
+
+                    <h5>
+                        توضیحات
+                    </h5> 
+                     <!--<div>
+                        واحد مبلغ ها
+                        {{CURRENCY}}
+                        می باشد.
+                    </div> -->
+                    <!-- {% if invoice.tax_amount > 0 %}
+                    <div>
+                        میزان مالیات : {{invoice.tax_amount|to_price}}
+                    </div>
+                    {% endif %} -->
+
+
+                    {% if not TRANSACTION_PRINTING %}
+                    <div class="text-right farsi">
+                        {{invoice.status}}
+                        /
+                        {{invoice.payment_method}}
+                    </div>
+                    {% endif %}
+
+                    {% if invoice.description %}
+                    <div class=" ">
+                        {{invoice.description|safe}}
+                    </div>
+                    {% endif %}
+                    {% if not TRANSACTION_PRINTING and invoice.print_datetime %}
+                    <div>
+                        <p class="text-right">
+                            تاریخ چاپ : {{invoice.invoice_datetime|to_persian_datetime|safe}}
+                        </p>
+
+                    </div>
+                    {% endif %}
+
+                    <div>
+                        <p>
+
+                            امضای این برگه توسط خریدار به معنای
+                            <strong>
+
+                                تحویل کامل
+                            </strong>
+                            کالاها و خدمات لیست فوق می باشد.
+                            <br>
+
+                            قیمت ها بروز بوده و تنها 24 ساعت از تاریخ فاکتور اعتبار دارد.
+                            <br>
+
+                            کلیه اجناس موجود در فاکتور تا زمان تسویه کامل صورتحساب متعلق به فروشنده می باشد و به صورت
+                            امانت تحویل خریدار می باشد
+                        </p>
+                    </div>
+
+                </div>
+            </div>
         </div>
-        {% if invoice.tax_amount > 0 %}
-        <div>
-            میزان مالیات : {{invoice.tax_amount|to_price}}
-        </div>
-        {% endif %}
+
         {% if invoice.pay_from and invoice.pay_from.default_bank_account %}
-        <div>
-            {{invoice.pay_from.default_bank_account|to_variz_text|safe}}
+        <div class="text-right farsi rtl">
+            {{invoice.pay_from.default_bank_account.to_variz_text|safe}}
         </div>
         {% endif %}
 
-        {% if not TRANSACTION_PRINTING %}
-        <div class="text-right farsi">
-            {{invoice.status}}
-            /
-            {{invoice.payment_method}}
-        </div>
-        {% endif %}
-
-        {% if invoice.description %}
-        <div class=" ">
-            {{invoice.description|safe}}
-        </div>
-        {% endif %}
-        {% if not TRANSACTION_PRINTING and invoice.print_datetime %}
-        <div>
-            <p class="text-right">
-                تاریخ چاپ : {{invoice.invoice_datetime|to_persian_datetime|safe}}
-            </p>
-
-        </div>
-        {% endif %}
-
-        <div>
-            <p>
-
-                امضای این برگه توسط کارفرما به معنای
-                <strong>
-
-                    تحویل کامل
-                </strong>
-                کالاها و خدمات لیست فوق می باشد.
-            </p>
-        </div>
     </div>
 </div>

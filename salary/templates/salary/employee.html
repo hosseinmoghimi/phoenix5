@@ -1,0 +1,51 @@
+{% extends 'salary/layout.html' %}
+
+{% block content %}
+<div class="row rtl">
+    <div class="col-md-3"></div>
+    <div class="col-md-6">
+        <h4>
+            <small class="text-muted">
+                پرسنل
+            </small>
+
+            {{employee.title}}
+
+            {% if perms.salary.change_employee %}
+            <span class="mx-2">
+
+                {{employee.get_edit_btn|safe}}
+            </span>
+            {% endif %}
+            {% if perms.salary.delete_employee %}
+            <span class="mx-2">
+
+                {{employee.get_delete_btn|safe}}
+            </span>
+            {% endif %}
+
+        </h4>
+    </div>
+    <div class="col-md-3"></div>
+    {% if perms.salary.add_salary %}
+    <div class="col-md-12">
+        {% include 'salary/includes/add-salary-app/template.html' %}
+    </div>
+    {% endif %}
+    <div class="col-md-12">
+        {% include 'salary/includes/salaries-app/template.html' %}
+    </div>
+</div>
+{% endblock content %}
+
+
+{% block script %}
+<script>
+    let employee_id=parseInt("{{employee.id}}")
+</script>
+{% include 'salary/includes/salaries-app/script.html' %}
+{% if perms.salary.add_salary %}
+{% include 'salary/includes/add-salary-app/script.html' %}
+{% endif %}
+
+{% endblock script %}

@@ -37,15 +37,13 @@
                             </label>
                             <input placeholder="شماره فاکتور" v-model="invoice_id" class="form-control" type="number">
                         </div>
-
-
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="">
                                 انتخاب فروشنده
                             </label>
-                            <select v-model="supplier_id" class="form-control" id="">
+                            <select v-model="supplier_id" class="form-control" id="" required>
                                 <option :value="supplier.id" v-for="supplier in suppliers" v-text="supplier.title">
                                 </option>
                             </select>
@@ -58,7 +56,7 @@
                             <label for="">
                                 انتخاب مشتری
                             </label>
-                            <select v-model="customer_id" class="form-control" id="">
+                            <select v-model="customer_id" class="form-control" id="" required>
                                 <option :value="customer.id" v-for="customer in customers"
                                     v-text="customer.account.title">
                                 </option>
@@ -75,7 +73,7 @@
                                 <small class="mx-2 text-muted" v-text="to_price(sum,'{{CURRENCY}}')"></small>
 
                             </label>
-                            <input placeholder="مبلغ" v-model="sum" class="form-control" type="number">
+                            <input placeholder="مبلغ" v-model="sum" required class="form-control" type="number">
                         </div>
 
                     </div>
@@ -87,7 +85,7 @@
                                 هزینه حمل
                                 <small class="mx-2 text-muted" v-text="to_price(ship_fee,'{{CURRENCY}}')"></small>
                             </label>
-                            <input placeholder="هزینه حمل" v-model="ship_fee" class="form-control" type="number">
+                            <input placeholder="هزینه حمل" v-model="ship_fee" class="form-control" required type="number">
 
                         </div>
 
@@ -113,7 +111,7 @@
                                 <small class="mx-2 text-muted" v-text="to_price(discount,'{{CURRENCY}}')"></small>
 
                             </label>
-                            <input placeholder="تخفیف" v-model="discount" class="form-control" type="number">
+                            <input placeholder="تخفیف" v-model="discount" required class="form-control" type="number">
                         </div>
 
                     </div>

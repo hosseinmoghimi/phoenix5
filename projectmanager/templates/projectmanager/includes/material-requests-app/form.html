@@ -1,14 +1,26 @@
 {% load static %}
-<div class="text-right">
+<div class="text-right" v-if="!show_add_material_request_form && !show_copy_material_request_form">
 
-    <button @click="show_add_material_request_form=true" v-if="!show_add_material_request_form" class="btn btn-primary">
+    <button @click="show_add()"
+        class="btn btn-success">
         <i class="fa fa-plus" aria-hidden="true"></i>
-        افزودن
+        افزودن درخواست متریال جدید
+    </button>
+    <button @click="show_copy()" 
+        class="btn btn-info">
+        <i class="fa fa-copy" aria-hidden="true"></i>
+        کپی
     </button>
 </div>
-<div v-if="show_add_material_request_form">
+<div v-if="show_copy_material_request_form || show_add_material_request_form" class="text-right">
+    <button @click="show_copy_material_request_form=show_add_material_request_form=false" class="btn btn-secondary">
+        <i class="fa fa-cancel" aria-hidden="true"></i>
+        انصراف
+    </button>
+</div>
+<div v-show="show_add_material_request_form">
 
-    <div class="row">
+    <div class="row rtl">
         <div class="col-md-3">
             <div class="form-group">
                 <label for="">نام متریال</label>
@@ -91,7 +103,7 @@
             </div>
         </div>
 
-        <div class="col-md-12">
+        <div class="col-md-8">
             <div class="form-group">
                 <label for="">توضیحات</label>
                 <input type="text" v-model="add_material_request_form_description" class="farsi form-control"
@@ -99,28 +111,31 @@
             </div>
         </div>
 
-        <div class="col-md-12 text-right">
+        <div class="col-md-12 text-right rtl">
             <img v-if="waiting" width="32" src="{% static 'leo/img/loading.gif' %}" alt="">
 
 
 
-            <button class="btn btn-outline-secondary" @click="show_add_material_request_form=false"
-                type="reset">Cancel</button>
-
-            <button @click="add_material_request()" v-if="!waiting" class="btn btn-primary">
+            <button @click="add_material_request()" v-if="!waiting" class="btn btn-success">
                 <i class="fa fa-plus" aria-hidden="true"></i>
                 افزودن
             </button>
+
+            <button class="btn btn-outline-secondary" @click="show_add_material_request_form=false"
+                type="reset">انصراف</button>
 
         </div>
     </div>
 
     <div class="table-responsive">
 
-        <table class="table table-striped my-3">
+        <table class="table table-striped my-3 rtl">
 
             <tbody>
                 <tr v-for="material in materials">
+                    <td>
+                        <button @click="select_material(material)" class="btn btn-info">انتخاب</button>
+                    </td>
                     <td>
                         <div class="media">
                             <a target="_blank" :href="material.get_pm_absolute_url">
@@ -146,21 +161,47 @@
 
 
                     </td>
-                    <td>
-                        <button @click="select_material(material)" class="btn btn-info">انتخاب</button>
-                    </td>
-                    <td>
-
-                    </td>
+                   
                 </tr>
             </tbody>
         </table>
     </div>
 
+
+    <div class="text-right rtl my-2">
+
+        <a href="{% url 'accounting:products' %}" target="_blank">
+            <span class="farsi">
+
+
+                همه متریال ها
+            </span>
+        </a>
+        <span class="mx-2">
+            <button class="btn btn-info  btn-sm" @click="fetch_materials()">
+
+                <i class="fa fa-refresh"></i>
+
+                بروز رسانی لیست متریال ها</button>
+        </span>
+    </div>
+
+</div>
+<div v-show="show_copy_material_request_form">
+
     <form @submit.prevent="copy_from_project()">
 
-        <div class="row">
-            <div class="col-md-4">
+        <div class="row rtl">
+
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="">کپی از پروژه </label>
+                    <input type="number" required v-model="source_project_id" class="form-control">
+
+                </div>
+            </div>
+
+            <div class="col-md-3">
                 <div class="form-group">
                     <label for="">فاکتور</label>
                     <select v-model="add_material_request_form_invoice_id" class="form-control farsi" id="" required>
@@ -182,16 +223,7 @@
                 </div>
 
             </div>
-
-            <div class="col-md-4">
-                <div class="form-group">
-                    <label for="">کپی از پروژه </label>
-                    <input type="number" required v-model="source_project_id" class="form-control">
-
-                </div>
-            </div>
-
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <div class="form-group">
                     <label for=""> وضعیت</label>
                     <select v-model="add_material_request_form_status" class="form-control farsi" id="" required>
@@ -204,18 +236,36 @@
                             وضعیت درخواست مبدا
                         </option>
                     </select>
+                   
+                </div>
+
+            </div>
+
+
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for=""> &nbsp;</label>
+                    
                     <button class="btn btn-block btn-success mt-2" type="submit">از پروژه کپی کن</button>
 
                 </div>
 
             </div>
+
         </div>
     </form>
 
     <form @submit.prevent="copy_from_invoice()">
 
-        <div class="row">
-            <div class="col-md-4">
+        <div class="row  rtl">
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="">کپی از فاکتور </label>
+                    <input type="number" required v-model="source_invoice_id" class="form-control">
+
+                </div>
+            </div>
+            <div class="col-md-3">
                 <div class="form-group">
                     <label for=""> فاکتور</label>
                     <select v-model="add_material_request_form_invoice_id" class="form-control farsi" id="" required>
@@ -237,15 +287,7 @@
                 </div>
 
             </div>
-            <div class="col-md-4">
-                <div class="form-group">
-                    <label for="">کپی از فاکتور </label>
-                    <input type="number" required v-model="source_invoice_id" class="form-control">
-                    <button class="btn btn-block btn-success mt-2" type="submit">از فاکتور کپی کن</button>
-
-                </div>
-            </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <div class="form-group">
                     <label for=""> وضعیت</label>
                     <select v-model="add_material_request_form_status" class="form-control farsi" id="" required>
@@ -262,12 +304,25 @@
 
             </div>
 
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for=""> &nbsp;</label>
+                    <button class="btn btn-block btn-success mt-2" type="submit">از فاکتور کپی کن</button>
+                    
+                </div>
+
+            </div>
+
         </div>
     </form>
+</div>
 
-    <a href="{% url 'accounting:products' %}" target="_blank">
-        <h6>
-            همه متریال ها
-        </h6>
-    </a>
+
+
+<div v-show="show_copy_material_request_form || show_add_material_request_form" class="text-right">
+
+    <button @click="show_copy_material_request_form=show_add_material_request_form=false" class="btn btn-secondary">
+        <i class="fa fa-cancel" aria-hidden="true"></i>
+        انصراف
+    </button>
 </div>

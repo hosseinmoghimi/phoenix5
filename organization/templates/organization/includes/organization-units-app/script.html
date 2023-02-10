@@ -30,7 +30,7 @@
             new_organization_unit_account_id: account_id,
             all_organization_units: all_organization_units,
             organization_units: JSON.parse(`{{organization_units_s|escapejs}}`),
-            message: "",
+            message: { show: false },
             waiting: false,
             show_form: false,
         },
@@ -73,7 +73,7 @@
                         organization_units_app.message = {
                             show: true,
                             color: "danger",
-                            text: "خطا در افزودن مورد جدید",
+                            body: "خطا در افزودن مورد جدید",
                         }
                     }
 
@@ -81,7 +81,7 @@
                         organization_units_app.message = {
                             show: true,
                             color: "success",
-                            text: "با موفقیت افزوده شد.",
+                            body: "با موفقیت افزوده شد.",
                         }
                         setTimeout(() => {
                             organization_units_app.message.show = false
@@ -100,7 +100,7 @@
             select_organization_unit: function (organization_unit_id) {
 
                 organization_units_app.waiting = true
-                let url = "{% url 'organization:add_organization_unit' %}"
+                let url = "{% url 'organization:select_organization_unit' %}"
                 let payload = {
                     csrfmiddlewaretoken: csrfmiddlewaretoken,
                     organization_unit_id: organization_unit_id,
@@ -114,37 +114,42 @@
                         organization_units_app.message = {
                             show: true,
                             color: "danger",
-                            text: "خطا در افزودن مورد جدید",
+                            body: data.message,
                         }
                     }
                     if (data.result === 'SUCCEED') {
                         organization_units_app.message = {
                             show: true,
                             color: "success",
-                            text: "با موفقیت افزوده شد.",
+                            body: data.message,
 
                         }
                         setTimeout(() => {
                             organization_units_app.message.show = false
                         }, 2000);
-                        organization_units_app.organization_units.push(data.organization_unit)
+                        organization_units_app.organization_units = (data.organization_units)
                         organization_units_app.new_organization_unit_title = ""
                         // if(typeof material_requests_app != 'undefined')
                         // material_requests_app.employees.push()
+                        if (typeof material_requests_app != "undefined") {
+                            material_requests_app.employees = []
+                        }
+                        if (typeof service_requests_app != "undefined") {
+                            service_requests_app.employees = []
+                        }
+                        organization_units_app.organization_units.forEach(organization_unit => {
+                            organization_unit.employees.forEach(employee => {
+                                if (typeof material_requests_app != "undefined") {
+                                    material_requests_app.employees.push(employee)
+                                }
 
+                                if (typeof service_requests_app != "undefined") {
+                                    service_requests_app.employees.push(employee)
+                                }
 
-                        console.log(data.organization_unit.employees)
-                        data.organization_unit.employees.forEach(employee => {
-                            console.log(employee)
-                            if (typeof material_requests_app != "undefined") {
-                                material_requests_app.employees.push(employee)
-                            }
-
-                            if (typeof service_requests_app != "undefined") {
-                                service_requests_app.employees.push(employee)
-                            }
-
+                            });
                         });
+
 
                     }
                 })

@@ -8,17 +8,17 @@
 <script>
 
     let all_materials = JSON.parse(`{{all_materials_s|escapejs}}`)
-    let employees=JSON.parse(`{{employees_s|escapejs}}`)
+    let employees = JSON.parse(`{{employees_s|escapejs}}`)
     let url_add_material_request = "{% url 'projectmanager:add_material_request' %}"
     material_requests_app_data = {
         id: 127,
-        add_material_request_form_status:"",
+        add_material_request_form_status: "",
         employees: JSON.parse(`{{employees_s|escapejs}}`),
         new_material_request_material_id: 1,
         add_material_request_form_title: "",
         add_material_request_form_invoice_id: 0,
         source_project_id: 0,
-        source_invoice_id:0,
+        source_invoice_id: 0,
         invoices: JSON.parse(`{{material_invoices_s|escapejs}}`),
         statuses: JSON.parse(`{{statuses_s|escapejs}}`),
         materials: [],
@@ -30,9 +30,10 @@
         waiting: false,
         sum_material_requests: 0,
         show_add_material_request_form: false,
+        show_copy_material_request_form: false,
         add_material_request_form_employee_id: "",
         filter_status: "",
-        employees:employees,
+        employees: employees,
     }
 </script>
 {% else %}
@@ -44,6 +45,7 @@
         sum_material_requests: 0,
         count_material_requests: 0,
         show_add_material_request_form: false,
+        show_copy_material_request_form: false,
         filter_status: "",
     }
 </script>
@@ -79,6 +81,25 @@
                 if (this.filter_status != "") {
                     this.material_requests = this.material_requests.filter(item => item.status === material_requests_app.filter_status)
                 }
+            },
+            show_copy: function () {
+                material_requests_app.show_copy_material_request_form = true
+                material_requests_app.show_add_material_request_form = false
+                console.log("show_copy")
+            },
+            show_add: function () {
+                material_requests_app.show_copy_material_request_form = false
+                material_requests_app.show_add_material_request_form = true
+                console.log("show_add")
+            },
+            fetch_materials: function () {
+                var getting = $.get("{% url 'projectmanager:fetch_materials' %}", {});
+                getting.done((data) => {
+                    console.log(data)
+                    if (data.result === 'SUCCEED') {
+                        all_materials = data.materials
+                    }
+                })
             },
             copy_from_project: function () {
                 console.log(this.source_project_id)

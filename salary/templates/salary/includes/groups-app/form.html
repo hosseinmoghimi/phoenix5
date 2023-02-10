@@ -1,0 +1,49 @@
+{% if add_group_form %}
+<div class="text-right">
+    <button @click="show_form=true" v-if="!show_form" class="btn btn-success">
+        <i class="fa fa-plus"></i>
+    </button>
+
+    <button @click="show_form=false" v-if="show_form" class="btn btn-secondary">
+        <i class="fa fa-plus"></i>
+    </button>
+</div>
+<div v-if="show_form">
+
+  <form @submit.prevent="add_group()">
+    <div class="row rtl text-right">
+        <div class="col-md-12">
+            <div class="form-group">
+                <label for="">نوع</label>
+                <select v-model="type" class="form-control">
+                    <option :value="group_type1" v-for="group_type1 in group_type_enums" v-text="group_type1"></option>
+                </select>
+            </div>
+        </div>
+
+        <div class="col-md-12">
+            <div class="form-group">
+                <label for="">عنوان گروه جدید</label>
+                <input type="text" v-model="title" class="form-control" required>
+            </div>
+        </div>
+
+      
+        
+
+        <div class="col-md-12">
+            <div class="form-group">
+            <button class="btn btn-success">
+                <i class="fa fa-plus"></i>
+                افزودن
+            </button>     
+            </div>
+        </div>
+        
+    </div>
+  </form>
+  <div>
+    
+  </div>
+</div>
+{% endif %}

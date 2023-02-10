@@ -459,6 +459,8 @@ class AddFinancialBalancesApi(APIView):
 class AddAccountApi(APIView):
     def post(self,request,*args, **kwargs):
         context={}
+        result=FAILED
+        message=""
         log=111
         context['result']=FAILED
         if request.method=='POST':
@@ -467,10 +469,11 @@ class AddAccountApi(APIView):
             if add_account_form.is_valid():
                 log=333
                 cd=add_account_form.cleaned_data
-                account=AccountRepo(request=request).add_account(**cd)
+                account,message,result=AccountRepo(request=request).add_account(**cd)
                 if account is not None:
                     context['account']=AccountSerializer(account).data
-                    context['result']=SUCCEED
+        context['message']=message
+        context['result']=result
         context['log']=log
         return JsonResponse(context)
 

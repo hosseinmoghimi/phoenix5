@@ -13,6 +13,7 @@ from utility.calendar import (PERSIAN_MONTH_NAMES, PersianCalendar,
                               to_persian_datetime_tag)
 from utility.currency import to_price
 from utility.excel import get_excel_report
+from utility.log import leolog
 from utility.utils import LinkHelper
 
 from accounting.apps import APP_NAME
@@ -164,6 +165,8 @@ class Transaction(Page,LinkHelper):
             return True
         if old_transaction.status==TransactionStatusEnum.FROM_PAST:
             return True
+        if old_transaction.status==TransactionStatusEnum.READY:
+            return False
         if old_transaction.status==TransactionStatusEnum.CANCELED:
             return True
         if old_transaction.status==TransactionStatusEnum.FINISHED:
@@ -328,6 +331,7 @@ class Product(ProductOrService):
     def get_market_absolute_url(self):
         return reverse("market:product",kwargs={'pk':self.pk})
  
+
 class AccountTag(models.Model,LinkHelper):
     account=models.ForeignKey("account", verbose_name=_("account"), on_delete=models.CASCADE)
     tag=models.CharField(_("tag"), max_length=50)
@@ -379,6 +383,7 @@ class Account(models.Model,LinkHelper):
     profile=models.ForeignKey("authentication.profile", verbose_name=_("profile"),null=True,blank=True, on_delete=models.CASCADE)
     address=models.CharField(_("آدرس"),null=True,blank=True, max_length=200)
     tel=models.CharField(_("تلفن"),null=True,blank=True, max_length=50)
+    mobile=models.CharField(_("موبایل"),null=True,blank=True, max_length=50)
     description=models.CharField(_("توضیحات"),blank=True,max_length=5000)
     economic_no=models.CharField(_("شماره اقتصادی"),max_length=50,null=True,blank=True)
     melli_id=models.CharField(_("شناسه ملی"),max_length=50,null=True,blank=True)
@@ -528,7 +533,7 @@ class BankAccount(models.Model,LinkHelper):
     #     return 0-self.rest()
  
     def __str__(self):
-        return self.title
+        return f"حساب {self.bank} {self.account} {self.account} : {self.title}"
 
     def save(self,*args, **kwargs):
          
@@ -540,6 +545,24 @@ class BankAccount(models.Model,LinkHelper):
                 account_name=self.account.title 
             self.title=f"""حساب {self.bank} {account_name}"""
         super(BankAccount,self).save(*args, **kwargs)
+    
+    def to_variz_text(bank_account):
+        if bank_account is None:
+            return ""
+        text=" جهت واریز : "
+        if bank_account.account_no:
+            text+="""<small class="text-muted"> شماره حساب : </small>"""
+            text+=bank_account.account_no
+        if bank_account.card_no:
+            text+="""<small class="text-muted"> شماره کارت :</small> """
+            text+=bank_account.card_no
+        if bank_account.shaba_no:
+            text+="""<small class="text-muted"> شماره شبا :</small>"""
+            text+=bank_account.shaba_no
+        if bank_account.account:
+            text+="""<small class="text-muted"> به نام  : </small>"""
+            text+= bank_account.title
+        return f"""<span class="rtl farsi">{text}</span>"""
 
 
 class FinancialYear(models.Model):
@@ -838,14 +861,19 @@ class Invoice(Transaction):
         sum+=self.tax_amount()
         sum-=self.discount
         return sum
+    def calculate_sum(self):
+        self.amount=self.sum_total()
+
     def save(self,*args, **kwargs):
+        if self.description is None or self.description=="":
+            self.description="این فاکتور فقط برای استعلام قیمت بوده و هیچ گونه ارزش قانونی دیگری ندارد."
         if self.class_name is None:
             self.class_name='invoice' 
         if self.app_name is None:
             self.app_name=APP_NAME
         if self.title is None or self.title=="":
             self.title=f"فاکتور شماره {self.pk}"
-        self.amount=self.sum_total()
+        self.calculate_sum()
         super(Invoice,self).save(*args, **kwargs)
       
     class Meta:
@@ -881,8 +909,7 @@ class InvoiceLine(models.Model,LinkHelper):
     unit_name=models.CharField(_("unit_name"),max_length=50,choices=UnitNameEnum.choices,default=UnitNameEnum.ADAD)
     description=models.CharField(_("description"),null=True,blank=True, max_length=50)
     class_name="invoiceline"
-    app_name=APP_NAME
-
+    app_name=APP_NAME 
     def save(self,*args, **kwargs):
         if not self.invoice.editable:
             return None
@@ -897,13 +924,18 @@ class InvoiceLine(models.Model,LinkHelper):
         if not self.invoice.editable:
             return None
         invoice=self.invoice
+        invoice=self.invoice
         super(InvoiceLine,self).delete()
-        i=0
-        for invoice_line in invoice.invoice_lines().order_by('row'):
-            i+=1
-            if not invoice_line.row-i==0:
-                invoice_line.row=i
-                invoice_line.save()
+        
+        invoice.calculate_sum()
+        invoice.save()
+        invoice.normalize_rows()
+        # i=0
+        # for invoice_line in invoice.invoice_lines().order_by('row'):
+        #     i+=1
+        #     if not invoice_line.row-i==0:
+        #         invoice_line.row=i
+        #         invoice_line.save()
 
     class Meta:
         verbose_name = _("InvoiceLine")
@@ -931,9 +963,12 @@ class Category(models.Model,LinkHelper, ImageMixin):
     for_home=models.BooleanField(_("for_home"),default=False)
     priority=models.IntegerField(_("اولویت / ترتیب"),default="1000")
     products_or_services=models.ManyToManyField("accounting.productorservice", blank=True,verbose_name=_("products or services"))
+    full_title=models.CharField(_("full_title"),null=True,blank=True, max_length=500)
     class_name='category'
     app_name=APP_NAME
-    
+    def save(self):
+        self.full_title=self.full_title_
+        super(Category,self).save()
     @property
     def products(self):
         ids=[]
@@ -1008,10 +1043,13 @@ class Category(models.Model,LinkHelper, ImageMixin):
         """
     
     @property
-    def full_title(self):
-        if self.parent is not None:
-            return self.parent.full_title+" / " +self.title
-        return self.title
+    def full_title_(self):
+        if self.parent is None:
+            if self.title is None:
+                return ""
+            return self.title
+        else:
+            return self.parent.full_title_+" / " +self.title
 
     def get_market_absolute_url(self):
         return reverse("market:category",kwargs={'pk':self.pk})

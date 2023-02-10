@@ -28,7 +28,7 @@
                 <img src="{% static 'leo/img/loading.gif' %}" width="32" v-if="waiting" alt="">
                 <select v-model="category_id" class="form-control">
 
-                    <option v-for="category in all_categories" :value="category.id" v-text="category.full_title"></option>
+                    <option v-for="category in all_categories" :title="category.full_title" :value="category.id" v-text="category.full_title"></option>
                 </select>
                 <button type="submit" class="btn btn-block btn-success">تایید</button>
             </form>
@@ -40,5 +40,12 @@
             </a>
         </h4>
         {% endif %}
+        <div class="my-2  text-center">
+            <a href="{% url 'accounting:categories' %}" target="_blank">
+                <small class="farsi text-center text-muted">
+                    همه دسته بندی ها
+                </small>
+            </a>
+        </div>
     </div>
 </div>

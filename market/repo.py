@@ -291,8 +291,8 @@ class CustomerRepo():
             if inviter_id is not None and inviter_id>0:
             
                 customer.inviter_id=inviter_id
-        
-        customer.account.tel=mobile
+        if mobile is not None and not mobile=="":
+            customer.account.mobile=mobile
         if customer is not None:
             customer.save()
             customer.account.save()
@@ -474,7 +474,10 @@ class CartRepo():
             market_invoice_line.save()
             result=SUCCEED
 
-            message="با موفقیت خرید شد."
+            message="""با موفقیت خرید شد."""
+            for market_invoice in market_invoices:
+
+                message+=f"""<a class="mx-2" href="{market_invoice.get_absolute_url()}">{market_invoice.title}</a>"""
             if result==SUCCEED:
                 cart_line.delete()
         leolog(market_invoices=market_invoices,message=message,result=result)

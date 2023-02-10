@@ -1,0 +1,63 @@
+{% extends "market/layout.html" %}
+{% load to_price %}
+{% load to_persian_date %}
+{% load static %}
+
+
+{% block content %}
+<div class="page-header header-filter header-small" data-parallax="true"
+    style="background-image: url(&quot;{{header_image.image}}&quot;); transform: translate3d(0px, 0px, 0px);">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8 ml-auto mr-auto text-center">
+                <div class="brand">
+                    
+
+
+                    <h1 class="title farsi text-center">{{title}}</h1>
+
+                   
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="main main-raised">
+ 
+
+
+ 
+
+
+    <!-- section -->
+    <div class="section">
+        <div class="container">
+            <h3 class="section-title text-center farsi">{{title}}</h3>
+
+            <div class="row">
+                <div class="col-md-12">
+{% include 'market/includes/invoices-app/template.html' %}
+                </div>
+
+            </div>
+
+            <br>
+
+        </div>
+    </div><!-- section -->
+</div>
+
+{% endblock %}
+{% block modal %}
+{% endblock %}
+
+
+
+{% block script %}
+{% include 'market/includes/invoices-app/script.html' %}
+
+ 
+
+
+{% endblock %}

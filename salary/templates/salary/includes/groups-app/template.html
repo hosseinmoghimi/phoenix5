@@ -1,0 +1,100 @@
+<div id="accordion-groups">
+
+    <div class="card mb-3" id="groups-app">
+        <div class="card-header" id="heading-groups">
+            <h5 class="text-center">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-groups" aria-expanded="true"
+                    aria-controls="collapse-groups">
+گروه ها                    <span v-if="groups.length>0">
+                        <small class="text-danger mx-2">
+                            <span v-text="groups.length"></span>
+                        </small>
+                    </span>
+
+
+                </button>
+            </h5>
+
+            {% if page_pre_description %}
+
+            <h5 class="text-center">
+                {{page_pre_description}}
+            </h5>
+            {% endif %}
+            {% if page_description %}
+
+            <h4 class="text-center">
+                {{page_description}}
+            </h4>
+            {% endif %}
+        </div>
+        <div id="collapse-groups" class="collapse{% if expand_groups %} show {% endif %}" aria-labelledby="heading-groups" data-parent="#accordion-groups">
+
+            <div class="card-body">
+<div>
+    <input type="text" class="form-control" v-model="search_for" @input="search()">
+</div>
+                <div class="table-responsive">
+                    <table class="table rtl">
+                        <thead>
+                            
+                           
+                            
+                            <th>
+                                عنوان گروه
+                            </th>
+                           
+                            <th>
+                                نوع
+                            </th>
+                           
+                            <th>
+                                
+                            </th>
+                        </thead>
+                        <tbody>
+                            <tr v-for="group in groups">
+                              
+                                <td> 
+                                        <a :href="group.get_absolute_url">
+                                        <h5>
+                                            <span v-text="group.title"></span>
+                                        </h5>  
+                                        </a>
+                                       
+                                </td>
+                                
+                                
+                                  <td>
+                                    <span v-text="group.type"></span>
+
+                                </td>
+                               
+                                <td>
+                                  
+                                    <a title="ویرایش" :href="group.get_edit_url" target="_blank">
+                                        <i class="fa fa-edit text-warning"></i>
+                                        
+                                    </a>
+                                    <a title="حذف" :href="group.get_delete_url" target="_blank">
+                                        <i class="fa fa-trash text-danger"></i>
+                                    </a>
+
+                                </td>
+
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+
+            </div>
+            <div class="card-footer">
+                {% if add_group_form %}
+
+                {% include "salary/includes/groups-app/form.html" %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>

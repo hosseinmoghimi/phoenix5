@@ -15,6 +15,8 @@ from .serializers import OrderSerializer,CouponSerializer,CoefSerializer
 from .repo import OrderRepo,CouponRepo,CoefRepo
 import json
 from accounting.views import get_transaction_context
+from dashboard.views import MessageView
+
 LAYOUT_PARENT="phoenix/layout.html"
 
 TEMPLATE_ROOT="loyaltyclub/"
@@ -48,6 +50,11 @@ class IndexView(View):
 
 class CustomersView(View):
     def get(self, request, *args, **kwargs):
+        if not request.user.has_perm(APP_NAME+".view_customer"):
+            mv=MessageView(request=request)
+            mv.title="عدم دسترسی مجاز"
+            mv.message_text="شما مجوز لازم برای نمایش لیست مشتریان را دارا نمی باشید."
+            return mv.response()
         context = getContext(request)
         customer_repo=CustomerRepo(request=request)
         customers=customer_repo.list(*args,**kwargs)

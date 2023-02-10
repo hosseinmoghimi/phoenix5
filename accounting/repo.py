@@ -399,7 +399,7 @@ class CategoryRepo():
             objects=objects.filter(parent_id=kwargs['super_category_id'])
         if 'category_title' in kwargs:
             objects=objects.filter(category_title=kwargs['category_title'])
-        return objects.order_by("priority")
+        return objects.order_by("full_title").order_by("priority")
 
     def add_category(self,*args, **kwargs):
         if not self.user.has_perm(APP_NAME+".add_category"):
@@ -857,8 +857,14 @@ class AccountRepo():
             return self.objects.filter(profile=self.profile)
    
     def add_account(self,*args, **kwargs):
+        account,message,result=(None,"",FAILED)
         if not self.request.user.has_perm(APP_NAME+".add_account"):
-            return
+            message="دسترسی غیر مجاز"
+            return account,message,result
+        if len(Account.objects.filter(title=kwargs['title']))>0:
+            message="از قبل حسابی با همین عنوان ثبت شده است."
+            return account,message,result
+
         account=Account()
 
         if 'title' in kwargs:
@@ -871,6 +877,8 @@ class AccountRepo():
             account.address=kwargs['address']
         if 'tel' in kwargs:
             account.tel=kwargs['tel']
+        if 'mobile' in kwargs:
+            account.mobile=kwargs['mobile']
        
         
         # if 'financial_year_id' in kwargs:
@@ -879,6 +887,8 @@ class AccountRepo():
         #     payment.financial_year_id=FinancialYear.get_by_date(date=payment.transaction_datetime).id
 
         account.save()
+        result=SUCCEED
+        message="با موفقیت اضافه گردید."
         
         if 'balance' in kwargs and kwargs['balance'] is not None and not kwargs['balance']==0:
             me_account=self.me
@@ -899,7 +909,7 @@ class AccountRepo():
                     payment.pay_to_id=account.id
                 payment.save()
 
-        return account
+        return account,message,result
 
     def add_account_tag(self,*args, **kwargs):
         result,message,account_tags=FAILED,"",[]
@@ -1265,8 +1275,6 @@ class InvoiceRepo():
         if 'payment_method' in kwargs:
             invoice.payment_method=kwargs['payment_method']
 
-        if 'status' in kwargs:
-            invoice.status=kwargs['status']
 
         if 'title' in kwargs:
             invoice.title=kwargs['title']
@@ -1290,7 +1298,6 @@ class InvoiceRepo():
         if 'tax_percent' in kwargs:
             invoice.tax_percent=kwargs['tax_percent']
 
-        invoice.save()
 
 
         if 'lines' in kwargs:
@@ -1322,8 +1329,13 @@ class InvoiceRepo():
                         invoice_line.unit_name=line['unit_name']
                         invoice_line.save()
                     
-        invoice.save()
+                
+        if 'status' in kwargs:
+            invoice.status=kwargs['status']
+        invoice.save()    
         invoice.normalize_rows()
+        
+        invoice.save()
         result=SUCCEED
         message="فاکتور با موفقیت ویرایش شد."
         return (result,invoice,message)

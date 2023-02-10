@@ -34,7 +34,10 @@ urlpatterns = [
 
     path("service/<int:pk>/",login_required(views.ServiceView.as_view()),name="service"),
     path("services/",login_required(views.ServicesView.as_view()),name="services"),
-  
+    
+    path('fetch_materials/',login_required(apis.FetchMaterialsApi.as_view()),name="fetch_materials"),
+    path('fetch_services/',login_required(apis.FetchServicesApi.as_view()),name="fetch_services"),
+   
     path('add_material_request/',login_required(apis.AddMaterialRequestApi.as_view()),name="add_material_request"),
     path('add_service_request/',login_required(apis.AddServiceRequestApi.as_view()),name="add_service_request"),
     path('add_project/',login_required(apis.AddProjectApi.as_view()),name="add_project"),
