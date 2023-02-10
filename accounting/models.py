@@ -865,6 +865,8 @@ class Invoice(Transaction):
         self.amount=self.sum_total()
 
     def save(self,*args, **kwargs):
+        if self.description is None or self.description=="":
+            self.description="این فاکتور فقط برای استعلام قیمت بوده و هیج گونه ارزش قانونی دیگری ندارد."
         if self.class_name is None:
             self.class_name='invoice' 
         if self.app_name is None:
