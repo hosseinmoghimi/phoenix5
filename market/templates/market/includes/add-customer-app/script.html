@@ -9,7 +9,6 @@
             customers:customers,
             region_id: 0,
             accounts: accounts,
-            mobile: "",
             name: "",
             search_for: '',
             inviter_id:0,
@@ -30,8 +29,7 @@
                     csrfmiddlewaretoken: csrfmiddlewaretoken,
                     account_id: parseInt(this.account_id),
                     region_id: parseInt(this.region_id),
-                    inviter_id: parseInt(this.inviter_id),
-                    mobile: this.mobile,
+                    inviter_id: parseInt(this.inviter_id), 
                 }
                 add_customer_app.waiting = true
                 $.post(url, payload).done((data) => {
