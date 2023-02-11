@@ -31,11 +31,11 @@
                         <h5>
         
                             خالص پرداختی
-        
+        :
         
                             {{sum_total|to_price}}
-                            {{sum_total|to_horuf}}
                         </h5>
+                         
                        
                     </div>
                 </div>
@@ -138,6 +138,41 @@
                         
                     </tbody>
                 </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5>
+
+                    خالص پرداختی
+                </h5>
+
+            </div>
+            <div class="card-body">
+                <h5>
+        
+
+
+                    {{sum_total|to_price}}
+                 
+
+
+                    
+                </h5>  
+                 <h5>
+        
+                   
+
+                    
+
+                    {{sum_total|to_price_rial}}  
+                </h5>
+                <h5>
+                    {{sum_total|to_horuf}} {{CURRENCY}}
+
+                </h5>
             </div>
         </div>
     </div>
