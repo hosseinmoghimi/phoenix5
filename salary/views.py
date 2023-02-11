@@ -89,6 +89,7 @@ class EmployeeView(View):
             context['add_salary_form']=AddSalaryForm()
             context['MAZAYA']=SalaryRowDirectionEnum.MAZAYA
             context['KOSURAT']=SalaryRowDirectionEnum.KOSURAT
+            context['SalaryRows']=SalaryRows
 
         if request.user.has_perm(APP_NAME+".add_group"):
             context['add_group_form']=AddGroupForm()

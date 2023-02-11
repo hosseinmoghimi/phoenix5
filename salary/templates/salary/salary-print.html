@@ -52,7 +52,7 @@
                 </h5>
             </div>
             <div class="card-body">
-                <table class="table rtl table-striped">
+                <table class="table rtl ">
                     <thead>
                         <th>
                             عنوان
@@ -75,17 +75,19 @@
                             </td>
                         </tr>
                         {% endfor %}
-                        <tr>
-                            <td>
-                                جمع
-                            </td>
-                            <td>
-                                {{sum_mazaya|to_price}}
-
-                            </td>
-                        </tr>
+                        
 
                     </tbody>
+                    <tfoot>
+                        <th>
+                            جمع
+                            
+                        </th> 
+                         <th>
+                            {{sum_mazaya|to_price}}
+                            
+                        </th>
+                    </tfoot>
                 </table>
             </div>
         </div>
@@ -99,7 +101,7 @@
                 </h5>
             </div>
             <div class="card-body">
-                <table class="table rtl table-striped">
+                <table class="table rtl">
                     <thead>
                         <th>
                             عنوان
@@ -122,15 +124,18 @@
                             </td>
                         </tr>
                         {% endfor %}
-                        <tr>
-                            <td>
+                        <tfoot>
+                            <th>
                                 جمع
-                            </td>
-                            <td>
+                                
+                            </th> 
+                             <th>
                                 {{sum_kosurat|to_price}}
+                                
+                            </th>
+                        </tfoot>
 
-                            </td>
-                        </tr>
+                        
                     </tbody>
                 </table>
             </div>

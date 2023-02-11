@@ -45,7 +45,9 @@
                     <div class="row rtl">
                         <div class="col-md-4">
                             <select name="month" class="form-control">
+                                {% if month_name %}
                                 <option selected value="{{month}}">{{month_name}}</option>
+                                {% endif %}
                                 <option value="1">فروردین</option>
                                 <option value="2">اردیبهشت</option>
                                 <option value="3">خرداد</option>
@@ -62,7 +64,9 @@
                         </div>
                         <div class="col-md-4">
                             <select name="year" class="form-control">
+                                {% if year %}
                                 <option selected value="{{year}}">{{year}}</option>
+                                {% endif %}
                                 <option value="1401">1401</option>
                                 <option value="1402">1402</option>
                                 <option value="1403">1403</option>

@@ -12,7 +12,12 @@
                     <div class="col-md-4">
                         <div class="form-group">
                             <label for="">عنوان</label>
-                            <input type="text" v-model="title" class="form-control" required>
+                            <select v-model="title"  class="form-control" required>
+                                {% for SalaryRow in SalaryRows %}
+                                  <option value="{{SalaryRow}}">{{SalaryRow}}</option>
+                                {% endfor %}
+                            </select>
+                            <!-- <input type="text" v-model="title" class="form-control" required> -->
                         </div>
                     </div>
 

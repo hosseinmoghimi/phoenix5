@@ -25,8 +25,6 @@ class SalaryRepo():
         result,message,salary=FAILED,"",None
         if not self.user.has_perm(APP_NAME+".add_salary"):
             return None
-        print(kwargs)
-        print(10 * "kwargs")
             
         salary=Salary(*args, **kwargs)
         # if 'title' in kwargs:
@@ -36,6 +34,7 @@ class SalaryRepo():
         
         # group.creator=ProfileRepo(request=self.request).me
         salary_old=Salary.objects.filter(employee_id=salary.employee_id).filter(title=salary.title).filter(year=salary.year).filter(month=salary.month)
+        
         if len(salary_old)>0:
             message="ردیف حقوقی تکراری"
             return result,message,salary
