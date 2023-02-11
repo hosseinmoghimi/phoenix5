@@ -107,6 +107,8 @@ class PrintEmployeeSalaryView(View):
         context=getContext(request=request)
         employee=EmployeeRepo(request=request).employee(*args, **kwargs)
         context['employee']=employee
+        context['no_navbar']=True
+        context['no_footer']=True
         if 'month' in kwargs and 'year' in kwargs:
             context['print_employee_year_month']=True
             month=kwargs['month'] 
