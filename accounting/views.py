@@ -129,11 +129,12 @@ def get_invoice_context(request,*args, **kwargs):
     
     # warehouse_sheets=[]
     if app_is_installed('warehouse'):
-        from warehouse.repo import WareHouseSheetRepo
+        from warehouse.repo import WareHouseSheetRepo,WareHouseSheetStatusEnum
         from warehouse.serializers import WareHouseSheetSerializer
         warehouse_sheets=WareHouseSheetRepo(request=request).list(invoice_id=invoice.id)
         warehouse_sheets_s=json.dumps(WareHouseSheetSerializer(warehouse_sheets,many=True).data)
         context['warehouse_sheets_s']=warehouse_sheets_s
+        context['ware_house_sheet_statuses']=(a[0] for a in WareHouseSheetStatusEnum.choices)
 
     return context
 
