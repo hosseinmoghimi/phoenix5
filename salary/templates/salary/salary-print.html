@@ -1,0 +1,141 @@
+{% extends 'salary/layout.html' %}
+{% load to_price %}
+{% block content %}
+
+<div class="row rtl">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+
+                <div class="media">
+                    <img src="{{employee.account.logo}}" class="rounded" width="128" alt="">
+                    <div class="mr-3 media-body">
+                        <h5>
+
+                            {{employee.account.title}}
+                        </h5>
+
+                        <h6>
+
+                            {{employee.organization_unit.root_title}}
+                        </h6>
+
+
+                        <h5>
+
+                            {{month_name}}
+        
+        
+                            {{year}}
+                        </h5>
+                        <h5>
+        
+                            خالص پرداختی
+        
+        
+                            {{sum_total|to_price}}
+                            {{sum_total|to_horuf}}
+                        </h5>
+                       
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5>
+                    مزایا
+                </h5>
+            </div>
+            <div class="card-body">
+                <table class="table rtl table-striped">
+                    <thead>
+                        <th>
+                            عنوان
+                        </th>
+                        <th>
+                            مبلغ
+                        </th>
+                    </thead>
+
+                    <tbody>
+                        {% for maza in mazaya %}
+
+                        <tr>
+                            <td>
+                                {{maza.title}}
+                            </td>
+                            <td>
+                                {{maza.amount|to_price}}
+
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        <tr>
+                            <td>
+                                جمع
+                            </td>
+                            <td>
+                                {{sum_mazaya|to_price}}
+
+                            </td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5>
+                    کسورات
+                </h5>
+            </div>
+            <div class="card-body">
+                <table class="table rtl table-striped">
+                    <thead>
+                        <th>
+                            عنوان
+                        </th>
+                        <th>
+                            مبلغ
+                        </th>
+                    </thead>
+
+                    <tbody>
+                        {% for kosur in kosurat %}
+
+                        <tr>
+                            <td>
+                                {{kosur.title}}
+                            </td>
+                            <td>
+                                {{kosur.amount|to_price}}
+
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        <tr>
+                            <td>
+                                جمع
+                            </td>
+                            <td>
+                                {{sum_kosurat|to_price}}
+
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock content %}

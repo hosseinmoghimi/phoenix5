@@ -89,7 +89,7 @@ class Salary(models.Model,LinkHelper):
         return "danger"
     @property
     def month_name(self):
-        return to_persian_month_name(self.month-1)
+        return to_persian_month_name(self.month)
 
 
     def __str__(self):

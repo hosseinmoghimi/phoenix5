@@ -1,5 +1,9 @@
 from django import forms
 
+class SelectSalaryForm(forms.Form):
+    employee_id=forms.IntegerField(required=False) 
+    month=forms.IntegerField(required=False) 
+    year=forms.IntegerField(required=False) 
 
 
 class AddSalaryForm(forms.Form):

@@ -24,6 +24,19 @@
         <div id="collapse-salaries" class="collapse {% if expand_salaries %}show{% endif %}"
             aria-labelledby="heading-salaries" data-parent="#accordion-salaries">
             <div class="card-body">
+                
+                {% if print_employee_year_month %}
+                    <div class="text-right">
+                        <a target="_blank" href="{% url 'salary:print_employee_year_month' employee_id=employee.id month=month year=year %}" class="btn btn-success">
+                            <i class="fa fa-preint"></i>
+                            <span class="farsi">
+
+                                چاپ
+                            </span>
+                        </a>
+                    </div>
+                {% endif %}
+                    
                 <div class="table-responsive">
                     <table class="table table-striped rtl">
                         <thead>

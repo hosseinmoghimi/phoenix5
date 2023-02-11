@@ -1,6 +1,11 @@
 {% load static %}
 <div id="add-salary-app">
     <div class="card">
+        <div class="card-header">
+            <h5>
+                افزودن ردیف حقوقی
+            </h5>
+        </div>
         <div class="card-body">
             <form @submit.prevent="add_salary()">
                 <div class="row rtl">
@@ -43,7 +48,7 @@
                     <div class="col-md-4">
                         <div class="form-group">
                             <label for="">سال</label>
-                            <select v-model="year" class="form-control" required>
+                            <select v-model="year"  class="form-control" required>
                                 <option value="1401">1401</option>
                                 <option value="1402">1402</option>
                                 <option value="1403">1403</option>

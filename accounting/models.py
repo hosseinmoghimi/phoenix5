@@ -1094,7 +1094,7 @@ class Salary(Spend,LinkHelper):
     month=models.IntegerField(_("month"))
     year=models.IntegerField(_("year"))
     def month_year(self):
-        return PERSIAN_MONTH_NAMES[self.month-1]+" " + str(self.year)
+        return PERSIAN_MONTH_NAMES[self.month]+" " + str(self.year)
     
     class Meta:
         verbose_name = _("Salary")

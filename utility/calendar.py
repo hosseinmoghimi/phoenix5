@@ -20,6 +20,7 @@ def to_persian_datetime_tag(value,*args, **kwargs):
         return ""
 
 PERSIAN_MONTH_NAMES=[
+'',
 'فروردین',
 'اردیبهشت',
 'خرداد',

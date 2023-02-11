@@ -11,8 +11,8 @@ urlpatterns = [
     path("group/<int:pk>/",login_required(views.GroupView.as_view()),name="group"),
     path("salary/<int:pk>/",login_required(views.SalaryView.as_view()),name="salary"),
     path("employee/<int:pk>/",login_required(views.EmployeeView.as_view()),name="employee"),
-    path("employee/<int:pk>/<int:year>/",login_required(views.EmployeeView.as_view()),name="employee_year"),
-    path("employee/<int:pk>/<int:year>/<int:month>/",login_required(views.EmployeeView.as_view()),name="employee_month"),
+    # path("employee/<int:pk>/<int:year>/",login_required(views.EmployeeView.as_view()),name="employee_year"),
+    path("employee/<int:employee_id>/<int:year>/<int:month>/",login_required(views.PrintEmployeeSalaryView.as_view()),name="print_employee_year_month"),
 
     path("add_group/",login_required(apis.AddGroupApi.as_view()),name="add_group"),
     path("add_salary/",login_required(apis.AddSalaryApi.as_view()),name="add_salary"),

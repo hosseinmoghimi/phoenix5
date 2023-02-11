@@ -1,0 +1,30 @@
+<script>
+    let monthly_salaries_app_monthly_salaries = JSON.parse(`{{monthly_salaries_s|escapejs}}`)
+    let monthly_salaries_app = new Vue({
+        el:"#monthly-salaries-app",
+        data: {
+            monthly_salaries: monthly_salaries_app_monthly_salaries,
+            search_for:'',
+            waiting:false,
+        },
+        methods: {
+            filter:function(){
+                this.monthly_salaries = monthly_salaries_app_monthly_salaries.filter(monthly_salary=> monthly_salary.title.indexOf(this.search_for) > -1 )
+            },
+            to_price: function (vall) {
+                let color='primary'
+                if (vall<0)
+                color='danger'
+                if (vall>0)
+                color='success'
+                vall=to_price(vall,"{{CURRENCY}}")
+                return `
+                    <span class="text-${color}">${vall}</span>
+                    `
+            },
+           filter_salary:function(){
+
+           }
+        }
+    })
+</script>

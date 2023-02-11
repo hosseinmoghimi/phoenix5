@@ -22,6 +22,11 @@ class OrganizationUnit(Page):
         return pages_ids
 
     @property
+    def root_title(self):
+        if self.parent is None:
+            return self.title
+        return self.parent.root_title
+    @property
     def employees(self,*args, **kwargs):
         return Employee.objects.filter(organization_unit_id=self.pk)
             

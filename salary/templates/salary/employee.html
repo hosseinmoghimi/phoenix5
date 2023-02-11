@@ -2,9 +2,8 @@
 
 {% block content %}
 <div class="row rtl">
-    <div class="col-md-3"></div>
-    <div class="col-md-6">
-        <h4>
+    <div class="col-md-12">
+        <h4 class="text-center">
             <small class="text-muted">
                 پرسنل
             </small>
@@ -25,9 +24,62 @@
             {% endif %}
 
         </h4>
+        <h4 class="text-center">
+
+            {{title}}
+        </h4>
     </div>
-    <div class="col-md-3"></div>
-    {% if perms.salary.add_salary %}
+    {% if select_salary_form %}
+
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5>
+                    انتخاب ماه و سال
+                </h5>
+            </div>
+            <div class="card-body">
+                <form action="{% url 'salary:employee' pk=employee.id %}" method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="employee_id" value="{{employee.id}}">
+                    <div class="row rtl">
+                        <div class="col-md-4">
+                            <select name="month" class="form-control">
+                                <option selected value="{{month}}">{{month_name}}</option>
+                                <option value="1">فروردین</option>
+                                <option value="2">اردیبهشت</option>
+                                <option value="3">خرداد</option>
+                                <option value="4">تیر</option>
+                                <option value="5">مرداد</option>
+                                <option value="6">شهریور</option>
+                                <option value="7">مهر</option>
+                                <option value="8">آبان</option>
+                                <option value="9">آذر</option>
+                                <option value="10">دی</option>
+                                <option value="11">بهمن</option>
+                                <option value="12">اسفند</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <select name="year" class="form-control">
+                                <option selected value="{{year}}">{{year}}</option>
+                                <option value="1401">1401</option>
+                                <option value="1402">1402</option>
+                                <option value="1403">1403</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <button class="btn btn-primary" typt="submit">برو</button>
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if add_salary_form %}
     <div class="col-md-12">
         {% include 'salary/includes/add-salary-app/template.html' %}
     </div>
@@ -41,7 +93,7 @@
 
 {% block script %}
 <script>
-    let employee_id=parseInt("{{employee.id}}")
+    let employee_id = parseInt("{{employee.id}}")
 </script>
 {% include 'salary/includes/salaries-app/script.html' %}
 {% if perms.salary.add_salary %}
