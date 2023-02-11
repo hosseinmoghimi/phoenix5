@@ -29,14 +29,19 @@ class AddSalaryApi(APIView):
         message=""
         result=FAILED
         context={}
-        if request.method=='POST':
-            log=2
-            AddSalaryForm_=AddSalaryForm(request.POST)
-            if AddSalaryForm_.is_valid():
-                cd=AddSalaryForm_.cleaned_data
-                result,message,salary=SalaryRepo(request=request).add_salary(**cd)
-                if result==SUCCEED:
-                    context['salary']=SalarySerializer(salary).data
+        log=1
+        try:
+            if request.method=='POST':
+                log=2
+                AddSalaryForm_=AddSalaryForm(request.POST)
+                if AddSalaryForm_.is_valid():
+                    log=3
+                    cd=AddSalaryForm_.cleaned_data
+                    result,message,salary=SalaryRepo(request=request).add_salary(**cd)
+                    if result==SUCCEED:
+                        context['salary']=SalarySerializer(salary).data
+        except:
+            pass
         context['result']=result
         context['message']=message
         context['log']=log
