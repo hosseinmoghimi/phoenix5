@@ -2,7 +2,6 @@
     let url_checkout = "{% url 'market:checkout' %}"
     let cart_line_component_template = `{% include 'market/includes/cart-app/component.html' %}`
     let cart_lines = JSON.parse(`{{cart_lines_s|escapejs}}`)
-    leolog(cart_lines)
     let add_to_cart_component = Vue.component('cart-line-component', {
         data: function () {
             return {
@@ -87,7 +86,6 @@
                     cart_lines: cart_lines,
                     csrfmiddlewaretoken: csrfmiddlewaretoken
                 }
-                leolog(payload)
                 let posting = $.post(url_checkout, payload)
                 posting.done(function (data) {
                     console.log(data)

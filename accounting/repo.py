@@ -1358,7 +1358,6 @@ class ChequeRepo():
         result=FAILED
         message=""
         cheque=None
-        leolog(kwargs=kwargs)
         error_code=1
         try:
             if not self.request.user.has_perm(APP_NAME+".add_cheque"):

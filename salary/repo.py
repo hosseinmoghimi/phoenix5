@@ -62,7 +62,6 @@ class SalaryRepo():
      
     def list(self, *args, **kwargs):
         objects = self.objects
-        leolog(kwargs=kwargs)
         if 'search_for' in kwargs:
             search_for=kwargs['search_for']
             objects = objects.filter(Q(title__contains=search_for)|Q(short_description__contains=search_for)|Q(description__contains=search_for))

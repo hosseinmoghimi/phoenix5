@@ -293,7 +293,6 @@ class LoginAsViews(View):
         context=getContext(request=request)
         if request.user.has_perm(APP_NAME+".change_profile"):
             selected_profile=ProfileRepo(request=request).profile(*args, **kwargs)
-            leolog(selected_profile=selected_profile)
             if selected_profile is not None:
                 ProfileRepo(request=request).login(request=request,user=selected_profile.user)
                 return redirect(APP_NAME+":me")

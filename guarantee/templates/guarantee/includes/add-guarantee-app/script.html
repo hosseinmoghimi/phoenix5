@@ -24,10 +24,8 @@
                     status:this.status,
                     invoice_line_id:this.invoice_line_id,
                 }
-                leolog(payload)
                 let url_add_guarantee="{% url 'guarantee:add_guarantee' %}"
                 $.post(url_add_guarantee,payload).done(data=>{
-                    leolog(data)
                     if(data.result==='SUCCEED'){
                         if(typeof guarantees_app != "undefined"){
                             guarantees_app.guarantees.push(data.guarantee)

@@ -129,7 +129,6 @@ class CommandRepo():
             
  
     def execute_command(self,*args, **kwargs):
-        leolog(kwargs=kwargs)
         result=FAILED
         message=""
         registers=[]
@@ -143,15 +142,12 @@ class CommandRepo():
                 ip=command.relay.feeder.ip
                 relay_pin= kwargs['pin'] if (command.relay.is_protected and 'pin' in kwargs) else command.relay.pin
                 if relay_pin==command.relay.pin:
-                    # leolog(relay_pin=relay_pin)
                     port=command.relay.feeder.port
                     register=command.relay.register
                     command_value=command.value
                     payload={'register':register,'command':command_value,'key':relay_pin,'pin':relay_pin}
-                    # leolog(payload=payload)
                     from .client import handleExecuteCommand_url
                     url=f'http://{ip}:{port}/'+handleExecuteCommand_url
-                    # leolog(url=url)
                     try:
                         response=requests.post(url,payload)
                     except:

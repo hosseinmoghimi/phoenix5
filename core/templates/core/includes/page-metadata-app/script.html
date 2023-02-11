@@ -16,7 +16,6 @@
                 }
                 let posting = $.post(url, payload)
                 posting.done((data) => {
-                    leolog(data)
                     if (data.result === 'SUCCEED') {
                         page_metadata_app.metadata = (data.metadata)
 
