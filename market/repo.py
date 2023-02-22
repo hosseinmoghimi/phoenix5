@@ -25,6 +25,7 @@ class ProductRepo(ProductRepo_origin):
             return objects.filter(Q(title__contains=kwargs['search_for'])|Q(short_description__contains=kwargs['search_for']))
         return objects
 
+
 class CategoryRepo121():  
     def __init__(self, *args, **kwargs):
         self.request = None
@@ -138,7 +139,6 @@ class BrandRepo():
         brand.save()
         return brand
 
-
         
 class SupplierRepo():  
     def __init__(self, *args, **kwargs):
@@ -229,7 +229,6 @@ class SupplierRepo():
         return result,message,supplier
 
     
-
 class CustomerRepo():  
     def __init__(self, *args, **kwargs):
         self.request = None
@@ -315,7 +314,6 @@ class CustomerRepo():
         return objects.all()
 
 
-
 class MarketInvoiceRepo():  
     def __init__(self, *args, **kwargs):
         self.request = None
@@ -366,7 +364,6 @@ class MarketInvoiceRepo():
                 objects=objects.filter(pay_to_id=supplier.account.id)
         return objects.all()
  
-
 
 class CartRepo():  
     def __init__(self, *args, **kwargs):
@@ -485,6 +482,8 @@ class CartRepo():
         # market_invoice.save()
         # market_invoices.append(market_invoice)
         return market_invoices,result,message
+
+
 class ShopRepo():  
     def __init__(self, *args, **kwargs):
         self.request = None
@@ -575,9 +574,6 @@ class ShopRepo():
                 if specification is not None:
                     shop.specifications.add(specification)
         return shop
-
-
-     
 
 
 class CartLineRepo():  
