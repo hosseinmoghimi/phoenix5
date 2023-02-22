@@ -10,6 +10,8 @@ from market.forms import *
 from market.serializers import CustomerSerializer,CartLineSerializer, CategorySerializer,SupplierSerializer, CategorySerializerForApi, ProductSerializer,ProductSerializerForApi, ShopSerializer
 from market.repo import CartLineRepo, CartRepo, CategoryRepo, ShopRepo,CustomerRepo,SupplierRepo
 from utility.log import leolog
+
+
 class AddCategoryApi(APIView):
     def post(self,request,*args, **kwargs):
         context={}
@@ -21,6 +23,7 @@ class AddCategoryApi(APIView):
                 context['category']=CategorySerializer(category).data
                 context['result']=SUCCEED
         return JsonResponse(context)
+
 
 class AddToCartApi(APIView):
     def post(self,request,*args, **kwargs):
@@ -35,7 +38,6 @@ class AddToCartApi(APIView):
             else:
                 context['message']=message
         return JsonResponse(context)
-
 
 
 class AddCustomerApi(APIView):
@@ -91,10 +93,6 @@ class CheckoutApi(APIView):
         return JsonResponse(context)
 
 
-
- 
-
-
 class AddShopApi(APIView):
     def post(self,request,*args, **kwargs):
         context={}
@@ -117,8 +115,6 @@ class AddShopApi(APIView):
         return JsonResponse(context)
 
 
-
-
 class AddProductApi(APIView):
     def post(self,request,*args, **kwargs):
         context={}
@@ -137,7 +133,6 @@ class AddProductApi(APIView):
         return JsonResponse(context)
 
 
-
 class CategoryApi(APIView):
     def get(self,request,*args, **kwargs):
         context={}
@@ -153,6 +148,7 @@ class CategoryApi(APIView):
         context['result']=SUCCEED
         return JsonResponse(context)
 
+
 class CategoriesApi(APIView):
     def get(self,request,*args, **kwargs):
         context={}
@@ -162,6 +158,8 @@ class CategoriesApi(APIView):
         context['categories']=categories
         context['result']=SUCCEED
         return JsonResponse(context)
+
+
 class ProductsApi(APIView):
     def get(self,request,*args, **kwargs):
         context={}

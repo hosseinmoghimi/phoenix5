@@ -221,6 +221,9 @@ class DoubleTransaction(Page):
 class ProductOrService(Page):
     barcode=models.CharField(_("بارکد"),null=True,blank=True, max_length=100)
 
+    def get_market_absolute_url(self):
+        return reverse("market:product",kwargs={'pk':self.pk})
+ 
     def unit_names(self):
         unit_names=ProductOrServiceUnitName.objects.filter(product_or_service_id=self.pk)
         if len(unit_names)==0:

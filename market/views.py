@@ -69,13 +69,13 @@ def get_suppliers_context(request,*args, **kwargs):
     context['suppliers_s']=json.dumps(SupplierSerializer(suppliers,many=True).data)
     return context
 
-
 def get_supplier_context(request,*args, **kwargs):
     context={}
     supplier=SupplierRepo(request=request).supplier(*args, **kwargs)
     context.update(get_account_context(request=request,account=supplier.account))
     
     return context
+
 
 class SupplierView(View):
     def get(self, request, *args, **kwargs):
@@ -92,6 +92,7 @@ class SupplierView(View):
 
 
         return render(request, TEMPLATE_ROOT+"supplier.html", context)
+
 
 class SuppliersView(View):
     def get(self, request, *args, **kwargs):

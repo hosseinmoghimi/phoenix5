@@ -74,7 +74,7 @@ class ChequeSerializer(serializers.ModelSerializer):
 class ProductOrServiceSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductOrService
-        fields = ['id', 'title', 'get_absolute_url','thumbnail']
+        fields = ['id', 'title', 'get_absolute_url','thumbnail','get_market_absolute_url']
 
 
 class InvoiceLineSerializer(serializers.ModelSerializer):

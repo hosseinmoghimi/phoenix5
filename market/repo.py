@@ -464,7 +464,7 @@ class CartRepo():
                 new_market_invoice.invoice_datetime=timezone.now()
                 new_market_invoice.save()
                 market_invoices.append(new_market_invoice)
-            leolog(new_market_invoice=new_market_invoice)
+                
             market_invoice_line=InvoiceLine()
             market_invoice_line.invoice=new_market_invoice
             market_invoice_line.product_or_service=cart_line.shop.product_or_service
@@ -480,7 +480,7 @@ class CartRepo():
                 message+=f"""<a class="mx-2" href="{market_invoice.get_absolute_url()}">{market_invoice.title}</a>"""
             if result==SUCCEED:
                 cart_line.delete()
-        leolog(market_invoices=market_invoices,message=message,result=result)
+                
         # market_invoice=MarketInvoice()
         # market_invoice.save()
         # market_invoices.append(market_invoice)

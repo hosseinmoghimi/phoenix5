@@ -90,6 +90,9 @@
                 posting.done(function (data) {
                     console.log(data)
                     if (data.result === 'SUCCEED') {
+                        if(data.market_invoices.length==1){
+                            location.href = data.market_invoices[0].get_absolute_url
+                        }
                         cart_app.cart_lines = data.cart_lines
                         cart_app.save_done = true
                         cart_app.message={show:true,body:data.message,color:"success"}
