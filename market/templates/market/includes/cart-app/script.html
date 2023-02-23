@@ -89,6 +89,10 @@
                 let posting = $.post(url_checkout, payload)
                 posting.done(function (data) {
                     console.log(data)
+                    if (data.result === 'FAILED') {
+                        
+                        cart_app.message={show:true,body:data.message,color:"danger"}
+                    }
                     if (data.result === 'SUCCEED') {
                         if(data.market_invoices.length==1){
                             location.href = data.market_invoices[0].get_absolute_url

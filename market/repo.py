@@ -467,7 +467,8 @@ class CartRepo():
             market_invoice_line.quantity=cart_line.quantity
             market_invoice_line.unit_price=cart_line.shop.unit_price
             market_invoice_line.unit_name=cart_line.shop.unit_name
-            market_invoice_line.save()
+            if market_invoice_line.quantity>0:
+                market_invoice_line.save()
             result=SUCCEED
 
             message="""با موفقیت خرید شد."""
@@ -480,6 +481,9 @@ class CartRepo():
         # market_invoice=MarketInvoice()
         # market_invoice.save()
         # market_invoices.append(market_invoice)
+        if len(new_market_invoice.invoice_lines())<1:
+            new_market_invoice.delete()
+            return None,FAILED,"سفارش شما دارای هیچ کالایی نمی باشد."
         return market_invoices,result,message
 
 
@@ -497,7 +501,6 @@ class ShopRepo():
         self.profile=ProfileRepo(*args, **kwargs).me
         self.customer= CustomerRepo(request=self.request).me
        
-
     def shop(self, *args, **kwargs):
         pk=0
         if 'shop_id' in kwargs:
@@ -535,36 +538,76 @@ class ShopRepo():
         return objects.all()
 
     def add_shop(self,*args, **kwargs):
+        me_supplier=SupplierRepo(request=self.request).me
+        if me_supplier is not None:
+            can_add_shop=True
         if not self.user.has_perm(APP_NAME+".add_shop"):
+            can_add_shop=True
+        if not can_add_shop:
             return None
         shop=Shop()
         if 'product_or_service_id' in kwargs:
-            shop.product_or_service_id = kwargs['product_or_service_id'] 
+            product_or_service_id = kwargs['product_or_service_id'] 
+            shop.product_or_service_id = product_or_service_id
         if 'productorservice_id' in kwargs:
-            shop.product_or_service_id = kwargs['productorservice_id'] 
+            product_or_service_id = kwargs['productorservice_id'] 
+            shop.product_or_service_id = product_or_service_id
         if 'product_id' in kwargs:
-            shop.product_or_service_id = kwargs['product_id'] 
+            product_or_service_id = kwargs['product_id'] 
+            shop.product_or_service_id = product_or_service_id
         if 'unit_name' in kwargs:
-            shop.unit_name = kwargs['unit_name'] 
+            unit_name = kwargs['unit_name'] 
+            shop.unit_name =unit_name
         if 'supplier_id' in kwargs:
-            shop.supplier_id = kwargs['supplier_id'] 
+            supplier_id = kwargs['supplier_id'] 
+            shop.supplier_id = supplier_id
 
         if 'old_price' in kwargs:
-            shop.old_price = kwargs['old_price'] 
+            old_price = kwargs['old_price'] 
+            shop.old_price = old_price
         if 'buy_price' in kwargs:
-            shop.buy_price = kwargs['buy_price']
+            buy_price = kwargs['buy_price']
+            shop.buy_price = buy_price
         if 'unit_price' in kwargs:
-            shop.unit_price = kwargs['unit_price'] 
+            unit_price = kwargs['unit_price'] 
+            shop.unit_price = unit_price 
 
        
             
         if 'available' in kwargs:
-            shop.available = kwargs['available'] 
+            available = kwargs['available'] 
+            shop.available = available
         if 'level' in kwargs:
-            shop.level = kwargs['level'] 
+            level = kwargs['level'] 
+            shop.level = level 
         if 'expire_datetime' in kwargs:
-            shop.expire_datetime = kwargs['expire_datetime'] 
-
+            expire_datetime = kwargs['expire_datetime'] 
+            shop.expire_datetime = expire_datetime 
+        
+        # done=False
+        # try:
+        #     old_shops=Shop.objects
+        #     old_shops=old_shops.filter(supplier_id=supplier_id)
+        #     old_shops=old_shops.filter(product_or_service_id=product_or_service_id)
+        #     old_shops=old_shops.filter(unit_name=unit_name)
+        #     old_shops=old_shops.filter(level=level)
+        #     specifications=[]
+        #     if 'specifications' in kwargs:
+        #         specifications = kwargs['specifications']
+        #     old_shop=old_shops.first()
+        #     if old_shop is not None:
+        #         leolog(specifications=list(specifications),specifications_=list(old_shop.specifications))
+        #         if list(old_shop.specifications)==list(specifications):
+        #             leolog(old_shop=old_shop)
+        #             leolog(unit_price=old_shop.unit_price)
+        #             leolog(available=old_shop.available)
+        #             old_shop.unit_price=unit_price
+        #             old_shop.available=available
+        #             shop=old_shop
+        #             shop.save()
+        #             done=True
+        # except:
+        #     pass
         shop.save()
         if 'specifications' in kwargs:
             specifications = kwargs['specifications']
