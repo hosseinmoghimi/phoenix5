@@ -17,6 +17,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounting/', include('accounting.urls')),
     path('authentication/', include('authentication.urls')),
+    path('distributionchannel/', include('distributionchannel.urls')),
     path('library/', include('library.urls')),
     path('core/', include('core.urls')),
     path('realestate/', include('realestate.urls')),

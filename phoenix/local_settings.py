@@ -32,7 +32,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_cleanup.apps.CleanupConfig',
     'django_social_share',
-    
+    'distributionchannel',
     # 'django_telegram',
     'rest_framework',
     # 'rest_framework.authtoken'
@@ -373,6 +373,15 @@ phoenix_apps=[
         'show_on_menu':True,
     },
 
+    {
+        'priority':31,
+        'name':'distributionchannel',
+        'title':'فروش مویرگی',
+        'color':'warning',
+        'home_url':SITE_URL+'distributionchannel/',
+        'has_help':False,
+        'show_on_menu':True,
+    },
 ]    
 
 
