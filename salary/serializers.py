@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Attendance,Group,Salary
+from .models import DailyAttendance,Group,Salary,MonthlyAttendance
 from accounting.serializers import AccountSerializer
 from organization.serializers import OrganizationUnitSerializer,Employee
 
@@ -18,11 +18,11 @@ class EmployeeSerializer(serializers.ModelSerializer):
         model=Employee
         fields=['id','organization_unit','job_title','get_absolute_url','get_salary_url','get_delete_url','get_edit_url','account','title']
 
-class AttendanceSerializer(serializers.ModelSerializer):
-    account=AccountSerializer()
+class DailyAttendanceSerializer(serializers.ModelSerializer):
+    employee=EmployeeSerializer()
     class Meta:
-        model=Attendance
-        fields=['id','status','get_absolute_url','get_delete_url','get_edit_url','account']
+        model=DailyAttendance
+        fields=['id','status','get_absolute_url','get_delete_url','get_edit_url','employee']
 
 
 

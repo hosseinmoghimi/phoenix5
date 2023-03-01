@@ -1,10 +1,27 @@
 from utility.log import leolog
-from salary.models import Group,Attendance,Salary
+from salary.models import Group,DailyAttendance,MonthlyAttendance,Salary
+from django.db.models import Q
 from core.repo import ParameterRepo
 from salary.enums import *
 from salary.apps import APP_NAME
 from authentication.repo import ProfileRepo
 from core.constants import FAILED,SUCCEED
+from organization.repo import EmployeeRepo
+def calculateAttendance(request,*args, **kwargs):
+    employee=EmployeeRepo(request=request).employee(*args, **kwargs)
+    if employee is None:
+        return
+    for employee_timing in employee.employeetiming_set.all():
+        for work_shift in employee_timing.work_shifts.all():
+            for time_table in work_shift.time_tables.all():
+                daily_attendance=DailyAttendance()
+                daily_attendance.employee=employee
+                daily_attendance.duration=480
+                DailyAttendance.save()
+
+
+    
+
 
 class SalaryRepo():
       
@@ -84,7 +101,7 @@ class SalaryRepo():
         return objects.all()
 
 
-class AttendanceRepo():
+class DailyAttendanceRepo():
       
     def __init__(self, *args, **kwargs):
         self.request = None
@@ -95,17 +112,17 @@ class AttendanceRepo():
         if 'user' in kwargs:
             self.user = kwargs['user']
         
-        self.objects=Attendance.objects.order_by("account__title")
+        self.objects=DailyAttendance.objects.order_by("account__title")
         self.profile=ProfileRepo(*args, **kwargs).me
-        self.me=Attendance.objects.filter(account__profile=self.profile).first()
+        self.me=DailyAttendance.objects.filter(account__profile=self.profile).first()
        
-    def attendance(self, *args, **kwargs):
-        if 'attendance_id' in kwargs:
-            pk=kwargs['attendance_id']
+    def daily_attendance(self, *args, **kwargs):
+        if 'daily_attendance_id' in kwargs:
+            pk=kwargs['daily_attendance_id']
             attendance=self.objects.filter(pk=pk).first()
             return attendance
-        if 'attendance' in kwargs:
-            attendance=kwargs['attendance']
+        if 'daily_attendance' in kwargs:
+            attendance=kwargs['daily_attendance']
             return attendance
         elif 'pk' in kwargs:
             pk=kwargs['pk']

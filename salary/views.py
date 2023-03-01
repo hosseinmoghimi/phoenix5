@@ -4,10 +4,10 @@ from core.views import CoreContext
 from django.views import View
 from .apps import APP_NAME
 from .forms import *
-from .repo import GroupRepo,AttendanceRepo,SalaryRepo
+from .repo import GroupRepo,DailyAttendanceRepo,SalaryRepo
 from .enums import *
 from organization.repo import EmployeeRepo
-from .serializers import GroupSerializer,AttendanceSerializer,EmployeeSerializer,SalarySerializer
+from .serializers import GroupSerializer,DailyAttendanceSerializer,EmployeeSerializer,SalarySerializer
 # from organization.serializers import EmployeeSerializer
 import json
 from .enums import *

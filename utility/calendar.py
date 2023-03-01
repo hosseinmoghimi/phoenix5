@@ -112,7 +112,7 @@ class PersianCalendar:
         
         return self
     
-    def from_gregorian(self,greg_date_time,add_time_zone=True):
+    def from_gregorian(self,greg_date_time,add_time_zone=True,*args, **kwargs):
         if greg_date_time is None:
             return None
         year_=greg_date_time.year
@@ -135,7 +135,15 @@ class PersianCalendar:
         delta=datetime.timedelta(hours=HOURS_OFFSET,minutes=MINUTES_OFFSET)
         # delta=datetime.timedelta(hours=4,minutes=30)
         a=JalaliDatetime(datetime.datetime(year_, month_, day_, hour_, min_, sec_, 0, TehranTimezone())+delta)
+        
+        delta2=datetime.timedelta(hours=0)
         if a.month<7 and DAY_LIGHT_SAVING:
             delta2=datetime.timedelta(hours=1)
             a=JalaliDatetime(datetime.datetime(year_, month_, day_, hour_, min_, sec_, 0, TehranTimezone())+delta+delta2)
-        return a.strftime("%Y/%m/%d %H:%M:%S")
+        strftime="%Y/%m/%d %H:%M:%S"
+        if 'only_date' in kwargs:
+            if kwargs['only_date']:
+                strftime="%Y/%m/%d"
+                # delta3=datetime.timedelta(hours=5)
+                # a=JalaliDatetime(datetime.datetime(year_, month_, day_, hour_, min_, sec_, 0, TehranTimezone())+delta+delta3+delta2)
+        return a.strftime(strftime)

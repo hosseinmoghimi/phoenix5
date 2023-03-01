@@ -22,6 +22,12 @@ SalaryRows=[
     'پاداش های مربوط به افزایش تولید',
     'مالیات',
 ]
+class CrossTypeEnum(TextChoices):
+    ENTER="ورود",_("ورود")
+    ENTER_HOURLY="ورود ساعتی",_("ورود ساعتی")
+    EXIT="خروج",_("خروج")
+    EXIT_HOURLY="خروج ساعتی",_("خروج ساعتی")
+    INVALID="غیر معتبر",_("غیر معتبر")
 class AttendanceStatusEnum(TextChoices):
     PRESENT="حاضر",_("حاضر")
     ABSET="غایب",_("غایب")
