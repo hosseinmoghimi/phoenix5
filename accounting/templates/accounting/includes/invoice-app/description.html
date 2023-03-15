@@ -1,7 +1,7 @@
 {% load to_variz_text %}
 {% load to_persian_date %}
 {% load to_price %}
-<div class="card">
+<div class="card" style="background-color: #e3e3eb;">
     <div class="card-body px-5 farsi text-right">
 
 
@@ -14,9 +14,9 @@
 
                 <div>
 
-                    <h5>
+                    <!-- <h5>
                         توضیحات
-                    </h5> 
+                    </h5>  -->
                      <!--<div>
                         واحد مبلغ ها
                         {{CURRENCY}}
@@ -52,33 +52,29 @@
                     {% endif %}
 
                     <div>
-                        <p>
-
-                            امضای این برگه توسط خریدار به معنای
-                            <strong>
-
-                                تحویل کامل
-                            </strong>
-                            کالاها و خدمات لیست فوق می باشد.
-                            <br>
-
-                            قیمت ها بروز بوده و تنها 24 ساعت از تاریخ فاکتور اعتبار دارد.
-                            <br>
-
-                            کلیه اجناس موجود در فاکتور تا زمان تسویه کامل صورتحساب متعلق به فروشنده می باشد و به صورت
-                            امانت تحویل خریدار می باشد
-                        </p>
+                        
                     </div>
 
                 </div>
             </div>
         </div>
 
-        {% if invoice.pay_from and invoice.pay_from.default_bank_account %}
-        <div class="text-right farsi rtl">
-            {{invoice.pay_from.default_bank_account.to_variz_text|safe}}
-        </div>
-        {% endif %}
+         
 
     </div>
 </div>
+
+
+{% if invoice.pay_from and invoice.pay_from.default_bank_account %}
+<div class="card">
+    <div class="card-body px-5 farsi text-right">
+
+ 
+
+        <div class="text-right farsi rtl">
+            {{invoice.pay_from.default_bank_account.to_variz_text|safe}}
+        </div>
+        
+    </div>
+</div>
+{% endif %}

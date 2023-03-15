@@ -815,8 +815,7 @@ class TransactionCategory(models.Model):
         
     def __str__(self):
         return self.title
-
-
+ 
 class Invoice(Transaction):
     tax_percent=models.IntegerField(_("درصد مالیات"),default=0)
     invoice_datetime=models.DateTimeField(_("تاریخ فاکتور"), auto_now=False, auto_now_add=False)
@@ -869,7 +868,25 @@ class Invoice(Transaction):
 
     def save(self,*args, **kwargs):
         if self.description is None or self.description=="":
-            self.description="این فاکتور فقط برای استعلام قیمت بوده و هیچ گونه ارزش قانونی دیگری ندارد."
+            self.description="""
+                        <p class="rtl text-right">
+
+                            امضای این برگه توسط خریدار به معنای
+                            <strong>
+
+                                تحویل کامل
+                            </strong>
+                            کالاها و خدمات لیست فوق می باشد.
+                            <br>
+
+                            قیمت ها بروز بوده و تنها 24 ساعت از تاریخ فاکتور اعتبار دارد.
+                            <br>
+
+                            کلیه اجناس موجود در فاکتور تا زمان تسویه کامل صورتحساب متعلق به فروشنده می باشد و به صورت
+                            امانت تحویل خریدار می باشد.
+                            <br>
+                            این فاکتور فقط برای استعلام قیمت بوده و هیچ گونه ارزش قانونی دیگری ندارد.
+                        </p>"""
         if self.class_name is None:
             self.class_name='invoice' 
         if self.app_name is None:

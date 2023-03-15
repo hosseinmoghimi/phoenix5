@@ -396,16 +396,12 @@
                     {{invoice.sum_total|to_horuf_rial}} ریال
                 </p>
                 <p class="farsi">
-                    مالیات  :
+                    مالیات :
                     <span v-text="to_price({{invoice.tax_amount}})"></span>
                     ریال
                 </p>
             </div>
-            {% if invoice.pay_from and invoice.pay_from.default_bank_account %}
-            <div class="rtl text-right">
-                {{invoice.pay_from.default_bank_account.to_variz_text|safe}}
-            </div>
-            {% endif %}
+
 
             {% if invoice.description %}
             <div class=" ">
@@ -414,6 +410,17 @@
             {% endif %}
         </div>
     </div>
+    
+    {% if invoice.pay_from and invoice.pay_from.default_bank_account %}
+    <div class="card">
+        <div class="card-body px-5 farsi text-right">
+
+            <div class="rtl text-right">
+                {{invoice.pay_from.default_bank_account.to_variz_text|safe}}
+            </div>
+        </div>
+    </div>
+    {% endif %}
 
     <div class="row rtl farsi">
         <div class="col-6">
