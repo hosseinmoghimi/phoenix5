@@ -1,7 +1,6 @@
 
 
-from requests import request
-from core.repo import ProfileRepo
+from core.repo import ProfileRepo,FAILED,SUCCEED
 from mafia.enums import RoleSideEnum
 from mafia.models import GameAct, Role,Game,Player,RolePlayer,God,GameScenario
 from mafia.apps import APP_NAME
@@ -238,14 +237,22 @@ class PlayerRepo():
         return objects.all()
 
     def add_player(self,*args, **kwargs):
+        player,message,result=None,"",FAILED
         if not self.user.has_perm(APP_NAME+".add_player"):
-            return None
+            message="شما مجوز لازم برای ایجاد بازیکن جدید ندارید ."
+            return player,message,result
+        olds=Player.objects.filter(account_id=kwargs['account_id'])
+        if len(olds)>0:
+            message="این حساب قبلا در لیست بازیکنان ایجاد شده است ."
+            return player,message,result
         player=Player()
-        if 'profile_id' in kwargs:
-            player.profile_id = kwargs['profile_id'] 
+        if 'account_id' in kwargs:
+            player.account_id = kwargs['account_id'] 
          
         player.save()
-        return player
+        result=SUCCEED
+        message=f"""بازیکن جدید "{player.account.title}" با موفقیت افزوده شد ."""
+        return player,message,result
 
 
 class GodRepo():  
@@ -287,14 +294,26 @@ class GodRepo():
         return objects.all()
 
     def add_god(self,*args, **kwargs):
+        god,message,result=None,"",FAILED
+
+        
         if not self.user.has_perm(APP_NAME+".add_god"):
-            return None
+            message="شما مجوز لازم برای ایجاد گاد جدید ندارید ."
+            return god,message,result
+        olds=God.objects.filter(account_id=kwargs['account_id'])
+        if len(olds)>0:
+            message="این حساب قبلا در لیست گادها ایجاد شده است ."
+            return god,message,result
+        
+        
         god=God()
-        if 'profile_id' in kwargs:
-            god.profile_id = kwargs['profile_id'] 
+        if 'account_id' in kwargs:
+            god.account_id = kwargs['account_id'] 
          
         god.save()
-        return god
+        result=SUCCEED
+        message="با موفقیت افزوده شد."
+        return god,message,result
 
 
 class GameActRepo():  

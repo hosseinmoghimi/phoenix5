@@ -1,0 +1,68 @@
+{% load to_json %}
+<script>
+    let accounts = JSON.parse(`{{accounts_s|escapejs}}`)
+    let add_player_app = new Vue({
+        el: "#add-player-app",
+        data: {
+            account_id: 0,
+            accounts: accounts,
+            name: "",
+            search_for: '',
+            waiting: false,
+            message: {
+                show: false
+            }
+        },
+        methods: {
+            filter: function () {
+                this.accounts = accounts.filter(account => account.title.indexOf(this.search_for) > -1)
+                if (this.accounts.length > 0)
+                    this.account_id = this.accounts[0].id
+            },
+            add_player: function () {
+                let url = "{% url 'mafia:add_player' %}"
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    account_id: this.account_id
+                }
+                add_player_app.waiting = true
+
+                $.post(url, payload).done((data) => {
+                    add_player_app.waiting = false
+
+                    if (data.result === 'FAILED') {
+                        add_player_app.message = {
+                            color: "danger",
+                            body:data.message,
+                            show: true,
+                        }
+                        setTimeout(() => {
+                            add_player_app.message = {
+                                show: false,
+                            }
+                        }, 3000);
+                    }
+                    if (data.result === 'SUCCEED') {
+                        if (typeof players_app != "undefined") {
+                            players_app.players.push(data.player)
+                        }
+
+                        add_player_app.message = {
+                            color: "success",
+                            body: data.message,
+                            show: true,
+                        }
+                        setTimeout(() => {
+                            add_player_app.message = {
+                                show: false,
+                            }
+                        }, 3000);
+                    }
+                })
+
+            }
+
+        }
+    })
+
+</script>

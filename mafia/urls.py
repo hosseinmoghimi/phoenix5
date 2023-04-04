@@ -18,7 +18,7 @@ urlpatterns = [
     
     path("players/",views.PlayersView.as_view(),name="players"),
     path("player/<int:pk>/",views.PlayerView.as_view(),name="player"),
-    path("add_player/",apis.AddRoleApi.as_view(),name="add_player"),
+    path("add_player/",apis.AddPlayerApi.as_view(),name="add_player"),
     
     path("leages/",views.GamesView.as_view(),name="leages"),
     path("leage/<int:pk>/",views.GameView.as_view(),name="leage"),
@@ -30,6 +30,7 @@ urlpatterns = [
 
     path("gods/",views.GodsView.as_view(),name="gods"),
     path("god/<int:pk>/",views.GodView.as_view(),name="god"),
+    path("add_god/",apis.AddGodApi.as_view(),name="add_god"),
 
     path("game_act/<int:pk>/",views.GameActView.as_view(),name="gameact"),
     path("add_player_to_game/",apis.AddPlayerToGameApi.as_view(),name="add_player_to_game"),

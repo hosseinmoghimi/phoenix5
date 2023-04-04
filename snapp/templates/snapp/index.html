@@ -1,0 +1,27 @@
+{% extends "snapp/layout.html" %}
+
+{% block content %}
+<div class="row rtl">
+    <div class="col-md-12">
+        <h5>
+            {{title}}
+        </h5>
+    </div>
+    {% for category in root_categories %}
+    <div class="col-4">
+        <div class="my-3 mx-2">
+            <div>
+                <a href="{{category.get_snapp_absolute_url}}">
+                    <img src="{{category.thumbnail}}" width="100%" alt="">
+                </a>
+            </div>
+            <h6 class="text-center">
+                <a href="{{category.get_snapp_absolute_url}}">
+                    {{category.title}}
+                </a>
+            </h6>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock content %}

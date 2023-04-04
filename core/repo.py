@@ -1,5 +1,3 @@
-from unittest import result
-from requests import request
 from .models import ContactMessage, Download, Image, Link, Page, PageComment, PageDownload, PageImage, PageLike, PageLink, PagePermission, PageTag, Parameter,Picture, Tag
 from .constants import *
 from django.db.models import Q

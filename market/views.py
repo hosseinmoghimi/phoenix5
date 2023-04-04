@@ -126,7 +126,7 @@ class HomeView(View):
             name=ParameterMarketEnum.SHOP_HEADER_SLOGAN)
         context['shop_header_image'] = PictureRepo(
             request=request, app_name=APP_NAME).picture(name=ParameterMarketEnum.SHOP_HEADER_IMAGE)
-        categories = CategoryRepo(request=request).list_home()
+        categories = CategoryRepo(request=request).list(root=True)
         context['categories'] = categories
         categories_s = json.dumps(CategorySerializer(categories,many=True).data)
 

@@ -2,7 +2,7 @@
 
 
 {% block content %}
-<div class="row">
+<div class="row rtl">
     <div class="col-md-4">
         <div class="card">
             <div class="card-header">
@@ -13,18 +13,41 @@
 
             <div class="card-body">
                     <a href="{{player.get_absolute_url}}">
-                        <div class="media">
-                            <img src="{{player.profile.image}}" class="rounded-circle" width="32"
+                        <div class="media farsi">
+                            <img src="{{player.account.logo}}" class="rounded-circle" width="32"
                                 alt="">
                             <div class="media-body mr-2">
-                                {{player.profile.name}}
+                                <h5 class="farsi rtl text-right">
+                                    {{player.account.title}}
+
+                                </h5>
                             </div>
                         </div>
 
                     </a>
+                    
+                    {% if perms.mafia.change_player %}
+                    <a href="{{player.get_edit_url}}" class="mx-2"><i class="text-warning fa fa-edit"></i></a>
+                    {% endif %}
+
+                    
+                    {% if perms.mafia.delete_player %}
+                    <a href="{{player.get_delete_url}}" class="mx-2"><i class="text-danger fa fa-trash"></i></a>
+                    {% endif %}
+
  
             </div>
         </div>
     </div>
+
+    <div class="col-md-12">
+        {% include "mafia/includes/role-players-app/template.html" %}
+      </div>
+
 </div>
 {% endblock content %}
+
+{% block script %}
+{% include "mafia/includes/role-players-app/script.html" %}
+  
+{% endblock script %}

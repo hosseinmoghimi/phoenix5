@@ -23,7 +23,7 @@
 
                 <form action="{% url 'mafia:add_game' %}" method="POST">
                     {% csrf_token %}
-                    <div class="row my-3">
+                    <div class="row my-3 rtl">
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label for="">عنوان بازی</label>
@@ -48,7 +48,7 @@
                                 <select name="god_id" class="form-control">
                                     {% for god in gods %}
         
-                                    <option value="{{god.id}}">{{god.profile.name}}</option>
+                                    <option value="{{god.id}}">{{god.account.title}}</option>
                                     {% endfor %}
                                 </select>
                             </div>

@@ -2,7 +2,7 @@
 
 
 {% block content %}
-<div class="row">
+<div class="row rtl">
     <div class="col-md-4">
         <div class="card">
             <div class="card-header">
@@ -11,31 +11,37 @@
                 </h5>
             </div>
 
-            <div class="card-body">
-                <p>
+            <div class="card-body farsi ">
+                <p class="text-right d-none">
                     <a href="{% url 'mafia:initialize' %}">مقدار دهی اولیه</a>
-                </p>
+                </p> 
 
-                <p>
+                <p class="text-right">
                     <a href="{% url 'mafia:roles' %}">نقش ها</a>
                 </p>
 
-                <p>
+                <p class="text-right">
                     <a href="{% url 'mafia:players' %}">بازیکن ها</a>
                 </p>
 
 
-                <p>
+                <p class="text-right">
+                    <a href="{% url 'mafia:gods' %}">گاد ها</a>
+                </p>
+
+
+
+                <p class="text-right">
                     <a href="{% url 'mafia:game_scenarioes' %}">سناریو های بازی</a>
                 </p>
 
 
-                <p>
+                <p class="text-right">
                     <a href="{% url 'mafia:games' %}">بازی ها</a>
                 </p>
 
 
-                <p>
+                <p class="text-right">
                     <a href="{% url 'mafia:role_players' %}">نقش های بازیکنان</a>
                 </p>
 

@@ -1,5 +1,3 @@
-import datetime
-from email.policy import default
 from accounting.models import Invoice, InvoiceLine,Product as AccountingProduct
 from core.constants import CURRENCY
 from core.enums import UnitNameEnum
@@ -31,18 +29,14 @@ class Brand(Page):
         return super(Brand,self).save(*args, **kwargs)
 
 
-class Order(Invoice):
-    
+class Order(Invoice,LinkHelper):
+    class_name="order"
+    app_name=APP_NAME
 
     class Meta:
         verbose_name = _("Order")
         verbose_name_plural = _("Orders")
  
-
-    def get_absolute_url(self):
-        return reverse("Order_detail", kwargs={"pk": self.pk})
-
-
     def save(self,*args, **kwargs):
         if self.class_name is None or self.class_name=="":
             self.class_name="order"
@@ -74,6 +68,7 @@ class Supplier(Page):
     def get_loyaltyclub_absolute_url(self):
         return reverse("loyaltyclub:supplier",kwargs={'pk':self.pk})
 
+
 class Customer(models.Model,LinkHelper):
     inviter=models.ForeignKey("customer", verbose_name=_("inviter"),null=True,blank=True, on_delete=models.SET_NULL)
     region=models.ForeignKey("map.area", verbose_name=_("region"), on_delete=models.CASCADE)
@@ -96,6 +91,7 @@ class Customer(models.Model,LinkHelper):
         if self.app_name is None or self.app_name=="":
             self.app_name=APP_NAME
         return super(Customer,self).save(*args, **kwargs)
+
 
 class MarketInvoice(Invoice):
 
@@ -128,6 +124,7 @@ class Cart(Invoice):
             self.app_name=APP_NAME
         return super(Cart,self).save(*args, **kwargs)
 
+
 class CartLine(models.Model,LinkHelper):
     date_added=models.DateTimeField(_("date_added"), auto_now=False, auto_now_add=True)
     customer=models.ForeignKey("customer",blank=True, verbose_name=_("مشتری"), on_delete=models.CASCADE)
@@ -150,6 +147,7 @@ class CartLine(models.Model,LinkHelper):
         if len(old_ones)>0:
             old_ones.exclude(pk=old_ones.first().id).delete()
         super(CartLine,self).save()
+
 
 class Shop(models.Model,LinkHelper):
     # region=models.ForeignKey("map.area", verbose_name=_("region"), on_delete=models.CASCADE)

@@ -264,6 +264,17 @@ class ProductRepo():
             objects = objects.filter(Q(for_home=kwargs['for_home']))
         if 'parent_id' in kwargs:
             objects=objects.filter(parent_id=kwargs['parent_id'])
+        if 'category_id' in kwargs:
+            category_id=kwargs['category_id']
+            category=Category.objects.filter(pk=category_id).first()
+            if category is not None:
+                products_or_services=category.products_or_services.filter(class_name="product")
+                ids=[]
+                for product_or_service in products_or_services:
+                    ids.append(product_or_service.id)
+                objects=Product.objects.filter(id__in=ids)
+            else:
+                objects=Product.objects.filter(pk=0)
         return objects.all()
 
     def add_product(self,*args, **kwargs):
@@ -387,6 +398,9 @@ class CategoryRepo():
             objects = objects.filter(Q(for_home=kwargs['for_home']))
         if 'parent' in kwargs and kwargs['parent'] is None:
             objects=self.list_home()
+        if 'root' in kwargs and kwargs['root'] is not None and kwargs['root']:
+            objects=self.objects.filter(parent=None)
+            print(100*"#%$%$#%^")
         if 'super_category' in kwargs and kwargs['super_category'] is None:
             objects=objects.filter(super_category=None)
         if 'parent_id' in kwargs:

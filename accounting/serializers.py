@@ -8,6 +8,7 @@ class ProductSerializer(serializers.ModelSerializer):
         model = Product
         fields = ['id', 'title','get_absolute_url','buy_price', 'get_pm_absolute_url','get_edit_url','get_delete_url','available','unit_price','unit_name','thumbnail']
 
+
  
 class ProductSpecificationSerializer(serializers.ModelSerializer):
     product=ProductSerializer()
@@ -121,7 +122,7 @@ class PaymentSerializer(serializers.ModelSerializer):
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
-        fields = ['id','full_title','title', 'parent_id','get_absolute_url','get_edit_url','get_delete_url']
+        fields = ['id','full_title','title','thumbnail', 'parent_id','get_absolute_url','get_edit_url','get_delete_url']
 
 class InvoiceBriefSerializer(serializers.ModelSerializer):
     class Meta:

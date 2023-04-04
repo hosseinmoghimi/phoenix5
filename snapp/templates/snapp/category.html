@@ -1,0 +1,56 @@
+{% extends "snapp/layout.html" %}
+
+{% block content %}
+<div class="row rtl">
+    <div class="col-md-12 mt-2">
+        <h5 class="text-center">
+            {{category.title}}
+            {% if perms.accounting.change_category %}
+             <a href="{{category.get_edit_url}}" target="_blank" class="mx-2"><i class="fa fa-edit text-warning"></i></a> 
+            {% endif %}
+            {% if perms.accounting.change_category %}
+            <a href="{{category.get_delete_url}}" target="_blank" class="mx-2"><i class="fa fa-trash text-danger"></i></a> 
+           {% endif %}
+        </h5>
+    </div>
+    {% for category in categories %}
+    <div class="col-4">
+        <div class="my-3 mx-2">
+            <div>
+                <a href="{{category.get_snapp_absolute_url}}">
+                    <img src="{{category.thumbnail}}" width="100%" alt="">
+                </a>
+            </div>
+            <h6 class="text-center">
+                <a href="{{category.get_snapp_absolute_url}}">
+                    {{category.title}}
+                </a>
+            </h6>
+        </div>
+    </div>
+    {% endfor %}
+
+    {% for product in products %}
+    <div class="col-4">
+        <div class="my-3 mx-2">
+            <div>
+                <a href="{{product.get_snapp_absolute_url}}">
+                    <img src="{{product.thumbnail}}" width="100%" alt="">
+                </a>
+            </div>
+            <div class="farsi text-center">
+
+                <a href="{{product.get_snapp_absolute_url}}">
+                <span>
+                    <small>
+
+                            {{product.title}}
+                        </small>
+                    </span>
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock content %}

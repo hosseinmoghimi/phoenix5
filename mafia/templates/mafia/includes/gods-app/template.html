@@ -1,0 +1,74 @@
+{% load to_persian_date %}
+{% load to_price %}
+{% load to_amount_color %}
+{% load static %}
+<div id="accordion-gods">
+    <div class="card" id="gods-app">
+        <div class="card-header" id="heading-gods">
+            <h5 class="text-center">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-gods" aria-expanded="true"
+                    aria-controls="collapse-gods">
+                    گاد ها
+                    <span>
+                        <small class="text-danger mx-2">
+                          
+                            <span v-text="gods.length"></span>
+                        </small>
+                    </span>
+                </button>
+            </h5>
+
+        </div>
+        <div id="collapse-gods" class="collapse" aria-labelledby="heading-gods" data-parent="#accordion-gods">
+            <div class="card-body">
+               
+              
+
+
+                <div class="table-responsive">
+
+                    <table class="table table-striped rtl">
+                        <thead>
+                            <th>
+                                گاد
+                            </th>
+                            <th>
+                              امتیاز
+                            </th>
+                        </thead>
+                        <tbody>
+
+
+                            <tr v-for="god in gods">
+                                <td>
+                                    <a :href="god.get_absolute_url">
+                                        <div class="media">
+                                            <img :src="god.account.logo" class="rounded-circle" width="32"
+                                                alt="">
+                                            <div class="media-body mr-2">
+                                                <span v-text="god.account.title"></span>
+                                            </div>
+                                        </div>
+
+                                    </a>
+
+                                </td>
+                                <td>
+                                  
+                                    <span v-text="god.score"></span>
+                                    <i aria-hidden="true" class="fa fa-star " style="color: rgb(245, 193, 3);"></i>
+
+
+                                </td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+
+
+    </div>
+</div>

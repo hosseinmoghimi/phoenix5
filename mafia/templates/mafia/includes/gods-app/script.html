@@ -1,0 +1,41 @@
+<script>
+    let gods = JSON.parse(`{{gods_s|escapejs}}`)
+    let gods_app = new Vue({
+        el:"#gods-app",
+        data: {
+            gods: gods,
+            description:"",
+            title:"",
+            search_for:'',
+            waiting:false,
+            show_form:false,
+        },
+        methods: {
+            filter:function(){
+                this.gods = gods.filter(god => god.title.indexOf(this.search_for) > -1)
+         
+            },
+         
+            add_god: function (god_id) {
+                let url = "{% url 'mafia:add_god' %}"
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    title: this.title,
+                    side: this.side,
+                    description: this.description,
+                }
+                console.log(payload)
+                $.post(url, payload).done((data) => {
+                    console.log(data)
+                    if(data.result==='SUCCEED'){
+                        gods_app.gods.push(data.god)
+                        gods_app.title=""
+                        gods_app.description=""
+                    }
+                })
+            },
+           
+        }
+    })
+
+</script>

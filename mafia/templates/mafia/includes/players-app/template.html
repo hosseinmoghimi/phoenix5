@@ -11,7 +11,8 @@
                     بازیکن ها
                     <span>
                         <small class="text-danger mx-2">
-                            {{players|length}}
+                          
+                            <span v-text="players.length"></span>
                         </small>
                     </span>
                 </button>
@@ -26,7 +27,7 @@
 
                 <div class="table-responsive">
 
-                    <table class="table table-striped">
+                    <table class="table table-striped rtl">
                         <thead>
                             <th>
                                 بازیکن
@@ -40,12 +41,12 @@
 
                             <tr v-for="player in players">
                                 <td>
-                                    <a :href="player.profile.get_absolute_url">
+                                    <a :href="player.get_absolute_url">
                                         <div class="media">
-                                            <img :src="player.profile.image" class="rounded-circle" width="32"
+                                            <img :src="player.account.logo" class="rounded-circle" width="32"
                                                 alt="">
                                             <div class="media-body mr-2">
-                                                <span v-text="player.profile.name"></span>
+                                                <span v-text="player.account.title"></span>
                                             </div>
                                         </div>
 

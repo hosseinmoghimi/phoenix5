@@ -80,6 +80,7 @@ class Transport(DoubleTransaction):
             self.class_name="transport"
  
         super(Transport,self).save()
+         
           
 class Driver(models.Model,LinkHelper):
     title=models.CharField(_("title"),null=True,blank=True, max_length=100)

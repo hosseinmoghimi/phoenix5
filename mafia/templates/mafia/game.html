@@ -1,12 +1,21 @@
 {% extends "mafia/layout.html" %}
 {% load to_persian_date %}
 {% block content %}
-<div class="row">
+<div class="row rtl">
     <div class="col-md-12">
         <div class="card">
             <div class="card-header">
                 <h5>
                     {{game.title}}
+
+                    {% if perms.mafia.change_game %}
+                    <a href="{{game.get_edit_url}}" class="mx-2"><i class="text-warning fa fa-edit"></i></a>
+                    {% endif %}
+
+                    
+                    {% if perms.mafia.delete_game %}
+                    <a href="{{game.get_delete_url}}" class="mx-2"><i class="text-danger fa fa-trash"></i></a>
+                    {% endif %}
                 </h5>
             </div>
             <div class="card-body">

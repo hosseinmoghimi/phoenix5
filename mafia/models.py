@@ -59,6 +59,7 @@ class GameScenario(models.Model,LinkHelper):
     def __str__(self):
         return self.title
 
+
 class Role(Page):
     side=models.CharField(_("side"),choices=RoleSideEnum.choices, max_length=50)
     @property
@@ -98,10 +99,10 @@ class GameAct(models.Model,LinkHelper):
     def __str__(self):
         return f"{self.act} : شب {self.night} : {self.actor.game.title}"
  
- 
 
 class Player(models.Model,LinkHelper):
-    profile=models.ForeignKey("authentication.profile", verbose_name=_("profile"), on_delete=models.CASCADE)
+    # profile=models.ForeignKey("authentication.profile", verbose_name=_("profile"), on_delete=models.CASCADE)
+    account=models.ForeignKey("accounting.account", verbose_name=_("account"), on_delete=models.CASCADE)
     @property
     def score(self):
         return 4*23
@@ -112,11 +113,11 @@ class Player(models.Model,LinkHelper):
         verbose_name_plural = _("Players")
 
     def __str__(self):
-        return self.profile.name 
+        return self.account.title 
 
 
 class God(models.Model,LinkHelper):
-    profile=models.ForeignKey("authentication.profile", verbose_name=_("profile"), on_delete=models.CASCADE)
+    account=models.ForeignKey("accounting.account", verbose_name=_("account"), on_delete=models.CASCADE)
 
     class_name="god"
     app_name=APP_NAME
@@ -142,6 +143,6 @@ class RolePlayer(models.Model,LinkHelper):
         verbose_name_plural = _("RolePlayers")
 
     def __str__(self):
-        aa=(self.player.profile.name) if self.player is not None else ""
+        aa=str(self.player) if self.player is not None else ""
         return f"{aa} : {self.role.title} : {self.game.title}"
  

@@ -1,0 +1,35 @@
+{% extends "snapp/layout.html" %}
+
+{% block content %}
+<div class="row rtl">
+    <div class="col-6">
+        <h5 class="text-center">
+            <img src="{{product.image}}" width="100%" alt="">
+        </h5>
+    </div>
+    <div class="col-6">
+        <div class="my-3 mx-2">
+            <div class="farsi text-center">
+                <span>
+                    <small>
+                        {{product.title}}
+                        {% if perms.accounting.change_product %}
+                        <a href="{{product.get_edit_url}}" target="_blank" class="mx-2"><i
+                                class="fa fa-edit text-warning"></i></a>
+                        {% endif %}
+                        {% if perms.accounting.change_product %}
+                        <a href="{{product.get_delete_url}}" target="_blank" class="mx-2"><i
+                                class="fa fa-trash text-danger"></i></a>
+                        {% endif %}
+                    </small>
+                </span>
+            </div>
+        </div>
+    {% include "snapp/includes/add-to-cart-app/template.html" %}
+    </div>
+</div>
+{% endblock content %}
+
+{% block script %}
+{% include "snapp/includes/add-to-cart-app/script.html" %}
+{% endblock script %}

@@ -9,6 +9,12 @@ class AddRoleToGameForm(forms.Form):
     game_id=forms.IntegerField(required=True)
     role_id=forms.IntegerField(required=True)
     
+class AddPlayerForm(forms.Form):
+    account_id=forms.IntegerField(required=True) 
+    
+class AddGodForm(forms.Form):
+    account_id=forms.IntegerField(required=True) 
+    
 class InitializeForm(forms.Form):
     title=forms.CharField(max_length=50, required=False)
 

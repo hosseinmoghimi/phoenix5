@@ -1,3 +1,5 @@
+
+from accounting.views import add_from_accounts_context
 import json
 from django.shortcuts import redirect, render,reverse
 from django.views import View
@@ -6,7 +8,7 @@ from core.views import CoreContext, MessageView,PageContext
 from mafia.enums import RoleSideEnum
 from mafia.forms import *
 from mafia.repo import GameActRepo, GameRepo, GameScenarioRepo, GodRepo, PlayerRepo, RolePlayerRepo, RoleRepo
-from mafia.serializers import GameActSerializer, GameSerializer, PlayerSerializer, RolePlayerSerializer, RoleSerializer,GameScenarioSerializer
+from mafia.serializers import GodSerializer,GameActSerializer, GameSerializer, PlayerSerializer, RolePlayerSerializer, RoleSerializer,GameScenarioSerializer
 
 TEMPLATE_ROOT="mafia/"
 LAYOUT_PARENT="phoenix/layout.html"
@@ -50,11 +52,11 @@ class GodsView(View):
         context=getContext(request=request)
         gods=GodRepo(request=request).list(*args, **kwargs)
         context['gods']=gods
-        gods_s=json.dumps(RoleSerializer(gods,many=True).data)
+        gods_s=json.dumps(GodSerializer(gods,many=True).data)
         context['gods_s']=gods_s
         if request.user.has_perm(APP_NAME+".add_god"):
-            context['sides']=(side[0] for side in RoleSideEnum.choices)
-            context['add_role_form']=AddRoleForm()
+            context['add_god_form']=AddGodForm()
+            context.update(add_from_accounts_context(request=request))
         return render(request,TEMPLATE_ROOT+"gods.html",context)
 
 class GodView(View):
@@ -177,6 +179,8 @@ class AddGameView(View):
 
 
 
+
+
 class InitializeView(View):
     def get(self,request,*args, **kwargs):
         if request.user.has_perm(APP_NAME+".add_game"):
@@ -210,7 +214,6 @@ class RolePlayerView(View):
         return render(request,TEMPLATE_ROOT+"role-player.html",context)
 
 
-
 class PlayersView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
@@ -218,9 +221,15 @@ class PlayersView(View):
         context['players']=players
         players_s=json.dumps(PlayerSerializer(players,many=True).data)
         context['players_s']=players_s
-        if request.user.has_perm(APP_NAME+".add_role"):
-            context['sides']=(side[0] for side in RoleSideEnum.choices)
-            context['add_role_form']=AddRoleForm()
+        # if request.user.has_perm(APP_NAME+".add_role"):
+        #     context['sides']=(side[0] for side in RoleSideEnum.choices)
+        #     context['add_role_form']=AddRoleForm()
+
+
+        if request.user.has_perm(APP_NAME+".add_player"):
+            context['add_player_form']=AddPlayerForm()
+            context.update(add_from_accounts_context(request=request))
+
         return render(request,TEMPLATE_ROOT+"players.html",context)
 
 class PlayerView(View):
@@ -228,6 +237,14 @@ class PlayerView(View):
         context=getContext(request=request)
         player=PlayerRepo(request=request).player(*args, **kwargs)
         context['player']=player
+
+        
+        role_players=RolePlayerRepo(request=request).list(*args, **kwargs).filter(player_id=player.id)
+        context['role_players']=role_players
+        role_players_s=json.dumps(RolePlayerSerializer(role_players,many=True).data)
+        context['role_players_s']=role_players_s
+
+
         return render(request,TEMPLATE_ROOT+"player.html",context)
 
 

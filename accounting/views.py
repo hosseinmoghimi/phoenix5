@@ -931,7 +931,7 @@ class TransactionsPrintView(View):
 class CategoriesView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
-        categories=CategoryRepo(request=request).list(parent_id=0,*args, **kwargs)
+        categories=CategoryRepo(request=request).list(root=True)
         context['categories']=categories
         categories_s=json.dumps(CategorySerializer(categories,many=True).data)
         context['categories_s']=categories_s
@@ -944,7 +944,6 @@ class CategoriesView(View):
 class CategoryView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
-        context['expand_categories']=True
         category_repo=CategoryRepo(request=request)
         category=category_repo.category(*args, **kwargs)
         if category is None:
@@ -958,6 +957,8 @@ class CategoryView(View):
         context['products']=products
         products_s=json.dumps(ProductSerializer(products,many=True).data)
         context['products_s']=products_s
+        if len(products)>0:
+            context['expand_products']=True
         
 
         services=products_or_services.filter(class_name='service')
@@ -972,6 +973,8 @@ class CategoryView(View):
         context['categories']=categories
         context['categories_s']=json.dumps(CategorySerializer(categories,many=True).data)
 
+        if len(categories)>0:
+            context['expand_categories']=True
         if request.user.has_perm(APP_NAME+".add_category"):
             context['add_category_form']=AddCategoryForm()
 

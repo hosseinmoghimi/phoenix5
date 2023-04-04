@@ -44,7 +44,12 @@
 
                             <th>
                             </th>
+                            {% if not game %}
 
+                            <th>
+                                بازی
+                            </th>
+                            {% endif %}
 
                             <th>
                                 ساید
@@ -73,6 +78,18 @@
                                     </a>
                                 </td>
 
+                                {% if not game %}
+
+                                <td> 
+                                    <a :href="role_player.game.get_absolute_url">
+
+                                        <h5 v-text="role_player.game.title"></h5>
+                                    </a>
+                                        <h6 class="text-muted" v-text="role_player.game.scenario"></h6>
+
+                                </td>
+                                {% endif %}
+
                                 <td>
 
                                     <span :class="'text-'+role_player.role.color" v-text="role_player.role.side">
@@ -95,26 +112,46 @@
 
                                 <td>
                                     <div v-if="role_player.player">
-                                        <a :href="role_player.player.get_absolute_url">
-                                            <img :src="role_player.player.profile.image" width="64"
-                                                class="rounded-circle" alt=""><span class="farsi mr-2">
-                                                <span :class="'text-'+role_player.role.color"
-                                                    v-text="role_player.player.profile.name">
+                                        <div class="media">
+                                            <a :href="role_player.player.get_absolute_url">
 
-                                                </span>
-                                                <small v-text="role_player.player.score">
+                                                <img :src="role_player.player.account.logo" width="64"
+                                                    class="rounded-circle" alt="">
+                                            </a>
 
-                                                </small>
-                                                <i aria-hidden="true" class="fa fa-star "
-                                                    style="color: rgb(245, 193, 3);"></i>
+                                            <div class="media-body mr-2 farsi">
+                                                <a :href="role_player.player.get_absolute_url">
+                                                    <h6>
 
-                                            </span>
-                                        </a>
+                                                        <span :class="'text-'+role_player.role.color"
+                                                            v-text="role_player.player.account.title">
+
+                                                        </span>
+                                                    </h6>
+                                                </a>
+                                                <h6>
+
+                                                    <small v-text="role_player.player.score">
+
+                                                    </small> <i aria-hidden="true" class="fa fa-star "
+                                                        style="color: rgb(245, 193, 3);"></i>
+                                                </h6>
+
+
+
+                                            </div>
+                                        </div>
+
+
+
+
+
                                     </div>
 
                                 </td>
                                 <td>
-                                    <a :href="role_player.get_edit_url" class=" text-warning" title="ویرایش">
+                                    <a :href="role_player.get_edit_url" class=" text-warning" title="ویرایش"
+                                        target="_blank">
                                         <i class="fa fa-edit"></i>
                                         <small>
 

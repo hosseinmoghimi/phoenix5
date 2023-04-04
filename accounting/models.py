@@ -333,6 +333,8 @@ class Product(ProductOrService):
         return super(Product,self).save(*args, **kwargs)
     def get_market_absolute_url(self):
         return reverse("market:product",kwargs={'pk':self.pk})
+    def get_snapp_absolute_url(self):
+        return reverse("snapp:product",kwargs={'pk':self.pk})
  
 
 class AccountTag(models.Model,LinkHelper):
@@ -989,6 +991,7 @@ class Category(models.Model,LinkHelper, ImageMixin):
     def save(self):
         self.full_title=self.full_title_
         super(Category,self).save()
+     
     @property
     def products(self):
         ids=[]
@@ -1073,6 +1076,10 @@ class Category(models.Model,LinkHelper, ImageMixin):
 
     def get_market_absolute_url(self):
         return reverse("market:category",kwargs={'pk':self.pk})
+
+
+    def get_snapp_absolute_url(self):
+        return reverse("snapp:category",kwargs={'pk':self.pk})
 
 
 class Spend(Transaction,LinkHelper):    
