@@ -3,6 +3,7 @@
 from core.repo import ProfileRepo,FAILED,SUCCEED
 from mafia.enums import RoleSideEnum
 from mafia.models import GameAct, Role,Game,Player,RolePlayer,God,GameScenario
+from utility.log import leolog
 from mafia.apps import APP_NAME
 from mafia.default import init_roles,init_scenarioes
 
@@ -188,6 +189,23 @@ class GameRepo():
                     role_player.save()
         return game
 
+    def remove_role_from_game(self,*args, **kwargs):
+        result=FAILED
+        if not self.user.has_perm(APP_NAME+".change_game"):
+            return None
+        role_id=0
+        game_id=0
+        if 'game_id' in kwargs:
+            game_id=kwargs['game_id']
+        if 'role_id' in kwargs:
+            role_id=kwargs['role_id']
+        if role_id==0 or game_id==0:
+            return result
+        role_player=RolePlayer.objects.filter(game_id=game_id).filter(role_id=role_id).delete()
+        # if role_player is not None:
+            # role_player.delete()
+        result=SUCCEED
+        return result
 
 
     def add_role_to_game(self,*args, **kwargs):
@@ -196,7 +214,68 @@ class GameRepo():
         role_player=RolePlayer(*args, **kwargs)
         role_player.save()
         return role_player
+    
+    def randomize_role_players(self,*args, **kwargs):
+        kwargs_="game_id"
+        role_players,message,result=None,"",FAILED
 
+        if not self.user.has_perm(APP_NAME+".change_game"):
+            message="شما مجوز لازم برای ویرایش بازیکنان ندارید."
+            return role_players,message,result
+        game=Game.objects.filter(pk=kwargs["game_id"]).first()
+        if game is None:
+            message="همچنین بازی ای وجود ندارد."
+            return role_players,message,result
+        role_players=RolePlayer.objects.filter(game_id=game.id)
+        roles_id=[]
+        for role_player in role_players:
+            roles_id.append(role_player.role.id)
+        # role_players.delete()
+        players=game.players.all()
+        players_id=[]
+        for player in players:
+            players_id.append(player.id)
+        # leolog(players_id=players_id,roles_id=roles_id)
+
+        import random
+        random.shuffle(players_id)
+        random.shuffle(roles_id)
+        # leolog(players_id=players_id,roles_id=roles_id)
+        if len(roles_id)==len(players_id):
+            role_players.delete()
+            for i in range(len(roles_id)):
+                role_player=RolePlayer()
+                role_player.game_id=game.id
+                role_player.role_id=roles_id[i]
+                role_player.player_id=players_id[i]
+                role_player.save()
+        role_players=RolePlayer.objects.filter(game_id=game.id)
+        message="بازیکنان با موفقیت اضافه شدند."
+        result=SUCCEED
+        return role_players,message,result
+
+
+    def set_players(self,*args, **kwargs):
+        kwargs_="players_id","game_id"
+        players,message,result=None,"",FAILED
+
+        if not self.user.has_perm(APP_NAME+".change_game"):
+            message="شما مجوز لازم برای ویرایش بازیکنان ندارید."
+            return players,message,result
+        game=Game.objects.filter(pk=kwargs["game_id"]).first()
+        if game is None:
+            message="همچنین بازی ای وجود ندارد."
+            return players,message,result
+        players_id=kwargs["players_id"]
+        
+        game.players.clear()
+        for player_id in players_id:
+            player=Player.objects.filter(pk=player_id).first()
+            if player is not None:
+                game.players.add(player) 
+        message="بازیکنان با موفقیت اضافه شدند."
+        result=SUCCEED
+        return players,message,result
 
 class PlayerRepo():  
     def __init__(self, *args, **kwargs):

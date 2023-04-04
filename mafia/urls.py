@@ -10,6 +10,7 @@ urlpatterns = [
     path("role/<int:pk>/",views.RoleView.as_view(),name="role"),
     path("add_role/",apis.AddRoleApi.as_view(),name="add_role"),
     path("add_role_to_game/",apis.AddRoleToGameApi.as_view(),name="add_role_to_game"),
+    path("remove_role_from_game/",apis.RemoveRoleFromGameApi.as_view(),name="remove_role_from_game"),
     
     path("role_players/",views.RolePlayersView.as_view(),name="role_players"),
     path("role_player/<int:pk>/",views.RolePlayerView.as_view(),name="roleplayer"),
@@ -26,6 +27,7 @@ urlpatterns = [
     path("games/",views.GamesView.as_view(),name="games"),
     path("game/<int:pk>/",views.GameView.as_view(),name="game"),
     path("add_game/",views.AddGameView.as_view(),name="add_game"),
+    path("randomize_game_role_players/",apis.RandomizeGameRolePlayersApi.as_view(),name="randomize_game_role_players"),
 
 
     path("gods/",views.GodsView.as_view(),name="gods"),
@@ -34,6 +36,7 @@ urlpatterns = [
 
     path("game_act/<int:pk>/",views.GameActView.as_view(),name="gameact"),
     path("add_player_to_game/",apis.AddPlayerToGameApi.as_view(),name="add_player_to_game"),
+    path("set_game_players/",apis.SetGamePlayersApi.as_view(),name="set_game_players"),
     path("add_game_act/",views.GameActView.as_view(),name="add_game_act"),
 
     path("game_scenarioes/",views.GameScenarioesView.as_view(),name="game_scenarioes"),

@@ -101,7 +101,13 @@
         </div>
     </div>
     <div class="col-md-12">
-        {% include "mafia/includes/role-players-app/template.html" %}
+        {% include "mafia/includes/select-players-app/template.html" %}
+    </div>
+    <div class="col-md-12">
+        {% include "mafia/includes/select-roles-app/template.html" %}
+    </div>
+    <div class="col-md-12">
+        {% include "mafia/includes/role-players-app/template2.html" %}
     </div>
     <div class="col-md-12">
         {% include "mafia/includes/game-acts-app/template.html" %}
@@ -109,17 +115,14 @@
     <div class="col-md-12">
         {% include "mafia/includes/add-player-to-game-app/template.html" %}
     </div>
-    <div class="col-md-12">
-        {% include "mafia/includes/select-players-app/template.html" %}
-    </div>
-    <div class="col-md-12">
-        {% include "mafia/includes/select-roles-app/template.html" %}
-    </div>
 </div>
 {% endblock content %}
 {% block script %}
+<script>
+
+</script>
 {% include "mafia/includes/game-app/script.html" %}
-{% include "mafia/includes/role-players-app/script.html" %}
+{% include "mafia/includes/role-players-app/script2.html" %}
 {% include "mafia/includes/game-acts-app/script.html" %}
 {% include "mafia/includes/add-player-to-game-app/script.html" %}
 {% include "mafia/includes/select-players-app/script.html" %}

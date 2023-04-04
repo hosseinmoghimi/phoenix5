@@ -1,21 +1,69 @@
 <script>
-    let players = JSON.parse(`{{players_s|escapejs}}`)
+    let select_players_app_players = JSON.parse(`{{players_s|escapejs}}`)
+    let select_players_app_selected_players = JSON.parse(`{{selected_players_s|escapejs}}`)
     let select_players_app = new Vue({
         el: "#select-players-app",
         data: {
-            players: players,
+            players: select_players_app_players,
             selected_players: [],
+            message:{show:false}
+        },
+        mounted: function () {
+            select_players_app_selected_players.forEach(player => {
+                this.select_player(player)
+
+            });
         },
         methods: {
             select_player: function (selected_player) {
                 this.selected_players.push(selected_player)
-                this.players=this.players.filter(player=>player.id!=selected_player.id)
+                this.players = this.players.filter(player => player.id != selected_player.id)
             },
 
             deselect_player: function (selected_player) {
-                
+
                 this.players.push(selected_player)
-                this.selected_players=this.selected_players.filter(player=>player.id!=selected_player.id)
+                this.selected_players = this.selected_players.filter(player => player.id != selected_player.id)
+            },
+            set_game_players: function (selected_player) {
+                players_id = []
+                this.selected_players.forEach(player => {
+                    players_id.push(player.id)
+                });
+                players_id = JSON.stringify(players_id)
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    game_id: parseInt("{{game.id}}"),
+                    players_id: players_id,
+                }
+                console.log(payload)
+                let posting = $.post("{% url 'mafia:set_game_players' %}", payload)
+                posting.done(data => {
+                    if (data.result === "SUCCEED") {
+                        select_players_app.message = {
+                            color: "success",
+                            body: data.message,
+                            show: true,
+                        }
+                        setTimeout(() => {
+                            select_players_app.message = {
+                                show: false,
+                            }
+                        }, 3000);
+                    }
+                    else {
+                        select_players_app.message = {
+                            color: "danger",
+                            body: data.message,
+                            show: true,
+                        }
+                        setTimeout(() => {
+                            select_players_app.message = {
+                                show: false,
+                            }
+                        }, 3000);
+                    }
+                })
             },
         }
     })

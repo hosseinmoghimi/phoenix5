@@ -137,6 +137,9 @@ class GameView(View):
             roles_s=json.dumps(RoleSerializer(roles,many=True).data)
             context['roles']=roles
             context['roles_s']=roles_s
+            selected_players=game.players.all()
+            selected_players_s=json.dumps(PlayerSerializer(selected_players,many=True).data)
+            context['selected_players_s']=selected_players_s
             selected_roles=[]
             for role_player in game.roleplayer_set.all():
                 selected_roles.append(role_player.role)

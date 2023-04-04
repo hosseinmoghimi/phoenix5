@@ -13,6 +13,9 @@
     let select_roles_app = new Vue({
         el: "#select-roles-app",
         data: {
+            CITIZEN:CITIZEN,
+            MAFIA:MAFIA,
+            INDEPENDENT:INDEPENDENT,
             roles: roles,
             selected_roles: [],
         },
@@ -56,12 +59,35 @@
                 if (selected_role.title != "شهروند ساده")
                     this.roles = this.roles.filter(role => role.id != selected_role.id)
 
+                    
+
             },
 
-            deselect_role: function (selected_role) {
+            deselect_role: function (selected_role,add_to_db) {
 
                 this.roles.push(selected_role)
                 this.selected_roles = this.selected_roles.filter(role => role.id != selected_role.id)
+
+                if (add_to_db) {
+                    let payload = {
+                        csrfmiddlewaretoken: csrfmiddlewaretoken,
+                        game_id: parseInt("{{game.id}}"),
+                        role_id: selected_role.id,
+                    }
+                    let url = "{% url 'mafia:remove_role_from_game' %}"
+                    console.log(payload)
+                    $.post(url, payload).done(data => {
+                        if (data.result === 'SUCCEED') {
+
+                        }
+
+
+                    })
+                }
+                if (!add_to_db) {
+
+                }
+
             },
         }
     })

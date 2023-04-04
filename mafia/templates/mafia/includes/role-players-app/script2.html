@@ -1,0 +1,162 @@
+<script>
+    let role_player_component_template = `{% include "mafia/includes/role-players-app/component.html" %}`
+    let url_change_role_player = "{% url 'mafia:add_god' %}"
+    let players = JSON.parse(`{{players_s|escapejs}}`)
+
+    let role_player_component = Vue.component('role-player-component', {
+        data: function () {
+            return {
+                quantity: 1,
+                message: { show: false },
+                unit_name: "عدد",
+                // show: false,
+            }
+        },
+        methods: {
+            change_player: function (a) {
+                if ((this.quantity + a) < 0) {
+                    this.quantity = 0
+                }
+                else if ((this.quantity + a) > this.shop.available) {
+                    this.quantity = this.shop.available
+                }
+                else {
+                    this.quantity = this.quantity + a
+                }
+            },
+
+            to_price: function (value, currency) {
+                return to_price(value, currency)
+            },
+            show_for_seconds: function (seconds) {
+                this.show = true
+                this_ = this
+                setTimeout(() => {
+                    this_.show = false
+                }, seconds * 1000);
+            },
+
+            change_role_player: function () {
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    quantity: this.quantity,
+                    shop_id: this.shop.id,
+                }
+                // console.log(payload)
+                let aa = this
+                let posting = $.post(url_change_role_player, payload)
+                posting.done((data) => {
+                    if (data.result === 'SUCCEED') {
+                        let in_cart = data.cart_line.quantity + " " + data.cart_line.shop.unit_name
+                        // let message = in_cart + " با موفقیت به <a href='{% url 'market:cart' %}'>سبد خرید</a> شما افزوده شد."
+                        let message = in_cart + `<a href='{% url 'market:cart' %}'>به <i class="material-icons">shopping_cart</i>سبد خرید شما افزوده شد.</a>`
+                        aa.message =
+                        {
+                            body: message,
+                            show: true
+                        }
+                        if (typeof in_cart_app != "undefined") {
+                            in_cart_app.in_cart = aa.quantity
+                            in_cart_app.in_cart_unit = data.cart_line.shop.unit_name
+                        }
+
+                        // setTimeout(() => { 
+                        //     aa.message.show = false
+                        // }, 2000);
+                    }
+                })
+            },
+
+
+        },
+        props: ['role_player', 'show'],
+        template: role_player_component_template,
+    })
+
+
+
+
+</script>
+
+<script>
+    let role_players = JSON.parse(`{{role_players_s|escapejs}}`)
+    let role_players_app = new Vue({
+        el: "#role-players-app",
+        data: {
+            role_players: role_players,
+            description: "",
+            title: "",
+            side: "",
+            search_for: '',
+            waiting: false,
+            show_form: false,
+        },
+        components: {
+            role_player_component,
+        },
+        methods: {
+            show_all: function () {
+                role_players.forEach(element => {
+
+                });
+            },
+            hide_all: function () {
+                role_players.forEach(element => {
+
+                });
+            },
+            randomize_role_players: function () {
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    game_id: parseInt("{{game.id}}"),
+                }
+                // console.log(payload)
+                let aa = this
+                let posting = $.post("{% url 'mafia:randomize_game_role_players' %}", payload)
+                posting.done((data) => {
+                    if (data.result === 'SUCCEED') {
+                        role_players_app.role_players = data.role_players
+                    }
+                })
+            },
+            filter: function () {
+                this.role_players = role_players.filter(function (role_player) {
+                    let search_for = role_players_app.search_for
+                    if (role_player.role.title.indexOf(search_for) > -1)
+                        return true
+
+
+                    if (role_player.player.profile.name.indexOf(search_for) > -1)
+                        return true
+
+
+                    return false
+
+
+                })
+
+            },
+
+            add_role_player: function (role_player_id) {
+                let url = "{% url 'mafia:add_role_player' %}"
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    title: this.title,
+                    side: this.side,
+                    description: this.description,
+                }
+                console.log(payload)
+                $.post(url, payload).done((data) => {
+                    console.log(data)
+                    if (data.result === 'SUCCEED') {
+                        role_players_app.role_players.push(data.role_player)
+                        role_players_app.title = ""
+                        role_players_app.description = ""
+                    }
+                })
+            },
+
+        }
+    })
+
+</script>

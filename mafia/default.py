@@ -2,6 +2,297 @@ from mafia.models import Role,GameScenario
 from mafia.enums import RoleSideEnum
 
 
+def init_roles(*args, **kwargs):
+    Role.objects.all().delete()
+
+
+    role=Role()
+    role.priority=1
+    role.title="شهروند ساده"
+    role.wake_up_turn=0
+    role.side=RoleSideEnum.CITIZEN
+    role.save()
+
+    role=Role(title="پزشک")
+    role.wake_up_turn=20
+    role.priority=2
+    role.side=RoleSideEnum.CITIZEN
+    role.save()
+
+    role=Role()
+    role.priority=3
+    role.wake_up_turn=21
+    role.title="کارآگاه"
+    role.side=RoleSideEnum.CITIZEN
+    role.save()
+
+    
+    role=Role(title="تفنگ دار")
+    role.wake_up_turn=40
+    role.priority=4
+    role.side=RoleSideEnum.CITIZEN
+    role.save()
+
+
+    
+    role=Role()
+    role.title="نگهبان"
+    role.wake_up_turn=5
+    role.priority=5
+    role.side=RoleSideEnum.CITIZEN
+    role.save()
+    
+
+    role=Role(title="تکاور")
+    role.wake_up_turn=10
+    role.priority=6
+    role.side=RoleSideEnum.CITIZEN
+    role.save()
+
+    role=Role(title="روانشناس")
+    role.wake_up_turn=99
+    role.priority=7
+    role.side=RoleSideEnum.CITIZEN
+    role.save()
+
+
+    role=Role(title="زره پوش")
+    role.wake_up_turn=0
+    role.priority=2
+    role.side=RoleSideEnum.CITIZEN
+    role.save()
+
+    role=Role(title="خبرنگار")
+    role.wake_up_turn=80
+    role.priority=2
+    role.side=RoleSideEnum.CITIZEN
+    role.save()
+
+
+    role=Role(title="تک تیر انداز")
+    role.wake_up_turn=70
+    role.priority=2
+    role.side=RoleSideEnum.CITIZEN
+    role.save()
+    
+    
+    
+
+    role=Role(title="بازپرس")
+    role.wake_up_turn=50
+    role.priority=2
+    role.side=RoleSideEnum.CITIZEN
+    role.save()
+    
+    
+
+    role=Role(title="شکارچی")
+    role.wake_up_turn=2
+    role.priority=2
+    role.side=RoleSideEnum.CITIZEN
+    role.save()
+    
+
+
+    role=Role(title="رویین تن")
+    role.priority=0
+    role.side=RoleSideEnum.CITIZEN
+    role.save()
+    
+ 
+
+    role=Role(title="حرفه ای")
+    role.wake_up_turn=74
+    role.priority=2
+    role.side=RoleSideEnum.CITIZEN
+    role.save()
+
+
+    role=Role()
+    role.title="کابوی"
+    role.wake_up_turn=0
+    role.priority=2
+    role.side=RoleSideEnum.CITIZEN
+    role.save()
+
+    role=Role(title="ماسون")
+    role.wake_up_turn=90
+    role.priority=2
+    role.side=RoleSideEnum.CITIZEN
+    role.save()
+
+    role=Role(title="تایلر")
+    role.priority=2
+    role.wake_up_turn=90
+    role.side=RoleSideEnum.CITIZEN
+    role.save()
+
+
+    role=Role(title="نانوا")
+    role.priority=2
+    role.wake_up_turn=0
+    role.side=RoleSideEnum.CITIZEN
+    role.save()
+    
+
+
+    role=Role(title="کشیش")
+    role.wake_up_turn=0
+    role.priority=2
+    role.side=RoleSideEnum.CITIZEN
+    role.save()
+    
+
+    role=Role(title="گورکن")
+    role.priority=2
+    role.side=RoleSideEnum.CITIZEN
+    role.save()
+    
+
+    role=Role(title="مسیح")
+    role.priority=2
+    role.side=RoleSideEnum.CITIZEN
+    role.save()
+    
+
+    role=Role(title="فروشنده")
+    role.wake_up_turn=0
+    role.priority=2
+    role.side=RoleSideEnum.CITIZEN
+    role.save()
+    
+    role=Role(title="فدایی")
+    role.wake_up_turn=0
+    role.priority=2
+    role.side=RoleSideEnum.CITIZEN
+    role.save()
+
+    role=Role(title="شهردار")
+    role.wake_up_turn=0
+    role.priority=2
+    role.side=RoleSideEnum.CITIZEN
+    role.save()
+
+    role=Role(title="جان سخت")
+    role.wake_up_turn=0
+    role.priority=2
+    role.side=RoleSideEnum.CITIZEN
+    role.save()
+
+    role=Role()
+    role.priority=2
+    role.wake_up_turn=0
+    role.title="پدرخوانده"
+    role.side=RoleSideEnum.MAFIA
+    role.save()
+    
+
+    
+
+    role=Role(title="مافیای ساده")
+    role.priority=2
+    role.wake_up_turn=0
+    role.side=RoleSideEnum.MAFIA
+    role.save()
+
+    role=Role(title="دکتر لکتر")
+    role.priority=2
+    role.wake_up_turn=0
+    role.side=RoleSideEnum.MAFIA
+    role.save()
+
+    role=Role(title="جاسوس")
+    role.priority=2
+    role.wake_up_turn=0
+    role.side=RoleSideEnum.MAFIA
+    role.save()
+
+    role=Role(title="ناتاشا")
+    role.priority=2
+    role.wake_up_turn=0
+    role.side=RoleSideEnum.MAFIA
+    role.save()
+
+    role=Role(title="معشوقه")
+    role.priority=2
+    role.wake_up_turn=0
+    role.side=RoleSideEnum.MAFIA
+    role.save()
+
+
+    role=Role()
+    role.title="تروریست"
+    role.priority=2
+    role.wake_up_turn=0
+    role.side=RoleSideEnum.MAFIA
+    role.save()
+
+    role=Role()
+    role.title="خراب کار"
+    role.priority=2
+    role.wake_up_turn=0
+    role.side=RoleSideEnum.MAFIA
+    role.save()
+
+    role=Role()
+    role.title="گروگان گیر"
+    role.wake_up_turn=0
+    role.priority=2
+    role.side=RoleSideEnum.MAFIA
+    role.save()
+    
+    role=Role()
+    role.title="مذاکره کننده"
+    role.priority=2
+    role.wake_up_turn=0
+    role.side=RoleSideEnum.MAFIA
+    role.save()
+
+    
+    role=Role(title="شیاد")
+    role.priority=2
+    role.wake_up_turn=0
+    role.side=RoleSideEnum.MAFIA
+    role.save()
+    
+
+
+    role=Role()
+    role.title="ناتو"
+    role.wake_up_turn=0
+    role.priority=2
+    role.side=RoleSideEnum.MAFIA
+    role.save()
+
+
+    
+    role=Role()
+    role.title="جوکر"
+    role.wake_up_turn=0
+    role.priority=2
+    role.side=RoleSideEnum.MAFIA
+    role.save()
+
+
+
+
+    role=Role()
+    role.title="ساقی"
+    role.wake_up_turn=0
+    role.priority=2
+    role.side=RoleSideEnum.INDEPENDENT
+    role.save()
+
+    role=Role()
+    role.title="هزار چهره"
+    role.wake_up_turn=0
+    role.priority=2
+    role.side=RoleSideEnum.INDEPENDENT
+    role.save()
+
+
+
+
 def init_scenarioes(*args, **kwargs):
     
     GameScenario.objects.all().delete()
@@ -66,204 +357,4 @@ def init_scenarioes(*args, **kwargs):
     game_scenario.roles.add(Role.objects.get(title="خراب کار"))
 
 
-def init_roles(*args, **kwargs):
-    Role.objects.all().delete()
 
-
-    role=Role()
-    role.title="شهروند ساده"
-    role.side=RoleSideEnum.CITIZEN
-    role.save()
-
-    role=Role(title="پزشک")
-    role.side=RoleSideEnum.CITIZEN
-    role.save()
-
-    role=Role()
-    role.title="کارآگاه"
-    role.side=RoleSideEnum.CITIZEN
-    role.save()
-
-    
-    role=Role(title="تفنگ دار")
-    role.side=RoleSideEnum.CITIZEN
-    role.save()
-
-
-    role=Role(title="تک تیر انداز")
-    role.side=RoleSideEnum.CITIZEN
-    role.save()
-    
-    
-    role=Role(title="تکاور")
-    role.side=RoleSideEnum.CITIZEN
-    role.save()
-
-    role=Role(title="حرفه ای")
-    role.side=RoleSideEnum.CITIZEN
-    role.save()
-
-    role=Role(title="خبرنگار")
-    role.side=RoleSideEnum.CITIZEN
-    role.save()
-
-    
-    role=Role(title="روانشناس")
-    role.side=RoleSideEnum.CITIZEN
-    role.save()
-
-    
-    role=Role(title="زره پوش")
-    role.side=RoleSideEnum.CITIZEN
-    role.save()
-
-    role=Role(title="بازپرس")
-    role.side=RoleSideEnum.CITIZEN
-    role.save()
-    
-    
-
-    role=Role(title="شکارچی")
-    role.side=RoleSideEnum.CITIZEN
-    role.save()
-    
-
-
-    role=Role(title="رویین تن")
-    role.side=RoleSideEnum.CITIZEN
-    role.save()
-    
- 
-
-    role=Role()
-    role.title="کابوی"
-    role.side=RoleSideEnum.CITIZEN
-    role.save()
-
-    role=Role()
-    role.title="نگهبان"
-    role.side=RoleSideEnum.CITIZEN
-    role.save()
-    
-
-    role=Role(title="نانوا")
-    role.side=RoleSideEnum.CITIZEN
-    role.save()
-    
-
-
-    role=Role(title="کشیش")
-    role.side=RoleSideEnum.CITIZEN
-    role.save()
-    
-
-    role=Role(title="گورکن")
-    role.side=RoleSideEnum.CITIZEN
-    role.save()
-    
-
-    role=Role(title="مسیح")
-    role.side=RoleSideEnum.CITIZEN
-    role.save()
-    
-
-    role=Role(title="فروشنده")
-    role.side=RoleSideEnum.CITIZEN
-    role.save()
-    
-    role=Role(title="فدایی")
-    role.side=RoleSideEnum.CITIZEN
-    role.save()
-
-    role=Role(title="ماسون")
-    role.side=RoleSideEnum.CITIZEN
-    role.save()
-
-    role=Role(title="شهردار")
-    role.side=RoleSideEnum.CITIZEN
-    role.save()
-
-    role=Role(title="جان سخت")
-    role.side=RoleSideEnum.CITIZEN
-    role.save()
-
-    role=Role()
-    role.title="پدرخوانده"
-    role.side=RoleSideEnum.MAFIA
-    role.save()
-    
-
-    
-
-    role=Role(title="مافیای ساده")
-    role.side=RoleSideEnum.MAFIA
-    role.save()
-
-    role=Role(title="دکتر لکتر")
-    role.side=RoleSideEnum.MAFIA
-    role.save()
-
-    role=Role(title="جاسوس")
-    role.side=RoleSideEnum.MAFIA
-    role.save()
-
-    role=Role(title="ناتاشا")
-    role.side=RoleSideEnum.MAFIA
-    role.save()
-
-    role=Role(title="معشوقه")
-    role.side=RoleSideEnum.MAFIA
-    role.save()
-
-
-    role=Role()
-    role.title="تروریست"
-    role.side=RoleSideEnum.MAFIA
-    role.save()
-
-    role=Role()
-    role.title="خراب کار"
-    role.side=RoleSideEnum.MAFIA
-    role.save()
-
-    role=Role()
-    role.title="گروگان گیر"
-    role.side=RoleSideEnum.MAFIA
-    role.save()
-    
-    role=Role()
-    role.title="مذاکره کننده"
-    role.side=RoleSideEnum.MAFIA
-    role.save()
-
-    
-    role=Role(title="شیاد")
-    role.side=RoleSideEnum.MAFIA
-    role.save()
-    
-
-
-    role=Role()
-    role.title="ناتو"
-    role.side=RoleSideEnum.MAFIA
-    role.save()
-
-
-    
-    role=Role()
-    role.title="جوکر"
-    role.side=RoleSideEnum.MAFIA
-    role.save()
-
-
-
-
-    role=Role()
-    role.title="ساقی"
-    role.side=RoleSideEnum.INDEPENDENT
-    role.save()
-
-    role=Role()
-    role.title="هزار چهره"
-    role.side=RoleSideEnum.INDEPENDENT
-    role.save()

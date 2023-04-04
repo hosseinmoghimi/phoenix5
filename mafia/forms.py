@@ -9,8 +9,20 @@ class AddRoleToGameForm(forms.Form):
     game_id=forms.IntegerField(required=True)
     role_id=forms.IntegerField(required=True)
     
+class SetGamePlayersForm(forms.Form):
+    game_id=forms.IntegerField(required=True)
+    players_id=forms.CharField(max_length=500,required=True)
+
+class RemoveRoleFromGameForm(forms.Form):
+    game_id=forms.IntegerField(required=True) 
+    role_id=forms.IntegerField(required=True) 
+
 class AddPlayerForm(forms.Form):
     account_id=forms.IntegerField(required=True) 
+
+class RandomizeGameRolePlayersForm(forms.Form):
+    game_id=forms.IntegerField(required=True) 
+    
     
 class AddGodForm(forms.Form):
     account_id=forms.IntegerField(required=True) 

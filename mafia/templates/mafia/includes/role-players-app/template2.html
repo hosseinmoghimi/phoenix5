@@ -1,0 +1,61 @@
+{% load to_persian_date %}
+{% load to_price %}
+{% load to_amount_color %}
+{% load static %}
+<div id="accordion-role-players">
+    <div class="card" id="role-players-app">
+        <div class="card-header" id="heading-role-players">
+            <h5 class="text-center">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-role-players"
+                    aria-expanded="true" aria-controls="collapse-role-players">
+                    نقش های بازیکنان
+                    <span v-if="role_players.length>0">
+                        <small class="text-danger mx-2">
+                            <span v-text="role_players.length"></span>
+                        </small>
+                    </span>
+                </button>
+            </h5>
+
+        </div>
+        <div id="collapse-role-players" class="collapse" aria-labelledby="heading-role-players"
+            data-parent="#accordion-role-players">
+            <div class="card-body">
+                {% load static %}
+                <form @submit.prevent="search()">
+                    <img src="{% static 'leo/img/loading.gif' %}" width="32" v-if="waiting" alt="">
+                    <input type="text" v-model="search_for" class="form-control" placeholder="جستجو ..."
+                        @input="filter()">
+                </form>
+                <div class="mb-3"></div>
+                {% if add_role_form %}
+                {% include "mafia/includes/roles-app/form.html" %}
+                {% endif %}
+
+                <div class="mb-3"></div>
+                <img v-if="false" width="32" src="{% static 'leo/img/loading.gif' %}" alt="">
+                <h6 v-if="false">
+                    <span class="text-muted">در حال بار گذاری ... </span>
+                </h6>
+
+                <div v-for="role_player in role_players">
+                    <div class="mb-3">
+
+                        <role-player-component :role_player="role_player" :show="true">
+
+                        </role-player-component>
+                        <hr>
+                    </div>
+
+                </div>
+                <div>
+                    <button class="btn btn-primary" @click="randomize_role_players()"> در هم ریزی</button>
+                    <button class="btn btn-danger" @click="hide_all()"> مخفی کردن نقش ها </button>
+                    <button class="btn btn-warning" @click="show_all()"> نمایش دادن نقش ها </button>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+</div>

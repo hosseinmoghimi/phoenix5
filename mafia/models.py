@@ -25,6 +25,7 @@ class Game(models.Model,LinkHelper):
     status=models.CharField(_("status"),choices=GameStatusEnum.choices,default=GameStatusEnum.INITIAL, max_length=50)
     date_added=models.DateTimeField(_("date_added"), auto_now=False, auto_now_add=True)
     god=models.ForeignKey("god", verbose_name=_("god"), on_delete=models.CASCADE)
+    players=models.ManyToManyField("player",blank=True, verbose_name=_("players"))
     game_scenario=models.ForeignKey("gamescenario", verbose_name=_("scenario"), on_delete=models.CASCADE)
     class_name="game"
     app_name=APP_NAME
@@ -62,6 +63,7 @@ class GameScenario(models.Model,LinkHelper):
 
 class Role(Page):
     side=models.CharField(_("side"),choices=RoleSideEnum.choices, max_length=50)
+    wake_up_turn=models.IntegerField(_("نوبت بیدار شدن"),default=0)
     @property
     def color(self):
         if self.side==RoleSideEnum.CITIZEN:
@@ -127,7 +129,7 @@ class God(models.Model,LinkHelper):
         verbose_name_plural = _("Gods")
 
     def __str__(self):
-        return self.profile.name
+        return self.account.title
  
 
 class RolePlayer(models.Model,LinkHelper):
