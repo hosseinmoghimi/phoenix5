@@ -1,0 +1,70 @@
+<script>
+    let menu_item_component_template = `{% include 'snapp/includes/menu-app/component.html' %}`
+    let shops=JSON.parse("{{shops_s|escapejs}}")
+
+
+    let menu_item_component=Vue.component('menu-item-component', {
+        data: function () {
+            return {
+                quantity:0
+            }
+        },
+        methods: {
+            add_quantity: function (a) {
+                // if (cart_app.save_done)
+                //     return
+
+                if ((this.quantity + a) < 0) {
+                    this.quantity = 0
+                }
+                else if ((this.quantity + a) > this.shop.available) {
+                    this.quantity = this.shop.available
+                }
+                else {
+                    this.quantity = this.quantity + a
+                }
+                // cart_app.calculate_total()
+            },
+
+            to_price: function (value, currency) {
+                return to_price(value, currency)
+            },
+            add_to_cart: function () {
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    quantity: this.quantity,
+                    shop_id: this.shop.id,
+                }
+
+                let aa = this
+                let posting = $.post(url_checkout, payload)
+                posting.done((data) => {
+                    if (data.result === 'SUCCEED') {
+                        let message = data.cart_line.quantity + " " + data.cart_line.shop.unit_name + " با موفقیت به سبد خرید شما افزوده شد."
+                        aa.message = message
+                        aa.done = true
+                        setTimeout(() => {
+                            aa.done = false
+                        }, 1800);
+                    }
+                })
+            },
+
+
+        },
+        props: ['shop'],
+        template: menu_item_component_template,
+    })
+
+
+
+    let menu_app=new Vue({
+        el:"#menu-app",
+        data:{
+            shops:shops
+        },
+        components:{
+            menu_item_component
+        }
+    })
+</script>

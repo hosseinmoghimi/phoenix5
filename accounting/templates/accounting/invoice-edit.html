@@ -25,7 +25,7 @@
 
                         {{invoice.pay_from.title}}
                     </h4>
- 
+
                     <input type="text" v-model="title" class="form-control">
 
                     <h4 class="text-center my-3">
@@ -56,7 +56,7 @@
                                     <span class="">
                                         <a href="{{invoice.pay_from.get_absolute_url}}">
                                             <img src="{{invoice.pay_from.logo}}" width="32" class="rounded ml-2" alt="">
-                                          
+
                                             {{invoice.pay_from.title}}
                                         </a>
                                     </span>
@@ -366,6 +366,46 @@
 
                             <a href="{% url 'accounting:services' %}" target="_blank">لیست سرویس ها </a>
                         </h6>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="text-center">
+                        کپی کردن خط های فاکتور دیگر
+                    </h5>
+                    <div class="row rtl">
+                        <div class="col-md-4">
+                            <input type="text" class="form-control" v-model="copy_from_id">
+
+                        </div>
+                        <div class="col-md-4">
+                            <button v-if="!show_copy_submit" class="btn btn-warning btn-block"
+                                @click="show_copy_submit=true"> کپی
+                                کن</button>
+
+                        </div>
+                        <div class="col-md-4" v-if="show_copy_submit">
+                            <div>
+                                <button class="btn btn-success btn-block" @click="copy_lines()">کپی کن</button>
+
+                            </div>
+                            <div>
+                                <button class="btn btn-secondary btn-block"
+                                    @click="show_copy_submit=false">انصراف</button>
+
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="col-md-12" v-if="show_copy_submit">
+                        <div class="my-3" v-if="message.show">
+                            <span :class="'alert alert-'+message.color">
+                                <span class="farsi" v-text="message.body"></span>
+                            </span>
+                        </div>
                     </div>
                 </div>
             </div>

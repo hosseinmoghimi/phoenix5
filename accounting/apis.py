@@ -55,6 +55,31 @@ class AddBankApi(APIView):
         return JsonResponse(context)
 
 
+class CopyInvoiceLinesApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        result=FAILED
+        message=""
+        log=1
+        context['result']=FAILED
+        if request.method=='POST':
+            log=2
+            CopyInvoiceLinesForm_=CopyInvoiceLinesForm(request.POST)
+
+
+
+            
+            if CopyInvoiceLinesForm_.is_valid():
+                log=3
+                invoice_lines,result,message=InvoiceRepo(request=request).copy_invoice_lines(**CopyInvoiceLinesForm_.cleaned_data)
+                if result == SUCCEED:
+                    context['invoice_lines']=InvoiceLineSerializer(invoice_lines,many=True).data
+        context['result']=result
+        context['message']=message
+        context['log']=log
+        return JsonResponse(context)
+
+
 class RollBackTransactionApi(APIView):
     def post(self,request,*args, **kwargs):
         context={}

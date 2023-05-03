@@ -1,0 +1,59 @@
+<div class="card" id="menus-app">
+    <div class="card-header">
+        <h4 class="text-center">
+            منو ها
+        </h4>
+    </div>
+    <div class="card-body">
+        <input type="text" v-model="title" class="form-control">
+        <div class="text-right">
+            {% if add_menu_form %}
+
+            <button class="btn btn-success" @click="add_menu()">افزودن منو</button>
+            {% endif %}
+        </div>
+        <div v-if="message.show" class="my-3">
+
+            <div :class="'alert alert-'+message.color">
+                <p class="farsi text-right">
+
+                    <span v-text="message.body">
+                    </span>
+                </p>
+            </div>
+        </div>
+        <div class="my-2">
+            &nbsp;
+        </div>
+        {% for menu in menus %}
+        <div class="media">
+            <a href="{{menu.get_absolute_url}}">
+                <img width="48" src="{{menu.thumbnail}}" width="100%" alt="">
+            </a>
+            <div class="media-body mr-2">
+                <h6 class="text-right">
+                    <a href="{{menu.get_absolute_url}}">
+                        {{menu.title}}
+                    </a>
+                </h6>
+            </div>
+        </div>
+        <hr>
+        {% endfor %}
+        <div v-for="menu in menus">
+            <div class="media">
+                <a :href="menu.get_absolute_url">
+                    <img width="48" :src="menu.thumbnail" width="100%" alt="">
+                </a>
+                <div class="media-body mr-2">
+                    <h6 class="text-right">
+                        <a :href="menu.get_absolute_url">
+                            <span v-text="menu.title"></span>
+                        </a>
+                    </h6>
+                </div>
+            </div>
+            <hr>
+        </div>
+    </div>
+</div>

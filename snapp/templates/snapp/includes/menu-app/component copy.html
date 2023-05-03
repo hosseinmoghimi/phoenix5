@@ -1,0 +1,28 @@
+<tr>
+    <td>
+        <div class="media">
+            <a :href="shop.product_or_service.get_absolute_url">
+                <img width="48" :src="shop.product_or_service.thumbnail" alt="">
+            </a>
+            <div class="media-body mr-2">
+                <h6 class="text-right">
+                    <a :href="shop.product_or_service.get_absolute_url">
+                        <span v-text="shop.product_or_service.title"></span>
+                    </a>
+                </h6>
+
+
+            </div>
+        </div>
+    </td>
+
+    <td>
+        <h6 class="text-right text-success">
+            <span v-text="to_price(shop.unit_price)"></span> {{CURRENCY}}
+
+        </h6>
+    </td>
+    <td>
+
+    </td>
+</tr>

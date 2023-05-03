@@ -11,6 +11,10 @@ class AddAccountTagForm(forms.Form):
     tag=forms.CharField(max_length=100, required=False)
     account_id=forms.IntegerField(required=False)
 
+class CopyInvoiceLinesForm(forms.Form):
+    copy_from_id=forms.IntegerField(required=True)
+    copy_to_id=forms.IntegerField(required=True)
+
 class AddBankAccountForm(forms.Form):
     title=forms.CharField(max_length=50, required=False)
     shaba_no=forms.CharField(max_length=50, required=False)

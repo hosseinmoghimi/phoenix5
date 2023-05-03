@@ -85,6 +85,7 @@ urlpatterns = [
     
 
 
+  path("copy_invoice_lines/",login_required(apis.CopyInvoiceLinesApi.as_view()),name="copy_invoice_lines"),
 
   path("add_payment/",login_required(apis.AddPaymentApi.as_view()),name="add_payment"),
   path("add_cheque/",login_required(apis.AddChequeApi.as_view()),name="add_cheque"),

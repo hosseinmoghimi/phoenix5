@@ -36,7 +36,9 @@
                 body: "",
                 color: "success",
             },
-            title:"{{invoice.title}}",
+            copy_from_id: 0,
+            show_copy_submit: false,
+            title: "{{invoice.title}}",
             product_search_items: [],
             service_search_items: [],
             search_for: "",
@@ -58,6 +60,34 @@
 
         },
         methods: {
+            copy_lines: function () {
+                let payload = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    copy_from_id: parseInt(this.copy_from_id),
+                    copy_to_id: parseInt(this.invoice.id),
+                  
+                }
+                console.log(payload)
+                let url = "{% url 'accounting:copy_invoice_lines'  %}"
+                $.post(url, payload).done((data) => {
+                    console.log(data)
+                    if (data.result === 'SUCCEED') {
+                        edit_invoice_app.invoice_lines=data.invoice_lines
+                        edit_invoice_app.message = { show: true, body: data.message, color: 'success' }
+                        setTimeout(() => {
+                            edit_invoice_app.message = { show: false }
+
+                        }, 3000);
+                    }
+                    if (data.result === 'FAILED') {
+                        edit_invoice_app.message = { show: true, body: data.message, color: 'danger' }
+                        setTimeout(() => {
+                            edit_invoice_app.message = { show: false }
+
+                        }, 3000);
+                    }
+                })
+            },
             filter: function () {
                 if (this.search_for.length > 0) {
 
@@ -155,7 +185,7 @@
                     payment_method: this.invoice.payment_method,
                     status: this.invoice.status,
                     ship_fee: parseInt(this.invoice.ship_fee),
-                    title:this.title,
+                    title: this.title,
                     tax_percent: parseInt(this.invoice.tax_percent),
                     discount: parseInt(this.invoice.discount),
                 }

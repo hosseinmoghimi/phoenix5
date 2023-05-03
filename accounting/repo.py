@@ -1265,6 +1265,43 @@ class InvoiceRepo():
             objects= objects.filter(id__in=ids)
         return objects.order_by("-transaction_datetime")
 
+    def copy_invoice_lines(self,*args, **kwargs):
+        (invoice_lines,result,message)=([],FAILED,"")
+        copy_to_id=0
+        copy_from_id=0
+        if 'copy_from_id' in kwargs:
+            copy_from_id=kwargs['copy_from_id']
+        if 'copy_to_id' in kwargs:
+            copy_to_id=kwargs['copy_to_id']
+        invoice_to=self.invoice(pk=copy_to_id)
+        invoice_from=self.invoice(pk=copy_from_id)
+        if invoice_to is None:
+            return ([],FAILED,"فاکتور مقصد وجود ندارد.")
+        if invoice_from is None:
+            return ([],FAILED,"فاکتور مبدا وجود ندارد.")
+        if not invoice_to.editable:
+            return ([],FAILED,"فاکتور مقصد قابل ویرایش نمی باشد")
+        
+        if not self.user.has_perm(APP_NAME+".change_invoice"):
+            return ([],FAILED,"شما مجوز لازم برای اصلاح فاکتور ندارید.")
+        from_invoice_lines=invoice_from.invoice_lines()
+        leolog(from_invoice_lines=from_invoice_lines)
+        for line in from_invoice_lines:
+            line_=InvoiceLine()
+            line_.invoice_id=invoice_to.id
+            line_.product_or_service=line.product_or_service
+            line_.quantity=line.quantity
+            line_.unit_name=line.unit_name
+            line_.unit_price=line.unit_price
+            line_.row=line.row
+            line_.save()
+        result=SUCCEED
+        
+        invoice_lines=invoice_to.invoice_lines()
+        message="فاکتور با موفقیت ویرایش شد."
+        return (invoice_lines,result,message)
+
+
    
     def edit_invoice(self,*args, **kwargs):
         invoice=self.invoice(*args, **kwargs)

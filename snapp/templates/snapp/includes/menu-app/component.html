@@ -1,0 +1,47 @@
+<div class="row rtl">
+    <div class="col-md-5">
+        <div class="media">
+            <a :href="shop.product_or_service.get_absolute_url">
+                <img width="48" :src="shop.product_or_service.thumbnail" alt="">
+            </a>
+            <div class="media-body mr-2">
+                <h6 class="text-right">
+                    <a :href="shop.product_or_service.get_absolute_url">
+                        <span v-text="shop.product_or_service.title"></span>
+                    </a>
+                </h6>
+
+
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <h6 class="text-right text-success">
+            <span v-text="to_price(shop.unit_price)"></span> {{CURRENCY}}
+
+        </h6>
+    </div>
+    <div class="col-md-3">
+        <template v-if="true">
+            <button class="btn btn-round btn-success" @click="add_quantity(1)"> <i class="material-icons">add</i>
+            </button>
+
+            <button class="btn btn-round btn-light">
+                <span v-text="to_price(quantity)"></span>
+
+            </button>
+
+            <button class="btn btn-round btn-danger" @click="add_quantity(-1)"> <i class="material-icons">remove</i>
+            </button>
+        </template>
+
+        <div class="text-center">
+            <span class="farsi" v-text="shop.unit_name">
+
+            </span>
+        </div>
+    </div> 
+    <div class="col-md-12">
+        <hr>
+    </div>
+</div>

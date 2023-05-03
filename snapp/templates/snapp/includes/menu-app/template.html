@@ -1,0 +1,24 @@
+<div class="card" id="menu-app">
+    <div class="card-header">
+        <h5>
+            {{menu.title}}
+            {% if perms.snapp.change_menu %}
+            <a href="{{menu.get_edit_url}}" target="_blank" class="mx-2" title="ویرایش"><i
+                    class="fa fa-edit text-warning"></i></a>
+            {% endif %}
+            {% if perms.snapp.delete_menu %}
+            <a href="{{menu.get_delete_url}}" target="_blank" class="mx-2" title="حذف"><i
+                    class="fa fa-trash text-danger"></i></a>
+            {% endif %}
+
+        </h5>
+    </div>
+    <div class="card-body">
+      
+                    <menu-item-component v-for="shop in shops" :shop="shop"></menu-item-component>
+              
+     
+
+
+    </div>
+</div>

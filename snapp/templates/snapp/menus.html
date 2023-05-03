@@ -1,0 +1,22 @@
+{% extends "snapp/layout.html" %}
+
+{% block content %}
+<div class="row rtl">
+    <div class="col-md-12">
+        <h5>
+            {{title}}
+        </h5>
+    </div>
+    
+    <div class="col-12">
+         {% include "snapp/includes/menus-app/template.html" %}
+    </div> 
+</div>
+{% endblock content %}
+
+
+
+{% block script %}
+{% include "snapp/includes/menus-app/script.html" %}
+  
+{% endblock script %}

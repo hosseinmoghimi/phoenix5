@@ -150,7 +150,7 @@ class CartLine(models.Model,LinkHelper):
 
 
 class Shop(models.Model,LinkHelper):
-    # region=models.ForeignKey("map.area", verbose_name=_("region"), on_delete=models.CASCADE)
+    
     supplier=models.ForeignKey("supplier", verbose_name=_("supplier"), on_delete=models.CASCADE)
     product_or_service=models.ForeignKey("accounting.productorservice", verbose_name=_("product_or_service"), on_delete=models.CASCADE)
     available=models.IntegerField(_("available"))
