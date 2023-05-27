@@ -1,0 +1,244 @@
+{% load to_persian_date %}
+{% load to_price %}
+{% load to_amount_color %}
+{% load static %}
+<div id="accordion-maintenances">
+
+
+    <div class="card" id="add-maintenance-app">
+        <div class="card-header" id="heading-maintenances">
+            <h5 class="text-center">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-maintenances"
+                    aria-expanded="true" aria-controls="collapse-maintenances">
+                    افزودن
+                    تعمیر و نگهداری و سرویس ماشین آلات
+
+
+
+                </button>
+            </h5>
+
+
+        </div>
+        <div id="collapse-maintenances" class="collapse" aria-labelledby="heading-maintenances"
+            data-parent="#accordion-maintenances">
+
+
+            <div class="card-body">
+
+                {% load static %}
+                {% if add_maintenance_form %}
+
+                <p>
+
+                    <button @click="show_form=true" v-if="!show_form" class="btn btn-success">
+                        <i class="fa fa-plus">
+
+                        </i>
+                        افزودن
+                    </button>
+                </p>
+                <form v-show="show_form" @submit.prevent="add_maintenance()">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="exampleInputEmail1fdvg34">تاریخ سرویس</label>
+                                <date-picker v-model="event_datetime"></date-picker>
+
+                                <small id="emai5645lHelp" class="form-text farsi text-muted">
+                                    تاریخ سرویس مرتبط را وارد کنید.
+                                </small>
+                            </div>
+
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="end_datetimesdfd">عنوان</label>
+                                <input type="text" class="form-control" v-model="title" id="end_datetimesdfd">
+                                <small id="emailHelp12" class="form-text farsi text-muted">
+                                    عنوان سرویس را وارد کنید.
+                                </small>
+                            </div>
+
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="description">توضیحات</label>
+                                <input type="text" v-model="description" class="form-control" id="description">
+
+                                <small id="emailHele324p" class="form-text farsi text-muted">
+                                    توضیحات مرتبط را وارد کنید.
+                                </small>
+                            </div>
+
+                        </div>
+
+
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="paid">هزینه سرویس</label>
+                                <input required min="0" type="number" v-model="amount" class="form-control" id="paid">
+
+                                <small id="emailHele324p" v-if="!amount" class="form-text farsi text-danger">
+                                    هزینه سرویس را وارد کنید.
+                                </small>
+                                <small v-if="amount>0" id="emailHele324p" class="form-text farsi text-muted">
+                                    هزینه سرویس :
+                                    <span v-text="to_price(amount)"></span>
+                                    {{CURRENCY}}
+                                </small>
+                            </div>
+
+                        </div>
+
+
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="maintenance_type">سرویس</label>
+
+                                <select v-model="maintenance_type" class="form-control" id="maintenance_type">
+                                    {% for maintenance_type in maintenance_types %}
+
+
+                                    <option value="{{maintenance_type}}">
+                                        {{maintenance_type}}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                                <small id="emailHele324p" class="form-text farsi text-muted">
+                                    نوع سرویس مرتبط را وارد کنید.
+                                </small>
+                            </div>
+
+                        </div>
+
+
+
+
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="service_man_id">سرویس کار</label>
+                                <select required v-model="service_man_id" id="service_man_id" class="form-control">
+                                    <template v-for="service_man in service_mans">
+
+                                        <option :value="service_man.id">
+                                            <span v-text="service_man.title"></span>
+                                            (<small class="mx-2 px-2" v-text="service_man.account.title"></small>)
+                                        </option>
+                                    </template>
+                                </select>
+
+                                <small id="emailHele324p" class="form-text farsi text-muted">
+                                    سرویس کار مرتبط را انتخاب کنید.
+                                </small>
+                            </div>
+
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="service_man_id">مشتری</label>
+                                <select required v-model="client_id" id="client_id" class="form-control">
+                                    <template v-for="client in clients">
+
+                                        <option :value="client.id">
+                                            <span v-text="client.title"></span>
+                                            (<small class="mx-2 px-2" v-text="client.account.title"></small>)
+                                        </option>
+                                    </template>
+                                </select>
+
+                                <small id="emailHele324p" class="form-text farsi text-muted">
+                                    مشتری مرتبط را انتخاب کنید.
+                                </small>
+                            </div>
+
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="service_man_id">وسیله نقلیه</label>
+                                <select required v-model="vehicle_id" id="vehicle_id" class="form-control">
+                                    <template v-for="vehicle in vehicles">
+
+                                        <option :value="vehicle.id">
+                                            <span v-text="vehicle.title"></span>
+                                            (<small class="mx-2 px-2" v-text="vehicle.plaque"></small>)
+                                        </option>
+                                    </template>
+                                </select>
+
+                                <small id="emailHele324p" class="form-text farsi text-muted">
+                                    وسیله نقلیه مرتبط را انتخاب کنید.
+                                </small>
+                            </div>
+
+                        </div>
+
+
+
+
+
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="kilometer">کیلومتر ماشین</label>
+                                <input required min="0" type="number" v-model="kilometer" class="form-control"
+                                    id="kilometer">
+
+
+                                <small id="emailHeewrle324p" class="form-text farsi text-muted">
+                                    کیلومتر ماشین را انتخاب کنید.
+                                </small>
+                            </div>
+
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="">نحوه پرداخت</label>
+                                <select v-model="payment_method" class="form-control">
+                                    {% for payment_method in payment_methods %}
+                                    <option value="{{payment_method}}">{{payment_method}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="">وضعیت پرداخت</label>
+
+
+                                <select required v-model="status" class="form-control">
+                                    {% for transaction_status in transaction_statuses %}
+                                    <option value="{{transaction_status}}">{{transaction_status}}</option>
+
+                                    {% endfor %}
+                                </select>
+
+                            </div>
+
+
+                        </div>
+
+
+                        <div class="col-md-4">
+                            <button class="btn btn-success btn-block" type="submit">
+                                <i class="fa fa-plus"></i>
+                                افزودن</button>
+                            <button class="btn btn-secondary btn-block" @click="show_form=false">انصراف</button>
+
+                        </div>
+                    </div>
+                </form>
+                {% endif %}
+            </div>
+            <div class="card-footer">
+
+            </div>
+        </div>
+
+
+    </div>
+</div>

@@ -1,0 +1,94 @@
+<script>
+    let vehicle_id_ = 0
+    if (typeof vehicle_id != "undefined") {
+        vehicle_id_ = vehicle_id
+    }
+    let maintenances_app_data = {}
+</script>
+{% if add_maintenance_form %}
+<script>
+    maintenances_app_data = {
+        maintenances: JSON.parse(`{{maintenances_s|escapejs}}`),
+        service_mans: JSON.parse(`{{service_mans_s|escapejs}}`),
+        vehicles: JSON.parse(`{{vehicles_s|escapejs}}`),
+        event_datetime: current_datetime,
+        clients: JSON.parse(`{{clients_s|escapejs}}`),
+        service_man_id: "",
+        client_id: "",
+        maintenance_type: "",
+        show_form: false,
+        // maintenance_types: maintenance_types,
+        amount: "",
+        description: "",
+        status:"",
+        payment_method:"",
+        title: "",
+        vehicle_id: vehicle_id_,
+        kilometer: "",
+        waiting: false,
+        message: { show: false },
+        search_for: "",
+    }
+
+</script>
+{% else %}
+<script>
+
+    maintenances_app_data = {
+        maintenances: JSON.parse(`{{maintenances_s|escapejs}}`),
+        waiting: false,
+        message: { show: false },
+        search_for: "",
+    }
+</script>
+{% endif %}
+
+<script>
+
+
+    let maintenances_app = new Vue({
+        el: "#maintenances-app",
+        data: maintenances_app_data,
+        components: {
+            DatePicker: VuePersianDatetimePicker
+
+        },
+        methods: {
+            to_price: (vall, curr) => to_price(vall, curr),
+            total: function () {
+                let tt = 0
+                this.maintenances.forEach(maintenance => {
+                    tt += maintenance.amount
+                });
+                return tt
+            },
+            add_maintenance: function () {
+                let url_add_maintenance = "{% url 'transport:add_maintenance' %}"
+                let payload = {
+                    vehicle_id: this.vehicle_id,
+                    service_man_id: this.service_man_id,
+                    client_id: this.client_id,
+                    event_datetime: this.event_datetime,
+                    kilometer: this.kilometer,
+                    amount: this.amount,
+                    title: this.title,
+                    payment_method: this.payment_method,
+                    status: this.status,
+                    maintenance_type: this.maintenance_type,
+                    description: this.description,
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+
+                }
+                console.log(payload)
+                let posting = $.post(url_add_maintenance, payload)
+                posting.done((data) => {
+                    console.log(data)
+                    if (data.result === "SUCCEED") {
+                        maintenances_app.maintenances.push(data.maintenance)
+                    }
+
+                })
+            },
+        }
+    })
+</script>

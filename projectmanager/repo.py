@@ -1,13 +1,15 @@
 from os import stat
 from organization.models import Employee
+from core.constants import FAILED,SUCCEED
 from core.enums import ParameterNameEnum
 from core.repo import PagePermissionRepo, PageRepo, ParameterRepo
 from map.repo import LocationRepo
+from utility.log import leolog
 from django.utils import timezone
 from utility.calendar import PersianCalendar
 from projectmanager.enums import ProjectManagerParameterEnum, RequestStatusEnum, SignatureStatusEnum
 from projectmanager.apps import APP_NAME
-from projectmanager.models import  Event, Letter,Material, MaterialInvoice, MaterialRequest,Service, Project,OrganizationUnit, Request, RequestSignature, ServiceInvoice, ServiceRequest,WareHouse
+from projectmanager.models import  RemoteClient,Event, Letter,Material, MaterialInvoice, MaterialRequest,Service, Project,OrganizationUnit, Request, RequestSignature, ServiceInvoice, ServiceRequest,WareHouse
 from organization.repo import EmployeeRepo,OrganizationUnitRepo
 from authentication.repo import ProfileRepo
 from django.db.models import Q
@@ -52,6 +54,62 @@ class MaterialInvoiceRepo():
             objects=objects.filter(parent_id=kwargs['parent_id'])
         return objects.order_by('date_added') 
 
+
+class RemoteClientRepo():
+    def __init__(self, *args, **kwargs):
+        self.request = None
+        self.user = None
+        if 'request' in kwargs:
+            self.request = kwargs['request']
+            self.user = self.request.user
+        if 'user' in kwargs:
+            self.user = kwargs['user']
+        
+        self.objects=RemoteClient.objects.all()
+        self.profile=ProfileRepo(*args, **kwargs).me
+       
+
+    def remote_client(self, *args, **kwargs):
+        pk=0
+        if 'remote_client_id' in kwargs:
+            pk=kwargs['remote_client_id']
+        elif 'pk' in kwargs:
+            pk=kwargs['pk']
+        elif 'id' in kwargs:
+            pk=kwargs['id']
+        return self.objects.filter(pk=pk).first()
+     
+    def list(self, *args, **kwargs):
+        objects = self.objects
+        if 'search_for' in kwargs:
+            search_for=kwargs['search_for']
+            objects = objects.filter(Q(title__contains=search_for)|Q(short_description__contains=search_for)|Q(description__contains=search_for))
+        if 'for_home' in kwargs:
+            objects = objects.filter(Q(for_home=kwargs['for_home']))
+        if 'organization_unit_id' in kwargs:
+            objects = objects.filter(pk=0)
+        if 'parent_id' in kwargs:
+            objects=objects.filter(parent_id=kwargs['parent_id'])
+        return objects.order_by('date_added') 
+
+    def add_remote_client(self,*args, **kwargs):
+        remote_client,result,message=None,FAILED,""
+        if not self.user.has_perm(APP_NAME+'.add_remoteclient'):
+            message="شما مجوز لازم را برای افزودن سیستم کلاینت ندارید."
+            return remote_client,result,message
+        project_id=kwargs["project_id"]
+        a=kwargs.pop("project_id")
+        remote_client=RemoteClient(*args, **kwargs)
+        remote_client.save()
+        project=Project.objects.filter(pk=project_id).first()
+        if project is not None:
+            project.remote_clients.add(remote_client)
+            result=SUCCEED
+            message="با موفقیت اضافه شد."
+        else:
+            message="پروژه مرتبط یافت نشد."
+
+        return remote_client,result,message
 
 class ServiceInvoiceRepo():
     def __init__(self, *args, **kwargs):

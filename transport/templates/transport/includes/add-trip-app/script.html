@@ -10,7 +10,7 @@
     let driver = null
     let vehicle_id = 0
     let trip_path_id = 0
-    let trip_category_id=0
+    let trip_category_id = 0
 </script>
 {% if trip_path %}
 <script>
@@ -141,74 +141,88 @@
                 this.message.show = true
                 this.message.color = message_color
                 this.message.text = message
+                setTimeout(() => {
+                    this.message.show = false
+                }, 4000);
             },
             add_trip: function () {
-
+                let valid = true
+                let message=""
                 if (add_trip_app.trip_paths.length < 1) {
-                    add_trip_app.show_message("warning", "مسیری برای سفر را انتخاب کنید.")
-                    return
+                    message=message+"<p><i class=\"fa fa-warning ml-2\"></i>"+"مسیری برای سفر را انتخاب کنید."+"</p>"
+                    valid = false
                 }
                 if (add_trip_app.title === "") {
-                    add_trip_app.show_message("warning", "عنوان سفر را وارد کنید.")
-                    return
+                    message=message+"<p><i class=\"fa fa-warning ml-2\"></i>"+"عنوان سفر را وارد کنید."+"</p>"
+                    valid = false
+
                 }
                 if (add_trip_app.vehicle_id == 0) {
-                    add_trip_app.show_message("warning", "وسیله را وارد کنید.")
-                    return
+                    message=message+"<p><i class=\"fa fa-warning ml-2\"></i>"+"وسیله را وارد کنید."+"</p>"
+                    valid = false
+
                 }
                 if (add_trip_app.driver_id == 0) {
-                    add_trip_app.show_message("warning", "راننده را وارد کنید.")
-                    return
+                    message=message+"<p><i class=\"fa fa-warning ml-2\"></i>"+"راننده را وارد کنید."+"</p>"
+                    valid = false
+
                 }
-                add_trip_app.waiting = true
+                if (!valid) {
+                    add_trip_app.show_message("danger", message)
 
-
-                let trip_paths_ = []
-
-                this.trip_paths.forEach(trip_path => {
-                    trip_paths_.push(trip_path.id)
-                })
-
-                trip_paths_ = JSON.stringify(trip_paths_)
-
-
-
-                let passengers_ = []
-
-                this.passengers.forEach(passenger => {
-                    passengers_.push(passenger.id)
-                })
-
-                passengers_ = JSON.stringify(passengers_)
-
-                let payload = {
-                    csrfmiddlewaretoken: csrfmiddlewaretoken,
-                    trip_paths: trip_paths_,
-                    title: this.title,
-                    driver_id: this.driver_id,
-                    vehicle_id: this.vehicle_id,
-                    description: this.description,
-                    client_id: this.client_id,
-                    passengers: passengers_,
-                    amount: this.amount,
-                    delay: this.delay,
-                    date_started: this.date_started,
-                    date_ended: this.date_ended,
-                    trip_category_id: this.trip_category_id,
                 }
-                console.log(payload)
-                let url = "{% url 'transport:add_trip' %}"
-                $.post(url, payload).done(data => {
-                add_trip_app.waiting = false
+                else {
+                    add_trip_app.waiting = true
 
-                    // console.log(data)
-                    if (data.result === 'SUCCEED') {
-                        if (typeof trips_app != "undefined") {
-                            trips_app.trips.push(data.trip)
-                        }
+
+                    let trip_paths_ = []
+
+                    this.trip_paths.forEach(trip_path => {
+                        trip_paths_.push(trip_path.id)
+                    })
+
+                    trip_paths_ = JSON.stringify(trip_paths_)
+
+
+
+                    let passengers_ = []
+
+                    this.passengers.forEach(passenger => {
+                        passengers_.push(passenger.id)
+                    })
+
+                    passengers_ = JSON.stringify(passengers_)
+
+                    let payload = {
+                        csrfmiddlewaretoken: csrfmiddlewaretoken,
+                        trip_paths: trip_paths_,
+                        title: this.title,
+                        driver_id: this.driver_id,
+                        vehicle_id: this.vehicle_id,
+                        description: this.description,
+                        client_id: this.client_id,
+                        passengers: passengers_,
+                        amount: this.amount,
+                        delay: this.delay,
+                        date_started: this.date_started,
+                        date_ended: this.date_ended,
+                        trip_category_id: this.trip_category_id,
                     }
+                    console.log(payload)
+                    let url = "{% url 'transport:add_trip' %}"
+                    $.post(url, payload).done(data => {
+                        add_trip_app.waiting = false
 
-                })
+                        // console.log(data)
+                        if (data.result === 'SUCCEED') {
+                            if (typeof trips_app != "undefined") {
+                                trips_app.trips.push(data.trip)
+                            }
+                        }
+
+                    })
+                }
+
             }
         }
     })

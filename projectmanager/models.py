@@ -38,6 +38,42 @@ class ProjectInvoice(Invoice):
         super(ProjectInvoice, self).save(*args, **kwargs)
 
 
+class RemoteClient(models.Model,LinkHelper):
+   
+   
+   
+    name=models.CharField(_("name"), max_length=100)
+    active_directory=models.CharField(_("active_directory"),null=True,blank=True, max_length=100)
+    work_group=models.CharField(_("work_group"),null=True,blank=True, max_length=50)
+    url=models.CharField(_("url"),null=True,blank=True, max_length=500)
+    local_ip=models.CharField(_("local_ip"),null=True,blank=True, max_length=50)
+    remote_ip=models.CharField(_("remote_ip"),null=True,blank=True, max_length=50)
+    any_desk_address=models.CharField(_("any_desk_address"),null=True,blank=True, max_length=50)
+    any_desk_password=models.CharField(_("any_desk_password"),null=True,blank=True, max_length=50)
+    username=models.CharField(_("username"),null=True,blank=True, max_length=50)
+    password=models.CharField(_("password"),null=True,blank=True, max_length=50)
+    identity=models.CharField(_("identity"),null=True,blank=True, max_length=50)
+    ssid=models.CharField(_("ssid"),null=True,blank=True, max_length=50)
+    preshared_key=models.CharField(_("preshared_key"),null=True,blank=True, max_length=50)
+    frequency=models.CharField(_("frequency"),null=True,blank=True, max_length=50)
+    protocol=models.CharField(_("protocol"),null=True,blank=True, max_length=50)
+    channel_width=models.CharField(_("channel_width"),null=True,blank=True, max_length=50)
+    adsl_username=models.CharField(_("adsl_username"),null=True,blank=True, max_length=50)
+    adsl_password=models.CharField(_("adsl_password"),null=True,blank=True, max_length=50)
+    telephone=models.CharField(_("telephone"),null=True,blank=True, max_length=50)
+    contact=models.CharField(_("contact"),null=True,blank=True, max_length=50)
+    description=models.CharField(_("description"),null=True,blank=True, max_length=500)
+    
+    class_name="remoteclient"
+    app_name=APP_NAME
+    class Meta:
+        verbose_name = _("RemoteClient")
+        verbose_name_plural = _("RemoteClients")
+
+    def __str__(self):
+        return self.name 
+
+
 class MaterialInvoice(ProjectInvoice):
 
     class Meta:
@@ -249,6 +285,8 @@ class Project(Page):
         _("زمان پایان پروژه"), null=True, blank=True, auto_now=False, auto_now_add=False)
     organization_units = models.ManyToManyField(
         "organization.organizationunit", verbose_name=_("واحد های سازمانی"), blank=True)
+    remote_clients = models.ManyToManyField(
+        "remoteclient", verbose_name=_("کلاینت ها"), blank=True)
     weight = models.IntegerField(_("ضریب و وزن پروژه"), default=10)
     color=models.CharField(_("color"),choices=ColorEnum.choices,default=ColorEnum.PRIMARY, max_length=50)
     # locations = models.ManyToManyField("map.location", blank=True, verbose_name=_("locations"))
@@ -435,6 +473,8 @@ class Project(Page):
 
     def __str__(self):
         return self.full_title
+
+
 class SampleForm(Page):
 
     class Meta:

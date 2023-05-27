@@ -23,7 +23,7 @@
 
             <div class="card-body">
 
-                <div class="row">
+                <div class="row rtl">
                     <div class="col-md-4 text-right">
                         <div class="for-group">
                             <label for="">عنوان سفر</label>
@@ -239,15 +239,18 @@
                             </div>
 
                             <img src="{% static 'leo/img/loading.gif' %}" width="32" v-if="waiting" alt="">
-                            <div v-if="message.show" :class="'alert alert-'+message.color">
-                                <div class="farsi my-3 text-right">
-
-                                    <div v-html="message.text"></div>
-                                </div>
-                            </div>
+                           
                         </div>
 
 
+                    </div>
+                    <div class="col-12">
+                        <div v-if="message.show" :class="'alert alert-'+message.color">
+                            <div class="farsi my-3 text-right">
+ 
+                                <div v-html="message.text"></div>
+                            </div>
+                        </div>
                     </div>
 
                 </div>

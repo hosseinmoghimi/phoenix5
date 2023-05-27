@@ -5,11 +5,11 @@ from core.serializers import PageLinkSerializer
 from .enums import *
 
 from utility.calendar import PersianCalendar
-from projectmanager.repo import  EventRepo, MaterialRepo, MaterialRequestRepo, ProjectRepo, RequestSignatureRepo, ServiceRepo, ServiceRequestRepo
+from projectmanager.repo import  RemoteClientRepo,EventRepo, MaterialRepo, MaterialRequestRepo, ProjectRepo, RequestSignatureRepo, ServiceRepo, ServiceRequestRepo
 from django.http import JsonResponse
 from organization.repo import OrganizationUnitRepo,EmployeeRepo
 from projectmanager.forms import *
-from projectmanager.serializers import EventSerializer, MaterialRequestFullSerializer, MaterialRequestSerializer, MaterialSerializer, OrganizationUnitSerializer, ProjectSerializer, RequestSerializer, RequestSignatureSerializer, ServiceRequestFullSerializer, ServiceRequestSerializer, ServiceSerializer
+from projectmanager.serializers import RemoteClientSerializer,EventSerializer, MaterialRequestFullSerializer, MaterialRequestSerializer, MaterialSerializer, OrganizationUnitSerializer, ProjectSerializer, RequestSerializer, RequestSignatureSerializer, ServiceRequestFullSerializer, ServiceRequestSerializer, ServiceSerializer
 
 class FetchMaterialsApi(APIView):
     def get(self,request,*args, **kwargs):
@@ -35,7 +35,30 @@ class FetchServicesApi(APIView):
         context['log']=log
         return JsonResponse(context)
         
-       
+     
+class AddRemoteClientApi(APIView):
+    def post(self,request,*args, **kwargs):
+        context={}
+        log=1
+        context['result']=FAILED
+        message=""
+        result=FAILED
+        if request.method=='POST':
+            log=2
+            AddRemoteClientForm_=AddRemoteClientForm(request.POST)
+            if AddRemoteClientForm_.is_valid():
+                log=3  
+                cd=AddRemoteClientForm_.cleaned_data
+                
+                remote_client,result,message=RemoteClientRepo(request=request).add_remote_client(**cd)
+                if remote_client is not None:
+                    context['remote_client']=RemoteClientSerializer(remote_client).data
+        context['message']=message
+        context['result']=result
+        context['log']=log
+        return JsonResponse(context)
+        
+        
 
 class AddProjectApi(APIView):
     def post(self,request,*args, **kwargs):

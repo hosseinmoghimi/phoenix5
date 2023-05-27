@@ -1,6 +1,29 @@
 from django import forms
 from .apps import APP_NAME
 
+class AddRemoteClientForm(forms.Form):
+    project_id=forms.IntegerField(required=True) 
+    name=forms.CharField(max_length=50, required=False)
+    active_directory=forms.CharField(max_length=100, required=False)
+    work_group=forms.CharField(max_length=50, required=False)
+    url=forms.CharField(max_length=500, required=False)
+    local_ip=forms.CharField(max_length=50, required=False)
+    remote_ip=forms.CharField(max_length=50, required=False)
+    any_desk_address=forms.CharField(max_length=50, required=False)
+    any_desk_password=forms.CharField(max_length=50, required=False)
+    username=forms.CharField(max_length=50, required=False)
+    password=forms.CharField(max_length=50, required=False)
+    identity=forms.CharField(max_length=50, required=False)
+    ssid=forms.CharField(max_length=50, required=False)
+    preshared_key=forms.CharField(max_length=50, required=False)
+    frequency=forms.CharField(max_length=50, required=False)
+    protocol=forms.CharField(max_length=50, required=False)
+    channel_width=forms.CharField(max_length=50, required=False)
+    adsl_username=forms.CharField(max_length=50, required=False)
+    adsl_password=forms.CharField(max_length=50, required=False)
+    telephone=forms.CharField(max_length=50, required=False)
+    contact=forms.CharField(max_length=50, required=False)
+    description=forms.CharField(max_length=500, required=False)
 
 class CopyServiceRequestsForm(forms.Form):
     source_project_id=forms.IntegerField(required=True)

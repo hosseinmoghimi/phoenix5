@@ -2,7 +2,7 @@ from rest_framework import serializers
 from accounting.models import ProductOrService
 
 from accounting.serializers import AccountSerializer, InvoiceSerializer, ProductOrServiceSerializer
-from .models import Service,Material,Event,Employee, MaterialRequest, Request,Project,OrganizationUnit, RequestSignature, ServiceRequest
+from .models import RemoteClient,Service,Material,Event,Employee, MaterialRequest, Request,Project,OrganizationUnit, RequestSignature, ServiceRequest
 from authentication.serializers import ProfileSerializer
 from organization.serializers import OrganizationUnitSerializer,EmployeeSerializer
 
@@ -13,6 +13,14 @@ class ProjectBriefSerializer(serializers.ModelSerializer):
 
 
 
+class RemoteClientSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=RemoteClient
+        fields=['id', 'name', 'get_absolute_url', 'get_edit_url','remote_ip','any_desk_address'
+                ,'any_desk_password','username','password','identity','ssid','preshared_key'
+                ,'frequency','protocol','channel_width','adsl_username','adsl_password',
+                'telephone','contact'] 
+        
 class ProjectSerializerForGuantt(serializers.ModelSerializer):
     class Meta:
         model=Project

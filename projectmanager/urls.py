@@ -29,6 +29,9 @@ urlpatterns = [
     path("materials/",login_required(views.MaterialsView.as_view()),name="materials"),
     path("material/<int:pk>/",login_required(views.MaterialView.as_view()),name="material"),
 
+    path("remoteclients/",login_required(views.RemoteClientsView.as_view()),name="remoteclients"),
+    path("remoteclient/<int:pk>/",login_required(views.RemoteClientView.as_view()),name="remoteclient"),
+
     path("event/<int:pk>/",login_required(views.EventView.as_view()),name="event"),
     path("events/",login_required(views.EventsView.as_view()),name="events"),
 
@@ -38,6 +41,7 @@ urlpatterns = [
     path('fetch_materials/',login_required(apis.FetchMaterialsApi.as_view()),name="fetch_materials"),
     path('fetch_services/',login_required(apis.FetchServicesApi.as_view()),name="fetch_services"),
    
+    path('add_remote_client/',login_required(apis.AddRemoteClientApi.as_view()),name="add_remote_client"),
     path('add_material_request/',login_required(apis.AddMaterialRequestApi.as_view()),name="add_material_request"),
     path('add_service_request/',login_required(apis.AddServiceRequestApi.as_view()),name="add_service_request"),
     path('add_project/',login_required(apis.AddProjectApi.as_view()),name="add_project"),

@@ -21,8 +21,8 @@ from .apps import APP_NAME
 # from .repo import MaterialRepo
 # from .serializers import MaterialSerializer
 import json
-from projectmanager.repo import EventRepo, MaterialInvoiceRepo, MaterialRepo, MaterialRequestRepo, RequestSignatureRepo, ServiceInvoiceRepo, ServiceRepo, ProjectRepo, ServiceRequestRepo
-from projectmanager.serializers import EventSerializer,  MaterialSerializer, ProjectSerializerForGuantt, RequestSignatureForEmployeeSerializer, RequestSignatureSerializer, ServiceSerializer, ProjectSerializer, ServiceRequestSerializer, MaterialRequestSerializer
+from projectmanager.repo import RemoteClientRepo,EventRepo, MaterialInvoiceRepo, MaterialRepo, MaterialRequestRepo, RequestSignatureRepo, ServiceInvoiceRepo, ServiceRepo, ProjectRepo, ServiceRequestRepo
+from projectmanager.serializers import RemoteClientSerializer,EventSerializer,  MaterialSerializer, ProjectSerializerForGuantt, RequestSignatureForEmployeeSerializer, RequestSignatureSerializer, ServiceSerializer, ProjectSerializer, ServiceRequestSerializer, MaterialRequestSerializer
 from organization.repo import EmployeeRepo,OrganizationUnitRepo
 from organization.serializers import EmployeeSerializer,OrganizationUnitSerializer
 from accounting.views import get_invoice_line_context
@@ -179,23 +179,30 @@ class ProjectView(View):
         me_emp = EmployeeRepo(request=request).me
         if me_emp is not None:
             my_project_ids = me_emp.my_project_ids()
-
-        context['invoices'] = project.invoices()
+ 
         material_invoices=project.materialinvoice_set.all()
         context['material_invoices']=material_invoices
         material_invoices_s=json.dumps(InvoiceSerializer(material_invoices,many=True).data)
         context['material_invoices_s'] = material_invoices_s
 
         
+        service_invoices=project.serviceinvoice_set.all()
+        context['service_invoices']=service_invoices
+        service_invoices_s=json.dumps(InvoiceSerializer(service_invoices,many=True).data)
+        context['service_invoices_s'] = service_invoices_s
+
 
         invoices = project.invoices()
         context['invoices'] = invoices
         context['invoices_s']=json.dumps(InvoiceSerializer(invoices,many=True).data)
 
-        service_invoices=project.serviceinvoice_set.all()
-        context['service_invoices']=service_invoices
-        service_invoices_s=json.dumps(InvoiceSerializer(service_invoices,many=True).data)
-        context['service_invoices_s'] = service_invoices_s
+        remote_clients = project.remote_clients.all()
+        context['remote_clients'] = remote_clients
+        context['remote_clients_s']=json.dumps(RemoteClientSerializer(remote_clients,many=True).data)
+
+        if request.user.has_perm(APP_NAME+".add_remoteclient"):
+            context["add_remote_client_form"]=AddRemoteClientForm()
+
 
         
 
@@ -464,6 +471,29 @@ class MaterialsView(View):
         if request.user.has_perm(APP_NAME+".add_material"):
             context['add_material_form']=AddMaterialForm()
         return render(request, TEMPLATE_ROOT+"materials.html", context)
+
+
+class RemoteClientsView(View):
+    def get(self, request, *args, **kwargs):
+        context = getContext(request=request)
+        if context is None:
+            return notPersmissionView(request=request)
+        materials = MaterialRepo(request=request).list()
+        context['materials'] = materials
+        materials_s = json.dumps(MaterialSerializer(materials, many=True).data)
+        context['materials_s'] = materials_s
+        
+        if request.user.has_perm(APP_NAME+".add_material"):
+            context['add_material_form']=AddMaterialForm()
+        return render(request, TEMPLATE_ROOT+"remote-clients.html", context)
+
+class RemoteClientView(View):
+    def get(self, request, *args, **kwargs):
+        context = getContext(request=request)
+        
+        remote_client = RemoteClientRepo(request=request).remote_client(*args, **kwargs)
+        context['remote_client'] = remote_client
+        return render(request, TEMPLATE_ROOT+"remote-client.html", context)
 
 
 class MaterialView(View):
