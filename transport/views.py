@@ -37,7 +37,7 @@ def getContext(request, *args, **kwargs):
     return context
 
 def get_add_trip_context(request,*args, **kwargs):
-    context={}
+    context=add_transaction_context(request=request)
 
     if not request.user.has_perm(APP_NAME+".add_trip"):
         return context
@@ -84,35 +84,43 @@ def get_add_trip_context(request,*args, **kwargs):
     context['add_trip_form']=AddTripForm()
     return context
 
-def get_work_shifts_context(request,*args, **kwargs):
+def get_add_work_shift_context(request,*args, **kwargs):
     context={}
-      
-     #areas
+    if not  request.user.has_perm(APP_NAME+".add_workshift"):
+        return context
+    
+    #areas
     areas=AreaRepo(request=request).list(*args, **kwargs)
     context['areas']=areas
     areas_s=json.dumps(AreaSerializer(areas,many=True).data)
     context['areas_s']=areas_s
- 
 
-      
-     #drivers
+    context['add_work_shift_form']=AddWorkShiftForm()
+
+    context.update(add_transaction_context(request=request))
+
+    #vehicles
+    vehicles=VehicleRepo(request=request).list(*args, **kwargs)
+    context['vehicles']=vehicles
+    vehicles_s=json.dumps(VehicleSerializer(vehicles,many=True).data)
+    context['vehicles_s']=vehicles_s
+    
+
+    
+    #drivers
     drivers=DriverRepo(request=request).list(*args, **kwargs)
     context['drivers']=drivers
     drivers_s=json.dumps(DriverSerializer(drivers,many=True).data)
     context['drivers_s']=drivers_s
+    
+    
+    #clients
+    clients=ClientRepo(request=request).list(*args, **kwargs)
+    context['clients']=clients
+    clients_s=json.dumps(ClientSerializer(clients,many=True).data)
+    context['clients_s']=clients_s
  
-    #work_shifts
-    work_shifts=WorkShiftRepo(request=request).list(*args, **kwargs)
-    context['work_shifts']=work_shifts
-    work_shifts_s=json.dumps(WorkShiftSerializer(work_shifts,many=True).data)
-    context['work_shifts_s']=work_shifts_s
-
-
-
-    if request.user.has_perm(APP_NAME+".add_workshift"):
-        context['add_work_shift_form']=AddWorkShiftForm()
-
-    return context
+    return context 
 
 def get_work_events_context(request,*args, **kwargs):
     context={}
@@ -217,7 +225,7 @@ def get_add_maintenance_context(request,*args, **kwargs):
     trip_paths_s=json.dumps(TripPathSerializer(trip_paths,many=True).data)
     context['trip_paths_s']=trip_paths_s
 
-    context['add_trip_form']=AddTripForm()
+    # context['add_trip_form']=AddTripForm()
     return context
 
 def add_luggage_context(request=request,*args, **kwargs):
@@ -366,7 +374,15 @@ class TripView(View):
 class WorkShiftsView(View):
     def get(self,request,*args, **kwargs):
         context=getContext(request=request)
-        context.update(get_work_shifts_context(request=request))
+        #work_shifts
+        work_shifts=WorkShiftRepo(request=request).list(*args, **kwargs)
+        context['work_shifts']=work_shifts
+        work_shifts_s=json.dumps(WorkShiftSerializer(work_shifts,many=True).data)
+        context['work_shifts_s']=work_shifts_s
+
+        if request.user.has_perm(APP_NAME+".add_workshift"):
+            context.update(get_add_work_shift_context(request=request))
+
         return render(request,TEMPLATE_ROOT+"work-shifts.html",context)
 
 

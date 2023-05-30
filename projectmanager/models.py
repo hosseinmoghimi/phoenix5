@@ -62,7 +62,7 @@ class RemoteClient(models.Model,LinkHelper):
     adsl_password=models.CharField(_("adsl_password"),null=True,blank=True, max_length=50)
     telephone=models.CharField(_("telephone"),null=True,blank=True, max_length=50)
     contact=models.CharField(_("contact"),null=True,blank=True, max_length=50)
-    description=models.CharField(_("description"),null=True,blank=True, max_length=500)
+    description=models.TextField(_("description"),null=True,blank=True, max_length=2000)
     
     class_name="remoteclient"
     app_name=APP_NAME

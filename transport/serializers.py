@@ -55,7 +55,7 @@ class WorkShiftSerializer(serializers.ModelSerializer):
     area=AreaSerializer()
     class Meta:
         model=WorkShift
-        fields=['id','vehicle','client','driver','persian_start_datetime','persian_end_datetime','amount','area','get_absolute_url','get_edit_url']
+        fields=['id','title','vehicle','client','driver','persian_start_datetime','persian_end_datetime','amount','status','area','get_absolute_url','get_edit_url']
 
 
 

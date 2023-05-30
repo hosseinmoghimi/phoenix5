@@ -90,9 +90,10 @@
                                     <a target="_blank" title="جزئیات" :href="work_shift.get_absolute_url">
             
             
-                                        <i class="material-icons">
+                                        <!-- <i class="material-icons">
                                             ballot
-                                        </i>
+                                        </i> -->
+                                        <span v-text="work_shift.title"></span>
                                     </a>
                                 </td>
                                 {% if not area %}
@@ -151,11 +152,8 @@
                                 </td>
                                 <td>
                                     <div class="text-success">
-                                        <span v-text="to_price(work_shift.income)"></span>
-                                        <small class="text-muted mx-2">
-            
-                                            {{CURRENCY}}
-                                        </small>
+                                        <span v-text="work_shift.status"></span>
+                                       
             
                                     </div>
             

@@ -23,7 +23,7 @@ class AddRemoteClientForm(forms.Form):
     adsl_password=forms.CharField(max_length=50, required=False)
     telephone=forms.CharField(max_length=50, required=False)
     contact=forms.CharField(max_length=50, required=False)
-    description=forms.CharField(max_length=500, required=False)
+    description=forms.CharField(max_length=2000, required=False)
 
 class CopyServiceRequestsForm(forms.Form):
     source_project_id=forms.IntegerField(required=True)

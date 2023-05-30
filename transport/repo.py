@@ -4,6 +4,7 @@ from transport.serializers import MaintenanceSerializer
 from .models import Driver, Luggage, Maintenance,Passenger,ServiceMan, Trip, TripCategory, TripPath, Vehicle,Client, WorkShift
 from authentication.repo import ProfileRepo
 from django.utils import timezone
+from utility.log import leolog
 from django.db.models import Q
 
 class DriverRepo():
@@ -647,6 +648,7 @@ class WorkShiftRepo():
         self.profile=ProfileRepo(*args, **kwargs).me
 
     def add_work_shift(self, *args, **kwargs):
+        leolog(kwargs=kwargs)
         if not self.user.has_perm(APP_NAME+".add_workshift"):
             return
         work_shift=WorkShift()
@@ -669,7 +671,15 @@ class WorkShiftRepo():
         
         key='driver_id'
         if key in kwargs and kwargs[key] is not None and kwargs[key]>0:
-            work_shift.driver_id=kwargs[key]
+            driver=Driver.objects.filter(pk=kwargs[key]).first()
+            if driver is not None:
+                work_shift.pay_from_id=driver.account_id
+
+        key='client_id'
+        if key in kwargs and kwargs[key] is not None and kwargs[key]>0:
+            client=Client.objects.filter(pk=kwargs[key]).first()
+            if client is not None:
+                work_shift.pay_to_id=client.account_id
 
         key='area_id'
         if key in kwargs and kwargs[key] is not None and kwargs[key]>0:
@@ -691,6 +701,10 @@ class WorkShiftRepo():
         key='title'
         if key in kwargs and kwargs[key] is not None:
             work_shift.title=kwargs[key]
+
+        key='status'
+        if key in kwargs and kwargs[key] is not None:
+            work_shift.status=kwargs[key]
 
         key='trip_category_id'
         if key in kwargs and kwargs[key] is not None and kwargs[key]>0:

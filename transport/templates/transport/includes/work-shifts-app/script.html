@@ -3,13 +3,55 @@
     let drivers = []
     let areas = []
     let work_shifts_app_data = {}
+    let work_shifts_app_methods = {}
 </script>
 {% if add_work_shift_form %}
 <script>
+    work_shifts_app_methods = {
+        to_price: (vall, curr) => to_price(vall, curr),
+        total: function () {
+            let tt = 0
+            this.work_shifts.forEach(work_shift => {
+                tt += (work_shift.amount)
+            });
+            return tt
+        },
+        add_work_shift: function () {
+            let url_add_work_shift = "{% url 'transport:add_work_shift' %}"
+            let payload = {
+                vehicle_id: this.vehicle_id,
+                // driver_id: this.driver_id,
+                // client_id: this.client_id,
+                start_datetime: this.start_datetime,
+                end_datetime: this.end_datetime,
+                area_id: this.area_id,
+                pay_from_id: this.pay_from_id,
+                pay_to_id: this.pay_to_id,
+                amount: this.amount,
+                description: this.description,
+                csrfmiddlewaretoken: csrfmiddlewaretoken,
+                title: this.title,
+                status:this.status,
+
+            }
+            console.log("jhgy yy yug oyt")
+            console.log("jhgy yy yug oytuiuyt")
+            console.log(payload)
+            let posting = $.post(url_add_work_shift, payload)
+            posting.done((data) => {
+                if (data.result === "SUCCEED") {
+                    work_shifts_app.work_shifts.push(data.work_shift)
+                }
+
+            })
+        },
+
+    }
     work_shifts = JSON.parse(`{{work_shifts_s|escapejs}}`)
     drivers = JSON.parse(`{{drivers_s|escapejs}}`)
     areas = JSON.parse(`{{areas_s|escapejs}}`)
-    
+    let clients = JSON.parse(`{{clients_s|escapejs}}`)
+    let vehicles = JSON.parse(`{{vehicles_s|escapejs}}`)
     work_shifts_app_data = {
         work_shifts: work_shifts,
         drivers: drivers,
@@ -17,30 +59,44 @@
         end_datetime: current_datetime,
         driver_id: "",
         areas: areas,
-        client_id:0,
-        clients:JSON.parse(`{{clients_s|escapejs}}`),
-        title:"",
+        client_id: 0,
+        clients: clients,
+        title: "",
+        pay_to_id:0,
+        pay_from_id:0,
         area_id: 0,
+        vehicles: vehicles,
         description: "",
+        vehicle_id: 0,
         amount: 0,
         outcome: "",
         show_form: false,
         waiting: false,
         message: { show: false },
         search_for: "",
+        status:"",
     }
 </script>
 {% else %}
 <script>
     work_shifts = JSON.parse(`{{work_shifts_s|escapejs}}`)
 
+    work_shifts_app_methods = {
+        to_price: (vall, curr) => to_price(vall, curr),
+        total: function () {
+            let tt = 0
+            this.work_shifts.forEach(work_shift => {
+                tt += (work_shift.amount)
+            });
+            return tt
+        },
+
+    } 
     work_shifts_app_data = {
         work_shifts: work_shifts,
         waiting: false,
         message: { show: false },
-        search_for: "",
-        areas:areas,
-
+        search_for: "", 
     }
 </script>
 {% endif %}
@@ -54,41 +110,6 @@
             DatePicker: VuePersianDatetimePicker
 
         },
-        methods: {
-            to_price: (vall, curr) => to_price(vall, curr),
-            total: function () {
-                let tt = 0
-                this.work_shifts.forEach(work_shift => {
-                    tt += (work_shift.amount)
-                });
-                return tt
-            },
-            add_work_shift: function () {
-                let url_add_work_shift = "{% url 'transport:add_work_shift' %}"
-                let payload = {
-                    vehicle_id: vehicle_id,
-                    driver_id: this.driver_id,
-                    start_datetime: this.start_datetime,
-                    end_datetime: this.end_datetime,
-                    area_id: this.area_id,
-                    pay_from_id:this.driver_id,
-                    pay_to_id:this.client_id,
-                    amount: this.amount,
-                    description: this.description,
-                    csrfmiddlewaretoken: csrfmiddlewaretoken,
-                    message: { show: false },
-                    search_for: "",
-                    title:this.title,
-
-                }
-                let posting = $.post(url_add_work_shift, payload)
-                posting.done((data) => {
-                    if (data.result === "SUCCEED") {
-                        work_shifts_app.work_shifts.push(data.work_shift)
-                    }
-
-                })
-            },
-        }
+        methods: work_shifts_app_methods,
     })
 </script>
