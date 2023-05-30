@@ -648,7 +648,6 @@ class WorkShiftRepo():
         self.profile=ProfileRepo(*args, **kwargs).me
 
     def add_work_shift(self, *args, **kwargs):
-        leolog(kwargs=kwargs)
         if not self.user.has_perm(APP_NAME+".add_workshift"):
             return
         work_shift=WorkShift()
